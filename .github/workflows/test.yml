@@ -17,8 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 scripts/check-sdk-surface.py
       - run: npm --prefix packages/typescript test
       - run: python3 -m unittest discover -s packages/python/tests
+        env:
+          PYTHONPATH: packages/python/src
       - run: cargo test --manifest-path packages/rust/Cargo.toml
-      - run: python3 scripts/check-sdk-surface.py
-
