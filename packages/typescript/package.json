@@ -1,0 +1,22 @@
+{
+  "name": "@tempera/sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/tempera-dev/tempera-sdk",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+

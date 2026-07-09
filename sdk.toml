@@ -1,0 +1,53 @@
+[sdk]
+name = "tempera-sdk"
+repository = "https://github.com/tempera-dev/tempera-sdk"
+languages = ["typescript", "python", "rust"]
+
+[products.auth_hub]
+name = "auth-hub"
+repository = "https://github.com/tempera-dev/auth-hub"
+visibility = "private"
+default_env = "TEMPERA_CONTROL_PLANE_URL"
+scopes = ["admin"]
+
+[products.temp_js]
+name = "temp.js"
+repository = "https://github.com/tempera-dev/temp.js"
+visibility = "public"
+default_env = "TEMPERA_TEMPJS_URL"
+scopes = ["mcp:invoke", "trace:read", "trace:write"]
+
+[products.tempo]
+name = "tempo"
+repository = "https://github.com/tempera-dev/tempo"
+visibility = "public"
+default_env = "TEMPERA_TEMPO_URL"
+scopes = ["trace:read", "trace:write", "eval:run"]
+
+[products.temp_os]
+name = "tempOS"
+repository = "https://github.com/tempera-dev/tempOS"
+visibility = "public"
+default_env = "TEMPERA_TEMPOS_URL"
+scopes = ["admin"]
+
+[products.remi]
+name = "remi"
+repository = "https://github.com/tempera-dev/remi"
+visibility = "private"
+default_env = "TEMPERA_REMI_URL"
+scopes = ["trace:read", "dataset:read", "dataset:write"]
+
+[products.cradle]
+name = "cradle"
+repository = "https://github.com/tempera-dev/cradle"
+visibility = "private"
+default_env = "TEMPERA_CRADLE_URL"
+scopes = ["mcp:invoke", "admin"]
+
+[products.arrha]
+name = "Arrha"
+repository = "https://github.com/tempera-dev/arrha"
+visibility = "private"
+default_env = "TEMPERA_ARRHA_URL"
+scopes = ["admin"]

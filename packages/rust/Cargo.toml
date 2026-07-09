@@ -1,0 +1,10 @@
+[package]
+name = "tempera-sdk"
+version = "0.1.0"
+edition = "2024"
+license = "UNLICENSED"
+repository = "https://github.com/tempera-dev/tempera-sdk"
+
+[lib]
+path = "src/lib.rs"
+

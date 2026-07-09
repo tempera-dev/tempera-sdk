@@ -1,0 +1,10 @@
+{
+  "name": "tempera-sdk-repo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "python3 scripts/check-sdk-surface.py && npm --prefix packages/typescript test && python3 -m unittest discover -s packages/python/tests && cargo test --manifest-path packages/rust/Cargo.toml"
+  }
+}
+

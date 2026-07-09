@@ -1,0 +1,10 @@
+[project]
+name = "tempera-sdk"
+version = "0.1.0"
+description = "Aggregated SDK for Tempera products"
+requires-python = ">=3.10"
+license = "UNLICENSED"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
