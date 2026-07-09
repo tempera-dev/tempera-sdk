@@ -60,6 +60,27 @@ pub const ARRHA: Product = Product {
 
 pub const PRODUCTS: &[Product] = &[AUTH_HUB, TEMPO, TEMP_JS, TEMP_OS, REMI, CRADLE, ARRHA];
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ApiTargets {
+    pub public_site_url: &'static str,
+    pub control_plane_url: &'static str,
+    pub auth_issuer_url: &'static str,
+    pub auth_jwks_url: &'static str,
+    pub palette_api_url: &'static str,
+    pub palette_mcp_url: &'static str,
+    pub tempo_api_url: &'static str,
+}
+
+pub const PRODUCTION_TARGETS: ApiTargets = ApiTargets {
+    public_site_url: "https://tempera.dev",
+    control_plane_url: "https://api.tempera.dev",
+    auth_issuer_url: "https://api.tempera.dev",
+    auth_jwks_url: "https://api.tempera.dev/.well-known/jwks.json",
+    palette_api_url: "https://mcp.tempera.dev",
+    palette_mcp_url: "https://mcp.tempera.dev/mcp",
+    tempo_api_url: "https://tempo.tempera.dev",
+};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ClientConfig {
     pub access_token: Option<String>,
@@ -100,6 +121,9 @@ mod tests {
         assert!(PRODUCTS.iter().any(|product| product.name == "Arrha"));
         assert!(SCOPES.contains(&"mcp:invoke"));
         assert!(SCOPES.contains(&"admin"));
+        assert_eq!(PRODUCTION_TARGETS.control_plane_url, "https://api.tempera.dev");
+        assert_eq!(PRODUCTION_TARGETS.palette_mcp_url, "https://mcp.tempera.dev/mcp");
+        assert_eq!(PRODUCTION_TARGETS.tempo_api_url, "https://tempo.tempera.dev");
     }
 
     #[test]

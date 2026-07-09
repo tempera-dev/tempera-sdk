@@ -8,6 +8,45 @@ export const TEMPERA_PRODUCTS = Object.freeze({
   arrha: { name: "Arrha", repository: "https://github.com/tempera-dev/arrha", env: "TEMPERA_ARRHA_URL" },
 });
 
+export const TEMPERA_API_TARGETS = Object.freeze({
+  local: {
+    publicSiteUrl: "http://localhost:3000",
+    controlPlaneUrl: "http://localhost:8787",
+    authIssuerUrl: "http://localhost:8787",
+    authJwksUrl: "http://localhost:8787/.well-known/jwks.json",
+    paletteApiUrl: "http://localhost:8080",
+    paletteMcpUrl: "http://localhost:8080/mcp",
+    tempoApiUrl: "http://localhost:7878",
+  },
+  preview: {
+    publicSiteUrl: "https://tempera-public-site-git-preview-tempera.vercel.app",
+    controlPlaneUrl: "https://preview-api.tempera.dev",
+    authIssuerUrl: "https://preview-api.tempera.dev",
+    authJwksUrl: "https://preview-api.tempera.dev/.well-known/jwks.json",
+    paletteApiUrl: "https://preview-mcp.tempera.dev",
+    paletteMcpUrl: "https://preview-mcp.tempera.dev/mcp",
+    tempoApiUrl: "https://preview-tempo.tempera.dev",
+  },
+  staging: {
+    publicSiteUrl: "https://staging.tempera.dev",
+    controlPlaneUrl: "https://staging-api.tempera.dev",
+    authIssuerUrl: "https://staging-api.tempera.dev",
+    authJwksUrl: "https://staging-api.tempera.dev/.well-known/jwks.json",
+    paletteApiUrl: "https://staging-mcp.tempera.dev",
+    paletteMcpUrl: "https://staging-mcp.tempera.dev/mcp",
+    tempoApiUrl: "https://staging-tempo.tempera.dev",
+  },
+  production: {
+    publicSiteUrl: "https://tempera.dev",
+    controlPlaneUrl: "https://api.tempera.dev",
+    authIssuerUrl: "https://api.tempera.dev",
+    authJwksUrl: "https://api.tempera.dev/.well-known/jwks.json",
+    paletteApiUrl: "https://mcp.tempera.dev",
+    paletteMcpUrl: "https://mcp.tempera.dev/mcp",
+    tempoApiUrl: "https://tempo.tempera.dev",
+  },
+});
+
 export const TEMPERA_SCOPES = Object.freeze([
   "mcp:invoke",
   "trace:read",
@@ -54,6 +93,7 @@ export function createTemperaClient({ endpoints = {}, accessToken, fetch: fetchI
 
   return {
     products: TEMPERA_PRODUCTS,
+    targets: TEMPERA_API_TARGETS,
     request,
     authHub: (path, options) => request("authHub", path, options),
     tempo: (path, options) => request("tempo", path, options),

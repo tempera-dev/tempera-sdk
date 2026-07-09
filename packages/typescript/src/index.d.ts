@@ -18,6 +18,17 @@ export type TemperaProduct = {
 
 export declare const TEMPERA_PRODUCTS: Readonly<Record<TemperaProductKey, TemperaProduct>>;
 export declare const TEMPERA_SCOPES: readonly TemperaScope[];
+export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
+export type TemperaApiTargets = {
+  publicSiteUrl: string;
+  controlPlaneUrl: string;
+  authIssuerUrl: string;
+  authJwksUrl: string;
+  paletteApiUrl: string;
+  paletteMcpUrl: string;
+  tempoApiUrl: string;
+};
+export declare const TEMPERA_API_TARGETS: Readonly<Record<TemperaEnvironment, TemperaApiTargets>>;
 
 export declare class TemperaSdkError extends Error {
   status?: number;
@@ -38,6 +49,7 @@ export type TemperaRequestOptions = {
 
 export declare function createTemperaClient(options?: TemperaClientOptions): {
   products: typeof TEMPERA_PRODUCTS;
+  targets: typeof TEMPERA_API_TARGETS;
   request(productKey: TemperaProductKey, path: string, options?: TemperaRequestOptions): Promise<unknown>;
   authHub(path: string, options?: TemperaRequestOptions): Promise<unknown>;
   tempo(path: string, options?: TemperaRequestOptions): Promise<unknown>;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { TEMPERA_PRODUCTS, TEMPERA_SCOPES, createTemperaClient } from "../src/index.js";
+import { TEMPERA_API_TARGETS, TEMPERA_PRODUCTS, TEMPERA_SCOPES, createTemperaClient } from "../src/index.js";
 
 test("exports the aggregated Tempera product surface", () => {
   assert.equal(TEMPERA_PRODUCTS.tempJs.repository, "https://github.com/tempera-dev/temp.js");
@@ -11,6 +11,9 @@ test("exports the aggregated Tempera product surface", () => {
   assert.equal(TEMPERA_PRODUCTS.arrha.repository, "https://github.com/tempera-dev/arrha");
   assert.ok(TEMPERA_SCOPES.includes("mcp:invoke"));
   assert.ok(TEMPERA_SCOPES.includes("admin"));
+  assert.equal(TEMPERA_API_TARGETS.production.controlPlaneUrl, "https://api.tempera.dev");
+  assert.equal(TEMPERA_API_TARGETS.production.paletteMcpUrl, "https://mcp.tempera.dev/mcp");
+  assert.equal(TEMPERA_API_TARGETS.production.tempoApiUrl, "https://tempo.tempera.dev");
 });
 
 test("client sends bearer-authenticated product requests", async () => {

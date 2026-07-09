@@ -37,6 +37,28 @@ PRODUCTS = {
 }
 
 
+API_TARGETS = {
+    "local": {
+        "public_site_url": "http://localhost:3000",
+        "control_plane_url": "http://localhost:8787",
+        "auth_issuer_url": "http://localhost:8787",
+        "auth_jwks_url": "http://localhost:8787/.well-known/jwks.json",
+        "palette_api_url": "http://localhost:8080",
+        "palette_mcp_url": "http://localhost:8080/mcp",
+        "tempo_api_url": "http://localhost:7878",
+    },
+    "production": {
+        "public_site_url": "https://tempera.dev",
+        "control_plane_url": "https://api.tempera.dev",
+        "auth_issuer_url": "https://api.tempera.dev",
+        "auth_jwks_url": "https://api.tempera.dev/.well-known/jwks.json",
+        "palette_api_url": "https://mcp.tempera.dev",
+        "palette_mcp_url": "https://mcp.tempera.dev/mcp",
+        "tempo_api_url": "https://tempo.tempera.dev",
+    },
+}
+
+
 class TemperaSdkError(RuntimeError):
     pass
 
@@ -69,4 +91,4 @@ class TemperaClient:
             return json.loads(text) if text else None
 
 
-__all__ = ["PRODUCTS", "SCOPES", "Product", "TemperaClient", "TemperaSdkError"]
+__all__ = ["API_TARGETS", "PRODUCTS", "SCOPES", "Product", "TemperaClient", "TemperaSdkError"]

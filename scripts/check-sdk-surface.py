@@ -17,6 +17,9 @@ REQUIRED = [
     "https://github.com/tempera-dev/remi",
     "https://github.com/tempera-dev/cradle",
     "https://github.com/tempera-dev/arrha",
+    "https://api.tempera.dev",
+    "https://mcp.tempera.dev/mcp",
+    "https://tempo.tempera.dev",
     "typescript",
     "python",
     "rust",
@@ -28,6 +31,7 @@ FILES = [
     "packages/typescript/src/index.d.ts",
     "packages/python/src/tempera_sdk/__init__.py",
     "packages/rust/src/lib.rs",
+    "targets.json",
 ]
 
 
