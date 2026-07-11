@@ -1,58 +1,96 @@
 #!/usr/bin/env python3
+"""The Tempera SDK uniformity gate.
+
+Fails when the three language packages can drift apart:
+
+1. surface.json invariants (validated by the generator).
+2. The generated surface tables (TypeScript, TypeScript .d.ts, Python, Rust)
+   must byte-match a fresh render of surface.json — so nobody hand-edits a
+   generated file or forgets to regenerate after changing the manifest.
+3. The three package versions must be identical.
+4. The hand-written mirror files must each define the uniform primitives
+   (TemperaApiError, the unified client, the MCP client) so a package cannot
+   quietly drop part of the surface.
+
+Runtime conformance (every operation dispatching the right method, path, and
+auth header) is asserted per-language by each package's own test suite, which
+loops over the generated tables; `npm test` at the repo root runs all of it.
+"""
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-REQUIRED = [
-    "auth-hub",
-    "tempo",
-    "temp.js",
-    "tempOS",
-    "remi",
-    "cradle",
-    "Arrha",
-    "https://github.com/tempera-dev/tempo",
-    "https://github.com/tempera-dev/temp.js",
-    "https://github.com/tempera-dev/tempOS",
-    "https://github.com/tempera-dev/remi",
-    "https://github.com/tempera-dev/cradle",
-    "https://github.com/tempera-dev/arrha",
-    "https://api.tempera.dev",
-    "https://mcp.tempera.dev/mcp",
-    "https://tempo.tempera.dev",
-    "typescript",
-    "python",
-    "rust",
-    "/oauth/authorize",
-    "/oauth/token",
-    "/oauth/revoke",
-    "S256",
-    "resource",
-    "tempera-mcp",
-    "human-data",
-]
+# Hand-written files must keep exposing the uniform primitives by these names.
+REQUIRED_MARKERS = {
+    "packages/typescript/src/errors.js": ["class TemperaApiError", "class TemperaMcpError", "normalizeErrorBody"],
+    "packages/typescript/src/client.js": ["export function createTemperaClient"],
+    "packages/typescript/src/mcp.js": ["class TemperaMcpClient", "MCP_PROTOCOL_VERSION"],
+    "packages/typescript/src/auth.js": ["class TemperaAuth", "createPkcePair", "pkceChallengeS256"],
+    "packages/python/src/tempera_sdk/errors.py": ["class TemperaApiError", "class TemperaMcpError", "def normalize_error_body"],
+    "packages/python/src/tempera_sdk/client.py": ["class TemperaClient"],
+    "packages/python/src/tempera_sdk/mcp.py": ["class TemperaMcpClient", "MCP_PROTOCOL_VERSION"],
+    "packages/python/src/tempera_sdk/auth.py": ["class TemperaAuth", "def create_pkce_pair", "def pkce_challenge_s256"],
+    "packages/rust/src/error.rs": ["pub struct TemperaApiError", "pub fn normalize_error_body"],
+    "packages/rust/src/client.rs": ["pub struct TemperaClient", "pub struct RequestSpec"],
+    "packages/rust/src/mcp.rs": ["MCP_PROTOCOL_VERSION"],
+    "packages/rust/src/auth.rs": ["pub struct TemperaAuth", "pub fn pkce_challenge_s256"],
+}
 
-FILES = [
-    "sdk.toml",
-    "packages/typescript/src/index.js",
-    "packages/typescript/src/index.d.ts",
-    "packages/typescript/src/auth.js",
-    "packages/python/src/tempera_sdk/__init__.py",
-    "packages/python/src/tempera_sdk/auth.py",
-    "packages/rust/src/lib.rs",
-    "packages/rust/src/auth.rs",
-    "targets.json",
-]
+
+def package_versions() -> dict[str, str]:
+    versions: dict[str, str] = {}
+    ts = json.loads((ROOT / "packages/typescript/package.json").read_text())
+    versions["typescript"] = ts["version"]
+    py = (ROOT / "packages/python/pyproject.toml").read_text()
+    match = re.search(r'^version\s*=\s*"([^"]+)"', py, re.MULTILINE)
+    versions["python"] = match.group(1) if match else "?"
+    cargo = (ROOT / "packages/rust/Cargo.toml").read_text()
+    match = re.search(r'^version\s*=\s*"([^"]+)"', cargo, re.MULTILINE)
+    versions["rust"] = match.group(1) if match else "?"
+    return versions
 
 
 def main() -> int:
-    text = "\n".join((ROOT / path).read_text() for path in FILES)
-    missing = [item for item in REQUIRED if item not in text]
-    if missing:
-        for item in missing:
-            print(f"missing SDK surface marker: {item}")
+    failures: list[str] = []
+
+    # 1 + 2: manifest invariants and generated-table drift.
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/gen-sdk-surface.py"), "--check"],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append("generated surface tables are stale or surface.json is invalid")
+
+    # 3: one SDK version across the three packages.
+    versions = package_versions()
+    if len(set(versions.values())) != 1:
+        failures.append(f"package versions differ: {versions}")
+
+    # 4: uniform primitives present in every hand-written mirror file.
+    for rel_path, markers in REQUIRED_MARKERS.items():
+        path = ROOT / rel_path
+        if not path.exists():
+            failures.append(f"missing file: {rel_path}")
+            continue
+        text = path.read_text()
+        for marker in markers:
+            if marker not in text:
+                failures.append(f"{rel_path}: missing marker {marker!r}")
+
+    if failures:
+        for failure in failures:
+            print(f"SDK surface check failed: {failure}", file=sys.stderr)
         return 1
-    print("SDK surface check passed")
+    print(f"SDK surface check passed (version {versions['typescript']})")
     return 0
 
 

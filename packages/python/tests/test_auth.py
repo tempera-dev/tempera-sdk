@@ -4,10 +4,13 @@ from urllib import parse as urllib_parse
 from tempera_sdk import (
     AUDIENCES,
     DEFAULT_AUDIENCE,
+    ISSUER_PATHS,
+    PRODUCT_AUDIENCES,
+    TemperaApiError,
     TemperaAuth,
-    TemperaProducts,
     TemperaSdkError,
     TokenSet,
+    api_error_from_response,
     build_authorize_url,
     create_pkce_pair,
     generate_pkce_verifier,
@@ -23,9 +26,10 @@ class PkceTest(unittest.TestCase):
         self.assertNotIn("=", challenge)
 
     def test_generated_pair_is_consistent(self):
-        verifier, challenge = create_pkce_pair()
-        self.assertRegex(verifier, r"^[A-Za-z0-9_-]{43,128}$")
-        self.assertEqual(challenge, pkce_challenge_s256(verifier))
+        pair = create_pkce_pair()
+        self.assertRegex(pair.verifier, r"^[A-Za-z0-9_-]{43,128}$")
+        self.assertEqual(pair.challenge, pkce_challenge_s256(pair.verifier))
+        self.assertEqual(pair.method, "S256")
         self.assertNotEqual(generate_pkce_verifier(), generate_pkce_verifier())
 
 
@@ -42,6 +46,7 @@ class AuthorizeUrlTest(unittest.TestCase):
         )
         parsed = urllib_parse.urlparse(url)
         params = dict(urllib_parse.parse_qsl(parsed.query))
+        self.assertEqual(parsed.path, ISSUER_PATHS["authorize"])
         self.assertEqual(f"{parsed.scheme}://{parsed.netloc}{parsed.path}", "https://api.tempera.dev/oauth/authorize")
         self.assertEqual(params["response_type"], "code")
         self.assertEqual(params["resource"], "tempo")
@@ -118,10 +123,27 @@ class TokenFlowTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["params"]["token_type_hint"], "refresh_token")
         self.assertNotIn("remi", auth.tokens)
 
+    def test_failed_token_requests_raise_tempera_api_error(self):
+        def transport(method, url, headers, data):
+            raise api_error_from_response(
+                401, "Unauthorized", {}, {"error": "unauthenticated", "message": "Authorization code is invalid."}
+            )
+
+        auth = TemperaAuth(issuer_url="https://api.tempera.dev", client_id="client_1", transport=transport)
+        with self.assertRaises(TemperaApiError) as ctx:
+            auth.exchange_code(
+                code="bad",
+                code_verifier="verifier_1",
+                redirect_uri="https://app.example.test/callback",
+            )
+        self.assertEqual(ctx.exception.status, 401)
+        self.assertEqual(ctx.exception.code, "unauthenticated")
+        self.assertEqual(ctx.exception.product, "controlPlane")
+        self.assertEqual(ctx.exception.operation, ISSUER_PATHS["token"])
+
 
 class ProductBearerTest(unittest.TestCase):
-    def test_products_attach_audience_matched_bearer(self):
-        transport = FakeTransport(lambda url, params: {"ok": True})
+    def test_bearer_for_matches_the_audience_with_api_key_fallback(self):
         auth = TemperaAuth(
             issuer_url="https://api.tempera.dev",
             api_key="tp_key_1",
@@ -130,31 +152,29 @@ class ProductBearerTest(unittest.TestCase):
                 "remi": TokenSet(access_token="at_remi"),
             },
         )
-        products = TemperaProducts(
-            auth,
-            base_urls={
-                "tempo": "https://tempo.example.test",
-                "remi": "https://remi.example.test",
-                "cradle": "https://cradle.example.test",
-            },
-            transport=transport,
-        )
-
-        products.tempo("/v1/traces")
-        products.remi("/memory")
-        products.cradle("/runs")
-
-        self.assertEqual(transport.calls[0]["url"], "https://tempo.example.test/v1/traces")
-        self.assertEqual(transport.calls[0]["headers"]["authorization"], "Bearer at_tempo")
-        self.assertEqual(transport.calls[1]["headers"]["authorization"], "Bearer at_remi")
+        self.assertEqual(auth.bearer_for("tempo"), "at_tempo")
+        self.assertEqual(auth.bearer_for("remi"), "at_remi")
         # No cradle token: the unified API key is the fallback bearer.
-        self.assertEqual(transport.calls[2]["headers"]["authorization"], "Bearer tp_key_1")
-        self.assertEqual(products.mcp_url, "https://api.tempera.dev/mcp")
+        self.assertEqual(auth.bearer_for("cradle"), "tp_key_1")
+        self.assertEqual(auth.mcp_url, "https://api.tempera.dev/mcp")
 
     def test_missing_credential_is_clear(self):
         auth = TemperaAuth(issuer_url="https://api.tempera.dev")
-        with self.assertRaises(TemperaSdkError):
+        with self.assertRaises(TemperaSdkError) as ctx:
             auth.bearer_for("cradle")
+        self.assertIn("no credential", str(ctx.exception))
+
+    def test_product_audiences_derive_from_the_surface_registry(self):
+        self.assertEqual(
+            PRODUCT_AUDIENCES,
+            {
+                "palette": ("palette", "TEMPERA_PALETTE_URL"),
+                "tempo": ("tempo", "TEMPERA_TEMPO_URL"),
+                "cradle": ("cradle", "TEMPERA_CRADLE_URL"),
+                "remi": ("remi", "TEMPERA_REMI_URL"),
+                "humanData": ("human-data", "TEMPERA_HUMAN_DATA_URL"),
+            },
+        )
 
 
 if __name__ == "__main__":

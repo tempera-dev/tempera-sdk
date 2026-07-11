@@ -10,6 +10,20 @@ visibility = "private"
 default_env = "TEMPERA_CONTROL_PLANE_URL"
 scopes = ["admin"]
 
+[products.palette]
+name = "palette"
+repository = "https://github.com/tempera-dev/palette"
+visibility = "public"
+default_env = "TEMPERA_PALETTE_URL"
+scopes = ["trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "admin"]
+
+[products.human_data]
+name = "human-data"
+repository = "https://github.com/tempera-dev/human-data"
+visibility = "private"
+default_env = "TEMPERA_HUMAN_DATA_URL"
+scopes = ["dataset:read", "dataset:write"]
+
 [products.temp_js]
 name = "temp.js"
 repository = "https://github.com/tempera-dev/temp.js"

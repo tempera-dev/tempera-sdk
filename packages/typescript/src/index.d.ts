@@ -1,55 +1,58 @@
-export type TemperaScope =
-  | "mcp:invoke"
-  | "trace:read"
-  | "trace:write"
-  | "dataset:read"
-  | "dataset:write"
-  | "eval:run"
-  | "pii:unmask"
-  | "admin";
+export * from "./surface.js";
+export {
+  TEMPERA_ENVIRONMENTS as TEMPERA_API_TARGETS,
+  type TemperaEnvironmentTargets as TemperaApiTargets,
+} from "./surface.js";
 
-export type TemperaProductKey = "authHub" | "tempo" | "tempJs" | "tempOS" | "remi" | "cradle" | "arrha";
+import type {
+  ControlPlaneClient,
+  CradleClient,
+  PaletteClient,
+  PassthroughClient,
+  RemiClient,
+  TemperaAudience,
+  TemperaEnvironment,
+  TemperaProductKey,
+  TemperaScope,
+  TempoClient,
+} from "./surface.js";
 
-export type TemperaProduct = {
-  name: "auth-hub" | "tempo" | "temp.js" | "tempOS" | "remi" | "cradle" | "Arrha";
-  repository: string;
-  env: string;
-};
-
-export declare const TEMPERA_PRODUCTS: Readonly<Record<TemperaProductKey, TemperaProduct>>;
-export declare const TEMPERA_SCOPES: readonly TemperaScope[];
-export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaApiTargets = {
-  publicSiteUrl: string;
-  controlPlaneUrl: string;
-  authIssuerUrl: string;
-  authJwksUrl: string;
-  paletteApiUrl: string;
-  paletteMcpUrl: string;
-  tempoApiUrl: string;
-};
-export declare const TEMPERA_API_TARGETS: Readonly<Record<TemperaEnvironment, TemperaApiTargets>>;
+// --- errors ---
 
 export declare class TemperaSdkError extends Error {
   status?: number;
   body?: unknown;
 }
 
-export type TemperaClientOptions = {
-  endpoints?: Partial<Record<TemperaProductKey, string>>;
-  accessToken?: string;
-  fetch?: typeof fetch;
-};
+export declare class TemperaApiError extends TemperaSdkError {
+  status: number;
+  code: string | null;
+  requestId: string | null;
+  product: string | null;
+  operation: string | null;
+  body: unknown;
+}
 
-export type TemperaRequestOptions = {
-  method?: string;
+export declare class TemperaMcpError extends TemperaSdkError {
+  code: number;
+  data: unknown;
+}
+
+export declare function normalizeErrorBody(
+  body: unknown,
+  statusText?: string,
+): { code: string | null; message: string; requestId: string | null };
+
+export declare function apiErrorFromResponse(options: {
+  status: number;
+  statusText?: string;
+  headers?: { get(name: string): string | null };
   body?: unknown;
-  headers?: HeadersInit;
-};
+  product?: string;
+  operation?: string;
+}): TemperaApiError;
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "tempera-mcp";
-export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
-export declare const DEFAULT_AUDIENCE: "palette";
+// --- auth ---
 
 export declare function generatePkceVerifier(byteLength?: number): string;
 export declare function pkceChallengeS256(verifier: string): Promise<string>;
@@ -90,7 +93,9 @@ export declare class TemperaAuth {
   fetch?: typeof fetch;
   get mcpUrl(): string;
   bearerFor(audience?: TemperaAudience | (string & {})): string;
-  buildAuthorizeUrl(options: Omit<TemperaAuthorizeUrlOptions, "issuerUrl" | "clientId"> & { clientId?: string }): string;
+  buildAuthorizeUrl(
+    options: Omit<TemperaAuthorizeUrlOptions, "issuerUrl" | "clientId"> & { clientId?: string },
+  ): string;
   exchangeCode(options: {
     code: string;
     codeVerifier: string;
@@ -104,36 +109,59 @@ export declare class TemperaAuth {
   ): Promise<void>;
 }
 
-export type TemperaProductAudienceKey = "palette" | "tempo" | "cradle" | "remi";
 export declare const TEMPERA_PRODUCT_AUDIENCES: Readonly<
-  Record<TemperaProductAudienceKey, { audience: TemperaAudience; env: string }>
+  Partial<Record<TemperaProductKey, { audience: TemperaAudience; env: string }>>
 >;
 
-export type TemperaProductsOptions = {
-  auth: TemperaAuth;
-  baseUrls?: Partial<Record<TemperaProductAudienceKey, string>>;
-  mcpUrl?: string;
+// --- unified client ---
+
+export type TemperaClientOptions = {
+  auth?: TemperaAuth;
+  accountToken?: string;
+  introspectionSecret?: string;
+  baseUrls?: Partial<Record<TemperaProductKey, string>>;
+  environment?: TemperaEnvironment;
   fetch?: typeof fetch;
 };
 
-export declare function createTemperaProducts(options: TemperaProductsOptions): {
-  mcpUrl: string;
-  request(productKey: TemperaProductAudienceKey, path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  palette(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  tempo(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  cradle(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  remi(path: string, options?: TemperaRequestOptions): Promise<unknown>;
+export type TemperaClient = {
+  auth: TemperaAuth | null;
+  accountToken: string | null;
+  controlPlane: ControlPlaneClient;
+  palette: PaletteClient;
+  tempo: TempoClient;
+  cradle: CradleClient;
+  remi: RemiClient;
+  humanData: PassthroughClient;
+  tempJs: PassthroughClient;
+  tempOS: PassthroughClient;
+  arrha: PassthroughClient;
 };
 
-export declare function createTemperaClient(options?: TemperaClientOptions): {
-  products: typeof TEMPERA_PRODUCTS;
-  targets: typeof TEMPERA_API_TARGETS;
-  request(productKey: TemperaProductKey, path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  authHub(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  tempo(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  tempJs(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  tempOS(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  remi(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  cradle(path: string, options?: TemperaRequestOptions): Promise<unknown>;
-  arrha(path: string, options?: TemperaRequestOptions): Promise<unknown>;
+export declare function createTemperaClient(options?: TemperaClientOptions): TemperaClient;
+
+// --- MCP gateway client ---
+
+export declare const MCP_PROTOCOL_VERSION: string;
+export declare const MCP_ERROR_CODES: Readonly<Record<string, number>>;
+
+export type TemperaMcpClientOptions = {
+  url?: string;
+  auth?: TemperaAuth;
+  bearer?: string;
+  fetch?: typeof fetch;
 };
+
+export declare class TemperaMcpClient {
+  constructor(options: TemperaMcpClientOptions);
+  url: string;
+  auth: TemperaAuth | null;
+  bearer: string | null;
+  rpc(method: string, params?: unknown): Promise<unknown>;
+  initialize(clientInfo?: { name?: string; version?: string }): Promise<unknown>;
+  ping(): Promise<unknown>;
+  listTools(): Promise<unknown[]>;
+  callTool(name: string, args?: Record<string, unknown>): Promise<unknown>;
+  whoami(): Promise<unknown>;
+  status(): Promise<unknown>;
+}
