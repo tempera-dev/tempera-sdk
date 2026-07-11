@@ -54,7 +54,16 @@ export class TemperaMcpClient {
       });
     }
     if (parsed?.error) {
-      throw new TemperaMcpError({ code: parsed.error.code, message: parsed.error.message, data: parsed.error.data });
+      // Uniform rule (same in Python and Rust): a JSON-RPC error object
+      // carries its integer code (0 when absent) and string message; a
+      // non-conformant non-object error becomes code 0 with its string form.
+      const error = parsed.error;
+      const isObject = typeof error === "object";
+      throw new TemperaMcpError({
+        code: isObject && typeof error.code === "number" ? error.code : 0,
+        message: isObject ? (typeof error.message === "string" ? error.message : "MCP error") : String(error),
+        data: isObject ? error.data : null,
+      });
     }
     return parsed?.result;
   }

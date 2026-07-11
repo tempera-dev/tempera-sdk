@@ -111,3 +111,12 @@ class McpClientTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NonConformantErrorTest(unittest.TestCase):
+    def test_string_error_raises_tempera_mcp_error_with_code_0(self):
+        client, _calls = gateway_client(lambda request: {"jsonrpc": "2.0", "id": 1, "error": "nope"})
+        with self.assertRaises(TemperaMcpError) as caught:
+            client.ping()
+        self.assertEqual(caught.exception.code, 0)
+        self.assertEqual(str(caught.exception), "nope")

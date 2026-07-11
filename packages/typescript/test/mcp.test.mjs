@@ -103,3 +103,16 @@ test("the gateway URL derives from TemperaAuth when not passed explicitly", () =
   const client = new TemperaMcpClient({ auth });
   assert.equal(client.url, "https://api.tempera.dev/mcp");
 });
+
+test("non-conformant string errors raise TemperaMcpError with code 0", async () => {
+  const { client } = gatewayClient(() => rpcResponse({ jsonrpc: "2.0", id: 1, error: "nope" }));
+  await assert.rejects(
+    () => client.ping(),
+    (error) => {
+      assert.ok(error instanceof TemperaMcpError);
+      assert.equal(error.code, 0);
+      assert.equal(error.message, "nope");
+      return true;
+    },
+  );
+});

@@ -63,8 +63,20 @@ class TemperaMcpClient:
         except TemperaApiError as error:
             raise _with_context(error, "mcpGateway", method) from None
         if isinstance(parsed, Mapping) and parsed.get("error"):
+            # Uniform rule (same in TypeScript and Rust): a JSON-RPC error
+            # object carries its integer code (0 when absent) and string
+            # message; a non-conformant non-object error becomes code 0 with
+            # its string form.
             error = parsed["error"]
-            raise TemperaMcpError(error.get("message") or "MCP error", code=error.get("code"), data=error.get("data"))
+            if isinstance(error, Mapping):
+                code = error.get("code")
+                message = error.get("message")
+                raise TemperaMcpError(
+                    message if isinstance(message, str) else "MCP error",
+                    code=code if isinstance(code, int) and not isinstance(code, bool) else 0,
+                    data=error.get("data"),
+                )
+            raise TemperaMcpError(str(error), code=0, data=None)
         return parsed.get("result") if isinstance(parsed, Mapping) else None
 
     def initialize(self, *, name: str = "tempera-sdk", version: str = "0.2.0") -> Any:

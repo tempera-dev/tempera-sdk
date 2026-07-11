@@ -318,18 +318,10 @@ impl std::error::Error for TemperaApiError {}
 /// - control plane / palette: `{"error": "<code>", "message": "<text>"}`
 /// - tempo:                   `{"error": "<human message>"}`
 /// - cradle / remi:           `{"error": {"code", "message", "request_id"?, ...}}`
-/// - anything unparseable:    `message` is the trimmed body, or `"request failed"`
-///   when the body is empty.
-pub fn normalize_error_body(status: u16, body: &str) -> TemperaApiError {
-    let fallback_message = || {
-        let trimmed = body.trim();
-        if trimmed.is_empty() {
-            "request failed".to_string()
-        } else {
-            trimmed.to_string()
-        }
-    };
-
+/// - anything unparseable:    `message` is `status_text`, or `"request failed"`
+///   when the status text is empty — the same fallback rule as the TypeScript
+///   and Python packages, so one wire response yields one message everywhere.
+pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> TemperaApiError {
     if let Some(root) = parse_json(body)
         && let Some(error) = root.get("error")
     {
@@ -341,8 +333,8 @@ pub fn normalize_error_body(status: u16, body: &str) -> TemperaApiError {
                     message: error
                         .get("message")
                         .and_then(Json::as_str)
-                        .map(str::to_string)
-                        .unwrap_or_else(fallback_message),
+                        .unwrap_or(status_text)
+                        .to_string(),
                     request_id: error
                         .get("request_id")
                         .and_then(Json::as_str)
@@ -372,7 +364,11 @@ pub fn normalize_error_body(status: u16, body: &str) -> TemperaApiError {
     TemperaApiError {
         status,
         code: None,
-        message: fallback_message(),
+        message: if status_text.is_empty() {
+            "request failed".to_string()
+        } else {
+            status_text.to_string()
+        },
         request_id: None,
     }
 }
@@ -383,9 +379,7 @@ mod tests {
 
     #[test]
     fn control_plane_shape_yields_code_and_message() {
-        let error = normalize_error_body(
-            401,
-            r#"{"error":"invalid_token","message":"token expired"}"#,
+        let error = normalize_error_body(401, "", r#"{"error":"invalid_token","message":"token expired"}"#,
         );
         assert_eq!(error.status, 401);
         assert_eq!(error.code.as_deref(), Some("invalid_token"));
@@ -395,9 +389,7 @@ mod tests {
 
     #[test]
     fn palette_shape_ignores_extra_status_member() {
-        let error = normalize_error_body(
-            404,
-            r#"{"error":"not_found","message":"trace not found","status":404}"#,
+        let error = normalize_error_body(404, "", r#"{"error":"not_found","message":"trace not found","status":404}"#,
         );
         assert_eq!(error.code.as_deref(), Some("not_found"));
         assert_eq!(error.message, "trace not found");
@@ -405,7 +397,7 @@ mod tests {
 
     #[test]
     fn tempo_shape_is_message_only() {
-        let error = normalize_error_body(400, r#"{"error":"session is drained"}"#);
+        let error = normalize_error_body(400, "", r#"{"error":"session is drained"}"#);
         assert_eq!(error.code, None);
         assert_eq!(error.message, "session is drained");
         assert_eq!(error.request_id, None);
@@ -423,7 +415,7 @@ mod tests {
                 "details": {"lanes": ["js", "wasm"], "nested": {"depth": 2, "none": null}}
             }
         }"#;
-        let error = normalize_error_body(503, body);
+        let error = normalize_error_body(503, "Service Unavailable", body);
         assert_eq!(error.code.as_deref(), Some("lane_unavailable"));
         assert_eq!(error.message, "no python lane");
         assert_eq!(error.request_id.as_deref(), Some("req_123"));
@@ -431,9 +423,7 @@ mod tests {
 
     #[test]
     fn remi_shape_without_request_id() {
-        let error = normalize_error_body(
-            422,
-            r#"{"error":{"code":"bad_scope","message":"scope is malformed"}}"#,
+        let error = normalize_error_body(422, "", r#"{"error":{"code":"bad_scope","message":"scope is malformed"}}"#,
         );
         assert_eq!(error.code.as_deref(), Some("bad_scope"));
         assert_eq!(error.message, "scope is malformed");
@@ -442,9 +432,7 @@ mod tests {
 
     #[test]
     fn escaped_quotes_and_escapes_inside_messages_survive() {
-        let error = normalize_error_body(
-            400,
-            r#"{"error":"bad_input","message":"field \"name\" is bad\n\ttab \\ slash \/ u: é"}"#,
+        let error = normalize_error_body(400, "", r#"{"error":"bad_input","message":"field \"name\" is bad\n\ttab \\ slash \/ u: é"}"#,
         );
         assert_eq!(error.code.as_deref(), Some("bad_input"));
         assert_eq!(
@@ -455,61 +443,62 @@ mod tests {
 
     #[test]
     fn surrogate_pair_escapes_decode() {
-        let error = normalize_error_body(400, r#"{"error":"emoji 😀 done"}"#);
+        let error = normalize_error_body(400, "", r#"{"error":"emoji 😀 done"}"#);
         assert_eq!(error.message, "emoji \u{1F600} done");
     }
 
     #[test]
     fn unknown_extra_fields_before_and_after_and_whitespace() {
         let body = "  \n\t{ \"trace\": [1, 2.5, -3e2, true, null], \"error\" : \"quota\" , \"message\": \"limit hit\", \"hint\": {\"docs\": \"https://x\"} }  \n";
-        let error = normalize_error_body(429, body);
+        let error = normalize_error_body(429, "Too Many Requests", body);
         assert_eq!(error.code.as_deref(), Some("quota"));
         assert_eq!(error.message, "limit hit");
     }
 
     #[test]
-    fn garbage_body_falls_back_to_trimmed_body() {
-        let error = normalize_error_body(502, "  <html>bad gateway</html>  ");
+    fn garbage_body_falls_back_to_status_text() {
+        // Same rule as TS/Python: unparseable bodies surface the HTTP status
+        // text, never the raw body (which may be a whole HTML error page).
+        let error = normalize_error_body(502, "Bad Gateway", "  <html>bad gateway</html>  ");
         assert_eq!(error.code, None);
-        assert_eq!(error.message, "<html>bad gateway</html>");
+        assert_eq!(error.message, "Bad Gateway");
         assert_eq!(error.request_id, None);
     }
 
     #[test]
-    fn truncated_json_falls_back_to_trimmed_body() {
-        let error = normalize_error_body(500, r#"{"error":"boom"#);
+    fn truncated_json_falls_back_to_status_text() {
+        let error = normalize_error_body(500, "Internal Server Error", r#"{"error":"boom"#);
         assert_eq!(error.code, None);
-        assert_eq!(error.message, r#"{"error":"boom"#);
+        assert_eq!(error.message, "Internal Server Error");
     }
 
     #[test]
-    fn empty_body_falls_back_to_request_failed() {
-        let error = normalize_error_body(500, "");
+    fn empty_status_text_falls_back_to_request_failed() {
+        let error = normalize_error_body(500, "", "");
         assert_eq!(error.message, "request failed");
-        let error = normalize_error_body(500, "   \n ");
+        let error = normalize_error_body(500, "", "   \n ");
         assert_eq!(error.message, "request failed");
     }
 
     #[test]
     fn object_without_error_member_falls_back() {
-        let error = normalize_error_body(500, r#"{"ok":false}"#);
+        let error = normalize_error_body(500, "Internal Server Error", r#"{"ok":false}"#);
         assert_eq!(error.code, None);
-        assert_eq!(error.message, r#"{"ok":false}"#);
+        assert_eq!(error.message, "Internal Server Error");
     }
 
     #[test]
-    fn error_object_without_message_uses_trimmed_body() {
-        let body = r#"{"error":{"code":"opaque"}}"#;
-        let error = normalize_error_body(500, body);
+    fn error_object_without_message_uses_status_text() {
+        let error = normalize_error_body(500, "Internal Server Error", r#"{"error":{"code":"opaque"}}"#);
         assert_eq!(error.code.as_deref(), Some("opaque"));
-        assert_eq!(error.message, body);
+        assert_eq!(error.message, "Internal Server Error");
     }
 
     #[test]
     fn non_string_error_member_falls_back() {
-        let error = normalize_error_body(500, r#"{"error":42}"#);
+        let error = normalize_error_body(500, "Internal Server Error", r#"{"error":42}"#);
         assert_eq!(error.code, None);
-        assert_eq!(error.message, r#"{"error":42}"#);
+        assert_eq!(error.message, "Internal Server Error");
     }
 
     #[test]

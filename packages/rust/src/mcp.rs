@@ -106,7 +106,8 @@ impl McpRequestBuilder {
 /// `MCP_ERROR_*` constants in [`crate::surface`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct McpError {
-    /// JSON-RPC error code (e.g. -32002 for a plan limit).
+    /// JSON-RPC error code (e.g. -32002 for a plan limit); 0 when the
+    /// response carried a non-conformant error without an integer code.
     pub code: i64,
     /// Human-readable error message.
     pub message: String,
@@ -126,16 +127,32 @@ impl std::error::Error for McpError {}
 pub fn parse_mcp_error(body: &str) -> Option<McpError> {
     let root = parse_json(body)?;
     let error = root.get("error")?;
-    if !matches!(error, Json::Obj(_)) {
-        return None;
+    // Uniform rule (same in TypeScript and Python): a JSON-RPC error object
+    // carries its integer code (0 when absent) and string message; a
+    // non-conformant non-object error becomes code 0 with its string form.
+    match error {
+        Json::Obj(_) => Some(McpError {
+            code: error.get("code").and_then(Json::as_i64).unwrap_or(0),
+            message: error
+                .get("message")
+                .and_then(Json::as_str)
+                .unwrap_or("MCP error")
+                .to_string(),
+        }),
+        Json::Str(text) => Some(McpError {
+            code: 0,
+            message: text.clone(),
+        }),
+        Json::Null => None,
+        other => Some(McpError {
+            code: 0,
+            message: match other {
+                Json::Num(raw) => raw.clone(),
+                Json::Bool(value) => value.to_string(),
+                _ => String::new(),
+            },
+        }),
     }
-    let code = error.get("code")?.as_i64()?;
-    let message = error
-        .get("message")
-        .and_then(Json::as_str)
-        .unwrap_or_default()
-        .to_string();
-    Some(McpError { code, message })
 }
 
 #[cfg(test)]
@@ -223,12 +240,26 @@ mod tests {
             None
         );
         assert_eq!(parse_mcp_error("not json"), None);
-        // A string-valued error member is not a JSON-RPC error object.
-        assert_eq!(parse_mcp_error(r#"{"error":"nope"}"#), None);
-        // A non-numeric code is rejected.
+        assert_eq!(parse_mcp_error(r#"{"error":null}"#), None);
+    }
+
+    #[test]
+    fn parse_mcp_error_handles_non_conformant_errors_uniformly() {
+        // Same rule as TypeScript and Python: any present error member is an
+        // error; non-object shapes become code 0 with their string form.
+        assert_eq!(
+            parse_mcp_error(r#"{"error":"nope"}"#),
+            Some(McpError { code: 0, message: "nope".to_string() })
+        );
+        // An error object without an integer code keeps its message, code 0.
         assert_eq!(
             parse_mcp_error(r#"{"error":{"code":"x","message":"m"}}"#),
-            None
+            Some(McpError { code: 0, message: "m".to_string() })
+        );
+        // An error object with neither code nor message gets the shared label.
+        assert_eq!(
+            parse_mcp_error(r#"{"error":{}}"#),
+            Some(McpError { code: 0, message: "MCP error".to_string() })
         );
     }
 }

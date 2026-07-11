@@ -89,7 +89,7 @@ mod tests {
         assert_eq!(spec.method, "GET");
         assert_eq!(spec.full_url(), "https://mcp.tempera.dev/v1/traces/t1/tr1");
 
-        let error = normalize_error_body(429, "{\"error\":\"quota\",\"message\":\"limit\"}");
+        let error = normalize_error_body(429, "Too Many Requests", "{\"error\":\"quota\",\"message\":\"limit\"}");
         assert_eq!(error.code.as_deref(), Some("quota"));
 
         let (id, body) = McpRequestBuilder::new().ping_body();
