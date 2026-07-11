@@ -14,6 +14,9 @@ Fails when the three language packages can drift apart:
 5. The hand-written mirror files must each define the uniform primitives
    (TemperaApiError, the unified client, the MCP client) so a package cannot
    quietly drop part of the surface.
+6. No tracked file may mention a legacy product codename; the current
+   product names (palette, tempo, cradle, remi, tempOS, temp.js) are the
+   only ones allowed.
 
 Runtime conformance (every operation dispatching the right method, path, and
 auth header) is asserted per-language by each package's own test suite, which
@@ -101,6 +104,27 @@ def main() -> int:
         for marker in markers:
             if marker not in text:
                 failures.append(f"{rel_path}: missing marker {marker!r}")
+
+    # 6: no legacy product codenames in any tracked file. The products are
+    # palette, tempo, cradle, remi, tempOS, and temp.js — their pre-rename
+    # codenames must not resurface in code, docs, or the manifest.
+    legacy = re.compile(r"beater|beatbox", re.IGNORECASE)
+    tracked = subprocess.run(
+        ["git", "ls-files"], capture_output=True, text=True, cwd=ROOT
+    ).stdout.splitlines()
+    for tracked_path in tracked:
+        if tracked_path == "scripts/check-sdk-surface.py":
+            continue  # this file necessarily spells the denied pattern
+        path = ROOT / tracked_path
+        try:
+            text = path.read_text()
+        except (UnicodeDecodeError, FileNotFoundError):
+            continue
+        for line_number, line in enumerate(text.splitlines(), 1):
+            if legacy.search(line):
+                failures.append(
+                    f"{tracked_path}:{line_number}: legacy product codename; use the current product names"
+                )
 
     if failures:
         for failure in failures:

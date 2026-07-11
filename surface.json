@@ -97,7 +97,7 @@
       "repository": "https://github.com/tempera-dev/palette",
       "envVar": "TEMPERA_PALETTE_URL",
       "audience": "palette",
-      "auth": "bearer minted for audience palette, central tp_ API key, or product x-beater-api-key header",
+      "auth": "bearer minted for audience palette, central tp_ API key, or product x-palette-api-key header",
       "description": "Agent observability: trace and span ingestion, search, datasets, evals, experiments, gates, and human review."
     },
     "tempo": {
@@ -113,8 +113,8 @@
       "repository": "https://github.com/tempera-dev/cradle",
       "envVar": "TEMPERA_CRADLE_URL",
       "audience": "cradle",
-      "auth": "bearer minted for audience cradle, central tp_ API key, or the beatbox static key",
-      "description": "Capability sandbox daemon (beatbox): synchronous and job-based sandboxed execution plus browser admission control."
+      "auth": "bearer minted for audience cradle, central tp_ API key, or the cradled static key",
+      "description": "Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control."
     },
     "remi": {
       "name": "remi",
@@ -122,7 +122,7 @@
       "envVar": "TEMPERA_REMI_URL",
       "audience": "remi",
       "auth": "bearer minted for audience remi, central tp_ API key, or the memory-server static token",
-      "description": "Temporal memory server (beater-memory): remember, project, query, and maintain an agent memory graph."
+      "description": "Temporal memory server: remember, project, query, and maintain an agent memory graph."
     },
     "humanData": {
       "name": "human-data",
@@ -236,7 +236,7 @@
       { "id": "grantConfirmation", "method": "POST", "path": "/sessions/{session_id}/confirmations/{confirmation_id}", "auth": "product", "pathParams": ["session_id", "confirmation_id"], "description": "Grant a pending policy confirmation and receive a single-use grant token." }
     ],
     "cradle": [
-      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check beatbox liveness; returns status, version, and uptime." },
+      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },
       { "id": "getCapabilities", "method": "GET", "path": "/v1/capabilities", "auth": "product", "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations." },
       { "id": "getIntegrationContract", "method": "GET", "path": "/v1/integration", "auth": "product", "description": "Fetch the ecosystem integration contract this daemon implements." },
       { "id": "execute", "method": "POST", "path": "/v1/execute", "auth": "product", "body": ["lane", "source", "entrypoint", "input", "stdin", "policy", "idempotency_key"], "description": "Execute source synchronously in a sandbox lane and return the result with metrics." },

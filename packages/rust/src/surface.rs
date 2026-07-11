@@ -116,7 +116,7 @@ pub const PRODUCTS: &[ProductSpec] = &[
         repository: "https://github.com/tempera-dev/cradle",
         env_var: "TEMPERA_CRADLE_URL",
         audience: Some("cradle"),
-        description: "Capability sandbox daemon (beatbox): synchronous and job-based sandboxed execution plus browser admission control.",
+        description: "Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control.",
     },
     ProductSpec {
         key: "remi",
@@ -124,7 +124,7 @@ pub const PRODUCTS: &[ProductSpec] = &[
         repository: "https://github.com/tempera-dev/remi",
         env_var: "TEMPERA_REMI_URL",
         audience: Some("remi"),
-        description: "Temporal memory server (beater-memory): remember, project, query, and maintain an agent memory graph.",
+        description: "Temporal memory server: remember, project, query, and maintain an agent memory graph.",
     },
     ProductSpec {
         key: "human_data",
@@ -1110,7 +1110,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body: &[],
         body_defaults: &[],
         scope: None,
-        description: "Check beatbox liveness; returns status, version, and uptime.",
+        description: "Check sandbox-daemon liveness; returns status, version, and uptime.",
     },
     OperationSpec {
         product: "cradle",

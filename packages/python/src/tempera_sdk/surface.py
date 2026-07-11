@@ -83,14 +83,14 @@ PRODUCTS = {
         "repository": "https://github.com/tempera-dev/cradle",
         "env_var": "TEMPERA_CRADLE_URL",
         "audience": "cradle",
-        "description": "Capability sandbox daemon (beatbox): synchronous and job-based sandboxed execution plus browser admission control."
+        "description": "Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control."
     },
     "remi": {
         "name": "remi",
         "repository": "https://github.com/tempera-dev/remi",
         "env_var": "TEMPERA_REMI_URL",
         "audience": "remi",
-        "description": "Temporal memory server (beater-memory): remember, project, query, and maintain an agent memory graph."
+        "description": "Temporal memory server: remember, project, query, and maintain an agent memory graph."
     },
     "humanData": {
         "name": "human-data",
@@ -1225,7 +1225,7 @@ OPERATIONS = {
             "body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check beatbox liveness; returns status, version, and uptime."
+            "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
         },
         {
             "id": "get_capabilities",
