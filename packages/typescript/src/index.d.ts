@@ -94,7 +94,7 @@ export declare class TemperaAuth {
   exchangeCode(options: {
     code: string;
     codeVerifier: string;
-    redirectUri?: string;
+    redirectUri: string;
     audience?: TemperaAudience | (string & {});
   }): Promise<TemperaTokenSet>;
   refresh(audience?: TemperaAudience | (string & {})): Promise<TemperaTokenSet>;

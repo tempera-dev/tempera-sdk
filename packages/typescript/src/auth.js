@@ -118,6 +118,7 @@ export class TemperaAuth {
   async exchangeCode({ code, codeVerifier, redirectUri, audience = DEFAULT_AUDIENCE } = {}) {
     if (!code) throw new Error("code is required");
     if (!codeVerifier) throw new Error("codeVerifier is required (PKCE is mandatory)");
+    if (!redirectUri) throw new Error("redirectUri is required and must match the authorize request");
     const token = await this.#post("/oauth/token", {
       grant_type: "authorization_code",
       code,
