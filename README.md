@@ -14,7 +14,7 @@ cannot drift apart.
 | `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 15 | `palette` |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 10 | `cradle` |
-| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |
+| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
 | `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | `human-data` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough | — |
 
