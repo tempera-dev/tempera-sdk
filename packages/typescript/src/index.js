@@ -1,3 +1,5 @@
+export * from "./auth.js";
+
 export const TEMPERA_PRODUCTS = Object.freeze({
   authHub: { name: "auth-hub", repository: "https://github.com/tempera-dev/auth-hub", env: "TEMPERA_CONTROL_PLANE_URL" },
   tempo: { name: "tempo", repository: "https://github.com/tempera-dev/tempo", env: "TEMPERA_TEMPO_URL" },

@@ -91,4 +91,34 @@ class TemperaClient:
             return json.loads(text) if text else None
 
 
-__all__ = ["API_TARGETS", "PRODUCTS", "SCOPES", "Product", "TemperaClient", "TemperaSdkError"]
+from .auth import (  # noqa: E402  (needs TemperaSdkError defined above)
+    AUDIENCES,
+    DEFAULT_AUDIENCE,
+    PRODUCT_AUDIENCES,
+    TemperaAuth,
+    TemperaProducts,
+    TokenSet,
+    build_authorize_url,
+    create_pkce_pair,
+    generate_pkce_verifier,
+    pkce_challenge_s256,
+)
+
+__all__ = [
+    "API_TARGETS",
+    "AUDIENCES",
+    "DEFAULT_AUDIENCE",
+    "PRODUCTS",
+    "PRODUCT_AUDIENCES",
+    "SCOPES",
+    "Product",
+    "TemperaAuth",
+    "TemperaClient",
+    "TemperaProducts",
+    "TemperaSdkError",
+    "TokenSet",
+    "build_authorize_url",
+    "create_pkce_pair",
+    "generate_pkce_verifier",
+    "pkce_challenge_s256",
+]
