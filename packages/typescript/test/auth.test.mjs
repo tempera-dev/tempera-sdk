@@ -3,10 +3,10 @@ import { test } from "node:test";
 import {
   DEFAULT_AUDIENCE,
   TEMPERA_AUDIENCES,
+  TemperaApiError,
   TemperaAuth,
   buildAuthorizeUrl,
   createPkcePair,
-  createTemperaProducts,
   generatePkceVerifier,
   pkceChallengeS256,
 } from "../src/index.js";
@@ -109,8 +109,7 @@ test("revoke posts the token to /oauth/revoke and drops the token set", async ()
   assert.equal(auth.tokens.remi, undefined);
 });
 
-test("product clients attach the audience-matched bearer", async () => {
-  const calls = [];
+test("bearerFor matches the audience with API-key fallback and mcpUrl derives from the issuer", () => {
   const auth = new TemperaAuth({
     issuerUrl: "https://api.tempera.dev",
     apiKey: "tp_key_1",
@@ -119,27 +118,36 @@ test("product clients attach the audience-matched bearer", async () => {
       remi: { accessToken: "at_remi" },
     },
   });
-  const products = createTemperaProducts({
-    auth,
-    baseUrls: {
-      tempo: "https://tempo.example.test",
-      remi: "https://remi.example.test",
-      cradle: "https://cradle.example.test",
-    },
-    fetch: async (url, options) => {
-      calls.push({ url, options });
-      return new Response(JSON.stringify({ ok: true }), { status: 200 });
-    },
-  });
-
-  await products.tempo("/v1/traces");
-  await products.remi("/memory");
-  await products.cradle("/runs");
-
-  assert.equal(calls[0].url, "https://tempo.example.test/v1/traces");
-  assert.equal(calls[0].options.headers.authorization, "Bearer at_tempo");
-  assert.equal(calls[1].options.headers.authorization, "Bearer at_remi");
+  assert.equal(auth.bearerFor("tempo"), "at_tempo");
+  assert.equal(auth.bearerFor("remi"), "at_remi");
   // No cradle token: the unified API key is the fallback bearer.
-  assert.equal(calls[2].options.headers.authorization, "Bearer tp_key_1");
-  assert.equal(products.mcpUrl, "https://api.tempera.dev/mcp");
+  assert.equal(auth.bearerFor("cradle"), "tp_key_1");
+  assert.equal(auth.mcpUrl, "https://api.tempera.dev/mcp");
+  assert.throws(() => new TemperaAuth({ issuerUrl: "https://api.tempera.dev" }).bearerFor("palette"), /no credential/);
+});
+
+test("failed token requests raise TemperaApiError with the control-plane error code", async () => {
+  const auth = new TemperaAuth({
+    issuerUrl: "https://api.tempera.dev",
+    clientId: "client_1",
+    fetch: async () =>
+      new Response(JSON.stringify({ error: "unauthenticated", message: "Authorization code is invalid." }), {
+        status: 401,
+        headers: { "content-type": "application/json" },
+      }),
+  });
+  await assert.rejects(
+    () =>
+      auth.exchangeCode({
+        code: "bad",
+        codeVerifier: "verifier_1",
+        redirectUri: "https://app.example.test/callback",
+      }),
+    (error) => {
+      assert.ok(error instanceof TemperaApiError);
+      assert.equal(error.status, 401);
+      assert.equal(error.code, "unauthenticated");
+      return true;
+    },
+  );
 });

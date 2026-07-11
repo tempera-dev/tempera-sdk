@@ -7,10 +7,16 @@
 
 use std::collections::HashMap;
 
-pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "tempera-mcp"];
-pub const DEFAULT_AUDIENCE: &str = "palette";
+use crate::surface::{AUTHORIZE_PATH, MCP_PATH, REVOKE_PATH, TOKEN_PATH};
 
-/// Product key -> (token audience, base-URL env var).
+// Compat re-exports: these constants moved to the generated surface tables.
+pub use crate::surface::{AUDIENCES, DEFAULT_AUDIENCE};
+
+/// Compat table: product key -> (token audience, base-URL env var) for the
+/// four audience-bearing core products. The authoritative source is
+/// [`crate::surface::PRODUCTS`] (`ProductSpec::audience` / `env_var`), which
+/// also covers `human-data` and the passthrough products; prefer
+/// [`crate::surface::find_product`].
 pub const PRODUCT_AUDIENCES: &[(&str, &str, &str)] = &[
     ("palette", "palette", "TEMPERA_PALETTE_URL"),
     ("tempo", "tempo", "TEMPERA_TEMPO_URL"),
@@ -31,7 +37,8 @@ const SHA256_K: [u32; 64] = [
 
 fn sha256(data: &[u8]) -> [u8; 32] {
     let mut hash: [u32; 8] = [
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+        0x5be0cd19,
     ];
     let mut message = data.to_vec();
     let bit_len = (data.len() as u64) * 8;
@@ -52,8 +59,12 @@ fn sha256(data: &[u8]) -> [u8; 32] {
             ]);
         }
         for index in 16..64 {
-            let s0 = w[index - 15].rotate_right(7) ^ w[index - 15].rotate_right(18) ^ (w[index - 15] >> 3);
-            let s1 = w[index - 2].rotate_right(17) ^ w[index - 2].rotate_right(19) ^ (w[index - 2] >> 10);
+            let s0 = w[index - 15].rotate_right(7)
+                ^ w[index - 15].rotate_right(18)
+                ^ (w[index - 15] >> 3);
+            let s1 = w[index - 2].rotate_right(17)
+                ^ w[index - 2].rotate_right(19)
+                ^ (w[index - 2] >> 10);
             w[index] = w[index - 16]
                 .wrapping_add(s0)
                 .wrapping_add(w[index - 7])
@@ -93,7 +104,8 @@ fn sha256(data: &[u8]) -> [u8; 32] {
     out
 }
 
-const BASE64URL_ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+const BASE64URL_ALPHABET: &[u8; 64] =
+    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 /// Base64url without padding (RFC 4648 section 5), as PKCE requires.
 pub fn base64url_no_pad(data: &[u8]) -> String {
@@ -120,11 +132,46 @@ pub fn pkce_challenge_s256(verifier: &str) -> String {
     base64url_no_pad(&sha256(verifier.as_bytes()))
 }
 
-fn urlencode(value: &str) -> String {
+/// Build a PKCE code verifier from caller-supplied entropy: the unpadded
+/// base64url encoding of the bytes (RFC 7636 section 4.1).
+///
+/// The crate is dependency-free and has no RNG, so callers MUST supply at
+/// least 32 cryptographically random bytes (e.g. from the OS CSPRNG).
+pub fn pkce_verifier_from_entropy(entropy: &[u8]) -> String {
+    base64url_no_pad(entropy)
+}
+
+/// A PKCE verifier/challenge pair (always `S256`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PkcePair {
+    /// The code verifier to send with the token request.
+    pub verifier: String,
+    /// The S256 code challenge to send with the authorize request.
+    pub challenge: String,
+    /// The challenge method; always `"S256"`.
+    pub method: &'static str,
+}
+
+/// Build a full PKCE pair from caller-supplied entropy (see
+/// [`pkce_verifier_from_entropy`]; supply at least 32 cryptographically
+/// random bytes).
+pub fn pkce_pair_from_entropy(entropy: &[u8]) -> PkcePair {
+    let verifier = pkce_verifier_from_entropy(entropy);
+    let challenge = pkce_challenge_s256(&verifier);
+    PkcePair {
+        verifier,
+        challenge,
+        method: "S256",
+    }
+}
+
+pub(crate) fn urlencode(value: &str) -> String {
     let mut out = String::with_capacity(value.len());
     for byte in value.bytes() {
         match byte {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'.' | b'_' | b'~' => out.push(byte as char),
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'.' | b'_' | b'~' => {
+                out.push(byte as char)
+            }
             _ => out.push_str(&format!("%{byte:02X}")),
         }
     }
@@ -139,32 +186,51 @@ fn form_encode(params: &[(&str, &str)]) -> String {
         .join("&")
 }
 
+/// Inputs to [`TemperaAuth::authorize_url`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthorizeUrlParams<'a> {
+    /// OAuth client id registered at the issuer.
     pub client_id: &'a str,
+    /// Redirect URI; must match the token request exactly.
     pub redirect_uri: &'a str,
+    /// PKCE S256 code challenge (see [`pkce_pair_from_entropy`]).
     pub code_challenge: &'a str,
+    /// Token audience (RFC 8707 `resource` parameter).
     pub audience: &'a str,
+    /// Optional space-separated scope list.
     pub scope: Option<&'a str>,
+    /// Optional opaque state echoed back on the redirect.
     pub state: Option<&'a str>,
 }
 
+/// One audience's stored OAuth tokens, as parsed from an `/oauth/token`
+/// response.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct TokenSet {
+    /// The bearer access token for the audience.
     pub access_token: String,
+    /// The refresh token, when the issuer granted one.
     pub refresh_token: Option<String>,
+    /// Access-token lifetime in seconds, when the response carried one.
+    pub expires_in: Option<u64>,
+    /// Granted scope, when the response carried one.
+    pub scope: Option<String>,
 }
 
 /// One unified credential (API key or per-audience OAuth tokens) against one issuer.
 #[derive(Debug, Clone, Default)]
 pub struct TemperaAuth {
     issuer_url: String,
+    /// OAuth client id used in authorize/token/revoke requests.
     pub client_id: Option<String>,
+    /// Central tp_ API key; the fallback bearer for every audience.
     pub api_key: Option<String>,
     tokens: HashMap<String, TokenSet>,
 }
 
 impl TemperaAuth {
+    /// Create a credential store against one issuer (e.g.
+    /// `https://api.tempera.dev`); a trailing slash is trimmed.
     pub fn new(issuer_url: impl Into<String>) -> Self {
         Self {
             issuer_url: issuer_url.into().trim_end_matches('/').to_string(),
@@ -172,36 +238,42 @@ impl TemperaAuth {
         }
     }
 
+    /// Set the OAuth client id.
     pub fn with_client_id(mut self, client_id: impl Into<String>) -> Self {
         self.client_id = Some(client_id.into());
         self
     }
 
+    /// Set the central tp_ API key (fallback bearer for every audience).
     pub fn with_api_key(mut self, api_key: impl Into<String>) -> Self {
         self.api_key = Some(api_key.into());
         self
     }
 
+    /// Seed the store with a token set for one audience.
     pub fn with_tokens(mut self, audience: impl Into<String>, tokens: TokenSet) -> Self {
         self.tokens.insert(audience.into(), tokens);
         self
     }
 
+    /// The issuer URL this credential targets (no trailing slash).
     pub fn issuer_url(&self) -> &str {
         &self.issuer_url
     }
 
     /// Unified MCP gateway (streamable HTTP MCP, audience `tempera-mcp`).
     pub fn mcp_url(&self) -> String {
-        format!("{}/mcp", self.issuer_url)
+        format!("{}{}", self.issuer_url, MCP_PATH)
     }
 
+    /// The issuer's `/oauth/token` endpoint.
     pub fn token_url(&self) -> String {
-        format!("{}/oauth/token", self.issuer_url)
+        format!("{}{}", self.issuer_url, TOKEN_PATH)
     }
 
+    /// The issuer's `/oauth/revoke` endpoint.
     pub fn revoke_url(&self) -> String {
-        format!("{}/oauth/revoke", self.issuer_url)
+        format!("{}{}", self.issuer_url, REVOKE_PATH)
     }
 
     /// Authorize URL with PKCE (S256) and the RFC 8707 `resource` audience selector.
@@ -220,11 +292,22 @@ impl TemperaAuth {
         if let Some(state) = params.state {
             query.push(("state", state));
         }
-        format!("{}/oauth/authorize?{}", self.issuer_url, form_encode(&query))
+        format!(
+            "{}{}?{}",
+            self.issuer_url,
+            AUTHORIZE_PATH,
+            form_encode(&query)
+        )
     }
 
     /// Form body to POST at [`Self::token_url`] to exchange an authorization code.
-    pub fn code_exchange_body(&self, code: &str, code_verifier: &str, redirect_uri: &str, audience: &str) -> String {
+    pub fn code_exchange_body(
+        &self,
+        code: &str,
+        code_verifier: &str,
+        redirect_uri: &str,
+        audience: &str,
+    ) -> String {
         let mut params = vec![
             ("grant_type", "authorization_code"),
             ("code", code),
@@ -257,7 +340,10 @@ impl TemperaAuth {
     pub fn revoke_body(&mut self, audience: &str) -> Option<String> {
         let tokens = self.tokens.remove(audience)?;
         let token = tokens.refresh_token.unwrap_or(tokens.access_token);
-        let mut params = vec![("token", token.as_str()), ("token_type_hint", "refresh_token")];
+        let mut params = vec![
+            ("token", token.as_str()),
+            ("token_type_hint", "refresh_token"),
+        ];
         if let Some(client_id) = self.client_id.as_deref() {
             params.push(("client_id", client_id));
         }
@@ -266,12 +352,28 @@ impl TemperaAuth {
 
     /// Store a parsed `/oauth/token` response for an audience. Refresh-token
     /// rotation: a newly issued refresh token replaces the old one; if the
-    /// response omitted it, the previous refresh token is kept.
+    /// response omitted it, the previous refresh token is kept. Use
+    /// [`Self::apply_token_response_full`] to also record `expires_in` and
+    /// `scope`.
     pub fn apply_token_response(
         &mut self,
         audience: impl Into<String>,
         access_token: impl Into<String>,
         refresh_token: Option<String>,
+    ) -> &TokenSet {
+        self.apply_token_response_full(audience, access_token, refresh_token, None, None)
+    }
+
+    /// Store a parsed `/oauth/token` response including its `expires_in` and
+    /// `scope` members. Same refresh-token rotation as
+    /// [`Self::apply_token_response`].
+    pub fn apply_token_response_full(
+        &mut self,
+        audience: impl Into<String>,
+        access_token: impl Into<String>,
+        refresh_token: Option<String>,
+        expires_in: Option<u64>,
+        scope: Option<String>,
     ) -> &TokenSet {
         let audience = audience.into();
         let previous_refresh = self
@@ -283,6 +385,8 @@ impl TemperaAuth {
             TokenSet {
                 access_token: access_token.into(),
                 refresh_token: refresh_token.or(previous_refresh),
+                expires_in,
+                scope,
             },
         );
         &self.tokens[&audience]
@@ -299,7 +403,8 @@ impl TemperaAuth {
 
     /// `Authorization` header value for the given audience.
     pub fn authorization_header(&self, audience: &str) -> Option<String> {
-        self.bearer_for(audience).map(|token| format!("Bearer {token}"))
+        self.bearer_for(audience)
+            .map(|token| format!("Bearer {token}"))
     }
 }
 
@@ -340,13 +445,22 @@ mod tests {
         let mut auth = TemperaAuth::new("https://api.tempera.dev").with_client_id("client_1");
         assert_eq!(auth.token_url(), "https://api.tempera.dev/oauth/token");
 
-        let exchange = auth.code_exchange_body("code_1", "verifier_1", "https://app.example.test/callback", "tempo");
+        let exchange = auth.code_exchange_body(
+            "code_1",
+            "verifier_1",
+            "https://app.example.test/callback",
+            "tempo",
+        );
         assert!(exchange.contains("grant_type=authorization_code"));
         assert!(exchange.contains("resource=tempo"));
         assert!(exchange.contains("code_verifier=verifier_1"));
 
         auth.apply_token_response("tempo", "at_1", Some("rt_1".to_string()));
-        assert!(auth.refresh_body("tempo").unwrap().contains("refresh_token=rt_1"));
+        assert!(
+            auth.refresh_body("tempo")
+                .unwrap()
+                .contains("refresh_token=rt_1")
+        );
 
         // Rotation: the newly issued refresh token replaces the old one.
         auth.apply_token_response("tempo", "at_2", Some("rt_2".to_string()));
@@ -357,7 +471,11 @@ mod tests {
 
         // A response without a refresh token keeps the previous one.
         auth.apply_token_response("tempo", "at_3", None);
-        assert!(auth.refresh_body("tempo").unwrap().contains("refresh_token=rt_2"));
+        assert!(
+            auth.refresh_body("tempo")
+                .unwrap()
+                .contains("refresh_token=rt_2")
+        );
         assert_eq!(auth.bearer_for("tempo"), Some("at_3"));
 
         let revoke = auth.revoke_body("tempo").unwrap();
@@ -369,13 +487,87 @@ mod tests {
     fn bearer_matches_audience_with_api_key_fallback() {
         let auth = TemperaAuth::new("https://api.tempera.dev")
             .with_api_key("tp_key_1")
-            .with_tokens("tempo", TokenSet { access_token: "at_tempo".into(), refresh_token: None })
-            .with_tokens("remi", TokenSet { access_token: "at_remi".into(), refresh_token: None });
-        assert_eq!(auth.authorization_header("tempo").as_deref(), Some("Bearer at_tempo"));
-        assert_eq!(auth.authorization_header("remi").as_deref(), Some("Bearer at_remi"));
+            .with_tokens(
+                "tempo",
+                TokenSet {
+                    access_token: "at_tempo".into(),
+                    ..TokenSet::default()
+                },
+            )
+            .with_tokens(
+                "remi",
+                TokenSet {
+                    access_token: "at_remi".into(),
+                    ..TokenSet::default()
+                },
+            );
+        assert_eq!(
+            auth.authorization_header("tempo").as_deref(),
+            Some("Bearer at_tempo")
+        );
+        assert_eq!(
+            auth.authorization_header("remi").as_deref(),
+            Some("Bearer at_remi")
+        );
         // No cradle token: the unified API key is the fallback bearer.
-        assert_eq!(auth.authorization_header("cradle").as_deref(), Some("Bearer tp_key_1"));
+        assert_eq!(
+            auth.authorization_header("cradle").as_deref(),
+            Some("Bearer tp_key_1")
+        );
         assert_eq!(auth.mcp_url(), "https://api.tempera.dev/mcp");
-        assert!(TemperaAuth::new("https://api.tempera.dev").bearer_for("palette").is_none());
+        assert!(
+            TemperaAuth::new("https://api.tempera.dev")
+                .bearer_for("palette")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn pkce_pair_from_entropy_matches_the_rfc7636_vector() {
+        // RFC 7636 appendix B: the verifier's underlying octet sequence.
+        let entropy: [u8; 32] = [
+            116, 24, 223, 180, 151, 153, 224, 37, 79, 250, 96, 125, 216, 173, 187, 186, 22, 212,
+            37, 77, 105, 214, 191, 240, 91, 88, 5, 88, 83, 132, 141, 121,
+        ];
+        assert_eq!(
+            pkce_verifier_from_entropy(&entropy),
+            "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+        );
+        let pair = pkce_pair_from_entropy(&entropy);
+        assert_eq!(pair.verifier, "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
+        assert_eq!(
+            pair.challenge,
+            "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+        );
+        assert_eq!(pair.challenge, pkce_challenge_s256(&pair.verifier));
+        assert_eq!(pair.method, "S256");
+    }
+
+    #[test]
+    fn full_token_response_records_expiry_and_scope() {
+        let mut auth = TemperaAuth::new("https://api.tempera.dev");
+        let tokens = auth.apply_token_response_full(
+            "palette",
+            "at_1",
+            Some("rt_1".to_string()),
+            Some(3600),
+            Some("trace:read trace:write".to_string()),
+        );
+        assert_eq!(tokens.expires_in, Some(3600));
+        assert_eq!(tokens.scope.as_deref(), Some("trace:read trace:write"));
+        // The two-token compat helper leaves the optional metadata unset.
+        let tokens = auth.apply_token_response("palette", "at_2", None);
+        assert_eq!(tokens.refresh_token.as_deref(), Some("rt_1"));
+        assert_eq!(tokens.expires_in, None);
+        assert_eq!(tokens.scope, None);
+    }
+
+    #[test]
+    fn compat_product_audiences_agree_with_the_surface_tables() {
+        for (product, audience, env_var) in PRODUCT_AUDIENCES {
+            let spec = crate::surface::find_product(product).expect("product exists");
+            assert_eq!(spec.audience, Some(*audience));
+            assert_eq!(spec.env_var, *env_var);
+        }
     }
 }

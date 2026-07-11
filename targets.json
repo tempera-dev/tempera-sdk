@@ -4,6 +4,7 @@
     "controlPlaneUrl": "http://localhost:8787",
     "authIssuerUrl": "http://localhost:8787",
     "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
+    "mcpGatewayUrl": "http://localhost:8787/mcp",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
     "tempoApiUrl": "http://localhost:7878"
@@ -13,6 +14,7 @@
     "controlPlaneUrl": "https://preview-api.tempera.dev",
     "authIssuerUrl": "https://preview-api.tempera.dev",
     "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
+    "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -22,6 +24,7 @@
     "controlPlaneUrl": "https://staging-api.tempera.dev",
     "authIssuerUrl": "https://staging-api.tempera.dev",
     "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
+    "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -31,6 +34,7 @@
     "controlPlaneUrl": "https://api.tempera.dev",
     "authIssuerUrl": "https://api.tempera.dev",
     "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
+    "mcpGatewayUrl": "https://api.tempera.dev/mcp",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://tempo.tempera.dev"

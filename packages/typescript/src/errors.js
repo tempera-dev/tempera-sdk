@@ -1,0 +1,89 @@
+/**
+ * Uniform Tempera SDK errors, shared in shape with the Python and Rust
+ * packages (see surface.json `errorContract`).
+ *
+ * - `TemperaSdkError`: base class for every error the SDK throws, including
+ *   configuration and usage mistakes (missing credential, unknown product).
+ * - `TemperaApiError`: an HTTP response error, normalized from the five wire
+ *   error shapes in the Tempera fleet so callers always read the same fields.
+ * - `TemperaMcpError`: a JSON-RPC error from an MCP endpoint.
+ */
+
+export class TemperaSdkError extends Error {
+  constructor(message, extra = {}) {
+    super(message);
+    this.name = "TemperaSdkError";
+    // Back-compat: pre-0.2 callers read status/body off TemperaSdkError.
+    if (extra.status !== undefined) this.status = extra.status;
+    if (extra.body !== undefined) this.body = extra.body;
+  }
+}
+
+export class TemperaApiError extends TemperaSdkError {
+  constructor({ status, code, message, requestId, product, operation, body }) {
+    super(message, { status, body });
+    this.name = "TemperaApiError";
+    this.status = status;
+    this.code = code ?? null;
+    this.requestId = requestId ?? null;
+    this.product = product ?? null;
+    this.operation = operation ?? null;
+    this.body = body ?? null;
+  }
+}
+
+export class TemperaMcpError extends TemperaSdkError {
+  constructor({ code, message, data }) {
+    super(message);
+    this.name = "TemperaMcpError";
+    this.code = code;
+    this.data = data ?? null;
+  }
+}
+
+/**
+ * Normalize any Tempera product error body into {code, message, requestId}.
+ *
+ * Wire shapes handled (see surface.json errorContract.wireShapes):
+ * - control plane / palette: {"error": "<code>", "message": "<text>"}
+ * - tempo:                    {"error": "<human message>"}
+ * - cradle / remi:            {"error": {"code", "message", "request_id"?, ...}}
+ */
+export function normalizeErrorBody(body, statusText = "") {
+  if (body && typeof body === "object") {
+    const error = body.error;
+    if (error && typeof error === "object") {
+      return {
+        code: typeof error.code === "string" ? error.code : null,
+        message: typeof error.message === "string" ? error.message : statusText,
+        requestId: typeof error.request_id === "string" ? error.request_id : null,
+      };
+    }
+    if (typeof error === "string") {
+      if (typeof body.message === "string") {
+        return { code: error, message: body.message, requestId: null };
+      }
+      return { code: null, message: error, requestId: null };
+    }
+  }
+  return { code: null, message: statusText || "request failed", requestId: null };
+}
+
+/**
+ * Build a TemperaApiError from a failed HTTP response.
+ * `requestId` falls back to the x-request-id response header.
+ */
+export function apiErrorFromResponse({ status, statusText, headers, body, product, operation }) {
+  const normalized = normalizeErrorBody(body, statusText);
+  const headerRequestId = headers?.get?.("x-request-id") ?? null;
+  const label = [product, operation].filter(Boolean).join(".");
+  return new TemperaApiError({
+    status,
+    code: normalized.code,
+    message: `Tempera ${label || "request"} failed (${status}): ${normalized.message}`,
+    requestId: normalized.requestId ?? headerRequestId,
+    product,
+    operation,
+    body,
+  });
+}

@@ -1,136 +1,100 @@
+//! Dependency-free Tempera SDK for Rust.
+//!
+//! The crate is HTTP-less by design: it builds request URLs, headers, and
+//! bodies for the caller's own HTTP client instead of sending them. Every
+//! product, audience, scope, environment target, and typed operation comes
+//! from the generated surface tables in [`surface`] (from `surface.json`),
+//! shared verbatim with the TypeScript and Python packages.
+//!
+//! - [`surface`]: the generated tables (products, operations, environments,
+//!   MCP methods, error-code constants). GENERATED — never edit by hand.
+//! - [`auth`]: PKCE (S256) helpers, audience-aware OAuth request builders,
+//!   and the unified per-audience credential store with tp_ API-key fallback.
+//! - [`client`]: [`TemperaClient`] turns `(product, operation, params)` into
+//!   a fully-described [`RequestSpec`].
+//! - [`error`]: [`TemperaApiError`] and [`normalize_error_body`], folding the
+//!   five fleet wire error shapes into one type.
+//! - [`mcp`]: JSON-RPC 2.0 body builders for the unified MCP gateway.
+
 pub mod auth;
+pub mod client;
+pub mod error;
+pub mod mcp;
+pub mod surface;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Product {
-    pub name: &'static str,
-    pub repository: &'static str,
-    pub env: &'static str,
-}
-
-pub const SCOPES: &[&str] = &[
-    "mcp:invoke",
-    "trace:read",
-    "trace:write",
-    "dataset:read",
-    "dataset:write",
-    "eval:run",
-    "pii:unmask",
-    "admin",
-];
-
-pub const AUTH_HUB: Product = Product {
-    name: "auth-hub",
-    repository: "https://github.com/tempera-dev/auth-hub",
-    env: "TEMPERA_CONTROL_PLANE_URL",
+pub use auth::{
+    AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet, base64url_no_pad, pkce_challenge_s256,
+    pkce_pair_from_entropy, pkce_verifier_from_entropy,
 };
-
-pub const TEMP_JS: Product = Product {
-    name: "temp.js",
-    repository: "https://github.com/tempera-dev/temp.js",
-    env: "TEMPERA_TEMPJS_URL",
+pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
+pub use error::{TemperaApiError, normalize_error_body};
+pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
+pub use surface::{
+    AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
+    MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,
+    MCP_ERROR_METHOD_NOT_FOUND, MCP_ERROR_PLAN_LIMIT, MCP_METHODS, MCP_PATH, McpMethodSpec,
+    OPERATIONS, OperationSpec, PRODUCTS, ProductSpec, REVOKE_PATH, SCOPES, SURFACE_VERSION,
+    TOKEN_PATH, find_operation, find_product,
 };
-
-pub const TEMPO: Product = Product {
-    name: "tempo",
-    repository: "https://github.com/tempera-dev/tempo",
-    env: "TEMPERA_TEMPO_URL",
-};
-
-pub const TEMP_OS: Product = Product {
-    name: "tempOS",
-    repository: "https://github.com/tempera-dev/tempOS",
-    env: "TEMPERA_TEMPOS_URL",
-};
-
-pub const REMI: Product = Product {
-    name: "remi",
-    repository: "https://github.com/tempera-dev/remi",
-    env: "TEMPERA_REMI_URL",
-};
-
-pub const CRADLE: Product = Product {
-    name: "cradle",
-    repository: "https://github.com/tempera-dev/cradle",
-    env: "TEMPERA_CRADLE_URL",
-};
-
-pub const ARRHA: Product = Product {
-    name: "Arrha",
-    repository: "https://github.com/tempera-dev/arrha",
-    env: "TEMPERA_ARRHA_URL",
-};
-
-pub const PRODUCTS: &[Product] = &[AUTH_HUB, TEMPO, TEMP_JS, TEMP_OS, REMI, CRADLE, ARRHA];
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ApiTargets {
-    pub public_site_url: &'static str,
-    pub control_plane_url: &'static str,
-    pub auth_issuer_url: &'static str,
-    pub auth_jwks_url: &'static str,
-    pub palette_api_url: &'static str,
-    pub palette_mcp_url: &'static str,
-    pub tempo_api_url: &'static str,
-}
-
-pub const PRODUCTION_TARGETS: ApiTargets = ApiTargets {
-    public_site_url: "https://tempera.dev",
-    control_plane_url: "https://api.tempera.dev",
-    auth_issuer_url: "https://api.tempera.dev",
-    auth_jwks_url: "https://api.tempera.dev/.well-known/jwks.json",
-    palette_api_url: "https://mcp.tempera.dev",
-    palette_mcp_url: "https://mcp.tempera.dev/mcp",
-    tempo_api_url: "https://tempo.tempera.dev",
-};
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ClientConfig {
-    pub access_token: Option<String>,
-    pub endpoints: Vec<(&'static str, String)>,
-}
-
-impl ClientConfig {
-    pub fn new() -> Self {
-        Self {
-            access_token: None,
-            endpoints: Vec::new(),
-        }
-    }
-
-    pub fn with_bearer_token(mut self, token: impl Into<String>) -> Self {
-        self.access_token = Some(token.into());
-        self
-    }
-}
-
-impl Default for ClientConfig {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn exports_aggregated_product_surface() {
-        assert!(PRODUCTS.iter().any(|product| product.name == "temp.js"));
-        assert!(PRODUCTS.iter().any(|product| product.name == "tempo"));
-        assert!(PRODUCTS.iter().any(|product| product.name == "tempOS"));
-        assert!(PRODUCTS.iter().any(|product| product.name == "remi"));
-        assert!(PRODUCTS.iter().any(|product| product.name == "cradle"));
-        assert!(PRODUCTS.iter().any(|product| product.name == "Arrha"));
+    fn surface_tables_replace_the_legacy_hand_written_consts() {
+        // Every legacy product is present in the generated table, by key.
+        for key in [
+            "control_plane",
+            "palette",
+            "tempo",
+            "cradle",
+            "remi",
+            "human_data",
+            "temp_js",
+            "temp_o_s",
+            "arrha",
+        ] {
+            assert!(find_product(key).is_some(), "missing product {key}");
+        }
+        assert_eq!(find_product("palette").unwrap().audience, Some("palette"));
         assert!(SCOPES.contains(&"mcp:invoke"));
         assert!(SCOPES.contains(&"admin"));
-        assert_eq!(PRODUCTION_TARGETS.control_plane_url, "https://api.tempera.dev");
-        assert_eq!(PRODUCTION_TARGETS.palette_mcp_url, "https://mcp.tempera.dev/mcp");
-        assert_eq!(PRODUCTION_TARGETS.tempo_api_url, "https://tempo.tempera.dev");
+        assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
+
+        // ENVIRONMENTS replaces PRODUCTION_TARGETS.
+        let production = ENVIRONMENTS
+            .iter()
+            .find(|target| target.environment == "production")
+            .unwrap();
+        assert_eq!(production.control_plane_url, "https://api.tempera.dev");
+        assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
+        assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
+        assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
 
     #[test]
-    fn carries_bearer_token_config() {
-        let config = ClientConfig::new().with_bearer_token("token_123");
-        assert_eq!(config.access_token.as_deref(), Some("token_123"));
+    fn re_exported_types_compose_end_to_end() {
+        let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key("tp_key_1");
+        let client = TemperaClient::new()
+            .with_auth(auth)
+            .with_base_url("palette", "https://mcp.tempera.dev");
+        let spec = client
+            .build_request(
+                "palette",
+                "get_trace",
+                &[("tenant_id", "t1".into()), ("trace_id", "tr1".into())],
+            )
+            .unwrap();
+        assert_eq!(spec.method, "GET");
+        assert_eq!(spec.full_url(), "https://mcp.tempera.dev/v1/traces/t1/tr1");
+
+        let error = normalize_error_body(429, "{\"error\":\"quota\",\"message\":\"limit\"}");
+        assert_eq!(error.code.as_deref(), Some("quota"));
+
+        let (id, body) = McpRequestBuilder::new().ping_body();
+        assert_eq!(id, 1);
+        assert!(parse_mcp_error(&body).is_none());
+        assert_eq!(MCP_PROTOCOL_VERSION, "2025-06-18");
     }
 }
