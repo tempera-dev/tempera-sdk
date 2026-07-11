@@ -23,14 +23,24 @@ REQUIRED = [
     "typescript",
     "python",
     "rust",
+    "/oauth/authorize",
+    "/oauth/token",
+    "/oauth/revoke",
+    "S256",
+    "resource",
+    "tempera-mcp",
+    "human-data",
 ]
 
 FILES = [
     "sdk.toml",
     "packages/typescript/src/index.js",
     "packages/typescript/src/index.d.ts",
+    "packages/typescript/src/auth.js",
     "packages/python/src/tempera_sdk/__init__.py",
+    "packages/python/src/tempera_sdk/auth.py",
     "packages/rust/src/lib.rs",
+    "packages/rust/src/auth.rs",
     "targets.json",
 ]
 

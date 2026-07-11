@@ -1,3 +1,5 @@
+pub mod auth;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Product {
     pub name: &'static str,
