@@ -1429,6 +1429,18 @@ OPERATIONS = {
             "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
         },
         {
+            "id": "get_prometheus_metrics",
+            "method": "GET",
+            "path": "/v1/metrics/prometheus",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
+        },
+        {
             "id": "list_audit",
             "method": "GET",
             "path": "/v1/audit",

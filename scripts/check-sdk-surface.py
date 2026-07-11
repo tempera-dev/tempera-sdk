@@ -7,8 +7,11 @@ Fails when the three language packages can drift apart:
 2. The generated surface tables (TypeScript, TypeScript .d.ts, Python, Rust)
    must byte-match a fresh render of surface.json — so nobody hand-edits a
    generated file or forgets to regenerate after changing the manifest.
-3. The three package versions must be identical.
-4. The hand-written mirror files must each define the uniform primitives
+3. The generated Mintlify docs site (docs/site/, rendered by
+   scripts/gen-sdk-docs.py from surface.json and docs/ROLLOUT.md) must
+   byte-match a fresh render — stale docs fail the gate the same way.
+4. The three package versions must be identical.
+5. The hand-written mirror files must each define the uniform primitives
    (TemperaApiError, the unified client, the MCP client) so a package cannot
    quietly drop part of the surface.
 
@@ -70,12 +73,25 @@ def main() -> int:
     if result.returncode != 0:
         failures.append("generated surface tables are stale or surface.json is invalid")
 
-    # 3: one SDK version across the three packages.
+    # 3: generated docs-site drift (same regenerate-and-diff pattern).
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/gen-sdk-docs.py"), "--check"],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append(
+            "generated docs site (docs/site/) is stale (run python3 scripts/gen-sdk-docs.py)"
+        )
+
+    # 4: one SDK version across the three packages.
     versions = package_versions()
     if len(set(versions.values())) != 1:
         failures.append(f"package versions differ: {versions}")
 
-    # 4: uniform primitives present in every hand-written mirror file.
+    # 5: uniform primitives present in every hand-written mirror file.
     for rel_path, markers in REQUIRED_MARKERS.items():
         path = ROOT / rel_path
         if not path.exists():

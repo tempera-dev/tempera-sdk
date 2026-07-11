@@ -104,12 +104,35 @@ await mcp.callTool("cradle_get_capabilities");
 console.log(await mcp.whoami());
 ```
 
+## Documentation
+
+The documentation site lives in [`docs/site/`](./docs/site) — a complete
+[Mintlify](https://mintlify.com) project (`docs.json` + MDX pages) generated
+from `surface.json` (and `docs/ROLLOUT.md`) by
+[`scripts/gen-sdk-docs.py`](./scripts/gen-sdk-docs.py): overview, auth,
+environments, errors, MCP gateway, rollout, and one API-reference page per
+typed product covering every operation with tabbed TS/Python/Rust examples.
+
+The docs are auto-updated by construction: `scripts/check-sdk-surface.py`
+re-renders the site and fails on any diff, so CI rejects a `surface.json`
+change that doesn't regenerate the docs. After editing the manifest run:
+
+```sh
+python3 scripts/gen-sdk-surface.py && python3 scripts/gen-sdk-docs.py
+```
+
+To deploy, point the Mintlify GitHub app at this repo with `docs/site` as the
+content directory — it auto-deploys on every push to `main` (no build step;
+the committed site is always current thanks to the drift gate).
+
 ## Uniformity, tests, and rollout
 
 - `surface.json` is the single source of truth; `scripts/gen-sdk-surface.py`
-  renders the per-language surface tables (committed, drift-gated).
+  renders the per-language surface tables and `scripts/gen-sdk-docs.py` the
+  Mintlify docs site (both committed, both drift-gated).
 - `scripts/check-sdk-surface.py` gates: manifest invariants, regenerate-and-
-  diff, one version across the three packages, and uniform-primitive markers.
+  diff (surface tables and docs site), one version across the three packages,
+  and uniform-primitive markers.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - The endpoint-change rollout process is documented in
