@@ -253,6 +253,7 @@
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "product", "description": "Fetch deep store health: schema version, integrity checks, and graph consistency." },
       { "id": "getStats", "method": "GET", "path": "/v1/stats", "auth": "product", "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind." },
       { "id": "getMetrics", "method": "GET", "path": "/v1/metrics", "auth": "product", "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies." },
+      { "id": "getPrometheusMetrics", "method": "GET", "path": "/v1/metrics/prometheus", "auth": "product", "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring." },
       { "id": "listAudit", "method": "GET", "path": "/v1/audit", "auth": "product", "query": ["limit"], "description": "List recent service audit events (default 100, maximum 500)." },
       { "id": "remember", "method": "POST", "path": "/v1/remember", "auth": "product", "body": ["tenant_id", "project_id", "kind", "text", "environment_id", "idempotency_key", "project"], "description": "Write one memory into the ledger and, by default, project it into the memory graph immediately." },
       { "id": "project", "method": "POST", "path": "/v1/project", "auth": "product", "body": ["limit"], "description": "Project pending ledger events into the memory graph and return the projection report." },

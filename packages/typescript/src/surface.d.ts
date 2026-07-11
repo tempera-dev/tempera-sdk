@@ -264,6 +264,8 @@ export interface RemiClient extends TemperaProductClientBase {
   getStats(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch service metrics as JSON, including per-route counters and query-tier latencies. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch service metrics in Prometheus text exposition format for scrape-based monitoring. */
+  getPrometheusMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent service audit events (default 100, maximum 500). */
   listAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Write one memory into the ledger and, by default, project it into the memory graph immediately. */

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Tempera SDK",
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#07C983",
+    "dark": "#0D9373"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Overview",
+        "pages": [
+          "index",
+          "authentication",
+          "environments",
+          "errors",
+          "mcp-gateway",
+          "rollout"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "products/control-plane",
+          "products/palette",
+          "products/tempo",
+          "products/cradle",
+          "products/remi"
+        ]
+      },
+      {
+        "group": "Registry",
+        "pages": [
+          "products/other-products"
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/tempera-dev/tempera-sdk"
+    }
+  }
+}

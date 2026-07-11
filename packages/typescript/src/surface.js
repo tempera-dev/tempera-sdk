@@ -1438,6 +1438,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
     },
     {
+      "id": "getPrometheusMetrics",
+      "method": "GET",
+      "path": "/v1/metrics/prometheus",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
+    },
+    {
       "id": "listAudit",
       "method": "GET",
       "path": "/v1/audit",
