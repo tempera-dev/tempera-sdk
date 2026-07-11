@@ -32,10 +32,10 @@ artifacts:
 | Product | Contract artifact | Product-side gate |
 |---|---|---|
 | auth-hub | `contracts/control-plane.openapi.json` | `scripts/check-control-plane-openapi.py` |
-| palette | `sdks/openapi/beater-api.json` (generated from `#[utoipa::path]`) | `scripts/check-contract-sync.sh` (CI: sdk-contract.yml) |
+| palette | `sdks/openapi/palette-api.json` (generated from `#[utoipa::path]`) | `scripts/check-contract-sync.sh` (CI: sdk-contract.yml) |
 | cradle | `sdks/openapi.json` (utoipa, committed) | `tests/openapi_drift.rs` + `tests/mcp_catalog_drift.rs` |
 | tempo | `GET /openapi.json` (runtime-generated; no committed snapshot yet) | route/spec coverage tests in `tempo-headless` |
-| remi | axum router in `crates/beater-memory/src/server.rs` (no spec) | `cargo test -p beater-memory` |
+| remi | axum router in `crates/remi/src/server.rs` (no spec) | `cargo test -p remi` |
 
 ## When a product endpoint changes
 

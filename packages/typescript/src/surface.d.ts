@@ -231,7 +231,7 @@ export interface TempoClient extends TemperaProductClientBase {
 }
 
 export interface CradleClient extends TemperaProductClientBase {
-  /** Check beatbox liveness; returns status, version, and uptime. */
+  /** Check sandbox-daemon liveness; returns status, version, and uptime. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the sandbox capability matrix: lanes, engines, limits, and integrations. */
   getCapabilities(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
