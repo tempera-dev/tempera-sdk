@@ -105,6 +105,23 @@ def main() -> int:
             if marker not in text:
                 failures.append(f"{rel_path}: missing marker {marker!r}")
 
+    # 5b: the hand-written TypeScript public type (index.d.ts) must expose a
+    # typed client field for every product in the surface — this file is not
+    # generated, so a new product can be wired into the runtime and surface.d.ts
+    # yet silently dropped from the public TemperaClient type. Guard against it.
+    surface = json.loads((ROOT / "surface.json").read_text())
+    index_dts = (ROOT / "packages/typescript/src/index.d.ts").read_text()
+    client_type = re.search(r"export type TemperaClient = \{(.*?)\n\};", index_dts, re.DOTALL)
+    if client_type is None:
+        failures.append("packages/typescript/src/index.d.ts: TemperaClient type not found")
+    else:
+        for product_key in surface["products"]:
+            if not re.search(rf"\n\s+{re.escape(product_key)}:\s", client_type.group(1)):
+                failures.append(
+                    f"packages/typescript/src/index.d.ts: TemperaClient type is missing "
+                    f"the {product_key!r} product client field"
+                )
+
     # 6: no legacy product codenames in any tracked file. The products are
     # palette, tempo, cradle, remi, tempOS, and temp.js — their pre-rename
     # codenames must not resurface in code, docs, or the manifest.

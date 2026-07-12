@@ -7,6 +7,7 @@ export {
 import type {
   ControlPlaneClient,
   CradleClient,
+  DataEngineClient,
   PaletteClient,
   PassthroughClient,
   RemiClient,
@@ -132,6 +133,7 @@ export type TemperaClient = {
   tempo: TempoClient;
   cradle: CradleClient;
   remi: RemiClient;
+  dataEngine: DataEngineClient;
   humanData: PassthroughClient;
   tempJs: PassthroughClient;
   tempOS: PassthroughClient;
