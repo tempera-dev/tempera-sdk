@@ -287,7 +287,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
   getUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Ingest one or many artifact envelopes deterministically; returns an async operation handle. */
+  /** Ingest one artifact deterministically into the project; returns an async operation handle. */
   ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
   ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

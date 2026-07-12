@@ -1612,12 +1612,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [
-        "envelopes",
-        "parent"
+        "artifactType",
+        "source",
+        "external_id",
+        "raw_body",
+        "metadata"
       ],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Ingest one or many artifact envelopes deterministically; returns an async operation handle."
+      "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
     },
     {
       "id": "ingestWeb",

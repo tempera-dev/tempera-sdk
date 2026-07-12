@@ -1603,12 +1603,15 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [
-                "envelopes",
-                "parent"
+                "artifactType",
+                "source",
+                "external_id",
+                "raw_body",
+                "metadata"
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Ingest one or many artifact envelopes deterministically; returns an async operation handle."
+            "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
         },
         {
             "id": "ingest_web",

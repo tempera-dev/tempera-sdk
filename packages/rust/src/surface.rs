@@ -1440,10 +1440,10 @@ pub const OPERATIONS: &[OperationSpec] = &[
         auth: "product",
         path_params: &["project_id"],
         query: &[],
-        body: &["envelopes", "parent"],
+        body: &["artifactType", "source", "external_id", "raw_body", "metadata"],
         body_defaults: &[],
         scope: None,
-        description: "Ingest one or many artifact envelopes deterministically; returns an async operation handle.",
+        description: "Ingest one artifact deterministically into the project; returns an async operation handle.",
     },
     OperationSpec {
         product: "data_engine",
