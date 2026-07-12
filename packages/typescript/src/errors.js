@@ -47,7 +47,7 @@ export class TemperaMcpError extends TemperaSdkError {
  * Wire shapes handled (see surface.json errorContract.wireShapes):
  * - control plane / palette: {"error": "<code>", "message": "<text>"}
  * - tempo:                    {"error": "<human message>"}
- * - cradle / remi:            {"error": {"code", "message", "request_id"?, ...}}
+ * - cradle / remi / data-engine: {"error": {"code", "message", "request_id"?, ...}}
  */
 export function normalizeErrorBody(body, statusText = "") {
   if (body && typeof body === "object") {

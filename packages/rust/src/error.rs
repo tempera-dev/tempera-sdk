@@ -317,7 +317,7 @@ impl std::error::Error for TemperaApiError {}
 /// Wire shapes handled (see `surface.json` `errorContract.wireShapes`):
 /// - control plane / palette: `{"error": "<code>", "message": "<text>"}`
 /// - tempo:                   `{"error": "<human message>"}`
-/// - cradle / remi:           `{"error": {"code", "message", "request_id"?, ...}}`
+/// - cradle / remi / data-engine: `{"error": {"code", "message", "request_id"?, ...}}`
 /// - anything unparseable:    `message` is `status_text`, or `"request failed"`
 ///   when the status text is empty — the same fallback rule as the TypeScript
 ///   and Python packages, so one wire response yields one message everywhere.
@@ -419,6 +419,24 @@ mod tests {
         assert_eq!(error.code.as_deref(), Some("lane_unavailable"));
         assert_eq!(error.message, "no python lane");
         assert_eq!(error.request_id.as_deref(), Some("req_123"));
+    }
+
+    #[test]
+    fn data_engine_shape_matches_the_cradle_normalization_path() {
+        let body = r#"{
+            "error": {
+                "code": "INVALID_ARGUMENT",
+                "message": "Bad envelope.",
+                "status": 400,
+                "request_id": "req-de-1",
+                "retryable": false,
+                "details": [{"field": "envelopes", "description": "must not be empty"}]
+            }
+        }"#;
+        let error = normalize_error_body(400, "Bad Request", body);
+        assert_eq!(error.code.as_deref(), Some("INVALID_ARGUMENT"));
+        assert_eq!(error.message, "Bad envelope.");
+        assert_eq!(error.request_id.as_deref(), Some("req-de-1"));
     }
 
     #[test]

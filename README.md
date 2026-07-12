@@ -15,6 +15,7 @@ cannot drift apart.
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 10 | `cradle` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
+| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 19 | `data-engine` |
 | `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | `human-data` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough | — |
 
@@ -28,7 +29,7 @@ defers exhaustive coverage to those.
 The control plane (`https://api.tempera.dev`) is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
 RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
-`remi`, `human-data`, `tempera-mcp` registered). One account mints one token
+`remi`, `human-data`, `data-engine`, `tempera-mcp` registered). One account mints one token
 per product audience, and control-plane API keys (`tp_...`) work as bearers
 at every product via central introspection.
 
@@ -93,7 +94,7 @@ gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
 
 The unified MCP gateway lives at `${issuer}/mcp` (audience `tempera-mcp`,
 scope `mcp:invoke`) and aggregates every product MCP server behind namespaced
-tools (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`).
+tools (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`).
 
 ```js
 import { TemperaMcpClient } from "@tempera/sdk";

@@ -746,6 +746,32 @@ mod tests {
     }
 
     #[test]
+    fn action_suffix_paths_keep_the_literal_colon_unencoded() {
+        let client = full_client();
+        let spec = client
+            .build_request("data_engine", "ingest_artifact", &[("project_id", "p1".into())])
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://data_engine.example.test/v1/projects/p1/artifacts:ingest"
+        );
+        assert!(!spec.full_url().contains("%3A"), "colon must not be percent-encoded");
+
+        // Colons inside a substituted path *value* are still encoded.
+        let spec = client
+            .build_request(
+                "data_engine",
+                "get_job",
+                &[("project_id", "p1".into()), ("job_id", "job:1".into())],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://data_engine.example.test/v1/projects/p1/jobs/job%3A1"
+        );
+    }
+
+    #[test]
     fn path_params_are_percent_encoded() {
         let client = full_client();
         let spec = client

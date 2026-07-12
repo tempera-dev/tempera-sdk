@@ -84,12 +84,13 @@ yet — gets a client in all three languages.
 | [tempo](/products/tempo) | `tempo` | `TEMPERA_TEMPO_URL` | [tempo](https://github.com/tempera-dev/tempo) | 18 | Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff. |
 | [cradle](/products/cradle) | `cradle` | `TEMPERA_CRADLE_URL` | [cradle](https://github.com/tempera-dev/cradle) | 10 | Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control. |
 | [remi](/products/remi) | `remi` | `TEMPERA_REMI_URL` | [remi](https://github.com/tempera-dev/remi) | 12 | Temporal memory server: remember, project, query, and maintain an agent memory graph. |
+| [data-engine](/products/data-engine) | `data-engine` | `TEMPERA_DATA_ENGINE_URL` | [data-engine](https://github.com/tempera-dev/data-engine) | 19 | Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission. |
 | [human-data](/products/other-products) | `human-data` | `TEMPERA_HUMAN_DATA_URL` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | Human data operations: expert annotation and review pipelines. Passthrough client only; no typed operations yet. |
 | [temp.js](/products/other-products) | — | `TEMPERA_TEMPJS_URL` | [temp.js](https://github.com/tempera-dev/temp.js) | passthrough | Durable JavaScript runtime bridge for Tempera agents. Passthrough client only; no typed operations yet. |
 | [tempOS](/products/other-products) | — | `TEMPERA_TEMPOS_URL` | [tempOS](https://github.com/tempera-dev/tempOS) | passthrough | OS/runtime admission, policy, and receipt layer for agents. Passthrough client only; no typed operations yet. |
 | [Arrha](/products/other-products) | — | `TEMPERA_ARRHA_URL` | [arrha](https://github.com/tempera-dev/arrha) | passthrough | Settlement, chain, credits, and indexer layer for agent payments. Passthrough client only; no typed operations yet. |
 
-93 typed operations across 5 products, plus a raw
+112 typed operations across 6 products, plus a raw
 `request()` escape hatch on every product client for endpoints the surface
 tables do not cover yet.
 
@@ -97,6 +98,6 @@ tables do not cover yet.
 
 - [Authentication](/authentication) — the unified account model, OAuth2 + PKCE, and `tp_` API keys.
 - [Environments](/environments) — presets and base-URL resolution.
-- [Errors](/errors) — one `TemperaApiError` across five wire shapes.
+- [Errors](/errors) — one `TemperaApiError` across six wire shapes.
 - [MCP gateway](/mcp-gateway) — every product as namespaced MCP tools.
 - [Rollout](/rollout) — how an endpoint change propagates into the SDK.

@@ -1,6 +1,6 @@
 """Client for the unified Tempera MCP gateway (``${issuer}/mcp``): stateless
 streamable-HTTP JSON-RPC 2.0 aggregating every product MCP server behind
-namespaced tools (palette_*, tempo_*, cradle_*, remi_*).
+namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*).
 
 Requires a bearer minted for audience ``tempera-mcp`` with scope ``mcp:invoke``
 (or a central tp_ API key). Mirrors TemperaMcpClient in the TypeScript
@@ -79,7 +79,7 @@ class TemperaMcpClient:
             raise TemperaMcpError(str(error), code=0, data=None)
         return parsed.get("result") if isinstance(parsed, Mapping) else None
 
-    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.2.0") -> Any:
+    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.3.0") -> Any:
         """Open an MCP session and fetch server capabilities and instructions."""
         return self.rpc(
             "initialize",

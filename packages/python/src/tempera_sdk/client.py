@@ -135,6 +135,7 @@ class TemperaClient:
         self.tempo: _ProductClient
         self.cradle: _ProductClient
         self.remi: _ProductClient
+        self.data_engine: _ProductClient
         self.human_data: _ProductClient
         self.temp_js: _ProductClient
         self.temp_os: _ProductClient

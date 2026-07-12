@@ -61,7 +61,7 @@ def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
     Wire shapes handled (see surface.json errorContract.wireShapes):
     - control plane / palette: ``{"error": "<code>", "message": "<text>"}``
     - tempo:                   ``{"error": "<human message>"}``
-    - cradle / remi:           ``{"error": {"code", "message", "request_id"?, ...}}``
+    - cradle / remi / data-engine: ``{"error": {"code", "message", "request_id"?, ...}}``
     """
     if isinstance(body, Mapping):
         error = body.get("error")

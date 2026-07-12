@@ -29,6 +29,7 @@ function testClient(overrides = {}) {
       tempo: "https://tempo.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
+      dataEngine: "https://data-engine.example.test",
       humanData: "https://human.example.test",
       tempJs: "https://tempjs.example.test",
       tempOS: "https://tempos.example.test",
@@ -97,6 +98,17 @@ test("undeclared parameters pass through for forward compatibility", async () =>
   assert.equal(calls[0].url.searchParams.get("future_filter"), "x");
   await client.cradle.execute({ lane: "wasm", source: "s", future_field: 7 });
   assert.equal(JSON.parse(calls[1].options.body).future_field, 7);
+});
+
+test("action-suffix paths keep the literal colon un-encoded", async () => {
+  const { client, calls } = testClient();
+  await client.dataEngine.ingestArtifact({ project_id: "p1", envelopes: [] });
+  assert.equal(calls[0].url.pathname, "/v1/projects/p1/artifacts:ingest");
+  assert.ok(calls[0].url.toString().endsWith("/v1/projects/p1/artifacts:ingest"));
+  assert.ok(!calls[0].url.toString().includes("%3A"), "colon must not be percent-encoded");
+  // Colons inside a substituted path *value* are still encoded.
+  await client.dataEngine.getJob({ project_id: "p1", job_id: "job:1" });
+  assert.equal(calls[1].url.pathname, "/v1/projects/p1/jobs/job%3A1");
 });
 
 test("missing path parameters fail fast with a clear message", async () => {
@@ -199,6 +211,15 @@ test("HTTP errors normalize every fleet wire shape into TemperaApiError", async 
       code: "invalid_json",
       message: "Bad body.",
       requestId: "req-123",
+    },
+    // data-engine: same nested rich shape, uppercase codes + details array
+    {
+      body: {
+        error: { code: "INVALID_ARGUMENT", message: "Bad envelope.", status: 400, request_id: "req-de-1", retryable: false, details: [] },
+      },
+      code: "INVALID_ARGUMENT",
+      message: "Bad envelope.",
+      requestId: "req-de-1",
     },
   ];
   for (const shape of shapes) {

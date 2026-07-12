@@ -361,7 +361,7 @@ def render_index(surface: dict) -> str:
         "",
         "- [Authentication](/authentication) — the unified account model, OAuth2 + PKCE, and `tp_` API keys.",
         "- [Environments](/environments) — presets and base-URL resolution.",
-        "- [Errors](/errors) — one `TemperaApiError` across five wire shapes.",
+        "- [Errors](/errors) — one `TemperaApiError` across six wire shapes.",
         "- [MCP gateway](/mcp-gateway) — every product as namespaced MCP tools.",
         "- [Rollout](/rollout) — how an endpoint change propagates into the SDK.",
         "",
@@ -662,7 +662,7 @@ def render_errors(surface: dict) -> str:
     lines = [
         frontmatter(
             "Errors",
-            "One TemperaApiError across five wire error shapes, plus MCP gateway errors.",
+            "One TemperaApiError across six wire error shapes, plus MCP gateway errors.",
         )
     ]
     lines += [
@@ -741,7 +741,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "**`mcp:invoke`** — or a central `tp_` API key.",
         "",
         "The gateway aggregates every product MCP server behind **namespaced tools**",
-        "(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`), so one endpoint and one",
+        "(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`), so one endpoint and one",
         "credential expose the whole fleet. Product tool calls are metered as",
         "`mcp_invocations` against the workspace's plan.",
         "",
@@ -811,7 +811,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.2.0");\n'
+        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
         'let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);\n'
         "let (id, body) = mcp.whoami_body();\n"

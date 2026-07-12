@@ -21,6 +21,7 @@ PRODUCT_ATTRS = {
     "tempo": "tempo",
     "cradle": "cradle",
     "remi": "remi",
+    "dataEngine": "data_engine",
     "humanData": "human_data",
     "tempJs": "temp_js",
     "tempOS": "temp_os",
@@ -66,6 +67,7 @@ def make_client(**overrides):
             "tempo": "https://tempo.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
+            "data_engine": "https://data-engine.example.test",
             "human_data": "https://human.example.test",
             "tempJs": "https://tempjs.example.test",
             "temp_os": "https://tempos.example.test",
@@ -128,6 +130,15 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["future_filter"], "x")
         client.cradle.execute({"lane": "wasm", "source": "s", "future_field": 7})
         self.assertEqual(transport.calls[1]["body"]["future_field"], 7)
+
+    def test_action_suffix_paths_keep_the_literal_colon_unencoded(self):
+        client, transport = make_client()
+        client.data_engine.ingest_artifact({"project_id": "p1", "envelopes": []})
+        self.assertEqual(transport.calls[0]["path"], "/v1/projects/p1/artifacts:ingest")
+        self.assertNotIn("%3A", transport.calls[0]["url"], "colon must not be percent-encoded")
+        # Colons inside a substituted path *value* are still encoded.
+        client.data_engine.get_job({"project_id": "p1", "job_id": "job:1"})
+        self.assertEqual(transport.calls[1]["path"], "/v1/projects/p1/jobs/job%3A1")
 
     def test_missing_path_parameters_fail_fast_with_a_clear_message(self):
         client, _ = make_client()
@@ -218,6 +229,22 @@ class ErrorNormalizationTest(unittest.TestCase):
                 "code": "invalid_json",
                 "message": "Bad body.",
                 "request_id": "req-123",
+            },
+            # data-engine: same nested rich shape, uppercase codes + details array
+            {
+                "body": {
+                    "error": {
+                        "code": "INVALID_ARGUMENT",
+                        "message": "Bad envelope.",
+                        "status": 400,
+                        "request_id": "req-de-1",
+                        "retryable": False,
+                        "details": [],
+                    }
+                },
+                "code": "INVALID_ARGUMENT",
+                "message": "Bad envelope.",
+                "request_id": "req-de-1",
             },
         ]
         for shape in shapes:

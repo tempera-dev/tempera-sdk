@@ -50,6 +50,7 @@ mod tests {
             "tempo",
             "cradle",
             "remi",
+            "data_engine",
             "human_data",
             "temp_js",
             "temp_o_s",

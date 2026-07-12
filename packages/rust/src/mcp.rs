@@ -1,7 +1,7 @@
 //! JSON-RPC 2.0 body builders for the unified Tempera MCP gateway
 //! (`${issuer}/mcp`): stateless streamable-HTTP JSON-RPC aggregating every
 //! product MCP server behind namespaced tools (`palette_*`, `tempo_*`,
-//! `cradle_*`, `remi_*`).
+//! `cradle_*`, `remi_*`, `data_engine_*`).
 //!
 //! The crate is HTTP-less: [`McpRequestBuilder`] produces the exact request
 //! bodies the gateway expects; POST them at `TemperaAuth::mcp_url()` with an
@@ -164,11 +164,11 @@ mod tests {
     fn initialize_and_ping_bodies_are_exact_and_ids_increment() {
         let mut builder = McpRequestBuilder::new();
 
-        let (id, body) = builder.initialize_body("tempera-sdk", "0.2.0");
+        let (id, body) = builder.initialize_body("tempera-sdk", "0.3.0");
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.2.0\"}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.3.0\"}}}"
         );
 
         let (id, body) = builder.ping_body();

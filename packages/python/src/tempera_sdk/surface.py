@@ -7,7 +7,7 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 2
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'tempera-mcp')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp')
 DEFAULT_AUDIENCE = 'palette'
 SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'admin')
 
@@ -91,6 +91,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_REMI_URL",
         "audience": "remi",
         "description": "Temporal memory server: remember, project, query, and maintain an agent memory graph."
+    },
+    "dataEngine": {
+        "name": "data-engine",
+        "repository": "https://github.com/tempera-dev/data-engine",
+        "env_var": "TEMPERA_DATA_ENGINE_URL",
+        "audience": "data-engine",
+        "description": "Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission."
     },
     "humanData": {
         "name": "human-data",
@@ -1540,11 +1547,342 @@ OPERATIONS = {
             "scope": None,
             "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
         }
+    ],
+    "dataEngine": [
+        {
+            "id": "health",
+            "method": "GET",
+            "path": "/v1/health",
+            "auth": "none",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Check data-engine liveness; returns the service status."
+        },
+        {
+            "id": "list_use_cases",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/use-cases",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
+        },
+        {
+            "id": "get_use_case",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/use-cases/{use_case_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "use_case_id"
+            ],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
+        },
+        {
+            "id": "ingest_artifact",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/artifacts:ingest",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "artifactType",
+                "source",
+                "external_id",
+                "raw_body",
+                "metadata"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
+        },
+        {
+            "id": "ingest_web",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/web:ingest",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "url",
+                "artifactType",
+                "timeoutSeconds",
+                "maxBytes",
+                "allowPrivate",
+                "metadata"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
+        },
+        {
+            "id": "run_use_case",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/pipelines:run-use-case",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "use_case",
+                "budget_cents",
+                "target_accuracy",
+                "urls",
+                "artifacts",
+                "verifier"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
+        },
+        {
+            "id": "create_campaign",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/campaigns",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "task_family",
+                "target_accuracy",
+                "budget_cents",
+                "rubric",
+                "skill_tags"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
+        },
+        {
+            "id": "list_campaigns",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/campaigns",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List a project's data campaigns with pagination."
+        },
+        {
+            "id": "list_artifacts",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/artifacts",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "filter",
+                "page_size",
+                "page_token",
+                "order_by"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List a project's artifacts with filtering, ordering, and cursor pagination."
+        },
+        {
+            "id": "get_artifact",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "artifact_id"
+            ],
+            "query": [
+                "view"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
+        },
+        {
+            "id": "list_artifact_labels",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/artifacts/{artifact_id}/labels",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "artifact_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List the labels attached to one artifact."
+        },
+        {
+            "id": "create_job",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/jobs",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "artifact_ids",
+                "task_family",
+                "max_items",
+                "priority",
+                "target_accuracy"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+        },
+        {
+            "id": "get_job",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/jobs/{job_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "job_id"
+            ],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one labeling job with its state and progress."
+        },
+        {
+            "id": "get_job_results",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/jobs/{job_id}/results",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "job_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List the deterministic label results a job produced."
+        },
+        {
+            "id": "list_expert_tasks",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/expert-tasks",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List the human residual review tasks queued for experts."
+        },
+        {
+            "id": "get_metrics",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/metrics",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch data-engine usage and quality metrics for a project."
+        },
+        {
+            "id": "get_ecosystem_readiness",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/ecosystem/readiness",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch public-site and ecosystem readiness signals for a project."
+        },
+        {
+            "id": "emit_eval",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/products:emit-eval",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "artifact_ids",
+                "include_provenance",
+                "license",
+                "filters"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
+        },
+        {
+            "id": "get_product",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/products/{product_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "product_id"
+            ],
+            "query": [],
+            "body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one emitted product bundle with its status and manifest URL."
+        }
     ]
 }
 
 MCP_GATEWAY = {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*) with per-call billing.",
+    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
     "methods": [
         {
             "id": "initialize",
