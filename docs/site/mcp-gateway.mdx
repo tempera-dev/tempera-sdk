@@ -11,7 +11,7 @@ It requires a bearer minted for audience **`tempera-mcp`** with scope
 **`mcp:invoke`** — or a central `tp_` API key.
 
 The gateway aggregates every product MCP server behind **namespaced tools**
-(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`), so one endpoint and one
+(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`), so one endpoint and one
 credential expose the whole fleet. Product tool calls are metered as
 `mcp_invocations` against the workspace's plan.
 
@@ -82,7 +82,7 @@ let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);
 let mut mcp = McpRequestBuilder::new();
 
 // POST each body at auth.mcp_url() with the tempera-mcp bearer:
-let (id, body) = mcp.initialize_body("tempera-sdk", "0.2.0");
+let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");
 let (id, body) = mcp.list_tools_body();
 let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);
 let (id, body) = mcp.whoami_body();

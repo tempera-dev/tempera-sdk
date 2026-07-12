@@ -1,7 +1,7 @@
 /**
  * Client for the unified Tempera MCP gateway (`${issuer}/mcp`): stateless
  * streamable-HTTP JSON-RPC 2.0 aggregating every product MCP server behind
- * namespaced tools (palette_*, tempo_*, cradle_*, remi_*).
+ * namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*).
  *
  * Requires a bearer minted for audience `tempera-mcp` with scope `mcp:invoke`
  * (or a central tp_ API key). Mirrored by tempera_sdk.TemperaMcpClient in
@@ -69,7 +69,7 @@ export class TemperaMcpClient {
   }
 
   /** Open an MCP session and fetch server capabilities and instructions. */
-  initialize({ name = "tempera-sdk", version = "0.2.0" } = {}) {
+  initialize({ name = "tempera-sdk", version = "0.3.0" } = {}) {
     return this.rpc("initialize", {
       protocolVersion: MCP_PROTOCOL_VERSION,
       capabilities: {},

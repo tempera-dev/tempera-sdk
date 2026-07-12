@@ -27,7 +27,8 @@
           "products/palette",
           "products/tempo",
           "products/cradle",
-          "products/remi"
+          "products/remi",
+          "products/data-engine"
         ]
       },
       {

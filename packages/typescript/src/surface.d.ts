@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "tempera-mcp";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp";
 export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "cradle" | "remi" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -278,6 +278,47 @@ export interface RemiClient extends TemperaProductClientBase {
   query(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history. */
   maintenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface DataEngineClient extends TemperaProductClientBase {
+  /** Check data-engine liveness; returns the service status. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the MVP use-case templates (data products and pipeline templates) for a project. */
+  listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
+  getUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ingest one or many artifact envelopes deterministically; returns an async operation handle. */
+  ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
+  ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification. */
+  runUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a data campaign with a rubric, budget, target accuracy, and skill tags. */
+  createCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List a project's data campaigns with pagination. */
+  listCampaigns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List a project's artifacts with filtering, ordering, and cursor pagination. */
+  listArtifacts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one artifact, expanded to the requested view (BASIC or FULL). */
+  getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the labels attached to one artifact. */
+  listArtifactLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll. */
+  createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one labeling job with its state and progress. */
+  getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the deterministic label results a job produced. */
+  getJobResults(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the human residual review tasks queued for experts. */
+  listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch data-engine usage and quality metrics for a project. */
+  getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch public-site and ecosystem readiness signals for a project. */
+  getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
+  emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one emitted product bundle with its status and manifest URL. */
+  getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

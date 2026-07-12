@@ -16,7 +16,7 @@ for what happens when any product endpoint changes.
 ## The chain of custody
 
 ```
-product handler change                     (palette, tempo, cradle, remi, auth-hub)
+product handler change                     (palette, tempo, cradle, remi, data-engine, auth-hub)
   └─ product contract artifact             (each repo's own gate, see table below)
        └─ surface.json in this repo        (single source of truth for the SDK)
             └─ scripts/gen-sdk-surface.py  (renders the per-language tables)
@@ -36,6 +36,7 @@ artifacts:
 | cradle | `sdks/openapi.json` (utoipa, committed) | `tests/openapi_drift.rs` + `tests/mcp_catalog_drift.rs` |
 | tempo | `GET /openapi.json` (runtime-generated; no committed snapshot yet) | route/spec coverage tests in `tempo-headless` |
 | remi | axum router in `crates/remi/src/server.rs` (no spec) | `cargo test -p remi` |
+| data-engine | `api/openapi.yaml` (contract-first, committed) | route/auth coverage in `tests/test_mvp.py` |
 
 ## When a product endpoint changes
 
@@ -73,7 +74,7 @@ artifacts:
 
 ## Error-contract changes
 
-The five products speak four different wire error shapes (see
+The six products speak four different wire error shapes (see
 `errorContract.wireShapes` in `surface.json`). The SDK normalizes them into
 one `TemperaApiError` (`status`, `code`, `message`, `requestId`, `product`,
 `operation`, `body`) in every language. If a product changes its error shape:

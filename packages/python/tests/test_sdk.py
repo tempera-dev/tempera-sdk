@@ -18,6 +18,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["tempo"]["repository"], "https://github.com/tempera-dev/tempo")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
+        self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
         self.assertEqual(PRODUCTS["humanData"]["repository"], "https://github.com/tempera-dev/human-data")
         self.assertEqual(PRODUCTS["tempJs"]["repository"], "https://github.com/tempera-dev/temp.js")
         self.assertEqual(PRODUCTS["tempOS"]["repository"], "https://github.com/tempera-dev/tempOS")
@@ -30,6 +31,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn(DEFAULT_AUDIENCE, AUDIENCES)
         self.assertIn("tempera-mcp", AUDIENCES)
         self.assertIn("human-data", AUDIENCES)
+        self.assertIn("data-engine", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(

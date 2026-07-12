@@ -16,6 +16,7 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.tempo.repository, "https://github.com/tempera-dev/tempo");
   assert.equal(TEMPERA_PRODUCTS.cradle.repository, "https://github.com/tempera-dev/cradle");
   assert.equal(TEMPERA_PRODUCTS.remi.repository, "https://github.com/tempera-dev/remi");
+  assert.equal(TEMPERA_PRODUCTS.dataEngine.repository, "https://github.com/tempera-dev/data-engine");
   assert.equal(TEMPERA_PRODUCTS.humanData.repository, "https://github.com/tempera-dev/human-data");
   assert.equal(TEMPERA_PRODUCTS.tempJs.repository, "https://github.com/tempera-dev/temp.js");
   assert.equal(TEMPERA_PRODUCTS.tempOS.repository, "https://github.com/tempera-dev/tempOS");
@@ -31,6 +32,7 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes(DEFAULT_AUDIENCE));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-mcp"));
   assert.ok(TEMPERA_AUDIENCES.includes("human-data"));
+  assert.ok(TEMPERA_AUDIENCES.includes("data-engine"));
 });
 
 test("scopes match the control-plane scope registry", () => {
