@@ -97,6 +97,15 @@ def frontmatter(title: str, description: str) -> str:
     )
 
 
+def private_access_note() -> list[str]:
+    return [
+        "> **Private access.** Hosted Tempera services are available through design-partner onboarding.",
+        "> Use the issuer, credentials, environment, and product URLs provisioned for your workspace;",
+        "> start in staging unless Tempera explicitly approves another target.",
+        "",
+    ]
+
+
 def code_group(blocks: list[tuple[str, str, str]]) -> list[str]:
     """A Mintlify <CodeGroup> from (language, tab title, code) blocks."""
     lines = ["<CodeGroup>", ""]
@@ -264,46 +273,55 @@ def render_index(surface: dict) -> str:
         "manifest, `surface.json`, and gated in CI so the packages (and these docs)",
         "cannot drift apart.",
         "",
+    ]
+    lines += private_access_note()
+    lines += [
         "## Quickstart",
         "",
-        "Authenticate once — a central `tp_` API key works as a bearer at every product —",
-        "and call any product through the unified client.",
+        "After private onboarding, authenticate with the issuer and API key supplied for",
+        "your workspace, then call the products enabled for that workspace. These examples",
+        "start with the staging preset.",
         "",
     ]
     ts_code = (
-        "// npm install @tempera/sdk\n"
+        "// Package access and environment values are supplied during onboarding.\n"
         'import { TemperaAuth, createTemperaClient } from "@tempera/sdk";\n'
         "\n"
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        'if (!issuerUrl) throw new Error("Missing TEMPERA_ISSUER_URL");\n'
+        "\n"
         "const auth = new TemperaAuth({\n"
-        '  issuerUrl: "https://api.tempera.dev",\n'
+        "  issuerUrl,\n"
         "  apiKey: process.env.TEMPERA_API_KEY, // tp_... works at every product\n"
         "});\n"
-        'const client = createTemperaClient({ auth, environment: "production" });\n'
+        'const client = createTemperaClient({ auth, environment: "staging" });\n'
         "\n"
         'const traces = await client.palette.listTraces({ tenant_id: "org_1", limit: 20 });\n'
         'const session = await client.tempo.createSession({ url: "https://example.com" });'
     )
     py_code = (
-        "# pip install tempera-sdk\n"
+        "# Package access and environment values are supplied during onboarding.\n"
         "import os\n"
         "from tempera_sdk import TemperaAuth, TemperaClient\n"
         "\n"
         "auth = TemperaAuth(\n"
-        '    issuer_url="https://api.tempera.dev",\n'
+        '    issuer_url=os.environ["TEMPERA_ISSUER_URL"],\n'
         '    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... works at every product\n'
         ")\n"
-        'client = TemperaClient(auth=auth, environment="production")\n'
+        'client = TemperaClient(auth=auth, environment="staging")\n'
         "\n"
         'traces = client.palette.list_traces({"tenant_id": "org_1", "limit": 20})\n'
         'session = client.tempo.create_session({"url": "https://example.com"})'
     )
     rust_code = (
-        "// cargo add tempera-sdk\n"
+        "// Crate access and environment values are supplied during onboarding.\n"
         "use tempera_sdk::{TemperaAuth, TemperaClient};\n"
         "\n"
         "// The Rust crate is HTTP-less: it builds fully-described RequestSpecs\n"
         "// (method, URL, headers, JSON body) for your own HTTP client to send.\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        'let api_key = std::env::var("TEMPERA_API_KEY")?;\n'
+        "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let client = TemperaClient::new().with_auth(auth);\n"
         "\n"
         "let spec = client.build_request(\n"
@@ -377,10 +395,11 @@ def render_authentication(surface: dict) -> str:
             "Unified accounts, OAuth2 authorization-code + PKCE with audience selection, and tp_ API keys.",
         )
     ]
+    lines += private_access_note()
     lines += [
         "## One account, every product",
         "",
-        "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer for the whole",
+        "The provisioned Tempera control plane (auth-hub) is the OAuth 2.1 issuer for the whole",
         "fleet. One Tempera account mints one access token per **product audience**,",
         "and central API keys (`tp_...`) work as bearers at every product via central",
         "introspection. The SDK's `TemperaAuth` holds both: per-audience OAuth token",
@@ -408,9 +427,13 @@ def render_authentication(surface: dict) -> str:
     ts_code = (
         'import { TemperaAuth, createPkcePair } from "@tempera/sdk";\n'
         "\n"
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        "const clientId = process.env.TEMPERA_CLIENT_ID;\n"
+        'if (!issuerUrl || !clientId) throw new Error("Missing provisioned Tempera auth settings");\n'
+        "\n"
         "const auth = new TemperaAuth({\n"
-        '  issuerUrl: "https://api.tempera.dev",\n'
-        '  clientId: "my-app",\n'
+        "  issuerUrl,\n"
+        "  clientId,\n"
         "});\n"
         "\n"
         "// 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
@@ -437,9 +460,13 @@ def render_authentication(surface: dict) -> str:
         'await auth.revoke("tempo");'
     )
     py_code = (
+        "import os\n"
         "from tempera_sdk import TemperaAuth, create_pkce_pair\n"
         "\n"
-        'auth = TemperaAuth(issuer_url="https://api.tempera.dev", client_id="my-app")\n'
+        "auth = TemperaAuth(\n"
+        '    issuer_url=os.environ["TEMPERA_ISSUER_URL"],\n'
+        '    client_id=os.environ["TEMPERA_CLIENT_ID"],\n'
+        ")\n"
         "\n"
         "# 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
         'pair = create_pkce_pair()  # (verifier, challenge, method="S256")\n'
@@ -469,12 +496,14 @@ def render_authentication(surface: dict) -> str:
         "\n"
         "// The crate is HTTP-less: it builds the URLs and form bodies; you POST them\n"
         "// (content-type: application/x-www-form-urlencoded) with your HTTP client.\n"
-        'let mut auth = TemperaAuth::new("https://api.tempera.dev").with_client_id("my-app");\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        'let client_id = std::env::var("TEMPERA_CLIENT_ID")?;\n'
+        "let mut auth = TemperaAuth::new(issuer_url).with_client_id(client_id.clone());\n"
         "\n"
         "// 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
         "let pkce = pkce_pair_from_entropy(&entropy); // >= 32 cryptographically random bytes\n"
         "let authorize_url = auth.authorize_url(&AuthorizeUrlParams {\n"
-        '    client_id: "my-app",\n'
+        "    client_id: &client_id,\n"
         '    redirect_uri: "https://my-app.example/callback",\n'
         "    code_challenge: &pkce.challenge,\n"
         '    audience: "tempo",\n'
@@ -607,14 +636,21 @@ def render_environments(surface: dict) -> str:
     ]
     env_names = list(surface["environments"])
     fields = sorted(next(iter(surface["environments"].values())))
+    lines += private_access_note()
     lines += [
-        "The SDK ships four environment presets. Pass `environment: \"production\"` (or",
-        "`local`, `preview`, `staging`) when creating the client to resolve base URLs",
-        "without configuring anything else.",
+        "The SDK ships four versioned environment presets. A preset records target URLs;",
+        "it does not assert that a deployment is live or generally available. Private",
+        "onboarding tells you which preset and overrides to use. Begin with `staging`; use",
+        "`production` only after Tempera explicitly provisions and approves production access.",
         "",
         "## Presets",
         "",
-        "| Field | " + " | ".join(f"`{name}`" for name in env_names) + " |",
+        "| Field | "
+        + " | ".join(
+            "`production` (reserved)" if name == "production" else f"`{name}`"
+            for name in env_names
+        )
+        + " |",
         "|---|" + "---|" * len(env_names),
     ]
     for field in fields:
@@ -734,9 +770,10 @@ def render_mcp_gateway(surface: dict) -> str:
             "The unified MCP gateway: every product's tools behind one JSON-RPC endpoint.",
         )
     ]
+    lines += private_access_note()
     lines += [
-        "The unified MCP gateway lives at **`${issuer}/mcp`** (for example",
-        f"`{surface['environments']['production']['mcpGatewayUrl']}`): stateless streamable-HTTP JSON-RPC 2.0.",
+        "The unified MCP gateway lives at **`${issuer}/mcp`**, using the issuer URL",
+        "supplied during onboarding. It is a stateless streamable-HTTP JSON-RPC 2.0 endpoint.",
         "It requires a bearer minted for audience **`tempera-mcp`** with scope",
         "**`mcp:invoke`** — or a central `tp_` API key.",
         "",
@@ -782,7 +819,9 @@ def render_mcp_gateway(surface: dict) -> str:
     ts_code = (
         'import { TemperaAuth, TemperaMcpClient } from "@tempera/sdk";\n'
         "\n"
-        'const auth = new TemperaAuth({ issuerUrl: "https://api.tempera.dev", apiKey: process.env.TEMPERA_API_KEY });\n'
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        'if (!issuerUrl) throw new Error("Missing TEMPERA_ISSUER_URL");\n'
+        "const auth = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });\n"
         "const mcp = new TemperaMcpClient({ auth }); // url derives as ${issuer}/mcp\n"
         "\n"
         "await mcp.initialize();\n"
@@ -795,7 +834,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "import os\n"
         "from tempera_sdk import TemperaAuth, TemperaMcpClient\n"
         "\n"
-        'auth = TemperaAuth(issuer_url="https://api.tempera.dev", api_key=os.environ["TEMPERA_API_KEY"])\n'
+        'auth = TemperaAuth(issuer_url=os.environ["TEMPERA_ISSUER_URL"], api_key=os.environ["TEMPERA_API_KEY"])\n'
         "mcp = TemperaMcpClient(auth=auth)  # url derives as ${issuer}/mcp\n"
         "\n"
         "mcp.initialize()\n"
@@ -807,7 +846,8 @@ def render_mcp_gateway(surface: dict) -> str:
     rust_code = (
         "use tempera_sdk::{McpRequestBuilder, TemperaAuth, parse_mcp_error};\n"
         "\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
@@ -861,6 +901,7 @@ def render_product_page(surface: dict, product_key: str) -> str:
     rust_product = snake(product_key)
     audience_cell = f"`{product['audience']}`" if product["audience"] else "— (no OAuth audience)"
     lines = [frontmatter(product["name"], product["description"])]
+    lines += private_access_note()
     lines += [
         esc(product["description"]),
         "",
@@ -894,12 +935,13 @@ def render_other_products(surface: dict) -> str:
             "Registry-only products: passthrough clients with no typed operations yet.",
         )
     ]
+    lines += private_access_note()
     lines += [
         "These products are registered in `surface.json` but have **no typed",
         "operations yet**. They still get a full product client in every language —",
         "registry metadata, base-URL resolution, auth wiring, and the raw `request()`",
-        "escape hatch — so you can call them today; typed operations land once each",
-        "HTTP contract is stable (see [Rollout](/rollout)).",
+        "escape hatch — so a provisioned endpoint can be used before typed operations",
+        "land once its HTTP contract is stable (see [Rollout](/rollout)).",
         "",
         "| Product | Audience | Env var | Repository | Description |",
         "|---|---|---|---|---|",
@@ -959,7 +1001,8 @@ def render_other_products(surface: dict) -> str:
         "\n"
         'let product = find_product("human_data").unwrap();\n'
         "let base_url = std::env::var(product.env_var)?; // TEMPERA_HUMAN_DATA_URL\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let bearer = product.audience.and_then(|aud| auth.bearer_for(aud));\n"
         '// GET {base_url}/v1/queues with "authorization: Bearer <bearer>".'
     )
@@ -1009,6 +1052,20 @@ def validate_site(surface: dict, files: dict[str, str]) -> None:
         for op in ops:
             assert f"### {op['id']}\n" in page, (
                 f"operation {product_key}.{op['id']} missing from its product page"
+            )
+    forbidden_public_examples = [
+        'issuerUrl: "https://api.tempera.dev"',
+        'issuer_url="https://api.tempera.dev"',
+        'TemperaAuth::new("https://api.tempera.dev")',
+        'environment: "production"',
+        'environment="production"',
+    ]
+    for path, content in files.items():
+        if path == "environments.mdx":
+            continue  # The reserved production target remains part of the reference contract.
+        for forbidden in forbidden_public_examples:
+            assert forbidden not in content, (
+                f"{path}: public example presents reserved production access: {forbidden!r}"
             )
     for path, content in files.items():
         if path.endswith(".mdx"):

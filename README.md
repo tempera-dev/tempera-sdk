@@ -6,6 +6,17 @@ same operation names and descriptions, the same error model — generated from
 a single manifest, [`surface.json`](./surface.json), and gated in CI so they
 cannot drift apart.
 
+## Access status
+
+Hosted Tempera services are in private design-partner access. Onboarding
+provides the SDK package access, issuer URL, credentials, environment, and any
+product-specific base URLs for your workspace. Start with the provisioned
+staging environment unless Tempera explicitly approves another target.
+
+The `production` preset and `api.tempera.dev` entries remain part of the SDK's
+versioned target contract; their presence does not mean production access is
+generally available or that the control plane is production-ready.
+
 ## Products
 
 | Client | Product | Typed operations | Audience |
@@ -26,7 +37,7 @@ defers exhaustive coverage to those.
 
 ## Unified auth
 
-The control plane (`https://api.tempera.dev`) is an OAuth 2.1 issuer:
+Your provisioned control-plane URL is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
 RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
 `remi`, `human-data`, `data-engine`, `tempera-mcp` registered). One account mints one token
@@ -36,7 +47,11 @@ at every product via central introspection.
 ```js
 import { TemperaAuth, createPkcePair, createTemperaClient } from "@tempera/sdk";
 
-const auth = new TemperaAuth({ issuerUrl: "https://api.tempera.dev", clientId: "my-app" });
+const issuerUrl = process.env.TEMPERA_ISSUER_URL;
+const clientId = process.env.TEMPERA_CLIENT_ID;
+if (!issuerUrl || !clientId) throw new Error("Missing provisioned Tempera auth settings");
+
+const auth = new TemperaAuth({ issuerUrl, clientId });
 
 // Browser/device flow: send the user to the authorize URL, then exchange the code.
 const { verifier, challenge } = await createPkcePair();
@@ -50,13 +65,13 @@ await auth.exchangeCode({ code, codeVerifier: verifier, redirectUri, audience: "
 await auth.refresh("tempo"); // rotation: stores the newly issued refresh token
 
 // Or headless: one tp_ API key covers every audience.
-const headless = new TemperaAuth({ issuerUrl: "https://api.tempera.dev", apiKey: process.env.TEMPERA_API_KEY });
+const headless = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });
 ```
 
 ## The unified client
 
 ```js
-const client = createTemperaClient({ auth, environment: "production" });
+const client = createTemperaClient({ auth, environment: "staging" });
 
 // Control plane: login()/signup() store the account token automatically.
 await client.controlPlane.login({ email, password });

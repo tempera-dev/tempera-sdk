@@ -12,49 +12,59 @@ descriptions, and the same error model. All of it is generated from a single
 manifest, `surface.json`, and gated in CI so the packages (and these docs)
 cannot drift apart.
 
+> **Private access.** Hosted Tempera services are available through design-partner onboarding.
+> Use the issuer, credentials, environment, and product URLs provisioned for your workspace;
+> start in staging unless Tempera explicitly approves another target.
+
 ## Quickstart
 
-Authenticate once — a central `tp_` API key works as a bearer at every product —
-and call any product through the unified client.
+After private onboarding, authenticate with the issuer and API key supplied for
+your workspace, then call the products enabled for that workspace. These examples
+start with the staging preset.
 
 <CodeGroup>
 
 ```typescript TypeScript
-// npm install @tempera/sdk
+// Package access and environment values are supplied during onboarding.
 import { TemperaAuth, createTemperaClient } from "@tempera/sdk";
 
+const issuerUrl = process.env.TEMPERA_ISSUER_URL;
+if (!issuerUrl) throw new Error("Missing TEMPERA_ISSUER_URL");
+
 const auth = new TemperaAuth({
-  issuerUrl: "https://api.tempera.dev",
+  issuerUrl,
   apiKey: process.env.TEMPERA_API_KEY, // tp_... works at every product
 });
-const client = createTemperaClient({ auth, environment: "production" });
+const client = createTemperaClient({ auth, environment: "staging" });
 
 const traces = await client.palette.listTraces({ tenant_id: "org_1", limit: 20 });
 const session = await client.tempo.createSession({ url: "https://example.com" });
 ```
 
 ```python Python
-# pip install tempera-sdk
+# Package access and environment values are supplied during onboarding.
 import os
 from tempera_sdk import TemperaAuth, TemperaClient
 
 auth = TemperaAuth(
-    issuer_url="https://api.tempera.dev",
+    issuer_url=os.environ["TEMPERA_ISSUER_URL"],
     api_key=os.environ["TEMPERA_API_KEY"],  # tp_... works at every product
 )
-client = TemperaClient(auth=auth, environment="production")
+client = TemperaClient(auth=auth, environment="staging")
 
 traces = client.palette.list_traces({"tenant_id": "org_1", "limit": 20})
 session = client.tempo.create_session({"url": "https://example.com"})
 ```
 
 ```rust Rust
-// cargo add tempera-sdk
+// Crate access and environment values are supplied during onboarding.
 use tempera_sdk::{TemperaAuth, TemperaClient};
 
 // The Rust crate is HTTP-less: it builds fully-described RequestSpecs
 // (method, URL, headers, JSON body) for your own HTTP client to send.
-let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);
+let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;
+let api_key = std::env::var("TEMPERA_API_KEY")?;
+let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);
 let client = TemperaClient::new().with_auth(auth);
 
 let spec = client.build_request(
