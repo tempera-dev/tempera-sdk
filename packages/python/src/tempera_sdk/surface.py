@@ -104,7 +104,7 @@ PRODUCTS = {
         "repository": "https://github.com/tempera-dev/human-data",
         "env_var": "TEMPERA_HUMAN_DATA_URL",
         "audience": "human-data",
-        "description": "Human data operations: expert annotation and review pipelines. Passthrough client only; no typed operations yet."
+        "description": "Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the agent quality loop. Passthrough client only; no typed operations yet."
     },
     "tempJs": {
         "name": "temp.js",

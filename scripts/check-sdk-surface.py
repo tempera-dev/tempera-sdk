@@ -48,6 +48,14 @@ REQUIRED_MARKERS = {
     "packages/rust/src/auth.rs": ["pub struct TemperaAuth", "pub fn pkce_challenge_s256"],
 }
 
+FORBIDDEN_README_EXAMPLES = [
+    'issuerUrl: "https://api.tempera.dev"',
+    'issuer_url="https://api.tempera.dev"',
+    'TemperaAuth::new("https://api.tempera.dev")',
+    'environment: "production"',
+    'environment="production"',
+]
+
 
 def package_versions() -> dict[str, str]:
     versions: dict[str, str] = {}
@@ -88,6 +96,15 @@ def main() -> int:
         failures.append(
             "generated docs site (docs/site/) is stale (run python3 scripts/gen-sdk-docs.py)"
         )
+
+    # 3b: reference data may retain reserved production targets, but public
+    # quickstarts must not present those targets as generally available.
+    readme = (ROOT / "README.md").read_text()
+    for forbidden in FORBIDDEN_README_EXAMPLES:
+        if forbidden in readme:
+            failures.append(
+                f"README.md: public example presents reserved production access: {forbidden!r}"
+            )
 
     # 4: one SDK version across the three packages.
     versions = package_versions()

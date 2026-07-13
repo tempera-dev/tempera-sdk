@@ -14,7 +14,7 @@ for the rollout page) into a complete Mintlify project:
   docs/site/mcp-gateway.mdx              unified MCP gateway
   docs/site/rollout.mdx                  rendered from docs/ROLLOUT.md
   docs/site/products/<product>.mdx       one page per typed product, every operation
-  docs/site/products/other-products.mdx  registry-only products + request() escape hatch
+  docs/site/products/other-products.mdx  private registry-only contract inventory
 
 The generated site is committed; scripts/check-sdk-surface.py re-renders it
 and fails on any diff, so the docs cannot drift from the manifest. Rendering
@@ -41,6 +41,10 @@ GENERATED_NOTE = (
 )
 
 OVERVIEW_PAGES = ["index", "authentication", "environments", "errors", "mcp-gateway", "rollout"]
+
+# The public product story is intentionally narrower than the versioned SDK
+# registry. Keep this order aligned with the browser-agent quality loop.
+PRIMARY_PRODUCT_KEYS = ("controlPlane", "tempo", "humanData", "palette")
 
 # Meanings for the MCP gateway JSON-RPC error codes (keyed by surface.json name).
 MCP_ERROR_MEANINGS = {
@@ -95,6 +99,15 @@ def frontmatter(title: str, description: str) -> str:
             "",
         ]
     )
+
+
+def private_access_note() -> list[str]:
+    return [
+        "> **Private access.** Hosted Tempera services are available through design-partner onboarding.",
+        "> Use the issuer, credentials, environment, and product URLs provisioned for your workspace;",
+        "> start in staging unless Tempera explicitly approves another target.",
+        "",
+    ]
 
 
 def code_group(blocks: list[tuple[str, str, str]]) -> list[str]:
@@ -239,7 +252,7 @@ def render_docs_json(surface: dict) -> str:
                     "group": "API Reference",
                     "pages": [product_page_slug(key) for key in typed_products(surface)],
                 },
-                {"group": "Registry", "pages": ["products/other-products"]},
+                {"group": "Contract inventory", "pages": ["products/other-products"]},
             ]
         },
         "footer": {
@@ -253,65 +266,115 @@ def render_index(surface: dict) -> str:
     lines = [
         frontmatter(
             "Tempera SDK",
-            "One SDK, three languages, every Tempera product — generated from a single manifest.",
+            "One SDK for the browser-agent quality loop, with a versioned private contract inventory.",
         )
     ]
     lines += [
         "The Tempera SDK exposes **one uniform surface in three languages** — TypeScript",
-        "(`@tempera/sdk`), Python (`tempera-sdk`), and Rust (`tempera-sdk`) — covering every",
-        "Tempera product: the same product registry, the same operation names and",
-        "descriptions, and the same error model. All of it is generated from a single",
-        "manifest, `surface.json`, and gated in CI so the packages (and these docs)",
-        "cannot drift apart.",
+        "(`@tempera/sdk`), Python (`tempera-sdk`), and Rust (`tempera-sdk`). The primary",
+        "workflow connects the control plane, Tempo browser sessions, Human Data review,",
+        "and Palette measurement through an onboarding-provisioned integration and",
+        "correlation path. A single manifest, `surface.json`, also preserves the",
+        "full versioned private contract inventory so the packages and reference docs cannot",
+        "drift apart.",
+        "",
+    ]
+    lines += private_access_note()
+    lines += [
+        "## The browser-agent quality loop",
+        "",
+        "1. **Control plane** — authenticate and select the provisioned workspace.",
+        "2. **Tempo** — run and record the browser session.",
+        "3. **Human Data** — review the provisioned session and trace evidence, record a",
+        "   decision, and return a candidate case to the quality loop.",
+        "4. **Palette** — hold and measure the corresponding trace.",
+        "",
+        "Tempo session creation and Palette evidence are separate contracts. A Tempo",
+        "session does not by itself prove a Palette trace exists; onboarding supplies the",
+        "integration and correlation path for corresponding Palette evidence.",
+        "",
+        "Human Data is currently a provisioned review workflow, not a published typed SDK",
+        "operation. The SDK does not claim a public Human Data HTTP path.",
         "",
         "## Quickstart",
         "",
-        "Authenticate once — a central `tp_` API key works as a bearer at every product —",
-        "and call any product through the unified client.",
+        "After private onboarding, authenticate with the issuer and API key supplied for",
+        "your workspace, then connect the typed parts of the loop. These examples start",
+        "with the staging preset. The examples call each typed surface independently; your",
+        "onboarding-provisioned integration correlates the Tempo session with any",
+        "corresponding Palette evidence for Human Data review.",
         "",
     ]
     ts_code = (
-        "// npm install @tempera/sdk\n"
+        "// Package access and environment values are supplied during onboarding.\n"
         'import { TemperaAuth, createTemperaClient } from "@tempera/sdk";\n'
         "\n"
-        "const auth = new TemperaAuth({\n"
-        '  issuerUrl: "https://api.tempera.dev",\n'
-        "  apiKey: process.env.TEMPERA_API_KEY, // tp_... works at every product\n"
-        "});\n"
-        'const client = createTemperaClient({ auth, environment: "production" });\n'
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        "const apiKey = process.env.TEMPERA_API_KEY;\n"
+        "const tenantId = process.env.TEMPERA_TENANT_ID;\n"
+        'if (!issuerUrl || !apiKey || !tenantId) throw new Error("Missing provisioned Tempera settings");\n'
         "\n"
-        'const traces = await client.palette.listTraces({ tenant_id: "org_1", limit: 20 });\n'
-        'const session = await client.tempo.createSession({ url: "https://example.com" });'
+        "const auth = new TemperaAuth({\n"
+        "  issuerUrl,\n"
+        "  apiKey, // tp_... works at every product\n"
+        "});\n"
+        'const client = createTemperaClient({ auth, environment: "staging" });\n'
+        "\n"
+        "const issuerMetadata = await client.controlPlane.discovery();\n"
+        'const session = await client.tempo.createSession({ url: "https://example.com" });\n'
+        "// Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "// the integration and correlation path for the corresponding Palette evidence.\n"
+        "// Human Data reviews the provisioned session and trace evidence.\n"
+        "const availableTraces = await client.palette.listTraces({\n"
+        "  tenant_id: tenantId,\n"
+        "  limit: 20,\n"
+        "});"
     )
     py_code = (
-        "# pip install tempera-sdk\n"
+        "# Package access and environment values are supplied during onboarding.\n"
         "import os\n"
         "from tempera_sdk import TemperaAuth, TemperaClient\n"
         "\n"
         "auth = TemperaAuth(\n"
-        '    issuer_url="https://api.tempera.dev",\n'
+        '    issuer_url=os.environ["TEMPERA_ISSUER_URL"],\n'
         '    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... works at every product\n'
         ")\n"
-        'client = TemperaClient(auth=auth, environment="production")\n'
+        'client = TemperaClient(auth=auth, environment="staging")\n'
         "\n"
-        'traces = client.palette.list_traces({"tenant_id": "org_1", "limit": 20})\n'
-        'session = client.tempo.create_session({"url": "https://example.com"})'
+        "issuer_metadata = client.control_plane.discovery()\n"
+        'session = client.tempo.create_session({"url": "https://example.com"})\n'
+        "# Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "# the integration and correlation path for the corresponding Palette evidence.\n"
+        "# Human Data reviews the provisioned session and trace evidence.\n"
+        'available_traces = client.palette.list_traces({"tenant_id": os.environ["TEMPERA_TENANT_ID"], "limit": 20})'
     )
     rust_code = (
-        "// cargo add tempera-sdk\n"
+        "// Crate access and environment values are supplied during onboarding.\n"
         "use tempera_sdk::{TemperaAuth, TemperaClient};\n"
         "\n"
         "// The Rust crate is HTTP-less: it builds fully-described RequestSpecs\n"
         "// (method, URL, headers, JSON body) for your own HTTP client to send.\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        'let api_key = std::env::var("TEMPERA_API_KEY")?;\n'
+        'let tenant_id = std::env::var("TEMPERA_TENANT_ID")?;\n'
+        "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let client = TemperaClient::new().with_auth(auth);\n"
         "\n"
-        "let spec = client.build_request(\n"
+        'let issuer_metadata = client.build_request("control_plane", "discovery", &[])?;\n'
+        "let session = client.build_request(\n"
+        '    "tempo",\n'
+        '    "create_session",\n'
+        '    &[("url", "https://example.com".into())],\n'
+        ")?;\n"
+        "// Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "// the integration and correlation path for the corresponding Palette evidence.\n"
+        "// Human Data reviews the provisioned session and trace evidence.\n"
+        "let available_traces = client.build_request(\n"
         '    "palette",\n'
         '    "list_traces",\n'
-        '    &[("tenant_id", "org_1".into()), ("limit", 20i64.into())],\n'
+        '    &[("tenant_id", tenant_id.into()), ("limit", 20i64.into())],\n'
         ")?;\n"
-        "// spec.method / spec.full_url() / spec.headers / spec.body_json"
+        "// Send each RequestSpec with your own HTTP client."
     )
     lines += code_group(
         [
@@ -326,15 +389,16 @@ def render_index(surface: dict) -> str:
         'and `build_request(product, "list_traces", params)` in Rust. Parameters use wire',
         "names (snake_case) in every language.",
         "",
-        "## Products",
+        "## Primary workflow surfaces",
         "",
-        "Every product in the registry — including the ones without typed operations",
-        "yet — gets a client in all three languages.",
+        "These four surfaces define the primary public story. Hosted access still depends",
+        "on what Tempera provisions for your workspace.",
         "",
         "| Product | Audience | Env var | Repository | Operations | Description |",
         "|---|---|---|---|---|---|",
     ]
-    for key, product in surface["products"].items():
+    for key in PRIMARY_PRODUCT_KEYS:
+        product = surface["products"][key]
         ops = surface["operations"].get(key, [])
         if ops:
             slug = product_page_slug(key)
@@ -350,12 +414,18 @@ def render_index(surface: dict) -> str:
             f"| {name_cell} | {audience} | `{product['envVar']}` | [{repo_name}]({repo}) "
             f"| {ops_cell} | {cell(product['description'])} |"
         )
-    total_ops = sum(len(ops) for ops in surface["operations"].values())
     lines += [
         "",
-        f"{total_ops} typed operations across {len(typed_products(surface))} products, plus a raw",
-        "`request()` escape hatch on every product client for endpoints the surface",
-        "tables do not cover yet.",
+        "## Versioned private contract inventory",
+        "",
+        "The SDK also retains typed and passthrough clients for the complete versioned",
+        "registry. Entries outside the four-product workflow are **private contract",
+        "inventory**: their presence preserves compatibility and reference coverage; it",
+        "does not advertise public availability, a live hosted service, or an undocumented",
+        "HTTP endpoint. Use one only when Tempera provisions it and supplies its contract.",
+        "",
+        "The full inventory remains available in the API Reference navigation and the",
+        "[registry-only contract inventory](/products/other-products).",
         "",
         "## Where to go next",
         "",
@@ -377,10 +447,11 @@ def render_authentication(surface: dict) -> str:
             "Unified accounts, OAuth2 authorization-code + PKCE with audience selection, and tp_ API keys.",
         )
     ]
+    lines += private_access_note()
     lines += [
         "## One account, every product",
         "",
-        "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer for the whole",
+        "The provisioned Tempera control plane (auth-hub) is the OAuth 2.1 issuer for the whole",
         "fleet. One Tempera account mints one access token per **product audience**,",
         "and central API keys (`tp_...`) work as bearers at every product via central",
         "introspection. The SDK's `TemperaAuth` holds both: per-audience OAuth token",
@@ -408,9 +479,13 @@ def render_authentication(surface: dict) -> str:
     ts_code = (
         'import { TemperaAuth, createPkcePair } from "@tempera/sdk";\n'
         "\n"
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        "const clientId = process.env.TEMPERA_CLIENT_ID;\n"
+        'if (!issuerUrl || !clientId) throw new Error("Missing provisioned Tempera auth settings");\n'
+        "\n"
         "const auth = new TemperaAuth({\n"
-        '  issuerUrl: "https://api.tempera.dev",\n'
-        '  clientId: "my-app",\n'
+        "  issuerUrl,\n"
+        "  clientId,\n"
         "});\n"
         "\n"
         "// 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
@@ -437,9 +512,13 @@ def render_authentication(surface: dict) -> str:
         'await auth.revoke("tempo");'
     )
     py_code = (
+        "import os\n"
         "from tempera_sdk import TemperaAuth, create_pkce_pair\n"
         "\n"
-        'auth = TemperaAuth(issuer_url="https://api.tempera.dev", client_id="my-app")\n'
+        "auth = TemperaAuth(\n"
+        '    issuer_url=os.environ["TEMPERA_ISSUER_URL"],\n'
+        '    client_id=os.environ["TEMPERA_CLIENT_ID"],\n'
+        ")\n"
         "\n"
         "# 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
         'pair = create_pkce_pair()  # (verifier, challenge, method="S256")\n'
@@ -469,12 +548,14 @@ def render_authentication(surface: dict) -> str:
         "\n"
         "// The crate is HTTP-less: it builds the URLs and form bodies; you POST them\n"
         "// (content-type: application/x-www-form-urlencoded) with your HTTP client.\n"
-        'let mut auth = TemperaAuth::new("https://api.tempera.dev").with_client_id("my-app");\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        'let client_id = std::env::var("TEMPERA_CLIENT_ID")?;\n'
+        "let mut auth = TemperaAuth::new(issuer_url).with_client_id(client_id.clone());\n"
         "\n"
         "// 1. Authorize: PKCE S256 + RFC 8707 resource audience selector.\n"
         "let pkce = pkce_pair_from_entropy(&entropy); // >= 32 cryptographically random bytes\n"
         "let authorize_url = auth.authorize_url(&AuthorizeUrlParams {\n"
-        '    client_id: "my-app",\n'
+        "    client_id: &client_id,\n"
         '    redirect_uri: "https://my-app.example/callback",\n'
         "    code_challenge: &pkce.challenge,\n"
         '    audience: "tempo",\n'
@@ -607,14 +688,21 @@ def render_environments(surface: dict) -> str:
     ]
     env_names = list(surface["environments"])
     fields = sorted(next(iter(surface["environments"].values())))
+    lines += private_access_note()
     lines += [
-        "The SDK ships four environment presets. Pass `environment: \"production\"` (or",
-        "`local`, `preview`, `staging`) when creating the client to resolve base URLs",
-        "without configuring anything else.",
+        "The SDK ships four versioned environment presets. A preset records target URLs;",
+        "it does not assert that a deployment is live or generally available. Private",
+        "onboarding tells you which preset and overrides to use. Begin with `staging`; use",
+        "`production` only after Tempera explicitly provisions and approves production access.",
         "",
         "## Presets",
         "",
-        "| Field | " + " | ".join(f"`{name}`" for name in env_names) + " |",
+        "| Field | "
+        + " | ".join(
+            "`production` (reserved)" if name == "production" else f"`{name}`"
+            for name in env_names
+        )
+        + " |",
         "|---|" + "---|" * len(env_names),
     ]
     for field in fields:
@@ -734,9 +822,10 @@ def render_mcp_gateway(surface: dict) -> str:
             "The unified MCP gateway: every product's tools behind one JSON-RPC endpoint.",
         )
     ]
+    lines += private_access_note()
     lines += [
-        "The unified MCP gateway lives at **`${issuer}/mcp`** (for example",
-        f"`{surface['environments']['production']['mcpGatewayUrl']}`): stateless streamable-HTTP JSON-RPC 2.0.",
+        "The unified MCP gateway lives at **`${issuer}/mcp`**, using the issuer URL",
+        "supplied during onboarding. It is a stateless streamable-HTTP JSON-RPC 2.0 endpoint.",
         "It requires a bearer minted for audience **`tempera-mcp`** with scope",
         "**`mcp:invoke`** — or a central `tp_` API key.",
         "",
@@ -782,7 +871,9 @@ def render_mcp_gateway(surface: dict) -> str:
     ts_code = (
         'import { TemperaAuth, TemperaMcpClient } from "@tempera/sdk";\n'
         "\n"
-        'const auth = new TemperaAuth({ issuerUrl: "https://api.tempera.dev", apiKey: process.env.TEMPERA_API_KEY });\n'
+        "const issuerUrl = process.env.TEMPERA_ISSUER_URL;\n"
+        'if (!issuerUrl) throw new Error("Missing TEMPERA_ISSUER_URL");\n'
+        "const auth = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });\n"
         "const mcp = new TemperaMcpClient({ auth }); // url derives as ${issuer}/mcp\n"
         "\n"
         "await mcp.initialize();\n"
@@ -795,7 +886,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "import os\n"
         "from tempera_sdk import TemperaAuth, TemperaMcpClient\n"
         "\n"
-        'auth = TemperaAuth(issuer_url="https://api.tempera.dev", api_key=os.environ["TEMPERA_API_KEY"])\n'
+        'auth = TemperaAuth(issuer_url=os.environ["TEMPERA_ISSUER_URL"], api_key=os.environ["TEMPERA_API_KEY"])\n'
         "mcp = TemperaMcpClient(auth=auth)  # url derives as ${issuer}/mcp\n"
         "\n"
         "mcp.initialize()\n"
@@ -807,7 +898,8 @@ def render_mcp_gateway(surface: dict) -> str:
     rust_code = (
         "use tempera_sdk::{McpRequestBuilder, TemperaAuth, parse_mcp_error};\n"
         "\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
+        'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
+        "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
@@ -861,6 +953,13 @@ def render_product_page(surface: dict, product_key: str) -> str:
     rust_product = snake(product_key)
     audience_cell = f"`{product['audience']}`" if product["audience"] else "— (no OAuth audience)"
     lines = [frontmatter(product["name"], product["description"])]
+    lines += private_access_note()
+    if product_key not in PRIMARY_PRODUCT_KEYS:
+        lines += [
+            "> **Contract inventory.** This typed reference is retained for SDK compatibility.",
+            "> It is not part of the primary public workflow or evidence of general service availability.",
+            "",
+        ]
     lines += [
         esc(product["description"]),
         "",
@@ -890,16 +989,17 @@ def render_other_products(surface: dict) -> str:
     keys = registry_products(surface)
     lines = [
         frontmatter(
-            "Other products",
-            "Registry-only products: passthrough clients with no typed operations yet.",
+            "Private contract inventory",
+            "Registry-only SDK contracts retained for compatibility, not public availability.",
         )
     ]
+    lines += private_access_note()
     lines += [
-        "These products are registered in `surface.json` but have **no typed",
-        "operations yet**. They still get a full product client in every language —",
-        "registry metadata, base-URL resolution, auth wiring, and the raw `request()`",
-        "escape hatch — so you can call them today; typed operations land once each",
-        "HTTP contract is stable (see [Rollout](/rollout)).",
+        "These products are registered in `surface.json` but have **no typed operations",
+        "yet**. Their clients preserve the versioned SDK contract across all three",
+        "languages. Registry membership does not mean a hosted service or HTTP endpoint is",
+        "publicly available. Use a client only when Tempera provisions the product and",
+        "supplies its stable HTTP contract (see [Rollout](/rollout)).",
         "",
         "| Product | Audience | Env var | Repository | Description |",
         "|---|---|---|---|---|",
@@ -926,50 +1026,18 @@ def render_other_products(surface: dict) -> str:
         )
     lines += [
         "",
-        "## Calling them: the request() escape hatch",
+        "## Passthrough contract",
         "",
-        "Every product client exposes a raw `request()` that resolves the product's",
-        "base URL and bearer for you. Products with a registered audience (only",
-        "`human-data` here) attach an audience token or `tp_` API key automatically;",
-        "audience-less products send no bearer unless you pass one explicitly.",
+        "TypeScript and Python retain a raw `request()` helper for a path supplied by a",
+        "provisioned, documented product contract. Human Data can attach its audience token",
+        "or central `tp_` API key automatically; audience-less products require the auth",
+        "specified during onboarding. The Rust crate exposes registry metadata but no raw",
+        "passthrough request builder.",
+        "",
+        "No copyable raw-route example is published here because the registry alone is not",
+        "an endpoint contract.",
         "",
     ]
-    ts_code = (
-        "// human-data has an audience: the bearer is attached automatically.\n"
-        'const queues = await client.humanData.request("/v1/queues");\n'
-        "\n"
-        "// Audience-less products: pass a bearer (or headers) yourself if needed.\n"
-        'await client.tempJs.request("/v1/runtimes", { method: "GET" });\n'
-        'await client.tempOS.request("/v1/receipts", { bearer: myToken });\n'
-        'await client.arrha.request("/v1/credits/balance", { query: { org_id: "org_1" } });'
-    )
-    py_code = (
-        "# human-data has an audience: the bearer is attached automatically.\n"
-        'queues = client.human_data.request("/v1/queues")\n'
-        "\n"
-        "# Audience-less products: pass a bearer (or headers) yourself if needed.\n"
-        'client.temp_js.request("/v1/runtimes", method="GET")\n'
-        'client.temp_os.request("/v1/receipts", bearer=my_token)\n'
-        'client.arrha.request("/v1/credits/balance", query={"org_id": "org_1"})'
-    )
-    rust_code = (
-        "// The Rust crate has no passthrough request builder; typed operations only.\n"
-        "// For registry-only products, read the registry and build the request yourself:\n"
-        'use tempera_sdk::{TemperaAuth, find_product};\n'
-        "\n"
-        'let product = find_product("human_data").unwrap();\n'
-        "let base_url = std::env::var(product.env_var)?; // TEMPERA_HUMAN_DATA_URL\n"
-        'let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key(api_key);\n'
-        "let bearer = product.audience.and_then(|aud| auth.bearer_for(aud));\n"
-        '// GET {base_url}/v1/queues with "authorization: Bearer <bearer>".'
-    )
-    lines += code_group(
-        [
-            ("typescript", "TypeScript", ts_code),
-            ("python", "Python", py_code),
-            ("rust", "Rust", rust_code),
-        ]
-    )
     return "\n".join(lines)
 
 
@@ -1009,6 +1077,32 @@ def validate_site(surface: dict, files: dict[str, str]) -> None:
         for op in ops:
             assert f"### {op['id']}\n" in page, (
                 f"operation {product_key}.{op['id']} missing from its product page"
+            )
+        if product_key not in PRIMARY_PRODUCT_KEYS:
+            assert "> **Contract inventory.**" in page, (
+                f"{product_key}: non-primary reference is missing its contract-inventory notice"
+            )
+    registry_page = files["products/other-products.mdx"]
+    for raw_route_marker in ('.request("/', ".request('/"):
+        assert raw_route_marker not in registry_page, (
+            "registry-only docs must not invent a copyable raw route without a tested contract"
+        )
+    assert "does not by itself prove a Palette trace exists" in files["index.mdx"], (
+        "overview must keep the Tempo-session/Palette-evidence boundary explicit"
+    )
+    forbidden_public_examples = [
+        'issuerUrl: "https://api.tempera.dev"',
+        'issuer_url="https://api.tempera.dev"',
+        'TemperaAuth::new("https://api.tempera.dev")',
+        'environment: "production"',
+        'environment="production"',
+    ]
+    for path, content in files.items():
+        if path == "environments.mdx":
+            continue  # The reserved production target remains part of the reference contract.
+        for forbidden in forbidden_public_examples:
+            assert forbidden not in content, (
+                f"{path}: public example presents reserved production access: {forbidden!r}"
             )
     for path, content in files.items():
         if path.endswith(".mdx"):
