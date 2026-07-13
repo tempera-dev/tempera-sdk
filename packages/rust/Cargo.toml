@@ -1,6 +1,6 @@
 [package]
 name = "tempera-sdk"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
 license = "UNLICENSED"
 repository = "https://github.com/tempera-dev/tempera-sdk"
@@ -8,3 +8,11 @@ repository = "https://github.com/tempera-dev/tempera-sdk"
 [lib]
 path = "src/lib.rs"
 
+[dependencies]
+reqwest = { version = "0.13.2", default-features = false, features = ["rustls"] }
+rmcp = { version = "=2.2.0", git = "https://github.com/modelcontextprotocol/rust-sdk", rev = "3662d20ac27af34e96d6d7285031d54077a6d755", features = [
+  "client",
+  "transport-streamable-http-client-reqwest",
+] }
+serde_json = "1.0"
+tokio = { version = "1.47", features = ["macros", "rt-multi-thread"] }

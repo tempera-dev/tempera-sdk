@@ -5,7 +5,7 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 2
+SURFACE_VERSION = 3
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp')
 DEFAULT_AUDIENCE = 'palette'
@@ -1882,7 +1882,7 @@ OPERATIONS = {
 }
 
 MCP_GATEWAY = {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
+    "description": "Unified stable Streamable HTTP MCP gateway at ${issuer}/mcp, audience tempera-mcp with scope mcp:invoke, aggregating product servers behind a progressive namespaced catalog with per-call billing.",
     "methods": [
         {
             "id": "initialize",
@@ -1897,12 +1897,50 @@ MCP_GATEWAY = {
         {
             "id": "list_tools",
             "rpc": "tools/list",
-            "description": "List every tool the gateway offers: builtins plus namespaced product tools."
+            "description": "List the tools currently exposed by the configured gateway discovery mode."
         },
         {
             "id": "call_tool",
             "rpc": "tools/call",
             "description": "Invoke a tool by name; product tool calls are metered as mcp_invocations."
+        },
+        {
+            "id": "list_resources",
+            "rpc": "resources/list",
+            "description": "List every composed resource with bounded automatic pagination."
+        },
+        {
+            "id": "read_resource",
+            "rpc": "resources/read",
+            "description": "Read one composed resource by its gateway URI."
+        },
+        {
+            "id": "list_prompts",
+            "rpc": "prompts/list",
+            "description": "List every composed prompt with bounded automatic pagination."
+        },
+        {
+            "id": "get_prompt",
+            "rpc": "prompts/get",
+            "description": "Resolve one composed prompt with arguments."
+        },
+        {
+            "id": "search_tools",
+            "rpc": "tools/call",
+            "tool": "tempera_search_tools",
+            "description": "Search compact tool summaries without loading the complete schema catalog."
+        },
+        {
+            "id": "describe_tool",
+            "rpc": "tools/call",
+            "tool": "tempera_describe_tool",
+            "description": "Fetch one discovered tool's complete schema and surface hash."
+        },
+        {
+            "id": "call_discovered_tool",
+            "rpc": "tools/call",
+            "tool": "tempera_call",
+            "description": "Invoke one progressively discovered namespaced tool."
         },
         {
             "id": "whoami",

@@ -10,14 +10,19 @@ description: "The unified MCP gateway: every product's tools behind one JSON-RPC
 > start in staging unless Tempera explicitly approves another target.
 
 The unified MCP gateway lives at **`${issuer}/mcp`**, using the issuer URL
-supplied during onboarding. It is a stateless streamable-HTTP JSON-RPC 2.0 endpoint.
+supplied during onboarding. It uses stable MCP `2025-11-25` over
+session-aware Streamable HTTP.
 It requires a bearer minted for audience **`tempera-mcp`** with scope
 **`mcp:invoke`** — or a central `tp_` API key.
 
 The gateway aggregates every product MCP server behind **namespaced tools**
 (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`), so one endpoint and one
-credential expose the whole fleet. Product tool calls are metered as
+credential can reach the whole fleet. Progressive mode keeps product schemas behind
+discovery builtins; hybrid and full modes expose selected or complete namespaced catalogs.
+Calls are metered as
 `mcp_invocations` against the workspace's plan.
+The SDK clients complete initialization automatically, preserve session and protocol
+headers, accept JSON or SSE responses, bound pagination, and recover one expired session.
 
 ## JSON-RPC methods
 
@@ -25,8 +30,15 @@ credential expose the whole fleet. Product tool calls are metered as
 |---|---|---|---|
 | `initialize` | `initialize` | — | Open an MCP session and fetch server capabilities and instructions. |
 | `ping` | `ping` | — | Check gateway liveness over JSON-RPC. |
-| `listTools` | `tools/list` | — | List every tool the gateway offers: builtins plus namespaced product tools. |
+| `listTools` | `tools/list` | — | List the tools currently exposed by the configured gateway discovery mode. |
 | `callTool` | `tools/call` | — | Invoke a tool by name; product tool calls are metered as mcp_invocations. |
+| `listResources` | `resources/list` | — | List every composed resource with bounded automatic pagination. |
+| `readResource` | `resources/read` | — | Read one composed resource by its gateway URI. |
+| `listPrompts` | `prompts/list` | — | List every composed prompt with bounded automatic pagination. |
+| `getPrompt` | `prompts/get` | — | Resolve one composed prompt with arguments. |
+| `searchTools` | `tools/call` | `tempera_search_tools` | Search compact tool summaries without loading the complete schema catalog. |
+| `describeTool` | `tools/call` | `tempera_describe_tool` | Fetch one discovered tool's complete schema and surface hash. |
+| `callDiscoveredTool` | `tools/call` | `tempera_call` | Invoke one progressively discovered namespaced tool. |
 | `whoami` | `tools/call` | `tempera_whoami` | Fetch the caller's identity, workspace, and scopes as seen by the gateway. |
 | `status` | `tools/call` | `tempera_status` | Fetch gateway upstream health for every connected product MCP server. |
 
@@ -35,6 +47,9 @@ credential expose the whole fleet. Product tool calls are metered as
 Alongside the namespaced product tools, the gateway serves its own builtins
 (not metered as product invocations):
 
+- **`tempera_search_tools`** — Search compact tool summaries without loading the complete schema catalog.
+- **`tempera_describe_tool`** — Fetch one discovered tool's complete schema and surface hash.
+- **`tempera_call`** — Invoke one progressively discovered namespaced tool.
 - **`tempera_whoami`** — Fetch the caller's identity, workspace, and scopes as seen by the gateway.
 - **`tempera_status`** — Fetch gateway upstream health for every connected product MCP server.
 
@@ -46,9 +61,9 @@ calls fail with JSON-RPC error code `-32002`
 
 ## Client examples
 
-TypeScript and Python ship a `TemperaMcpClient`; the HTTP-less Rust crate
-ships `McpRequestBuilder`, which produces the exact JSON-RPC bodies to POST
-at `TemperaAuth::mcp_url()`.
+All three packages ship a session-aware `TemperaMcpClient`. The Rust client
+delegates wire behavior to the pinned official MCP Rust SDK; `McpRequestBuilder`
+remains available for HTTP-less integrations.
 
 <CodeGroup>
 
@@ -60,11 +75,12 @@ if (!issuerUrl) throw new Error("Missing TEMPERA_ISSUER_URL");
 const auth = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });
 const mcp = new TemperaMcpClient({ auth }); // url derives as ${issuer}/mcp
 
-await mcp.initialize();
-const tools = await mcp.listTools();
-const result = await mcp.callTool("cradle_get_capabilities");
+const tools = await mcp.listTools(); // initializes automatically
+const matches = await mcp.searchTools("cradle capabilities");
+const result = await mcp.callDiscoveredTool("cradle_get_capabilities");
 console.log(await mcp.whoami());
 console.log(await mcp.status());
+await mcp.close();
 ```
 
 ```python Python
@@ -74,30 +90,27 @@ from tempera_sdk import TemperaAuth, TemperaMcpClient
 auth = TemperaAuth(issuer_url=os.environ["TEMPERA_ISSUER_URL"], api_key=os.environ["TEMPERA_API_KEY"])
 mcp = TemperaMcpClient(auth=auth)  # url derives as ${issuer}/mcp
 
-mcp.initialize()
-tools = mcp.list_tools()
-result = mcp.call_tool("cradle_get_capabilities")
+tools = mcp.list_tools()  # initializes automatically
+matches = mcp.search_tools("cradle capabilities")
+result = mcp.call_discovered_tool("cradle_get_capabilities")
 print(mcp.whoami())
 print(mcp.status())
+mcp.close()
 ```
 
 ```rust Rust
-use tempera_sdk::{McpRequestBuilder, TemperaAuth, parse_mcp_error};
+use tempera_sdk::{TemperaMcpClient, TemperaAuth};
 
 let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;
+let api_key = std::env::var("TEMPERA_API_KEY")?;
 let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);
-let mut mcp = McpRequestBuilder::new();
-
-// POST each body at auth.mcp_url() with the tempera-mcp bearer:
-let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");
-let (id, body) = mcp.list_tools_body();
-let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);
-let (id, body) = mcp.whoami_body();
-
-// Feed error responses to the shared parser:
-if let Some(err) = parse_mcp_error(&response_body) {
-    eprintln!("MCP error {}: {}", err.code, err.message);
-}
+let bearer = auth.bearer_for("tempera-mcp").expect("MCP credential");
+let mcp = TemperaMcpClient::connect(auth.mcp_url(), bearer).await?;
+let tools = mcp.list_tools().await?;
+let matches = mcp.search_tools("cradle capabilities", None, Some(5), false).await?;
+let result = mcp.call_discovered_tool("cradle_get_capabilities", Default::default()).await?;
+let identity = mcp.whoami().await?;
+mcp.close().await?;
 ```
 
 </CodeGroup>

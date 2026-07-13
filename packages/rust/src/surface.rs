@@ -3,7 +3,7 @@
 // the error contract, and every typed operation, shared verbatim with
 // the TypeScript and Python packages.
 
-pub const SURFACE_VERSION: u32 = 2;
+pub const SURFACE_VERSION: u32 = 3;
 
 pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp"];
 pub const DEFAULT_AUDIENCE: &str = "palette";
@@ -1667,13 +1667,55 @@ pub const MCP_METHODS: &[McpMethodSpec] = &[
         id: "list_tools",
         rpc: "tools/list",
         tool: None,
-        description: "List every tool the gateway offers: builtins plus namespaced product tools.",
+        description: "List the tools currently exposed by the configured gateway discovery mode.",
     },
     McpMethodSpec {
         id: "call_tool",
         rpc: "tools/call",
         tool: None,
         description: "Invoke a tool by name; product tool calls are metered as mcp_invocations.",
+    },
+    McpMethodSpec {
+        id: "list_resources",
+        rpc: "resources/list",
+        tool: None,
+        description: "List every composed resource with bounded automatic pagination.",
+    },
+    McpMethodSpec {
+        id: "read_resource",
+        rpc: "resources/read",
+        tool: None,
+        description: "Read one composed resource by its gateway URI.",
+    },
+    McpMethodSpec {
+        id: "list_prompts",
+        rpc: "prompts/list",
+        tool: None,
+        description: "List every composed prompt with bounded automatic pagination.",
+    },
+    McpMethodSpec {
+        id: "get_prompt",
+        rpc: "prompts/get",
+        tool: None,
+        description: "Resolve one composed prompt with arguments.",
+    },
+    McpMethodSpec {
+        id: "search_tools",
+        rpc: "tools/call",
+        tool: Some("tempera_search_tools"),
+        description: "Search compact tool summaries without loading the complete schema catalog.",
+    },
+    McpMethodSpec {
+        id: "describe_tool",
+        rpc: "tools/call",
+        tool: Some("tempera_describe_tool"),
+        description: "Fetch one discovered tool's complete schema and surface hash.",
+    },
+    McpMethodSpec {
+        id: "call_discovered_tool",
+        rpc: "tools/call",
+        tool: Some("tempera_call"),
+        description: "Invoke one progressively discovered namespaced tool.",
     },
     McpMethodSpec {
         id: "whoami",

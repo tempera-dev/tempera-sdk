@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
-  "version": 2,
+  "version": 3,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
     "authorizePath": "/oauth/authorize",
@@ -293,12 +293,19 @@
     ]
   },
   "mcpGateway": {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
+    "description": "Unified stable Streamable HTTP MCP gateway at ${issuer}/mcp, audience tempera-mcp with scope mcp:invoke, aggregating product servers behind a progressive namespaced catalog with per-call billing.",
     "methods": [
       { "id": "initialize", "rpc": "initialize", "description": "Open an MCP session and fetch server capabilities and instructions." },
       { "id": "ping", "rpc": "ping", "description": "Check gateway liveness over JSON-RPC." },
-      { "id": "listTools", "rpc": "tools/list", "description": "List every tool the gateway offers: builtins plus namespaced product tools." },
+      { "id": "listTools", "rpc": "tools/list", "description": "List the tools currently exposed by the configured gateway discovery mode." },
       { "id": "callTool", "rpc": "tools/call", "description": "Invoke a tool by name; product tool calls are metered as mcp_invocations." },
+      { "id": "listResources", "rpc": "resources/list", "description": "List every composed resource with bounded automatic pagination." },
+      { "id": "readResource", "rpc": "resources/read", "description": "Read one composed resource by its gateway URI." },
+      { "id": "listPrompts", "rpc": "prompts/list", "description": "List every composed prompt with bounded automatic pagination." },
+      { "id": "getPrompt", "rpc": "prompts/get", "description": "Resolve one composed prompt with arguments." },
+      { "id": "searchTools", "rpc": "tools/call", "tool": "tempera_search_tools", "description": "Search compact tool summaries without loading the complete schema catalog." },
+      { "id": "describeTool", "rpc": "tools/call", "tool": "tempera_describe_tool", "description": "Fetch one discovered tool's complete schema and surface hash." },
+      { "id": "callDiscoveredTool", "rpc": "tools/call", "tool": "tempera_call", "description": "Invoke one progressively discovered namespaced tool." },
       { "id": "whoami", "rpc": "tools/call", "tool": "tempera_whoami", "description": "Fetch the caller's identity, workspace, and scopes as seen by the gateway." },
       { "id": "status", "rpc": "tools/call", "tool": "tempera_status", "description": "Fetch gateway upstream health for every connected product MCP server." }
     ],

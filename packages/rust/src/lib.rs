@@ -28,7 +28,10 @@ pub use auth::{
 };
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
 pub use error::{TemperaApiError, normalize_error_body};
-pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
+pub use mcp::{
+    MCP_PROTOCOL_VERSION, McpClientError, McpClientOptions, McpClientResult, McpError,
+    McpRequestBuilder, McpService, TemperaMcpClient, parse_mcp_error,
+};
 pub use surface::{
     AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
     MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,
@@ -90,12 +93,16 @@ mod tests {
         assert_eq!(spec.method, "GET");
         assert_eq!(spec.full_url(), "https://mcp.tempera.dev/v1/traces/t1/tr1");
 
-        let error = normalize_error_body(429, "Too Many Requests", "{\"error\":\"quota\",\"message\":\"limit\"}");
+        let error = normalize_error_body(
+            429,
+            "Too Many Requests",
+            "{\"error\":\"quota\",\"message\":\"limit\"}",
+        );
         assert_eq!(error.code.as_deref(), Some("quota"));
 
         let (id, body) = McpRequestBuilder::new().ping_body();
         assert_eq!(id, 1);
         assert!(parse_mcp_error(&body).is_none());
-        assert_eq!(MCP_PROTOCOL_VERSION, "2025-06-18");
+        assert_eq!(MCP_PROTOCOL_VERSION, "2025-11-25");
     }
 }

@@ -1,19 +1,391 @@
-//! JSON-RPC 2.0 body builders for the unified Tempera MCP gateway
-//! (`${issuer}/mcp`): stateless streamable-HTTP JSON-RPC aggregating every
-//! product MCP server behind namespaced tools (`palette_*`, `tempo_*`,
-//! `cradle_*`, `remi_*`, `data_engine_*`).
+//! Stable Streamable HTTP client and JSON-RPC body builders for the unified
+//! Tempera MCP gateway (`${issuer}/mcp`).
 //!
-//! The crate is HTTP-less: [`McpRequestBuilder`] produces the exact request
-//! bodies the gateway expects; POST them at `TemperaAuth::mcp_url()` with an
-//! `authorization: Bearer <token>` header (a bearer minted for audience
-//! `tempera-mcp` with scope `mcp:invoke`, or a central tp_ API key), then feed
-//! error responses to [`parse_mcp_error`]. Mirrors `TemperaMcpClient` in the
-//! TypeScript and Python packages.
+//! [`TemperaMcpClient`] is a complete session-aware client backed by the
+//! official Rust SDK. [`McpRequestBuilder`] remains available for environments
+//! that provide their own HTTP transport.
+
+use std::{collections::BTreeSet, sync::Arc, time::Duration};
+
+use rmcp::{
+    RoleClient, ServiceExt,
+    model::{
+        CallToolRequestParams, CallToolResult, ClientCapabilities, ClientInfo, ClientRequest,
+        GetPromptRequestParams, GetPromptResult, Implementation, JsonObject,
+        PaginatedRequestParams, PingRequest, Prompt, ReadResourceRequestParams, ReadResourceResult,
+        Resource, ServerInfo, ServerResult, Tool,
+    },
+    service::RunningService,
+    transport::{
+        StreamableHttpClientTransport, streamable_http_client::StreamableHttpClientTransportConfig,
+    },
+};
+use serde_json::Value;
 
 use crate::error::{Json, json_escape, parse_json};
 
 /// MCP protocol revision sent in `initialize` requests.
-pub const MCP_PROTOCOL_VERSION: &str = "2025-06-18";
+pub const MCP_PROTOCOL_VERSION: &str = "2025-11-25";
+
+/// The initialized official MCP client service used by [`TemperaMcpClient`].
+pub type McpService = RunningService<RoleClient, ClientInfo>;
+
+/// Connection options for the unified gateway.
+#[derive(Clone)]
+pub struct McpClientOptions {
+    /// Streamable HTTP endpoint.
+    pub url: String,
+    /// Bearer token without the `Bearer ` prefix.
+    pub bearer: String,
+    /// Client implementation name sent during initialization.
+    pub client_name: String,
+    /// Client implementation version sent during initialization.
+    pub client_version: String,
+    /// HTTP operation deadline.
+    pub request_timeout: Duration,
+    /// Maximum pages accepted from one list operation.
+    pub max_pages: usize,
+    /// Maximum items accumulated by one list operation.
+    pub max_items: usize,
+}
+
+impl std::fmt::Debug for McpClientOptions {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("McpClientOptions")
+            .field("url", &self.url)
+            .field("bearer", &"<redacted>")
+            .field("client_name", &self.client_name)
+            .field("client_version", &self.client_version)
+            .field("request_timeout", &self.request_timeout)
+            .field("max_pages", &self.max_pages)
+            .field("max_items", &self.max_items)
+            .finish()
+    }
+}
+
+impl McpClientOptions {
+    /// Create options with production-safe defaults.
+    pub fn new(url: impl Into<String>, bearer: impl Into<String>) -> Self {
+        Self {
+            url: url.into(),
+            bearer: bearer.into(),
+            client_name: "tempera-sdk".into(),
+            client_version: "0.4.0".into(),
+            request_timeout: Duration::from_secs(120),
+            max_pages: 100,
+            max_items: 10_000,
+        }
+    }
+}
+
+/// Transport, initialization, or protocol failure from the MCP client.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct McpClientError {
+    message: String,
+}
+
+impl McpClientError {
+    fn new(error: impl std::fmt::Display) -> Self {
+        Self {
+            message: error.to_string(),
+        }
+    }
+}
+
+impl std::fmt::Display for McpClientError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str(&self.message)
+    }
+}
+
+impl std::error::Error for McpClientError {}
+
+/// Result returned by the live MCP client.
+pub type McpClientResult<T> = Result<T, McpClientError>;
+
+/// Initialized, session-aware client backed by the pinned official Rust SDK.
+pub struct TemperaMcpClient {
+    service: McpService,
+    max_pages: usize,
+    max_items: usize,
+}
+
+impl TemperaMcpClient {
+    /// Connect, negotiate the latest stable protocol, and send `notifications/initialized`.
+    pub async fn connect(
+        url: impl Into<String>,
+        bearer: impl Into<String>,
+    ) -> McpClientResult<Self> {
+        Self::connect_with(McpClientOptions::new(url, bearer)).await
+    }
+
+    /// Connect with explicit client identity and timeout settings.
+    pub async fn connect_with(options: McpClientOptions) -> McpClientResult<Self> {
+        if options.max_pages == 0 || options.max_items == 0 {
+            return Err(McpClientError::new(
+                "MCP pagination limits must be greater than zero",
+            ));
+        }
+        if options.request_timeout.is_zero() {
+            return Err(McpClientError::new(
+                "MCP request timeout must be greater than zero",
+            ));
+        }
+        let max_pages = options.max_pages;
+        let max_items = options.max_items;
+        let http = reqwest::Client::builder()
+            .connect_timeout(Duration::from_secs(10))
+            .timeout(options.request_timeout)
+            .redirect(reqwest::redirect::Policy::none())
+            .build()
+            .map_err(McpClientError::new)?;
+        let transport_config = StreamableHttpClientTransportConfig::with_uri(options.url)
+            .auth_header(options.bearer)
+            .reinit_on_expired_session(true);
+        let transport = StreamableHttpClientTransport::with_client(http, transport_config);
+        let info = ClientInfo::new(
+            ClientCapabilities::default(),
+            Implementation::new(options.client_name, options.client_version),
+        );
+        let service = info.serve(transport).await.map_err(McpClientError::new)?;
+        Ok(Self {
+            service,
+            max_pages,
+            max_items,
+        })
+    }
+
+    /// Server capabilities and implementation metadata from initialization.
+    pub fn server_info(&self) -> Option<Arc<ServerInfo>> {
+        self.service.peer_info()
+    }
+
+    /// Access the official initialized service for advanced protocol operations.
+    pub fn service(&self) -> &McpService {
+        &self.service
+    }
+
+    /// Check protocol liveness.
+    pub async fn ping(&self) -> McpClientResult<()> {
+        match self
+            .service
+            .send_request(ClientRequest::PingRequest(PingRequest::default()))
+            .await
+            .map_err(McpClientError::new)?
+        {
+            ServerResult::EmptyResult(_) => Ok(()),
+            _ => Err(McpClientError::new(
+                "ping returned an unexpected response type",
+            )),
+        }
+    }
+
+    /// List the currently exposed tools with bounded, repeated-cursor-safe pagination.
+    pub async fn list_tools(&self) -> McpClientResult<Vec<Tool>> {
+        let mut values = Vec::new();
+        let mut cursor = None;
+        let mut seen = BTreeSet::new();
+        for _ in 0..self.max_pages {
+            let result = self
+                .service
+                .list_tools(
+                    cursor.map(|value| PaginatedRequestParams::default().with_cursor(Some(value))),
+                )
+                .await
+                .map_err(McpClientError::new)?;
+            extend_bounded(&mut values, result.tools, self.max_items, "tools/list")?;
+            match next_page_cursor(result.next_cursor, &mut seen, "tools/list")? {
+                None => return Ok(values),
+                Some(next) => cursor = Some(next),
+            }
+        }
+        Err(McpClientError::new(format!(
+            "tools/list exceeded {} pages",
+            self.max_pages
+        )))
+    }
+
+    /// Invoke any direct gateway tool.
+    pub async fn call_tool(
+        &self,
+        name: impl Into<String>,
+        arguments: JsonObject,
+    ) -> McpClientResult<CallToolResult> {
+        self.service
+            .call_tool(CallToolRequestParams::new(name.into()).with_arguments(arguments))
+            .await
+            .map_err(McpClientError::new)
+    }
+
+    /// Search the progressive catalog without exposing every schema to the model.
+    pub async fn search_tools(
+        &self,
+        query: impl Into<String>,
+        server: Option<&str>,
+        limit: Option<u64>,
+        include_schema: bool,
+    ) -> McpClientResult<CallToolResult> {
+        let mut arguments = JsonObject::new();
+        arguments.insert("query".into(), Value::String(query.into()));
+        arguments.insert("includeSchema".into(), Value::Bool(include_schema));
+        if let Some(server) = server {
+            arguments.insert("server".into(), Value::String(server.into()));
+        }
+        if let Some(limit) = limit {
+            arguments.insert("limit".into(), Value::from(limit));
+        }
+        self.call_tool("tempera_search_tools", arguments).await
+    }
+
+    /// Fetch one discovered tool's full schema and surface hash.
+    pub async fn describe_tool(&self, name: impl Into<String>) -> McpClientResult<CallToolResult> {
+        let mut arguments = JsonObject::new();
+        arguments.insert("name".into(), Value::String(name.into()));
+        self.call_tool("tempera_describe_tool", arguments).await
+    }
+
+    /// Invoke a progressively discovered tool by its namespaced name.
+    pub async fn call_discovered_tool(
+        &self,
+        name: impl Into<String>,
+        arguments: JsonObject,
+    ) -> McpClientResult<CallToolResult> {
+        let mut envelope = JsonObject::new();
+        envelope.insert("name".into(), Value::String(name.into()));
+        envelope.insert("arguments".into(), Value::Object(arguments));
+        self.call_tool("tempera_call", envelope).await
+    }
+
+    /// List all resources with bounded pagination.
+    pub async fn list_resources(&self) -> McpClientResult<Vec<Resource>> {
+        let mut values = Vec::new();
+        let mut cursor = None;
+        let mut seen = BTreeSet::new();
+        for _ in 0..self.max_pages {
+            let result = self
+                .service
+                .list_resources(
+                    cursor.map(|value| PaginatedRequestParams::default().with_cursor(Some(value))),
+                )
+                .await
+                .map_err(McpClientError::new)?;
+            extend_bounded(
+                &mut values,
+                result.resources,
+                self.max_items,
+                "resources/list",
+            )?;
+            match next_page_cursor(result.next_cursor, &mut seen, "resources/list")? {
+                None => return Ok(values),
+                Some(next) => cursor = Some(next),
+            }
+        }
+        Err(McpClientError::new(format!(
+            "resources/list exceeded {} pages",
+            self.max_pages
+        )))
+    }
+
+    /// Read a composed resource URI.
+    pub async fn read_resource(
+        &self,
+        uri: impl Into<String>,
+    ) -> McpClientResult<ReadResourceResult> {
+        self.service
+            .read_resource(ReadResourceRequestParams::new(uri))
+            .await
+            .map_err(McpClientError::new)
+    }
+
+    /// List all prompts with bounded pagination.
+    pub async fn list_prompts(&self) -> McpClientResult<Vec<Prompt>> {
+        let mut values = Vec::new();
+        let mut cursor = None;
+        let mut seen = BTreeSet::new();
+        for _ in 0..self.max_pages {
+            let result = self
+                .service
+                .list_prompts(
+                    cursor.map(|value| PaginatedRequestParams::default().with_cursor(Some(value))),
+                )
+                .await
+                .map_err(McpClientError::new)?;
+            extend_bounded(&mut values, result.prompts, self.max_items, "prompts/list")?;
+            match next_page_cursor(result.next_cursor, &mut seen, "prompts/list")? {
+                None => return Ok(values),
+                Some(next) => cursor = Some(next),
+            }
+        }
+        Err(McpClientError::new(format!(
+            "prompts/list exceeded {} pages",
+            self.max_pages
+        )))
+    }
+
+    /// Resolve a prompt by name.
+    pub async fn get_prompt(
+        &self,
+        name: impl Into<String>,
+        arguments: JsonObject,
+    ) -> McpClientResult<GetPromptResult> {
+        self.service
+            .get_prompt(GetPromptRequestParams::new(name).with_arguments(arguments))
+            .await
+            .map_err(McpClientError::new)
+    }
+
+    /// Fetch identity and workspace claims through the gateway builtin.
+    pub async fn whoami(&self) -> McpClientResult<CallToolResult> {
+        self.call_tool("tempera_whoami", JsonObject::new()).await
+    }
+
+    /// Fetch catalog hashes, token metrics, and upstream circuit state.
+    pub async fn status(&self) -> McpClientResult<CallToolResult> {
+        self.call_tool("tempera_status", JsonObject::new()).await
+    }
+
+    /// Close the MCP session and stop the transport worker.
+    pub async fn close(self) -> McpClientResult<()> {
+        self.service
+            .cancel()
+            .await
+            .map(|_| ())
+            .map_err(McpClientError::new)
+    }
+}
+
+fn next_page_cursor(
+    next_cursor: Option<String>,
+    seen: &mut BTreeSet<String>,
+    method: &str,
+) -> McpClientResult<Option<String>> {
+    match next_cursor {
+        None => Ok(None),
+        Some(next) if next.is_empty() => Err(McpClientError::new(format!(
+            "{method} returned an invalid nextCursor"
+        ))),
+        Some(next) if !seen.insert(next.clone()) => Err(McpClientError::new(format!(
+            "{method} repeated a pagination cursor"
+        ))),
+        Some(next) => Ok(Some(next)),
+    }
+}
+
+fn extend_bounded<T>(
+    values: &mut Vec<T>,
+    page: Vec<T>,
+    max_items: usize,
+    method: &str,
+) -> McpClientResult<()> {
+    if page.len() > max_items.saturating_sub(values.len()) {
+        return Err(McpClientError::new(format!(
+            "{method} exceeded {max_items} items"
+        )));
+    }
+    values.extend(page);
+    Ok(())
+}
 
 /// Builds JSON-RPC 2.0 request bodies for the MCP gateway with monotonically
 /// increasing request ids. Each `*_body` method returns `(id, body)` so the
@@ -62,8 +434,7 @@ impl McpRequestBuilder {
         )
     }
 
-    /// Body for `tools/list`: list every tool the gateway offers, builtins
-    /// plus namespaced product tools.
+    /// Body for `tools/list`: list the tools currently exposed by the gateway mode.
     pub fn list_tools_body(&mut self) -> (i64, String) {
         let id = self.take_id();
         (
@@ -161,14 +532,33 @@ mod tests {
     use crate::surface::MCP_ERROR_PLAN_LIMIT;
 
     #[test]
+    fn pagination_rejects_empty_and_repeated_cursors() {
+        let mut seen = BTreeSet::new();
+        assert!(next_page_cursor(Some(String::new()), &mut seen, "tools/list").is_err());
+        assert_eq!(
+            next_page_cursor(Some("next".into()), &mut seen, "tools/list").expect("first cursor"),
+            Some("next".into())
+        );
+        assert!(next_page_cursor(Some("next".into()), &mut seen, "tools/list").is_err());
+    }
+
+    #[test]
+    fn client_options_debug_redacts_the_bearer() {
+        let options = McpClientOptions::new("https://api.tempera.dev/mcp", "secret-token");
+        let rendered = format!("{options:?}");
+        assert!(rendered.contains("<redacted>"));
+        assert!(!rendered.contains("secret-token"));
+    }
+
+    #[test]
     fn initialize_and_ping_bodies_are_exact_and_ids_increment() {
         let mut builder = McpRequestBuilder::new();
 
-        let (id, body) = builder.initialize_body("tempera-sdk", "0.3.0");
+        let (id, body) = builder.initialize_body("tempera-sdk", "0.4.0");
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.3.0\"}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-11-25\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.4.0\"}}}"
         );
 
         let (id, body) = builder.ping_body();
@@ -249,17 +639,42 @@ mod tests {
         // error; non-object shapes become code 0 with their string form.
         assert_eq!(
             parse_mcp_error(r#"{"error":"nope"}"#),
-            Some(McpError { code: 0, message: "nope".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "nope".to_string()
+            })
         );
         // An error object without an integer code keeps its message, code 0.
         assert_eq!(
             parse_mcp_error(r#"{"error":{"code":"x","message":"m"}}"#),
-            Some(McpError { code: 0, message: "m".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "m".to_string()
+            })
         );
         // An error object with neither code nor message gets the shared label.
         assert_eq!(
             parse_mcp_error(r#"{"error":{}}"#),
-            Some(McpError { code: 0, message: "MCP error".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "MCP error".to_string()
+            })
         );
+    }
+
+    #[test]
+    fn live_client_defaults_bound_pagination() {
+        let options = McpClientOptions::new("https://api.tempera.dev/mcp", "token");
+        assert_eq!(options.max_pages, 100);
+        assert_eq!(options.max_items, 10_000);
+    }
+
+    #[test]
+    fn bounded_extension_rejects_catalog_overflow() {
+        let mut values = vec![1_u8];
+        let error = extend_bounded(&mut values, vec![2, 3], 2, "tools/list")
+            .expect_err("catalog must be bounded");
+        assert_eq!(error.to_string(), "tools/list exceeded 2 items");
+        assert_eq!(values, vec![1]);
     }
 }

@@ -152,6 +152,17 @@ export type TemperaMcpClientOptions = {
   auth?: TemperaAuth;
   bearer?: string;
   fetch?: typeof fetch;
+  protocolVersion?: string;
+  timeoutMs?: number;
+  maxPages?: number;
+  maxItems?: number;
+  autoInitialize?: boolean;
+  clientInfo?: { name: string; version: string };
+};
+
+export type TemperaMcpRequestOptions = {
+  signal?: AbortSignal;
+  timeoutMs?: number;
 };
 
 export declare class TemperaMcpClient {
@@ -159,11 +170,37 @@ export declare class TemperaMcpClient {
   url: string;
   auth: TemperaAuth | null;
   bearer: string | null;
-  rpc(method: string, params?: unknown): Promise<unknown>;
-  initialize(clientInfo?: { name?: string; version?: string }): Promise<unknown>;
-  ping(): Promise<unknown>;
-  listTools(): Promise<unknown[]>;
-  callTool(name: string, args?: Record<string, unknown>): Promise<unknown>;
-  whoami(): Promise<unknown>;
-  status(): Promise<unknown>;
+  protocolVersion: string;
+  timeoutMs: number;
+  maxPages: number;
+  maxItems: number;
+  autoInitialize: boolean;
+  sessionId: string | null;
+  serverInfo: unknown;
+  initialized: boolean;
+  rpc(method: string, params?: unknown, options?: TemperaMcpRequestOptions): Promise<unknown>;
+  initialize(
+    clientInfo?: { name?: string; version?: string },
+    options?: TemperaMcpRequestOptions,
+  ): Promise<unknown>;
+  ping(options?: TemperaMcpRequestOptions): Promise<unknown>;
+  listTools(options?: TemperaMcpRequestOptions & { cursor?: string }): Promise<unknown[]>;
+  callTool(name: string, args?: Record<string, unknown>, options?: TemperaMcpRequestOptions): Promise<unknown>;
+  listResources(options?: TemperaMcpRequestOptions & { cursor?: string }): Promise<unknown[]>;
+  readResource(uri: string, options?: TemperaMcpRequestOptions): Promise<unknown>;
+  listPrompts(options?: TemperaMcpRequestOptions & { cursor?: string }): Promise<unknown[]>;
+  getPrompt(name: string, args?: Record<string, unknown>, options?: TemperaMcpRequestOptions): Promise<unknown>;
+  searchTools(
+    query: string,
+    options?: TemperaMcpRequestOptions & { server?: string; limit?: number; includeSchema?: boolean },
+  ): Promise<unknown>;
+  describeTool(name: string, options?: TemperaMcpRequestOptions): Promise<unknown>;
+  callDiscoveredTool(
+    name: string,
+    args?: Record<string, unknown>,
+    options?: TemperaMcpRequestOptions,
+  ): Promise<unknown>;
+  whoami(options?: TemperaMcpRequestOptions): Promise<unknown>;
+  status(options?: TemperaMcpRequestOptions): Promise<unknown>;
+  close(): Promise<void>;
 }

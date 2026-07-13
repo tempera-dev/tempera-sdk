@@ -116,10 +116,10 @@ const availableTraces = await client.palette.listTraces({ tenant_id: tenantId, l
 ```
 
 Python is the same surface in snake_case (`client.control_plane.discovery()`,
-`client.palette.list_traces(...)`); Rust builds `RequestSpec`s for your HTTP
-client (`client.build_request("palette", "list_traces", &params)`) since the
-crate ships no HTTP stack. Parameters use wire names (snake_case) in every
-language.
+`client.palette.list_traces(...)`). Rust builds `RequestSpec`s for product REST
+calls (`client.build_request("palette", "list_traces", &params)`) and includes
+an official-SDK-backed `TemperaMcpClient` for session-aware MCP. Parameters use
+wire names (snake_case) in every language.
 
 ## Errors
 
@@ -138,10 +138,11 @@ tools (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`).
 ```js
 import { TemperaMcpClient } from "@tempera/sdk";
 const mcp = new TemperaMcpClient({ auth });   // url derives as ${issuer}/mcp
-await mcp.initialize();
-const tools = await mcp.listTools();
-await mcp.callTool("cradle_get_capabilities");
+const tools = await mcp.listTools();           // initializes automatically
+await mcp.searchTools("cradle capabilities");
+await mcp.callDiscoveredTool("cradle_get_capabilities");
 console.log(await mcp.whoami());
+await mcp.close();
 ```
 
 ## Documentation
