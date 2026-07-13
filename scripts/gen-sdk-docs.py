@@ -273,7 +273,8 @@ def render_index(surface: dict) -> str:
         "The Tempera SDK exposes **one uniform surface in three languages** — TypeScript",
         "(`@tempera/sdk`), Python (`tempera-sdk`), and Rust (`tempera-sdk`). The primary",
         "workflow connects the control plane, Tempo browser sessions, Human Data review,",
-        "and Palette measurement. A single manifest, `surface.json`, also preserves the",
+        "and Palette measurement through an onboarding-provisioned integration and",
+        "correlation path. A single manifest, `surface.json`, also preserves the",
         "full versioned private contract inventory so the packages and reference docs cannot",
         "drift apart.",
         "",
@@ -283,10 +284,14 @@ def render_index(surface: dict) -> str:
         "## The browser-agent quality loop",
         "",
         "1. **Control plane** — authenticate and select the provisioned workspace.",
-        "2. **Tempo** — run a browser session and capture its trace.",
-        "3. **Human Data** — reviewers inspect the trace, record a decision, and return a",
-        "   candidate case to the quality loop.",
-        "4. **Palette** — inspect traces and measure the resulting agent behavior.",
+        "2. **Tempo** — run and record the browser session.",
+        "3. **Human Data** — review the provisioned session and trace evidence, record a",
+        "   decision, and return a candidate case to the quality loop.",
+        "4. **Palette** — hold and measure the corresponding trace.",
+        "",
+        "Tempo session creation and Palette evidence are separate contracts. A Tempo",
+        "session does not by itself prove a Palette trace exists; onboarding supplies the",
+        "integration and correlation path for corresponding Palette evidence.",
         "",
         "Human Data is currently a provisioned review workflow, not a published typed SDK",
         "operation. The SDK does not claim a public Human Data HTTP path.",
@@ -295,8 +300,9 @@ def render_index(surface: dict) -> str:
         "",
         "After private onboarding, authenticate with the issuer and API key supplied for",
         "your workspace, then connect the typed parts of the loop. These examples start",
-        "with the staging preset; your provisioned Human Data workflow handles the review",
-        "step between Tempo capture and Palette measurement.",
+        "with the staging preset. The examples call each typed surface independently; your",
+        "onboarding-provisioned integration correlates the Tempo session with any",
+        "corresponding Palette evidence for Human Data review.",
         "",
     ]
     ts_code = (
@@ -316,8 +322,10 @@ def render_index(surface: dict) -> str:
         "\n"
         "const issuerMetadata = await client.controlPlane.discovery();\n"
         'const session = await client.tempo.createSession({ url: "https://example.com" });\n'
-        "// Human Data review runs through the workflow provisioned for this workspace.\n"
-        "const traces = await client.palette.listTraces({\n"
+        "// Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "// the integration and correlation path for the corresponding Palette evidence.\n"
+        "// Human Data reviews the provisioned session and trace evidence.\n"
+        "const availableTraces = await client.palette.listTraces({\n"
         "  tenant_id: tenantId,\n"
         "  limit: 20,\n"
         "});"
@@ -335,8 +343,10 @@ def render_index(surface: dict) -> str:
         "\n"
         "issuer_metadata = client.control_plane.discovery()\n"
         'session = client.tempo.create_session({"url": "https://example.com"})\n'
-        "# Human Data review runs through the workflow provisioned for this workspace.\n"
-        'traces = client.palette.list_traces({"tenant_id": os.environ["TEMPERA_TENANT_ID"], "limit": 20})'
+        "# Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "# the integration and correlation path for the corresponding Palette evidence.\n"
+        "# Human Data reviews the provisioned session and trace evidence.\n"
+        'available_traces = client.palette.list_traces({"tenant_id": os.environ["TEMPERA_TENANT_ID"], "limit": 20})'
     )
     rust_code = (
         "// Crate access and environment values are supplied during onboarding.\n"
@@ -356,8 +366,10 @@ def render_index(surface: dict) -> str:
         '    "create_session",\n'
         '    &[("url", "https://example.com".into())],\n'
         ")?;\n"
-        "// Human Data review runs through the workflow provisioned for this workspace.\n"
-        "let traces = client.build_request(\n"
+        "// Session creation does not prove a Palette trace exists. Onboarding supplies\n"
+        "// the integration and correlation path for the corresponding Palette evidence.\n"
+        "// Human Data reviews the provisioned session and trace evidence.\n"
+        "let available_traces = client.build_request(\n"
         '    "palette",\n'
         '    "list_traces",\n'
         '    &[("tenant_id", tenant_id.into()), ("limit", 20i64.into())],\n'
@@ -1075,6 +1087,9 @@ def validate_site(surface: dict, files: dict[str, str]) -> None:
         assert raw_route_marker not in registry_page, (
             "registry-only docs must not invent a copyable raw route without a tested contract"
         )
+    assert "does not by itself prove a Palette trace exists" in files["index.mdx"], (
+        "overview must keep the Tempo-session/Palette-evidence boundary explicit"
+    )
     forbidden_public_examples = [
         'issuerUrl: "https://api.tempera.dev"',
         'issuer_url="https://api.tempera.dev"',

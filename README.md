@@ -2,9 +2,12 @@
 
 One versioned SDK contract in TypeScript, Python, and Rust. The primary product
 story is a browser-agent quality loop: the control plane provisions access,
-Tempo captures a browser session, Human Data records human review, and Palette
-measures the result. A single manifest, [`surface.json`](./surface.json), keeps
-that workflow and the full private contract inventory aligned across languages.
+Tempo runs and records a browser session, Human Data reviews the provisioned
+session and trace evidence, and Palette holds and measures the corresponding
+trace. The onboarding-provisioned integration supplies the correlation path; a
+Tempo session does not by itself prove a Palette trace exists. A single manifest,
+[`surface.json`](./surface.json), keeps that workflow and the full private
+contract inventory aligned across languages.
 
 ## Access status
 
@@ -23,7 +26,7 @@ generally available or that the control plane is production-ready.
 |---|---|---|---|
 | `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 38 | account tokens |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
-| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect browser-session traces, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
+| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
 | `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 15 | `palette` |
 
 Human Data is a provisioned review workflow, not a published raw HTTP route.
@@ -101,13 +104,15 @@ const client = createTemperaClient({
 // Control plane: confirm the provisioned issuer contract.
 const issuerMetadata = await client.controlPlane.discovery();
 
-// Tempo captures the browser session.
+// Tempo runs and records the browser session.
 const session = await client.tempo.createSession({ url: "https://example.com" });
 
-// Human Data review runs through the workflow provisioned for this workspace.
+// Session creation does not prove a Palette trace exists. Onboarding supplies
+// the integration and correlation path for the corresponding Palette evidence.
+// Human Data reviews the provisioned session and trace evidence.
 
-// Palette measures the browser-agent trace and resulting quality loop.
-const traces = await client.palette.listTraces({ tenant_id: tenantId, limit: 20 });
+// Palette holds and measures traces available for this tenant.
+const availableTraces = await client.palette.listTraces({ tenant_id: tenantId, limit: 20 });
 ```
 
 Python is the same surface in snake_case (`client.control_plane.discovery()`,

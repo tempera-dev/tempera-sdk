@@ -8,7 +8,8 @@ description: "One SDK for the browser-agent quality loop, with a versioned priva
 The Tempera SDK exposes **one uniform surface in three languages** — TypeScript
 (`@tempera/sdk`), Python (`tempera-sdk`), and Rust (`tempera-sdk`). The primary
 workflow connects the control plane, Tempo browser sessions, Human Data review,
-and Palette measurement. A single manifest, `surface.json`, also preserves the
+and Palette measurement through an onboarding-provisioned integration and
+correlation path. A single manifest, `surface.json`, also preserves the
 full versioned private contract inventory so the packages and reference docs cannot
 drift apart.
 
@@ -19,10 +20,14 @@ drift apart.
 ## The browser-agent quality loop
 
 1. **Control plane** — authenticate and select the provisioned workspace.
-2. **Tempo** — run a browser session and capture its trace.
-3. **Human Data** — reviewers inspect the trace, record a decision, and return a
-   candidate case to the quality loop.
-4. **Palette** — inspect traces and measure the resulting agent behavior.
+2. **Tempo** — run and record the browser session.
+3. **Human Data** — review the provisioned session and trace evidence, record a
+   decision, and return a candidate case to the quality loop.
+4. **Palette** — hold and measure the corresponding trace.
+
+Tempo session creation and Palette evidence are separate contracts. A Tempo
+session does not by itself prove a Palette trace exists; onboarding supplies the
+integration and correlation path for corresponding Palette evidence.
 
 Human Data is currently a provisioned review workflow, not a published typed SDK
 operation. The SDK does not claim a public Human Data HTTP path.
@@ -31,8 +36,9 @@ operation. The SDK does not claim a public Human Data HTTP path.
 
 After private onboarding, authenticate with the issuer and API key supplied for
 your workspace, then connect the typed parts of the loop. These examples start
-with the staging preset; your provisioned Human Data workflow handles the review
-step between Tempo capture and Palette measurement.
+with the staging preset. The examples call each typed surface independently; your
+onboarding-provisioned integration correlates the Tempo session with any
+corresponding Palette evidence for Human Data review.
 
 <CodeGroup>
 
@@ -53,8 +59,10 @@ const client = createTemperaClient({ auth, environment: "staging" });
 
 const issuerMetadata = await client.controlPlane.discovery();
 const session = await client.tempo.createSession({ url: "https://example.com" });
-// Human Data review runs through the workflow provisioned for this workspace.
-const traces = await client.palette.listTraces({
+// Session creation does not prove a Palette trace exists. Onboarding supplies
+// the integration and correlation path for the corresponding Palette evidence.
+// Human Data reviews the provisioned session and trace evidence.
+const availableTraces = await client.palette.listTraces({
   tenant_id: tenantId,
   limit: 20,
 });
@@ -73,8 +81,10 @@ client = TemperaClient(auth=auth, environment="staging")
 
 issuer_metadata = client.control_plane.discovery()
 session = client.tempo.create_session({"url": "https://example.com"})
-# Human Data review runs through the workflow provisioned for this workspace.
-traces = client.palette.list_traces({"tenant_id": os.environ["TEMPERA_TENANT_ID"], "limit": 20})
+# Session creation does not prove a Palette trace exists. Onboarding supplies
+# the integration and correlation path for the corresponding Palette evidence.
+# Human Data reviews the provisioned session and trace evidence.
+available_traces = client.palette.list_traces({"tenant_id": os.environ["TEMPERA_TENANT_ID"], "limit": 20})
 ```
 
 ```rust Rust
@@ -95,8 +105,10 @@ let session = client.build_request(
     "create_session",
     &[("url", "https://example.com".into())],
 )?;
-// Human Data review runs through the workflow provisioned for this workspace.
-let traces = client.build_request(
+// Session creation does not prove a Palette trace exists. Onboarding supplies
+// the integration and correlation path for the corresponding Palette evidence.
+// Human Data reviews the provisioned session and trace evidence.
+let available_traces = client.build_request(
     "palette",
     "list_traces",
     &[("tenant_id", tenant_id.into()), ("limit", 20i64.into())],
@@ -120,7 +132,7 @@ on what Tempera provisions for your workspace.
 |---|---|---|---|---|---|
 | [auth-hub](/products/control-plane) | — | `TEMPERA_CONTROL_PLANE_URL` | [auth-hub](https://github.com/tempera-dev/auth-hub) | 38 | Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API keys, billing, usage metering, and the unified MCP gateway. |
 | [tempo](/products/tempo) | `tempo` | `TEMPERA_TEMPO_URL` | [tempo](https://github.com/tempera-dev/tempo) | 18 | Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff. |
-| [human-data](/products/other-products) | `human-data` | `TEMPERA_HUMAN_DATA_URL` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | Browser-agent human review: reviewers inspect session traces, record decisions, and return candidate cases to the agent quality loop. Passthrough client only; no typed operations yet. |
+| [human-data](/products/other-products) | `human-data` | `TEMPERA_HUMAN_DATA_URL` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the agent quality loop. Passthrough client only; no typed operations yet. |
 | [palette](/products/palette) | `palette` | `TEMPERA_PALETTE_URL` | [palette](https://github.com/tempera-dev/palette) | 15 | Agent observability: trace and span ingestion, search, datasets, evals, experiments, gates, and human review. |
 
 ## Versioned private contract inventory
