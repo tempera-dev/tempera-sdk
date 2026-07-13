@@ -1,10 +1,10 @@
 # Tempera SDK
 
-One SDK, three languages, every Tempera product. The TypeScript, Python, and
-Rust packages expose the **same surface** — the same product registry, the
-same operation names and descriptions, the same error model — generated from
-a single manifest, [`surface.json`](./surface.json), and gated in CI so they
-cannot drift apart.
+One versioned SDK contract in TypeScript, Python, and Rust. The primary product
+story is a browser-agent quality loop: the control plane provisions access,
+Tempo captures a browser session, Human Data records human review, and Palette
+measures the result. A single manifest, [`surface.json`](./surface.json), keeps
+that workflow and the full private contract inventory aligned across languages.
 
 ## Access status
 
@@ -17,18 +17,30 @@ The `production` preset and `api.tempera.dev` entries remain part of the SDK's
 versioned target contract; their presence does not mean production access is
 generally available or that the control plane is production-ready.
 
-## Products
+## Primary browser-agent workflow
 
 | Client | Product | Typed operations | Audience |
 |---|---|---|---|
 | `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 38 | account tokens |
-| `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 15 | `palette` |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
+| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect browser-session traces, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
+| `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 15 | `palette` |
+
+Human Data is a provisioned review workflow, not a published raw HTTP route.
+Use only the endpoint contract supplied during onboarding.
+
+## Versioned private contract inventory
+
+The SDK retains the following clients for compatibility and complete reference
+coverage. Their presence in the registry does not advertise public availability,
+a live hosted service, or an undocumented endpoint.
+
+| Client | Product | Typed operations | Audience |
+|---|---|---|---|
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 10 | `cradle` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
 | `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 19 | `data-engine` |
-| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) | passthrough | `human-data` |
-| `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough | — |
+| `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 Palette also ships seven fully generated per-language clients inside its own
 repo (`sdks/clients/`) covering all 55+ operations of its OpenAPI contract;
@@ -65,33 +77,40 @@ await auth.exchangeCode({ code, codeVerifier: verifier, redirectUri, audience: "
 await auth.refresh("tempo"); // rotation: stores the newly issued refresh token
 
 // Or headless: one tp_ API key covers every audience.
-const headless = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });
+const apiKey = process.env.TEMPERA_API_KEY;
+if (!apiKey) throw new Error("Missing provisioned TEMPERA_API_KEY");
+const headless = new TemperaAuth({ issuerUrl, apiKey });
 ```
 
-## The unified client
+## Browser-agent quickstart
 
 ```js
-const client = createTemperaClient({ auth, environment: "staging" });
+import { TemperaAuth, createTemperaClient } from "@tempera/sdk";
 
-// Control plane: login()/signup() store the account token automatically.
-await client.controlPlane.login({ email, password });
-const me = await client.controlPlane.me();
-const key = await client.controlPlane.createApiKey({
-  scopes: ["trace:write"], audience: "palette",
-  org_id: me.org_id, project_id: me.project_id, environment_id: me.environment_id,
+const issuerUrl = process.env.TEMPERA_ISSUER_URL;
+const apiKey = process.env.TEMPERA_API_KEY;
+const tenantId = process.env.TEMPERA_TENANT_ID;
+if (!issuerUrl || !apiKey || !tenantId) {
+  throw new Error("Missing provisioned Tempera settings");
+}
+const client = createTemperaClient({
+  auth: new TemperaAuth({ issuerUrl, apiKey }),
+  environment: "staging",
 });
 
-// Products: the audience-matched bearer is attached automatically.
-await client.palette.listTraces({ tenant_id: me.org_id, limit: 20 });
-await client.tempo.createSession({ url: "https://example.com" });
-await client.cradle.execute({ lane: "wasm", source: "..." });
-await client.remi.remember({ tenant_id: me.org_id, project_id: "p1", kind: "fact", text: "..." });
+// Control plane: confirm the provisioned issuer contract.
+const issuerMetadata = await client.controlPlane.discovery();
 
-// Anything not covered by a typed operation:
-await client.tempo.request("/sessions/abc/observe");
+// Tempo captures the browser session.
+const session = await client.tempo.createSession({ url: "https://example.com" });
+
+// Human Data review runs through the workflow provisioned for this workspace.
+
+// Palette measures the browser-agent trace and resulting quality loop.
+const traces = await client.palette.listTraces({ tenant_id: tenantId, limit: 20 });
 ```
 
-Python is the same surface in snake_case (`client.control_plane.me()`,
+Python is the same surface in snake_case (`client.control_plane.discovery()`,
 `client.palette.list_traces(...)`); Rust builds `RequestSpec`s for your HTTP
 client (`client.build_request("palette", "list_traces", &params)`) since the
 crate ships no HTTP stack. Parameters use wire names (snake_case) in every

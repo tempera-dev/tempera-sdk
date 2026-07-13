@@ -139,7 +139,7 @@
       "envVar": "TEMPERA_HUMAN_DATA_URL",
       "audience": "human-data",
       "auth": "bearer minted for audience human-data or central tp_ API key",
-      "description": "Human data operations: expert annotation and review pipelines. Passthrough client only; no typed operations yet."
+      "description": "Browser-agent human review: reviewers inspect session traces, record decisions, and return candidate cases to the agent quality loop. Passthrough client only; no typed operations yet."
     },
     "tempJs": {
       "name": "temp.js",
