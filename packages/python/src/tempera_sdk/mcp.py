@@ -9,7 +9,7 @@ from typing import Any, Mapping
 from urllib import error as urllib_error
 from urllib import request as urllib_request
 
-from .auth import TemperaAuth, Transport, _default_transport, _parse_body
+from .auth import TemperaAuth, Transport, _default_transport, _encode_json, _parse_body
 from .errors import (
     TemperaApiError,
     TemperaMcpError,
@@ -150,7 +150,7 @@ class TemperaMcpClient:
 
     def _send(self, payload: Mapping[str, Any], operation: str, *, retry_session: bool = True) -> tuple[list[Mapping[str, Any]], Mapping[str, str]]:
         try:
-            response = self.transport("POST", self.url, self._headers(), json.dumps(payload).encode("utf-8"))
+            response = self.transport("POST", self.url, self._headers(), _encode_json(payload))
         except TemperaApiError as error:
             if error.status == 404 and self.session_id and retry_session and payload.get("method") != "initialize":
                 self.session_id = None

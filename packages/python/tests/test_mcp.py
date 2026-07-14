@@ -23,7 +23,7 @@ class GatewayTransport:
 
     def __call__(self, method, url, headers, data):
         request = json.loads(data) if data else None
-        self.calls.append({"method": method, "url": url, "headers": headers, "request": request})
+        self.calls.append({"method": method, "url": url, "headers": headers, "data": data, "request": request})
         if request and "id" not in request:
             return None
         return self.handler(request)
@@ -72,6 +72,16 @@ class McpClientTest(unittest.TestCase):
         self.assertEqual(transport.calls[1]["request"]["method"], "notifications/initialized")
         self.assertEqual(transport.calls[2]["request"]["method"], "ping")
         self.assertEqual(transport.calls[3]["request"]["method"], "tools/list")
+
+    def test_json_rpc_request_bodies_use_the_compact_wire_shape(self):
+        client, transport = gateway_client(
+            lambda request: {"jsonrpc": "2.0", "id": request["id"], "result": {}}
+        )
+        client.ping()
+        self.assertEqual(
+            transport.calls[0]["data"],
+            b'{"jsonrpc":"2.0","id":1,"method":"ping"}',
+        )
 
     def test_initialize_rejects_unsupported_negotiated_protocol_version(self):
         client, transport = gateway_client(
