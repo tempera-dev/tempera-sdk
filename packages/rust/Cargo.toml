@@ -10,9 +10,11 @@ path = "src/lib.rs"
 
 [dependencies]
 reqwest = { version = "0.13.2", default-features = false, features = ["rustls"] }
-rmcp = { version = "=2.2.0", git = "https://github.com/modelcontextprotocol/rust-sdk", rev = "3662d20ac27af34e96d6d7285031d54077a6d755", features = [
+rmcp = { version = "=2.2.0", git = "https://github.com/modelcontextprotocol/rust-sdk", rev = "3662d20ac27af34e96d6d7285031d54077a6d755", default-features = false, features = [
   "client",
   "transport-streamable-http-client-reqwest",
 ] }
 serde_json = "1.0"
+
+[dev-dependencies]
 tokio = { version = "1.47", features = ["macros", "rt-multi-thread"] }
