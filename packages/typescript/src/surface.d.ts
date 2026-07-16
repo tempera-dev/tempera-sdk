@@ -304,7 +304,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers. */
   enableDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified. */
+  /** Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified. */
   generateDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List installed descriptor-only environment definitions without claiming their execution lane is available. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

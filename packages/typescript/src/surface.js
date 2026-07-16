@@ -1821,11 +1821,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "domain_id"
       ],
       "query": [],
-      "body": [],
-      "requiredBody": [],
+      "body": [
+        "task_family",
+        "model_profile",
+        "artifact_names",
+        "seed",
+        "hard_budgets"
+      ],
+      "requiredBody": [
+        "task_family"
+      ],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified."
+      "description": "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified."
     },
     {
       "id": "listEnvironments",

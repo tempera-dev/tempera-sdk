@@ -1812,11 +1812,19 @@ OPERATIONS = {
                 "domain_id"
             ],
             "query": [],
-            "body": [],
-            "required_body": [],
+            "body": [
+                "task_family",
+                "model_profile",
+                "artifact_names",
+                "seed",
+                "hard_budgets"
+            ],
+            "required_body": [
+                "task_family"
+            ],
             "body_defaults": {},
             "scope": None,
-            "description": "Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified."
+            "description": "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified."
         },
         {
             "id": "list_environments",

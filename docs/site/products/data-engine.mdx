@@ -302,7 +302,7 @@ let spec = client.build_request("data_engine", "enable_domain", &[
 
 `POST /v1/projects/{project_id}/domains/{domain_id}:generate`
 
-Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified.
+Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified.
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.dataEngine.generateDomain()` · Python `client.data_engine.generate_domain()` · Rust `build_request("data_engine", "generate_domain", params)`
@@ -314,12 +314,25 @@ Request domain task generation through the approved worker boundary; the service
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 | `domain_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `task_family` | yes | — |
+| `model_profile` | no | — |
+| `artifact_names` | no | — |
+| `seed` | no | — |
+| `hard_budgets` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.dataEngine.generateDomain({
   project_id: "<project_id>",
   domain_id: "<domain_id>",
+  task_family: "<task_family>",
+  model_profile: "<model_profile>",
+  artifact_names: "<artifact_names>",
 });
 ```
 
@@ -327,6 +340,9 @@ const result = await client.dataEngine.generateDomain({
 result = client.data_engine.generate_domain({
     "project_id": "<project_id>",
     "domain_id": "<domain_id>",
+    "task_family": "<task_family>",
+    "model_profile": "<model_profile>",
+    "artifact_names": "<artifact_names>",
 })
 ```
 
@@ -334,6 +350,9 @@ result = client.data_engine.generate_domain({
 let spec = client.build_request("data_engine", "generate_domain", &[
     ("project_id", "<project_id>".into()),
     ("domain_id", "<domain_id>".into()),
+    ("task_family", "<task_family>".into()),
+    ("model_profile", "<model_profile>".into()),
+    ("artifact_names", "<artifact_names>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
