@@ -1853,6 +1853,54 @@ OPERATIONS = {
             "description": "Get one installed environment descriptor."
         },
         {
+            "id": "get_operation",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/operations/{operation_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "operation_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get an asynchronous data-engine operation and its current terminal state."
+        },
+        {
+            "id": "cancel_operation",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/operations/{operation_id}:cancel",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "operation_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers."
+        },
+        {
+            "id": "delete_operation",
+            "method": "DELETE",
+            "path": "/v1/projects/{project_id}/operations/{operation_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "operation_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Delete a completed data-engine operation; pass Idempotency-Key through operation headers."
+        },
+        {
             "id": "create_repository",
             "method": "POST",
             "path": "/v1/projects/{project_id}/repositories",

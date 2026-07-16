@@ -1862,6 +1862,54 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get one installed environment descriptor."
     },
     {
+      "id": "getOperation",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/operations/{operation_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "operation_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get an asynchronous data-engine operation and its current terminal state."
+    },
+    {
+      "id": "cancelOperation",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/operations/{operation_id}:cancel",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "operation_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers."
+    },
+    {
+      "id": "deleteOperation",
+      "method": "DELETE",
+      "path": "/v1/projects/{project_id}/operations/{operation_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "operation_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Delete a completed data-engine operation; pass Idempotency-Key through operation headers."
+    },
+    {
       "id": "createRepository",
       "method": "POST",
       "path": "/v1/projects/{project_id}/repositories",

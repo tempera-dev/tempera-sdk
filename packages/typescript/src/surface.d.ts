@@ -310,6 +310,12 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get one installed environment descriptor. */
   getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get an asynchronous data-engine operation and its current terminal state. */
+  getOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers. */
+  cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a completed data-engine operation; pass Idempotency-Key through operation headers. */
+  deleteOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Register a GitHub repository reference; pass Idempotency-Key through operation headers. */
   createRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List registered project repositories. */

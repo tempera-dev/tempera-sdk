@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 38 |
+| Typed operations | 41 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -429,6 +429,135 @@ result = client.data_engine.get_environment({
 let spec = client.build_request("data_engine", "get_environment", &[
     ("project_id", "<project_id>".into()),
     ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getOperation
+
+`GET /v1/projects/{project_id}/operations/{operation_id}`
+
+Get an asynchronous data-engine operation and its current terminal state.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getOperation()` · Python `client.data_engine.get_operation()` · Rust `build_request("data_engine", "get_operation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `operation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getOperation({
+  project_id: "<project_id>",
+  operation_id: "<operation_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_operation({
+    "project_id": "<project_id>",
+    "operation_id": "<operation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_operation", &[
+    ("project_id", "<project_id>".into()),
+    ("operation_id", "<operation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### cancelOperation
+
+`POST /v1/projects/{project_id}/operations/{operation_id}:cancel`
+
+Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.cancelOperation()` · Python `client.data_engine.cancel_operation()` · Rust `build_request("data_engine", "cancel_operation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `operation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.cancelOperation({
+  project_id: "<project_id>",
+  operation_id: "<operation_id>",
+});
+```
+
+```python Python
+result = client.data_engine.cancel_operation({
+    "project_id": "<project_id>",
+    "operation_id": "<operation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "cancel_operation", &[
+    ("project_id", "<project_id>".into()),
+    ("operation_id", "<operation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### deleteOperation
+
+`DELETE /v1/projects/{project_id}/operations/{operation_id}`
+
+Delete a completed data-engine operation; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.deleteOperation()` · Python `client.data_engine.delete_operation()` · Rust `build_request("data_engine", "delete_operation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `operation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.deleteOperation({
+  project_id: "<project_id>",
+  operation_id: "<operation_id>",
+});
+```
+
+```python Python
+result = client.data_engine.delete_operation({
+    "project_id": "<project_id>",
+    "operation_id": "<operation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "delete_operation", &[
+    ("project_id", "<project_id>".into()),
+    ("operation_id", "<operation_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
