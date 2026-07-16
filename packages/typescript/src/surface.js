@@ -1829,10 +1829,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "hard_budgets"
       ],
       "requiredBody": [
-        "task_family"
+        "task_family",
+        "hard_budgets"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified."
     },
     {

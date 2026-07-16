@@ -1635,9 +1635,9 @@ pub const OPERATIONS: &[OperationSpec] = &[
         path_params: &["project_id", "domain_id"],
         query: &[],
         body: &["task_family", "model_profile", "artifact_names", "seed", "hard_budgets"],
-        required_body: &["task_family"],
+        required_body: &["task_family", "hard_budgets"],
         body_defaults: &[],
-        scope: None,
+        scope: Some("eval:run"),
         description: "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified.",
     },
     OperationSpec {

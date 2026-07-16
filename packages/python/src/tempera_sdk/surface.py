@@ -1820,10 +1820,11 @@ OPERATIONS = {
                 "hard_budgets"
             ],
             "required_body": [
-                "task_family"
+                "task_family",
+                "hard_budgets"
             ],
             "body_defaults": {},
-            "scope": None,
+            "scope": "eval:run",
             "description": "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified."
         },
         {

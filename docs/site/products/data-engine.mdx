@@ -305,6 +305,7 @@ let spec = client.build_request("data_engine", "enable_domain", &[
 Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified.
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.generateDomain()` · Python `client.data_engine.generate_domain()` · Rust `build_request("data_engine", "generate_domain", params)`
 
 **Path parameters**
@@ -322,7 +323,7 @@ Request bounded domain task generation with brokered model-profile and artifact 
 | `model_profile` | no | — |
 | `artifact_names` | no | — |
 | `seed` | no | — |
-| `hard_budgets` | no | — |
+| `hard_budgets` | yes | — |
 
 <CodeGroup>
 
