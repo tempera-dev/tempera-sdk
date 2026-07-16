@@ -1853,6 +1853,215 @@ OPERATIONS = {
             "description": "Get one installed environment descriptor."
         },
         {
+            "id": "create_repository",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/repositories",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "provider",
+                "provider_repository_id",
+                "owner",
+                "repository",
+                "visibility",
+                "default_branch",
+                "connection_ref"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register a GitHub repository reference; pass Idempotency-Key through operation headers."
+        },
+        {
+            "id": "list_repositories",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/repositories",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List registered project repositories."
+        },
+        {
+            "id": "get_repository",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/repositories/{repository_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "repository_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get one repository reference and its current ETag."
+        },
+        {
+            "id": "patch_repository",
+            "method": "PATCH",
+            "path": "/v1/projects/{project_id}/repositories/{repository_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "repository_id"
+            ],
+            "query": [],
+            "body": [
+                "visibility",
+                "default_branch",
+                "connection_ref",
+                "resolved_contract_hash",
+                "update_mask"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers."
+        },
+        {
+            "id": "sync_repository",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/repositories/{repository_id}:sync",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "repository_id"
+            ],
+            "query": [],
+            "body": [
+                "ref",
+                "commit",
+                "snapshot"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Record a repository snapshot through the authenticated provider boundary; returns an operation."
+        },
+        {
+            "id": "generate_repository_tasks",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/repositories/{repository_id}:generate-tasks",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "repository_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured."
+        },
+        {
+            "id": "create_task_set",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/task-sets",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "task_set_id",
+                "repository",
+                "snapshot",
+                "tasks",
+                "status",
+                "publication_state",
+                "metadata"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Import an immutable worker-produced task set; pass Idempotency-Key through operation headers."
+        },
+        {
+            "id": "list_task_sets",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/task-sets",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List repository task sets and publication state."
+        },
+        {
+            "id": "get_task_set",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "task_set_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get one immutable repository task set and its current ETag."
+        },
+        {
+            "id": "list_task_set_tasks",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}/tasks",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "task_set_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List structurally distinct evaluation and backlog tasks in a task set."
+        },
+        {
+            "id": "publish_task_set",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}:publish",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "task_set_id"
+            ],
+            "query": [],
+            "body": [
+                "task_names"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers."
+        },
+        {
             "id": "list_use_cases",
             "method": "GET",
             "path": "/v1/projects/{project_id}/use-cases",

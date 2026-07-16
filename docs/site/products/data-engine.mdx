@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 27 |
+| Typed operations | 38 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -429,6 +429,589 @@ result = client.data_engine.get_environment({
 let spec = client.build_request("data_engine", "get_environment", &[
     ("project_id", "<project_id>".into()),
     ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createRepository
+
+`POST /v1/projects/{project_id}/repositories`
+
+Register a GitHub repository reference; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createRepository()` · Python `client.data_engine.create_repository()` · Rust `build_request("data_engine", "create_repository", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `provider` | no | — |
+| `provider_repository_id` | no | — |
+| `owner` | no | — |
+| `repository` | no | — |
+| `visibility` | no | — |
+| `default_branch` | no | — |
+| `connection_ref` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createRepository({
+  project_id: "<project_id>",
+  provider: "<provider>",
+  provider_repository_id: "<provider_repository_id>",
+  owner: "<owner>",
+});
+```
+
+```python Python
+result = client.data_engine.create_repository({
+    "project_id": "<project_id>",
+    "provider": "<provider>",
+    "provider_repository_id": "<provider_repository_id>",
+    "owner": "<owner>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_repository", &[
+    ("project_id", "<project_id>".into()),
+    ("provider", "<provider>".into()),
+    ("provider_repository_id", "<provider_repository_id>".into()),
+    ("owner", "<owner>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listRepositories
+
+`GET /v1/projects/{project_id}/repositories`
+
+List registered project repositories.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listRepositories()` · Python `client.data_engine.list_repositories()` · Rust `build_request("data_engine", "list_repositories", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listRepositories({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_repositories({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_repositories", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getRepository
+
+`GET /v1/projects/{project_id}/repositories/{repository_id}`
+
+Get one repository reference and its current ETag.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getRepository()` · Python `client.data_engine.get_repository()` · Rust `build_request("data_engine", "get_repository", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getRepository({
+  project_id: "<project_id>",
+  repository_id: "<repository_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_repository({
+    "project_id": "<project_id>",
+    "repository_id": "<repository_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_repository", &[
+    ("project_id", "<project_id>".into()),
+    ("repository_id", "<repository_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### patchRepository
+
+`PATCH /v1/projects/{project_id}/repositories/{repository_id}`
+
+Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.patchRepository()` · Python `client.data_engine.patch_repository()` · Rust `build_request("data_engine", "patch_repository", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `visibility` | no | — |
+| `default_branch` | no | — |
+| `connection_ref` | no | — |
+| `resolved_contract_hash` | no | — |
+| `update_mask` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.patchRepository({
+  project_id: "<project_id>",
+  repository_id: "<repository_id>",
+  visibility: "<visibility>",
+  default_branch: "<default_branch>",
+  connection_ref: "<connection_ref>",
+});
+```
+
+```python Python
+result = client.data_engine.patch_repository({
+    "project_id": "<project_id>",
+    "repository_id": "<repository_id>",
+    "visibility": "<visibility>",
+    "default_branch": "<default_branch>",
+    "connection_ref": "<connection_ref>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "patch_repository", &[
+    ("project_id", "<project_id>".into()),
+    ("repository_id", "<repository_id>".into()),
+    ("visibility", "<visibility>".into()),
+    ("default_branch", "<default_branch>".into()),
+    ("connection_ref", "<connection_ref>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### syncRepository
+
+`POST /v1/projects/{project_id}/repositories/{repository_id}:sync`
+
+Record a repository snapshot through the authenticated provider boundary; returns an operation.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.syncRepository()` · Python `client.data_engine.sync_repository()` · Rust `build_request("data_engine", "sync_repository", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `ref` | no | — |
+| `commit` | no | — |
+| `snapshot` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.syncRepository({
+  project_id: "<project_id>",
+  repository_id: "<repository_id>",
+  ref: "<ref>",
+  commit: "<commit>",
+  snapshot: "<snapshot>",
+});
+```
+
+```python Python
+result = client.data_engine.sync_repository({
+    "project_id": "<project_id>",
+    "repository_id": "<repository_id>",
+    "ref": "<ref>",
+    "commit": "<commit>",
+    "snapshot": "<snapshot>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "sync_repository", &[
+    ("project_id", "<project_id>".into()),
+    ("repository_id", "<repository_id>".into()),
+    ("ref", "<ref>".into()),
+    ("commit", "<commit>".into()),
+    ("snapshot", "<snapshot>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### generateRepositoryTasks
+
+`POST /v1/projects/{project_id}/repositories/{repository_id}:generate-tasks`
+
+Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.generateRepositoryTasks()` · Python `client.data_engine.generate_repository_tasks()` · Rust `build_request("data_engine", "generate_repository_tasks", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.generateRepositoryTasks({
+  project_id: "<project_id>",
+  repository_id: "<repository_id>",
+});
+```
+
+```python Python
+result = client.data_engine.generate_repository_tasks({
+    "project_id": "<project_id>",
+    "repository_id": "<repository_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "generate_repository_tasks", &[
+    ("project_id", "<project_id>".into()),
+    ("repository_id", "<repository_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createTaskSet
+
+`POST /v1/projects/{project_id}/task-sets`
+
+Import an immutable worker-produced task set; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createTaskSet()` · Python `client.data_engine.create_task_set()` · Rust `build_request("data_engine", "create_task_set", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `task_set_id` | no | — |
+| `repository` | no | — |
+| `snapshot` | no | — |
+| `tasks` | no | — |
+| `status` | no | — |
+| `publication_state` | no | — |
+| `metadata` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createTaskSet({
+  project_id: "<project_id>",
+  task_set_id: "<task_set_id>",
+  repository: "<repository>",
+  snapshot: "<snapshot>",
+});
+```
+
+```python Python
+result = client.data_engine.create_task_set({
+    "project_id": "<project_id>",
+    "task_set_id": "<task_set_id>",
+    "repository": "<repository>",
+    "snapshot": "<snapshot>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_task_set", &[
+    ("project_id", "<project_id>".into()),
+    ("task_set_id", "<task_set_id>".into()),
+    ("repository", "<repository>".into()),
+    ("snapshot", "<snapshot>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listTaskSets
+
+`GET /v1/projects/{project_id}/task-sets`
+
+List repository task sets and publication state.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listTaskSets()` · Python `client.data_engine.list_task_sets()` · Rust `build_request("data_engine", "list_task_sets", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listTaskSets({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_task_sets({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_task_sets", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getTaskSet
+
+`GET /v1/projects/{project_id}/task-sets/{task_set_id}`
+
+Get one immutable repository task set and its current ETag.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getTaskSet()` · Python `client.data_engine.get_task_set()` · Rust `build_request("data_engine", "get_task_set", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `task_set_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getTaskSet({
+  project_id: "<project_id>",
+  task_set_id: "<task_set_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_task_set({
+    "project_id": "<project_id>",
+    "task_set_id": "<task_set_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_task_set", &[
+    ("project_id", "<project_id>".into()),
+    ("task_set_id", "<task_set_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listTaskSetTasks
+
+`GET /v1/projects/{project_id}/task-sets/{task_set_id}/tasks`
+
+List structurally distinct evaluation and backlog tasks in a task set.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listTaskSetTasks()` · Python `client.data_engine.list_task_set_tasks()` · Rust `build_request("data_engine", "list_task_set_tasks", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `task_set_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listTaskSetTasks({
+  project_id: "<project_id>",
+  task_set_id: "<task_set_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_task_set_tasks({
+    "project_id": "<project_id>",
+    "task_set_id": "<task_set_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_task_set_tasks", &[
+    ("project_id", "<project_id>".into()),
+    ("task_set_id", "<task_set_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### publishTaskSet
+
+`POST /v1/projects/{project_id}/task-sets/{task_set_id}:publish`
+
+Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.publishTaskSet()` · Python `client.data_engine.publish_task_set()` · Rust `build_request("data_engine", "publish_task_set", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `task_set_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `task_names` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.publishTaskSet({
+  project_id: "<project_id>",
+  task_set_id: "<task_set_id>",
+  task_names: "<task_names>",
+});
+```
+
+```python Python
+result = client.data_engine.publish_task_set({
+    "project_id": "<project_id>",
+    "task_set_id": "<task_set_id>",
+    "task_names": "<task_names>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "publish_task_set", &[
+    ("project_id", "<project_id>".into()),
+    ("task_set_id", "<task_set_id>".into()),
+    ("task_names", "<task_names>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

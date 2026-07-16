@@ -310,6 +310,28 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get one installed environment descriptor. */
   getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register a GitHub repository reference; pass Idempotency-Key through operation headers. */
+  createRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List registered project repositories. */
+  listRepositories(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one repository reference and its current ETag. */
+  getRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers. */
+  patchRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record a repository snapshot through the authenticated provider boundary; returns an operation. */
+  syncRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured. */
+  generateRepositoryTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import an immutable worker-produced task set; pass Idempotency-Key through operation headers. */
+  createTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List repository task sets and publication state. */
+  listTaskSets(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one immutable repository task set and its current ETag. */
+  getTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List structurally distinct evaluation and backlog tasks in a task set. */
+  listTaskSetTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers. */
+  publishTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the MVP use-case templates (data products and pipeline templates) for a project. */
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
