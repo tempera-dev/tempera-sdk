@@ -16,6 +16,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["controlPlane"]["repository"], "https://github.com/tempera-dev/auth-hub")
         self.assertEqual(PRODUCTS["palette"]["repository"], "https://github.com/tempera-dev/palette")
         self.assertEqual(PRODUCTS["tempo"]["repository"], "https://github.com/tempera-dev/tempo")
+        self.assertEqual(PRODUCTS["temperaCode"]["repository"], "https://github.com/tempera-dev/tempera-code")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
         self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
@@ -32,11 +33,12 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("tempera-mcp", AUDIENCES)
         self.assertIn("human-data", AUDIENCES)
         self.assertIn("data-engine", AUDIENCES)
+        self.assertIn("tempera-code", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
             list(SCOPES),
-            ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "admin"],
+            ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "model:read", "model:invoke", "admin"],
         )
 
     def test_all_four_environments_carry_the_same_target_keys(self):
@@ -49,6 +51,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(ENVIRONMENTS["production"]["mcpGatewayUrl"], "https://api.tempera.dev/mcp")
         self.assertEqual(ENVIRONMENTS["production"]["paletteMcpUrl"], "https://mcp.tempera.dev/mcp")
         self.assertEqual(ENVIRONMENTS["production"]["tempoApiUrl"], "https://tempo.tempera.dev")
+        self.assertEqual(ENVIRONMENTS["production"]["temperaCodeApiUrl"], "https://code-api.tempera.dev")
         # Deprecated alias points at the same object.
         self.assertIs(API_TARGETS, ENVIRONMENTS)
 

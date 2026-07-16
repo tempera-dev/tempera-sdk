@@ -13,13 +13,14 @@ use crate::surface::{AUTHORIZE_PATH, MCP_PATH, REVOKE_PATH, TOKEN_PATH};
 pub use crate::surface::{AUDIENCES, DEFAULT_AUDIENCE};
 
 /// Compat table: product key -> (token audience, base-URL env var) for the
-/// four audience-bearing core products. The authoritative source is
+/// audience-bearing core products. The authoritative source is
 /// [`crate::surface::PRODUCTS`] (`ProductSpec::audience` / `env_var`), which
 /// also covers `human-data` and the passthrough products; prefer
 /// [`crate::surface::find_product`].
 pub const PRODUCT_AUDIENCES: &[(&str, &str, &str)] = &[
     ("palette", "palette", "TEMPERA_PALETTE_URL"),
     ("tempo", "tempo", "TEMPERA_TEMPO_URL"),
+    ("tempera_code", "tempera-code", "TEMPERA_CODE_GATEWAY_URL"),
     ("cradle", "cradle", "TEMPERA_CRADLE_URL"),
     ("remi", "remi", "TEMPERA_REMI_URL"),
 ];

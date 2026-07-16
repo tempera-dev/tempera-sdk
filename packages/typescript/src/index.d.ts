@@ -11,6 +11,7 @@ import type {
   PaletteClient,
   PassthroughClient,
   RemiClient,
+  TemperaCodeClient,
   TemperaAudience,
   TemperaEnvironment,
   TemperaProductKey,
@@ -131,6 +132,7 @@ export type TemperaClient = {
   controlPlane: ControlPlaneClient;
   palette: PaletteClient;
   tempo: TempoClient;
+  temperaCode: TemperaCodeClient;
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;

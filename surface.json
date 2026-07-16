@@ -10,7 +10,7 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp"],
+  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -20,6 +20,8 @@
     "dataset:write",
     "eval:run",
     "pii:unmask",
+    "model:read",
+    "model:invoke",
     "admin"
   ],
   "environments": {
@@ -29,6 +31,7 @@
       "authIssuerUrl": "http://localhost:8787",
       "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
       "mcpGatewayUrl": "http://localhost:8787/mcp",
+      "temperaCodeApiUrl": "http://127.0.0.1:8789",
       "paletteApiUrl": "http://localhost:8080",
       "paletteMcpUrl": "http://localhost:8080/mcp",
       "tempoApiUrl": "http://localhost:7878"
@@ -39,6 +42,7 @@
       "authIssuerUrl": "https://preview-api.tempera.dev",
       "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
+      "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
       "paletteApiUrl": "https://preview-mcp.tempera.dev",
       "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -49,6 +53,7 @@
       "authIssuerUrl": "https://staging-api.tempera.dev",
       "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
+      "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
       "paletteApiUrl": "https://staging-mcp.tempera.dev",
       "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -59,6 +64,7 @@
       "authIssuerUrl": "https://api.tempera.dev",
       "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://api.tempera.dev/mcp",
+      "temperaCodeApiUrl": "https://code-api.tempera.dev",
       "paletteApiUrl": "https://mcp.tempera.dev",
       "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://tempo.tempera.dev"
@@ -108,6 +114,14 @@
       "audience": "tempo",
       "auth": "bearer minted for audience tempo, central tp_ API key, or the tempod static token",
       "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
+    },
+    "temperaCode": {
+      "name": "Tempera Code",
+      "repository": "https://github.com/tempera-dev/tempera-code",
+      "envVar": "TEMPERA_CODE_GATEWAY_URL",
+      "audience": "tempera-code",
+      "auth": "bearer minted for audience tempera-code with model:read/model:invoke, or a central tp_ API key",
+      "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
     },
     "cradle": {
       "name": "cradle",
@@ -243,6 +257,11 @@
       { "id": "cancelRun", "method": "POST", "path": "/runs/{run_id}/cancel", "auth": "product", "pathParams": ["run_id"], "description": "Cancel an agent run." },
       { "id": "resumeRun", "method": "POST", "path": "/runs/{run_id}/resume", "auth": "product", "pathParams": ["run_id"], "description": "Resume an agent run after a human handoff completes." },
       { "id": "grantConfirmation", "method": "POST", "path": "/sessions/{session_id}/confirmations/{confirmation_id}", "auth": "product", "pathParams": ["session_id", "confirmation_id"], "description": "Grant a pending policy confirmation and receive a single-use grant token." }
+    ],
+    "temperaCode": [
+      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check Tempera Code gateway liveness." },
+      { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the entitled Tempera Code hosted model catalog." },
+      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "instructions", "stream", "reasoning", "tools", "text"], "scope": "model:invoke", "description": "Create a Responses-compatible inference request through the Tempera Code gateway." }
     ],
     "cradle": [
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },

@@ -27,6 +27,7 @@ function testClient(overrides = {}) {
       controlPlane: "https://cp.example.test",
       palette: "https://palette.example.test",
       tempo: "https://tempo.example.test",
+      temperaCode: "https://code.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
@@ -182,7 +183,7 @@ test("passthrough request covers products without typed operations", async () =>
   assert.equal(calls[0].url.toString(), "https://tempjs.example.test/runtime/status");
 });
 
-test("environment presets resolve control-plane, palette, and tempo base URLs", async () => {
+test("environment presets resolve control-plane, palette, and Tempera Code base URLs", async () => {
   const calls = [];
   const client = createTemperaClient({
     environment: "production",
@@ -193,8 +194,10 @@ test("environment presets resolve control-plane, palette, and tempo base URLs", 
   });
   await client.controlPlane.health();
   await client.palette.health();
+  await client.temperaCode.health();
   assert.equal(calls[0].origin, "https://api.tempera.dev");
   assert.equal(calls[1].origin, "https://mcp.tempera.dev");
+  assert.equal(calls[2].origin, "https://code-api.tempera.dev");
 });
 
 test("HTTP errors normalize every fleet wire shape into TemperaApiError", async () => {

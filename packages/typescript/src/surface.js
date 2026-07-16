@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 2;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "model:read", "model:invoke", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -25,6 +25,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "http://localhost:8787",
     "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
     "mcpGatewayUrl": "http://localhost:8787/mcp",
+    "temperaCodeApiUrl": "http://127.0.0.1:8789",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
     "tempoApiUrl": "http://localhost:7878"
@@ -35,6 +36,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://preview-api.tempera.dev",
     "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -45,6 +47,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://staging-api.tempera.dev",
     "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -55,6 +58,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://api.tempera.dev",
     "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://code-api.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://tempo.tempera.dev"
@@ -84,6 +88,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_TEMPO_URL",
     "audience": "tempo",
     "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
+  },
+  "temperaCode": {
+    "name": "Tempera Code",
+    "repository": "https://github.com/tempera-dev/tempera-code",
+    "envVar": "TEMPERA_CODE_GATEWAY_URL",
+    "audience": "tempera-code",
+    "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
   },
   "cradle": {
     "name": "cradle",
@@ -1228,6 +1239,52 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Grant a pending policy confirmation and receive a single-use grant token."
+    }
+  ],
+  "temperaCode": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check Tempera Code gateway liveness."
+    },
+    {
+      "id": "listModels",
+      "method": "GET",
+      "path": "/v1/models",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the entitled Tempera Code hosted model catalog."
+    },
+    {
+      "id": "createResponse",
+      "method": "POST",
+      "path": "/v1/responses",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "model",
+        "input",
+        "instructions",
+        "stream",
+        "reasoning",
+        "tools",
+        "text"
+      ],
+      "bodyDefaults": {},
+      "scope": "model:invoke",
+      "description": "Create a Responses-compatible inference request through the Tempera Code gateway."
     }
   ],
   "cradle": [

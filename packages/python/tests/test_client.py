@@ -19,6 +19,7 @@ PRODUCT_ATTRS = {
     "controlPlane": "control_plane",
     "palette": "palette",
     "tempo": "tempo",
+    "temperaCode": "tempera_code",
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
@@ -65,6 +66,7 @@ def make_client(**overrides):
             "control_plane": "https://cp.example.test",
             "palette": "https://palette.example.test",
             "tempo": "https://tempo.example.test",
+            "tempera_code": "https://code.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
@@ -193,13 +195,15 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(result, {"ok": True})
         self.assertEqual(transport.calls[0]["url"], "https://tempjs.example.test/runtime/status")
 
-    def test_environment_presets_resolve_control_plane_palette_and_tempo(self):
+    def test_environment_presets_resolve_control_plane_palette_and_tempera_code(self):
         transport = FakeTransport()
         client = TemperaClient(environment="production", transport=transport)
         client.control_plane.health()
         client.palette.health()
+        client.tempera_code.health()
         self.assertEqual(transport.calls[0]["origin"], "https://api.tempera.dev")
         self.assertEqual(transport.calls[1]["origin"], "https://mcp.tempera.dev")
+        self.assertEqual(transport.calls[2]["origin"], "https://code-api.tempera.dev")
 
     def test_unknown_environment_is_rejected(self):
         with self.assertRaises(TemperaSdkError):

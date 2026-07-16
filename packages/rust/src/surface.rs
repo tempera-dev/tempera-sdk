@@ -5,9 +5,9 @@
 
 pub const SURFACE_VERSION: u32 = 2;
 
-pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp"];
+pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"];
 pub const DEFAULT_AUDIENCE: &str = "palette";
-pub const SCOPES: &[&str] = &["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "admin"];
+pub const SCOPES: &[&str] = &["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "model:read", "model:invoke", "admin"];
 
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";
 pub const TOKEN_PATH: &str = "/oauth/token";
@@ -25,6 +25,7 @@ pub struct EnvironmentTarget {
     pub palette_api_url: &'static str,
     pub palette_mcp_url: &'static str,
     pub public_site_url: &'static str,
+    pub tempera_code_api_url: &'static str,
     pub tempo_api_url: &'static str,
 }
 
@@ -38,6 +39,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         palette_api_url: "http://localhost:8080",
         palette_mcp_url: "http://localhost:8080/mcp",
         public_site_url: "http://localhost:3000",
+        tempera_code_api_url: "http://127.0.0.1:8789",
         tempo_api_url: "http://localhost:7878",
     },
     EnvironmentTarget {
@@ -49,6 +51,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         palette_api_url: "https://preview-mcp.tempera.dev",
         palette_mcp_url: "https://preview-mcp.tempera.dev/mcp",
         public_site_url: "https://tempera-public-site-git-preview-tempera.vercel.app",
+        tempera_code_api_url: "https://preview-code-api.tempera.dev",
         tempo_api_url: "https://preview-tempo.tempera.dev",
     },
     EnvironmentTarget {
@@ -60,6 +63,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         palette_api_url: "https://staging-mcp.tempera.dev",
         palette_mcp_url: "https://staging-mcp.tempera.dev/mcp",
         public_site_url: "https://staging.tempera.dev",
+        tempera_code_api_url: "https://staging-code-api.tempera.dev",
         tempo_api_url: "https://staging-tempo.tempera.dev",
     },
     EnvironmentTarget {
@@ -71,6 +75,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         palette_api_url: "https://mcp.tempera.dev",
         palette_mcp_url: "https://mcp.tempera.dev/mcp",
         public_site_url: "https://tempera.dev",
+        tempera_code_api_url: "https://code-api.tempera.dev",
         tempo_api_url: "https://tempo.tempera.dev",
     },
 ];
@@ -109,6 +114,14 @@ pub const PRODUCTS: &[ProductSpec] = &[
         env_var: "TEMPERA_TEMPO_URL",
         audience: Some("tempo"),
         description: "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff.",
+    },
+    ProductSpec {
+        key: "tempera_code",
+        name: "Tempera Code",
+        repository: "https://github.com/tempera-dev/tempera-code",
+        env_var: "TEMPERA_CODE_GATEWAY_URL",
+        audience: Some("tempera-code"),
+        description: "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway.",
     },
     ProductSpec {
         key: "cradle",
@@ -1106,6 +1119,45 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body_defaults: &[],
         scope: None,
         description: "Grant a pending policy confirmation and receive a single-use grant token.",
+    },
+    OperationSpec {
+        product: "tempera_code",
+        id: "health",
+        method: "GET",
+        path: "/healthz",
+        auth: "none",
+        path_params: &[],
+        query: &[],
+        body: &[],
+        body_defaults: &[],
+        scope: None,
+        description: "Check Tempera Code gateway liveness.",
+    },
+    OperationSpec {
+        product: "tempera_code",
+        id: "list_models",
+        method: "GET",
+        path: "/v1/models",
+        auth: "product",
+        path_params: &[],
+        query: &[],
+        body: &[],
+        body_defaults: &[],
+        scope: Some("model:read"),
+        description: "List the entitled Tempera Code hosted model catalog.",
+    },
+    OperationSpec {
+        product: "tempera_code",
+        id: "create_response",
+        method: "POST",
+        path: "/v1/responses",
+        auth: "product",
+        path_params: &[],
+        query: &[],
+        body: &["model", "input", "instructions", "stream", "reasoning", "tools", "text"],
+        body_defaults: &[],
+        scope: Some("model:invoke"),
+        description: "Create a Responses-compatible inference request through the Tempera Code gateway.",
     },
     OperationSpec {
         product: "cradle",
