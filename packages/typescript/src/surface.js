@@ -1726,6 +1726,142 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check data-engine liveness; returns the service status."
     },
     {
+      "id": "listDomainPacks",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/domain-packs",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List installed versioned domain packs from data-engine's OpenAPI contract."
+    },
+    {
+      "id": "getDomainPack",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/domain-packs/{pack_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "pack_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one installed versioned domain-pack manifest."
+    },
+    {
+      "id": "listDomains",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/domains",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List immutable domain-pack bindings enabled for a project."
+    },
+    {
+      "id": "getDomain",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/domains/{domain_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "domain_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one project-enabled, digest-pinned domain binding."
+    },
+    {
+      "id": "enableDomain",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/domains/{domain_id}:enable",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "domain_id"
+      ],
+      "query": [],
+      "body": [
+        "profile"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers."
+    },
+    {
+      "id": "generateDomain",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/domains/{domain_id}:generate",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "domain_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified."
+    },
+    {
+      "id": "listEnvironments",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/environments",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List installed descriptor-only environment definitions without claiming their execution lane is available."
+    },
+    {
+      "id": "getEnvironment",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/environments/{environment_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "environment_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one installed environment descriptor."
+    },
+    {
       "id": "listUseCases",
       "method": "GET",
       "path": "/v1/projects/{project_id}/use-cases",

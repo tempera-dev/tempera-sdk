@@ -294,6 +294,22 @@ export interface RemiClient extends TemperaProductClientBase {
 export interface DataEngineClient extends TemperaProductClientBase {
   /** Check data-engine liveness; returns the service status. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List installed versioned domain packs from data-engine's OpenAPI contract. */
+  listDomainPacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one installed versioned domain-pack manifest. */
+  getDomainPack(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable domain-pack bindings enabled for a project. */
+  listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one project-enabled, digest-pinned domain binding. */
+  getDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers. */
+  enableDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified. */
+  generateDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List installed descriptor-only environment definitions without claiming their execution lane is available. */
+  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one installed environment descriptor. */
+  getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the MVP use-case templates (data products and pipeline templates) for a project. */
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */

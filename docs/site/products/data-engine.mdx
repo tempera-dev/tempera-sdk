@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 19 |
+| Typed operations | 27 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -50,6 +50,386 @@ result = client.data_engine.health()
 
 ```rust Rust
 let spec = client.build_request("data_engine", "health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listDomainPacks
+
+`GET /v1/projects/{project_id}/domain-packs`
+
+List installed versioned domain packs from data-engine's OpenAPI contract.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listDomainPacks()` · Python `client.data_engine.list_domain_packs()` · Rust `build_request("data_engine", "list_domain_packs", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listDomainPacks({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_domain_packs({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_domain_packs", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getDomainPack
+
+`GET /v1/projects/{project_id}/domain-packs/{pack_id}`
+
+Get one installed versioned domain-pack manifest.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getDomainPack()` · Python `client.data_engine.get_domain_pack()` · Rust `build_request("data_engine", "get_domain_pack", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `pack_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getDomainPack({
+  project_id: "<project_id>",
+  pack_id: "<pack_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_domain_pack({
+    "project_id": "<project_id>",
+    "pack_id": "<pack_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_domain_pack", &[
+    ("project_id", "<project_id>".into()),
+    ("pack_id", "<pack_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listDomains
+
+`GET /v1/projects/{project_id}/domains`
+
+List immutable domain-pack bindings enabled for a project.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listDomains()` · Python `client.data_engine.list_domains()` · Rust `build_request("data_engine", "list_domains", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listDomains({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_domains({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_domains", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getDomain
+
+`GET /v1/projects/{project_id}/domains/{domain_id}`
+
+Get one project-enabled, digest-pinned domain binding.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getDomain()` · Python `client.data_engine.get_domain()` · Rust `build_request("data_engine", "get_domain", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `domain_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getDomain({
+  project_id: "<project_id>",
+  domain_id: "<domain_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_domain({
+    "project_id": "<project_id>",
+    "domain_id": "<domain_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_domain", &[
+    ("project_id", "<project_id>".into()),
+    ("domain_id", "<domain_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### enableDomain
+
+`POST /v1/projects/{project_id}/domains/{domain_id}:enable`
+
+Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.enableDomain()` · Python `client.data_engine.enable_domain()` · Rust `build_request("data_engine", "enable_domain", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `domain_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `profile` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.enableDomain({
+  project_id: "<project_id>",
+  domain_id: "<domain_id>",
+  profile: "<profile>",
+});
+```
+
+```python Python
+result = client.data_engine.enable_domain({
+    "project_id": "<project_id>",
+    "domain_id": "<domain_id>",
+    "profile": "<profile>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "enable_domain", &[
+    ("project_id", "<project_id>".into()),
+    ("domain_id", "<domain_id>".into()),
+    ("profile", "<profile>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### generateDomain
+
+`POST /v1/projects/{project_id}/domains/{domain_id}:generate`
+
+Request domain task generation through the approved worker boundary; the service reports unavailable until that worker and its Cradle lane are qualified.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.generateDomain()` · Python `client.data_engine.generate_domain()` · Rust `build_request("data_engine", "generate_domain", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `domain_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.generateDomain({
+  project_id: "<project_id>",
+  domain_id: "<domain_id>",
+});
+```
+
+```python Python
+result = client.data_engine.generate_domain({
+    "project_id": "<project_id>",
+    "domain_id": "<domain_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "generate_domain", &[
+    ("project_id", "<project_id>".into()),
+    ("domain_id", "<domain_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listEnvironments
+
+`GET /v1/projects/{project_id}/environments`
+
+List installed descriptor-only environment definitions without claiming their execution lane is available.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listEnvironments()` · Python `client.data_engine.list_environments()` · Rust `build_request("data_engine", "list_environments", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listEnvironments({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_environments({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_environments", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getEnvironment
+
+`GET /v1/projects/{project_id}/environments/{environment_id}`
+
+Get one installed environment descriptor.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getEnvironment()` · Python `client.data_engine.get_environment()` · Rust `build_request("data_engine", "get_environment", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `environment_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getEnvironment({
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_environment({
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_environment", &[
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
