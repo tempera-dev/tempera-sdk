@@ -167,12 +167,19 @@ the committed site is always current thanks to the drift gate).
 
 ## Uniformity, tests, and rollout
 
-- `surface.json` is the single source of truth; `scripts/gen-sdk-surface.py`
-  renders the per-language surface tables and `scripts/gen-sdk-docs.py` the
-  Mintlify docs site (both committed, both drift-gated).
+- `surface.json` is the single source of truth for SDK ergonomics;
+  data-engine owns the canonical REST operation identities in OpenAPI.
+  `scripts/gen-sdk-surface.py` renders the per-language surface tables and
+  `scripts/gen-sdk-docs.py` the Mintlify docs site (both committed, both
+  drift-gated).
 - `scripts/check-sdk-surface.py` gates: manifest invariants, regenerate-and-
   diff (surface tables and docs site), one version across the three packages,
-  and uniform-primitive markers.
+  uniform-primitive markers, and data-engine operation/path/method parity.
+- `contracts/data-engine-openapi-operations.json` is a checked operation lock
+  generated from data-engine's authoritative OpenAPI. When both repositories
+  are checked out, refresh and verify it with
+  `python3 scripts/sync-data-engine-openapi.py --check`; CI always verifies
+  that the committed lock covers every typed data-engine SDK operation.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - The endpoint-change rollout process is documented in
@@ -188,6 +195,7 @@ or individually:
 
 ```sh
 python3 scripts/check-sdk-surface.py
+python3 scripts/sync-data-engine-openapi.py --check
 npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml
