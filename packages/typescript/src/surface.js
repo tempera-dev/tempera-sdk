@@ -1910,6 +1910,115 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Delete a completed data-engine operation; pass Idempotency-Key through operation headers."
     },
     {
+      "id": "createConnector",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/connectors",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "source",
+        "pack_id",
+        "mode",
+        "config"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Register an approved domain-pack source connector; pass Idempotency-Key through operation headers."
+    },
+    {
+      "id": "listConnectors",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/connectors",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List registered source connectors for a project."
+    },
+    {
+      "id": "getConnector",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "connector_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get a source connector and its current ETag."
+    },
+    {
+      "id": "patchConnector",
+      "method": "PATCH",
+      "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "connector_id"
+      ],
+      "query": [],
+      "body": [
+        "update_mask",
+        "mode",
+        "config"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers."
+    },
+    {
+      "id": "deleteConnector",
+      "method": "DELETE",
+      "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "connector_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Delete a connector registration; pass If-Match and Idempotency-Key through operation headers."
+    },
+    {
+      "id": "syncConnector",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/connectors/{connector_id}:sync",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "connector_id"
+      ],
+      "query": [],
+      "body": [
+        "cursor",
+        "artifacts"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Start a bounded connector sync; pass Idempotency-Key through operation headers."
+    },
+    {
       "id": "createRepository",
       "method": "POST",
       "path": "/v1/projects/{project_id}/repositories",

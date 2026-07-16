@@ -316,6 +316,18 @@ export interface DataEngineClient extends TemperaProductClientBase {
   cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete a completed data-engine operation; pass Idempotency-Key through operation headers. */
   deleteOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register an approved domain-pack source connector; pass Idempotency-Key through operation headers. */
+  createConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List registered source connectors for a project. */
+  listConnectors(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get a source connector and its current ETag. */
+  getConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers. */
+  patchConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a connector registration; pass If-Match and Idempotency-Key through operation headers. */
+  deleteConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start a bounded connector sync; pass Idempotency-Key through operation headers. */
+  syncConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Register a GitHub repository reference; pass Idempotency-Key through operation headers. */
   createRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List registered project repositories. */

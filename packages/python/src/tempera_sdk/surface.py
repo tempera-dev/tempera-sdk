@@ -1901,6 +1901,115 @@ OPERATIONS = {
             "description": "Delete a completed data-engine operation; pass Idempotency-Key through operation headers."
         },
         {
+            "id": "create_connector",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/connectors",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "source",
+                "pack_id",
+                "mode",
+                "config"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register an approved domain-pack source connector; pass Idempotency-Key through operation headers."
+        },
+        {
+            "id": "list_connectors",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/connectors",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List registered source connectors for a project."
+        },
+        {
+            "id": "get_connector",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "connector_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get a source connector and its current ETag."
+        },
+        {
+            "id": "patch_connector",
+            "method": "PATCH",
+            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "connector_id"
+            ],
+            "query": [],
+            "body": [
+                "update_mask",
+                "mode",
+                "config"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers."
+        },
+        {
+            "id": "delete_connector",
+            "method": "DELETE",
+            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "connector_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Delete a connector registration; pass If-Match and Idempotency-Key through operation headers."
+        },
+        {
+            "id": "sync_connector",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/connectors/{connector_id}:sync",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "connector_id"
+            ],
+            "query": [],
+            "body": [
+                "cursor",
+                "artifacts"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Start a bounded connector sync; pass Idempotency-Key through operation headers."
+        },
+        {
             "id": "create_repository",
             "method": "POST",
             "path": "/v1/projects/{project_id}/repositories",

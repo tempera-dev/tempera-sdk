@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 41 |
+| Typed operations | 47 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -558,6 +558,317 @@ result = client.data_engine.delete_operation({
 let spec = client.build_request("data_engine", "delete_operation", &[
     ("project_id", "<project_id>".into()),
     ("operation_id", "<operation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createConnector
+
+`POST /v1/projects/{project_id}/connectors`
+
+Register an approved domain-pack source connector; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createConnector()` · Python `client.data_engine.create_connector()` · Rust `build_request("data_engine", "create_connector", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `source` | no | — |
+| `pack_id` | no | — |
+| `mode` | no | — |
+| `config` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createConnector({
+  project_id: "<project_id>",
+  source: "<source>",
+  pack_id: "<pack_id>",
+  mode: "<mode>",
+});
+```
+
+```python Python
+result = client.data_engine.create_connector({
+    "project_id": "<project_id>",
+    "source": "<source>",
+    "pack_id": "<pack_id>",
+    "mode": "<mode>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_connector", &[
+    ("project_id", "<project_id>".into()),
+    ("source", "<source>".into()),
+    ("pack_id", "<pack_id>".into()),
+    ("mode", "<mode>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listConnectors
+
+`GET /v1/projects/{project_id}/connectors`
+
+List registered source connectors for a project.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listConnectors()` · Python `client.data_engine.list_connectors()` · Rust `build_request("data_engine", "list_connectors", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listConnectors({
+  project_id: "<project_id>",
+  page_size: "<page_size>",
+  page_token: "<page_token>",
+});
+```
+
+```python Python
+result = client.data_engine.list_connectors({
+    "project_id": "<project_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_connectors", &[
+    ("project_id", "<project_id>".into()),
+    ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getConnector
+
+`GET /v1/projects/{project_id}/connectors/{connector_id}`
+
+Get a source connector and its current ETag.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getConnector()` · Python `client.data_engine.get_connector()` · Rust `build_request("data_engine", "get_connector", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `connector_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getConnector({
+  project_id: "<project_id>",
+  connector_id: "<connector_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_connector({
+    "project_id": "<project_id>",
+    "connector_id": "<connector_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_connector", &[
+    ("project_id", "<project_id>".into()),
+    ("connector_id", "<connector_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### patchConnector
+
+`PATCH /v1/projects/{project_id}/connectors/{connector_id}`
+
+Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.patchConnector()` · Python `client.data_engine.patch_connector()` · Rust `build_request("data_engine", "patch_connector", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `connector_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `update_mask` | no | — |
+| `mode` | no | — |
+| `config` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.patchConnector({
+  project_id: "<project_id>",
+  connector_id: "<connector_id>",
+  update_mask: "<update_mask>",
+  mode: "<mode>",
+  config: "<config>",
+});
+```
+
+```python Python
+result = client.data_engine.patch_connector({
+    "project_id": "<project_id>",
+    "connector_id": "<connector_id>",
+    "update_mask": "<update_mask>",
+    "mode": "<mode>",
+    "config": "<config>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "patch_connector", &[
+    ("project_id", "<project_id>".into()),
+    ("connector_id", "<connector_id>".into()),
+    ("update_mask", "<update_mask>".into()),
+    ("mode", "<mode>".into()),
+    ("config", "<config>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### deleteConnector
+
+`DELETE /v1/projects/{project_id}/connectors/{connector_id}`
+
+Delete a connector registration; pass If-Match and Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.deleteConnector()` · Python `client.data_engine.delete_connector()` · Rust `build_request("data_engine", "delete_connector", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `connector_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.deleteConnector({
+  project_id: "<project_id>",
+  connector_id: "<connector_id>",
+});
+```
+
+```python Python
+result = client.data_engine.delete_connector({
+    "project_id": "<project_id>",
+    "connector_id": "<connector_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "delete_connector", &[
+    ("project_id", "<project_id>".into()),
+    ("connector_id", "<connector_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### syncConnector
+
+`POST /v1/projects/{project_id}/connectors/{connector_id}:sync`
+
+Start a bounded connector sync; pass Idempotency-Key through operation headers.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.syncConnector()` · Python `client.data_engine.sync_connector()` · Rust `build_request("data_engine", "sync_connector", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `connector_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `cursor` | no | — |
+| `artifacts` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.syncConnector({
+  project_id: "<project_id>",
+  connector_id: "<connector_id>",
+  cursor: "<cursor>",
+  artifacts: "<artifacts>",
+});
+```
+
+```python Python
+result = client.data_engine.sync_connector({
+    "project_id": "<project_id>",
+    "connector_id": "<connector_id>",
+    "cursor": "<cursor>",
+    "artifacts": "<artifacts>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "sync_connector", &[
+    ("project_id", "<project_id>".into()),
+    ("connector_id", "<connector_id>".into()),
+    ("cursor", "<cursor>".into()),
+    ("artifacts", "<artifacts>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
