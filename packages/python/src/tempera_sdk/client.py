@@ -41,6 +41,7 @@ _ENVIRONMENT_TARGET_KEYS = {
     "controlPlane": "controlPlaneUrl",
     "palette": "paletteApiUrl",
     "tempo": "tempoApiUrl",
+    "temperaCode": "temperaCodeApiUrl",
 }
 
 _PATH_PARAM_RE = re.compile(r"\{([a-z_]+)\}")
@@ -133,6 +134,7 @@ class TemperaClient:
         self.control_plane: _ProductClient
         self.palette: _ProductClient
         self.tempo: _ProductClient
+        self.tempera_code: _ProductClient
         self.cradle: _ProductClient
         self.remi: _ProductClient
         self.data_engine: _ProductClient

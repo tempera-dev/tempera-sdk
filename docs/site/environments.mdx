@@ -25,6 +25,7 @@ onboarding tells you which preset and overrides to use. Begin with `staging`; us
 | `paletteApiUrl` | `http://localhost:8080` | `https://preview-mcp.tempera.dev` | `https://staging-mcp.tempera.dev` | `https://mcp.tempera.dev` |
 | `paletteMcpUrl` | `http://localhost:8080/mcp` | `https://preview-mcp.tempera.dev/mcp` | `https://staging-mcp.tempera.dev/mcp` | `https://mcp.tempera.dev/mcp` |
 | `publicSiteUrl` | `http://localhost:3000` | `https://tempera-public-site-git-preview-tempera.vercel.app` | `https://staging.tempera.dev` | `https://tempera.dev` |
+| `temperaCodeApiUrl` | `http://127.0.0.1:8789` | `https://preview-code-api.tempera.dev` | `https://staging-code-api.tempera.dev` | `https://code-api.tempera.dev` |
 | `tempoApiUrl` | `http://localhost:7878` | `https://preview-tempo.tempera.dev` | `https://staging-tempo.tempera.dev` | `https://tempo.tempera.dev` |
 
 ## Per-product base-URL env vars
@@ -38,6 +39,7 @@ must get their base URL from the env var or an explicit override.
 | auth-hub | `TEMPERA_CONTROL_PLANE_URL` | `controlPlaneUrl` |
 | palette | `TEMPERA_PALETTE_URL` | `paletteApiUrl` |
 | tempo | `TEMPERA_TEMPO_URL` | `tempoApiUrl` |
+| Tempera Code | `TEMPERA_CODE_GATEWAY_URL` | — |
 | cradle | `TEMPERA_CRADLE_URL` | — |
 | remi | `TEMPERA_REMI_URL` | — |
 | data-engine | `TEMPERA_DATA_ENGINE_URL` | — |

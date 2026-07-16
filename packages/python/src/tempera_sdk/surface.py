@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 2
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'admin')
+SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'model:read', 'model:invoke', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
 
@@ -20,6 +20,7 @@ ENVIRONMENTS = {
         "authIssuerUrl": "http://localhost:8787",
         "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
         "mcpGatewayUrl": "http://localhost:8787/mcp",
+        "temperaCodeApiUrl": "http://127.0.0.1:8789",
         "paletteApiUrl": "http://localhost:8080",
         "paletteMcpUrl": "http://localhost:8080/mcp",
         "tempoApiUrl": "http://localhost:7878"
@@ -30,6 +31,7 @@ ENVIRONMENTS = {
         "authIssuerUrl": "https://preview-api.tempera.dev",
         "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
         "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
+        "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
         "paletteApiUrl": "https://preview-mcp.tempera.dev",
         "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
         "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -40,6 +42,7 @@ ENVIRONMENTS = {
         "authIssuerUrl": "https://staging-api.tempera.dev",
         "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
         "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
+        "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
         "paletteApiUrl": "https://staging-mcp.tempera.dev",
         "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
         "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -50,6 +53,7 @@ ENVIRONMENTS = {
         "authIssuerUrl": "https://api.tempera.dev",
         "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
         "mcpGatewayUrl": "https://api.tempera.dev/mcp",
+        "temperaCodeApiUrl": "https://code-api.tempera.dev",
         "paletteApiUrl": "https://mcp.tempera.dev",
         "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
         "tempoApiUrl": "https://tempo.tempera.dev"
@@ -77,6 +81,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_TEMPO_URL",
         "audience": "tempo",
         "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
+    },
+    "temperaCode": {
+        "name": "Tempera Code",
+        "repository": "https://github.com/tempera-dev/tempera-code",
+        "env_var": "TEMPERA_CODE_GATEWAY_URL",
+        "audience": "tempera-code",
+        "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
     },
     "cradle": {
         "name": "cradle",
@@ -139,6 +150,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check control-plane liveness; returns {ok: True}."
@@ -151,6 +163,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
@@ -163,6 +176,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
@@ -177,6 +191,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch OAuth protected-resource metadata for one registered audience."
@@ -194,6 +209,7 @@ OPERATIONS = {
                 "organization",
                 "invite_token"
             ],
+            "required_body": [],
             "body_defaults": {
                 "mode": "signup"
             },
@@ -211,6 +227,7 @@ OPERATIONS = {
                 "email",
                 "password"
             ],
+            "required_body": [],
             "body_defaults": {
                 "mode": "login"
             },
@@ -225,6 +242,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the authenticated user's identity, active workspace, and roles."
@@ -241,6 +259,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Switch the active workspace and receive a token pair scoped to it."
@@ -253,6 +272,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the organizations the authenticated user belongs to."
@@ -267,6 +287,7 @@ OPERATIONS = {
             "body": [
                 "name"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create an organization; the caller becomes its owner."
@@ -279,6 +300,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List projects across every organization the user belongs to."
@@ -294,6 +316,7 @@ OPERATIONS = {
                 "org_id",
                 "name"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create a project in an organization (requires an org admin role)."
@@ -306,6 +329,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List environments across every project the user can access."
@@ -321,6 +345,7 @@ OPERATIONS = {
                 "project_id",
                 "name"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create an environment in a project (requires an org admin role)."
@@ -333,6 +358,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List team members of the active organization."
@@ -349,6 +375,7 @@ OPERATIONS = {
             "body": [
                 "role"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
@@ -363,6 +390,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Remove a team member from the active organization (idempotent)."
@@ -375,6 +403,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List invites for the active organization, newest first."
@@ -390,6 +419,7 @@ OPERATIONS = {
                 "email",
                 "role"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Invite a user to the active organization; the accept URL is returned once."
@@ -404,6 +434,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Cancel a pending invite (idempotent)."
@@ -416,6 +447,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List API keys in the active workspace; secrets are never returned."
@@ -434,6 +466,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
@@ -448,6 +481,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Rotate an API key's secret; the new secret is returned exactly once."
@@ -462,6 +496,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Revoke an API key (idempotent)."
@@ -474,6 +509,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the OAuth grants the user has approved in the active workspace."
@@ -488,6 +524,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Revoke an OAuth grant and every refresh token issued under it."
@@ -500,6 +537,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the user's active account sessions."
@@ -514,6 +552,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Revoke an account session and its tokens immediately (idempotent)."
@@ -526,6 +565,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
@@ -540,6 +580,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one connector's connection status for the active workspace."
@@ -552,6 +593,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the product catalog with default scopes and setup paths."
@@ -566,6 +608,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
@@ -578,6 +621,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
@@ -596,6 +640,7 @@ OPERATIONS = {
                 "network"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
@@ -608,6 +653,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
@@ -626,6 +672,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
@@ -638,6 +685,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
@@ -652,6 +700,7 @@ OPERATIONS = {
             "body": [
                 "token"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: False} for anything invalid."
@@ -666,6 +715,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check palette API liveness; returns {ok: True}."
@@ -696,6 +746,7 @@ OPERATIONS = {
                 "cursor"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "List trace summaries for a tenant with filters and cursor pagination."
@@ -714,6 +765,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
@@ -733,6 +785,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "Fetch one canonical span by trace and span id."
@@ -752,6 +805,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "Fetch a span's recorded input and output values."
@@ -777,6 +831,7 @@ OPERATIONS = {
                 "limit"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "Search spans by text query and facet filters."
@@ -810,6 +865,7 @@ OPERATIONS = {
                 "cost",
                 "idempotency_key"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:write",
             "description": "Ingest one native span; idempotent when an idempotency key is supplied."
@@ -831,6 +887,7 @@ OPERATIONS = {
                 "source",
                 "payload"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:write",
             "description": "Import spans from a named external source payload."
@@ -847,6 +904,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
             "description": "Archive a trace to Parquet and return the archive manifest."
@@ -864,6 +922,7 @@ OPERATIONS = {
             "body": [
                 "name"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
             "description": "Create a dataset for curating cases from traces."
@@ -884,6 +943,7 @@ OPERATIONS = {
                 "span_id",
                 "reference"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
             "description": "Promote a trace (or one span of it) into a dataset case."
@@ -902,6 +962,7 @@ OPERATIONS = {
             "body": [
                 "case_ids"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
             "description": "Snapshot a dataset into an immutable version for evals and experiments."
@@ -920,6 +981,7 @@ OPERATIONS = {
             "body": [
                 "scopes"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": "admin",
             "description": "Mint a palette-scoped API key; the secret is returned exactly once."
@@ -937,6 +999,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "admin",
             "description": "Revoke a palette API key."
@@ -952,6 +1015,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": "admin",
             "description": "Fetch usage totals for a tenant project."
@@ -966,6 +1030,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check tempod liveness; returns {ok: True}."
@@ -978,6 +1043,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
@@ -990,6 +1056,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
@@ -1002,6 +1069,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List browser sessions with their state and creation time."
@@ -1017,6 +1085,7 @@ OPERATIONS = {
                 "url",
                 "driverless"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
@@ -1031,6 +1100,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Close a browser session and release its engine resources."
@@ -1045,6 +1115,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
@@ -1066,6 +1137,7 @@ OPERATIONS = {
                 "confirmation_grant",
                 "payment_context"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
@@ -1082,6 +1154,7 @@ OPERATIONS = {
                 "set_of_marks"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
@@ -1098,6 +1171,7 @@ OPERATIONS = {
                 "after_seq"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the session's event window after a sequence number."
@@ -1112,6 +1186,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Let a human surface take write ownership of the session and receive an adoption lease."
@@ -1126,6 +1201,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Return write ownership of the session to the agent plane."
@@ -1145,6 +1221,7 @@ OPERATIONS = {
                 "max_rounds",
                 "token_budget"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Start an agent run against the session with a goal, action budget, and round limit."
@@ -1159,6 +1236,7 @@ OPERATIONS = {
                 "session_id"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List agent runs, optionally filtered to one session."
@@ -1173,6 +1251,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one agent run with its state."
@@ -1187,6 +1266,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Cancel an agent run."
@@ -1201,6 +1281,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Resume an agent run after a human handoff completes."
@@ -1216,9 +1297,60 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Grant a pending policy confirmation and receive a single-use grant token."
+        }
+    ],
+    "temperaCode": [
+        {
+            "id": "health",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Check Tempera Code gateway liveness."
+        },
+        {
+            "id": "list_models",
+            "method": "GET",
+            "path": "/v1/models",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "model:read",
+            "description": "List the entitled Tempera Code hosted model catalog."
+        },
+        {
+            "id": "create_response",
+            "method": "POST",
+            "path": "/v1/responses",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "model",
+                "input",
+                "instructions",
+                "tools",
+                "text"
+            ],
+            "required_body": [
+                "model",
+                "input"
+            ],
+            "body_defaults": {},
+            "scope": "model:invoke",
+            "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway."
         }
     ],
     "cradle": [
@@ -1230,6 +1362,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
@@ -1242,6 +1375,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
@@ -1254,6 +1388,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the ecosystem integration contract this daemon implements."
@@ -1274,6 +1409,7 @@ OPERATIONS = {
                 "policy",
                 "idempotency_key"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
@@ -1294,6 +1430,7 @@ OPERATIONS = {
                 "policy",
                 "idempotency_key"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
@@ -1308,6 +1445,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch a sandbox job's status and result."
@@ -1322,6 +1460,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
@@ -1334,6 +1473,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
@@ -1357,6 +1497,7 @@ OPERATIONS = {
                 "target_origins",
                 "task_label"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
@@ -1369,6 +1510,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch the browser adapter contract, required controls, and conformance profile."
@@ -1383,6 +1525,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check memory-server liveness."
@@ -1395,6 +1538,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check memory-server readiness, including database health."
@@ -1407,6 +1551,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch deep store health: schema version, integrity checks, and graph consistency."
@@ -1419,6 +1564,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
@@ -1431,6 +1577,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
@@ -1443,6 +1590,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
@@ -1457,6 +1605,7 @@ OPERATIONS = {
                 "limit"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List recent service audit events (default 100, maximum 500)."
@@ -1477,6 +1626,7 @@ OPERATIONS = {
                 "idempotency_key",
                 "project"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Write one memory into the ledger and, by default, project it into the memory graph immediately."
@@ -1491,6 +1641,7 @@ OPERATIONS = {
             "body": [
                 "limit"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Project pending ledger events into the memory graph and return the projection report."
@@ -1505,6 +1656,7 @@ OPERATIONS = {
             "body": [
                 "limit"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Run memory management over pending ledger events (same engine pass as project, tracked separately)."
@@ -1526,6 +1678,7 @@ OPERATIONS = {
                 "max_reconstruction_steps",
                 "max_reconstruction_tokens"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Answer a question from memory with evidence, citations, contradictions, and staleness signals."
@@ -1543,6 +1696,7 @@ OPERATIONS = {
                 "prune_audit_before_unix_ms",
                 "retain_latest_audit_events"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
@@ -1557,6 +1711,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Check data-engine liveness; returns the service status."
@@ -1574,6 +1729,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
@@ -1589,6 +1745,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
@@ -1609,6 +1766,7 @@ OPERATIONS = {
                 "raw_body",
                 "metadata"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
@@ -1630,6 +1788,7 @@ OPERATIONS = {
                 "allowPrivate",
                 "metadata"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
@@ -1651,6 +1810,7 @@ OPERATIONS = {
                 "artifacts",
                 "verifier"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
@@ -1671,6 +1831,7 @@ OPERATIONS = {
                 "rubric",
                 "skill_tags"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
@@ -1688,6 +1849,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List a project's data campaigns with pagination."
@@ -1707,6 +1869,7 @@ OPERATIONS = {
                 "order_by"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List a project's artifacts with filtering, ordering, and cursor pagination."
@@ -1724,6 +1887,7 @@ OPERATIONS = {
                 "view"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
@@ -1742,6 +1906,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the labels attached to one artifact."
@@ -1762,6 +1927,7 @@ OPERATIONS = {
                 "priority",
                 "target_accuracy"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
@@ -1777,6 +1943,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one labeling job with its state and progress."
@@ -1795,6 +1962,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the deterministic label results a job produced."
@@ -1812,6 +1980,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "List the human residual review tasks queued for experts."
@@ -1826,6 +1995,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch data-engine usage and quality metrics for a project."
@@ -1840,6 +2010,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch public-site and ecosystem readiness signals for a project."
@@ -1859,6 +2030,7 @@ OPERATIONS = {
                 "license",
                 "filters"
             ],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
@@ -1874,6 +2046,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "required_body": [],
             "body_defaults": {},
             "scope": None,
             "description": "Fetch one emitted product bundle with its status and manifest URL."

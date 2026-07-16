@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 2;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "model:read", "model:invoke", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -25,6 +25,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "http://localhost:8787",
     "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
     "mcpGatewayUrl": "http://localhost:8787/mcp",
+    "temperaCodeApiUrl": "http://127.0.0.1:8789",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
     "tempoApiUrl": "http://localhost:7878"
@@ -35,6 +36,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://preview-api.tempera.dev",
     "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -45,6 +47,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://staging-api.tempera.dev",
     "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -55,6 +58,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authIssuerUrl": "https://api.tempera.dev",
     "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
     "mcpGatewayUrl": "https://api.tempera.dev/mcp",
+    "temperaCodeApiUrl": "https://code-api.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://tempo.tempera.dev"
@@ -84,6 +88,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_TEMPO_URL",
     "audience": "tempo",
     "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
+  },
+  "temperaCode": {
+    "name": "Tempera Code",
+    "repository": "https://github.com/tempera-dev/tempera-code",
+    "envVar": "TEMPERA_CODE_GATEWAY_URL",
+    "audience": "tempera-code",
+    "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
   },
   "cradle": {
     "name": "cradle",
@@ -148,6 +159,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check control-plane liveness; returns {ok: true}."
@@ -160,6 +172,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
@@ -172,6 +185,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
@@ -186,6 +200,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch OAuth protected-resource metadata for one registered audience."
@@ -203,6 +218,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "organization",
         "invite_token"
       ],
+      "requiredBody": [],
       "bodyDefaults": {
         "mode": "signup"
       },
@@ -220,6 +236,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "email",
         "password"
       ],
+      "requiredBody": [],
       "bodyDefaults": {
         "mode": "login"
       },
@@ -234,6 +251,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the authenticated user's identity, active workspace, and roles."
@@ -250,6 +268,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Switch the active workspace and receive a token pair scoped to it."
@@ -262,6 +281,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the organizations the authenticated user belongs to."
@@ -276,6 +296,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "name"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create an organization; the caller becomes its owner."
@@ -288,6 +309,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List projects across every organization the user belongs to."
@@ -303,6 +325,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "org_id",
         "name"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create a project in an organization (requires an org admin role)."
@@ -315,6 +338,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List environments across every project the user can access."
@@ -330,6 +354,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "name"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create an environment in a project (requires an org admin role)."
@@ -342,6 +367,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List team members of the active organization."
@@ -358,6 +384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "role"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
@@ -372,6 +399,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Remove a team member from the active organization (idempotent)."
@@ -384,6 +412,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List invites for the active organization, newest first."
@@ -399,6 +428,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "email",
         "role"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Invite a user to the active organization; the accept URL is returned once."
@@ -413,6 +443,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Cancel a pending invite (idempotent)."
@@ -425,6 +456,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List API keys in the active workspace; secrets are never returned."
@@ -443,6 +475,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
@@ -457,6 +490,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Rotate an API key's secret; the new secret is returned exactly once."
@@ -471,6 +505,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Revoke an API key (idempotent)."
@@ -483,6 +518,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the OAuth grants the user has approved in the active workspace."
@@ -497,6 +533,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Revoke an OAuth grant and every refresh token issued under it."
@@ -509,6 +546,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the user's active account sessions."
@@ -523,6 +561,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Revoke an account session and its tokens immediately (idempotent)."
@@ -535,6 +574,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
@@ -549,6 +589,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one connector's connection status for the active workspace."
@@ -561,6 +602,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the product catalog with default scopes and setup paths."
@@ -575,6 +617,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
@@ -587,6 +630,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
@@ -605,6 +649,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "network"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
@@ -617,6 +662,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
@@ -635,6 +681,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
@@ -647,6 +694,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
@@ -661,6 +709,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "token"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid."
@@ -675,6 +724,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check palette API liveness; returns {ok: true}."
@@ -705,6 +755,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "cursor"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "List trace summaries for a tenant with filters and cursor pagination."
@@ -723,6 +774,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
@@ -742,6 +794,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "Fetch one canonical span by trace and span id."
@@ -761,6 +814,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "Fetch a span's recorded input and output values."
@@ -786,6 +840,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "limit"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "Search spans by text query and facet filters."
@@ -819,6 +874,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "cost",
         "idempotency_key"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:write",
       "description": "Ingest one native span; idempotent when an idempotency key is supplied."
@@ -840,6 +896,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "source",
         "payload"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:write",
       "description": "Import spans from a named external source payload."
@@ -856,6 +913,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
       "description": "Archive a trace to Parquet and return the archive manifest."
@@ -873,6 +931,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "name"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
       "description": "Create a dataset for curating cases from traces."
@@ -893,6 +952,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "span_id",
         "reference"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
       "description": "Promote a trace (or one span of it) into a dataset case."
@@ -911,6 +971,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "case_ids"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
       "description": "Snapshot a dataset into an immutable version for evals and experiments."
@@ -929,6 +990,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "scopes"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
       "description": "Mint a palette-scoped API key; the secret is returned exactly once."
@@ -946,6 +1008,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
       "description": "Revoke a palette API key."
@@ -961,6 +1024,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
       "description": "Fetch usage totals for a tenant project."
@@ -975,6 +1039,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check tempod liveness; returns {ok: true}."
@@ -987,6 +1052,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
@@ -999,6 +1065,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
@@ -1011,6 +1078,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List browser sessions with their state and creation time."
@@ -1026,6 +1094,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "url",
         "driverless"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
@@ -1040,6 +1109,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Close a browser session and release its engine resources."
@@ -1054,6 +1124,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
@@ -1075,6 +1146,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "confirmation_grant",
         "payment_context"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
@@ -1091,6 +1163,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "set_of_marks"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
@@ -1107,6 +1180,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "after_seq"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the session's event window after a sequence number."
@@ -1121,6 +1195,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Let a human surface take write ownership of the session and receive an adoption lease."
@@ -1135,6 +1210,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Return write ownership of the session to the agent plane."
@@ -1154,6 +1230,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_rounds",
         "token_budget"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Start an agent run against the session with a goal, action budget, and round limit."
@@ -1168,6 +1245,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "session_id"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List agent runs, optionally filtered to one session."
@@ -1182,6 +1260,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one agent run with its state."
@@ -1196,6 +1275,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Cancel an agent run."
@@ -1210,6 +1290,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Resume an agent run after a human handoff completes."
@@ -1225,9 +1306,60 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Grant a pending policy confirmation and receive a single-use grant token."
+    }
+  ],
+  "temperaCode": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check Tempera Code gateway liveness."
+    },
+    {
+      "id": "listModels",
+      "method": "GET",
+      "path": "/v1/models",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the entitled Tempera Code hosted model catalog."
+    },
+    {
+      "id": "createResponse",
+      "method": "POST",
+      "path": "/v1/responses",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "model",
+        "input",
+        "instructions",
+        "tools",
+        "text"
+      ],
+      "requiredBody": [
+        "model",
+        "input"
+      ],
+      "bodyDefaults": {},
+      "scope": "model:invoke",
+      "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway."
     }
   ],
   "cradle": [
@@ -1239,6 +1371,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
@@ -1251,6 +1384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
@@ -1263,6 +1397,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the ecosystem integration contract this daemon implements."
@@ -1283,6 +1418,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "policy",
         "idempotency_key"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
@@ -1303,6 +1439,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "policy",
         "idempotency_key"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
@@ -1317,6 +1454,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch a sandbox job's status and result."
@@ -1331,6 +1469,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
@@ -1343,6 +1482,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
@@ -1366,6 +1506,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "target_origins",
         "task_label"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
@@ -1378,6 +1519,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch the browser adapter contract, required controls, and conformance profile."
@@ -1392,6 +1534,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check memory-server liveness."
@@ -1404,6 +1547,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check memory-server readiness, including database health."
@@ -1416,6 +1560,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch deep store health: schema version, integrity checks, and graph consistency."
@@ -1428,6 +1573,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
@@ -1440,6 +1586,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
@@ -1452,6 +1599,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
@@ -1466,6 +1614,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "limit"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List recent service audit events (default 100, maximum 500)."
@@ -1486,6 +1635,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "idempotency_key",
         "project"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Write one memory into the ledger and, by default, project it into the memory graph immediately."
@@ -1500,6 +1650,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "limit"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Project pending ledger events into the memory graph and return the projection report."
@@ -1514,6 +1665,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "limit"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Run memory management over pending ledger events (same engine pass as project, tracked separately)."
@@ -1535,6 +1687,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_reconstruction_steps",
         "max_reconstruction_tokens"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Answer a question from memory with evidence, citations, contradictions, and staleness signals."
@@ -1552,6 +1705,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "prune_audit_before_unix_ms",
         "retain_latest_audit_events"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
@@ -1566,6 +1720,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Check data-engine liveness; returns the service status."
@@ -1583,6 +1738,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
@@ -1598,6 +1754,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
@@ -1618,6 +1775,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "raw_body",
         "metadata"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
@@ -1639,6 +1797,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "allowPrivate",
         "metadata"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
@@ -1660,6 +1819,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "artifacts",
         "verifier"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
@@ -1680,6 +1840,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "rubric",
         "skill_tags"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
@@ -1697,6 +1858,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List a project's data campaigns with pagination."
@@ -1716,6 +1878,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "order_by"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List a project's artifacts with filtering, ordering, and cursor pagination."
@@ -1733,6 +1896,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "view"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
@@ -1751,6 +1915,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the labels attached to one artifact."
@@ -1771,6 +1936,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "priority",
         "target_accuracy"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
@@ -1786,6 +1952,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one labeling job with its state and progress."
@@ -1804,6 +1971,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the deterministic label results a job produced."
@@ -1821,6 +1989,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "List the human residual review tasks queued for experts."
@@ -1835,6 +2004,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch data-engine usage and quality metrics for a project."
@@ -1849,6 +2019,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch public-site and ecosystem readiness signals for a project."
@@ -1868,6 +2039,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "license",
         "filters"
       ],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
@@ -1883,6 +2055,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one emitted product bundle with its status and manifest URL."

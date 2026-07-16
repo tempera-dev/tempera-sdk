@@ -70,6 +70,10 @@ def validate(surface: dict) -> list[str]:
                 )
             if op.get("auth") not in {"none", "account", "product", "introspectionSecret"}:
                 problems.append(f"{label}: invalid auth {op.get('auth')!r}")
+            required_body = set(op.get("requiredBody", []))
+            body = set(op.get("body", []))
+            if not required_body.issubset(body):
+                problems.append(f"{label}: requiredBody must be a subset of body")
     for product_key, product in surface["products"].items():
         if not ID_RE.match(product_key):
             problems.append(f"product key {product_key!r} must be lowerCamelCase")
@@ -166,6 +170,7 @@ def render_typescript(surface: dict) -> str:
                 "pathParams": op.get("pathParams", []),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
+                "requiredBody": op.get("requiredBody", []),
                 "bodyDefaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
                 "description": op["description"],
@@ -241,6 +246,7 @@ def render_typescript_dts(surface: dict) -> str:
         "  pathParams: readonly string[];",
         "  query: readonly string[];",
         "  body: readonly string[];",
+        "  requiredBody: readonly string[];",
         "  bodyDefaults: Readonly<Record<string, unknown>>;",
         "  scope: TemperaScope | null;",
         "  description: string;",
@@ -340,6 +346,7 @@ def render_python(surface: dict) -> str:
                 "path_params": op.get("pathParams", []),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
+                "required_body": op.get("requiredBody", []),
                 "body_defaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
                 "description": op["description"],
@@ -444,6 +451,7 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub path_params: &'static [&'static str],")
     lines.append("    pub query: &'static [&'static str],")
     lines.append("    pub body: &'static [&'static str],")
+    lines.append("    pub required_body: &'static [&'static str],")
     lines.append("    pub body_defaults: &'static [(&'static str, &'static str)],")
     lines.append("    pub scope: Option<&'static str>,")
     lines.append("    pub description: &'static str,")
@@ -461,6 +469,7 @@ def render_rust(surface: dict) -> str:
             lines.append(f"        path_params: {rust_str_slice(op.get('pathParams', []))},")
             lines.append(f"        query: {rust_str_slice(op.get('query', []))},")
             lines.append(f"        body: {rust_str_slice(op.get('body', []))},")
+            lines.append(f"        required_body: {rust_str_slice(op.get('requiredBody', []))},")
             defaults = op.get("bodyDefaults", {})
             pairs = ", ".join(
                 f"({json.dumps(key)}, {json.dumps(str(value))})" for key, value in defaults.items()
