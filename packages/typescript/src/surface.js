@@ -524,6 +524,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List model profiles in the active project without exposing broker credential references."
     },
     {
+      "id": "getModelProfile",
+      "method": "GET",
+      "path": "/model-profiles/{model_profile_id}",
+      "auth": "account",
+      "pathParams": [
+        "model_profile_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one project-scoped model profile without exposing its broker credential reference."
+    },
+    {
       "id": "createModelProfile",
       "method": "POST",
       "path": "/model-profiles",

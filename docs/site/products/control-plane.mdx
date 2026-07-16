@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from login/signup (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 42 |
+| Typed operations | 43 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -917,6 +917,45 @@ result = client.control_plane.list_model_profiles()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "list_model_profiles", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getModelProfile
+
+`GET /model-profiles/{model_profile_id}`
+
+Get one project-scoped model profile without exposing its broker credential reference.
+
+- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Call as:** TypeScript `client.controlPlane.getModelProfile()` · Python `client.control_plane.get_model_profile()` · Rust `build_request("control_plane", "get_model_profile", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `model_profile_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getModelProfile({
+  model_profile_id: "<model_profile_id>",
+});
+```
+
+```python Python
+result = client.control_plane.get_model_profile({
+    "model_profile_id": "<model_profile_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_model_profile", &[
+    ("model_profile_id", "<model_profile_id>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

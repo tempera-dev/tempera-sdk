@@ -515,6 +515,21 @@ OPERATIONS = {
             "description": "List model profiles in the active project without exposing broker credential references."
         },
         {
+            "id": "get_model_profile",
+            "method": "GET",
+            "path": "/model-profiles/{model_profile_id}",
+            "auth": "account",
+            "path_params": [
+                "model_profile_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get one project-scoped model profile without exposing its broker credential reference."
+        },
+        {
             "id": "create_model_profile",
             "method": "POST",
             "path": "/model-profiles",
