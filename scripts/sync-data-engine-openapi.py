@@ -110,6 +110,21 @@ def render(source: Path, operations: list[dict[str, str]]) -> str:
                 f"SDK operation {sdk_operation['id']!r} is absent from {source}: {identity}"
             )
         bindings.append({"sdkOperationId": sdk_operation["id"], **operation})
+    # The MCP gateway is represented by the SDK's dedicated MCP client. Every
+    # other data-engine OpenAPI operation must have a generated REST method;
+    # otherwise regenerating this lock after an accidental surface deletion
+    # could make a smaller SDK look valid.
+    authoritative_rest = {
+        operation["operationId"] for operation in operations if operation["operationId"] != "mcp.jsonrpc"
+    }
+    represented = {binding["operationId"] for binding in bindings}
+    missing = sorted(authoritative_rest - represented)
+    extra = sorted(represented - authoritative_rest)
+    if missing or extra:
+        raise ValueError(
+            "data-engine SDK coverage differs from authoritative REST operations "
+            f"(missing={missing}, extra={extra})"
+        )
     lines = [
         "{",
         '  "schemaVersion": 1,',

@@ -396,6 +396,58 @@ export interface DataEngineClient extends TemperaProductClientBase {
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request an environment run; availability remains explicit until its qualified execution lane is enabled. */
+  runEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch an artifact when the documented data-engine implementation is enabled. */
+  patchArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Archive an artifact through the documented data-engine lifecycle endpoint. */
+  archiveArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Purge an archived artifact through the documented data-engine lifecycle endpoint. */
+  purgeArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List labeling jobs when the documented data-engine implementation is enabled. */
+  listJobs(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel a labeling job through the documented data-engine lifecycle endpoint. */
+  cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an artifact label when the documented data-engine implementation is enabled. */
+  createLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List artifact labels when the documented data-engine implementation is enabled. */
+  listLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one artifact label when the documented data-engine implementation is enabled. */
+  getLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch an artifact label when the documented data-engine implementation is enabled. */
+  patchLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a verifier when the documented data-engine implementation is enabled. */
+  createVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List verifiers when the documented data-engine implementation is enabled. */
+  listVerifiers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one verifier when the documented data-engine implementation is enabled. */
+  getVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch a verifier when the documented data-engine implementation is enabled. */
+  patchVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run a verifier when the documented data-engine implementation is enabled. */
+  runVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an evaluation definition when the documented data-engine implementation is enabled. */
+  createEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List evaluation definitions when the documented data-engine implementation is enabled. */
+  listEvals(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one evaluation definition when the documented data-engine implementation is enabled. */
+  getEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run an evaluation definition when the documented data-engine implementation is enabled. */
+  runEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List evaluation runs when the documented data-engine implementation is enabled. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one evaluation run when the documented data-engine implementation is enabled. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List emitted data products when the documented data-engine implementation is enabled. */
+  listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit a generic data product when the documented data-engine implementation is enabled. */
+  emitProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit an RLVR product when the documented data-engine implementation is enabled. */
+  emitRlvr(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit a preference product when the documented data-engine implementation is enabled. */
+  emitPreference(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit an SFT product when the documented data-engine implementation is enabled. */
+  emitSft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

@@ -2658,6 +2658,409 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one emitted product bundle with its status and manifest URL."
+    },
+    {
+      "id": "runEnvironment",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/environments/{environment_id}:run",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "environment_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Request an environment run; availability remains explicit until its qualified execution lane is enabled."
+    },
+    {
+      "id": "patchArtifact",
+      "method": "PATCH",
+      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "artifact_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Patch an artifact when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "archiveArtifact",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}:archive",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "artifact_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Archive an artifact through the documented data-engine lifecycle endpoint."
+    },
+    {
+      "id": "purgeArtifact",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}:purge",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "artifact_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Purge an archived artifact through the documented data-engine lifecycle endpoint."
+    },
+    {
+      "id": "listJobs",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/jobs",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List labeling jobs when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "cancelJob",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/jobs/{job_id}:cancel",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "job_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Cancel a labeling job through the documented data-engine lifecycle endpoint."
+    },
+    {
+      "id": "createLabel",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/labels",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create an artifact label when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "listLabels",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/labels",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List artifact labels when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "getLabel",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/labels/{label_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "label_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one artifact label when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "patchLabel",
+      "method": "PATCH",
+      "path": "/v1/projects/{project_id}/labels/{label_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "label_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Patch an artifact label when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "createVerifier",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/verifiers",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create a verifier when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "listVerifiers",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/verifiers",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List verifiers when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "getVerifier",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/verifiers/{verifier_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "verifier_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one verifier when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "patchVerifier",
+      "method": "PATCH",
+      "path": "/v1/projects/{project_id}/verifiers/{verifier_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "verifier_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Patch a verifier when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "runVerifier",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/verifiers/{verifier_id}:run",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "verifier_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Run a verifier when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "createEval",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/evals",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create an evaluation definition when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "listEvals",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/evals",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List evaluation definitions when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "getEval",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/evals/{eval_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "eval_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one evaluation definition when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "runEval",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/evals/{eval_id}:run",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "eval_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Run an evaluation definition when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "listRuns",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/runs",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List evaluation runs when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "getRun",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/runs/{run_id}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "run_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one evaluation run when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "listProducts",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/products",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List emitted data products when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "emitProduct",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:emit",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Emit a generic data product when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "emitRlvr",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:emit-rlvr",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Emit an RLVR product when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "emitPreference",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:emit-preference",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Emit a preference product when the documented data-engine implementation is enabled."
+    },
+    {
+      "id": "emitSft",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:emit-sft",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Emit an SFT product when the documented data-engine implementation is enabled."
     }
   ]
 }

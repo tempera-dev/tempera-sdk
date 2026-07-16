@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 47 |
+| Typed operations | 73 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -2402,6 +2402,1072 @@ result = client.data_engine.get_product({
 let spec = client.build_request("data_engine", "get_product", &[
     ("project_id", "<project_id>".into()),
     ("product_id", "<product_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### runEnvironment
+
+`POST /v1/projects/{project_id}/environments/{environment_id}:run`
+
+Request an environment run; availability remains explicit until its qualified execution lane is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.runEnvironment()` · Python `client.data_engine.run_environment()` · Rust `build_request("data_engine", "run_environment", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `environment_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.runEnvironment({
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.data_engine.run_environment({
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "run_environment", &[
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### patchArtifact
+
+`PATCH /v1/projects/{project_id}/artifacts/{artifact_id}`
+
+Patch an artifact when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.patchArtifact()` · Python `client.data_engine.patch_artifact()` · Rust `build_request("data_engine", "patch_artifact", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `artifact_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.patchArtifact({
+  project_id: "<project_id>",
+  artifact_id: "<artifact_id>",
+});
+```
+
+```python Python
+result = client.data_engine.patch_artifact({
+    "project_id": "<project_id>",
+    "artifact_id": "<artifact_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "patch_artifact", &[
+    ("project_id", "<project_id>".into()),
+    ("artifact_id", "<artifact_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### archiveArtifact
+
+`POST /v1/projects/{project_id}/artifacts/{artifact_id}:archive`
+
+Archive an artifact through the documented data-engine lifecycle endpoint.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.archiveArtifact()` · Python `client.data_engine.archive_artifact()` · Rust `build_request("data_engine", "archive_artifact", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `artifact_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.archiveArtifact({
+  project_id: "<project_id>",
+  artifact_id: "<artifact_id>",
+});
+```
+
+```python Python
+result = client.data_engine.archive_artifact({
+    "project_id": "<project_id>",
+    "artifact_id": "<artifact_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "archive_artifact", &[
+    ("project_id", "<project_id>".into()),
+    ("artifact_id", "<artifact_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### purgeArtifact
+
+`POST /v1/projects/{project_id}/artifacts/{artifact_id}:purge`
+
+Purge an archived artifact through the documented data-engine lifecycle endpoint.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.purgeArtifact()` · Python `client.data_engine.purge_artifact()` · Rust `build_request("data_engine", "purge_artifact", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `artifact_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.purgeArtifact({
+  project_id: "<project_id>",
+  artifact_id: "<artifact_id>",
+});
+```
+
+```python Python
+result = client.data_engine.purge_artifact({
+    "project_id": "<project_id>",
+    "artifact_id": "<artifact_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "purge_artifact", &[
+    ("project_id", "<project_id>".into()),
+    ("artifact_id", "<artifact_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listJobs
+
+`GET /v1/projects/{project_id}/jobs`
+
+List labeling jobs when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listJobs()` · Python `client.data_engine.list_jobs()` · Rust `build_request("data_engine", "list_jobs", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listJobs({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_jobs({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_jobs", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### cancelJob
+
+`POST /v1/projects/{project_id}/jobs/{job_id}:cancel`
+
+Cancel a labeling job through the documented data-engine lifecycle endpoint.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.cancelJob()` · Python `client.data_engine.cancel_job()` · Rust `build_request("data_engine", "cancel_job", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `job_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.cancelJob({
+  project_id: "<project_id>",
+  job_id: "<job_id>",
+});
+```
+
+```python Python
+result = client.data_engine.cancel_job({
+    "project_id": "<project_id>",
+    "job_id": "<job_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "cancel_job", &[
+    ("project_id", "<project_id>".into()),
+    ("job_id", "<job_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createLabel
+
+`POST /v1/projects/{project_id}/labels`
+
+Create an artifact label when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createLabel()` · Python `client.data_engine.create_label()` · Rust `build_request("data_engine", "create_label", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createLabel({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.create_label({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_label", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listLabels
+
+`GET /v1/projects/{project_id}/labels`
+
+List artifact labels when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listLabels()` · Python `client.data_engine.list_labels()` · Rust `build_request("data_engine", "list_labels", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listLabels({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_labels({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_labels", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getLabel
+
+`GET /v1/projects/{project_id}/labels/{label_id}`
+
+Get one artifact label when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getLabel()` · Python `client.data_engine.get_label()` · Rust `build_request("data_engine", "get_label", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `label_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getLabel({
+  project_id: "<project_id>",
+  label_id: "<label_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_label({
+    "project_id": "<project_id>",
+    "label_id": "<label_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_label", &[
+    ("project_id", "<project_id>".into()),
+    ("label_id", "<label_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### patchLabel
+
+`PATCH /v1/projects/{project_id}/labels/{label_id}`
+
+Patch an artifact label when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.patchLabel()` · Python `client.data_engine.patch_label()` · Rust `build_request("data_engine", "patch_label", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `label_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.patchLabel({
+  project_id: "<project_id>",
+  label_id: "<label_id>",
+});
+```
+
+```python Python
+result = client.data_engine.patch_label({
+    "project_id": "<project_id>",
+    "label_id": "<label_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "patch_label", &[
+    ("project_id", "<project_id>".into()),
+    ("label_id", "<label_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createVerifier
+
+`POST /v1/projects/{project_id}/verifiers`
+
+Create a verifier when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createVerifier()` · Python `client.data_engine.create_verifier()` · Rust `build_request("data_engine", "create_verifier", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createVerifier({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.create_verifier({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_verifier", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listVerifiers
+
+`GET /v1/projects/{project_id}/verifiers`
+
+List verifiers when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listVerifiers()` · Python `client.data_engine.list_verifiers()` · Rust `build_request("data_engine", "list_verifiers", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listVerifiers({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_verifiers({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_verifiers", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getVerifier
+
+`GET /v1/projects/{project_id}/verifiers/{verifier_id}`
+
+Get one verifier when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getVerifier()` · Python `client.data_engine.get_verifier()` · Rust `build_request("data_engine", "get_verifier", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `verifier_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getVerifier({
+  project_id: "<project_id>",
+  verifier_id: "<verifier_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_verifier({
+    "project_id": "<project_id>",
+    "verifier_id": "<verifier_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_verifier", &[
+    ("project_id", "<project_id>".into()),
+    ("verifier_id", "<verifier_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### patchVerifier
+
+`PATCH /v1/projects/{project_id}/verifiers/{verifier_id}`
+
+Patch a verifier when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.patchVerifier()` · Python `client.data_engine.patch_verifier()` · Rust `build_request("data_engine", "patch_verifier", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `verifier_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.patchVerifier({
+  project_id: "<project_id>",
+  verifier_id: "<verifier_id>",
+});
+```
+
+```python Python
+result = client.data_engine.patch_verifier({
+    "project_id": "<project_id>",
+    "verifier_id": "<verifier_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "patch_verifier", &[
+    ("project_id", "<project_id>".into()),
+    ("verifier_id", "<verifier_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### runVerifier
+
+`POST /v1/projects/{project_id}/verifiers/{verifier_id}:run`
+
+Run a verifier when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.runVerifier()` · Python `client.data_engine.run_verifier()` · Rust `build_request("data_engine", "run_verifier", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `verifier_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.runVerifier({
+  project_id: "<project_id>",
+  verifier_id: "<verifier_id>",
+});
+```
+
+```python Python
+result = client.data_engine.run_verifier({
+    "project_id": "<project_id>",
+    "verifier_id": "<verifier_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "run_verifier", &[
+    ("project_id", "<project_id>".into()),
+    ("verifier_id", "<verifier_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createEval
+
+`POST /v1/projects/{project_id}/evals`
+
+Create an evaluation definition when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.createEval()` · Python `client.data_engine.create_eval()` · Rust `build_request("data_engine", "create_eval", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createEval({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.create_eval({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_eval", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listEvals
+
+`GET /v1/projects/{project_id}/evals`
+
+List evaluation definitions when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listEvals()` · Python `client.data_engine.list_evals()` · Rust `build_request("data_engine", "list_evals", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listEvals({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_evals({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_evals", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getEval
+
+`GET /v1/projects/{project_id}/evals/{eval_id}`
+
+Get one evaluation definition when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getEval()` · Python `client.data_engine.get_eval()` · Rust `build_request("data_engine", "get_eval", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `eval_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getEval({
+  project_id: "<project_id>",
+  eval_id: "<eval_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_eval({
+    "project_id": "<project_id>",
+    "eval_id": "<eval_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_eval", &[
+    ("project_id", "<project_id>".into()),
+    ("eval_id", "<eval_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### runEval
+
+`POST /v1/projects/{project_id}/evals/{eval_id}:run`
+
+Run an evaluation definition when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.runEval()` · Python `client.data_engine.run_eval()` · Rust `build_request("data_engine", "run_eval", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `eval_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.runEval({
+  project_id: "<project_id>",
+  eval_id: "<eval_id>",
+});
+```
+
+```python Python
+result = client.data_engine.run_eval({
+    "project_id": "<project_id>",
+    "eval_id": "<eval_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "run_eval", &[
+    ("project_id", "<project_id>".into()),
+    ("eval_id", "<eval_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listRuns
+
+`GET /v1/projects/{project_id}/runs`
+
+List evaluation runs when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listRuns()` · Python `client.data_engine.list_runs()` · Rust `build_request("data_engine", "list_runs", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listRuns({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_runs({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_runs", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getRun
+
+`GET /v1/projects/{project_id}/runs/{run_id}`
+
+Get one evaluation run when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.getRun()` · Python `client.data_engine.get_run()` · Rust `build_request("data_engine", "get_run", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `run_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getRun({
+  project_id: "<project_id>",
+  run_id: "<run_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_run({
+    "project_id": "<project_id>",
+    "run_id": "<run_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_run", &[
+    ("project_id", "<project_id>".into()),
+    ("run_id", "<run_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listProducts
+
+`GET /v1/projects/{project_id}/products`
+
+List emitted data products when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.listProducts()` · Python `client.data_engine.list_products()` · Rust `build_request("data_engine", "list_products", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.listProducts({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.list_products({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "list_products", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### emitProduct
+
+`POST /v1/projects/{project_id}/products:emit`
+
+Emit a generic data product when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.emitProduct()` · Python `client.data_engine.emit_product()` · Rust `build_request("data_engine", "emit_product", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.emitProduct({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.emit_product({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "emit_product", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### emitRlvr
+
+`POST /v1/projects/{project_id}/products:emit-rlvr`
+
+Emit an RLVR product when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.emitRlvr()` · Python `client.data_engine.emit_rlvr()` · Rust `build_request("data_engine", "emit_rlvr", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.emitRlvr({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.emit_rlvr({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "emit_rlvr", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### emitPreference
+
+`POST /v1/projects/{project_id}/products:emit-preference`
+
+Emit a preference product when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.emitPreference()` · Python `client.data_engine.emit_preference()` · Rust `build_request("data_engine", "emit_preference", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.emitPreference({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.emit_preference({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "emit_preference", &[
+    ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### emitSft
+
+`POST /v1/projects/{project_id}/products:emit-sft`
+
+Emit an SFT product when the documented data-engine implementation is enabled.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.emitSft()` · Python `client.data_engine.emit_sft()` · Rust `build_request("data_engine", "emit_sft", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.emitSft({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.emit_sft({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "emit_sft", &[
+    ("project_id", "<project_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
