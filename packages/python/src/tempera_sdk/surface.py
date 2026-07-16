@@ -502,6 +502,79 @@ OPERATIONS = {
             "description": "Revoke an API key (idempotent)."
         },
         {
+            "id": "list_model_profiles",
+            "method": "GET",
+            "path": "/model-profiles",
+            "auth": "account",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List model profiles in the active project without exposing broker credential references."
+        },
+        {
+            "id": "create_model_profile",
+            "method": "POST",
+            "path": "/model-profiles",
+            "auth": "account",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "project_id",
+                "name",
+                "provider",
+                "model",
+                "kind",
+                "credential_ref"
+            ],
+            "required_body": [
+                "name",
+                "provider",
+                "model"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Create a project-scoped managed or BYOK model profile using a write-only control-plane broker reference."
+        },
+        {
+            "id": "update_model_profile",
+            "method": "PATCH",
+            "path": "/model-profiles/{model_profile_id}",
+            "auth": "account",
+            "path_params": [
+                "model_profile_id"
+            ],
+            "query": [],
+            "body": [
+                "name",
+                "provider",
+                "model",
+                "kind",
+                "credential_ref"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Update mutable model-profile metadata or replace its write-only broker reference."
+        },
+        {
+            "id": "delete_model_profile",
+            "method": "DELETE",
+            "path": "/model-profiles/{model_profile_id}",
+            "auth": "account",
+            "path_params": [
+                "model_profile_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Soft-delete a model profile from the active project."
+        },
+        {
             "id": "list_grants",
             "method": "GET",
             "path": "/oauth/grants",
