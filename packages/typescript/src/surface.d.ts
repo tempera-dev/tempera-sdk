@@ -51,6 +51,7 @@ export type TemperaOperationSpec = {
   pathParams: readonly string[];
   query: readonly string[];
   body: readonly string[];
+  requiredBody: readonly string[];
   bodyDefaults: Readonly<Record<string, unknown>>;
   scope: TemperaScope | null;
   description: string;
@@ -236,7 +237,7 @@ export interface TemperaCodeClient extends TemperaProductClientBase {
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the entitled Tempera Code hosted model catalog. */
   listModels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a Responses-compatible inference request through the Tempera Code gateway. */
+  /** Create a non-streaming Responses-compatible inference request through the Tempera Code gateway. */
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 

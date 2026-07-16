@@ -224,11 +224,12 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     if op.get("query"):
         lines += param_table("Query parameters", [(name, "no", "") for name in op["query"]])
     body_rows: list[tuple[str, str, str]] = []
+    required_body = set(op.get("requiredBody", []))
     for name in op.get("body", []):
         note = ""
         if name in defaults:
             note = f"Defaults to `{json.dumps(defaults[name])}` when omitted."
-        body_rows.append((name, "no", note))
+        body_rows.append((name, "yes" if name in required_body else "no", note))
     for name in sorted(set(defaults) - set(op.get("body", []))):
         body_rows.append(
             (name, "always sent", f"Included automatically as `{json.dumps(defaults[name])}`; pass `{name}` to override.")

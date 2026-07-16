@@ -261,7 +261,7 @@
     "temperaCode": [
       { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check Tempera Code gateway liveness." },
       { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the entitled Tempera Code hosted model catalog." },
-      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "instructions", "stream", "reasoning", "tools", "text"], "scope": "model:invoke", "description": "Create a Responses-compatible inference request through the Tempera Code gateway." }
+      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "instructions", "tools", "text"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway." }
     ],
     "cradle": [
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },
