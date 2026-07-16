@@ -2724,6 +2724,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Purge an archived artifact through the documented data-engine lifecycle endpoint."
     },
     {
+      "id": "expireArtifactRetention",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/artifacts:expire-retention",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Apply due artifact retention policies through the REST-only lifecycle endpoint."
+    },
+    {
       "id": "listJobs",
       "method": "GET",
       "path": "/v1/projects/{project_id}/jobs",

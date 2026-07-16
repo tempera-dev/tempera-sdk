@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "data-engine/api/openapi.yaml",
-  "sourceSha256": "770037f2d1cc8ad50e9fb7aea18bf90c2c0fd7fe5996e48d259dbd75573a2029",
+  "sourceSha256": "c781183bdd1e64a38a66f402aa32c1d5253aa9896899ddb9e3c0c9a7c0f7b20f",
   "operations": [
     {"sdkOperationId":"health","operationId":"health.get","method":"GET","path":"/v1/health"},
     {"sdkOperationId":"listDomainPacks","operationId":"projects.domainPacks.list","method":"GET","path":"/v1/{parent}/domain-packs"},
@@ -54,6 +54,7 @@
     {"sdkOperationId":"patchArtifact","operationId":"projects.artifacts.patch","method":"PATCH","path":"/v1/{parent}/artifacts/{artifactId}"},
     {"sdkOperationId":"archiveArtifact","operationId":"projects.artifacts.archive","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:archive"},
     {"sdkOperationId":"purgeArtifact","operationId":"projects.artifacts.purge","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:purge"},
+    {"sdkOperationId":"expireArtifactRetention","operationId":"projects.artifacts.expireRetention","method":"POST","path":"/v1/{parent}/artifacts:expire-retention"},
     {"sdkOperationId":"listJobs","operationId":"projects.jobs.list","method":"GET","path":"/v1/{parent}/jobs"},
     {"sdkOperationId":"cancelJob","operationId":"projects.jobs.cancel","method":"POST","path":"/v1/{parent}/jobs/{jobId}:cancel"},
     {"sdkOperationId":"createLabel","operationId":"projects.labels.create","method":"POST","path":"/v1/{parent}/labels"},

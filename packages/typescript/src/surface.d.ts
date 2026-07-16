@@ -404,6 +404,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   archiveArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Purge an archived artifact through the documented data-engine lifecycle endpoint. */
   purgeArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply due artifact retention policies through the REST-only lifecycle endpoint. */
+  expireArtifactRetention(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List labeling jobs when the documented data-engine implementation is enabled. */
   listJobs(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel a labeling job through the documented data-engine lifecycle endpoint. */

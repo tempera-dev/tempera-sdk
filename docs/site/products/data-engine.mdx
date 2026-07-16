@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 73 |
+| Typed operations | 74 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -2574,6 +2574,45 @@ result = client.data_engine.purge_artifact({
 let spec = client.build_request("data_engine", "purge_artifact", &[
     ("project_id", "<project_id>".into()),
     ("artifact_id", "<artifact_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### expireArtifactRetention
+
+`POST /v1/projects/{project_id}/artifacts:expire-retention`
+
+Apply due artifact retention policies through the REST-only lifecycle endpoint.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.expireArtifactRetention()` · Python `client.data_engine.expire_artifact_retention()` · Rust `build_request("data_engine", "expire_artifact_retention", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.expireArtifactRetention({
+  project_id: "<project_id>",
+});
+```
+
+```python Python
+result = client.data_engine.expire_artifact_retention({
+    "project_id": "<project_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "expire_artifact_retention", &[
+    ("project_id", "<project_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
