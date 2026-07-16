@@ -20,6 +20,8 @@
     "dataset:write",
     "eval:run",
     "pii:unmask",
+    "cyber:research",
+    "clinical:run",
     "model:read",
     "model:invoke",
     "admin"
