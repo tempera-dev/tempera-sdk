@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "data-engine/api/openapi.yaml",
-  "sourceSha256": "edf3a364dc6bef85d54025492d6eb158ef3bdf2169133e48a30e3e3997a3e954",
+  "sourceSha256": "910469c981ed6396f30f803efcd7f1f6c4ac52308162b55cf15b92c940ffc61a",
   "operations": [
     {"sdkOperationId":"health","operationId":"health.get","method":"GET","path":"/v1/health"},
     {"sdkOperationId":"listDomainPacks","operationId":"projects.domainPacks.list","method":"GET","path":"/v1/{parent}/domain-packs"},
