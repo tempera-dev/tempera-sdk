@@ -25,11 +25,14 @@ export type TemperaEnvironmentTargets = {
   authIssuerUrl: string;
   authJwksUrl: string;
   controlPlaneUrl: string;
+  cradleApiUrl: string;
+  dataEngineApiUrl: string;
   mcpGatewayUrl: string;
   paletteApiUrl: string;
   paletteMcpUrl: string;
   publicSiteUrl: string;
   temperaCodeApiUrl: string;
+  temperaGymUrl: string;
   tempoApiUrl: string;
 };
 export declare const TEMPERA_ENVIRONMENTS: Readonly<Record<TemperaEnvironment, TemperaEnvironmentTargets>>;
