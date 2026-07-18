@@ -28,9 +28,9 @@ The SDK must expose these authenticated `remi` operations from `surface.json`:
 
 | Operation | Method and path | Required fields | Rules |
 |---|---|---|---|
-| `context` | `POST /v1/context` | `question` | Optional `max_tokens`, `modes`; no client-supplied tenant, project, or workspace scope. Response must carry a fresh retrieval receipt and cited evidence. |
-| `recordObservation` | `POST /v1/observations` | `kind`, `summary`, `artifact_refs`, `trace_id`, `idempotency_key` | Summary is bounded/redacted; references are opaque. `checkpoint_ref` is optional. Never send prompts, tool bodies, patch bodies, command output, secrets, or browser content. |
-| `feedback` | `POST /v1/feedback` | `retrieval_receipt_id`, `evidence_node_id`, `helpful`, `terminal_state`, `outcome_ref`, `idempotency_key` | The evidence ID must be from that exact receipt; terminal state is `succeeded`, `failed`, `interrupted`, or `retry`; outcome is a verified opaque reference. |
+| `context` | `POST /v1/context` | `question` | Optional `max_tokens`, `require_fresh`, `modes`, and bounded reconstruction controls; no client-supplied tenant, project, environment, or workspace scope. Response must carry a retrieval receipt and cited evidence. |
+| `remember` | `POST /v1/remember` | `kind`, `text` | Lifecycle writes use an idempotency key and the bounded `remi.memory_event_provenance.v1` envelope (`trace_id`, rollout/turn/tool IDs, producer, and opaque `artifact_refs`). `text` is a redacted summary only; checkpoint identity belongs in an opaque artifact reference. Never send prompts, tool bodies, patch bodies, command output, secrets, or browser content. |
+| `feedback` | `POST /v1/feedback` | `schema`, `retrieval_receipt_id`, `evidence_node_id`, `helpful`, `terminal_state`, `outcome_artifact_id`, `idempotency_key` | Use `remi.memory_feedback.v2`. The evidence ID must be from that exact receipt; terminal state is `succeeded`, `failed`, `interrupted`, or `retry`; the outcome artifact is a verified opaque `artifact://`, `test://`, `review://`, or `deploy://` reference. |
 
 The current SDK convention is generated from `surface.json`; regenerate all
 language surfaces and documentation with the normal SDK rollout gate. A local
@@ -40,9 +40,9 @@ type is not a substitute for a released SDK operation or transport.
 
 | State | Evidence | Status |
 |---|---|---|
-| Implemented locally | SDK contract commit `3c7ba3770c1d5b7e54a0bb25fe876f8ee6371325` contains all three operations. Remi and Auth Hub companion local commits are `285029aca726e0a1391aa207d9fca5a82b69204b` and `3da7aca5f79edaff6d52b27e889d3b68d07d9be6`. | Yes, local only |
+| Implemented locally | SDK contract commit `6abd466` contains generated `context`, `remember`, and V2 `feedback` operations. Remi and Auth Hub companion local commits are `12deeb9` and `6532439`. | Yes, local only |
 | Locally validated | Earlier focused SDK contract/generation and Rust package tests were run on the local contract branch; rerun the SDK gate on the publication candidate. | Partial, release gate still required |
-| Remotely published / consumable | SDK `origin/main` is `87d54d3`; its Remi operation table has the legacy operations and does **not** contain `context`, `recordObservation`, or `feedback`. No remote branch contains `3c7ba3770c1d5b7e54a0bb25fe876f8ee6371325`. | No |
+| Remotely published / consumable | SDK `origin/main` is `87d54d3`; its Remi operation table does **not** contain `context` or V2 terminal feedback. No remote branch contains `6abd466`. | No |
 | Live end-to-end verified | No versioned generated SDK dependency is available to bind, so no authenticated workflow-to-Remi E2E can truthfully be claimed. | No |
 
 The companion work is likewise not a release proof: Remi `origin/main` does
@@ -58,19 +58,21 @@ revision or released package that contains all three operations.
 1. Pin that immutable version or commit through the normal dependency policy;
    do not add a path dependency or handwritten HTTP client.
 2. Map the pre-plan request exactly to the generated `context` body:
-   `question`, optional `max_tokens`, and optional `modes`. The current local
-   adapter's `require_fresh` and `reconstruction_mode` fields are **not** in
-   the generated SDK contract and must be removed from the wire mapping or
-   deliberately added, generated, reviewed, and released before use.
+   `question`, optional `max_tokens`, `require_fresh`, `modes`, and bounded
+   reconstruction controls. The existing local adapter's `require_fresh` and
+   `reconstruction_mode` fields are generated SDK fields; keep their values
+   bounded and covered by the same release.
 3. On unavailable, invalid, timed-out, or cancelled context, continue with no
    memory. Retain the returned receipt ID and evidence IDs only in workflow
    state needed for receipt-bound feedback.
-4. Enqueue lifecycle observations atomically with workflow events. Use the
-   journal-derived idempotency key and only bounded redacted summaries plus
-   opaque artifact/checkpoint/trace references.
+4. Enqueue lifecycle memory observations atomically with workflow events. Use
+   the journal-derived idempotency key and the generated `remember` body: a
+   bounded redacted summary, plus opaque artifact/checkpoint/trace references
+   in its provenance envelope.
 5. Let the app-server-owned maintenance worker lease a bounded batch, deliver
-   through the SDK, record a delivery/retry audit event, and use bounded
-   exponential backoff. It must not be an arbitrary cron or tool runner.
+   `remember` calls through the SDK, record a delivery/retry audit event, and
+   use bounded exponential backoff. It must not be an arbitrary cron or tool
+   runner.
 6. On cancellation, cancel outstanding outbox work and never report it as
    success. Send feedback only with a retained exact receipt/evidence pair,
    a verified outcome reference, and one of the four terminal states above.
@@ -84,8 +86,9 @@ The blocking gate is publication: land the reviewed Remi and Auth Hub
 contract changes, land/regenerate the SDK surface, pass the SDK's full
 `npm test` contract gate, and publish or otherwise approve a portable SDK
 revision. Then the Tempera Code owner can pin that exact release and run one
-authenticated SDK-shaped E2E covering context, durable observation delivery,
-checkpoint identity, receipt-bound terminal feedback, retry, and cancellation.
+authenticated SDK-shaped E2E covering context, durable `remember` delivery,
+checkpoint identity carried as provenance, receipt-bound terminal feedback,
+retry, and cancellation.
 
 Until then, do not fabricate delivery by marking outbox rows complete, and do
 not replace the SDK transport with direct HTTP.
