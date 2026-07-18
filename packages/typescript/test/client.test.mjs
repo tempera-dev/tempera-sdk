@@ -89,9 +89,18 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
-  await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
+  await client.remi.remember({ kind: "fact", text: "hello" });
   const body = JSON.parse(calls[1].options.body);
-  assert.deepEqual(body, { tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
+  assert.deepEqual(body, { kind: "fact", text: "hello" });
+  const context = { question: "Which workflow evidence is current?", max_tokens: 600, require_fresh: true, modes: ["procedural", "gotcha", "state"], reconstruction_mode: "off" };
+  await client.remi.context(context);
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), context);
+  const feedback = { schema: "remi.memory_feedback.v2", retrieval_receipt_id: "receipt_1", evidence_node_id: "node_1", helpful: true, terminal_state: "succeeded", outcome_artifact_id: "test://sdk/generated-wire", idempotency_key: "feedback_1" };
+  await client.remi.feedback(feedback);
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), feedback);
+  await assert.rejects(client.remi.remember({ tenant_id: "t1", kind: "fact", text: "nope" }), /derived from the authenticated principal/);
+  await assert.rejects(client.remi.context({ tenant_id: "t1", question: "what is current?" }), /derived from the authenticated principal/);
+  await assert.rejects(client.remi.feedback({ environment_id: "prod", ...feedback }), /derived from the authenticated principal/);
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {

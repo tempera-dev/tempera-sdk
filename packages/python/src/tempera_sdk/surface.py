@@ -9,7 +9,7 @@ SURFACE_VERSION = 2
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
 
@@ -169,6 +169,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -182,6 +183,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -195,6 +197,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -210,6 +213,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -228,6 +232,7 @@ OPERATIONS = {
                 "organization",
                 "invite_token"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {
                 "mode": "signup"
@@ -246,6 +251,7 @@ OPERATIONS = {
                 "email",
                 "password"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {
                 "mode": "login"
@@ -261,6 +267,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -278,6 +285,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -291,6 +299,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -306,6 +315,7 @@ OPERATIONS = {
             "body": [
                 "name"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -319,6 +329,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -335,6 +346,7 @@ OPERATIONS = {
                 "org_id",
                 "name"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -348,6 +360,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -364,6 +377,7 @@ OPERATIONS = {
                 "project_id",
                 "name"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -377,6 +391,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -394,6 +409,7 @@ OPERATIONS = {
             "body": [
                 "role"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -409,6 +425,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -422,6 +439,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -438,6 +456,7 @@ OPERATIONS = {
                 "email",
                 "role"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -453,6 +472,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -466,6 +486,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -485,6 +506,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -500,6 +522,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -515,6 +538,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -528,6 +552,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -543,6 +568,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -563,6 +589,7 @@ OPERATIONS = {
                 "kind",
                 "credential_ref"
             ],
+            "forbidden_body": [],
             "required_body": [
                 "name",
                 "provider",
@@ -588,6 +615,7 @@ OPERATIONS = {
                 "kind",
                 "credential_ref"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -603,6 +631,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -616,6 +645,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -631,6 +661,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -644,6 +675,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -659,6 +691,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -672,6 +705,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -687,6 +721,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -700,6 +735,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -715,6 +751,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -728,6 +765,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -747,6 +785,7 @@ OPERATIONS = {
                 "network"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -760,6 +799,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -779,6 +819,7 @@ OPERATIONS = {
                 "project_id",
                 "environment_id"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -792,6 +833,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -807,6 +849,7 @@ OPERATIONS = {
             "body": [
                 "token"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -822,6 +865,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -853,6 +897,7 @@ OPERATIONS = {
                 "cursor"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -872,6 +917,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -892,6 +938,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -912,6 +959,7 @@ OPERATIONS = {
                 "reason"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -938,6 +986,7 @@ OPERATIONS = {
                 "limit"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -972,6 +1021,7 @@ OPERATIONS = {
                 "cost",
                 "idempotency_key"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:write",
@@ -994,6 +1044,7 @@ OPERATIONS = {
                 "source",
                 "payload"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:write",
@@ -1011,6 +1062,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
@@ -1029,6 +1081,7 @@ OPERATIONS = {
             "body": [
                 "name"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -1050,6 +1103,7 @@ OPERATIONS = {
                 "span_id",
                 "reference"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -1069,6 +1123,7 @@ OPERATIONS = {
             "body": [
                 "case_ids"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -1088,6 +1143,7 @@ OPERATIONS = {
             "body": [
                 "scopes"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
@@ -1106,6 +1162,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
@@ -1122,6 +1179,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
@@ -1137,6 +1195,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1150,6 +1209,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1163,6 +1223,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1176,6 +1237,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1192,6 +1254,7 @@ OPERATIONS = {
                 "url",
                 "driverless"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1207,6 +1270,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1222,6 +1286,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1244,6 +1309,7 @@ OPERATIONS = {
                 "confirmation_grant",
                 "payment_context"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1261,6 +1327,7 @@ OPERATIONS = {
                 "set_of_marks"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1278,6 +1345,7 @@ OPERATIONS = {
                 "after_seq"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1293,6 +1361,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1308,6 +1377,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1328,6 +1398,7 @@ OPERATIONS = {
                 "max_rounds",
                 "token_budget"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1343,6 +1414,7 @@ OPERATIONS = {
                 "session_id"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1358,6 +1430,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1373,6 +1446,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1388,6 +1462,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1404,6 +1479,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1419,6 +1495,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1432,6 +1509,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
@@ -1451,6 +1529,7 @@ OPERATIONS = {
                 "tools",
                 "text"
             ],
+            "forbidden_body": [],
             "required_body": [
                 "model",
                 "input"
@@ -1469,6 +1548,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1482,6 +1562,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
@@ -1502,6 +1583,7 @@ OPERATIONS = {
                 "stream",
                 "byok"
             ],
+            "forbidden_body": [],
             "required_body": [
                 "model",
                 "messages"
@@ -1523,6 +1605,7 @@ OPERATIONS = {
                 "max_output_tokens",
                 "byok"
             ],
+            "forbidden_body": [],
             "required_body": [
                 "model",
                 "input"
@@ -1541,6 +1624,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1554,6 +1638,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1567,6 +1652,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1588,6 +1674,7 @@ OPERATIONS = {
                 "policy",
                 "idempotency_key"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1609,6 +1696,7 @@ OPERATIONS = {
                 "policy",
                 "idempotency_key"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1624,6 +1712,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1639,6 +1728,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1652,6 +1742,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1676,6 +1767,7 @@ OPERATIONS = {
                 "target_origins",
                 "task_label"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1689,6 +1781,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1704,6 +1797,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1717,6 +1816,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1730,6 +1835,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1743,6 +1854,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1756,6 +1873,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1769,6 +1892,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1784,6 +1913,12 @@ OPERATIONS = {
                 "limit"
             ],
             "body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1797,18 +1932,22 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [
-                "tenant_id",
-                "project_id",
                 "kind",
                 "text",
-                "environment_id",
                 "idempotency_key",
-                "project"
+                "project",
+                "provenance"
+            ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
             ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Write one memory into the ledger and, by default, project it into the memory graph immediately."
+            "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier."
         },
         {
             "id": "project",
@@ -1819,6 +1958,12 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "limit"
+            ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
             ],
             "required_body": [],
             "body_defaults": {},
@@ -1835,6 +1980,12 @@ OPERATIONS = {
             "body": [
                 "limit"
             ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1849,7 +2000,6 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "question",
-                "scope",
                 "max_tokens",
                 "require_fresh",
                 "modes",
@@ -1857,10 +2007,71 @@ OPERATIONS = {
                 "max_reconstruction_steps",
                 "max_reconstruction_tokens"
             ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Answer a question from memory with evidence, citations, contradictions, and staleness signals."
+            "description": "Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals."
+        },
+        {
+            "id": "context",
+            "method": "POST",
+            "path": "/v1/context",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "question",
+                "max_tokens",
+                "require_fresh",
+                "modes",
+                "reconstruction_mode",
+                "max_reconstruction_steps",
+                "max_reconstruction_tokens"
+            ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback."
+        },
+        {
+            "id": "feedback",
+            "method": "POST",
+            "path": "/v1/feedback",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "schema",
+                "retrieval_receipt_id",
+                "evidence_node_id",
+                "helpful",
+                "outcome_artifact_id",
+                "note",
+                "terminal_state",
+                "idempotency_key"
+            ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth."
         },
         {
             "id": "maintenance",
@@ -1874,6 +2085,12 @@ OPERATIONS = {
                 "repair_orphans",
                 "prune_audit_before_unix_ms",
                 "retain_latest_audit_events"
+            ],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
             ],
             "required_body": [],
             "body_defaults": {},
@@ -1890,6 +2107,7 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1908,6 +2126,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1924,6 +2143,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1942,6 +2162,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1958,6 +2179,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1976,6 +2198,7 @@ OPERATIONS = {
             "body": [
                 "profile"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1998,6 +2221,7 @@ OPERATIONS = {
                 "seed",
                 "hard_budgets"
             ],
+            "forbidden_body": [],
             "required_body": [
                 "task_family",
                 "hard_budgets"
@@ -2019,6 +2243,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2035,6 +2260,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2051,6 +2277,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2067,6 +2294,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2083,6 +2311,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2103,6 +2332,7 @@ OPERATIONS = {
                 "mode",
                 "config"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2121,6 +2351,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2137,6 +2368,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2157,6 +2389,7 @@ OPERATIONS = {
                 "mode",
                 "config"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2173,6 +2406,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2192,6 +2426,7 @@ OPERATIONS = {
                 "cursor",
                 "artifacts"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2215,6 +2450,7 @@ OPERATIONS = {
                 "default_branch",
                 "connection_ref"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2233,6 +2469,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2249,6 +2486,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2271,6 +2509,7 @@ OPERATIONS = {
                 "resolved_contract_hash",
                 "update_mask"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2291,6 +2530,7 @@ OPERATIONS = {
                 "commit",
                 "snapshot"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2307,6 +2547,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2330,6 +2571,7 @@ OPERATIONS = {
                 "publication_state",
                 "metadata"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2348,6 +2590,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2364,6 +2607,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2383,6 +2627,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2401,6 +2646,7 @@ OPERATIONS = {
             "body": [
                 "task_names"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2419,6 +2665,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2435,6 +2682,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2456,6 +2704,7 @@ OPERATIONS = {
                 "raw_body",
                 "metadata"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2478,6 +2727,7 @@ OPERATIONS = {
                 "allowPrivate",
                 "metadata"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2500,6 +2750,7 @@ OPERATIONS = {
                 "artifacts",
                 "verifier"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2521,6 +2772,7 @@ OPERATIONS = {
                 "rubric",
                 "skill_tags"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2539,6 +2791,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2559,6 +2812,7 @@ OPERATIONS = {
                 "order_by"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2577,6 +2831,7 @@ OPERATIONS = {
                 "view"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2596,6 +2851,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2617,6 +2873,7 @@ OPERATIONS = {
                 "priority",
                 "target_accuracy"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2633,6 +2890,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2652,6 +2910,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2670,6 +2929,7 @@ OPERATIONS = {
                 "page_token"
             ],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2685,6 +2945,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2700,6 +2961,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2720,6 +2982,7 @@ OPERATIONS = {
                 "license",
                 "filters"
             ],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2736,6 +2999,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2752,6 +3016,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2768,6 +3033,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2784,6 +3050,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2800,6 +3067,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2815,6 +3083,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2830,6 +3099,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2846,6 +3116,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2861,6 +3132,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2876,6 +3148,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2892,6 +3165,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2908,6 +3182,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2923,6 +3198,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2938,6 +3214,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2954,6 +3231,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2970,6 +3248,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -2986,6 +3265,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3001,6 +3281,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3016,6 +3297,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3032,6 +3314,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3048,6 +3331,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3063,6 +3347,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3079,6 +3364,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3094,6 +3380,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3109,6 +3396,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3124,6 +3412,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3139,6 +3428,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3154,6 +3444,7 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [],
+            "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -3163,7 +3454,7 @@ OPERATIONS = {
 }
 
 MCP_GATEWAY = {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
+    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to ten tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
     "methods": [
         {
             "id": "initialize",
@@ -3178,12 +3469,12 @@ MCP_GATEWAY = {
         {
             "id": "list_tools",
             "rpc": "tools/list",
-            "description": "List every tool the gateway offers: builtins plus namespaced product tools."
+            "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
         },
         {
             "id": "call_tool",
             "rpc": "tools/call",
-            "description": "Invoke a tool by name; product tool calls are metered as mcp_invocations."
+            "description": "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit."
         },
         {
             "id": "whoami",

@@ -3,7 +3,7 @@
 // product-client interfaces used by createTemperaClient().
 
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
@@ -54,6 +54,7 @@ export type TemperaOperationSpec = {
   pathParams: readonly string[];
   query: readonly string[];
   body: readonly string[];
+  forbiddenBody: readonly string[];
   requiredBody: readonly string[];
   bodyDefaults: Readonly<Record<string, unknown>>;
   scope: TemperaScope | null;
@@ -303,14 +304,18 @@ export interface RemiClient extends TemperaProductClientBase {
   getPrometheusMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent service audit events (default 100, maximum 500). */
   listAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Write one memory into the ledger and, by default, project it into the memory graph immediately. */
+  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier. */
   remember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Project pending ledger events into the memory graph and return the projection report. */
   project(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run memory management over pending ledger events (same engine pass as project, tracked separately). */
   manage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Answer a question from memory with evidence, citations, contradictions, and staleness signals. */
+  /** Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals. */
   query(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback. */
+  context(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth. */
+  feedback(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history. */
   maintenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

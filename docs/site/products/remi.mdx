@@ -21,7 +21,7 @@ Temporal memory server: remember, project, query, and maintain an agent memory g
 | Audience | `remi` |
 | Auth | bearer minted for audience remi, central tp_ API key, or the memory-server static token |
 | Client | TypeScript `client.remi` · Python `client.remi` · Rust `build_request("remi", ...)` |
-| Typed operations | 12 |
+| Typed operations | 14 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.remi.request(path, options)` (TypeScript) /
@@ -234,7 +234,7 @@ let spec = client.build_request("remi", "list_audit", &[
 
 `POST /v1/remember`
 
-Write one memory into the ledger and, by default, project it into the memory graph immediately.
+Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier.
 
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.remi.remember()` · Python `client.remi.remember()` · Rust `build_request("remi", "remember", params)`
@@ -243,37 +243,35 @@ Write one memory into the ledger and, by default, project it into the memory gra
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | no | — |
-| `project_id` | no | — |
 | `kind` | no | — |
 | `text` | no | — |
-| `environment_id` | no | — |
 | `idempotency_key` | no | — |
 | `project` | no | — |
+| `provenance` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.remi.remember({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
   kind: "<kind>",
+  text: "<text>",
+  idempotency_key: "<idempotency_key>",
 });
 ```
 
 ```python Python
 result = client.remi.remember({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
     "kind": "<kind>",
+    "text": "<text>",
+    "idempotency_key": "<idempotency_key>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "remember", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
     ("kind", "<kind>".into()),
+    ("text", "<text>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -363,7 +361,7 @@ let spec = client.build_request("remi", "manage", &[
 
 `POST /v1/query`
 
-Answer a question from memory with evidence, citations, contradictions, and staleness signals.
+Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals.
 
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.remi.query()` · Python `client.remi.query()` · Rust `build_request("remi", "query", params)`
@@ -373,7 +371,6 @@ Answer a question from memory with evidence, citations, contradictions, and stal
 | Parameter | Required | Notes |
 |---|---|---|
 | `question` | no | — |
-| `scope` | no | — |
 | `max_tokens` | no | — |
 | `require_fresh` | no | — |
 | `modes` | no | — |
@@ -386,24 +383,127 @@ Answer a question from memory with evidence, citations, contradictions, and stal
 ```typescript TypeScript
 const result = await client.remi.query({
   question: "<question>",
-  scope: "<scope>",
   max_tokens: "<max_tokens>",
+  require_fresh: "<require_fresh>",
 });
 ```
 
 ```python Python
 result = client.remi.query({
     "question": "<question>",
-    "scope": "<scope>",
     "max_tokens": "<max_tokens>",
+    "require_fresh": "<require_fresh>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "query", &[
     ("question", "<question>".into()),
-    ("scope", "<scope>".into()),
     ("max_tokens", "<max_tokens>".into()),
+    ("require_fresh", "<require_fresh>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### context
+
+`POST /v1/context`
+
+Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback.
+
+- **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.remi.context()` · Python `client.remi.context()` · Rust `build_request("remi", "context", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `question` | no | — |
+| `max_tokens` | no | — |
+| `require_fresh` | no | — |
+| `modes` | no | — |
+| `reconstruction_mode` | no | — |
+| `max_reconstruction_steps` | no | — |
+| `max_reconstruction_tokens` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.remi.context({
+  question: "<question>",
+  max_tokens: "<max_tokens>",
+  require_fresh: "<require_fresh>",
+});
+```
+
+```python Python
+result = client.remi.context({
+    "question": "<question>",
+    "max_tokens": "<max_tokens>",
+    "require_fresh": "<require_fresh>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("remi", "context", &[
+    ("question", "<question>".into()),
+    ("max_tokens", "<max_tokens>".into()),
+    ("require_fresh", "<require_fresh>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### feedback
+
+`POST /v1/feedback`
+
+Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth.
+
+- **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.remi.feedback()` · Python `client.remi.feedback()` · Rust `build_request("remi", "feedback", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `schema` | no | — |
+| `retrieval_receipt_id` | no | — |
+| `evidence_node_id` | no | — |
+| `helpful` | no | — |
+| `outcome_artifact_id` | no | — |
+| `note` | no | — |
+| `terminal_state` | no | — |
+| `idempotency_key` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.remi.feedback({
+  schema: "<schema>",
+  retrieval_receipt_id: "<retrieval_receipt_id>",
+  evidence_node_id: "<evidence_node_id>",
+});
+```
+
+```python Python
+result = client.remi.feedback({
+    "schema": "<schema>",
+    "retrieval_receipt_id": "<retrieval_receipt_id>",
+    "evidence_node_id": "<evidence_node_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("remi", "feedback", &[
+    ("schema", "<schema>".into()),
+    ("retrieval_receipt_id", "<retrieval_receipt_id>".into()),
+    ("evidence_node_id", "<evidence_node_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

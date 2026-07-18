@@ -14,9 +14,11 @@ supplied during onboarding. It is a stateless streamable-HTTP JSON-RPC 2.0 endpo
 It requires a bearer minted for audience **`tempera-mcp`** with scope
 **`mcp:invoke`** — or a central `tp_` API key.
 
-The gateway aggregates every product MCP server behind **namespaced tools**
-(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`), so one endpoint and one
-credential expose the whole fleet. Product tool calls are metered as
+The model-facing surface is a fixed **capability fabric**, so product
+capabilities are not flat namespaced tools. Use `tempera_search` to discover
+policy-filtered opaque cards, `tempera_describe` to inspect one, then
+`tempera_invoke` or `tempera_prepare`/`tempera_commit` to execute it. Product
+execution is metered as
 `mcp_invocations` against the workspace's plan.
 
 ## JSON-RPC methods
@@ -25,15 +27,15 @@ credential expose the whole fleet. Product tool calls are metered as
 |---|---|---|---|
 | `initialize` | `initialize` | — | Open an MCP session and fetch server capabilities and instructions. |
 | `ping` | `ping` | — | Check gateway liveness over JSON-RPC. |
-| `listTools` | `tools/list` | — | List every tool the gateway offers: builtins plus namespaced product tools. |
-| `callTool` | `tools/call` | — | Invoke a tool by name; product tool calls are metered as mcp_invocations. |
+| `listTools` | `tools/list` | — | List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names. |
+| `callTool` | `tools/call` | — | Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit. |
 | `whoami` | `tools/call` | `tempera_whoami` | Fetch the caller's identity, workspace, and scopes as seen by the gateway. |
 | `status` | `tools/call` | `tempera_status` | Fetch gateway upstream health for every connected product MCP server. |
 
 ## Builtin tools
 
-Alongside the namespaced product tools, the gateway serves its own builtins
-(not metered as product invocations):
+The fixed surface includes these gateway verbs (product-card discovery itself
+is not a product invocation):
 
 - **`tempera_whoami`** — Fetch the caller's identity, workspace, and scopes as seen by the gateway.
 - **`tempera_status`** — Fetch gateway upstream health for every connected product MCP server.
@@ -62,7 +64,7 @@ const mcp = new TemperaMcpClient({ auth }); // url derives as ${issuer}/mcp
 
 await mcp.initialize();
 const tools = await mcp.listTools();
-const result = await mcp.callTool("cradle_get_capabilities");
+const cards = await mcp.callTool("tempera_search", { query: "browser capability" });
 console.log(await mcp.whoami());
 console.log(await mcp.status());
 ```
@@ -76,7 +78,7 @@ mcp = TemperaMcpClient(auth=auth)  # url derives as ${issuer}/mcp
 
 mcp.initialize()
 tools = mcp.list_tools()
-result = mcp.call_tool("cradle_get_capabilities")
+cards = mcp.call_tool("tempera_search", {"query": "browser capability"})
 print(mcp.whoami())
 print(mcp.status())
 ```
@@ -91,7 +93,7 @@ let mut mcp = McpRequestBuilder::new();
 // POST each body at auth.mcp_url() with the tempera-mcp bearer:
 let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");
 let (id, body) = mcp.list_tools_body();
-let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);
+let (id, body) = mcp.call_tool_body("tempera_search", Some(serde_json::json!({"query": "browser capability"})));
 let (id, body) = mcp.whoami_body();
 
 // Feed error responses to the shared parser:

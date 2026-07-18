@@ -7,7 +7,7 @@ export const TEMPERA_SURFACE_VERSION = 2;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -178,6 +178,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -191,6 +192,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -204,6 +206,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -219,6 +222,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -237,6 +241,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "organization",
         "invite_token"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {
         "mode": "signup"
@@ -255,6 +260,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "email",
         "password"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {
         "mode": "login"
@@ -270,6 +276,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -287,6 +294,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -300,6 +308,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -315,6 +324,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "name"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -328,6 +338,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -344,6 +355,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "org_id",
         "name"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -357,6 +369,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -373,6 +386,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "name"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -386,6 +400,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -403,6 +418,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "role"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -418,6 +434,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -431,6 +448,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -447,6 +465,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "email",
         "role"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -462,6 +481,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -475,6 +495,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -494,6 +515,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -509,6 +531,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -524,6 +547,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -537,6 +561,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -552,6 +577,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -572,6 +598,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "kind",
         "credential_ref"
       ],
+      "forbiddenBody": [],
       "requiredBody": [
         "name",
         "provider",
@@ -597,6 +624,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "kind",
         "credential_ref"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -612,6 +640,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -625,6 +654,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -640,6 +670,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -653,6 +684,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -668,6 +700,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -681,6 +714,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -696,6 +730,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -709,6 +744,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -724,6 +760,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -737,6 +774,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -756,6 +794,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "network"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -769,6 +808,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -788,6 +828,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id",
         "environment_id"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -801,6 +842,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -816,6 +858,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "token"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -831,6 +874,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -862,6 +906,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "cursor"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -881,6 +926,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -901,6 +947,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -921,6 +968,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "reason"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -947,6 +995,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "limit"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -981,6 +1030,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "cost",
         "idempotency_key"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:write",
@@ -1003,6 +1053,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "source",
         "payload"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:write",
@@ -1020,6 +1071,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
@@ -1038,6 +1090,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "name"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -1059,6 +1112,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "span_id",
         "reference"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -1078,6 +1132,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "case_ids"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -1097,6 +1152,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "scopes"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
@@ -1115,6 +1171,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
@@ -1131,6 +1188,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
@@ -1146,6 +1204,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1159,6 +1218,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1172,6 +1232,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1185,6 +1246,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1201,6 +1263,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "url",
         "driverless"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1216,6 +1279,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1231,6 +1295,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1253,6 +1318,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "confirmation_grant",
         "payment_context"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1270,6 +1336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "set_of_marks"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1287,6 +1354,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "after_seq"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1302,6 +1370,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1317,6 +1386,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1337,6 +1407,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_rounds",
         "token_budget"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1352,6 +1423,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "session_id"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1367,6 +1439,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1382,6 +1455,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1397,6 +1471,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1413,6 +1488,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1428,6 +1504,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1441,6 +1518,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "model:read",
@@ -1460,6 +1538,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "tools",
         "text"
       ],
+      "forbiddenBody": [],
       "requiredBody": [
         "model",
         "input"
@@ -1478,6 +1557,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1491,6 +1571,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "model:read",
@@ -1511,6 +1592,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "stream",
         "byok"
       ],
+      "forbiddenBody": [],
       "requiredBody": [
         "model",
         "messages"
@@ -1532,6 +1614,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_output_tokens",
         "byok"
       ],
+      "forbiddenBody": [],
       "requiredBody": [
         "model",
         "input"
@@ -1550,6 +1633,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1563,6 +1647,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1576,6 +1661,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1597,6 +1683,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "policy",
         "idempotency_key"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1618,6 +1705,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "policy",
         "idempotency_key"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1633,6 +1721,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1648,6 +1737,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1661,6 +1751,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1685,6 +1776,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "target_origins",
         "task_label"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1698,6 +1790,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1713,6 +1806,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1726,6 +1825,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1739,6 +1844,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1752,6 +1863,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1765,6 +1882,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1778,6 +1901,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1793,6 +1922,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "limit"
       ],
       "body": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1806,18 +1941,22 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [
-        "tenant_id",
-        "project_id",
         "kind",
         "text",
-        "environment_id",
         "idempotency_key",
-        "project"
+        "project",
+        "provenance"
+      ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
       ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Write one memory into the ledger and, by default, project it into the memory graph immediately."
+      "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier."
     },
     {
       "id": "project",
@@ -1828,6 +1967,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "limit"
+      ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
       ],
       "requiredBody": [],
       "bodyDefaults": {},
@@ -1844,6 +1989,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "limit"
       ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1858,7 +2009,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "question",
-        "scope",
         "max_tokens",
         "require_fresh",
         "modes",
@@ -1866,10 +2016,71 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_reconstruction_steps",
         "max_reconstruction_tokens"
       ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Answer a question from memory with evidence, citations, contradictions, and staleness signals."
+      "description": "Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals."
+    },
+    {
+      "id": "context",
+      "method": "POST",
+      "path": "/v1/context",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "question",
+        "max_tokens",
+        "require_fresh",
+        "modes",
+        "reconstruction_mode",
+        "max_reconstruction_steps",
+        "max_reconstruction_tokens"
+      ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback."
+    },
+    {
+      "id": "feedback",
+      "method": "POST",
+      "path": "/v1/feedback",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "schema",
+        "retrieval_receipt_id",
+        "evidence_node_id",
+        "helpful",
+        "outcome_artifact_id",
+        "note",
+        "terminal_state",
+        "idempotency_key"
+      ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth."
     },
     {
       "id": "maintenance",
@@ -1883,6 +2094,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "repair_orphans",
         "prune_audit_before_unix_ms",
         "retain_latest_audit_events"
+      ],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
       ],
       "requiredBody": [],
       "bodyDefaults": {},
@@ -1899,6 +2116,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1917,6 +2135,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1933,6 +2152,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1951,6 +2171,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1967,6 +2188,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1985,6 +2207,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "profile"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2007,6 +2230,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "seed",
         "hard_budgets"
       ],
+      "forbiddenBody": [],
       "requiredBody": [
         "task_family",
         "hard_budgets"
@@ -2028,6 +2252,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2044,6 +2269,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2060,6 +2286,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2076,6 +2303,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2092,6 +2320,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2112,6 +2341,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "mode",
         "config"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2130,6 +2360,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2146,6 +2377,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2166,6 +2398,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "mode",
         "config"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2182,6 +2415,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2201,6 +2435,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "cursor",
         "artifacts"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2224,6 +2459,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "default_branch",
         "connection_ref"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2242,6 +2478,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2258,6 +2495,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2280,6 +2518,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "resolved_contract_hash",
         "update_mask"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2300,6 +2539,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "commit",
         "snapshot"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2316,6 +2556,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2339,6 +2580,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "publication_state",
         "metadata"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2357,6 +2599,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2373,6 +2616,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2392,6 +2636,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2410,6 +2655,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "task_names"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2428,6 +2674,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2444,6 +2691,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2465,6 +2713,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "raw_body",
         "metadata"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2487,6 +2736,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "allowPrivate",
         "metadata"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2509,6 +2759,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "artifacts",
         "verifier"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2530,6 +2781,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "rubric",
         "skill_tags"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2548,6 +2800,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2568,6 +2821,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "order_by"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2586,6 +2840,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "view"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2605,6 +2860,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2626,6 +2882,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "priority",
         "target_accuracy"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2642,6 +2899,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2661,6 +2919,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2679,6 +2938,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_token"
       ],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2694,6 +2954,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2709,6 +2970,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2729,6 +2991,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "license",
         "filters"
       ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2745,6 +3008,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2761,6 +3025,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2777,6 +3042,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2793,6 +3059,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2809,6 +3076,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2824,6 +3092,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2839,6 +3108,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2855,6 +3125,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2870,6 +3141,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2885,6 +3157,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2901,6 +3174,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2917,6 +3191,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2932,6 +3207,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2947,6 +3223,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2963,6 +3240,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2979,6 +3257,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2995,6 +3274,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3010,6 +3290,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3025,6 +3306,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3041,6 +3323,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3057,6 +3340,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3072,6 +3356,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3088,6 +3373,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3103,6 +3389,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3118,6 +3405,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3133,6 +3421,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3148,6 +3437,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3163,6 +3453,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [],
       "body": [],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -3174,7 +3465,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
 
 export const TEMPERA_MCP_GATEWAY = Object.freeze(
 {
-  "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
+  "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to ten tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
   "methods": [
     {
       "id": "initialize",
@@ -3189,12 +3480,12 @@ export const TEMPERA_MCP_GATEWAY = Object.freeze(
     {
       "id": "listTools",
       "rpc": "tools/list",
-      "description": "List every tool the gateway offers: builtins plus namespaced product tools."
+      "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
     },
     {
       "id": "callTool",
       "rpc": "tools/call",
-      "description": "Invoke a tool by name; product tool calls are metered as mcp_invocations."
+      "description": "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit."
     },
     {
       "id": "whoami",
