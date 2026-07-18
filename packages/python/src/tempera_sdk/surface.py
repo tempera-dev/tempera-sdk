@@ -1741,6 +1741,29 @@ OPERATIONS = {
             "description": "Start a run of a stored workflow with an optional input document and idempotency key."
         },
         {
+            "id": "call_workflow",
+            "method": "POST",
+            "path": "/v1/workflows/{workflow_id}:call",
+            "auth": "product",
+            "path_params": [
+                "workflow_id"
+            ],
+            "query": [],
+            "body": [
+                "input",
+                "idempotencyKey",
+                "usePinned",
+                "startAt",
+                "only",
+                "seedOutputs",
+                "waitMs"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:run",
+            "description": "Run a workflow to completion and return its output in a single call."
+        },
+        {
             "id": "list_runs",
             "method": "GET",
             "path": "/v1/runs",
