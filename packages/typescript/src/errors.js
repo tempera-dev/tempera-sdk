@@ -4,7 +4,7 @@
  *
  * - `TemperaSdkError`: base class for every error the SDK throws, including
  *   configuration and usage mistakes (missing credential, unknown product).
- * - `TemperaApiError`: an HTTP response error, normalized from the five wire
+ * - `TemperaApiError`: an HTTP response error, normalized from the seven wire
  *   error shapes in the Tempera fleet so callers always read the same fields.
  * - `TemperaMcpError`: a JSON-RPC error from an MCP endpoint.
  */

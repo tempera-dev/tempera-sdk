@@ -2,7 +2,7 @@
 //! packages (see `surface.json` `errorContract`).
 //!
 //! The crate is dependency-free, so this module carries a small private JSON
-//! scanner ([`parse_json`]) sufficient for the five wire error shapes in the
+//! scanner ([`parse_json`]) sufficient for the seven wire error shapes in the
 //! Tempera fleet, plus [`normalize_error_body`], which folds any of them into
 //! one [`TemperaApiError`].
 
@@ -286,7 +286,7 @@ impl Parser<'_> {
     }
 }
 
-/// An HTTP error response from any Tempera product, normalized from the five
+/// An HTTP error response from any Tempera product, normalized from the seven
 /// wire error shapes in the fleet (see `surface.json` `errorContract`) so
 /// callers always read the same fields.
 #[derive(Debug, Clone, PartialEq, Eq)]
