@@ -159,6 +159,8 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one product's activation status, entitlements, signals, and usage meters. */
   getProductStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement. */
+  getModelCatalog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role). */
   getBillingStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role). */

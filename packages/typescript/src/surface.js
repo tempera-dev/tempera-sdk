@@ -730,6 +730,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
     },
     {
+      "id": "getModelCatalog",
+      "method": "GET",
+      "path": "/model-catalog",
+      "auth": "account",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
+    },
+    {
       "id": "getBillingStatus",
       "method": "GET",
       "path": "/billing/status",

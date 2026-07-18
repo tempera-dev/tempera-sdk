@@ -721,6 +721,19 @@ OPERATIONS = {
             "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
         },
         {
+            "id": "get_model_catalog",
+            "method": "GET",
+            "path": "/model-catalog",
+            "auth": "account",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "model:read",
+            "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
+        },
+        {
             "id": "get_billing_status",
             "method": "GET",
             "path": "/billing/status",

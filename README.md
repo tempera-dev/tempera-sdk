@@ -24,7 +24,7 @@ generally available or that the control plane is production-ready.
 
 | Client | Product | Typed operations | Audience |
 |---|---|---|---|
-| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 38 | account tokens |
+| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 44 | account tokens |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
 | `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
 | `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 15 | `palette` |
