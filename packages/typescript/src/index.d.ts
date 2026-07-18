@@ -12,6 +12,7 @@ import type {
   PassthroughClient,
   RemiClient,
   TemperaCodeClient,
+  TemperaLlmClient,
   TemperaAudience,
   TemperaEnvironment,
   TemperaProductKey,
@@ -133,6 +134,7 @@ export type TemperaClient = {
   palette: PaletteClient;
   tempo: TempoClient;
   temperaCode: TemperaCodeClient;
+  temperaLlm: TemperaLlmClient;
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;

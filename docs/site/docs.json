@@ -27,6 +27,7 @@
           "products/palette",
           "products/tempo",
           "products/tempera-code",
+          "products/tempera-llm",
           "products/cradle",
           "products/remi",
           "products/data-engine"

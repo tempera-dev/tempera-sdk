@@ -1,0 +1,4 @@
+Vendored from cradle repo: sdks/openapi.json
+Origin path: /home/user/cradle/sdks/openapi.json
+(The task referenced /home/user/cradle/api/openapi.json; the committed cradle spec actually lives at sdks/openapi.json.)
+Generated upstream from the cradle Rust handlers. Do not hand-edit; refresh by re-copying the upstream committed spec.

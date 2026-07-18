@@ -42,6 +42,8 @@ _ENVIRONMENT_TARGET_KEYS = {
     "palette": "paletteApiUrl",
     "tempo": "tempoApiUrl",
     "temperaCode": "temperaCodeApiUrl",
+    "dataEngine": "dataEngineApiUrl",
+    "cradle": "cradleApiUrl",
 }
 
 _PATH_PARAM_RE = re.compile(r"\{([a-z_]+)\}")

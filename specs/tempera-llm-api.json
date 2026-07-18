@@ -1,0 +1,544 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tempera LLM Gateway API",
+    "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly. Reports LLM cost as `model_cost` usage events per the billing-credits contract.",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "operationId": "health.check",
+        "responses": {
+          "200": {
+            "description": "Runtime is accepting requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chat/completions": {
+      "post": {
+        "tags": [
+          "chatCompletions"
+        ],
+        "operationId": "chatCompletions.create",
+        "parameters": [
+          {
+            "name": "x-provider-key",
+            "in": "header",
+            "description": "Customer BYOK provider key; presence bills surcharge-only",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Chat completion (non-streaming)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient credits (from control-plane on debit)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No provider configured for the model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream provider unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "tags": [
+          "models"
+        ],
+        "operationId": "models.list",
+        "responses": {
+          "200": {
+            "description": "List configured models",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/responses": {
+      "post": {
+        "tags": [
+          "responses"
+        ],
+        "operationId": "responses.create",
+        "parameters": [
+          {
+            "name": "x-provider-key",
+            "in": "header",
+            "description": "Customer BYOK provider key; presence bills surcharge-only",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponsesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Response (skeleton)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No provider configured for the model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChatChoice": {
+        "type": "object",
+        "description": "One choice in a chat completion response.",
+        "required": [
+          "index",
+          "message"
+        ],
+        "properties": {
+          "finish_reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "message": {
+            "$ref": "#/components/schemas/ChatMessage"
+          }
+        }
+      },
+      "ChatCompletionRequest": {
+        "type": "object",
+        "description": "`POST /v1/chat/completions` request body (OpenAI Chat Completions shape).",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "byok": {
+            "type": "boolean",
+            "description": "Optional per-request BYOK flag. May also be signalled by `x-provider-key`.",
+            "nullable": true
+          },
+          "max_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 0
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            },
+            "description": "Conversation so far."
+          },
+          "model": {
+            "type": "string",
+            "description": "Target model id, e.g. `gpt-4o`, `claude-sonnet-5`, `glm-4`."
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "When true the client wants SSE streaming. Not yet served (see handler).",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        }
+      },
+      "ChatCompletionResponse": {
+        "type": "object",
+        "description": "`POST /v1/chat/completions` response body (OpenAI Chat Completions shape).",
+        "required": [
+          "id",
+          "object",
+          "created",
+          "model",
+          "choices",
+          "usage"
+        ],
+        "properties": {
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatChoice"
+            }
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix seconds.",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "description": "Always `chat.completion` for the non-streaming path."
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "description": "A single chat message.",
+        "required": [
+          "role"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Message content. Kept as a string for the non-streaming skeleton."
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional name of the author (OpenAI compatibility).",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "description": "`system` | `user` | `assistant` | `tool`."
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": "object",
+        "description": "The inner error object.",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "details": {
+            "type": "array",
+            "items": {},
+            "description": "Structured, typed detail objects (AIP `details`)."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable message."
+          }
+        }
+      },
+      "ErrorCode": {
+        "type": "string",
+        "description": "Stable machine-readable error codes from the shared vocabulary.\n\nSerialized as `SCREAMING_SNAKE_CASE` strings, never integers (style guide §5).",
+        "enum": [
+          "INVALID_ARGUMENT",
+          "UNAUTHENTICATED",
+          "PERMISSION_DENIED",
+          "NOT_FOUND",
+          "ALREADY_EXISTS",
+          "FAILED_PRECONDITION",
+          "PLAN_LIMIT_EXCEEDED",
+          "INSUFFICIENT_CREDITS",
+          "IDEMPOTENCY_CONFLICT",
+          "RESOURCE_EXHAUSTED",
+          "INTERNAL",
+          "UNAVAILABLE"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "The shared error envelope. This is the exact wire shape every Tempera\nservice returns for a 4xx/5xx.",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "description": "`GET /healthz` response.",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Model": {
+        "type": "object",
+        "description": "One entry in `GET /v1/models`.",
+        "required": [
+          "id",
+          "object",
+          "owned_by"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "description": "Always `model`."
+          },
+          "owned_by": {
+            "type": "string",
+            "description": "Owning provider, e.g. `openai`, `nvidia`, `anthropic`, `glm`, `kimi`."
+          }
+        }
+      },
+      "ModelList": {
+        "type": "object",
+        "description": "`GET /v1/models` response. A JSON object (never a bare array) so fields can\nbe added compatibly (style guide §5).",
+        "required": [
+          "object",
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            }
+          },
+          "object": {
+            "type": "string",
+            "description": "Always `list`."
+          }
+        }
+      },
+      "ResponsesRequest": {
+        "type": "object",
+        "description": "`POST /v1/responses` request body (OpenAI Responses-style, thin skeleton).",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "byok": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "input": {
+            "description": "Free-form input. The Responses API accepts a string or a structured\nlist; we keep the skeleton permissive with an untyped value."
+          },
+          "max_output_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 0
+          },
+          "model": {
+            "type": "string"
+          }
+        }
+      },
+      "ResponsesResponse": {
+        "type": "object",
+        "description": "`POST /v1/responses` response body (thin skeleton).",
+        "required": [
+          "id",
+          "object",
+          "created",
+          "model",
+          "output_text",
+          "usage"
+        ],
+        "properties": {
+          "created": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "description": "Always `response`."
+          },
+          "output_text": {
+            "type": "string",
+            "description": "Aggregated output text (skeleton)."
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "description": "Token accounting for a completion. `snake_case`, integer counts.",
+        "required": [
+          "prompt_tokens",
+          "completion_tokens",
+          "total_tokens"
+        ],
+        "properties": {
+          "cache_read_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Cache-read tokens (Anthropic/GLM prompt caching). 0 when unused.",
+            "minimum": 0
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "prompt_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "total_tokens": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "health",
+      "description": "Runtime health"
+    },
+    {
+      "name": "chatCompletions",
+      "description": "OpenAI-compatible chat completions"
+    },
+    {
+      "name": "responses",
+      "description": "OpenAI Responses-style API (skeleton)"
+    },
+    {
+      "name": "models",
+      "description": "Configured model catalog"
+    }
+  ]
+}

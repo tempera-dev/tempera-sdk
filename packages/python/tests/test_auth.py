@@ -171,6 +171,7 @@ class ProductBearerTest(unittest.TestCase):
                 "palette": ("palette", "TEMPERA_PALETTE_URL"),
                 "tempo": ("tempo", "TEMPERA_TEMPO_URL"),
                 "temperaCode": ("tempera-code", "TEMPERA_CODE_GATEWAY_URL"),
+                "temperaLlm": ("tempera-llm", "TEMPERA_LLM_URL"),
                 "cradle": ("cradle", "TEMPERA_CRADLE_URL"),
                 "remi": ("remi", "TEMPERA_REMI_URL"),
                 "dataEngine": ("data-engine", "TEMPERA_DATA_ENGINE_URL"),

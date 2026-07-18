@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "model:read" | "model:invoke" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
+export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -25,11 +25,14 @@ export type TemperaEnvironmentTargets = {
   authIssuerUrl: string;
   authJwksUrl: string;
   controlPlaneUrl: string;
+  cradleApiUrl: string;
+  dataEngineApiUrl: string;
   mcpGatewayUrl: string;
   paletteApiUrl: string;
   paletteMcpUrl: string;
   publicSiteUrl: string;
   temperaCodeApiUrl: string;
+  temperaGymUrl: string;
   tempoApiUrl: string;
 };
 export declare const TEMPERA_ENVIRONMENTS: Readonly<Record<TemperaEnvironment, TemperaEnvironmentTargets>>;
@@ -130,6 +133,16 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   rotateApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an API key (idempotent). */
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List model profiles in the active project without exposing broker credential references. */
+  listModelProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one project-scoped model profile without exposing its broker credential reference. */
+  getModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a project-scoped managed or BYOK model profile using a write-only control-plane broker reference. */
+  createModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Update mutable model-profile metadata or replace its write-only broker reference. */
+  updateModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Soft-delete a model profile from the active project. */
+  deleteModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the OAuth grants the user has approved in the active workspace. */
   listGrants(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an OAuth grant and every refresh token issued under it. */
@@ -241,6 +254,17 @@ export interface TemperaCodeClient extends TemperaProductClientBase {
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
+export interface TemperaLlmClient extends TemperaProductClientBase {
+  /** Check tempera-llm gateway liveness; returns {ok: true}. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the configured model catalog the gateway can route to. */
+  listModels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway. */
+  createChatCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway. */
+  createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
 export interface CradleClient extends TemperaProductClientBase {
   /** Check sandbox-daemon liveness; returns status, version, and uptime. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -294,6 +318,62 @@ export interface RemiClient extends TemperaProductClientBase {
 export interface DataEngineClient extends TemperaProductClientBase {
   /** Check data-engine liveness; returns the service status. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List installed versioned domain packs from data-engine's OpenAPI contract. */
+  listDomainPacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one installed versioned domain-pack manifest. */
+  getDomainPack(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable domain-pack bindings enabled for a project. */
+  listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one project-enabled, digest-pinned domain binding. */
+  getDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers. */
+  enableDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified. */
+  generateDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List installed descriptor-only environment definitions without claiming their execution lane is available. */
+  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one installed environment descriptor. */
+  getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get an asynchronous data-engine operation and its current terminal state. */
+  getOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers. */
+  cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a completed data-engine operation; pass Idempotency-Key through operation headers. */
+  deleteOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register an approved domain-pack source connector; pass Idempotency-Key through operation headers. */
+  createConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List registered source connectors for a project. */
+  listConnectors(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get a source connector and its current ETag. */
+  getConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers. */
+  patchConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a connector registration; pass If-Match and Idempotency-Key through operation headers. */
+  deleteConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start a bounded connector sync; pass Idempotency-Key through operation headers. */
+  syncConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register a GitHub repository reference; pass Idempotency-Key through operation headers. */
+  createRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List registered project repositories. */
+  listRepositories(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one repository reference and its current ETag. */
+  getRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers. */
+  patchRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record a repository snapshot through the authenticated provider boundary; returns an operation. */
+  syncRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured. */
+  generateRepositoryTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import an immutable worker-produced task set; pass Idempotency-Key through operation headers. */
+  createTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List repository task sets and publication state. */
+  listTaskSets(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one immutable repository task set and its current ETag. */
+  getTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List structurally distinct evaluation and backlog tasks in a task set. */
+  listTaskSetTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers. */
+  publishTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the MVP use-case templates (data products and pipeline templates) for a project. */
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
@@ -332,6 +412,60 @@ export interface DataEngineClient extends TemperaProductClientBase {
   deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Request an environment run; availability remains explicit until its qualified execution lane is enabled. */
+  runEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch an artifact when the documented data-engine implementation is enabled. */
+  patchArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Archive an artifact through the documented data-engine lifecycle endpoint. */
+  archiveArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Purge an archived artifact through the documented data-engine lifecycle endpoint. */
+  purgeArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply due artifact retention policies through the REST-only lifecycle endpoint. */
+  expireArtifactRetention(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List labeling jobs when the documented data-engine implementation is enabled. */
+  listJobs(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel a labeling job through the documented data-engine lifecycle endpoint. */
+  cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an artifact label when the documented data-engine implementation is enabled. */
+  createLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List artifact labels when the documented data-engine implementation is enabled. */
+  listLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one artifact label when the documented data-engine implementation is enabled. */
+  getLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch an artifact label when the documented data-engine implementation is enabled. */
+  patchLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a verifier when the documented data-engine implementation is enabled. */
+  createVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List verifiers when the documented data-engine implementation is enabled. */
+  listVerifiers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one verifier when the documented data-engine implementation is enabled. */
+  getVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch a verifier when the documented data-engine implementation is enabled. */
+  patchVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run a verifier when the documented data-engine implementation is enabled. */
+  runVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an evaluation definition when the documented data-engine implementation is enabled. */
+  createEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List evaluation definitions when the documented data-engine implementation is enabled. */
+  listEvals(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one evaluation definition when the documented data-engine implementation is enabled. */
+  getEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run an evaluation definition when the documented data-engine implementation is enabled. */
+  runEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List evaluation runs when the documented data-engine implementation is enabled. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one evaluation run when the documented data-engine implementation is enabled. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List emitted data products when the documented data-engine implementation is enabled. */
+  listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit a generic data product when the documented data-engine implementation is enabled. */
+  emitProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit an RLVR product when the documented data-engine implementation is enabled. */
+  emitRlvr(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit a preference product when the documented data-engine implementation is enabled. */
+  emitPreference(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Emit an SFT product when the documented data-engine implementation is enabled. */
+  emitSft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;
