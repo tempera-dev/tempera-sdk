@@ -918,6 +918,50 @@ mod tests {
         assert!(body.contains(provenance));
         assert!(crate::error::parse_json(&body).is_some());
 
+        let spec = client
+            .build_request(
+                "remi",
+                "context",
+                &[
+                    ("question", "Which workflow evidence is current?".into()),
+                    ("max_tokens", 600.into()),
+                    ("require_fresh", true.into()),
+                    (
+                        "modes",
+                        ParamValue::RawJson(r#"["procedural","gotcha","state"]"#.to_string()),
+                    ),
+                    ("reconstruction_mode", "off".into()),
+                ],
+            )
+            .unwrap();
+        let body = spec.body_json.unwrap();
+        assert!(body.contains("\"question\":\"Which workflow evidence is current?\""));
+        assert!(body.contains("\"max_tokens\":600"));
+        assert!(body.contains("\"require_fresh\":true"));
+        assert!(body.contains("\"modes\":[\"procedural\",\"gotcha\",\"state\"]"));
+        assert!(crate::error::parse_json(&body).is_some());
+
+        let spec = client
+            .build_request(
+                "remi",
+                "feedback",
+                &[
+                    ("schema", "remi.memory_feedback.v2".into()),
+                    ("retrieval_receipt_id", "receipt_1".into()),
+                    ("evidence_node_id", "node_1".into()),
+                    ("helpful", true.into()),
+                    ("terminal_state", "succeeded".into()),
+                    ("outcome_artifact_id", "test://sdk/generated-wire".into()),
+                    ("idempotency_key", "feedback_1".into()),
+                ],
+            )
+            .unwrap();
+        let body = spec.body_json.unwrap();
+        assert!(body.contains("\"schema\":\"remi.memory_feedback.v2\""));
+        assert!(body.contains("\"outcome_artifact_id\":\"test://sdk/generated-wire\""));
+        assert!(body.contains("\"terminal_state\":\"succeeded\""));
+        assert!(crate::error::parse_json(&body).is_some());
+
         let error = client
             .build_request(
                 "remi",
