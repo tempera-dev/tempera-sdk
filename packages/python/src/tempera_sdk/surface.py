@@ -1702,7 +1702,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1716,7 +1721,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1730,7 +1740,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1744,7 +1759,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1758,7 +1778,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1772,7 +1797,12 @@ OPERATIONS = {
             "path_params": [],
             "query": [],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1788,7 +1818,12 @@ OPERATIONS = {
                 "limit"
             ],
             "body": [],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1828,7 +1863,12 @@ OPERATIONS = {
             "body": [
                 "limit"
             ],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1844,7 +1884,12 @@ OPERATIONS = {
             "body": [
                 "limit"
             ],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
@@ -1943,7 +1988,12 @@ OPERATIONS = {
                 "prune_audit_before_unix_ms",
                 "retain_latest_audit_events"
             ],
-            "forbidden_body": [],
+            "forbidden_body": [
+                "scope",
+                "tenant_id",
+                "project_id",
+                "environment_id"
+            ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,

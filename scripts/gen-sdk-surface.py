@@ -70,6 +70,15 @@ def validate(surface: dict) -> list[str]:
                 )
             if op.get("auth") not in {"none", "account", "product", "introspectionSecret"}:
                 problems.append(f"{label}: invalid auth {op.get('auth')!r}")
+            if product_key == "remi":
+                missing_principal_fields = {
+                    "scope", "tenant_id", "project_id", "environment_id"
+                } - set(op.get("forbiddenBody", []))
+                if missing_principal_fields:
+                    problems.append(
+                        f"{label}: must reject principal-derived fields "
+                        f"{sorted(missing_principal_fields)}"
+                    )
             required_body = set(op.get("requiredBody", []))
             body = set(op.get("body", []))
             if not required_body.issubset(body):

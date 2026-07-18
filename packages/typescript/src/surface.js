@@ -1711,7 +1711,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1725,7 +1730,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1739,7 +1749,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1753,7 +1768,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1767,7 +1787,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1781,7 +1806,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "query": [],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1797,7 +1827,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "limit"
       ],
       "body": [],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1837,7 +1872,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "limit"
       ],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1853,7 +1893,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "limit"
       ],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -1952,7 +1997,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "prune_audit_before_unix_ms",
         "retain_latest_audit_events"
       ],
-      "forbiddenBody": [],
+      "forbiddenBody": [
+        "scope",
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
