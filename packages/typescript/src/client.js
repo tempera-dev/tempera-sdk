@@ -150,6 +150,11 @@ export function createTemperaClient({
   }
 
   function dispatch(productKey, op, params = {}, options = {}) {
+    for (const key of op.forbiddenBody ?? []) {
+      if (params[key] !== undefined) {
+        throw new TemperaSdkError(`${productKey}.${op.id}: ${key} is derived from the authenticated principal`);
+      }
+    }
     const path = substitutePath(op.path, params, { product: productKey, operation: op.id });
     const consumed = new Set(op.pathParams);
     const query = {};
