@@ -785,6 +785,89 @@
         }
       }
     },
+    "/v1/workflows/{workflowId}:call": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Create a run AND wait for it to finish, returning the run + output in one",
+        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)`. If the run has not\nfinished by then it returns 200 with the still-running run and a poll hint;\nthe run is never orphaned — it keeps executing in the background.",
+        "operationId": "workflows.call",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowCallRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The run finished (or the wait bound elapsed with status=running)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowCallResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workflow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/workflows:validate": {
       "post": {
         "tags": [
@@ -986,6 +1069,18 @@
             "description": "Optional display name for the studio canvas.",
             "nullable": true
           },
+          "onError": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OnErrorPolicy"
+              }
+            ],
+            "nullable": true
+          },
+          "pinnedOutput": {
+            "description": "Pinned test output. When a run is created with `usePinned: true`, this\nvalue is returned verbatim without executing the node (studio testing).",
+            "nullable": true
+          },
           "position": {
             "allOf": [
               {
@@ -1132,6 +1227,33 @@
           }
         }
       },
+      "OnErrorMode": {
+        "type": "string",
+        "description": "How the engine reacts to a node failure.",
+        "enum": [
+          "fail",
+          "continue",
+          "route"
+        ]
+      },
+      "OnErrorPolicy": {
+        "type": "object",
+        "description": "Per-node failure policy, attached to a [`NodeDef`] as `onError`.",
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/OnErrorMode"
+          },
+          "retry": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RetryPolicy"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Position": {
         "type": "object",
         "description": "Studio canvas coordinates.",
@@ -1147,6 +1269,28 @@
           "y": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RetryPolicy": {
+        "type": "object",
+        "description": "Bounded retry policy for a node.",
+        "required": [
+          "maxAttempts"
+        ],
+        "properties": {
+          "backoffMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Fixed delay between attempts in ms (0..=[`MAX_RETRY_BACKOFF_MS`]).",
+            "minimum": 0
+          },
+          "maxAttempts": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total attempts including the first (1..=[`MAX_RETRY_ATTEMPTS`]).",
+            "minimum": 0
           }
         },
         "additionalProperties": false
@@ -1215,6 +1359,30 @@
           },
           "input": {
             "description": "Payload delivered to the trigger node (default `{}`).",
+            "nullable": true
+          },
+          "only": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Execute exactly this set of node ids; all others are skipped. Combine\nwith `seedOutputs` for a \"test single node\" run.",
+            "nullable": true
+          },
+          "seedOutputs": {
+            "type": "object",
+            "description": "Inject outputs for nodes treated as already-produced, so `startAt`/`only`\nhave upstream data. Keyed by node id.",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "startAt": {
+            "type": "string",
+            "description": "Execute only this node and its transitive descendants; ancestors are\nskipped unless supplied via `seedOutputs`.",
+            "nullable": true
+          },
+          "usePinned": {
+            "type": "boolean",
+            "description": "When true, any node with `pinnedOutput` set returns it verbatim without\nexecuting (studio testing of downstream logic). Default false.",
             "nullable": true
           }
         },
@@ -1311,6 +1479,14 @@
           }
         }
       },
+      "Severity": {
+        "type": "string",
+        "description": "Severity of a [`ValidationIssue`]. Defaults to `error` for backward\ncompatibility: an issue deserialized without a severity is an error, and\n`runs.create` refuses only on `error`-severity issues.",
+        "enum": [
+          "error",
+          "warning"
+        ]
+      },
       "ValidateResponse": {
         "type": "object",
         "description": "`POST /v1/workflows:validate` response (200 even when invalid).",
@@ -1349,6 +1525,81 @@
             "type": "string",
             "description": "Offending node id when the issue is node-scoped.",
             "nullable": true
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          }
+        }
+      },
+      "WorkflowCallRequest": {
+        "type": "object",
+        "description": "`POST /v1/workflows/{workflowId}:call` request. The same body as\n`runs.create` plus an optional `waitMs` wait bound: this custom method both\ncreates a run and waits for it to finish, returning the run and its output\nin a single response.",
+        "properties": {
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
+            "nullable": true
+          },
+          "input": {
+            "description": "Payload delivered to the trigger node (default `{}`).",
+            "nullable": true
+          },
+          "only": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Execute exactly this set of node ids; all others are skipped.",
+            "nullable": true
+          },
+          "seedOutputs": {
+            "type": "object",
+            "description": "Inject outputs for nodes treated as already-produced.",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "startAt": {
+            "type": "string",
+            "description": "Execute only this node and its transitive descendants.",
+            "nullable": true
+          },
+          "usePinned": {
+            "type": "boolean",
+            "description": "When true, any node with `pinnedOutput` set returns it verbatim.",
+            "nullable": true
+          },
+          "waitMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Max milliseconds to wait for the run to finish before returning it still\nrunning. Bounded by the workflow's `settings.deadlineMs`; when omitted,\nthe wait bound is the deadline itself. The run keeps executing either way.",
+            "nullable": true,
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowCallResponse": {
+        "type": "object",
+        "description": "`POST /v1/workflows/{workflowId}:call` response: the full run, its final\noutput, and the observed status. When the wait bound elapses before the run\nfinishes, `status` is `running`, `output` is null, and `hint` points at\n`runs.get` for polling — the run continues in the background.",
+        "required": [
+          "run",
+          "status"
+        ],
+        "properties": {
+          "hint": {
+            "type": "string",
+            "description": "Present only when `status` is `running`: how to poll for completion.",
+            "nullable": true
+          },
+          "output": {
+            "description": "Final run output (sink node outputs) when the run finished; else null.",
+            "nullable": true
+          },
+          "run": {
+            "$ref": "#/components/schemas/Run"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
           }
         }
       },
