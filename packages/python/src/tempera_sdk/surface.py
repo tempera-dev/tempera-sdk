@@ -1813,7 +1813,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
+            "description": "Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote)."
         },
         {
             "id": "create_campaign",
@@ -1923,14 +1923,15 @@ OPERATIONS = {
             "body": [
                 "artifact_ids",
                 "task_family",
-                "max_items",
-                "priority",
-                "target_accuracy"
+                "campaign",
+                "target_accuracy",
+                "verifier",
+                "idempotency_key"
             ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+            "description": "Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll."
         },
         {
             "id": "get_job",
