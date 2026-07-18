@@ -1,0 +1,3 @@
+Vendored from tempera-llm repo: sdks/openapi/tempera-llm-api.json
+Origin path: /home/user/tempera-llm/sdks/openapi/tempera-llm-api.json
+Generated upstream from the tempera-llm Rust handlers (cargo xtask). Do not hand-edit; refresh by re-copying the upstream committed spec.

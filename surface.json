@@ -10,7 +10,7 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"],
+  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -136,6 +136,14 @@
       "audience": "tempera-code",
       "auth": "bearer minted for audience tempera-code with model:read/model:invoke, or a central tp_ API key",
       "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
+    },
+    "temperaLlm": {
+      "name": "tempera-llm",
+      "repository": "https://github.com/tempera-dev/tempera-llm",
+      "envVar": "TEMPERA_LLM_URL",
+      "audience": "tempera-llm",
+      "auth": "bearer minted for audience tempera-llm with model:read/model:invoke, or a central tp_ API key",
+      "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
     },
     "cradle": {
       "name": "cradle",
@@ -281,6 +289,12 @@
       { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check Tempera Code gateway liveness." },
       { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the entitled Tempera Code hosted model catalog." },
       { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "instructions", "tools", "text"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway." }
+    ],
+    "temperaLlm": [
+      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-llm gateway liveness; returns {ok: true}." },
+      { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the configured model catalog the gateway can route to." },
+      { "id": "createChatCompletion", "method": "POST", "path": "/v1/chat/completions", "auth": "product", "body": ["model", "messages", "max_tokens", "temperature", "stream", "byok"], "requiredBody": ["model", "messages"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway." },
+      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "max_output_tokens", "byok"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway." }
     ],
     "cradle": [
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },

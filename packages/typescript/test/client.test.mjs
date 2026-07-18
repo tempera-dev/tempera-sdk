@@ -28,6 +28,7 @@ function testClient(overrides = {}) {
       palette: "https://palette.example.test",
       tempo: "https://tempo.example.test",
       temperaCode: "https://code.example.test",
+      temperaLlm: "https://llm.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",

@@ -5,7 +5,7 @@
 
 export const TEMPERA_SURFACE_VERSION = 2;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"]);
 export const DEFAULT_AUDIENCE = "palette";
 export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
 
@@ -107,6 +107,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_CODE_GATEWAY_URL",
     "audience": "tempera-code",
     "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
+  },
+  "temperaLlm": {
+    "name": "tempera-llm",
+    "repository": "https://github.com/tempera-dev/tempera-llm",
+    "envVar": "TEMPERA_LLM_URL",
+    "audience": "tempera-llm",
+    "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
   },
   "cradle": {
     "name": "cradle",
@@ -1460,6 +1467,78 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "model:invoke",
       "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway."
+    }
+  ],
+  "temperaLlm": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check tempera-llm gateway liveness; returns {ok: true}."
+    },
+    {
+      "id": "listModels",
+      "method": "GET",
+      "path": "/v1/models",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the configured model catalog the gateway can route to."
+    },
+    {
+      "id": "createChatCompletion",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "model",
+        "messages",
+        "max_tokens",
+        "temperature",
+        "stream",
+        "byok"
+      ],
+      "requiredBody": [
+        "model",
+        "messages"
+      ],
+      "bodyDefaults": {},
+      "scope": "model:invoke",
+      "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
+    },
+    {
+      "id": "createResponse",
+      "method": "POST",
+      "path": "/v1/responses",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "model",
+        "input",
+        "max_output_tokens",
+        "byok"
+      ],
+      "requiredBody": [
+        "model",
+        "input"
+      ],
+      "bodyDefaults": {},
+      "scope": "model:invoke",
+      "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
     }
   ],
   "cradle": [

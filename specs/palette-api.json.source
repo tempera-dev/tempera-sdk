@@ -1,0 +1,3 @@
+Vendored from palette repo: sdks/openapi/palette-api.json
+Origin path: /home/user/palette/sdks/openapi/palette-api.json
+Generated upstream from the palette Rust handlers (cargo xtask regen-spec). Do not hand-edit; refresh by re-copying the upstream committed spec.

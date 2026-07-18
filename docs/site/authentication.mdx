@@ -183,6 +183,7 @@ is the default when none is specified.
 | `data-engine` | data-engine |
 | `tempera-mcp` | the unified [MCP gateway](/mcp-gateway) |
 | `tempera-code` | Tempera Code |
+| `tempera-llm` | tempera-llm |
 
 ## Scopes
 
@@ -197,8 +198,8 @@ is the default when none is specified.
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `cyber:research` | No typed SDK operation declares it yet; enforced server-side. |
 | `clinical:run` | No typed SDK operation declares it yet; enforced server-side. |
-| `model:read` | Tempera Code: `listModels` |
-| `model:invoke` | Tempera Code: `createResponse` |
+| `model:read` | Tempera Code: `listModels`; tempera-llm: `listModels` |
+| `model:invoke` | Tempera Code: `createResponse`; tempera-llm: `createChatCompletion`, `createResponse` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 
 ## Issuer endpoints

@@ -5,7 +5,7 @@
 
 pub const SURFACE_VERSION: u32 = 2;
 
-pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"];
+pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"];
 pub const DEFAULT_AUDIENCE: &str = "palette";
 pub const SCOPES: &[&str] = &["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"];
 
@@ -137,6 +137,14 @@ pub const PRODUCTS: &[ProductSpec] = &[
         env_var: "TEMPERA_CODE_GATEWAY_URL",
         audience: Some("tempera-code"),
         description: "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway.",
+    },
+    ProductSpec {
+        key: "tempera_llm",
+        name: "tempera-llm",
+        repository: "https://github.com/tempera-dev/tempera-llm",
+        env_var: "TEMPERA_LLM_URL",
+        audience: Some("tempera-llm"),
+        description: "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract.",
     },
     ProductSpec {
         key: "cradle",
@@ -1318,6 +1326,62 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body_defaults: &[],
         scope: Some("model:invoke"),
         description: "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway.",
+    },
+    OperationSpec {
+        product: "tempera_llm",
+        id: "health",
+        method: "GET",
+        path: "/healthz",
+        auth: "none",
+        path_params: &[],
+        query: &[],
+        body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: None,
+        description: "Check tempera-llm gateway liveness; returns {ok: true}.",
+    },
+    OperationSpec {
+        product: "tempera_llm",
+        id: "list_models",
+        method: "GET",
+        path: "/v1/models",
+        auth: "product",
+        path_params: &[],
+        query: &[],
+        body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: Some("model:read"),
+        description: "List the configured model catalog the gateway can route to.",
+    },
+    OperationSpec {
+        product: "tempera_llm",
+        id: "create_chat_completion",
+        method: "POST",
+        path: "/v1/chat/completions",
+        auth: "product",
+        path_params: &[],
+        query: &[],
+        body: &["model", "messages", "max_tokens", "temperature", "stream", "byok"],
+        required_body: &["model", "messages"],
+        body_defaults: &[],
+        scope: Some("model:invoke"),
+        description: "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
+    },
+    OperationSpec {
+        product: "tempera_llm",
+        id: "create_response",
+        method: "POST",
+        path: "/v1/responses",
+        auth: "product",
+        path_params: &[],
+        query: &[],
+        body: &["model", "input", "max_output_tokens", "byok"],
+        required_body: &["model", "input"],
+        body_defaults: &[],
+        scope: Some("model:invoke"),
+        description: "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
     },
     OperationSpec {
         product: "cradle",

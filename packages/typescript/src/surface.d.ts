@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
 export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -251,6 +251,17 @@ export interface TemperaCodeClient extends TemperaProductClientBase {
   /** List the entitled Tempera Code hosted model catalog. */
   listModels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a non-streaming Responses-compatible inference request through the Tempera Code gateway. */
+  createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaLlmClient extends TemperaProductClientBase {
+  /** Check tempera-llm gateway liveness; returns {ok: true}. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the configured model catalog the gateway can route to. */
+  listModels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway. */
+  createChatCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway. */
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
