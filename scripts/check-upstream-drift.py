@@ -17,10 +17,10 @@ identity we compare on.
 
 Two enforcement tiers:
 
-* STRICT products (`temperaLlm`) must match their upstream spec *exactly*.
-  Any surface operation without a matching upstream (method, path) fails the
-  gate (exit 1). tempera-llm is new and authoritative, so it is held to the
-  generated-aggregate standard from day one.
+* STRICT products (see `STRICT_PRODUCTS`) must match their upstream spec
+  *exactly*. Any surface operation without a matching upstream (method, path)
+  fails the gate (exit 1). These products are new and authoritative, so they
+  are held to the generated-aggregate standard from day one.
 * WARN products (`palette`, `controlPlane`, `cradle`) are existing, still
   hand-maintained clients. Mismatches are *reported* as warnings — valuable
   signal for the migration to a fully generated surface — but do not fail the
@@ -49,6 +49,7 @@ HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 # surface product key -> vendored spec filename under specs/.
 VENDORED_SPECS = {
     "temperaLlm": "tempera-llm-api.json",
+    "temperaWorkflows": "tempera-workflows-api.json",
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",
@@ -56,7 +57,7 @@ VENDORED_SPECS = {
 
 # Products held to an exact match (new + authoritative). Everything else with a
 # vendored spec is reported as a warning while the surface is still migrating.
-STRICT_PRODUCTS = {"temperaLlm"}
+STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows"}
 
 PARAM_RE = re.compile(r"\{[^}]+\}")
 

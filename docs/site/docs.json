@@ -28,6 +28,7 @@
           "products/tempo",
           "products/tempera-code",
           "products/tempera-llm",
+          "products/tempera-workflows",
           "products/cradle",
           "products/remi",
           "products/data-engine"

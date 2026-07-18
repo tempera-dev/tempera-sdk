@@ -10,7 +10,7 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"],
+  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows"],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -19,6 +19,9 @@
     "dataset:read",
     "dataset:write",
     "eval:run",
+    "workflow:read",
+    "workflow:write",
+    "workflow:run",
     "pii:unmask",
     "cyber:research",
     "clinical:run",
@@ -38,6 +41,7 @@
       "cradleApiUrl": "http://127.0.0.1:8088",
       "temperaCodeApiUrl": "http://127.0.0.1:8789",
       "temperaLlmApiUrl": "http://127.0.0.1:8080",
+      "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
       "paletteApiUrl": "http://localhost:8080",
       "paletteMcpUrl": "http://localhost:8080/mcp",
       "tempoApiUrl": "http://localhost:7878"
@@ -53,6 +57,7 @@
       "cradleApiUrl": "https://preview-cradle.tempera.dev",
       "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
       "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
+      "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
       "paletteApiUrl": "https://preview-mcp.tempera.dev",
       "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -68,6 +73,7 @@
       "cradleApiUrl": "https://staging-cradle.tempera.dev",
       "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
       "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
+      "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
       "paletteApiUrl": "https://staging-mcp.tempera.dev",
       "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -83,6 +89,7 @@
       "cradleApiUrl": "https://cradle.tempera.dev",
       "temperaCodeApiUrl": "https://code-api.tempera.dev",
       "temperaLlmApiUrl": "https://llm.tempera.dev",
+      "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
       "paletteApiUrl": "https://mcp.tempera.dev",
       "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
       "tempoApiUrl": "https://tempo.tempera.dev"
@@ -148,6 +155,14 @@
       "audience": "tempera-llm",
       "auth": "bearer minted for audience tempera-llm with model:read/model:invoke, or a central tp_ API key",
       "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
+    },
+    "temperaWorkflows": {
+      "name": "tempera-workflows",
+      "repository": "https://github.com/tempera-dev/tempera-workflows",
+      "envVar": "TEMPERA_WORKFLOWS_URL",
+      "audience": "tempera-workflows",
+      "auth": "bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key",
+      "description": "Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only."
     },
     "cradle": {
       "name": "cradle",
@@ -300,6 +315,20 @@
       { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the configured model catalog the gateway can route to." },
       { "id": "createChatCompletion", "method": "POST", "path": "/v1/chat/completions", "auth": "product", "body": ["model", "messages", "max_tokens", "temperature", "stream", "byok"], "requiredBody": ["model", "messages"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway." },
       { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "max_output_tokens", "byok"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway." }
+    ],
+    "temperaWorkflows": [
+      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-workflows engine liveness." },
+      { "id": "listNodeTypes", "method": "GET", "path": "/v1/node-types", "auth": "product", "scope": "workflow:read", "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface." },
+      { "id": "listWorkflows", "method": "GET", "path": "/v1/workflows", "auth": "product", "query": ["limit"], "scope": "workflow:read", "description": "List stored workflow definitions, newest first." },
+      { "id": "createWorkflow", "method": "POST", "path": "/v1/workflows", "auth": "product", "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored." },
+      { "id": "getWorkflow", "method": "GET", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "scope": "workflow:read", "description": "Fetch one stored workflow definition." },
+      { "id": "updateWorkflow", "method": "PUT", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Replace a stored workflow definition with a new validated revision." },
+      { "id": "deleteWorkflow", "method": "DELETE", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "scope": "workflow:write", "description": "Delete a stored workflow definition." },
+      { "id": "validateWorkflow", "method": "POST", "path": "/v1/workflows:validate", "auth": "product", "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Validate a workflow definition without storing it; returns the full diagnostic list." },
+      { "id": "createRun", "method": "POST", "path": "/v1/workflows/{workflow_id}/runs", "auth": "product", "pathParams": ["workflow_id"], "body": ["input", "idempotencyKey"], "scope": "workflow:run", "description": "Start a run of a stored workflow with an optional input document and idempotency key." },
+      { "id": "listRuns", "method": "GET", "path": "/v1/runs", "auth": "product", "query": ["workflowId", "limit"], "scope": "workflow:read", "description": "List workflow runs, optionally filtered to one workflow." },
+      { "id": "getRun", "method": "GET", "path": "/v1/runs/{run_id}", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:read", "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only." },
+      { "id": "cancelRun", "method": "POST", "path": "/v1/runs/{run_id}:cancel", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:run", "description": "Cancel a queued or running workflow run." }
     ],
     "cradle": [
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },

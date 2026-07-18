@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows";
+export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "workflow:read" | "workflow:write" | "workflow:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "temperaWorkflows" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -34,6 +34,7 @@ export type TemperaEnvironmentTargets = {
   temperaCodeApiUrl: string;
   temperaGymUrl: string;
   temperaLlmApiUrl: string;
+  temperaWorkflowsApiUrl: string;
   tempoApiUrl: string;
 };
 export declare const TEMPERA_ENVIRONMENTS: Readonly<Record<TemperaEnvironment, TemperaEnvironmentTargets>>;
@@ -266,6 +267,33 @@ export interface TemperaLlmClient extends TemperaProductClientBase {
   createChatCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway. */
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaWorkflowsClient extends TemperaProductClientBase {
+  /** Check tempera-workflows engine liveness. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface. */
+  listNodeTypes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List stored workflow definitions, newest first. */
+  listWorkflows(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored. */
+  createWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one stored workflow definition. */
+  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace a stored workflow definition with a new validated revision. */
+  updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a stored workflow definition. */
+  deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate a workflow definition without storing it; returns the full diagnostic list. */
+  validateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start a run of a stored workflow with an optional input document and idempotency key. */
+  createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List workflow runs, optionally filtered to one workflow. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel a queued or running workflow run. */
+  cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {

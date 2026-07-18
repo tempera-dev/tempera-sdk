@@ -18,6 +18,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["tempo"]["repository"], "https://github.com/tempera-dev/tempo")
         self.assertEqual(PRODUCTS["temperaCode"]["repository"], "https://github.com/tempera-dev/tempera-code")
         self.assertEqual(PRODUCTS["temperaLlm"]["repository"], "https://github.com/tempera-dev/tempera-llm")
+        self.assertEqual(PRODUCTS["temperaWorkflows"]["repository"], "https://github.com/tempera-dev/tempera-workflows")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
         self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
@@ -36,11 +37,12 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("data-engine", AUDIENCES)
         self.assertIn("tempera-code", AUDIENCES)
         self.assertIn("tempera-llm", AUDIENCES)
+        self.assertIn("tempera-workflows", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
             list(SCOPES),
-            ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"],
+            ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"],
         )
 
     def test_all_four_environments_carry_the_same_target_keys(self):
@@ -55,6 +57,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(ENVIRONMENTS["production"]["tempoApiUrl"], "https://tempo.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaCodeApiUrl"], "https://code-api.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaLlmApiUrl"], "https://llm.tempera.dev")
+        self.assertEqual(ENVIRONMENTS["production"]["temperaWorkflowsApiUrl"], "https://workflows.tempera.dev")
         # Deprecated alias points at the same object.
         self.assertIs(API_TARGETS, ENVIRONMENTS)
 

@@ -21,6 +21,7 @@ PRODUCT_ATTRS = {
     "tempo": "tempo",
     "temperaCode": "tempera_code",
     "temperaLlm": "tempera_llm",
+    "temperaWorkflows": "tempera_workflows",
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
@@ -69,6 +70,7 @@ def make_client(**overrides):
             "tempo": "https://tempo.example.test",
             "tempera_code": "https://code.example.test",
             "tempera_llm": "https://llm.example.test",
+            "tempera_workflows": "https://workflows.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
@@ -204,10 +206,12 @@ class DispatchTest(unittest.TestCase):
         client.palette.health()
         client.tempera_code.health()
         client.tempera_llm.health()
+        client.tempera_workflows.health()
         self.assertEqual(transport.calls[0]["origin"], "https://api.tempera.dev")
         self.assertEqual(transport.calls[1]["origin"], "https://mcp.tempera.dev")
         self.assertEqual(transport.calls[2]["origin"], "https://code-api.tempera.dev")
         self.assertEqual(transport.calls[3]["origin"], "https://llm.tempera.dev")
+        self.assertEqual(transport.calls[4]["origin"], "https://workflows.tempera.dev")
 
     def test_unknown_environment_is_rejected(self):
         with self.assertRaises(TemperaSdkError):
