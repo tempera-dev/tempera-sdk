@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 19 |
+| Typed operations | 20 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -937,6 +937,68 @@ let spec = client.build_request("data_engine", "emit_eval", &[
     ("artifact_ids", "<artifact_ids>".into()),
     ("include_provenance", "<include_provenance>".into()),
     ("license", "<license>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### deriveBundle
+
+`POST /v1/projects/{project_id}/products/{product_id}:derive`
+
+Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.dataEngine.deriveBundle()` · Python `client.data_engine.derive_bundle()` · Rust `build_request("data_engine", "derive_bundle", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `product_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `format` | no | — |
+| `train_fraction` | no | — |
+| `include_raw` | no | — |
+| `page_size` | no | — |
+| `page_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.deriveBundle({
+  project_id: "<project_id>",
+  product_id: "<product_id>",
+  format: "<format>",
+  train_fraction: "<train_fraction>",
+  include_raw: "<include_raw>",
+});
+```
+
+```python Python
+result = client.data_engine.derive_bundle({
+    "project_id": "<project_id>",
+    "product_id": "<product_id>",
+    "format": "<format>",
+    "train_fraction": "<train_fraction>",
+    "include_raw": "<include_raw>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "derive_bundle", &[
+    ("project_id", "<project_id>".into()),
+    ("product_id", "<product_id>".into()),
+    ("format", "<format>".into()),
+    ("train_fraction", "<train_fraction>".into()),
+    ("include_raw", "<include_raw>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

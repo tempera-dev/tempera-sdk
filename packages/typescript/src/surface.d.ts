@@ -328,6 +328,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages. */
+  deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

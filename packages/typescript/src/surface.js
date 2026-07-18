@@ -2046,6 +2046,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
     },
     {
+      "id": "deriveBundle",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products/{product_id}:derive",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [
+        "format",
+        "train_fraction",
+        "include_raw",
+        "page_size",
+        "page_token"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages."
+    },
+    {
       "id": "getProduct",
       "method": "GET",
       "path": "/v1/projects/{project_id}/products/{product_id}",

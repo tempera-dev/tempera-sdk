@@ -2037,6 +2037,28 @@ OPERATIONS = {
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
         },
         {
+            "id": "derive_bundle",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/products/{product_id}:derive",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "product_id"
+            ],
+            "query": [],
+            "body": [
+                "format",
+                "train_fraction",
+                "include_raw",
+                "page_size",
+                "page_token"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages."
+        },
+        {
             "id": "get_product",
             "method": "GET",
             "path": "/v1/projects/{project_id}/products/{product_id}",
