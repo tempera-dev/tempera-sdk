@@ -2359,16 +2359,14 @@ OPERATIONS = {
             ],
             "query": [],
             "body": [
-                "artifactType",
-                "source",
-                "external_id",
-                "raw_body",
-                "metadata"
+                "envelopes"
             ],
-            "required_body": [],
+            "required_body": [
+                "envelopes"
+            ],
             "body_defaults": {},
             "scope": None,
-            "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
+            "description": "Ingest one or more OpenAPI envelopes into the project; returns an async operation handle."
         },
         {
             "id": "ingest_web",

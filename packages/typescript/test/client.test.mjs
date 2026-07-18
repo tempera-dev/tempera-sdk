@@ -105,6 +105,7 @@ test("action-suffix paths keep the literal colon un-encoded", async () => {
   const { client, calls } = testClient();
   await client.dataEngine.ingestArtifact({ project_id: "p1", envelopes: [] });
   assert.equal(calls[0].url.pathname, "/v1/projects/p1/artifacts:ingest");
+  assert.deepEqual(JSON.parse(calls[0].options.body), { envelopes: [] });
   assert.ok(calls[0].url.toString().endsWith("/v1/projects/p1/artifacts:ingest"));
   assert.ok(!calls[0].url.toString().includes("%3A"), "colon must not be percent-encoded");
   // Colons inside a substituted path *value* are still encoded.

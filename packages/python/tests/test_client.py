@@ -138,6 +138,7 @@ class DispatchTest(unittest.TestCase):
         client.data_engine.ingest_artifact({"project_id": "p1", "envelopes": []})
         self.assertEqual(transport.calls[0]["path"], "/v1/projects/p1/artifacts:ingest")
         self.assertNotIn("%3A", transport.calls[0]["url"], "colon must not be percent-encoded")
+        self.assertEqual(transport.calls[0]["body"], {"envelopes": []})
         # Colons inside a substituted path *value* are still encoded.
         client.data_engine.get_job({"project_id": "p1", "job_id": "job:1"})
         self.assertEqual(transport.calls[1]["path"], "/v1/projects/p1/jobs/job%3A1")

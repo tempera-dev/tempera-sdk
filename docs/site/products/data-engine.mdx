@@ -1578,7 +1578,7 @@ let spec = client.build_request("data_engine", "get_use_case", &[
 
 `POST /v1/projects/{project_id}/artifacts:ingest`
 
-Ingest one artifact deterministically into the project; returns an async operation handle.
+Ingest one or more OpenAPI envelopes into the project; returns an async operation handle.
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.dataEngine.ingestArtifact()` · Python `client.data_engine.ingest_artifact()` · Rust `build_request("data_engine", "ingest_artifact", params)`
@@ -1593,38 +1593,28 @@ Ingest one artifact deterministically into the project; returns an async operati
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `artifactType` | no | — |
-| `source` | no | — |
-| `external_id` | no | — |
-| `raw_body` | no | — |
-| `metadata` | no | — |
+| `envelopes` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.dataEngine.ingestArtifact({
   project_id: "<project_id>",
-  artifactType: "<artifactType>",
-  source: "<source>",
-  external_id: "<external_id>",
+  envelopes: "<envelopes>",
 });
 ```
 
 ```python Python
 result = client.data_engine.ingest_artifact({
     "project_id": "<project_id>",
-    "artifactType": "<artifactType>",
-    "source": "<source>",
-    "external_id": "<external_id>",
+    "envelopes": "<envelopes>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("data_engine", "ingest_artifact", &[
     ("project_id", "<project_id>".into()),
-    ("artifactType", "<artifactType>".into()),
-    ("source", "<source>".into()),
-    ("external_id", "<external_id>".into()),
+    ("envelopes", "<envelopes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
