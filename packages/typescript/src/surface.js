@@ -2567,6 +2567,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List a project's data campaigns with pagination."
     },
     {
+      "id": "transitionCampaign",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/campaigns/{campaign_id}:transition",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "campaign_id"
+      ],
+      "query": [],
+      "body": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "requiredBody": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
+    },
+    {
       "id": "listArtifacts",
       "method": "GET",
       "path": "/v1/projects/{project_id}/artifacts",
@@ -2622,6 +2644,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "List the labels attached to one artifact."
+    },
+    {
+      "id": "profileDataset",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/datasets:profile",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "artifact_ids",
+        "artifact_type"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Profile dataset quality before export: counts by artifact type and source, duplicate raw_hash groups, label coverage, and per-label distributions."
     },
     {
       "id": "createJob",
@@ -2690,13 +2730,44 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [
         "page_size",
-        "page_token"
+        "page_token",
+        "status",
+        "campaign_name"
       ],
       "body": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List the human residual review tasks queued for experts."
+      "description": "List the human residual review tasks queued for experts, optionally filtered by status (OPEN or RESOLVED) and campaign."
+    },
+    {
+      "id": "resolveExpertTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:resolve",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "label",
+        "outcome",
+        "confidence",
+        "rationale",
+        "evidence",
+        "annotator_id",
+        "idempotency_key",
+        "review_context"
+      ],
+      "requiredBody": [
+        "label",
+        "idempotency_key",
+        "review_context"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Resolve, abstain, flag, or adjudicate one human residual; the idempotency key binds one exact normalized decision to one expert task."
     },
     {
       "id": "getMetrics",
@@ -2712,6 +2783,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch data-engine usage and quality metrics for a project."
+    },
+    {
+      "id": "getLabelQuality",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/label-quality",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the label quality report: per-verifier stats, cross-verifier disagreements, the needs_expert backlog, and the auto-resolution rate."
     },
     {
       "id": "getEcosystemReadiness",
@@ -2786,6 +2872,181 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one emitted product bundle with its status and manifest URL."
+    },
+    {
+      "id": "validateProduct",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products/{product_id}:validate",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Validate an emitted product bundle's referential integrity and hygiene; missing artifacts, labels, or manifest are errors, duplicates and needs_expert labels are warnings."
+    },
+    {
+      "id": "checkProductLeakage",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:check-leakage",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "product_ids"
+      ],
+      "requiredBody": [
+        "product_ids"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check raw_hash leakage between exactly two product bundles for train/eval split hygiene, including overlap ratios and the overlapping hashes."
+    },
+    {
+      "id": "getProductManifest",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/products/{product_id}/manifest",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch an integrity-checked, bounded, remotely consumable manifest for an emitted eval product."
+    },
+    {
+      "id": "extractSource",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/sources:extract",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "connector",
+        "bucket",
+        "prefix",
+        "key",
+        "max_objects",
+        "max_bytes",
+        "statement",
+        "limit",
+        "soql",
+        "max_pages",
+        "artifact_type",
+        "source",
+        "ingest",
+        "metadata"
+      ],
+      "requiredBody": [
+        "connector"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Extract objects or records from a configured source connector (s3, snowflake, salesforce) into content-addressed artifacts; fails closed when the connector's env config is absent."
+    },
+    {
+      "id": "createTool",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tools",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "name",
+        "description",
+        "input_schema",
+        "kind",
+        "implementation",
+        "created_by"
+      ],
+      "requiredBody": [
+        "name",
+        "description",
+        "kind",
+        "implementation"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create or version-bump a stored custom tool; identical re-creates are idempotent and a changed definition creates a new monotonic version."
+    },
+    {
+      "id": "listTools",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tools",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List every stored custom tool for the project with usage stats (invocation count, last invoked, error count)."
+    },
+    {
+      "id": "getTool",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch one stored custom tool with its definition and usage stats."
+    },
+    {
+      "id": "deleteTool",
+      "method": "DELETE",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Hard-delete a stored custom tool and every retained version; the deletion is recorded in the custom tool audit log."
+    },
+    {
+      "id": "invokeTool",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}:invoke",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [
+        "arguments"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Invoke a stored custom tool; deterministic_wasm tools execute in the cradle sandbox and llm_prompt tools render the stored template with the caller arguments."
     },
     {
       "id": "runEnvironment",
