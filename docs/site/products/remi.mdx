@@ -463,7 +463,7 @@ let spec = client.build_request("remi", "context", &[
 
 `POST /v1/feedback`
 
-Attach a verified outcome to evidence returned by an immutable receipt; hosted scope is derived from the principal and it cannot rewrite memory truth.
+Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth.
 
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.remi.feedback()` · Python `client.remi.feedback()` · Rust `build_request("remi", "feedback", params)`
@@ -478,6 +478,8 @@ Attach a verified outcome to evidence returned by an immutable receipt; hosted s
 | `helpful` | no | — |
 | `outcome_artifact_id` | no | — |
 | `note` | no | — |
+| `terminal_state` | no | — |
+| `idempotency_key` | no | — |
 
 <CodeGroup>
 

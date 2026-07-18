@@ -1963,7 +1963,9 @@ OPERATIONS = {
                 "evidence_node_id",
                 "helpful",
                 "outcome_artifact_id",
-                "note"
+                "note",
+                "terminal_state",
+                "idempotency_key"
             ],
             "forbidden_body": [
                 "scope",
@@ -1974,7 +1976,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Attach a verified outcome to evidence returned by an immutable receipt; hosted scope is derived from the principal and it cannot rewrite memory truth."
+            "description": "Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth."
         },
         {
             "id": "maintenance",

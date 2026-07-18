@@ -300,7 +300,7 @@ export interface RemiClient extends TemperaProductClientBase {
   query(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback. */
   context(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Attach a verified outcome to evidence returned by an immutable receipt; hosted scope is derived from the principal and it cannot rewrite memory truth. */
+  /** Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth. */
   feedback(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history. */
   maintenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
