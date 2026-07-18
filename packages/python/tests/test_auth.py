@@ -175,6 +175,7 @@ class ProductBearerTest(unittest.TestCase):
                 "cradle": ("cradle", "TEMPERA_CRADLE_URL"),
                 "remi": ("remi", "TEMPERA_REMI_URL"),
                 "dataEngine": ("data-engine", "TEMPERA_DATA_ENGINE_URL"),
+                "temperaGym": ("tempera-gym", "TEMPERA_GYM_URL"),
                 "humanData": ("human-data", "TEMPERA_HUMAN_DATA_URL"),
             },
         )

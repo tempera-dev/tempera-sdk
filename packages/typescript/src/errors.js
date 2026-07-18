@@ -20,7 +20,7 @@ export class TemperaSdkError extends Error {
 }
 
 export class TemperaApiError extends TemperaSdkError {
-  constructor({ status, code, message, requestId, product, operation, body }) {
+  constructor({ status, code, message, requestId, product, operation, body, retryAfter }) {
     super(message, { status, body });
     this.name = "TemperaApiError";
     this.status = status;
@@ -29,6 +29,21 @@ export class TemperaApiError extends TemperaSdkError {
     this.product = product ?? null;
     this.operation = operation ?? null;
     this.body = body ?? null;
+    // Parsed numeric Retry-After response header, in seconds (when sent).
+    this.retryAfter = retryAfter ?? null;
+  }
+
+  /**
+   * Server-declared retryability: `body.error.retryable` when the object wire
+   * shape (cradle / data-engine / tempera-gym) carries a boolean, else null
+   * (unknown).
+   */
+  get retryable() {
+    const error = this.body && typeof this.body === "object" ? this.body.error : null;
+    if (error && typeof error === "object" && typeof error.retryable === "boolean") {
+      return error.retryable;
+    }
+    return null;
   }
 }
 
@@ -47,7 +62,8 @@ export class TemperaMcpError extends TemperaSdkError {
  * Wire shapes handled (see surface.json errorContract.wireShapes):
  * - control plane / palette: {"error": "<code>", "message": "<text>"}
  * - tempo:                    {"error": "<human message>"}
- * - cradle / remi / data-engine: {"error": {"code", "message", "request_id"?, ...}}
+ * - cradle / remi / data-engine / tempera-gym:
+ *   {"error": {"code", "message", "request_id"?, "retryable"?, ...}}
  */
 export function normalizeErrorBody(body, statusText = "") {
   if (body && typeof body === "object") {
@@ -70,8 +86,19 @@ export function normalizeErrorBody(body, statusText = "") {
 }
 
 /**
+ * Parse a numeric (delta-seconds) Retry-After header value; HTTP-date forms
+ * and garbage are ignored rather than guessed at.
+ */
+function parseRetryAfter(value) {
+  if (typeof value !== "string" || value.trim() === "") return null;
+  const seconds = Number(value.trim());
+  return Number.isFinite(seconds) && seconds >= 0 ? seconds : null;
+}
+
+/**
  * Build a TemperaApiError from a failed HTTP response.
- * `requestId` falls back to the x-request-id response header.
+ * `requestId` falls back to the x-request-id response header, and a numeric
+ * Retry-After header is surfaced as `retryAfter` (seconds).
  */
 export function apiErrorFromResponse({ status, statusText, headers, body, product, operation }) {
   const normalized = normalizeErrorBody(body, statusText);
@@ -85,5 +112,6 @@ export function apiErrorFromResponse({ status, statusText, headers, body, produc
     product,
     operation,
     body,
+    retryAfter: parseRetryAfter(headers?.get?.("retry-after") ?? null),
   });
 }

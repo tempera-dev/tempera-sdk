@@ -184,6 +184,7 @@ is the default when none is specified.
 | `tempera-mcp` | the unified [MCP gateway](/mcp-gateway) |
 | `tempera-code` | Tempera Code |
 | `tempera-llm` | tempera-llm |
+| `tempera-gym` | Tempera Gym |
 
 ## Scopes
 
@@ -194,7 +195,7 @@ is the default when none is specified.
 | `trace:write` | palette: `importSource`, `ingestSpan` |
 | `dataset:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `dataset:write` | palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
-| `eval:run` | data-engine: `generateDomain` |
+| `eval:run` | data-engine: `generateDomain`; Tempera Gym: `closeEpisode`, `createEpisode`, `stepEpisode`, `verifyTrajectory` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `cyber:research` | No typed SDK operation declares it yet; enforced server-side. |
 | `clinical:run` | No typed SDK operation declares it yet; enforced server-side. |

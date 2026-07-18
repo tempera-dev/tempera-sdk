@@ -12,6 +12,7 @@ import type {
   PassthroughClient,
   RemiClient,
   TemperaCodeClient,
+  TemperaGymClient,
   TemperaLlmClient,
   TemperaAudience,
   TemperaEnvironment,
@@ -34,6 +35,10 @@ export declare class TemperaApiError extends TemperaSdkError {
   product: string | null;
   operation: string | null;
   body: unknown;
+  /** Server-declared retryability (`body.error.retryable`), else null (unknown). */
+  readonly retryable: boolean | null;
+  /** Parsed numeric Retry-After response header, in seconds (when sent). */
+  retryAfter: number | null;
 }
 
 export declare class TemperaMcpError extends TemperaSdkError {
@@ -118,6 +123,21 @@ export declare const TEMPERA_PRODUCT_AUDIENCES: Readonly<
 
 // --- unified client ---
 
+/**
+ * Opt-in bounded retry for idempotent (GET/DELETE) requests whose normalized
+ * error is retryable (server-declared `retryable`, else HTTP 429/502/503/504).
+ */
+export type TemperaRetryOptions = {
+  /** Maximum retry attempts after the initial request (default 2). */
+  retries?: number;
+  /** First backoff delay in milliseconds (default 250); doubles per attempt. */
+  baseDelayMs?: number;
+  /** Delay cap in milliseconds (default 10000); also caps Retry-After. */
+  maxDelayMs?: number;
+  /** Injectable sleep (for tests); receives the delay in milliseconds. */
+  sleep?: (ms: number) => void | Promise<void>;
+};
+
 export type TemperaClientOptions = {
   auth?: TemperaAuth;
   accountToken?: string;
@@ -125,6 +145,8 @@ export type TemperaClientOptions = {
   baseUrls?: Partial<Record<TemperaProductKey, string>>;
   environment?: TemperaEnvironment;
   fetch?: typeof fetch;
+  /** Bounded retry for idempotent requests; default OFF. `true` uses the defaults. */
+  retry?: boolean | TemperaRetryOptions;
 };
 
 export type TemperaClient = {
@@ -138,6 +160,7 @@ export type TemperaClient = {
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;
+  temperaGym: TemperaGymClient;
   humanData: PassthroughClient;
   tempJs: PassthroughClient;
   tempOS: PassthroughClient;

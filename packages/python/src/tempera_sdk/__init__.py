@@ -38,7 +38,7 @@ from .auth import (
     pkce_challenge_s256,
 )
 
-from .client import TemperaClient
+from .client import RetryPolicy, TemperaClient
 
 from .mcp import MCP_ERROR_CODES, MCP_PROTOCOL_VERSION, TemperaMcpClient
 
@@ -58,6 +58,7 @@ __all__ = [
     "PRODUCTS",
     "PRODUCT_AUDIENCES",
     "PkcePair",
+    "RetryPolicy",
     "SCOPES",
     "SURFACE_VERSION",
     "TemperaApiError",

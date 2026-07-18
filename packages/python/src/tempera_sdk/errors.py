@@ -31,6 +31,7 @@ class TemperaApiError(TemperaSdkError):
         operation: str | None = None,
         body: Any = None,
         status_text: str = "",
+        retry_after: float | None = None,
     ):
         super().__init__(message)
         self.status = status
@@ -43,6 +44,19 @@ class TemperaApiError(TemperaSdkError):
         # Kept so the error can be re-labelled with product/operation context
         # after a transport raises it (see _with_context).
         self.status_text = status_text
+        # Parsed numeric Retry-After response header, in seconds (when sent).
+        self.retry_after = retry_after
+
+    @property
+    def retryable(self) -> bool | None:
+        """Server-declared retryability: ``body.error.retryable`` when the
+        object wire shape (cradle / data-engine / tempera-gym) carries a
+        boolean, else ``None`` (unknown)."""
+        if isinstance(self.body, Mapping):
+            error = self.body.get("error")
+            if isinstance(error, Mapping) and isinstance(error.get("retryable"), bool):
+                return error["retryable"]
+        return None
 
 
 class TemperaMcpError(TemperaSdkError):
@@ -61,7 +75,8 @@ def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
     Wire shapes handled (see surface.json errorContract.wireShapes):
     - control plane / palette: ``{"error": "<code>", "message": "<text>"}``
     - tempo:                   ``{"error": "<human message>"}``
-    - cradle / remi / data-engine: ``{"error": {"code", "message", "request_id"?, ...}}``
+    - cradle / remi / data-engine / tempera-gym:
+      ``{"error": {"code", "message", "request_id"?, "retryable"?, ...}}``
     """
     if isinstance(body, Mapping):
         error = body.get("error")
@@ -96,6 +111,18 @@ def _header_get(headers: Any, name: str) -> str | None:
     return None
 
 
+def _parse_retry_after(value: Any) -> float | None:
+    """Parse a numeric (delta-seconds) Retry-After header value; HTTP-date
+    forms and garbage are ignored rather than guessed at."""
+    if not isinstance(value, str):
+        return None
+    try:
+        seconds = float(value.strip())
+    except ValueError:
+        return None
+    return seconds if seconds >= 0 else None
+
+
 def api_error_from_response(
     status: int,
     status_text: str = "",
@@ -106,7 +133,8 @@ def api_error_from_response(
 ) -> TemperaApiError:
     """Build a TemperaApiError from a failed HTTP response.
 
-    ``request_id`` falls back to the ``x-request-id`` response header.
+    ``request_id`` falls back to the ``x-request-id`` response header, and a
+    numeric ``Retry-After`` header is surfaced as ``retry_after`` (seconds).
     """
     normalized = normalize_error_body(body, status_text)
     header_request_id = _header_get(headers, "x-request-id")
@@ -120,6 +148,7 @@ def api_error_from_response(
         operation=operation,
         body=body,
         status_text=status_text,
+        retry_after=_parse_retry_after(_header_get(headers, "retry-after")),
     )
 
 
@@ -128,8 +157,14 @@ def _with_context(error: TemperaApiError, product: str | None, operation: str | 
     product and operation that made the request."""
     if error.product or error.operation:
         return error
-    headers = {"x-request-id": error.request_id} if error.request_id else None
-    return api_error_from_response(error.status, error.status_text, headers, error.body, product, operation)
+    headers: dict[str, str] = {}
+    if error.request_id:
+        headers["x-request-id"] = error.request_id
+    if error.retry_after is not None:
+        headers["retry-after"] = str(error.retry_after)
+    return api_error_from_response(
+        error.status, error.status_text, headers or None, error.body, product, operation
+    )
 
 
 __all__ = [

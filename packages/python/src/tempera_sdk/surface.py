@@ -7,7 +7,7 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 2
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-gym')
 DEFAULT_AUDIENCE = 'palette'
 SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
 
@@ -128,6 +128,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_DATA_ENGINE_URL",
         "audience": "data-engine",
         "description": "Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission."
+    },
+    "temperaGym": {
+        "name": "Tempera Gym",
+        "repository": "https://github.com/tempera-dev/tempera-gym",
+        "env_var": "TEMPERA_GYM_URL",
+        "audience": "tempera-gym",
+        "description": "Seeded RL environment service: registered gym environments, episode rollout with stepwise actions, and trajectory verification."
     },
     "humanData": {
         "name": "human-data",
@@ -3182,6 +3189,134 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Emit an SFT product when the documented data-engine implementation is enabled."
+        }
+    ],
+    "temperaGym": [
+        {
+            "id": "health",
+            "method": "GET",
+            "path": "/v1/health",
+            "auth": "none",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Check tempera-gym liveness; returns the service status."
+        },
+        {
+            "id": "list_environments",
+            "method": "GET",
+            "path": "/v1/environments",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List the registered gym environments."
+        },
+        {
+            "id": "get_environment",
+            "method": "GET",
+            "path": "/v1/environments/{environment_id}",
+            "auth": "product",
+            "path_params": [
+                "environment_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one registered gym environment definition."
+        },
+        {
+            "id": "create_episode",
+            "method": "POST",
+            "path": "/v1/episodes",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "environment_id",
+                "seed"
+            ],
+            "required_body": [
+                "environment_id",
+                "seed"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Create a seeded episode in a gym environment and receive its initial observation."
+        },
+        {
+            "id": "get_episode",
+            "method": "GET",
+            "path": "/v1/episodes/{episode_id}",
+            "auth": "product",
+            "path_params": [
+                "episode_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one episode with its current state."
+        },
+        {
+            "id": "step_episode",
+            "method": "POST",
+            "path": "/v1/episodes/{episode_id}/step",
+            "auth": "product",
+            "path_params": [
+                "episode_id"
+            ],
+            "query": [],
+            "body": [
+                "action"
+            ],
+            "required_body": [
+                "action"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Apply one action to an episode and receive the resulting observation, reward, and termination state."
+        },
+        {
+            "id": "close_episode",
+            "method": "DELETE",
+            "path": "/v1/episodes/{episode_id}",
+            "auth": "product",
+            "path_params": [
+                "episode_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Close an episode and release its environment resources (idempotent)."
+        },
+        {
+            "id": "verify_trajectory",
+            "method": "POST",
+            "path": "/v1/trajectories/verify",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "trajectory"
+            ],
+            "required_body": [
+                "trajectory"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Verify a recorded trajectory against its environment's transition and reward rules."
         }
     ]
 }

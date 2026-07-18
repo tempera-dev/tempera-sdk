@@ -714,13 +714,23 @@ def render_environments(surface: dict) -> str:
         "## Per-product base-URL env vars",
         "",
         "Every product has a `TEMPERA_*_URL` environment variable, and only the",
-        "control plane, palette, and tempo have preset URLs — the other products",
+        "products with a preset field below have preset URLs — the other products",
         "must get their base URL from the env var or an explicit override.",
         "",
         "| Product | Env var | Preset field |",
         "|---|---|---|",
     ]
-    preset_fields = {"controlPlane": "controlPlaneUrl", "palette": "paletteApiUrl", "tempo": "tempoApiUrl"}
+    # Keep in sync with the clients' environment-target maps
+    # (_ENVIRONMENT_TARGET_KEYS in Python, baseUrlFor in TypeScript).
+    preset_fields = {
+        "controlPlane": "controlPlaneUrl",
+        "palette": "paletteApiUrl",
+        "tempo": "tempoApiUrl",
+        "temperaCode": "temperaCodeApiUrl",
+        "temperaGym": "temperaGymUrl",
+        "dataEngine": "dataEngineApiUrl",
+        "cradle": "cradleApiUrl",
+    }
     for key, product in surface["products"].items():
         preset = f"`{preset_fields[key]}`" if key in preset_fields else "—"
         lines.append(f"| {product['name']} | `{product['envVar']}` | {preset} |")
@@ -736,9 +746,9 @@ def render_environments(surface: dict) -> str:
         "   `base_urls[\"<product>\"]` (Python), or `with_base_url(\"<product>\", url)` (Rust).",
         "2. **The product's env var** — `TEMPERA_*_URL` from the table above.",
         "3. **The environment preset** — TypeScript and Python only, and only for the",
-        "   control plane, palette, and tempo. The Rust crate takes no `environment`",
-        "   option; use an explicit `with_base_url` or the env var (the preset table is",
-        "   still available as `tempera_sdk::ENVIRONMENTS`).",
+        "   products with a preset field in the table above. The Rust crate takes no",
+        "   `environment` option; use an explicit `with_base_url` or the env var (the",
+        "   preset table is still available as `tempera_sdk::ENVIRONMENTS`).",
         "",
         "Trailing slashes on configured base URLs are trimmed in every language.",
         "",
@@ -751,15 +761,15 @@ def render_errors(surface: dict) -> str:
     lines = [
         frontmatter(
             "Errors",
-            "One TemperaApiError across six wire error shapes, plus MCP gateway errors.",
+            "One TemperaApiError across seven wire error shapes, plus MCP gateway errors.",
         )
     ]
     lines += [
         "Every product speaks its own wire error shape; the SDK normalizes all of",
         f"them into one **`{contract['name']}`** with identical fields in every",
-        "language (Python uses `request_id`; the HTTP-less Rust crate normalizes",
-        "`status`/`code`/`message`/`request_id` from response bodies via",
-        "`normalize_error_body` and carries no request context):",
+        "language (Python uses `request_id`/`retry_after`; the HTTP-less Rust crate",
+        "normalizes `status`/`code`/`message`/`request_id`/`retryable` from response",
+        "bodies via `normalize_error_body` and carries no request context):",
         "",
         "| Field | Meaning |",
         "|---|---|",
@@ -772,6 +782,12 @@ def render_errors(surface: dict) -> str:
         "product": "Product key of the client that made the call.",
         "operation": "Operation id of the typed call (null/None for passthrough requests).",
         "body": "The raw parsed response body, untouched.",
+        "retryable": "Server-declared retryability (`body.error.retryable`) when the object "
+        "wire shape carried a boolean, else null/None. Opt-in client retry also treats "
+        "HTTP 429/502/503/504 as retryable when the body declares nothing.",
+        "retryAfter": "Parsed numeric `Retry-After` response header, in seconds "
+        "(TypeScript `retryAfter` / Python `retry_after`; the header-less Rust "
+        "normalization omits it).",
     }
     for field in contract["fields"]:
         lines.append(f"| `{field}` | {cell(field_meanings.get(field, ''))} |")
@@ -904,7 +920,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");\n'
+        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.4.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
         'let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);\n'
         "let (id, body) = mcp.whoami_body();\n"

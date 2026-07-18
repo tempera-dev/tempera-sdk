@@ -52,6 +52,7 @@ mod tests {
             "cradle",
             "remi",
             "data_engine",
+            "tempera_gym",
             "human_data",
             "temp_js",
             "temp_o_s",
@@ -66,6 +67,11 @@ mod tests {
         assert!(SCOPES.contains(&"admin"));
         assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
         assert!(AUDIENCES.contains(&"tempera-code"));
+        assert!(AUDIENCES.contains(&"tempera-gym"));
+        assert_eq!(
+            find_product("tempera_gym").unwrap().audience,
+            Some("tempera-gym")
+        );
 
         // ENVIRONMENTS replaces PRODUCTION_TARGETS.
         let production = ENVIRONMENTS
@@ -76,6 +82,7 @@ mod tests {
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
         assert_eq!(production.tempera_code_api_url, "https://code-api.tempera.dev");
+        assert_eq!(production.tempera_gym_url, "https://gym.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
 

@@ -30,7 +30,8 @@
           "products/tempera-llm",
           "products/cradle",
           "products/remi",
-          "products/data-engine"
+          "products/data-engine",
+          "products/tempera-gym"
         ]
       },
       {

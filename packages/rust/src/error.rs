@@ -37,6 +37,14 @@ impl Json {
         }
     }
 
+    /// The boolean payload, when this value is a JSON boolean.
+    pub(crate) fn as_bool(&self) -> Option<bool> {
+        match self {
+            Json::Bool(value) => Some(*value),
+            _ => None,
+        }
+    }
+
     /// The integer payload, when this value is a JSON number.
     pub(crate) fn as_i64(&self) -> Option<i64> {
         match self {
@@ -291,6 +299,22 @@ pub struct TemperaApiError {
     pub message: String,
     /// Server request id (`request_id`), when the wire shape carried one.
     pub request_id: Option<String>,
+    /// Server-declared retryability (`error.retryable`), when the object wire
+    /// shape (cradle / data-engine / tempera-gym) carried a boolean.
+    pub retryable: Option<bool>,
+}
+
+impl TemperaApiError {
+    /// Whether a caller-side retry of an **idempotent** (GET/DELETE) request
+    /// is reasonable: the server-declared [`TemperaApiError::retryable`] flag
+    /// when the body carried one (an explicit `false` always wins), else a
+    /// status in 429/502/503/504. The crate ships no HTTP stack, so callers
+    /// apply this from their own transport loop; also honor any `Retry-After`
+    /// response header, which the HTTP-less normalization cannot see.
+    pub fn is_retryable(&self) -> bool {
+        self.retryable
+            .unwrap_or(matches!(self.status, 429 | 502 | 503 | 504))
+    }
 }
 
 impl fmt::Display for TemperaApiError {
@@ -317,7 +341,8 @@ impl std::error::Error for TemperaApiError {}
 /// Wire shapes handled (see `surface.json` `errorContract.wireShapes`):
 /// - control plane / palette: `{"error": "<code>", "message": "<text>"}`
 /// - tempo:                   `{"error": "<human message>"}`
-/// - cradle / remi / data-engine: `{"error": {"code", "message", "request_id"?, ...}}`
+/// - cradle / remi / data-engine / tempera-gym:
+///   `{"error": {"code", "message", "request_id"?, "retryable"?, ...}}`
 /// - anything unparseable:    `message` is `status_text`, or `"request failed"`
 ///   when the status text is empty — the same fallback rule as the TypeScript
 ///   and Python packages, so one wire response yields one message everywhere.
@@ -339,6 +364,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                         .get("request_id")
                         .and_then(Json::as_str)
                         .map(str::to_string),
+                    retryable: error.get("retryable").and_then(Json::as_bool),
                 };
             }
             Json::Str(error_text) => {
@@ -348,6 +374,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                         code: Some(error_text.clone()),
                         message: message.to_string(),
                         request_id: None,
+                        retryable: None,
                     };
                 }
                 return TemperaApiError {
@@ -355,6 +382,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                     code: None,
                     message: error_text.clone(),
                     request_id: None,
+                    retryable: None,
                 };
             }
             _ => {}
@@ -370,6 +398,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
             status_text.to_string()
         },
         request_id: None,
+        retryable: None,
     }
 }
 
@@ -419,6 +448,38 @@ mod tests {
         assert_eq!(error.code.as_deref(), Some("lane_unavailable"));
         assert_eq!(error.message, "no python lane");
         assert_eq!(error.request_id.as_deref(), Some("req_123"));
+        assert_eq!(error.retryable, Some(true));
+        assert!(error.is_retryable());
+    }
+
+    #[test]
+    fn tempera_gym_shape_carries_the_retryable_flag() {
+        let error = normalize_error_body(429, "Too Many Requests", r#"{"error":{"code":"rate_limited","message":"Slow down.","retryable":true}}"#,
+        );
+        assert_eq!(error.code.as_deref(), Some("rate_limited"));
+        assert_eq!(error.message, "Slow down.");
+        assert_eq!(error.retryable, Some(true));
+        assert!(error.is_retryable());
+    }
+
+    #[test]
+    fn retryability_prefers_the_server_flag_and_falls_back_to_status() {
+        // Explicit false vetoes even a retryable status.
+        let error = normalize_error_body(503, "", r#"{"error":{"code":"fatal","message":"No.","retryable":false}}"#,
+        );
+        assert_eq!(error.retryable, Some(false));
+        assert!(!error.is_retryable());
+        // No flag: 429/502/503/504 are retryable, other statuses are not.
+        for status in [429u16, 502, 503, 504] {
+            assert!(normalize_error_body(status, "", "{}").is_retryable(), "{status}");
+        }
+        for status in [400u16, 401, 404, 500] {
+            assert!(!normalize_error_body(status, "", "{}").is_retryable(), "{status}");
+        }
+        // Non-boolean retryable members are ignored.
+        let error = normalize_error_body(400, "", r#"{"error":{"code":"x","message":"y","retryable":"yes"}}"#,
+        );
+        assert_eq!(error.retryable, None);
     }
 
     #[test]
@@ -526,6 +587,7 @@ mod tests {
             code: Some("quota".to_string()),
             message: "limit hit".to_string(),
             request_id: Some("req_9".to_string()),
+            retryable: None,
         };
         assert_eq!(
             error.to_string(),

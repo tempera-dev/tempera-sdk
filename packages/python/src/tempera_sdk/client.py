@@ -13,6 +13,9 @@ operation names, the same descriptions, and the same error shape.
   audience OAuth token with unified tp_ API-key fallback); control-plane
   operations use the account-session token, which login()/signup() store
   automatically.
+- Retry: opt-in bounded retry (``TemperaClient(retry=True)`` or a
+  ``RetryPolicy``) for idempotent GET/DELETE requests whose error is
+  retryable per the normalized error contract; default OFF.
 """
 
 from __future__ import annotations
@@ -20,7 +23,9 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any, Mapping
+import time
+from dataclasses import dataclass, field
+from typing import Any, Callable, Mapping
 
 from .auth import TemperaAuth, Transport, _default_transport
 from .errors import TemperaApiError, TemperaSdkError, _with_context
@@ -42,11 +47,40 @@ _ENVIRONMENT_TARGET_KEYS = {
     "palette": "paletteApiUrl",
     "tempo": "tempoApiUrl",
     "temperaCode": "temperaCodeApiUrl",
+    "temperaGym": "temperaGymUrl",
     "dataEngine": "dataEngineApiUrl",
     "cradle": "cradleApiUrl",
 }
 
 _PATH_PARAM_RE = re.compile(r"\{([a-z_]+)\}")
+
+# Statuses treated as retryable when the error body declares no `retryable`.
+_RETRYABLE_STATUSES = frozenset({429, 502, 503, 504})
+
+
+@dataclass
+class RetryPolicy:
+    """Opt-in bounded retry for idempotent (GET/DELETE) requests.
+
+    A failed response is retried only when the operation's method is GET or
+    DELETE and the normalized :class:`TemperaApiError` is retryable: the
+    server-declared ``retryable`` flag when the body carries one (an explicit
+    ``false`` always wins), else a status in 429/502/503/504. Delays follow
+    exponential backoff (``base_delay * 2**attempt``) capped at ``max_delay``;
+    a numeric ``Retry-After`` header, when surfaced, replaces the backoff
+    (still capped). ``sleep`` is injectable for tests.
+    """
+
+    retries: int = 2
+    base_delay: float = 0.25
+    max_delay: float = 10.0
+    sleep: Callable[[float], None] = field(default=time.sleep)
+
+
+def _should_retry(error: TemperaApiError) -> bool:
+    if error.retryable is not None:
+        return error.retryable
+    return error.status in _RETRYABLE_STATUSES
 
 
 def _query_value(value: Any) -> str:
@@ -123,10 +157,22 @@ class TemperaClient:
         base_urls: Mapping[str, str] | None = None,
         environment: str | None = None,
         transport: Transport | None = None,
+        retry: RetryPolicy | Mapping[str, Any] | bool | None = None,
     ):
         self.auth = auth
         self.account_token = account_token
         self._introspection_secret = introspection_secret
+        # Opt-in retry: None/False keeps the historical single-attempt behavior.
+        if retry is None or retry is False:
+            self._retry: RetryPolicy | None = None
+        elif retry is True:
+            self._retry = RetryPolicy()
+        elif isinstance(retry, RetryPolicy):
+            self._retry = retry
+        elif isinstance(retry, Mapping):
+            self._retry = RetryPolicy(**retry)
+        else:
+            raise TemperaSdkError("retry must be a RetryPolicy, a mapping of its fields, or a bool")
         # base_urls accepts snake_case attribute names and camelCase registry keys.
         self._base_urls = {_ATTR_TO_KEY.get(key, key): value for key, value in (base_urls or {}).items()}
         if environment is not None and environment not in ENVIRONMENTS:
@@ -137,6 +183,7 @@ class TemperaClient:
         self.palette: _ProductClient
         self.tempo: _ProductClient
         self.tempera_code: _ProductClient
+        self.tempera_gym: _ProductClient
         self.cradle: _ProductClient
         self.remi: _ProductClient
         self.data_engine: _ProductClient
@@ -215,10 +262,27 @@ class TemperaClient:
         if headers:
             request_headers.update(headers)
         data = json.dumps(body).encode("utf-8") if body is not None else None
-        try:
-            return self._transport(method, url, request_headers, data)
-        except TemperaApiError as error:
-            raise _with_context(error, product_key, operation) from None
+        attempt = 0
+        while True:
+            try:
+                return self._transport(method, url, request_headers, data)
+            except TemperaApiError as error:
+                error = _with_context(error, product_key, operation)
+                policy = self._retry
+                if (
+                    policy is None
+                    or method not in ("GET", "DELETE")  # only idempotent methods retry
+                    or attempt >= policy.retries
+                    or not _should_retry(error)
+                ):
+                    raise error from None
+                delay = (
+                    error.retry_after
+                    if error.retry_after is not None
+                    else policy.base_delay * (2**attempt)
+                )
+                policy.sleep(min(delay, policy.max_delay))
+                attempt += 1
 
     def _substitute_path(self, template: str, params: Mapping[str, Any], product_key: str, operation_id: str) -> str:
         def replace(match: "re.Match[str]") -> str:
@@ -280,4 +344,4 @@ class TemperaClient:
         )
 
 
-__all__ = ["TemperaClient"]
+__all__ = ["RetryPolicy", "TemperaClient"]

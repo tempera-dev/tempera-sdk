@@ -14,6 +14,9 @@
  *   audience OAuth token with unified tp_ API-key fallback); control-plane
  *   operations use the account-session token, which login()/signup() store
  *   automatically.
+ * - Retry: opt-in bounded retry (`createTemperaClient({ retry: true })` or a
+ *   config object) for idempotent GET/DELETE requests whose error is
+ *   retryable per the normalized error contract; default OFF.
  */
 
 import {
@@ -26,6 +29,27 @@ import { TemperaSdkError, apiErrorFromResponse } from "./errors.js";
 
 function trimTrailingSlash(url) {
   return url.replace(/\/+$/, "");
+}
+
+// Statuses treated as retryable when the error body declares no `retryable`.
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504]);
+
+function normalizeRetry(retry) {
+  if (!retry) return null;
+  const config = retry === true ? {} : retry;
+  return {
+    retries: config.retries ?? 2,
+    baseDelayMs: config.baseDelayMs ?? 250,
+    maxDelayMs: config.maxDelayMs ?? 10_000,
+    sleep: config.sleep ?? ((ms) => new Promise((resolve) => setTimeout(resolve, ms))),
+  };
+}
+
+// The server-declared retryable flag wins (an explicit false always vetoes);
+// else retry on 429/502/503/504.
+function shouldRetry(error) {
+  if (error.retryable !== null) return error.retryable;
+  return RETRYABLE_STATUSES.has(error.status);
 }
 
 function substitutePath(template, params, { product, operation }) {
@@ -64,9 +88,12 @@ export function createTemperaClient({
   baseUrls = {},
   environment,
   fetch: fetchImpl,
+  retry,
 } = {}) {
   const doFetch = fetchImpl ?? auth?.fetch ?? globalThis.fetch;
   if (!doFetch) throw new TemperaSdkError("fetch is required");
+  // Opt-in retry: absent/false keeps the historical single-attempt behavior.
+  const retryPolicy = normalizeRetry(retry);
   const environmentTargets = environment ? TEMPERA_ENVIRONMENTS[environment] : null;
   if (environment && !environmentTargets) {
     throw new TemperaSdkError(`unknown Tempera environment: ${environment}`);
@@ -83,6 +110,7 @@ export function createTemperaClient({
           palette: environmentTargets.paletteApiUrl,
           tempo: environmentTargets.tempoApiUrl,
           temperaCode: environmentTargets.temperaCodeApiUrl,
+          temperaGym: environmentTargets.temperaGymUrl,
           dataEngine: environmentTargets.dataEngineApiUrl,
           cradle: environmentTargets.cradleApiUrl,
         }[productKey]
@@ -122,19 +150,20 @@ export function createTemperaClient({
     for (const [key, value] of Object.entries(query ?? {})) {
       if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
     }
-    const response = await doFetch(url.toString(), {
-      method,
-      headers: {
-        accept: "application/json",
-        ...(body !== undefined ? { "content-type": "application/json" } : {}),
-        ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
-        ...headers,
-      },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-    const parsed = await parseResponseBody(response);
-    if (!response.ok) {
-      throw apiErrorFromResponse({
+    for (let attempt = 0; ; attempt += 1) {
+      const response = await doFetch(url.toString(), {
+        method,
+        headers: {
+          accept: "application/json",
+          ...(body !== undefined ? { "content-type": "application/json" } : {}),
+          ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
+          ...headers,
+        },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      });
+      const parsed = await parseResponseBody(response);
+      if (response.ok) return parsed;
+      const error = apiErrorFromResponse({
         status: response.status,
         statusText: response.statusText,
         headers: response.headers,
@@ -142,8 +171,17 @@ export function createTemperaClient({
         product: productKey,
         operation,
       });
+      if (
+        !retryPolicy ||
+        (method !== "GET" && method !== "DELETE") || // only idempotent methods retry
+        attempt >= retryPolicy.retries ||
+        !shouldRetry(error)
+      ) {
+        throw error;
+      }
+      const delayMs = error.retryAfter !== null ? error.retryAfter * 1000 : retryPolicy.baseDelayMs * 2 ** attempt;
+      await retryPolicy.sleep(Math.min(delayMs, retryPolicy.maxDelayMs));
     }
-    return parsed;
   }
 
   function dispatch(productKey, op, params = {}, options = {}) {

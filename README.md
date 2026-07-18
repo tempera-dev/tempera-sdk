@@ -44,6 +44,7 @@ a live hosted service, or an undocumented endpoint.
 | `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 4 | `tempera-llm` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
 | `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 19 | `data-engine` |
+| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — seeded RL environments: episode rollout, stepwise actions, trajectory verification | 8 | `tempera-gym` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 Palette also ships seven fully generated per-language clients inside its own
@@ -127,8 +128,30 @@ language.
 Every product speaks a different wire error shape; the SDK normalizes all of
 them into one `TemperaApiError` with `status`, `code`, `message`,
 `requestId`, `product`, `operation`, and the raw `body` — identical fields in
-all three languages. MCP JSON-RPC errors raise `TemperaMcpError` with the
-gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
+all three languages. Backends that declare retryability (cradle-style
+`{"error": {..., "retryable"}}` bodies, e.g. cradle, data-engine, and
+tempera-gym) surface it as `retryable`, and a numeric `Retry-After` header as
+`retryAfter` / `retry_after`. MCP JSON-RPC errors raise `TemperaMcpError`
+with the gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
+
+Retry is opt-in and bounded (default OFF, so existing behavior is unchanged):
+
+```js
+const client = createTemperaClient({ auth, environment: "staging", retry: true });
+// or: retry: { retries: 3, baseDelayMs: 250, maxDelayMs: 10_000 }
+```
+
+```python
+client = TemperaClient(auth=auth, environment="staging", retry=True)
+# or: retry=RetryPolicy(retries=3, base_delay=0.25, max_delay=10.0)
+```
+
+Only idempotent (GET/DELETE) requests retry, and only when the normalized
+error is retryable: the server-declared `retryable` flag when present (an
+explicit `false` always vetoes), else HTTP 429/502/503/504 — with capped
+exponential backoff that honors a numeric `Retry-After` header. The HTTP-less
+Rust crate exposes the same signal as `TemperaApiError::retryable` /
+`is_retryable()` for your own transport loop.
 
 ## MCP gateway
 

@@ -6,6 +6,7 @@ from urllib import parse as urllib_parse
 from tempera_sdk import (
     OPERATIONS,
     PRODUCTS,
+    RetryPolicy,
     TemperaApiError,
     TemperaAuth,
     TemperaClient,
@@ -24,6 +25,7 @@ PRODUCT_ATTRS = {
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
+    "temperaGym": "tempera_gym",
     "humanData": "human_data",
     "tempJs": "temp_js",
     "tempOS": "temp_os",
@@ -72,6 +74,7 @@ def make_client(**overrides):
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
+            "tempera_gym": "https://gym.example.test",
             "human_data": "https://human.example.test",
             "tempJs": "https://tempjs.example.test",
             "temp_os": "https://tempos.example.test",
@@ -203,13 +206,135 @@ class DispatchTest(unittest.TestCase):
         client.control_plane.health()
         client.palette.health()
         client.tempera_code.health()
+        client.tempera_gym.health()
         self.assertEqual(transport.calls[0]["origin"], "https://api.tempera.dev")
         self.assertEqual(transport.calls[1]["origin"], "https://mcp.tempera.dev")
         self.assertEqual(transport.calls[2]["origin"], "https://code-api.tempera.dev")
+        self.assertEqual(transport.calls[3]["origin"], "https://gym.tempera.dev")
 
     def test_unknown_environment_is_rejected(self):
         with self.assertRaises(TemperaSdkError):
             TemperaClient(environment="galactic")
+
+
+GYM_RETRYABLE_BODY = {"error": {"code": "episode_busy", "message": "Try again.", "retryable": True}}
+
+
+class FlakyTransport:
+    """Fails the first `failures` calls with a TemperaApiError, then succeeds.
+
+    No real sleeping happens in these tests: the retry policy's `sleep` is
+    injected and only records the requested delays.
+    """
+
+    def __init__(self, failures, status=503, body=None, headers=None):
+        self.failures = failures
+        self.status = status
+        self.body = body
+        self.headers = headers or {}
+        self.calls = 0
+
+    def __call__(self, method, url, headers, data):
+        self.calls += 1
+        if self.calls <= self.failures:
+            raise api_error_from_response(self.status, "Service Unavailable", self.headers, self.body)
+        return {"ok": True}
+
+
+class RetryTest(unittest.TestCase):
+    def _client(self, transport, **overrides):
+        return make_client(transport=transport, **overrides)[0]
+
+    def test_retry_is_off_by_default(self):
+        transport = FlakyTransport(failures=1, status=503)
+        client = self._client(transport)
+        with self.assertRaises(TemperaApiError):
+            client.tempera_gym.list_environments()
+        self.assertEqual(transport.calls, 1)
+
+    def test_idempotent_get_retries_with_exponential_backoff_and_no_real_sleep(self):
+        sleeps = []
+        transport = FlakyTransport(failures=2, status=503)
+        client = self._client(transport, retry=RetryPolicy(retries=2, base_delay=0.25, sleep=sleeps.append))
+        self.assertEqual(client.tempera_gym.list_environments(), {"ok": True})
+        self.assertEqual(transport.calls, 3)
+        self.assertEqual(sleeps, [0.25, 0.5])
+
+    def test_retry_accepts_true_and_mapping_configs(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=429)
+        client = self._client(transport, retry={"retries": 1, "base_delay": 0.1, "sleep": sleeps.append})
+        self.assertEqual(client.tempera_gym.get_episode({"episode_id": "ep1"}), {"ok": True})
+        self.assertEqual(sleeps, [0.1])
+        with self.assertRaises(TemperaSdkError):
+            make_client(retry=object())
+
+    def test_non_idempotent_operations_never_retry_even_when_retryable(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=503, body=GYM_RETRYABLE_BODY)
+        client = self._client(transport, retry=RetryPolicy(sleep=sleeps.append))
+        with self.assertRaises(TemperaApiError) as ctx:
+            client.tempera_gym.step_episode({"episode_id": "ep1", "action": "noop"})
+        self.assertIs(ctx.exception.retryable, True)
+        self.assertEqual(transport.calls, 1)
+        self.assertEqual(sleeps, [])
+
+    def test_server_declared_retryable_false_vetoes_a_retryable_status(self):
+        body = {"error": {"code": "fatal", "message": "No.", "retryable": False}}
+        transport = FlakyTransport(failures=1, status=503, body=body)
+        client = self._client(transport, retry=RetryPolicy(sleep=lambda _s: None))
+        with self.assertRaises(TemperaApiError) as ctx:
+            client.tempera_gym.list_environments()
+        self.assertIs(ctx.exception.retryable, False)
+        self.assertEqual(transport.calls, 1)
+
+    def test_server_declared_retryable_true_retries_a_non_listed_status(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=500, body=GYM_RETRYABLE_BODY)
+        client = self._client(transport, retry=RetryPolicy(sleep=sleeps.append))
+        self.assertEqual(client.tempera_gym.list_environments(), {"ok": True})
+        self.assertEqual(transport.calls, 2)
+        self.assertEqual(len(sleeps), 1)
+
+    def test_non_retryable_status_without_a_flag_does_not_retry(self):
+        transport = FlakyTransport(failures=1, status=404)
+        client = self._client(transport, retry=RetryPolicy(sleep=lambda _s: None))
+        with self.assertRaises(TemperaApiError):
+            client.tempera_gym.get_environment({"environment_id": "cartpole"})
+        self.assertEqual(transport.calls, 1)
+
+    def test_numeric_retry_after_header_replaces_the_backoff_delay(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=429, headers={"retry-after": "3"})
+        client = self._client(transport, retry=RetryPolicy(sleep=sleeps.append))
+        self.assertEqual(client.tempera_gym.list_environments(), {"ok": True})
+        self.assertEqual(sleeps, [3.0])
+
+    def test_delays_are_capped_at_max_delay(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=503, headers={"retry-after": "120"})
+        client = self._client(transport, retry=RetryPolicy(max_delay=5.0, sleep=sleeps.append))
+        self.assertEqual(client.tempera_gym.list_environments(), {"ok": True})
+        self.assertEqual(sleeps, [5.0])
+
+    def test_retries_are_bounded_and_the_final_error_is_raised(self):
+        sleeps = []
+        transport = FlakyTransport(failures=10, status=503)
+        client = self._client(transport, retry=RetryPolicy(retries=2, sleep=sleeps.append))
+        with self.assertRaises(TemperaApiError) as ctx:
+            client.tempera_gym.list_environments()
+        self.assertEqual(transport.calls, 3)  # initial attempt + 2 retries
+        self.assertEqual(len(sleeps), 2)
+        self.assertEqual(ctx.exception.status, 503)
+        self.assertEqual(ctx.exception.product, "temperaGym")
+        self.assertEqual(ctx.exception.operation, "list_environments")
+
+    def test_close_episode_delete_is_idempotent_and_retries(self):
+        sleeps = []
+        transport = FlakyTransport(failures=1, status=502)
+        client = self._client(transport, retry=RetryPolicy(sleep=sleeps.append))
+        self.assertEqual(client.tempera_gym.close_episode({"episode_id": "ep1"}), {"ok": True})
+        self.assertEqual(transport.calls, 2)
 
 
 class ErrorNormalizationTest(unittest.TestCase):
@@ -251,6 +376,12 @@ class ErrorNormalizationTest(unittest.TestCase):
                 "code": "INVALID_ARGUMENT",
                 "message": "Bad envelope.",
                 "request_id": "req-de-1",
+            },
+            # tempera-gym: nested code + message + retryable (cradle-style)
+            {
+                "body": {"error": {"code": "episode_not_found", "message": "Unknown episode.", "retryable": False}},
+                "code": "episode_not_found",
+                "message": "Unknown episode.",
             },
         ]
         for shape in shapes:

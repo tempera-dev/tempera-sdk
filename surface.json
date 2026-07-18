@@ -10,7 +10,7 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"],
+  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-gym"],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -85,15 +85,16 @@
     }
   },
   "errorContract": {
-    "$comment": "Every language exposes TemperaApiError with exactly these fields, populated by normalizing the six wire error shapes in the fleet.",
+    "$comment": "Every language exposes TemperaApiError with exactly these fields, populated by normalizing the seven wire error shapes in the fleet.",
     "name": "TemperaApiError",
-    "fields": ["status", "code", "message", "requestId", "product", "operation", "body"],
+    "fields": ["status", "code", "message", "requestId", "product", "operation", "body", "retryable", "retryAfter"],
     "normalization": [
-      "If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine; data-engine bodies always carry request_id).",
+      "If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine, tempera-gym; data-engine bodies always carry request_id).",
       "Else if body.error is a string and body.message is present: code = body.error, message = body.message (control plane, palette).",
       "Else if body.error is a string: code = null, message = body.error (tempo).",
       "Else: code = null, message = the HTTP status text.",
-      "requestId also falls back to the x-request-id response header when the body carries none (remi echoes it)."
+      "requestId also falls back to the x-request-id response header when the body carries none (remi echoes it).",
+      "retryable = body.error.retryable when the object shape carries a boolean (cradle, data-engine, tempera-gym), else null/None; retryAfter = the numeric Retry-After response header in seconds, when present (TypeScript and Python; the header-less Rust normalization surfaces retryable only). The TypeScript and Python clients use these for opt-in bounded retry of idempotent (GET/DELETE) operations, also treating HTTP 429/502/503/504 as retryable when the body declares nothing."
     ],
     "wireShapes": {
       "controlPlane": "{\"error\": \"<code>\", \"message\": \"<text>\"}",
@@ -101,7 +102,8 @@
       "tempo": "{\"error\": \"<message>\"}",
       "cradle": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}",
       "remi": "{\"error\": {\"code\": \"<code>\", \"message\": \"<text>\"}}",
-      "dataEngine": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}"
+      "dataEngine": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}",
+      "temperaGym": "{\"error\": {\"code\", \"message\", \"retryable\"}}"
     }
   },
   "products": {
@@ -168,6 +170,14 @@
       "audience": "data-engine",
       "auth": "bearer minted for audience data-engine, central tp_ API key, or the data-engine static token",
       "description": "Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission."
+    },
+    "temperaGym": {
+      "name": "Tempera Gym",
+      "repository": "https://github.com/tempera-dev/tempera-gym",
+      "envVar": "TEMPERA_GYM_URL",
+      "audience": "tempera-gym",
+      "auth": "bearer minted for audience tempera-gym, or a central tp_ API key",
+      "description": "Seeded RL environment service: registered gym environments, episode rollout with stepwise actions, and trajectory verification."
     },
     "humanData": {
       "name": "human-data",
@@ -398,6 +408,16 @@
       { "id": "emitRlvr", "method": "POST", "path": "/v1/projects/{project_id}/products:emit-rlvr", "auth": "product", "pathParams": ["project_id"], "description": "Emit an RLVR product when the documented data-engine implementation is enabled." },
       { "id": "emitPreference", "method": "POST", "path": "/v1/projects/{project_id}/products:emit-preference", "auth": "product", "pathParams": ["project_id"], "description": "Emit a preference product when the documented data-engine implementation is enabled." },
       { "id": "emitSft", "method": "POST", "path": "/v1/projects/{project_id}/products:emit-sft", "auth": "product", "pathParams": ["project_id"], "description": "Emit an SFT product when the documented data-engine implementation is enabled." }
+    ],
+    "temperaGym": [
+      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check tempera-gym liveness; returns the service status." },
+      { "id": "listEnvironments", "method": "GET", "path": "/v1/environments", "auth": "product", "description": "List the registered gym environments." },
+      { "id": "getEnvironment", "method": "GET", "path": "/v1/environments/{environment_id}", "auth": "product", "pathParams": ["environment_id"], "description": "Fetch one registered gym environment definition." },
+      { "id": "createEpisode", "method": "POST", "path": "/v1/episodes", "auth": "product", "body": ["environment_id", "seed"], "requiredBody": ["environment_id", "seed"], "scope": "eval:run", "description": "Create a seeded episode in a gym environment and receive its initial observation." },
+      { "id": "getEpisode", "method": "GET", "path": "/v1/episodes/{episode_id}", "auth": "product", "pathParams": ["episode_id"], "description": "Fetch one episode with its current state." },
+      { "id": "stepEpisode", "method": "POST", "path": "/v1/episodes/{episode_id}/step", "auth": "product", "pathParams": ["episode_id"], "body": ["action"], "requiredBody": ["action"], "scope": "eval:run", "description": "Apply one action to an episode and receive the resulting observation, reward, and termination state." },
+      { "id": "closeEpisode", "method": "DELETE", "path": "/v1/episodes/{episode_id}", "auth": "product", "pathParams": ["episode_id"], "scope": "eval:run", "description": "Close an episode and release its environment resources (idempotent)." },
+      { "id": "verifyTrajectory", "method": "POST", "path": "/v1/trajectories/verify", "auth": "product", "body": ["trajectory"], "requiredBody": ["trajectory"], "scope": "eval:run", "description": "Verify a recorded trajectory against its environment's transition and reward rules." }
     ]
   },
   "mcpGateway": {

@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-gym";
 export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "temperaGym" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -466,6 +466,25 @@ export interface DataEngineClient extends TemperaProductClientBase {
   emitPreference(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an SFT product when the documented data-engine implementation is enabled. */
   emitSft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaGymClient extends TemperaProductClientBase {
+  /** Check tempera-gym liveness; returns the service status. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the registered gym environments. */
+  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one registered gym environment definition. */
+  getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a seeded episode in a gym environment and receive its initial observation. */
+  createEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one episode with its current state. */
+  getEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply one action to an episode and receive the resulting observation, reward, and termination state. */
+  stepEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Close an episode and release its environment resources (idempotent). */
+  closeEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify a recorded trajectory against its environment's transition and reward rules. */
+  verifyTrajectory(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

@@ -74,10 +74,11 @@ artifacts:
 
 ## Error-contract changes
 
-The six products speak four different wire error shapes (see
+The seven products speak four different wire error shapes (see
 `errorContract.wireShapes` in `surface.json`). The SDK normalizes them into
 one `TemperaApiError` (`status`, `code`, `message`, `requestId`, `product`,
-`operation`, `body`) in every language. If a product changes its error shape:
+`operation`, `body`, plus the retry metadata `retryable`/`retryAfter`) in
+every language. If a product changes its error shape:
 
 1. Update `errorContract` in `surface.json` (the shapes are documentation,
    but keep them exact).
@@ -86,7 +87,17 @@ one `TemperaApiError` (`status`, `code`, `message`, `requestId`, `product`,
 
 A product adding a *new* shape should prefer one of the existing ones —
 ideally the cradle shape (`{"error": {code, message, request_id, ...}}`),
-which is the richest.
+which is the richest. tempera-gym follows it with
+`{"error": {code, message, retryable}}`.
+
+Backends that emit `retryable` feed the SDK's opt-in bounded retry: the
+TypeScript (`createTemperaClient({retry})`) and Python
+(`TemperaClient(retry=...)`) clients retry idempotent (GET/DELETE) requests
+whose normalized error is retryable — the server-declared flag when present,
+else HTTP 429/502/503/504 — with capped exponential backoff honoring a
+numeric `Retry-After` header; default OFF. The HTTP-less Rust crate exposes
+the same signal as `TemperaApiError::retryable` / `is_retryable()` for the
+caller's own transport loop.
 
 ## Adding a product
 
