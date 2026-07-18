@@ -88,9 +88,13 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
-  await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
+  await client.remi.remember({ kind: "fact", text: "hello" });
   const body = JSON.parse(calls[1].options.body);
-  assert.deepEqual(body, { tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
+  assert.deepEqual(body, { kind: "fact", text: "hello" });
+  await assert.rejects(
+    client.remi.remember({ tenant_id: "t1", kind: "fact", text: "nope" }),
+    /derived from the authenticated principal/,
+  );
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {

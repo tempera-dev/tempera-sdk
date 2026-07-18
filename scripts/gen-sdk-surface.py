@@ -170,6 +170,7 @@ def render_typescript(surface: dict) -> str:
                 "pathParams": op.get("pathParams", []),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
+                "forbiddenBody": op.get("forbiddenBody", []),
                 "requiredBody": op.get("requiredBody", []),
                 "bodyDefaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
@@ -246,6 +247,7 @@ def render_typescript_dts(surface: dict) -> str:
         "  pathParams: readonly string[];",
         "  query: readonly string[];",
         "  body: readonly string[];",
+        "  forbiddenBody: readonly string[];",
         "  requiredBody: readonly string[];",
         "  bodyDefaults: Readonly<Record<string, unknown>>;",
         "  scope: TemperaScope | null;",
@@ -346,6 +348,7 @@ def render_python(surface: dict) -> str:
                 "path_params": op.get("pathParams", []),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
+                "forbidden_body": op.get("forbiddenBody", []),
                 "required_body": op.get("requiredBody", []),
                 "body_defaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
@@ -451,6 +454,7 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub path_params: &'static [&'static str],")
     lines.append("    pub query: &'static [&'static str],")
     lines.append("    pub body: &'static [&'static str],")
+    lines.append("    pub forbidden_body: &'static [&'static str],")
     lines.append("    pub required_body: &'static [&'static str],")
     lines.append("    pub body_defaults: &'static [(&'static str, &'static str)],")
     lines.append("    pub scope: Option<&'static str>,")
@@ -469,6 +473,7 @@ def render_rust(surface: dict) -> str:
             lines.append(f"        path_params: {rust_str_slice(op.get('pathParams', []))},")
             lines.append(f"        query: {rust_str_slice(op.get('query', []))},")
             lines.append(f"        body: {rust_str_slice(op.get('body', []))},")
+            lines.append(f"        forbidden_body: {rust_str_slice(op.get('forbiddenBody', []))},")
             lines.append(f"        required_body: {rust_str_slice(op.get('requiredBody', []))},")
             defaults = op.get("bodyDefaults", {})
             pairs = ", ".join(

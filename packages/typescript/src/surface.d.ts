@@ -51,6 +51,7 @@ export type TemperaOperationSpec = {
   pathParams: readonly string[];
   query: readonly string[];
   body: readonly string[];
+  forbiddenBody: readonly string[];
   requiredBody: readonly string[];
   bodyDefaults: Readonly<Record<string, unknown>>;
   scope: TemperaScope | null;
@@ -289,17 +290,17 @@ export interface RemiClient extends TemperaProductClientBase {
   getPrometheusMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent service audit events (default 100, maximum 500). */
   listAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Write one memory into the ledger and, by default, project it into the memory graph immediately. */
+  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers. */
   remember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Project pending ledger events into the memory graph and return the projection report. */
   project(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run memory management over pending ledger events (same engine pass as project, tracked separately). */
   manage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Answer a question from memory with evidence, citations, contradictions, and staleness signals. */
+  /** Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals. */
   query(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Retrieve a bounded, citation-bearing memory context pack and immutable receipt for later verified feedback. */
+  /** Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback. */
   context(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Attach a verified outcome to evidence returned by an immutable receipt; it cannot directly rewrite memory truth. */
+  /** Attach a verified outcome to evidence returned by an immutable receipt; hosted scope is derived from the principal and it cannot rewrite memory truth. */
   feedback(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history. */
   maintenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

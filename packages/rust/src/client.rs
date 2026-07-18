@@ -133,6 +133,16 @@ pub enum BuildError {
         /// Name of the missing path parameter.
         name: String,
     },
+    /// A caller attempted to set a field supplied by the authenticated
+    /// principal rather than the request payload.
+    PrincipalDerivedParameter {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Rejected parameter name.
+        name: String,
+    },
     /// The operation needs an account-session token and none is configured.
     MissingAccountToken {
         /// Product key of the operation.
@@ -173,6 +183,14 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: missing required path parameter \"{name}\""
+            ),
+            BuildError::PrincipalDerivedParameter {
+                product,
+                operation,
+                name,
+            } => write!(
+                f,
+                "{product}.{operation}: {name} is derived from the authenticated principal"
             ),
             BuildError::MissingAccountToken { product } => write!(
                 f,
@@ -283,6 +301,16 @@ impl TemperaClient {
             })?;
 
         let get_param = |name: &str| params.iter().find(|(key, _)| *key == name).map(|(_, v)| v);
+
+        for name in op.forbidden_body {
+            if get_param(name).is_some() {
+                return Err(BuildError::PrincipalDerivedParameter {
+                    product: product.to_string(),
+                    operation: operation.to_string(),
+                    name: (*name).to_string(),
+                });
+            }
+        }
 
         // Path substitution (percent-encoded); empty values count as missing.
         let mut path = op.path.to_string();
@@ -864,8 +892,6 @@ mod tests {
                 "remi",
                 "remember",
                 &[
-                    ("tenant_id", "tenant_1".into()),
-                    ("project_id", "proj_1".into()),
                     ("kind", "note".into()),
                     ("text", "line1\nline2 \"quoted\"".into()),
                 ],
@@ -875,5 +901,18 @@ mod tests {
         assert!(body.contains("\"text\":\"line1\\nline2 \\\"quoted\\\"\""));
         // The serialized body parses back with the crate's own scanner.
         assert!(crate::error::parse_json(&body).is_some());
+
+        let error = client
+            .build_request(
+                "remi",
+                "remember",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("kind", "note".into()),
+                    ("text", "blocked".into()),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));
     }
 }

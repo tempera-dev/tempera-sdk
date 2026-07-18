@@ -120,11 +120,13 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
-        client.remi.remember({"tenant_id": "t1", "project_id": "p1", "kind": "fact", "text": "hello"})
+        client.remi.remember({"kind": "fact", "text": "hello"})
         self.assertEqual(
             transport.calls[1]["body"],
-            {"tenant_id": "t1", "project_id": "p1", "kind": "fact", "text": "hello"},
+            {"kind": "fact", "text": "hello"},
         )
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.remember({"tenant_id": "t1", "kind": "fact", "text": "nope"})
 
     def test_undeclared_parameters_pass_through_for_forward_compatibility(self):
         client, transport = make_client()
