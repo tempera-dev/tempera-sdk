@@ -184,6 +184,8 @@ is the default when none is specified.
 | `tempera-mcp` | the unified [MCP gateway](/mcp-gateway) |
 | `tempera-code` | Tempera Code |
 | `tempera-llm` | tempera-llm |
+| `tempera-workflows` | tempera-workflows |
+| `tempera-gym` | tempera-gym |
 
 ## Scopes
 
@@ -192,13 +194,16 @@ is the default when none is specified.
 | `mcp:invoke` | the [MCP gateway](/mcp-gateway) — required for every tool call. |
 | `trace:read` | palette: `archiveTrace`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `searchSpans` |
 | `trace:write` | palette: `importSource`, `ingestSpan` |
-| `dataset:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `dataset:read` | tempera-gym: `getRun`, `listEnvironments`, `listRuns` |
 | `dataset:write` | palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
-| `eval:run` | data-engine: `generateDomain` |
+| `eval:run` | data-engine: `generateDomain`; tempera-gym: `createRollout` |
+| `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
+| `workflow:write` | tempera-workflows: `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
+| `workflow:run` | tempera-workflows: `cancelRun`, `createRun` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `cyber:research` | No typed SDK operation declares it yet; enforced server-side. |
 | `clinical:run` | No typed SDK operation declares it yet; enforced server-side. |
-| `model:read` | Tempera Code: `listModels`; tempera-llm: `listModels` |
+| `model:read` | auth-hub: `getModelCatalog`; Tempera Code: `listModels`; tempera-llm: `listModels` |
 | `model:invoke` | Tempera Code: `createResponse`; tempera-llm: `createChatCompletion`, `createResponse` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 

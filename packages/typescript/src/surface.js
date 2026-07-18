@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 2;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -26,9 +26,11 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
     "mcpGatewayUrl": "http://localhost:8787/mcp",
     "dataEngineApiUrl": "http://127.0.0.1:8090",
-    "temperaGymUrl": "http://127.0.0.1:8091",
+    "temperaGymUrl": "http://127.0.0.1:8096",
     "cradleApiUrl": "http://127.0.0.1:8088",
     "temperaCodeApiUrl": "http://127.0.0.1:8789",
+    "temperaLlmApiUrl": "http://127.0.0.1:8080",
+    "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
     "tempoApiUrl": "http://localhost:7878"
@@ -43,6 +45,8 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://preview-gym.tempera.dev",
     "cradleApiUrl": "https://preview-cradle.tempera.dev",
     "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
+    "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -57,6 +61,8 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://staging-gym.tempera.dev",
     "cradleApiUrl": "https://staging-cradle.tempera.dev",
     "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
+    "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -71,6 +77,8 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://gym.tempera.dev",
     "cradleApiUrl": "https://cradle.tempera.dev",
     "temperaCodeApiUrl": "https://code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://llm.tempera.dev",
+    "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://tempo.tempera.dev"
@@ -114,6 +122,20 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_LLM_URL",
     "audience": "tempera-llm",
     "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
+  },
+  "temperaWorkflows": {
+    "name": "tempera-workflows",
+    "repository": "https://github.com/tempera-dev/tempera-workflows",
+    "envVar": "TEMPERA_WORKFLOWS_URL",
+    "audience": "tempera-workflows",
+    "description": "Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only."
+  },
+  "temperaGym": {
+    "name": "tempera-gym",
+    "repository": "https://github.com/tempera-dev/tempera-gym",
+    "envVar": "TEMPERA_GYM_URL",
+    "audience": "tempera-gym",
+    "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
   },
   "cradle": {
     "name": "cradle",
@@ -728,6 +750,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
+    },
+    {
+      "id": "getModelCatalog",
+      "method": "GET",
+      "path": "/model-catalog",
+      "auth": "account",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
     },
     {
       "id": "getBillingStatus",
@@ -1539,6 +1574,307 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "model:invoke",
       "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
+    }
+  ],
+  "temperaWorkflows": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check tempera-workflows engine liveness."
+    },
+    {
+      "id": "listNodeTypes",
+      "method": "GET",
+      "path": "/v1/node-types",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
+    },
+    {
+      "id": "listWorkflows",
+      "method": "GET",
+      "path": "/v1/workflows",
+      "auth": "product",
+      "pathParams": [],
+      "query": [
+        "limit"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "List stored workflow definitions, newest first."
+    },
+    {
+      "id": "createWorkflow",
+      "method": "POST",
+      "path": "/v1/workflows",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "contractVersion",
+        "id",
+        "name",
+        "description",
+        "nodes",
+        "edges",
+        "settings"
+      ],
+      "requiredBody": [
+        "contractVersion",
+        "id",
+        "name",
+        "nodes",
+        "edges"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
+    },
+    {
+      "id": "getWorkflow",
+      "method": "GET",
+      "path": "/v1/workflows/{workflow_id}",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "Fetch one stored workflow definition."
+    },
+    {
+      "id": "updateWorkflow",
+      "method": "PUT",
+      "path": "/v1/workflows/{workflow_id}",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [
+        "contractVersion",
+        "id",
+        "name",
+        "description",
+        "nodes",
+        "edges",
+        "settings"
+      ],
+      "requiredBody": [
+        "contractVersion",
+        "id",
+        "name",
+        "nodes",
+        "edges"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Replace a stored workflow definition with a new validated revision."
+    },
+    {
+      "id": "deleteWorkflow",
+      "method": "DELETE",
+      "path": "/v1/workflows/{workflow_id}",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Delete a stored workflow definition."
+    },
+    {
+      "id": "validateWorkflow",
+      "method": "POST",
+      "path": "/v1/workflows:validate",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "contractVersion",
+        "id",
+        "name",
+        "description",
+        "nodes",
+        "edges",
+        "settings"
+      ],
+      "requiredBody": [
+        "contractVersion",
+        "id",
+        "name",
+        "nodes",
+        "edges"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
+    },
+    {
+      "id": "createRun",
+      "method": "POST",
+      "path": "/v1/workflows/{workflow_id}/runs",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [
+        "input",
+        "idempotencyKey"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Start a run of a stored workflow with an optional input document and idempotency key."
+    },
+    {
+      "id": "listRuns",
+      "method": "GET",
+      "path": "/v1/runs",
+      "auth": "product",
+      "pathParams": [],
+      "query": [
+        "workflowId",
+        "limit"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "List workflow runs, optionally filtered to one workflow."
+    },
+    {
+      "id": "getRun",
+      "method": "GET",
+      "path": "/v1/runs/{run_id}",
+      "auth": "product",
+      "pathParams": [
+        "run_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
+    },
+    {
+      "id": "cancelRun",
+      "method": "POST",
+      "path": "/v1/runs/{run_id}:cancel",
+      "auth": "product",
+      "pathParams": [
+        "run_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Cancel a queued or running workflow run."
+    }
+  ],
+  "temperaGym": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check tempera-gym service liveness."
+    },
+    {
+      "id": "listEnvironments",
+      "method": "GET",
+      "path": "/v1/environments",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
+    },
+    {
+      "id": "listRuns",
+      "method": "GET",
+      "path": "/v1/runs",
+      "auth": "product",
+      "pathParams": [],
+      "query": [
+        "environment_id",
+        "limit"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List persisted rollout run index records, newest first."
+    },
+    {
+      "id": "getRun",
+      "method": "GET",
+      "path": "/v1/runs/{run}",
+      "auth": "product",
+      "pathParams": [
+        "run"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
+    },
+    {
+      "id": "createRollout",
+      "method": "POST",
+      "path": "/v1/rollouts",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "environment_id",
+        "policy",
+        "seed",
+        "max_steps",
+        "model"
+      ],
+      "requiredBody": [
+        "environment_id",
+        "seed"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
     }
   ],
   "cradle": [
@@ -2554,6 +2890,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List a project's data campaigns with pagination."
     },
     {
+      "id": "transitionCampaign",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/campaigns/{campaign_id}:transition",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "campaign_id"
+      ],
+      "query": [],
+      "body": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "requiredBody": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
+    },
+    {
       "id": "listArtifacts",
       "method": "GET",
       "path": "/v1/projects/{project_id}/artifacts",
@@ -2562,16 +2920,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "query": [
-        "filter",
         "page_size",
         "page_token",
-        "order_by"
+        "view"
       ],
       "body": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List a project's artifacts with filtering, ordering, and cursor pagination."
+      "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
     },
     {
       "id": "getArtifact",
@@ -2609,6 +2966,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "List the labels attached to one artifact."
+    },
+    {
+      "id": "profileDataset",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/datasets:profile",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "artifact_ids",
+        "artifact_type"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Profile dataset quality before export: counts by artifact type and source, duplicate raw_hash groups, label coverage, and per-label distributions."
     },
     {
       "id": "createJob",
@@ -2677,13 +3052,44 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "query": [
         "page_size",
-        "page_token"
+        "page_token",
+        "status",
+        "campaign_name"
       ],
       "body": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List the human residual review tasks queued for experts."
+      "description": "List the human residual review tasks queued for experts, optionally filtered by status (OPEN or RESOLVED) and campaign."
+    },
+    {
+      "id": "resolveExpertTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:resolve",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "label",
+        "outcome",
+        "confidence",
+        "rationale",
+        "evidence",
+        "annotator_id",
+        "idempotency_key",
+        "review_context"
+      ],
+      "requiredBody": [
+        "label",
+        "idempotency_key",
+        "review_context"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Resolve, abstain, flag, or adjudicate one human residual; the idempotency key binds one exact normalized decision to one expert task."
     },
     {
       "id": "getMetrics",
@@ -2699,6 +3105,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch data-engine usage and quality metrics for a project."
+    },
+    {
+      "id": "getLabelQuality",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/label-quality",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the label quality report: per-verifier stats, cross-verifier disagreements, the needs_expert backlog, and the auto-resolution rate."
     },
     {
       "id": "getEcosystemReadiness",
@@ -2773,6 +3194,181 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Fetch one emitted product bundle with its status and manifest URL."
+    },
+    {
+      "id": "validateProduct",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products/{product_id}:validate",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Validate an emitted product bundle's referential integrity and hygiene; missing artifacts, labels, or manifest are errors, duplicates and needs_expert labels are warnings."
+    },
+    {
+      "id": "checkProductLeakage",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products:check-leakage",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "product_ids"
+      ],
+      "requiredBody": [
+        "product_ids"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check raw_hash leakage between exactly two product bundles for train/eval split hygiene, including overlap ratios and the overlapping hashes."
+    },
+    {
+      "id": "getProductManifest",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/products/{product_id}/manifest",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch an integrity-checked, bounded, remotely consumable manifest for an emitted eval product."
+    },
+    {
+      "id": "extractSource",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/sources:extract",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "connector",
+        "bucket",
+        "prefix",
+        "key",
+        "max_objects",
+        "max_bytes",
+        "statement",
+        "limit",
+        "soql",
+        "max_pages",
+        "artifact_type",
+        "source",
+        "ingest",
+        "metadata"
+      ],
+      "requiredBody": [
+        "connector"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Extract objects or records from a configured source connector (s3, snowflake, salesforce) into content-addressed artifacts; fails closed when the connector's env config is absent."
+    },
+    {
+      "id": "createTool",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tools",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "name",
+        "description",
+        "input_schema",
+        "kind",
+        "implementation",
+        "created_by"
+      ],
+      "requiredBody": [
+        "name",
+        "description",
+        "kind",
+        "implementation"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create or version-bump a stored custom tool; identical re-creates are idempotent and a changed definition creates a new monotonic version."
+    },
+    {
+      "id": "listTools",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tools",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List every stored custom tool for the project with usage stats (invocation count, last invoked, error count)."
+    },
+    {
+      "id": "getTool",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch one stored custom tool with its definition and usage stats."
+    },
+    {
+      "id": "deleteTool",
+      "method": "DELETE",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Hard-delete a stored custom tool and every retained version; the deletion is recorded in the custom tool audit log."
+    },
+    {
+      "id": "invokeTool",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tools/{tool_name}:invoke",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "tool_name"
+      ],
+      "query": [],
+      "body": [
+        "arguments"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Invoke a stored custom tool; deterministic_wasm tools execute in the cradle sandbox and llm_prompt tools render the stored template with the caller arguments."
     },
     {
       "id": "runEnvironment",

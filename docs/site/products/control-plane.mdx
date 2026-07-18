@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from login/signup (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 43 |
+| Typed operations | 44 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -1367,6 +1367,34 @@ result = client.control_plane.get_product_status({
 let spec = client.build_request("control_plane", "get_product_status", &[
     ("product_id", "<product_id>".into()),
 ])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getModelCatalog
+
+`GET /model-catalog`
+
+List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
+
+- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Scope:** `model:read`
+- **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getModelCatalog();
+```
+
+```python Python
+result = client.control_plane.get_model_catalog()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

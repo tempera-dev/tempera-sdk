@@ -77,6 +77,19 @@
     {"sdkOperationId":"emitProduct","operationId":"projects.products.emit","method":"POST","path":"/v1/{parent}/products:emit"},
     {"sdkOperationId":"emitRlvr","operationId":"projects.products.emitRlvr","method":"POST","path":"/v1/{parent}/products:emit-rlvr"},
     {"sdkOperationId":"emitPreference","operationId":"projects.products.emitPreference","method":"POST","path":"/v1/{parent}/products:emit-preference"},
-    {"sdkOperationId":"emitSft","operationId":"projects.products.emitSft","method":"POST","path":"/v1/{parent}/products:emit-sft"}
+    {"sdkOperationId":"emitSft","operationId":"projects.products.emitSft","method":"POST","path":"/v1/{parent}/products:emit-sft"},
+    {"sdkOperationId":"transitionCampaign","operationId":"projects.campaigns.transition","method":"POST","path":"/v1/{parent}/campaigns/{campaignId}:transition"},
+    {"sdkOperationId":"resolveExpertTask","operationId":"projects.expertTasks.resolve","method":"POST","path":"/v1/{parent}/expert-tasks/{expertTaskId}:resolve"},
+    {"sdkOperationId":"getLabelQuality","operationId":"projects.labelQuality.get","method":"GET","path":"/v1/{parent}/label-quality"},
+    {"sdkOperationId":"profileDataset","operationId":"projects.datasets.profile","method":"POST","path":"/v1/{parent}/datasets:profile"},
+    {"sdkOperationId":"validateProduct","operationId":"projects.products.validate","method":"POST","path":"/v1/{parent}/products/{productId}:validate"},
+    {"sdkOperationId":"checkProductLeakage","operationId":"projects.products.checkLeakage","method":"POST","path":"/v1/{parent}/products:check-leakage"},
+    {"sdkOperationId":"getProductManifest","operationId":"projects.products.manifest.get","method":"GET","path":"/v1/{parent}/products/{productId}/manifest"},
+    {"sdkOperationId":"extractSource","operationId":"projects.sources.extract","method":"POST","path":"/v1/{parent}/sources:extract"},
+    {"sdkOperationId":"createTool","operationId":"projects.tools.create","method":"POST","path":"/v1/{parent}/tools"},
+    {"sdkOperationId":"listTools","operationId":"projects.tools.list","method":"GET","path":"/v1/{parent}/tools"},
+    {"sdkOperationId":"getTool","operationId":"projects.tools.get","method":"GET","path":"/v1/{parent}/tools/{toolName}"},
+    {"sdkOperationId":"deleteTool","operationId":"projects.tools.delete","method":"DELETE","path":"/v1/{parent}/tools/{toolName}"},
+    {"sdkOperationId":"invokeTool","operationId":"projects.tools.invoke","method":"POST","path":"/v1/{parent}/tools/{toolName}:invoke"}
   ]
 }

@@ -1,0 +1,1490 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tempera Workflows API",
+    "description": "Deterministic workflow engine for the Tempera ecosystem: bounded-DAG workflows (tempera.workflow/v1) of typed nodes — native orchestration nodes plus sdk.<product>.<opId> nodes generated from the tempera-sdk surface — executed as replayable, event-streamed runs. Thin orchestrator: code runs in cradle, LLM calls go through tempera-llm, data operations through data-engine.",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness. Unauthenticated.",
+        "operationId": "healthz",
+        "responses": {
+          "200": {
+            "description": "Service is live",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/node-types": {
+      "get": {
+        "tags": [
+          "nodeTypes"
+        ],
+        "summary": "The studio palette: every node type with config JSON Schema and outputs.",
+        "operationId": "nodeTypes.list",
+        "responses": {
+          "200": {
+            "description": "Node type catalog (native + sdk.* nodes)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTypeList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "List runs, newest first.",
+        "operationId": "runs.list",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "query",
+            "description": "Filter by workflow id.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum entries to return (default 100, max 500).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Full run view: status, per-node states with outputs/logs/metrics, timestamps.",
+        "operationId": "runs.get",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}/events": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Server-sent events for a run: replays history from `?since=seq`, then",
+        "description": "streams live `run.state` / `node.state` / `node.log` events until the run\nreaches a terminal state. SSE `id` = seq, `event` = type.",
+        "operationId": "runs.events",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Replay events with seq greater than this (default 0 = from the start).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "text/event-stream of RunEvent payloads",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}:cancel": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Cancel a queued/running run. Already-cancelled runs return 200",
+        "description": "(idempotent); other terminal states return 409.",
+        "operationId": "runs.cancel",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run already cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Cancellation requested; poll runs.get",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Run already finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows": {
+      "get": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "List workflows.",
+        "operationId": "workflows.list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum entries to return (default 100, max 500).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflows, id-sorted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Create a workflow from a `tempera.workflow/v1` definition.",
+        "operationId": "workflows.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Workflow id already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Definition too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows/{workflowId}": {
+      "get": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Get one workflow.",
+        "operationId": "workflows.get",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The workflow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Replace a workflow definition (full update; id in body must match path).",
+        "operationId": "workflows.update",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid definition or id mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Definition too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
+        "operationId": "workflows.delete",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows/{workflowId}/runs": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Start a run (job pattern): returns immediately with the queued run; poll",
+        "description": "`runs.get` or stream `runs.events`. `idempotencyKey` replays are returned\nwith 200 instead of 202.",
+        "operationId": "runs.create",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotent replay of an existing run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Run accepted and queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workflow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows:validate": {
+      "post": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Validate a definition without saving it. Returns 200 with the issue list",
+        "description": "even when invalid — this is the studio's live linting endpoint.",
+        "operationId": "workflows.validate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Validation verdict with issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Body is not a workflow definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EdgeDef": {
+        "type": "object",
+        "description": "A directed data edge.",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/EdgeFrom"
+          },
+          "to": {
+            "$ref": "#/components/schemas/EdgeTo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EdgeFrom": {
+        "type": "object",
+        "description": "Edge source endpoint.",
+        "required": [
+          "node"
+        ],
+        "properties": {
+          "node": {
+            "type": "string",
+            "description": "Source node id."
+          },
+          "output": {
+            "type": "string",
+            "description": "For multi-output nodes (`branch.condition`): the route name\n(`true`/`false`). For single-output nodes: an optional selector into the\noutput — a JSON pointer when it starts with `/`, else an object key.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EdgeTo": {
+        "type": "object",
+        "description": "Edge target endpoint.",
+        "required": [
+          "node"
+        ],
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Key under which the value lands in the target's input object. When\nomitted, object values are shallow-merged and scalars land under the\nsource node id.",
+            "nullable": true
+          },
+          "node": {
+            "type": "string",
+            "description": "Target node id."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorBody": {
+        "type": "object",
+        "description": "The error payload inside [`ErrorResponse`].",
+        "required": [
+          "code",
+          "message",
+          "status",
+          "retryable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable SCREAMING_SNAKE code (AIP-aligned), e.g. `INVALID_ARGUMENT`.",
+            "example": "INVALID_ARGUMENT"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable description safe to show to operators."
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Whether retrying the identical request may succeed."
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "description": "HTTP status carried in the body for stream/proxy contexts.",
+            "example": 400,
+            "minimum": 0
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Wire envelope for every non-2xx response.",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "description": "`GET /healthz` response.",
+        "required": [
+          "status",
+          "version"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "NodeDef": {
+        "type": "object",
+        "description": "One typed node.",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "config": {
+            "description": "Type-specific configuration, validated against the registry JSON Schema."
+          },
+          "id": {
+            "type": "string",
+            "description": "Graph-unique id (`[A-Za-z0-9_.-]{1,64}`); the deterministic tie-break key."
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional display name for the studio canvas.",
+            "nullable": true
+          },
+          "position": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Position"
+              }
+            ],
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Node type from the registry (`GET /v1/node-types`), e.g. `python.execute`.",
+            "example": "python.execute"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NodeState": {
+        "type": "object",
+        "description": "Recorded state of one node within a run.",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "finishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metrics": {
+            "description": "`durationMs` plus executor-specific metrics.",
+            "nullable": true
+          },
+          "output": {
+            "description": "Node output, possibly truncated to the run's `maxOutputBytes` — a\ntruncated value is replaced by `{\"truncated\":true,\"bytes\":N,\"preview\":\"...\"}`.",
+            "nullable": true
+          },
+          "route": {
+            "type": "string",
+            "description": "Taken route for multi-output nodes.",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/NodeStateKind"
+          }
+        }
+      },
+      "NodeStateKind": {
+        "type": "string",
+        "description": "Per-node lifecycle states.",
+        "enum": [
+          "pending",
+          "running",
+          "succeeded",
+          "failed",
+          "skipped"
+        ]
+      },
+      "NodeTypeInfo": {
+        "type": "object",
+        "description": "One node type in the studio palette catalog.",
+        "required": [
+          "type",
+          "description",
+          "category",
+          "outputs",
+          "configSchema"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "trigger | compute | control | llm | output | sdk."
+          },
+          "configSchema": {
+            "description": "JSON Schema for the node's `config`."
+          },
+          "description": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Friendly studio alias (e.g. \"S3 Ingest\").",
+            "nullable": true
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "product": {
+            "type": "string",
+            "description": "SDK product key for `sdk.*` nodes.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Unique type name used in workflow definitions.",
+            "example": "sdk.dataEngine.extractSource"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Honesty flag, present where the operation was cross-checked against the\nupstream product's real contract (today: dataEngine). `false` marks a\nphantom SDK operation — the studio should badge it as unverified.",
+            "nullable": true
+          }
+        }
+      },
+      "NodeTypeList": {
+        "type": "object",
+        "description": "`GET /v1/node-types` response: the palette catalog, grouped by product.",
+        "required": [
+          "nodeTypes",
+          "groups"
+        ],
+        "properties": {
+          "groups": {
+            "type": "object",
+            "description": "Group index: category or `sdk.<product>` -> node type names.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "nodeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeTypeInfo"
+            },
+            "description": "All node types, name-sorted."
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "description": "Studio canvas coordinates.",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Run": {
+        "type": "object",
+        "description": "Full run view (`GET /v1/runs/{runId}`).",
+        "required": [
+          "id",
+          "workflowId",
+          "status",
+          "input",
+          "nodeStates",
+          "createdAt"
+        ],
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "finishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "input": {},
+          "nodeStates": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NodeState"
+            }
+          },
+          "output": {
+            "description": "Outputs of the workflow's sink nodes, keyed by node id (size-capped).",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "workflowId": {
+            "type": "string"
+          }
+        }
+      },
+      "RunCreateRequest": {
+        "type": "object",
+        "description": "`POST /v1/workflows/{workflowId}/runs` request.",
+        "properties": {
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
+            "nullable": true
+          },
+          "input": {
+            "description": "Payload delivered to the trigger node (default `{}`).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RunEvent": {
+        "type": "object",
+        "description": "One replayable run event (also the SSE `data` payload; the SSE `id` is\n`seq` and the SSE `event` is `type`).",
+        "required": [
+          "seq",
+          "ts",
+          "type",
+          "runId",
+          "data"
+        ],
+        "properties": {
+          "data": {},
+          "nodeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "runId": {
+            "type": "string"
+          },
+          "seq": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Monotonic per-run sequence, starting at 1. Resume with `?since=seq`."
+          },
+          "ts": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "`run.state`, `node.state`, or `node.log`."
+          }
+        }
+      },
+      "RunList": {
+        "type": "object",
+        "description": "`GET /v1/runs` response.",
+        "required": [
+          "runs"
+        ],
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            }
+          }
+        }
+      },
+      "RunStatus": {
+        "type": "string",
+        "description": "Run lifecycle states.",
+        "enum": [
+          "queued",
+          "running",
+          "succeeded",
+          "failed",
+          "cancelled"
+        ]
+      },
+      "RunSummary": {
+        "type": "object",
+        "description": "Run summary for lists.",
+        "required": [
+          "id",
+          "workflowId",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "finishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          },
+          "workflowId": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidateResponse": {
+        "type": "object",
+        "description": "`POST /v1/workflows:validate` response (200 even when invalid).",
+        "required": [
+          "valid",
+          "issues"
+        ],
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            }
+          },
+          "valid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ValidationIssue": {
+        "type": "object",
+        "description": "One validation finding.",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable machine code, e.g. `CYCLE_DETECTED`."
+          },
+          "message": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string",
+            "description": "Offending node id when the issue is node-scoped.",
+            "nullable": true
+          }
+        }
+      },
+      "WorkflowDefinition": {
+        "type": "object",
+        "description": "A complete `tempera.workflow/v1` definition.",
+        "required": [
+          "contractVersion",
+          "id",
+          "name",
+          "nodes",
+          "edges"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "description": "Must be exactly `tempera.workflow/v1`.",
+            "example": "tempera.workflow/v1"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EdgeDef"
+            },
+            "description": "Directed edges carrying data between nodes."
+          },
+          "id": {
+            "type": "string",
+            "description": "Workflow id; doubles as the resource id (`[A-Za-z0-9_-]{1,64}`).",
+            "example": "wf_example"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name."
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeDef"
+            },
+            "description": "The DAG nodes."
+          },
+          "settings": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowSettings"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowList": {
+        "type": "object",
+        "description": "`GET /v1/workflows` response.",
+        "required": [
+          "workflows"
+        ],
+        "properties": {
+          "workflows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowResource"
+            }
+          }
+        }
+      },
+      "WorkflowResource": {
+        "type": "object",
+        "description": "A stored workflow resource.",
+        "required": [
+          "id",
+          "definition",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "RFC 3339 timestamps."
+          },
+          "definition": {
+            "$ref": "#/components/schemas/WorkflowDefinition"
+          },
+          "id": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkflowSettings": {
+        "type": "object",
+        "description": "Run-level execution settings.",
+        "properties": {
+          "deadlineMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Wall-clock budget for a whole run (default 300000, max 3600000).",
+            "nullable": true,
+            "minimum": 0
+          },
+          "maxOutputBytes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Per-node stored-output cap; larger outputs are truncated in the record\n(execution still sees full values). Default 262144, max 2097152.",
+            "nullable": true,
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "health",
+      "description": "Runtime health"
+    },
+    {
+      "name": "workflows",
+      "description": "Workflow definitions (tempera.workflow/v1) CRUD + validation"
+    },
+    {
+      "name": "runs",
+      "description": "Deterministic run execution: job pattern, per-node states, SSE events"
+    },
+    {
+      "name": "nodeTypes",
+      "description": "Data-driven node catalog for the studio palette"
+    }
+  ]
+}

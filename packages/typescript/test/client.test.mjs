@@ -29,6 +29,8 @@ function testClient(overrides = {}) {
       tempo: "https://tempo.example.test",
       temperaCode: "https://code.example.test",
       temperaLlm: "https://llm.example.test",
+      temperaWorkflows: "https://workflows.example.test",
+      temperaGym: "https://gym.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
@@ -184,7 +186,7 @@ test("passthrough request covers products without typed operations", async () =>
   assert.equal(calls[0].url.toString(), "https://tempjs.example.test/runtime/status");
 });
 
-test("environment presets resolve control-plane, palette, and Tempera Code base URLs", async () => {
+test("environment presets resolve control-plane, palette, Tempera Code, and tempera-llm base URLs", async () => {
   const calls = [];
   const client = createTemperaClient({
     environment: "production",
@@ -196,9 +198,15 @@ test("environment presets resolve control-plane, palette, and Tempera Code base 
   await client.controlPlane.health();
   await client.palette.health();
   await client.temperaCode.health();
+  await client.temperaLlm.health();
+  await client.temperaWorkflows.health();
+  await client.temperaGym.health();
   assert.equal(calls[0].origin, "https://api.tempera.dev");
   assert.equal(calls[1].origin, "https://mcp.tempera.dev");
   assert.equal(calls[2].origin, "https://code-api.tempera.dev");
+  assert.equal(calls[3].origin, "https://llm.tempera.dev");
+  assert.equal(calls[4].origin, "https://workflows.tempera.dev");
+  assert.equal(calls[5].origin, "https://gym.tempera.dev");
 });
 
 test("HTTP errors normalize every fleet wire shape into TemperaApiError", async () => {

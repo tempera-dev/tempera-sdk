@@ -15,6 +15,9 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.palette.repository, "https://github.com/tempera-dev/palette");
   assert.equal(TEMPERA_PRODUCTS.tempo.repository, "https://github.com/tempera-dev/tempo");
   assert.equal(TEMPERA_PRODUCTS.temperaCode.repository, "https://github.com/tempera-dev/tempera-code");
+  assert.equal(TEMPERA_PRODUCTS.temperaLlm.repository, "https://github.com/tempera-dev/tempera-llm");
+  assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
+  assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
   assert.equal(TEMPERA_PRODUCTS.cradle.repository, "https://github.com/tempera-dev/cradle");
   assert.equal(TEMPERA_PRODUCTS.remi.repository, "https://github.com/tempera-dev/remi");
   assert.equal(TEMPERA_PRODUCTS.dataEngine.repository, "https://github.com/tempera-dev/data-engine");
@@ -35,12 +38,15 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes("human-data"));
   assert.ok(TEMPERA_AUDIENCES.includes("data-engine"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-code"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-llm"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-workflows"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-gym"));
 });
 
 test("scopes match the control-plane scope registry", () => {
   assert.deepEqual(
     [...TEMPERA_SCOPES],
-    ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"],
+    ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"],
   );
 });
 
@@ -56,6 +62,9 @@ test("all four environments carry the same target keys", () => {
   assert.equal(TEMPERA_ENVIRONMENTS.production.paletteMcpUrl, "https://mcp.tempera.dev/mcp");
   assert.equal(TEMPERA_ENVIRONMENTS.production.tempoApiUrl, "https://tempo.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaCodeApiUrl, "https://code-api.tempera.dev");
+  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaLlmApiUrl, "https://llm.tempera.dev");
+  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaWorkflowsApiUrl, "https://workflows.tempera.dev");
+  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaGymUrl, "https://gym.tempera.dev");
   // Deprecated alias points at the same object.
   assert.equal(TEMPERA_API_TARGETS, TEMPERA_ENVIRONMENTS);
 });

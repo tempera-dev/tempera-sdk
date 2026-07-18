@@ -21,6 +21,9 @@ pub const PRODUCT_AUDIENCES: &[(&str, &str, &str)] = &[
     ("palette", "palette", "TEMPERA_PALETTE_URL"),
     ("tempo", "tempo", "TEMPERA_TEMPO_URL"),
     ("tempera_code", "tempera-code", "TEMPERA_CODE_GATEWAY_URL"),
+    ("tempera_llm", "tempera-llm", "TEMPERA_LLM_URL"),
+    ("tempera_workflows", "tempera-workflows", "TEMPERA_WORKFLOWS_URL"),
+    ("tempera_gym", "tempera-gym", "TEMPERA_GYM_URL"),
     ("cradle", "cradle", "TEMPERA_CRADLE_URL"),
     ("remi", "remi", "TEMPERA_REMI_URL"),
 ];

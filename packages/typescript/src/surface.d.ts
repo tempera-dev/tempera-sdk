@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym";
+export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "workflow:read" | "workflow:write" | "workflow:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -33,6 +33,8 @@ export type TemperaEnvironmentTargets = {
   publicSiteUrl: string;
   temperaCodeApiUrl: string;
   temperaGymUrl: string;
+  temperaLlmApiUrl: string;
+  temperaWorkflowsApiUrl: string;
   tempoApiUrl: string;
 };
 export declare const TEMPERA_ENVIRONMENTS: Readonly<Record<TemperaEnvironment, TemperaEnvironmentTargets>>;
@@ -159,6 +161,8 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one product's activation status, entitlements, signals, and usage meters. */
   getProductStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement. */
+  getModelCatalog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role). */
   getBillingStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role). */
@@ -263,6 +267,46 @@ export interface TemperaLlmClient extends TemperaProductClientBase {
   createChatCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway. */
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaWorkflowsClient extends TemperaProductClientBase {
+  /** Check tempera-workflows engine liveness. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface. */
+  listNodeTypes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List stored workflow definitions, newest first. */
+  listWorkflows(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored. */
+  createWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one stored workflow definition. */
+  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace a stored workflow definition with a new validated revision. */
+  updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete a stored workflow definition. */
+  deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate a workflow definition without storing it; returns the full diagnostic list. */
+  validateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start a run of a stored workflow with an optional input document and idempotency key. */
+  createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List workflow runs, optionally filtered to one workflow. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel a queued or running workflow run. */
+  cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaGymClient extends TemperaProductClientBase {
+  /** Check tempera-gym service liveness. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
+  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List persisted rollout run index records, newest first. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
+  createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {
@@ -388,22 +432,30 @@ export interface DataEngineClient extends TemperaProductClientBase {
   createCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List a project's data campaigns with pagination. */
   listCampaigns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List a project's artifacts with filtering, ordering, and cursor pagination. */
+  /** Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition. */
+  transitionCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL). */
   listArtifacts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one artifact, expanded to the requested view (BASIC or FULL). */
   getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the labels attached to one artifact. */
   listArtifactLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Profile dataset quality before export: counts by artifact type and source, duplicate raw_hash groups, label coverage, and per-label distributions. */
+  profileDataset(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one labeling job with its state and progress. */
   getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the deterministic label results a job produced. */
   getJobResults(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the human residual review tasks queued for experts. */
+  /** List the human residual review tasks queued for experts, optionally filtered by status (OPEN or RESOLVED) and campaign. */
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve, abstain, flag, or adjudicate one human residual; the idempotency key binds one exact normalized decision to one expert task. */
+  resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the label quality report: per-verifier stats, cross-verifier disagreements, the needs_expert backlog, and the auto-resolution rate. */
+  getLabelQuality(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch public-site and ecosystem readiness signals for a project. */
   getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
@@ -412,6 +464,24 @@ export interface DataEngineClient extends TemperaProductClientBase {
   deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate an emitted product bundle's referential integrity and hygiene; missing artifacts, labels, or manifest are errors, duplicates and needs_expert labels are warnings. */
+  validateProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Check raw_hash leakage between exactly two product bundles for train/eval split hygiene, including overlap ratios and the overlapping hashes. */
+  checkProductLeakage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch an integrity-checked, bounded, remotely consumable manifest for an emitted eval product. */
+  getProductManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Extract objects or records from a configured source connector (s3, snowflake, salesforce) into content-addressed artifacts; fails closed when the connector's env config is absent. */
+  extractSource(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create or version-bump a stored custom tool; identical re-creates are idempotent and a changed definition creates a new monotonic version. */
+  createTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List every stored custom tool for the project with usage stats (invocation count, last invoked, error count). */
+  listTools(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one stored custom tool with its definition and usage stats. */
+  getTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Hard-delete a stored custom tool and every retained version; the deletion is recorded in the custom tool audit log. */
+  deleteTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Invoke a stored custom tool; deterministic_wasm tools execute in the cradle sandbox and llm_prompt tools render the stored template with the caller arguments. */
+  invokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Request an environment run; availability remains explicit until its qualified execution lane is enabled. */
   runEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Patch an artifact when the documented data-engine implementation is enabled. */

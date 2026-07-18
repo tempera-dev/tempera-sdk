@@ -89,7 +89,7 @@ let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);
 let mut mcp = McpRequestBuilder::new();
 
 // POST each body at auth.mcp_url() with the tempera-mcp bearer:
-let (id, body) = mcp.initialize_body("tempera-sdk", "0.3.0");
+let (id, body) = mcp.initialize_body("tempera-sdk", "0.5.0");
 let (id, body) = mcp.list_tools_body();
 let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);
 let (id, body) = mcp.whoami_body();

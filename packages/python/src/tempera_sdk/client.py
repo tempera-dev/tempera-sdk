@@ -42,6 +42,9 @@ _ENVIRONMENT_TARGET_KEYS = {
     "palette": "paletteApiUrl",
     "tempo": "tempoApiUrl",
     "temperaCode": "temperaCodeApiUrl",
+    "temperaLlm": "temperaLlmApiUrl",
+    "temperaWorkflows": "temperaWorkflowsApiUrl",
+    "temperaGym": "temperaGymUrl",
     "dataEngine": "dataEngineApiUrl",
     "cradle": "cradleApiUrl",
 }
@@ -137,6 +140,9 @@ class TemperaClient:
         self.palette: _ProductClient
         self.tempo: _ProductClient
         self.tempera_code: _ProductClient
+        self.tempera_llm: _ProductClient
+        self.tempera_workflows: _ProductClient
+        self.tempera_gym: _ProductClient
         self.cradle: _ProductClient
         self.remi: _ProductClient
         self.data_engine: _ProductClient

@@ -1,0 +1,599 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "tempera-gym API",
+    "version": "0.2.1",
+    "description": "Minimal read/execute surface over the tempera-gym pack: environment catalog, persisted rollout runs, and synchronous rollout execution. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "license": {
+      "name": "Proprietary",
+      "identifier": "LicenseRef-Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8096",
+      "description": "local development default (TEMPERA_GYM_HOST/TEMPERA_GYM_PORT)"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health.get",
+        "summary": "Liveness probe (unauthenticated)",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "service",
+                    "version"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "service": {
+                      "type": "string",
+                      "enum": [
+                        "tempera-gym"
+                      ]
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/environments": {
+      "get": {
+        "operationId": "environments.list",
+        "summary": "Pack catalog including implementation status",
+        "responses": {
+          "200": {
+            "description": "Every environment in pack.json, implemented or planned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "pack",
+                    "environments"
+                  ],
+                  "properties": {
+                    "pack": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "version",
+                        "contract_version"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "contract_version": {
+                          "type": "string",
+                          "enum": [
+                            "tempera.gym-pack/v1"
+                          ]
+                        }
+                      }
+                    },
+                    "environments": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Environment"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/runs": {
+      "get": {
+        "operationId": "runs.list",
+        "summary": "Persisted-run index, newest first",
+        "parameters": [
+          {
+            "name": "environment_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Index records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "runs"
+                  ],
+                  "properties": {
+                    "runs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RunRecord"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/runs/{run}": {
+      "get": {
+        "operationId": "runs.get",
+        "summary": "Full trajectory envelope (incl. metadata.timing) for one run",
+        "parameters": [
+          {
+            "name": "run",
+            "in": "path",
+            "required": true,
+            "description": "run_id (uuid) or trajectory content_hash (sha256 hex)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._~-]{1,256}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Index record + verified trajectory-v1 envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "run",
+                    "trajectory"
+                  ],
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/RunRecord"
+                    },
+                    "trajectory": {
+                      "type": "object",
+                      "description": "trajectory-v1 envelope (see contracts/trajectory-v1.schema.json)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/DataLoss"
+          }
+        }
+      }
+    },
+    "/v1/rollouts": {
+      "post": {
+        "operationId": "rollouts.create",
+        "summary": "Execute one rollout synchronously, store it, return the summary",
+        "requestBody": {
+          "required": true,
+          "description": "JSON request body; rejected when Content-Length exceeds 64 KiB.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "environment_id",
+                  "seed"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "environment_id": {
+                    "type": "string"
+                  },
+                  "policy": {
+                    "type": "string",
+                    "enum": [
+                      "random",
+                      "llm"
+                    ],
+                    "default": "random"
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "max_steps": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Capped by the environment's manifest max_steps."
+                  },
+                  "model": {
+                    "type": "string",
+                    "default": "gpt-4o-mini",
+                    "description": "tempera-llm model id; only used when policy is llm."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Completed operation envelope (same shape data-engine returns)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Environment": {
+        "type": "object",
+        "required": [
+          "id",
+          "library",
+          "task_family",
+          "license",
+          "deterministic",
+          "network",
+          "max_steps",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "library": {
+            "type": "string"
+          },
+          "task_family": {
+            "type": "string"
+          },
+          "license": {
+            "type": "string"
+          },
+          "deterministic": {
+            "type": "boolean"
+          },
+          "network": {
+            "type": "boolean"
+          },
+          "max_steps": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "planned"
+            ]
+          },
+          "image_digest": {
+            "type": "string",
+            "nullable": true
+          },
+          "resource_limits": {
+            "type": "object",
+            "nullable": true
+          },
+          "observation_schema": {
+            "type": "object",
+            "nullable": true
+          },
+          "action_schema": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      },
+      "RunRecord": {
+        "type": "object",
+        "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, total_reward, terminal_reason, duration_ms) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
+        "required": [
+          "run_id",
+          "environment_id",
+          "seed",
+          "created_at",
+          "content_hash",
+          "policy",
+          "verify"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "seed": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "policy": {
+            "type": "string"
+          },
+          "verify": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "integrity_failed",
+              "missing"
+            ]
+          },
+          "steps": {
+            "type": "integer"
+          },
+          "total_reward": {
+            "type": "number"
+          },
+          "terminal_reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "duration_ms": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "Operation": {
+        "type": "object",
+        "required": [
+          "name",
+          "done"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "target_resource": {
+                "type": "string"
+              },
+              "create_time": {
+                "type": "string"
+              },
+              "progress_ratio": {
+                "type": "number"
+              },
+              "current_stage": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "status",
+          "retryable"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthenticated": {
+        "description": "Missing or invalid bearer token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Wrong audience or missing scope",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InvalidArgument": {
+        "description": "Malformed request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Unknown route, environment, or run",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "FailedPrecondition": {
+        "description": "Planned environment or unconfigured data directory",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "Request body over the bound",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Upstream (LLM gateway or introspection) failed closed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "DataLoss": {
+        "description": "Stored envelope failed content-hash verification",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
