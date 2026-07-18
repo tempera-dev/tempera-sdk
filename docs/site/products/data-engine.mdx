@@ -1920,7 +1920,7 @@ let spec = client.build_request("data_engine", "transition_campaign", &[
 
 `GET /v1/projects/{project_id}/artifacts`
 
-List a project's artifacts with filtering, ordering, and cursor pagination.
+List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.dataEngine.listArtifacts()` · Python `client.data_engine.list_artifacts()` · Rust `build_request("data_engine", "list_artifacts", params)`
@@ -1935,34 +1935,33 @@ List a project's artifacts with filtering, ordering, and cursor pagination.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `filter` | no | — |
 | `page_size` | no | — |
 | `page_token` | no | — |
-| `order_by` | no | — |
+| `view` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.dataEngine.listArtifacts({
   project_id: "<project_id>",
-  filter: "<filter>",
   page_size: "<page_size>",
+  page_token: "<page_token>",
 });
 ```
 
 ```python Python
 result = client.data_engine.list_artifacts({
     "project_id": "<project_id>",
-    "filter": "<filter>",
     "page_size": "<page_size>",
+    "page_token": "<page_token>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("data_engine", "list_artifacts", &[
     ("project_id", "<project_id>".into()),
-    ("filter", "<filter>".into()),
     ("page_size", "<page_size>".into()),
+    ("page_token", "<page_token>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

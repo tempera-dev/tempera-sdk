@@ -2920,16 +2920,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "query": [
-        "filter",
         "page_size",
         "page_token",
-        "order_by"
+        "view"
       ],
       "body": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List a project's artifacts with filtering, ordering, and cursor pagination."
+      "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
     },
     {
       "id": "getArtifact",

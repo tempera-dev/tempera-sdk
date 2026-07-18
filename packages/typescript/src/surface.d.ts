@@ -434,7 +434,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listCampaigns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition. */
   transitionCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List a project's artifacts with filtering, ordering, and cursor pagination. */
+  /** List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL). */
   listArtifacts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one artifact, expanded to the requested view (BASIC or FULL). */
   getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
