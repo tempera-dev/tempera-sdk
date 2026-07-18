@@ -14,6 +14,9 @@
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
+    "memory:read",
+    "memory:write",
+    "memory:manage",
     "trace:read",
     "trace:write",
     "dataset:read",
@@ -290,7 +293,7 @@
       { "id": "getMetrics", "method": "GET", "path": "/v1/metrics", "auth": "product", "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies." },
       { "id": "getPrometheusMetrics", "method": "GET", "path": "/v1/metrics/prometheus", "auth": "product", "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring." },
       { "id": "listAudit", "method": "GET", "path": "/v1/audit", "auth": "product", "query": ["limit"], "description": "List recent service audit events (default 100, maximum 500)." },
-      { "id": "remember", "method": "POST", "path": "/v1/remember", "auth": "product", "body": ["kind", "text", "idempotency_key", "project"], "forbiddenBody": ["tenant_id", "project_id", "environment_id"], "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers." },
+      { "id": "remember", "method": "POST", "path": "/v1/remember", "auth": "product", "body": ["kind", "text", "idempotency_key", "project"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier." },
       { "id": "project", "method": "POST", "path": "/v1/project", "auth": "product", "body": ["limit"], "description": "Project pending ledger events into the memory graph and return the projection report." },
       { "id": "manage", "method": "POST", "path": "/v1/manage", "auth": "product", "body": ["limit"], "description": "Run memory management over pending ledger events (same engine pass as project, tracked separately)." },
       { "id": "query", "method": "POST", "path": "/v1/query", "auth": "product", "body": ["question", "max_tokens", "require_fresh", "modes", "reconstruction_mode", "max_reconstruction_steps", "max_reconstruction_tokens"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals." },

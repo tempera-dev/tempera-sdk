@@ -9,7 +9,7 @@ SURFACE_VERSION = 2
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
 
@@ -1808,6 +1808,7 @@ OPERATIONS = {
                 "project"
             ],
             "forbidden_body": [
+                "scope",
                 "tenant_id",
                 "project_id",
                 "environment_id"
@@ -1815,7 +1816,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers."
+            "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier."
         },
         {
             "id": "project",

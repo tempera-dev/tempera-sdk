@@ -61,6 +61,9 @@ mod tests {
         }
         assert_eq!(find_product("palette").unwrap().audience, Some("palette"));
         assert!(SCOPES.contains(&"mcp:invoke"));
+        assert!(SCOPES.contains(&"memory:read"));
+        assert!(SCOPES.contains(&"memory:write"));
+        assert!(SCOPES.contains(&"memory:manage"));
         assert!(SCOPES.contains(&"model:read"));
         assert!(SCOPES.contains(&"model:invoke"));
         assert!(SCOPES.contains(&"admin"));

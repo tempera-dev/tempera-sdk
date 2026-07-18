@@ -911,6 +911,19 @@ mod tests {
                     ("kind", "note".into()),
                     ("text", "blocked".into()),
                 ],
+        )
+        .unwrap_err();
+        assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));
+
+        let error = client
+            .build_request(
+                "remi",
+                "remember",
+                &[
+                    ("scope", "tenant_1".into()),
+                    ("kind", "note".into()),
+                    ("text", "blocked".into()),
+                ],
             )
             .unwrap_err();
         assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));

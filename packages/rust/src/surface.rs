@@ -7,7 +7,7 @@ pub const SURFACE_VERSION: u32 = 2;
 
 pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code"];
 pub const DEFAULT_AUDIENCE: &str = "palette";
-pub const SCOPES: &[&str] = &["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"];
+pub const SCOPES: &[&str] = &["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"];
 
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";
 pub const TOKEN_PATH: &str = "/oauth/token";
@@ -1648,11 +1648,11 @@ pub const OPERATIONS: &[OperationSpec] = &[
         path_params: &[],
         query: &[],
         body: &["kind", "text", "idempotency_key", "project"],
-        forbidden_body: &["tenant_id", "project_id", "environment_id"],
+        forbidden_body: &["scope", "tenant_id", "project_id", "environment_id"],
         required_body: &[],
         body_defaults: &[],
         scope: None,
-        description: "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers.",
+        description: "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier.",
     },
     OperationSpec {
         product: "remi",

@@ -234,7 +234,7 @@ let spec = client.build_request("remi", "list_audit", &[
 
 `POST /v1/remember`
 
-Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers.
+Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier.
 
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.remi.remember()` · Python `client.remi.remember()` · Rust `build_request("remi", "remember", params)`

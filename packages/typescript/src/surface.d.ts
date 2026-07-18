@@ -3,7 +3,7 @@
 // product-client interfaces used by createTemperaClient().
 
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
@@ -290,7 +290,7 @@ export interface RemiClient extends TemperaProductClientBase {
   getPrometheusMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent service audit events (default 100, maximum 500). */
   listAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends tenant, project, or environment identifiers. */
+  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier. */
   remember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Project pending ledger events into the memory graph and return the projection report. */
   project(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

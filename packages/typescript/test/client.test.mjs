@@ -95,6 +95,10 @@ test("declared query and body parameters are routed to the right place", async (
     client.remi.remember({ tenant_id: "t1", kind: "fact", text: "nope" }),
     /derived from the authenticated principal/,
   );
+  await assert.rejects(
+    client.remi.remember({ scope: { tenant_id: "t1" }, kind: "fact", text: "nope" }),
+    /derived from the authenticated principal/,
+  );
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {
