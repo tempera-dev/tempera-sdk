@@ -49,6 +49,7 @@ mod tests {
             "palette",
             "tempo",
             "tempera_code",
+            "tempera_llm",
             "cradle",
             "remi",
             "data_engine",
@@ -66,6 +67,7 @@ mod tests {
         assert!(SCOPES.contains(&"admin"));
         assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
         assert!(AUDIENCES.contains(&"tempera-code"));
+        assert!(AUDIENCES.contains(&"tempera-llm"));
 
         // ENVIRONMENTS replaces PRODUCTION_TARGETS.
         let production = ENVIRONMENTS
@@ -76,6 +78,7 @@ mod tests {
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
         assert_eq!(production.tempera_code_api_url, "https://code-api.tempera.dev");
+        assert_eq!(production.tempera_llm_api_url, "https://llm.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
 

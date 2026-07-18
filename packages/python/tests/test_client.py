@@ -197,15 +197,17 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(result, {"ok": True})
         self.assertEqual(transport.calls[0]["url"], "https://tempjs.example.test/runtime/status")
 
-    def test_environment_presets_resolve_control_plane_palette_and_tempera_code(self):
+    def test_environment_presets_resolve_control_plane_palette_and_gateways(self):
         transport = FakeTransport()
         client = TemperaClient(environment="production", transport=transport)
         client.control_plane.health()
         client.palette.health()
         client.tempera_code.health()
+        client.tempera_llm.health()
         self.assertEqual(transport.calls[0]["origin"], "https://api.tempera.dev")
         self.assertEqual(transport.calls[1]["origin"], "https://mcp.tempera.dev")
         self.assertEqual(transport.calls[2]["origin"], "https://code-api.tempera.dev")
+        self.assertEqual(transport.calls[3]["origin"], "https://llm.tempera.dev")
 
     def test_unknown_environment_is_rejected(self):
         with self.assertRaises(TemperaSdkError):

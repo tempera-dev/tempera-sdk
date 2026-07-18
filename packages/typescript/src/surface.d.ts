@@ -33,6 +33,7 @@ export type TemperaEnvironmentTargets = {
   publicSiteUrl: string;
   temperaCodeApiUrl: string;
   temperaGymUrl: string;
+  temperaLlmApiUrl: string;
   tempoApiUrl: string;
 };
 export declare const TEMPERA_ENVIRONMENTS: Readonly<Record<TemperaEnvironment, TemperaEnvironmentTargets>>;

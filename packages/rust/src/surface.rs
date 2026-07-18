@@ -29,6 +29,7 @@ pub struct EnvironmentTarget {
     pub public_site_url: &'static str,
     pub tempera_code_api_url: &'static str,
     pub tempera_gym_url: &'static str,
+    pub tempera_llm_api_url: &'static str,
     pub tempo_api_url: &'static str,
 }
 
@@ -46,6 +47,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         public_site_url: "http://localhost:3000",
         tempera_code_api_url: "http://127.0.0.1:8789",
         tempera_gym_url: "http://127.0.0.1:8091",
+        tempera_llm_api_url: "http://127.0.0.1:8080",
         tempo_api_url: "http://localhost:7878",
     },
     EnvironmentTarget {
@@ -61,6 +63,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         public_site_url: "https://tempera-public-site-git-preview-tempera.vercel.app",
         tempera_code_api_url: "https://preview-code-api.tempera.dev",
         tempera_gym_url: "https://preview-gym.tempera.dev",
+        tempera_llm_api_url: "https://preview-llm.tempera.dev",
         tempo_api_url: "https://preview-tempo.tempera.dev",
     },
     EnvironmentTarget {
@@ -76,6 +79,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         public_site_url: "https://staging.tempera.dev",
         tempera_code_api_url: "https://staging-code-api.tempera.dev",
         tempera_gym_url: "https://staging-gym.tempera.dev",
+        tempera_llm_api_url: "https://staging-llm.tempera.dev",
         tempo_api_url: "https://staging-tempo.tempera.dev",
     },
     EnvironmentTarget {
@@ -91,6 +95,7 @@ pub const ENVIRONMENTS: &[EnvironmentTarget] = &[
         public_site_url: "https://tempera.dev",
         tempera_code_api_url: "https://code-api.tempera.dev",
         tempera_gym_url: "https://gym.tempera.dev",
+        tempera_llm_api_url: "https://llm.tempera.dev",
         tempo_api_url: "https://tempo.tempera.dev",
     },
 ];

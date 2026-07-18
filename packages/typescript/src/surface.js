@@ -29,6 +29,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "http://127.0.0.1:8091",
     "cradleApiUrl": "http://127.0.0.1:8088",
     "temperaCodeApiUrl": "http://127.0.0.1:8789",
+    "temperaLlmApiUrl": "http://127.0.0.1:8080",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
     "tempoApiUrl": "http://localhost:7878"
@@ -43,6 +44,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://preview-gym.tempera.dev",
     "cradleApiUrl": "https://preview-cradle.tempera.dev",
     "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://preview-tempo.tempera.dev"
@@ -57,6 +59,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://staging-gym.tempera.dev",
     "cradleApiUrl": "https://staging-cradle.tempera.dev",
     "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://staging-tempo.tempera.dev"
@@ -71,6 +74,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://gym.tempera.dev",
     "cradleApiUrl": "https://cradle.tempera.dev",
     "temperaCodeApiUrl": "https://code-api.tempera.dev",
+    "temperaLlmApiUrl": "https://llm.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
     "tempoApiUrl": "https://tempo.tempera.dev"
