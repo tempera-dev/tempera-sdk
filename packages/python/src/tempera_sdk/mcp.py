@@ -79,7 +79,7 @@ class TemperaMcpClient:
             raise TemperaMcpError(str(error), code=0, data=None)
         return parsed.get("result") if isinstance(parsed, Mapping) else None
 
-    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.3.0") -> Any:
+    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.4.0") -> Any:
         """Open an MCP session and fetch server capabilities and instructions."""
         return self.rpc(
             "initialize",
