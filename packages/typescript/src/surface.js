@@ -1803,6 +1803,27 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Retrieve a bounded, citation-bearing memory context pack and immutable receipt for later verified feedback."
     },
     {
+      "id": "feedback",
+      "method": "POST",
+      "path": "/v1/feedback",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "schema",
+        "scope",
+        "retrieval_receipt_id",
+        "evidence_node_id",
+        "helpful",
+        "outcome_artifact_id",
+        "note"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Attach a verified outcome to evidence returned by an immutable receipt; it cannot directly rewrite memory truth."
+    },
+    {
       "id": "maintenance",
       "method": "POST",
       "path": "/v1/maintenance",

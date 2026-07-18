@@ -21,7 +21,7 @@ Temporal memory server: remember, project, query, and maintain an agent memory g
 | Audience | `remi` |
 | Auth | bearer minted for audience remi, central tp_ API key, or the memory-server static token |
 | Client | TypeScript `client.remi` · Python `client.remi` · Rust `build_request("remi", ...)` |
-| Typed operations | 13 |
+| Typed operations | 14 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.remi.request(path, options)` (TypeScript) /
@@ -456,6 +456,57 @@ let spec = client.build_request("remi", "context", &[
     ("question", "<question>".into()),
     ("scope", "<scope>".into()),
     ("max_tokens", "<max_tokens>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### feedback
+
+`POST /v1/feedback`
+
+Attach a verified outcome to evidence returned by an immutable receipt; it cannot directly rewrite memory truth.
+
+- **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.remi.feedback()` · Python `client.remi.feedback()` · Rust `build_request("remi", "feedback", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `schema` | no | — |
+| `scope` | no | — |
+| `retrieval_receipt_id` | no | — |
+| `evidence_node_id` | no | — |
+| `helpful` | no | — |
+| `outcome_artifact_id` | no | — |
+| `note` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.remi.feedback({
+  schema: "<schema>",
+  scope: "<scope>",
+  retrieval_receipt_id: "<retrieval_receipt_id>",
+});
+```
+
+```python Python
+result = client.remi.feedback({
+    "schema": "<schema>",
+    "scope": "<scope>",
+    "retrieval_receipt_id": "<retrieval_receipt_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("remi", "feedback", &[
+    ("schema", "<schema>".into()),
+    ("scope", "<scope>".into()),
+    ("retrieval_receipt_id", "<retrieval_receipt_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
