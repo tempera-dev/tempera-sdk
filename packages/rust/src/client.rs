@@ -940,6 +940,36 @@ mod tests {
                     ("kind", "note".into()),
                     ("text", "blocked".into()),
                 ],
+        )
+        .unwrap_err();
+        assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));
+
+        let error = client
+            .build_request(
+                "remi",
+                "context",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("question", "what is current?".into()),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));
+
+        let error = client
+            .build_request(
+                "remi",
+                "feedback",
+                &[
+                    ("environment_id", "prod".into()),
+                    ("schema", "remi.memory_feedback.v2".into()),
+                    ("retrieval_receipt_id", "receipt_1".into()),
+                    ("evidence_node_id", "node_1".into()),
+                    ("helpful", true.into()),
+                    ("terminal_state", "succeeded".into()),
+                    ("outcome_artifact_id", "test://sdk/principal-bound".into()),
+                    ("idempotency_key", "feedback_1".into()),
+                ],
             )
             .unwrap_err();
         assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));

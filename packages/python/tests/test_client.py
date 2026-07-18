@@ -137,6 +137,21 @@ class DispatchTest(unittest.TestCase):
             client.remi.remember({"tenant_id": "t1", "kind": "fact", "text": "nope"})
         with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
             client.remi.remember({"scope": {"tenant_id": "t1"}, "kind": "fact", "text": "nope"})
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.context({"tenant_id": "t1", "question": "what is current?"})
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.feedback(
+                {
+                    "environment_id": "prod",
+                    "schema": "remi.memory_feedback.v2",
+                    "retrieval_receipt_id": "receipt_1",
+                    "evidence_node_id": "node_1",
+                    "helpful": True,
+                    "terminal_state": "succeeded",
+                    "outcome_artifact_id": "test://sdk/principal-bound",
+                    "idempotency_key": "feedback_1",
+                }
+            )
 
     def test_undeclared_parameters_pass_through_for_forward_compatibility(self):
         client, transport = make_client()

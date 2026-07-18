@@ -107,6 +107,23 @@ test("declared query and body parameters are routed to the right place", async (
     client.remi.remember({ scope: { tenant_id: "t1" }, kind: "fact", text: "nope" }),
     /derived from the authenticated principal/,
   );
+  await assert.rejects(
+    client.remi.context({ tenant_id: "t1", question: "what is current?" }),
+    /derived from the authenticated principal/,
+  );
+  await assert.rejects(
+    client.remi.feedback({
+      environment_id: "prod",
+      schema: "remi.memory_feedback.v2",
+      retrieval_receipt_id: "receipt_1",
+      evidence_node_id: "node_1",
+      helpful: true,
+      terminal_state: "succeeded",
+      outcome_artifact_id: "test://sdk/principal-bound",
+      idempotency_key: "feedback_1",
+    }),
+    /derived from the authenticated principal/,
+  );
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {
