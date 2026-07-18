@@ -83,6 +83,8 @@ export function createTemperaClient({
           palette: environmentTargets.paletteApiUrl,
           tempo: environmentTargets.tempoApiUrl,
           temperaCode: environmentTargets.temperaCodeApiUrl,
+          dataEngine: environmentTargets.dataEngineApiUrl,
+          cradle: environmentTargets.cradleApiUrl,
         }[productKey]
       : undefined;
     const baseUrl = baseUrls[productKey] ?? process?.env?.[product.envVar] ?? fromEnvironment;

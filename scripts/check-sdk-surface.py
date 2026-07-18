@@ -17,6 +17,8 @@ Fails when the three language packages can drift apart:
 6. No tracked file may mention a legacy product codename; the current
    product names (palette, tempo, cradle, remi, tempOS, temp.js) are the
    only ones allowed.
+7. Every typed data-engine operation must exactly match the corresponding
+   data-engine OpenAPI operation recorded in the committed contract lock.
 
 Runtime conformance (every operation dispatching the right method, path, and
 auth header) is asserted per-language by each package's own test suite, which
@@ -31,6 +33,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DATA_ENGINE_OPERATION_LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
 
 # Hand-written files must keep exposing the uniform primitives by these names.
 REQUIRED_MARKERS = {
@@ -68,6 +71,39 @@ def package_versions() -> dict[str, str]:
     match = re.search(r'^version\s*=\s*"([^"]+)"', cargo, re.MULTILINE)
     versions["rust"] = match.group(1) if match else "?"
     return versions
+
+
+def canonical_sdk_path(path: str) -> str:
+    """Translate SDK snake_case project paths to data-engine AIP templates."""
+    path = path.replace("/v1/projects/{project_id}", "/v1/{parent}")
+    return re.sub(r"\{([a-z0-9_]+)\}", lambda match: "{" + re.sub(
+        r"_([a-z0-9])", lambda part: part.group(1).upper(), match.group(1)
+    ) + "}", path)
+
+
+def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
+    if not DATA_ENGINE_OPERATION_LOCK.exists():
+        return ["missing contracts/data-engine-openapi-operations.json"]
+    try:
+        lock = json.loads(DATA_ENGINE_OPERATION_LOCK.read_text())
+        operations = lock["operations"]
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        return [f"invalid data-engine OpenAPI operation lock: {error}"]
+    indexed = {operation.get("sdkOperationId"): operation for operation in operations}
+    if len(indexed) != len(operations):
+        return ["data-engine OpenAPI operation lock has duplicate SDK operation IDs"]
+    failures: list[str] = []
+    for operation in surface.get("operations", {}).get("dataEngine", []):
+        label = f"dataEngine.{operation.get('id', '?')}"
+        authoritative = indexed.get(operation.get("id"))
+        if authoritative is None:
+            failures.append(f"{label}: absent from data-engine OpenAPI operation lock")
+            continue
+        if operation.get("method") != authoritative.get("method"):
+            failures.append(f"{label}: method differs from {authoritative.get('operationId')}")
+        if canonical_sdk_path(operation.get("path", "")) != authoritative.get("path"):
+            failures.append(f"{label}: path differs from {authoritative.get('operationId')}")
+    return failures
 
 
 def main() -> int:
@@ -127,6 +163,7 @@ def main() -> int:
     # generated, so a new product can be wired into the runtime and surface.d.ts
     # yet silently dropped from the public TemperaClient type. Guard against it.
     surface = json.loads((ROOT / "surface.json").read_text())
+    failures.extend(validate_data_engine_openapi_bindings(surface))
     index_dts = (ROOT / "packages/typescript/src/index.d.ts").read_text()
     client_type = re.search(r"export type TemperaClient = \{(.*?)\n\};", index_dts, re.DOTALL)
     if client_type is None:

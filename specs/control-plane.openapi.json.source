@@ -1,0 +1,3 @@
+Vendored from auth-hub (control-plane) repo: contracts/control-plane.openapi.json
+Origin path: /home/user/auth-hub/contracts/control-plane.openapi.json
+Emitted upstream from the Node/JS control-plane implementation and drift-gated there. Do not hand-edit; refresh by re-copying the upstream committed spec.

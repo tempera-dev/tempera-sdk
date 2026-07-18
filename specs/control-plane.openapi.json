@@ -1,0 +1,3049 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Control Plane API",
+    "version": "0.1.0",
+    "description": "Account, auth, billing, credential, connector, and entitlement API owned by the ecosystem control plane."
+  },
+  "servers": [
+    {
+      "url": "{TEMPERA_CONTROL_PLANE_URL}",
+      "variables": {
+        "TEMPERA_CONTROL_PLANE_URL": {
+          "default": "http://localhost:8787"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "sessionCookie": []
+    },
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Liveness probe for the control plane.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Control plane is serving requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok"],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "deployment_mode": {
+                      "$ref": "#/components/schemas/DeploymentMode"
+                    },
+                    "deployment_organization_id": {
+                      "type": "string",
+                      "description": "Pinned organization id, present only in single_tenant / pinned vpc deployments."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Return the current authenticated principal and active workspace context.",
+        "responses": {
+          "200": {
+            "description": "Current principal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      }
+    },
+    "/orgs": {
+      "get": {
+        "operationId": "listOrganizations",
+        "summary": "List organizations/workspaces visible to the current user.",
+        "responses": {
+          "200": {
+            "description": "Organizations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOrganization",
+        "summary": "Create an organization/workspace.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Organization created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/DeploymentForbidden"
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+        "operationId": "listAccountSessions",
+        "summary": "List active account-console sessions for the current user.",
+        "responses": {
+          "200": {
+            "description": "Account sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountSession"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createHostedSession",
+        "summary": "Create a first-party hosted account session from email/password login or signup.",
+        "description": "The returned token pair is for the control-plane account console. Product access still requires OAuth grants or scoped API keys.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Control-plane audience session token pair",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "delete": {
+        "operationId": "revokeAccountSession",
+        "summary": "Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Session revoked or already absent"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "description": "Session belongs to a different user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspace/select": {
+      "post": {
+        "operationId": "selectWorkspace",
+        "summary": "Select the active organization, project, and environment for the account console.",
+        "description": "Returns a new control-plane audience token pair with the selected workspace claims. The public site stores it in HttpOnly session cookies.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceSelectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Control-plane audience session token pair for the selected workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/WrongWorkspace"
+          }
+        }
+      }
+    },
+    "/team/members": {
+      "get": {
+        "operationId": "listTeamMembers",
+        "summary": "List team members for the active organization.",
+        "responses": {
+          "200": {
+            "description": "Team members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamMember"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team/members/{id}": {
+      "patch": {
+        "operationId": "updateTeamMember",
+        "summary": "Update a team member role.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamMemberRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Team member updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMember"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeTeamMember",
+        "summary": "Remove a team member from the active organization.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Team member removed"
+          }
+        }
+      }
+    },
+    "/invites": {
+      "get": {
+        "operationId": "listInvites",
+        "summary": "List organization invites.",
+        "responses": {
+          "200": {
+            "description": "Invites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Invite"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createInvite",
+        "summary": "Invite a teammate to the active organization.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInviteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invite created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invite"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invites/{id}": {
+      "delete": {
+        "operationId": "cancelInvite",
+        "summary": "Cancel an organization invite.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Invite cancelled"
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "listProjects",
+        "summary": "List projects for the active organization.",
+        "responses": {
+          "200": {
+            "description": "Projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProject",
+        "summary": "Create a project in the active organization.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/environments": {
+      "get": {
+        "operationId": "listEnvironments",
+        "summary": "List environments for the active project.",
+        "responses": {
+          "200": {
+            "description": "Environments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Environment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createEnvironment",
+        "summary": "Create an environment in a project owned by the active organization.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Environment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Environment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-keys": {
+      "get": {
+        "operationId": "listApiKeys",
+        "summary": "List scoped API keys for the active workspace. Plaintext key material is never returned.",
+        "responses": {
+          "200": {
+            "description": "API keys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKey"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createApiKey",
+        "summary": "Create a scoped API key. Plaintext key material is returned once.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiKeyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API key created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedApiKey"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/api-keys/{id}": {
+      "delete": {
+        "operationId": "revokeApiKey",
+        "summary": "Revoke a scoped API key. Revoking an unknown key id is a no-op.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "API key revoked or already absent"
+          }
+        }
+      }
+    },
+    "/api-keys/{id}/rotate": {
+      "post": {
+        "operationId": "rotateApiKey",
+        "summary": "Rotate a scoped API key. New plaintext key material is returned once.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API key rotated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedApiKey"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/audit-log": {
+      "get": {
+        "operationId": "listAuditLog",
+        "summary": "List recent scoped account and security activity for the active user and organization.",
+        "responses": {
+          "200": {
+            "description": "Recent activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      }
+    },
+    "/connectors": {
+      "get": {
+        "operationId": "listConnectors",
+        "summary": "List supported hosted connectors and their setup metadata.",
+        "responses": {
+          "200": {
+            "description": "Connectors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Connector"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connectors/{id}/status": {
+      "get": {
+        "operationId": "getConnectorStatus",
+        "summary": "Return connection status for one connector.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connector status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "List registered Tempera products and their setup metadata.",
+        "responses": {
+          "200": {
+            "description": "Products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}/status": {
+      "get": {
+        "operationId": "getProductStatus",
+        "summary": "Return entitlement and first-mile setup status for one product.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/status": {
+      "get": {
+        "operationId": "getBillingStatus",
+        "summary": "Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users.",
+        "responses": {
+          "200": {
+            "description": "Billing status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingStatus"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/billing/checkout": {
+      "get": {
+        "operationId": "createBillingCheckout",
+        "summary": "Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL.",
+        "parameters": [
+          {
+            "name": "rail",
+            "in": "query",
+            "description": "Payment rail or accepted alias. Defaults to stripe.",
+            "schema": {
+              "type": "string",
+              "enum": ["stripe", "card", "cards", "fiat", "invoice", "invoicing", "currency", "wire", "wire_transfer", "crypto", "blockchain", "onchain", "on_chain"],
+              "default": "stripe"
+            }
+          },
+          {
+            "name": "plan",
+            "in": "query",
+            "description": "Billing plan identifier. plan_id is also accepted by the server and SDK.",
+            "schema": {
+              "type": "string",
+              "enum": ["starter_trial", "platform", "business", "enterprise"],
+              "default": "platform"
+            }
+          },
+          {
+            "name": "plan_id",
+            "in": "query",
+            "description": "Billing plan identifier alias used by SDK clients.",
+            "schema": {
+              "type": "string",
+              "enum": ["starter_trial", "platform", "business", "enterprise"]
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "Settlement currency for the selected rail.",
+            "schema": {
+              "type": "string",
+              "enum": ["usd", "eur", "gbp", "usdc", "usdt", "eth", "btc", "sol"]
+            }
+          },
+          {
+            "name": "network",
+            "in": "query",
+            "description": "Blockchain network for crypto settlement rails.",
+            "schema": {
+              "type": "string",
+              "enum": ["base", "ethereum", "solana", "bitcoin"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlHandoff"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported payment rail, plan, currency, or network",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "501": {
+            "$ref": "#/components/responses/NotConfigured"
+          }
+        }
+      }
+    },
+    "/billing/portal": {
+      "get": {
+        "operationId": "createBillingPortal",
+        "summary": "Create a customer billing portal handoff URL.",
+        "responses": {
+          "200": {
+            "description": "Billing portal URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlHandoff"
+                }
+              }
+            }
+          },
+          "501": {
+            "$ref": "#/components/responses/NotConfigured"
+          }
+        }
+      }
+    },
+    "/billing/credits": {
+      "get": {
+        "operationId": "getBillingCredits",
+        "summary": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users.",
+        "responses": {
+          "200": {
+            "description": "Credit wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreditBalance"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/billing/webhook": {
+      "post": {
+        "operationId": "receiveStripeBillingWebhook",
+        "summary": "Receive a signed Stripe webhook and reconcile subscription, invoice, and entitlement state.",
+        "parameters": [
+          {
+            "name": "stripe-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeWebhookReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Webhook signature failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model-catalog": {
+      "get": {
+        "operationId": "getModelCatalog",
+        "summary": "List the entitled Tempera Code model catalog. Requires model:read.",
+        "responses": {
+          "200": {
+            "description": "Tempera Code model catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelCatalog"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Model access is not entitled for the workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/usage/events": {
+      "post": {
+        "operationId": "recordUsageEvent",
+        "summary": "Report a billable usage event and receive the current entitlement decision.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageEventRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usage event accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageEventResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Plan limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Idempotency key was already accepted with a different payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/grants": {
+      "get": {
+        "operationId": "listOAuthGrants",
+        "summary": "List connected OAuth app grants for the active workspace.",
+        "responses": {
+          "200": {
+            "description": "OAuth grants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OAuthGrant"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      }
+    },
+    "/oauth/grants/{id}": {
+      "delete": {
+        "operationId": "revokeOAuthGrant",
+        "summary": "Revoke an OAuth app grant and its refresh tokens.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OAuth grant revoked"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "operationId": "startOAuthAuthorization",
+        "summary": "Validate an OAuth authorization request with PKCE and redirect to the hosted consent page.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "code"
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "S256"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "Space-separated scopes. Defaults to mcp:invoke.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "Registered resource audience or resource URL. Defaults to the client's default audience.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "audience",
+            "in": "query",
+            "description": "Alias for resource accepted by SDK clients.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the hosted consent page with the validated authorization parameters"
+          },
+          "400": {
+            "description": "Unregistered client, redirect_uri, audience, or unsupported PKCE parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "authorizeOAuthClient",
+        "summary": "Start or approve an OAuth authorization request with PKCE.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthAuthorizeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": {
+            "description": "Redirect to the registered callback with code or error"
+          }
+        }
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "operationId": "exchangeOAuthToken",
+        "summary": "Exchange authorization code or refresh token for scoped access tokens.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/revoke": {
+      "post": {
+        "operationId": "revokeOAuthToken",
+        "summary": "Revoke an OAuth access or refresh token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthRevokeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Token revoked or already invalid"
+          }
+        }
+      }
+    },
+    "/oauth/introspect": {
+      "post": {
+        "operationId": "introspectOAuthToken",
+        "summary": "Validate a central access token or hosted API key for resource servers.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthIntrospectionRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthIntrospectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Introspection response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthIntrospectionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "operationId": "invokeMcpGateway",
+        "summary": "Unified Tempera MCP gateway. Accepts one stateless JSON-RPC 2.0 message per request.",
+        "description": "Requires a bearer token minted for the tempera-mcp audience with the mcp:invoke scope. Product tools are namespaced (palette_*, tempo_*, cradle_*, remi_*) and metered against the organization's plan. Notifications return 202 with no body. Non-POST requests are rejected with 405.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "JSON-RPC 2.0 request message",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON-RPC 2.0 response message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "JSON-RPC 2.0 response message",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "JSON-RPC notification accepted with no response body"
+          },
+          "401": {
+            "description": "Bearer token is missing, invalid, or revoked",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Bearer challenge with a resource_metadata pointer to the tempera-mcp protected resource metadata.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token audience is not tempera-mcp or the mcp:invoke scope is missing",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Bearer challenge with error=\"insufficient_scope\" and a resource_metadata pointer.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "The MCP gateway is stateless and only accepts POST",
+            "headers": {
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-authorization-server": {
+      "get": {
+        "operationId": "getOAuthAuthorizationServerMetadata",
+        "summary": "OAuth authorization server discovery metadata.",
+        "responses": {
+          "200": {
+            "description": "Authorization server metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthAuthorizationServerMetadata"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-protected-resource": {
+      "get": {
+        "operationId": "getOAuthProtectedResourceMetadata",
+        "summary": "OAuth protected resource discovery metadata for MCP/resource clients.",
+        "responses": {
+          "200": {
+            "description": "Protected resource metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthProtectedResourceMetadata"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-protected-resource/{resource}": {
+      "get": {
+        "operationId": "getOAuthProtectedResourceMetadataForAudience",
+        "summary": "OAuth protected resource discovery metadata for one registered resource audience.",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceAudience"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Protected resource metadata for the requested audience",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthProtectedResourceMetadata"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/.well-known/jwks.json": {
+      "get": {
+        "operationId": "getJsonWebKeySet",
+        "summary": "JSON Web Key Set for validating central issuer JWTs.",
+        "responses": {
+          "200": {
+            "description": "JWKS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "tempera_session"
+      }
+    },
+    "parameters": {
+      "id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "responses": {
+      "Unauthenticated": {
+        "description": "User is not logged in",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "MissingScope": {
+        "description": "Token or API key is missing a required scope",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "WrongWorkspace": {
+        "description": "Requested organization, project, or environment is not accessible to the current user",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "DeploymentForbidden": {
+        "description": "Operation is not permitted by the active deployment topology (e.g. creating additional organizations in a single-tenant deployment)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotConfigured": {
+        "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Me": {
+        "type": "object",
+        "required": ["sub", "email", "org_id", "project_id", "environment_id", "roles"],
+        "properties": {
+          "sub": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamRole"
+            }
+          }
+        }
+      },
+      "Organization": {
+        "type": "object",
+        "required": ["org_id", "name"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "required": ["org_id", "project_id", "name"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Environment": {
+        "type": "object",
+        "required": ["project_id", "environment_id", "name"],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Scope": {
+        "type": "string",
+        "enum": ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "model:read", "model:invoke", "pii:unmask", "admin"]
+      },
+      "ResourceAudience": {
+        "type": "string",
+        "description": "Registered Tempera resource audience.",
+        "enum": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"]
+      },
+      "TokenClaims": {
+        "type": "object",
+        "required": ["iss", "aud", "sub", "org_id", "project_id", "environment_id", "scope", "exp", "iat", "jti"],
+        "properties": {
+          "iss": {
+            "type": "string",
+            "format": "uri"
+          },
+          "aud": {
+            "type": "string"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "exp": {
+            "type": "integer"
+          },
+          "iat": {
+            "type": "integer"
+          },
+          "jti": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string",
+            "description": "Public OAuth client id that obtained the product token."
+          },
+          "azp": {
+            "type": "string",
+            "description": "Authorized-party alias for client_id on product OAuth tokens."
+          },
+          "grant_id": {
+            "type": "string",
+            "description": "Revocable OAuth grant backing the product token."
+          },
+          "sid": {
+            "type": "string",
+            "description": "Account-session id claim. Present on control-plane audience browser/account tokens and omitted from product OAuth tokens."
+          }
+        }
+      },
+      "CreateOrganizationRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "SessionRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": ["login", "signup"],
+            "default": "login",
+            "description": "Any value other than signup is treated as login."
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          },
+          "organization": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invite_token": {
+            "type": "string",
+            "minLength": 1,
+            "description": "One-time invite token from an invite accept link. Joins the inviting organization on login or signup."
+          }
+        }
+      },
+      "WorkspaceSelectionRequest": {
+        "type": "object",
+        "required": ["org_id", "project_id", "environment_id"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountSession": {
+        "type": "object",
+        "required": ["session_id", "org_id", "project_id", "environment_id", "organization_name", "project_name", "environment_name", "created_at", "updated_at", "expires_at", "revoked_at"],
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": ["string", "null"]
+          },
+          "project_id": {
+            "type": ["string", "null"]
+          },
+          "environment_id": {
+            "type": ["string", "null"]
+          },
+          "organization_name": {
+            "type": ["string", "null"]
+          },
+          "project_name": {
+            "type": ["string", "null"]
+          },
+          "environment_name": {
+            "type": ["string", "null"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revoked_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        }
+      },
+      "TeamRole": {
+        "type": "string",
+        "enum": ["owner", "admin", "member", "developer", "reviewer", "billing", "viewer"]
+      },
+      "TeamMember": {
+        "type": "object",
+        "required": ["member_id", "org_id", "email", "role", "status", "joined_at"],
+        "properties": {
+          "member_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": ["string", "null"]
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "$ref": "#/components/schemas/TeamRole"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active"]
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateTeamMemberRequest": {
+        "type": "object",
+        "required": ["role"],
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/TeamRole"
+          }
+        }
+      },
+      "CreateInviteRequest": {
+        "type": "object",
+        "required": ["email", "role"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "$ref": "#/components/schemas/TeamRole"
+          }
+        }
+      },
+      "Invite": {
+        "type": "object",
+        "required": ["invite_id", "org_id", "email", "role", "status", "invited_by", "created_at", "expires_at"],
+        "properties": {
+          "invite_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "$ref": "#/components/schemas/TeamRole"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "cancelled", "accepted", "expired"]
+          },
+          "invited_by": {
+            "type": "string"
+          },
+          "accepted_by": {
+            "type": ["string", "null"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "cancelled_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accept_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Invite acceptance link containing the one-time invite token. Only returned when the invite is created."
+          }
+        }
+      },
+      "CreateProjectRequest": {
+        "type": "object",
+        "required": ["org_id", "name"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "CreateEnvironmentRequest": {
+        "type": "object",
+        "required": ["project_id", "name"],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "CreateApiKeyRequest": {
+        "type": "object",
+        "required": ["org_id", "project_id", "environment_id", "scopes"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable key label."
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            },
+            "minItems": 1
+          },
+          "audience": {
+            "$ref": "#/components/schemas/ResourceAudience",
+            "description": "Resource audience the key is minted for. Defaults to palette.",
+            "default": "palette"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Optional future expiration time."
+          }
+        }
+      },
+      "ApiKey": {
+        "type": "object",
+        "required": ["api_key_id", "org_id", "project_id", "environment_id", "scopes", "created_at"],
+        "properties": {
+          "api_key_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "key_prefix": {
+            "type": "string"
+          },
+          "audience": {
+            "$ref": "#/components/schemas/ResourceAudience"
+          },
+          "created_by_user_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "rotated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revoked_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatedApiKey": {
+        "type": "object",
+        "required": ["api_key_id", "secret", "org_id", "project_id", "environment_id", "scopes", "created_at"],
+        "properties": {
+          "api_key_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "key_prefix": {
+            "type": "string"
+          },
+          "audience": {
+            "$ref": "#/components/schemas/ResourceAudience"
+          },
+          "created_by_user_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "rotated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revoked_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        }
+      },
+      "AuditEvent": {
+        "type": "object",
+        "required": ["id", "actor", "action", "at", "summary", "metadata"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Public, non-secret audit metadata suitable for the account console.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Connector": {
+        "type": "object",
+        "required": ["id", "name", "kind", "default_scopes"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["remote_mcp", "cli_mcp", "editor_mcp", "cli_api", "browser", "api"]
+          },
+          "default_scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          }
+        }
+      },
+      "ConnectorStatus": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["connected", "expired", "missing_permission", "revoked", "misconfigured"]
+          },
+          "missing_scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "required": ["id", "name", "kind", "default_scopes", "setup_path"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["palette", "tempo", "human-data", "tempera-code"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["observability", "browser", "labeling", "agent_orchestration"]
+          },
+          "default_scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "setup_path": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductStatus": {
+        "type": "object",
+        "required": ["id", "status", "action", "entitlement", "entitlements", "signals", "usage"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["connected", "waiting_for_trace", "waiting_for_eval", "waiting_for_session", "waiting_for_model_request", "missing_permission", "limited", "misconfigured"]
+          },
+          "action": {
+            "type": "string"
+          },
+          "entitlement": {
+            "type": "boolean"
+          },
+          "entitlements": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "signals": {
+            "type": "object",
+            "required": ["first_trace_received", "first_eval_run", "first_browser_session", "first_model_request"],
+            "properties": {
+              "first_trace_received": {
+                "type": "boolean"
+              },
+              "first_eval_run": {
+                "type": "boolean"
+              },
+              "first_browser_session": {
+                "type": "boolean"
+              },
+              "first_model_request": {
+                "type": "boolean"
+              }
+            }
+          },
+          "usage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "BillingPlanPrice": {
+        "type": "object",
+        "required": ["interval", "currency", "unit_amount"],
+        "properties": {
+          "interval": {
+            "type": "string",
+            "enum": ["trial", "monthly", "annual", "custom"]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "unit_amount": {
+            "type": ["integer", "null"],
+            "minimum": 0
+          }
+        }
+      },
+      "BillingPlan": {
+        "type": "object",
+        "required": ["plan_id", "name", "description", "prices", "included_usage", "entitlements"],
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "enum": ["starter_trial", "platform", "business", "enterprise"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPlanPrice"
+            }
+          },
+          "included_usage": {
+            "type": "object",
+            "additionalProperties": {
+              "type": ["integer", "null"],
+              "minimum": 0
+            }
+          },
+          "entitlements": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "BillingPaymentRail": {
+        "type": "object",
+        "required": ["rail", "provider", "display_name", "methods", "currencies", "supports_checkout", "supports_portal", "status"],
+        "properties": {
+          "rail": {
+            "type": "string",
+            "enum": ["stripe", "fiat", "crypto"]
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["stripe", "control_plane_invoice", "blockchain_settlement"]
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["base", "ethereum", "solana", "bitcoin"]
+            }
+          },
+          "supports_checkout": {
+            "type": "boolean"
+          },
+          "supports_portal": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["configured", "manual_handoff"]
+          }
+        }
+      },
+      "BillingPricing": {
+        "type": "object",
+        "required": ["plans", "payment_rails"],
+        "properties": {
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPlan"
+            }
+          },
+          "payment_rails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPaymentRail"
+            }
+          }
+        }
+      },
+      "BillingStatus": {
+        "type": "object",
+        "required": ["org_id", "customer", "plan", "subscription", "usage", "entitlements", "invoices", "pricing"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "customer": {
+            "type": ["object", "null"],
+            "properties": {
+              "stripe_customer_id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "plan": {
+            "type": "object",
+            "required": ["plan_id", "name", "status", "billing_interval"],
+            "properties": {
+              "plan_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["trialing", "active", "past_due", "canceled", "cancelled", "incomplete"]
+              },
+              "billing_interval": {
+                "type": "string",
+                "enum": ["monthly", "annual"]
+              },
+              "trial_ends_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "subscription": {
+            "type": "object",
+            "required": ["status", "stripe_subscription_id", "current_period_end"],
+            "properties": {
+              "status": {
+                "type": "string"
+              },
+              "stripe_subscription_id": {
+                "type": ["string", "null"]
+              },
+              "current_period_end": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "usage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["metric", "label", "used", "limit", "reset_at"],
+              "properties": {
+                "metric": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "limit": {
+                  "type": ["integer", "null"],
+                  "minimum": 0
+                },
+                "reset_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "last_reported_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "entitlements": {
+            "type": "object",
+            "required": ["status", "mcp", "tempo_browser", "evals", "model_gateway", "api_keys", "pii_unmask", "seats"],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["enabled", "limited"]
+              },
+              "mcp": {
+                "type": "boolean"
+              },
+              "tempo_browser": {
+                "type": "boolean"
+              },
+              "evals": {
+                "type": "boolean"
+              },
+              "model_gateway": {
+                "type": "boolean"
+              },
+              "api_keys": {
+                "type": "boolean"
+              },
+              "pii_unmask": {
+                "type": "boolean"
+              },
+              "seats": {
+                "type": ["integer", "null"],
+                "minimum": 1
+              }
+            }
+          },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["invoice_id", "status", "amount_due", "currency", "hosted_invoice_url", "created_at"],
+              "properties": {
+                "invoice_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "amount_due": {
+                  "type": "integer"
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "hosted_invoice_url": {
+                  "type": ["string", "null"],
+                  "format": "uri"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "$ref": "#/components/schemas/BillingPricing"
+          }
+        }
+      },
+      "ModelCatalogEntry": {
+        "type": "object",
+        "required": ["id", "display_name", "kind", "routing_key", "status", "roles", "capabilities", "reasoning_efforts", "input_modalities", "output_modalities"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["alias", "model"]
+          },
+          "provider": {
+            "type": "string"
+          },
+          "upstream_model": {
+            "type": "string",
+            "description": "Concrete provider model id. Present only for concrete catalog entries."
+          },
+          "target_model": {
+            "type": "string",
+            "description": "Concrete model id resolved by an alias."
+          },
+          "routing_key": {
+            "type": "string",
+            "description": "Opaque gateway routing key; it is not an upstream credential."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["available", "preview", "retiring", "unavailable"]
+          },
+          "roles": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "capabilities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "reasoning_efforts": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "input_modalities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "output_modalities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "context_window": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ModelCatalog": {
+        "type": "object",
+        "required": ["object", "audience", "models"],
+        "properties": {
+          "object": {
+            "type": "string",
+            "const": "list"
+          },
+          "audience": {
+            "type": "string",
+            "const": "tempera-code"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelCatalogEntry"
+            }
+          }
+        }
+      },
+      "UsageEventRequest": {
+        "type": "object",
+        "required": ["org_id", "project_id", "environment_id", "metric"],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string",
+            "enum": ["mcp_invocations", "trace_events", "eval_runs", "browser_sessions", "pipeline_runs", "model_requests", "model_input_tokens", "model_output_tokens", "workflow_runs", "model_cost"]
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Stable caller-provided event identity. Required for Tempera Code model and workflow usage and for all cost-bearing events; retries with the same payload are deduplicated durably."
+          },
+          "cost": {
+            "type": "object",
+            "description": "Present on cost-bearing events (metric model_cost) reported by the tempera-llm gateway. The client sends provider cost; the control plane owns the multiplier. See docs/billing-credits-contract.md.",
+            "required": ["provider_cost_micros"],
+            "properties": {
+              "provider_cost_micros": { "type": "integer", "minimum": 0, "description": "Micro-USD the provider charges Tempera for this call." },
+              "byok": { "type": "boolean", "default": false, "description": "True when the customer supplied their own provider key; only the surcharge (cost*(multiplier-1)) is debited." },
+              "provider": { "type": "string" },
+              "model": { "type": "string" },
+              "input_tokens": { "type": "integer", "minimum": 0 },
+              "output_tokens": { "type": "integer", "minimum": 0 },
+              "cache_read_tokens": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      },
+      "UsageEventResponse": {
+        "type": "object",
+        "required": ["accepted", "event_id", "idempotency_key", "deduplicated", "metric", "quantity", "meter", "entitlements"],
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "const": true
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": ["string", "null"]
+          },
+          "deduplicated": {
+            "type": "boolean"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "meter": {
+            "type": "object",
+            "required": ["metric", "label", "used", "limit", "reset_at"],
+            "properties": {
+              "metric": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "used": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": ["integer", "null"],
+                "minimum": 0
+              },
+              "reset_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_reported_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "entitlements": {
+            "type": "object",
+            "required": ["status", "mcp", "tempo_browser", "evals", "model_gateway", "api_keys", "pii_unmask", "seats"],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["enabled", "limited"]
+              },
+              "mcp": {
+                "type": "boolean"
+              },
+              "tempo_browser": {
+                "type": "boolean"
+              },
+              "evals": {
+                "type": "boolean"
+              },
+              "model_gateway": {
+                "type": "boolean"
+              },
+              "api_keys": {
+                "type": "boolean"
+              },
+              "pii_unmask": {
+                "type": "boolean"
+              },
+              "seats": {
+                "type": ["integer", "null"],
+                "minimum": 1
+              }
+            }
+          },
+          "credit": {
+            "description": "Present when the event debited credits.",
+            "oneOf": [{ "$ref": "#/components/schemas/Credit" }, { "type": "null" }]
+          },
+          "wallet": {
+            "description": "Wallet state after a cost-bearing event.",
+            "$ref": "#/components/schemas/CreditWallet"
+          }
+        }
+      },
+      "Credit": {
+        "type": "object",
+        "required": ["billable_micros", "multiplier_millis", "byok"],
+        "properties": {
+          "billable_micros": { "type": "integer", "description": "Credit micro-USD debited from the wallet for this event." },
+          "multiplier_millis": { "type": "integer", "description": "Applied margin in milli-units (1200 metered, 200 BYOK surcharge)." },
+          "byok": { "type": "boolean" }
+        }
+      },
+      "CreditWallet": {
+        "type": "object",
+        "required": ["plan_id", "granted_micros", "used_micros", "balance_micros", "overage_micros", "overage_allowed"],
+        "properties": {
+          "plan_id": { "type": "string" },
+          "granted_micros": { "type": ["integer", "null"], "description": "Credits granted this period; null for unlimited (enterprise)." },
+          "used_micros": { "type": "integer" },
+          "balance_micros": { "type": ["integer", "null"], "description": "Remaining credits; null for unlimited plans." },
+          "overage_micros": { "type": "integer", "description": "Credits consumed past zero on overage-enabled plans, invoiced via Stripe." },
+          "overage_allowed": { "type": "boolean" },
+          "period_end": { "type": ["string", "null"], "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreditLedgerEntry": {
+        "type": "object",
+        "required": ["entry_id", "kind", "credit_micros"],
+        "properties": {
+          "entry_id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["grant", "debit", "overage", "adjustment"] },
+          "credit_micros": { "type": "integer", "description": "Signed: grants positive, debits negative." },
+          "metric": { "type": ["string", "null"] },
+          "provider_cost_micros": { "type": ["integer", "null"] },
+          "multiplier_millis": { "type": ["integer", "null"] },
+          "byok": { "type": ["boolean", "null"] },
+          "idempotency_key": { "type": ["string", "null"] },
+          "metadata": { "type": "object", "additionalProperties": true },
+          "recorded_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreditBalance": {
+        "type": "object",
+        "required": ["org_id", "wallet", "multiplier_millis"],
+        "properties": {
+          "org_id": { "type": "string" },
+          "wallet": { "$ref": "#/components/schemas/CreditWallet" },
+          "ledger": { "type": "array", "items": { "$ref": "#/components/schemas/CreditLedgerEntry" } },
+          "multiplier_millis": { "type": "integer" }
+        }
+      },
+      "UrlHandoff": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rail": {
+            "type": "string",
+            "enum": ["stripe", "fiat", "crypto"]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string",
+            "enum": ["starter_trial", "developer", "platform", "business", "enterprise"]
+          }
+        }
+      },
+      "StripeWebhookReceipt": {
+        "type": "object",
+        "required": ["received", "type", "handled"],
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "const": true
+          },
+          "type": {
+            "type": "string"
+          },
+          "handled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OAuthAuthorizeRequest": {
+        "type": "object",
+        "required": ["response_type", "client_id", "redirect_uri", "code_challenge", "code_challenge_method", "scope"],
+        "properties": {
+          "response_type": {
+            "type": "string",
+            "const": "code"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "redirect_uri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "code_challenge": {
+            "type": "string"
+          },
+          "code_challenge_method": {
+            "type": "string",
+            "const": "S256"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "OAuthGrant": {
+        "type": "object",
+        "required": ["grant_id", "client_id", "client_name", "aud", "org_id", "project_id", "environment_id", "scopes", "created_at", "updated_at", "last_used_at"],
+        "properties": {
+          "grant_id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "aud": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revoked_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        }
+      },
+      "OAuthTokenRequest": {
+        "type": "object",
+        "required": ["grant_type"],
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "enum": ["authorization_code", "refresh_token"]
+          },
+          "code": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string",
+            "description": "OAuth client identifier. Required for the authorization_code grant and must match the authorization code."
+          },
+          "code_verifier": {
+            "type": "string"
+          },
+          "redirect_uri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "resource": {
+            "type": "string",
+            "description": "Registered resource audience or resource URL. Must match the audience approved at authorization time."
+          },
+          "audience": {
+            "type": "string",
+            "description": "Alias for resource accepted by SDK clients."
+          }
+        }
+      },
+      "OAuthTokenResponse": {
+        "type": "object",
+        "required": ["access_token", "token_type", "expires_in", "scope"],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "Bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "maximum": 3600
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      },
+      "OAuthRevokeRequest": {
+        "type": "object",
+        "required": ["token"],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "token_type_hint": {
+            "type": "string",
+            "enum": ["access_token", "refresh_token"]
+          }
+        }
+      },
+      "OAuthIntrospectionRequest": {
+        "type": "object",
+        "required": ["token"],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "token_type_hint": {
+            "type": "string",
+            "enum": ["access_token", "api_key"]
+          }
+        }
+      },
+      "OAuthIntrospectionResponse": {
+        "type": "object",
+        "required": ["active"],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "iss": {
+            "type": "string",
+            "format": "uri"
+          },
+          "aud": {
+            "type": "string"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": ["access_token", "api_key"]
+          },
+          "api_key_id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "exp": {
+            "type": "integer"
+          },
+          "iat": {
+            "type": "integer"
+          },
+          "jti": {
+            "type": "string"
+          },
+          "grant_id": {
+            "type": "string"
+          }
+        }
+      },
+      "OAuthAuthorizationServerMetadata": {
+        "type": "object",
+        "required": ["issuer", "authorization_endpoint", "token_endpoint", "revocation_endpoint", "introspection_endpoint", "code_challenge_methods_supported", "scopes_supported", "deployment_environment", "tempera_code_gateway_endpoint"],
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "authorization_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "token_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "revocation_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "introspection_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "code_challenge_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "const": "S256"
+            }
+          },
+          "scopes_supported": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "resource_audiences_supported": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceAudience"
+            }
+          },
+          "deployment_mode": {
+            "$ref": "#/components/schemas/DeploymentMode"
+          },
+          "deployment_environment": {
+            "$ref": "#/components/schemas/DeploymentEnvironment"
+          },
+          "tempera_code_gateway_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "deployment_organization_id": {
+            "type": "string",
+            "description": "Pinned organization id, present only in single_tenant / pinned vpc deployments."
+          }
+        }
+      },
+      "DeploymentMode": {
+        "type": "string",
+        "enum": ["multi_tenant", "single_tenant", "vpc"],
+        "description": "Deployment topology the control plane is running as."
+      },
+      "DeploymentEnvironment": {
+        "type": "string",
+        "enum": ["local", "preview", "staging", "production"],
+        "description": "Named deployment environment used to select public product endpoints."
+      },
+      "OAuthProtectedResourceMetadata": {
+        "type": "object",
+        "required": ["resource", "authorization_servers", "introspection_endpoint", "scopes_supported"],
+        "properties": {
+          "resource": {
+            "$ref": "#/components/schemas/ResourceAudience"
+          },
+          "authorization_servers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "introspection_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "scopes_supported": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scope"
+            }
+          },
+          "bearer_token_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["access_token", "api_key"]
+            }
+          },
+          "oauth_client_id": {
+            "type": "string",
+            "description": "Registered public client id for the resource, when one is assigned."
+          },
+          "model_catalog_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "usage_endpoint": {
+            "type": "string",
+            "format": "uri"
+          },
+          "inference_gateway_environment": {
+            "$ref": "#/components/schemas/DeploymentEnvironment"
+          },
+          "inference_gateway_endpoint": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": ["unauthenticated", "token_expired", "token_revoked", "missing_scope", "wrong_organization", "wrong_project", "wrong_environment", "plan_limit_exceeded", "insufficient_credits", "rate_limited", "idempotency_conflict", "connector_misconfigured", "not_found", "method_not_allowed", "deployment_forbidden", "not_configured"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error", "message"],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
