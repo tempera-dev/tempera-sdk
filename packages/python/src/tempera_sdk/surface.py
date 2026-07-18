@@ -3115,7 +3115,7 @@ OPERATIONS = {
 }
 
 MCP_GATEWAY = {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke, aggregating product MCP servers behind namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*) with per-call billing.",
+    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to ten tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
     "methods": [
         {
             "id": "initialize",
@@ -3130,12 +3130,12 @@ MCP_GATEWAY = {
         {
             "id": "list_tools",
             "rpc": "tools/list",
-            "description": "List every tool the gateway offers: builtins plus namespaced product tools."
+            "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
         },
         {
             "id": "call_tool",
             "rpc": "tools/call",
-            "description": "Invoke a tool by name; product tool calls are metered as mcp_invocations."
+            "description": "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit."
         },
         {
             "id": "whoami",

@@ -1,7 +1,8 @@
 //! JSON-RPC 2.0 body builders for the unified Tempera MCP gateway
-//! (`${issuer}/mcp`): stateless streamable-HTTP JSON-RPC aggregating every
-//! product MCP server behind namespaced tools (`palette_*`, `tempo_*`,
-//! `cradle_*`, `remi_*`, `data_engine_*`).
+//! (`${issuer}/mcp`): stateless streamable-HTTP JSON-RPC with a fixed
+//! capability-fabric surface. Discover product cards with `tempera_search`,
+//! inspect them with `tempera_describe`, then invoke opaque card references
+//! through `tempera_invoke` or `tempera_prepare`/`tempera_commit`.
 //!
 //! The crate is HTTP-less: [`McpRequestBuilder`] produces the exact request
 //! bodies the gateway expects; POST them at `TemperaAuth::mcp_url()` with an
@@ -62,8 +63,8 @@ impl McpRequestBuilder {
         )
     }
 
-    /// Body for `tools/list`: list every tool the gateway offers, builtins
-    /// plus namespaced product tools.
+    /// Body for `tools/list`: list fixed fabric verbs. Product capabilities
+    /// are opaque cards, not flat namespaced tools.
     pub fn list_tools_body(&mut self) -> (i64, String) {
         let id = self.take_id();
         (

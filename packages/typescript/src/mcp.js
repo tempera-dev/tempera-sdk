@@ -1,7 +1,9 @@
 /**
  * Client for the unified Tempera MCP gateway (`${issuer}/mcp`): stateless
- * streamable-HTTP JSON-RPC 2.0 aggregating every product MCP server behind
- * namespaced tools (palette_*, tempo_*, cradle_*, remi_*, data_engine_*).
+ * streamable-HTTP JSON-RPC 2.0 with a fixed capability-fabric surface.
+ * Discover product cards with `tempera_search`, inspect them with
+ * `tempera_describe`, and invoke opaque card references through
+ * `tempera_invoke` or `tempera_prepare`/`tempera_commit`.
  *
  * Requires a bearer minted for audience `tempera-mcp` with scope `mcp:invoke`
  * (or a central tp_ API key). Mirrored by tempera_sdk.TemperaMcpClient in
@@ -82,7 +84,7 @@ export class TemperaMcpClient {
     return this.rpc("ping");
   }
 
-  /** List every tool the gateway offers: builtins plus namespaced product tools. */
+  /** List the fixed fabric verbs; product capabilities are discovered as cards, not flat tools. */
   async listTools() {
     const result = await this.rpc("tools/list");
     return result?.tools ?? [];

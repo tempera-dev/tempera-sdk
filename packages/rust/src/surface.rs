@@ -2703,13 +2703,13 @@ pub const MCP_METHODS: &[McpMethodSpec] = &[
         id: "list_tools",
         rpc: "tools/list",
         tool: None,
-        description: "List every tool the gateway offers: builtins plus namespaced product tools.",
+        description: "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names.",
     },
     McpMethodSpec {
         id: "call_tool",
         rpc: "tools/call",
         tool: None,
-        description: "Invoke a tool by name; product tool calls are metered as mcp_invocations.",
+        description: "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit.",
     },
     McpMethodSpec {
         id: "whoami",

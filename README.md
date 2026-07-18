@@ -132,15 +132,17 @@ gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
 ## MCP gateway
 
 The unified MCP gateway lives at `${issuer}/mcp` (audience `tempera-mcp`,
-scope `mcp:invoke`) and aggregates every product MCP server behind namespaced
-tools (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`).
+scope `mcp:invoke`). Its model-facing surface is a fixed capability fabric:
+use `tempera_search` to discover opaque product cards, `tempera_describe` to
+inspect one, then `tempera_invoke` or `tempera_prepare`/`tempera_commit` to
+execute it. Product capabilities are not flat namespaced tools.
 
 ```js
 import { TemperaMcpClient } from "@tempera/sdk";
 const mcp = new TemperaMcpClient({ auth });   // url derives as ${issuer}/mcp
 await mcp.initialize();
 const tools = await mcp.listTools();
-await mcp.callTool("cradle_get_capabilities");
+await mcp.callTool("tempera_search", { query: "browser capability" });
 console.log(await mcp.whoami());
 ```
 
