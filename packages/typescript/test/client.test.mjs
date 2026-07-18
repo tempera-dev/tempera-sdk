@@ -91,6 +91,14 @@ test("declared query and body parameters are routed to the right place", async (
   await client.remi.remember({ kind: "fact", text: "hello" });
   const body = JSON.parse(calls[1].options.body);
   assert.deepEqual(body, { kind: "fact", text: "hello" });
+  const provenance = {
+    schema: "remi.memory_event_provenance.v1",
+    trace_id: "trace_workflow_1",
+    rollout_id: "rollout_1",
+    artifact_refs: ["artifact_bundle_1"],
+  };
+  await client.remi.remember({ kind: "fact", text: "with correlation", provenance });
+  assert.deepEqual(JSON.parse(calls[2].options.body).provenance, provenance);
   await assert.rejects(
     client.remi.remember({ tenant_id: "t1", kind: "fact", text: "nope" }),
     /derived from the authenticated principal/,

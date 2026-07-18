@@ -1849,7 +1849,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "kind",
         "text",
         "idempotency_key",
-        "project"
+        "project",
+        "provenance"
       ],
       "forbiddenBody": [
         "scope",
@@ -1860,7 +1861,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier."
+      "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier."
     },
     {
       "id": "project",

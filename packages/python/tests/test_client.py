@@ -125,6 +125,14 @@ class DispatchTest(unittest.TestCase):
             transport.calls[1]["body"],
             {"kind": "fact", "text": "hello"},
         )
+        provenance = {
+            "schema": "remi.memory_event_provenance.v1",
+            "trace_id": "trace_workflow_1",
+            "rollout_id": "rollout_1",
+            "artifact_refs": ["artifact_bundle_1"],
+        }
+        client.remi.remember({"kind": "fact", "text": "with correlation", "provenance": provenance})
+        self.assertEqual(transport.calls[2]["body"]["provenance"], provenance)
         with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
             client.remi.remember({"tenant_id": "t1", "kind": "fact", "text": "nope"})
         with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):

@@ -1840,7 +1840,8 @@ OPERATIONS = {
                 "kind",
                 "text",
                 "idempotency_key",
-                "project"
+                "project",
+                "provenance"
             ],
             "forbidden_body": [
                 "scope",
@@ -1851,7 +1852,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier."
+            "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier."
         },
         {
             "id": "project",

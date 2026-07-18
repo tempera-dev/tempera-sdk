@@ -290,7 +290,7 @@ export interface RemiClient extends TemperaProductClientBase {
   getPrometheusMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent service audit events (default 100, maximum 500). */
   listAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; the SDK never sends a scope, tenant, project, or environment identifier. */
+  /** Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier. */
   remember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Project pending ledger events into the memory graph and return the projection report. */
   project(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

@@ -902,6 +902,22 @@ mod tests {
         // The serialized body parses back with the crate's own scanner.
         assert!(crate::error::parse_json(&body).is_some());
 
+        let provenance = r#"{"schema":"remi.memory_event_provenance.v1","trace_id":"trace_workflow_1","rollout_id":"rollout_1","artifact_refs":["artifact_bundle_1"]}"#;
+        let spec = client
+            .build_request(
+                "remi",
+                "remember",
+                &[
+                    ("kind", "note".into()),
+                    ("text", "correlated memory".into()),
+                    ("provenance", ParamValue::RawJson(provenance.to_string())),
+                ],
+            )
+            .unwrap();
+        let body = spec.body_json.unwrap();
+        assert!(body.contains(provenance));
+        assert!(crate::error::parse_json(&body).is_some());
+
         let error = client
             .build_request(
                 "remi",
