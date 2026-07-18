@@ -50,6 +50,7 @@ HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 VENDORED_SPECS = {
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
+    "temperaGym": "tempera-gym-api.json",
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",
@@ -57,7 +58,7 @@ VENDORED_SPECS = {
 
 # Products held to an exact match (new + authoritative). Everything else with a
 # vendored spec is reported as a warning while the surface is still migrating.
-STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows"}
+STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows", "temperaGym"}
 
 PARAM_RE = re.compile(r"\{[^}]+\}")
 

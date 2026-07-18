@@ -5,7 +5,7 @@
 
 export const TEMPERA_SURFACE_VERSION = 2;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]);
 export const DEFAULT_AUDIENCE = "palette";
 export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"]);
 
@@ -26,7 +26,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
     "mcpGatewayUrl": "http://localhost:8787/mcp",
     "dataEngineApiUrl": "http://127.0.0.1:8090",
-    "temperaGymUrl": "http://127.0.0.1:8091",
+    "temperaGymUrl": "http://127.0.0.1:8096",
     "cradleApiUrl": "http://127.0.0.1:8088",
     "temperaCodeApiUrl": "http://127.0.0.1:8789",
     "temperaLlmApiUrl": "http://127.0.0.1:8080",
@@ -129,6 +129,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_WORKFLOWS_URL",
     "audience": "tempera-workflows",
     "description": "Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only."
+  },
+  "temperaGym": {
+    "name": "tempera-gym",
+    "repository": "https://github.com/tempera-dev/tempera-gym",
+    "envVar": "TEMPERA_GYM_URL",
+    "audience": "tempera-gym",
+    "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
   },
   "cradle": {
     "name": "cradle",
@@ -1787,6 +1794,87 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "workflow:run",
       "description": "Cancel a queued or running workflow run."
+    }
+  ],
+  "temperaGym": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check tempera-gym service liveness."
+    },
+    {
+      "id": "listEnvironments",
+      "method": "GET",
+      "path": "/v1/environments",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
+    },
+    {
+      "id": "listRuns",
+      "method": "GET",
+      "path": "/v1/runs",
+      "auth": "product",
+      "pathParams": [],
+      "query": [
+        "environment_id",
+        "limit"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List persisted rollout run index records, newest first."
+    },
+    {
+      "id": "getRun",
+      "method": "GET",
+      "path": "/v1/runs/{run}",
+      "auth": "product",
+      "pathParams": [
+        "run"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
+    },
+    {
+      "id": "createRollout",
+      "method": "POST",
+      "path": "/v1/rollouts",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "environment_id",
+        "policy",
+        "seed",
+        "max_steps",
+        "model"
+      ],
+      "requiredBody": [
+        "environment_id",
+        "seed"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
     }
   ],
   "cradle": [

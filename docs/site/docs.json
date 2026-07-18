@@ -29,6 +29,7 @@
           "products/tempera-code",
           "products/tempera-llm",
           "products/tempera-workflows",
+          "products/tempera-gym",
           "products/cradle",
           "products/remi",
           "products/data-engine"

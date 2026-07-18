@@ -85,6 +85,7 @@ export function createTemperaClient({
           temperaCode: environmentTargets.temperaCodeApiUrl,
           temperaLlm: environmentTargets.temperaLlmApiUrl,
           temperaWorkflows: environmentTargets.temperaWorkflowsApiUrl,
+          temperaGym: environmentTargets.temperaGymUrl,
           dataEngine: environmentTargets.dataEngineApiUrl,
           cradle: environmentTargets.cradleApiUrl,
         }[productKey]

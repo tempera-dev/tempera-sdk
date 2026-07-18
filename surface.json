@@ -10,7 +10,7 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows"],
+  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -37,7 +37,7 @@
       "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
       "mcpGatewayUrl": "http://localhost:8787/mcp",
       "dataEngineApiUrl": "http://127.0.0.1:8090",
-      "temperaGymUrl": "http://127.0.0.1:8091",
+      "temperaGymUrl": "http://127.0.0.1:8096",
       "cradleApiUrl": "http://127.0.0.1:8088",
       "temperaCodeApiUrl": "http://127.0.0.1:8789",
       "temperaLlmApiUrl": "http://127.0.0.1:8080",
@@ -163,6 +163,14 @@
       "audience": "tempera-workflows",
       "auth": "bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key",
       "description": "Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only."
+    },
+    "temperaGym": {
+      "name": "tempera-gym",
+      "repository": "https://github.com/tempera-dev/tempera-gym",
+      "envVar": "TEMPERA_GYM_URL",
+      "audience": "tempera-gym",
+      "auth": "bearer minted for audience tempera-gym with dataset:read/eval:run, central tp_ API key, or the gym static token",
+      "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
     },
     "cradle": {
       "name": "cradle",
@@ -329,6 +337,13 @@
       { "id": "listRuns", "method": "GET", "path": "/v1/runs", "auth": "product", "query": ["workflowId", "limit"], "scope": "workflow:read", "description": "List workflow runs, optionally filtered to one workflow." },
       { "id": "getRun", "method": "GET", "path": "/v1/runs/{run_id}", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:read", "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only." },
       { "id": "cancelRun", "method": "POST", "path": "/v1/runs/{run_id}:cancel", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:run", "description": "Cancel a queued or running workflow run." }
+    ],
+    "temperaGym": [
+      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-gym service liveness." },
+      { "id": "listEnvironments", "method": "GET", "path": "/v1/environments", "auth": "product", "scope": "dataset:read", "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests." },
+      { "id": "listRuns", "method": "GET", "path": "/v1/runs", "auth": "product", "query": ["environment_id", "limit"], "scope": "dataset:read", "description": "List persisted rollout run index records, newest first." },
+      { "id": "getRun", "method": "GET", "path": "/v1/runs/{run}", "auth": "product", "pathParams": ["run"], "scope": "dataset:read", "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash." },
+      { "id": "createRollout", "method": "POST", "path": "/v1/rollouts", "auth": "product", "body": ["environment_id", "policy", "seed", "max_steps", "model"], "requiredBody": ["environment_id", "seed"], "scope": "eval:run", "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope." }
     ],
     "cradle": [
       { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },

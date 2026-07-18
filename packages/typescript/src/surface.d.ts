@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym";
 export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "workflow:read" | "workflow:write" | "workflow:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "temperaWorkflows" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -294,6 +294,19 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel a queued or running workflow run. */
   cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaGymClient extends TemperaProductClientBase {
+  /** Check tempera-gym service liveness. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
+  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List persisted rollout run index records, newest first. */
+  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
+  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
+  createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {
