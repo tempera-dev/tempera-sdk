@@ -1772,6 +1772,28 @@ OPERATIONS = {
             "description": "Answer a question from memory with evidence, citations, contradictions, and staleness signals."
         },
         {
+            "id": "context",
+            "method": "POST",
+            "path": "/v1/context",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "question",
+                "scope",
+                "max_tokens",
+                "require_fresh",
+                "modes",
+                "reconstruction_mode",
+                "max_reconstruction_steps",
+                "max_reconstruction_tokens"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Retrieve a bounded, citation-bearing memory context pack and immutable receipt for later verified feedback."
+        },
+        {
             "id": "maintenance",
             "method": "POST",
             "path": "/v1/maintenance",

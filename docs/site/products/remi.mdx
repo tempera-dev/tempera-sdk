@@ -21,7 +21,7 @@ Temporal memory server: remember, project, query, and maintain an agent memory g
 | Audience | `remi` |
 | Auth | bearer minted for audience remi, central tp_ API key, or the memory-server static token |
 | Client | TypeScript `client.remi` · Python `client.remi` · Rust `build_request("remi", ...)` |
-| Typed operations | 12 |
+| Typed operations | 13 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.remi.request(path, options)` (TypeScript) /
@@ -401,6 +401,58 @@ result = client.remi.query({
 
 ```rust Rust
 let spec = client.build_request("remi", "query", &[
+    ("question", "<question>".into()),
+    ("scope", "<scope>".into()),
+    ("max_tokens", "<max_tokens>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### context
+
+`POST /v1/context`
+
+Retrieve a bounded, citation-bearing memory context pack and immutable receipt for later verified feedback.
+
+- **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.remi.context()` · Python `client.remi.context()` · Rust `build_request("remi", "context", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `question` | no | — |
+| `scope` | no | — |
+| `max_tokens` | no | — |
+| `require_fresh` | no | — |
+| `modes` | no | — |
+| `reconstruction_mode` | no | — |
+| `max_reconstruction_steps` | no | — |
+| `max_reconstruction_tokens` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.remi.context({
+  question: "<question>",
+  scope: "<scope>",
+  max_tokens: "<max_tokens>",
+});
+```
+
+```python Python
+result = client.remi.context({
+    "question": "<question>",
+    "scope": "<scope>",
+    "max_tokens": "<max_tokens>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("remi", "context", &[
     ("question", "<question>".into()),
     ("scope", "<scope>".into()),
     ("max_tokens", "<max_tokens>".into()),
