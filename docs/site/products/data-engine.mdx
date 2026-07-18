@@ -948,7 +948,7 @@ let spec = client.build_request("data_engine", "emit_eval", &[
 
 `POST /v1/projects/{project_id}/products/{product_id}:derive`
 
-Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages.
+Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages.
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.dataEngine.deriveBundle()` · Python `client.data_engine.derive_bundle()` · Rust `build_request("data_engine", "derive_bundle", params)`
@@ -969,6 +969,7 @@ Derive a post-training bundle (sft records or preference pairs) from a READY pro
 | `include_raw` | no | — |
 | `page_size` | no | — |
 | `page_token` | no | — |
+| `pair_sources` | no | — |
 
 <CodeGroup>
 

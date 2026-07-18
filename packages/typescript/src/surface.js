@@ -2060,12 +2060,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "train_fraction",
         "include_raw",
         "page_size",
-        "page_token"
+        "page_token",
+        "pair_sources"
       ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages."
+      "description": "Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages."
     },
     {
       "id": "getProduct",

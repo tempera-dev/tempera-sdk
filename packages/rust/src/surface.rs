@@ -1802,11 +1802,11 @@ pub const OPERATIONS: &[OperationSpec] = &[
         auth: "product",
         path_params: &["project_id", "product_id"],
         query: &[],
-        body: &["format", "train_fraction", "include_raw", "page_size", "page_token"],
+        body: &["format", "train_fraction", "include_raw", "page_size", "page_token", "pair_sources"],
         required_body: &[],
         body_defaults: &[],
         scope: None,
-        description: "Derive a post-training bundle (sft records or preference pairs) from a READY product with a deterministic content-hash train/val split; bounded keyset pages.",
+        description: "Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages.",
     },
     OperationSpec {
         product: "data_engine",
