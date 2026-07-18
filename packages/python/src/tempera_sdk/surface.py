@@ -2503,7 +2503,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
+            "description": "Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote)."
         },
         {
             "id": "create_campaign",
@@ -2613,14 +2613,15 @@ OPERATIONS = {
             "body": [
                 "artifact_ids",
                 "task_family",
-                "max_items",
-                "priority",
-                "target_accuracy"
+                "campaign",
+                "target_accuracy",
+                "verifier",
+                "idempotency_key"
             ],
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+            "description": "Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll."
         },
         {
             "id": "get_job",
@@ -2724,6 +2725,29 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
+        },
+        {
+            "id": "derive_bundle",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/products/{product_id}:derive",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "product_id"
+            ],
+            "query": [],
+            "body": [
+                "format",
+                "train_fraction",
+                "include_raw",
+                "page_size",
+                "page_token",
+                "pair_sources"
+            ],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages."
         },
         {
             "id": "get_product",

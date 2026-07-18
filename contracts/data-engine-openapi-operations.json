@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "data-engine/api/openapi.yaml",
-  "sourceSha256": "887f1d2026fdb904a5e97921d075de08f4b272c889a975dd88bd25838ac70c90",
+  "sourceSha256": "54146be92a44a02118a41eaebea9e55e83aab7d6a3109ed374b69392c47a4146",
   "operations": [
     {"sdkOperationId":"health","operationId":"health.get","method":"GET","path":"/v1/health"},
     {"sdkOperationId":"listDomainPacks","operationId":"projects.domainPacks.list","method":"GET","path":"/v1/{parent}/domain-packs"},
@@ -49,6 +49,7 @@
     {"sdkOperationId":"getMetrics","operationId":"projects.metrics.get","method":"GET","path":"/v1/{parent}/metrics"},
     {"sdkOperationId":"getEcosystemReadiness","operationId":"projects.ecosystem.readiness.get","method":"GET","path":"/v1/{parent}/ecosystem/readiness"},
     {"sdkOperationId":"emitEval","operationId":"projects.products.emitEval","method":"POST","path":"/v1/{parent}/products:emit-eval"},
+    {"sdkOperationId":"deriveBundle","operationId":"projects.products.derive","method":"POST","path":"/v1/{parent}/products/{productId}:derive"},
     {"sdkOperationId":"getProduct","operationId":"projects.products.get","method":"GET","path":"/v1/{parent}/products/{productId}"},
     {"sdkOperationId":"runEnvironment","operationId":"projects.environments.run","method":"POST","path":"/v1/{parent}/environments/{environmentId}:run"},
     {"sdkOperationId":"patchArtifact","operationId":"projects.artifacts.patch","method":"PATCH","path":"/v1/{parent}/artifacts/{artifactId}"},

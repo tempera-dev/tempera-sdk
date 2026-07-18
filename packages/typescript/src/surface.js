@@ -2512,7 +2512,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification."
+      "description": "Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote)."
     },
     {
       "id": "createCampaign",
@@ -2622,14 +2622,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "artifact_ids",
         "task_family",
-        "max_items",
-        "priority",
-        "target_accuracy"
+        "campaign",
+        "target_accuracy",
+        "verifier",
+        "idempotency_key"
       ],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+      "description": "Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll."
     },
     {
       "id": "getJob",
@@ -2733,6 +2734,29 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
+    },
+    {
+      "id": "deriveBundle",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/products/{product_id}:derive",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "product_id"
+      ],
+      "query": [],
+      "body": [
+        "format",
+        "train_fraction",
+        "include_raw",
+        "page_size",
+        "page_token",
+        "pair_sources"
+      ],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages."
     },
     {
       "id": "getProduct",

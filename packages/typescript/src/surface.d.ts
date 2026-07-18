@@ -382,7 +382,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
   ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run a complete MVP use-case pipeline end to end; setting verifier to cradle selects sandboxed wasm verification. */
+  /** Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote). */
   runUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a data campaign with a rubric, budget, target accuracy, and skill tags. */
   createCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -394,7 +394,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the labels attached to one artifact. */
   listArtifactLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll. */
+  /** Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one labeling job with its state and progress. */
   getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -408,6 +408,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages. */
+  deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Request an environment run; availability remains explicit until its qualified execution lane is enabled. */
