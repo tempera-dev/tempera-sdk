@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -529,7 +530,16 @@ def render_rust(surface: dict) -> str:
     lines.append("    PRODUCTS.iter().find(|product| product.key == key)")
     lines.append("}")
     lines.append("")
-    return "\n".join(lines)
+    rendered = "\n".join(lines)
+    formatted = subprocess.run(
+        ["rustfmt", "--emit", "stdout", "--edition", "2024"],
+        input=rendered,
+        capture_output=True,
+        text=True,
+    )
+    if formatted.returncode != 0:
+        raise RuntimeError(f"rustfmt failed while generating Rust SDK surface: {formatted.stderr}")
+    return formatted.stdout
 
 
 TARGETS = {

@@ -1843,6 +1843,30 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Start a run of a stored workflow with an optional input document and idempotency key."
     },
     {
+      "id": "callWorkflow",
+      "method": "POST",
+      "path": "/v1/workflows/{workflow_id}:call",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [
+        "input",
+        "idempotencyKey",
+        "usePinned",
+        "startAt",
+        "only",
+        "seedOutputs",
+        "waitMs"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Run a workflow to completion and return its output in a single call."
+    },
+    {
       "id": "listRuns",
       "method": "GET",
       "path": "/v1/runs",

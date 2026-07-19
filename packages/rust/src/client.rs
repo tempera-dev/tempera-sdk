@@ -15,7 +15,7 @@
 //!   `introspectionSecret`, and `product` (per-audience bearer through
 //!   [`crate::auth::TemperaAuth`], with unified tp_ API-key fallback).
 
-use crate::auth::{TemperaAuth, urlencode};
+use crate::auth::{urlencode, TemperaAuth};
 use crate::error::json_escape;
 use crate::surface;
 
@@ -593,14 +593,12 @@ mod tests {
             )
             .unwrap();
         assert_eq!(spec.url, "https://palette.example.test/v1/traces/tenant_1");
-        assert!(
-            spec.query
-                .contains(&("limit".to_string(), "25".to_string()))
-        );
-        assert!(
-            spec.query
-                .contains(&("status".to_string(), "error".to_string()))
-        );
+        assert!(spec
+            .query
+            .contains(&("limit".to_string(), "25".to_string())));
+        assert!(spec
+            .query
+            .contains(&("status".to_string(), "error".to_string())));
         assert_eq!(spec.body_json, None);
     }
 
@@ -618,16 +616,12 @@ mod tests {
                 ],
             )
             .unwrap();
-        assert!(
-            get_spec
-                .query
-                .contains(&("new_filter".to_string(), "on".to_string()))
-        );
-        assert!(
-            get_spec
-                .query
-                .contains(&("flag".to_string(), "true".to_string()))
-        );
+        assert!(get_spec
+            .query
+            .contains(&("new_filter".to_string(), "on".to_string())));
+        assert!(get_spec
+            .query
+            .contains(&("flag".to_string(), "true".to_string())));
         assert_eq!(get_spec.body_json, None);
 
         let post_spec = client
@@ -678,11 +672,9 @@ mod tests {
                 name: "trace_id".to_string(),
             }
         );
-        assert!(
-            error
-                .to_string()
-                .contains("missing required path parameter \"trace_id\"")
-        );
+        assert!(error
+            .to_string()
+            .contains("missing required path parameter \"trace_id\""));
 
         // Empty values count as missing, mirroring the TypeScript client.
         let error = client
@@ -735,11 +727,9 @@ mod tests {
                 audience: "remi".to_string(),
             }
         );
-        assert!(
-            error
-                .to_string()
-                .contains("no credential for audience remi")
-        );
+        assert!(error
+            .to_string()
+            .contains("no credential for audience remi"));
 
         // An auth without any credential for the audience also fails.
         let client = client.with_auth(TemperaAuth::new("https://api.tempera.dev"));
@@ -777,13 +767,20 @@ mod tests {
     fn action_suffix_paths_keep_the_literal_colon_unencoded() {
         let client = full_client();
         let spec = client
-            .build_request("data_engine", "ingest_artifact", &[("project_id", "p1".into())])
+            .build_request(
+                "data_engine",
+                "ingest_artifact",
+                &[("project_id", "p1".into())],
+            )
             .unwrap();
         assert_eq!(
             spec.url,
             "https://data_engine.example.test/v1/projects/p1/artifacts:ingest"
         );
-        assert!(!spec.full_url().contains("%3A"), "colon must not be percent-encoded");
+        assert!(
+            !spec.full_url().contains("%3A"),
+            "colon must not be percent-encoded"
+        );
 
         // Colons inside a substituted path *value* are still encoded.
         let spec = client
@@ -906,7 +903,15 @@ mod tests {
             .build_request(
                 "remi",
                 "context",
-                &[("question", "Which workflow evidence is current?".into()), ("max_tokens", 600.into()), ("require_fresh", true.into()), ("modes", ParamValue::RawJson(r#"["procedural","gotcha","state"]"#.to_string()))],
+                &[
+                    ("question", "Which workflow evidence is current?".into()),
+                    ("max_tokens", 600.into()),
+                    ("require_fresh", true.into()),
+                    (
+                        "modes",
+                        ParamValue::RawJson(r#"["procedural","gotcha","state"]"#.to_string()),
+                    ),
+                ],
             )
             .unwrap();
         let body = spec.body_json.unwrap();
@@ -917,24 +922,50 @@ mod tests {
             .build_request(
                 "remi",
                 "feedback",
-                &[("schema", "remi.memory_feedback.v2".into()), ("retrieval_receipt_id", "receipt_1".into()), ("evidence_node_id", "node_1".into()), ("helpful", true.into()), ("terminal_state", "succeeded".into()), ("outcome_artifact_id", "test://sdk/generated-wire".into()), ("idempotency_key", "feedback_1".into())],
+                &[
+                    ("schema", "remi.memory_feedback.v2".into()),
+                    ("retrieval_receipt_id", "receipt_1".into()),
+                    ("evidence_node_id", "node_1".into()),
+                    ("helpful", true.into()),
+                    ("terminal_state", "succeeded".into()),
+                    ("outcome_artifact_id", "test://sdk/generated-wire".into()),
+                    ("idempotency_key", "feedback_1".into()),
+                ],
             )
             .unwrap();
         let body = spec.body_json.unwrap();
         assert!(body.contains("\"outcome_artifact_id\":\"test://sdk/generated-wire\""));
 
-        let error = client.build_request("remi", "remember", &[("tenant_id", "tenant_1".into()), ("kind", "note".into()), ("text", "blocked".into())]).unwrap_err();
-        assert!(matches!(error, BuildError::PrincipalDerivedParameter { .. }));
+        let error = client
+            .build_request(
+                "remi",
+                "remember",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("kind", "note".into()),
+                    ("text", "blocked".into()),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(
+            error,
+            BuildError::PrincipalDerivedParameter { .. }
+        ));
 
         for field in ["scope", "tenant_id", "project_id", "environment_id"] {
             let error = client
                 .build_request(
                     "remi",
                     "context",
-                    &[("question", "what is current?".into()), (field, ParamValue::RawJson("null".to_string()))],
+                    &[
+                        ("question", "what is current?".into()),
+                        (field, ParamValue::RawJson("null".to_string())),
+                    ],
                 )
                 .unwrap_err();
-            assert!(matches!(error, BuildError::PrincipalDerivedParameter { name, .. } if name == field));
+            assert!(
+                matches!(error, BuildError::PrincipalDerivedParameter { name, .. } if name == field)
+            );
         }
     }
 }

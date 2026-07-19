@@ -5,9 +5,40 @@
 
 pub const SURFACE_VERSION: u32 = 2;
 
-pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"];
+pub const AUDIENCES: &[&str] = &[
+    "palette",
+    "tempo",
+    "cradle",
+    "remi",
+    "human-data",
+    "data-engine",
+    "tempera-mcp",
+    "tempera-code",
+    "tempera-llm",
+    "tempera-workflows",
+    "tempera-gym",
+];
 pub const DEFAULT_AUDIENCE: &str = "palette";
-pub const SCOPES: &[&str] = &["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "pii:unmask", "cyber:research", "clinical:run", "model:read", "model:invoke", "admin"];
+pub const SCOPES: &[&str] = &[
+    "mcp:invoke",
+    "memory:read",
+    "memory:write",
+    "memory:manage",
+    "trace:read",
+    "trace:write",
+    "dataset:read",
+    "dataset:write",
+    "eval:run",
+    "workflow:read",
+    "workflow:write",
+    "workflow:run",
+    "pii:unmask",
+    "cyber:research",
+    "clinical:run",
+    "model:read",
+    "model:invoke",
+    "admin",
+];
 
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";
 pub const TOKEN_PATH: &str = "/oauth/token";
@@ -1642,6 +1673,21 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body_defaults: &[],
         scope: Some("workflow:run"),
         description: "Start a run of a stored workflow with an optional input document and idempotency key.",
+    },
+    OperationSpec {
+        product: "tempera_workflows",
+        id: "call_workflow",
+        method: "POST",
+        path: "/v1/workflows/{workflow_id}:call",
+        auth: "product",
+        path_params: &["workflow_id"],
+        query: &[],
+        body: &["input", "idempotencyKey", "usePinned", "startAt", "only", "seedOutputs", "waitMs"],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: Some("workflow:run"),
+        description: "Run a workflow to completion and return its output in a single call.",
     },
     OperationSpec {
         product: "tempera_workflows",
@@ -3500,7 +3546,9 @@ pub const MCP_ERROR_INTERNAL: i64 = -32603;
 
 /// Look up one operation by product key and snake_case operation id.
 pub fn find_operation(product: &str, id: &str) -> Option<&'static OperationSpec> {
-    OPERATIONS.iter().find(|op| op.product == product && op.id == id)
+    OPERATIONS
+        .iter()
+        .find(|op| op.product == product && op.id == id)
 }
 
 /// Look up one product by snake_case key.

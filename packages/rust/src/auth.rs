@@ -22,7 +22,11 @@ pub const PRODUCT_AUDIENCES: &[(&str, &str, &str)] = &[
     ("tempo", "tempo", "TEMPERA_TEMPO_URL"),
     ("tempera_code", "tempera-code", "TEMPERA_CODE_GATEWAY_URL"),
     ("tempera_llm", "tempera-llm", "TEMPERA_LLM_URL"),
-    ("tempera_workflows", "tempera-workflows", "TEMPERA_WORKFLOWS_URL"),
+    (
+        "tempera_workflows",
+        "tempera-workflows",
+        "TEMPERA_WORKFLOWS_URL",
+    ),
     ("tempera_gym", "tempera-gym", "TEMPERA_GYM_URL"),
     ("cradle", "cradle", "TEMPERA_CRADLE_URL"),
     ("remi", "remi", "TEMPERA_REMI_URL"),
@@ -460,11 +464,10 @@ mod tests {
         assert!(exchange.contains("code_verifier=verifier_1"));
 
         auth.apply_token_response("tempo", "at_1", Some("rt_1".to_string()));
-        assert!(
-            auth.refresh_body("tempo")
-                .unwrap()
-                .contains("refresh_token=rt_1")
-        );
+        assert!(auth
+            .refresh_body("tempo")
+            .unwrap()
+            .contains("refresh_token=rt_1"));
 
         // Rotation: the newly issued refresh token replaces the old one.
         auth.apply_token_response("tempo", "at_2", Some("rt_2".to_string()));
@@ -475,11 +478,10 @@ mod tests {
 
         // A response without a refresh token keeps the previous one.
         auth.apply_token_response("tempo", "at_3", None);
-        assert!(
-            auth.refresh_body("tempo")
-                .unwrap()
-                .contains("refresh_token=rt_2")
-        );
+        assert!(auth
+            .refresh_body("tempo")
+            .unwrap()
+            .contains("refresh_token=rt_2"));
         assert_eq!(auth.bearer_for("tempo"), Some("at_3"));
 
         let revoke = auth.revoke_body("tempo").unwrap();
@@ -519,11 +521,9 @@ mod tests {
             Some("Bearer tp_key_1")
         );
         assert_eq!(auth.mcp_url(), "https://api.tempera.dev/mcp");
-        assert!(
-            TemperaAuth::new("https://api.tempera.dev")
-                .bearer_for("palette")
-                .is_none()
-        );
+        assert!(TemperaAuth::new("https://api.tempera.dev")
+            .bearer_for("palette")
+            .is_none());
     }
 
     #[test]

@@ -202,7 +202,7 @@ is the default when none is specified.
 | `eval:run` | data-engine: `generateDomain`; tempera-gym: `createRollout` |
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
-| `workflow:run` | tempera-workflows: `cancelRun`, `createRun` |
+| `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `cyber:research` | No typed SDK operation declares it yet; enforced server-side. |
 | `clinical:run` | No typed SDK operation declares it yet; enforced server-side. |

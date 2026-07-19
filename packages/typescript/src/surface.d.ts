@@ -289,6 +289,8 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   validateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Start a run of a stored workflow with an optional input document and idempotency key. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run a workflow to completion and return its output in a single call. */
+  callWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List workflow runs, optionally filtered to one workflow. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only. */

@@ -23,18 +23,18 @@ pub mod mcp;
 pub mod surface;
 
 pub use auth::{
-    AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet, base64url_no_pad, pkce_challenge_s256,
-    pkce_pair_from_entropy, pkce_verifier_from_entropy,
+    base64url_no_pad, pkce_challenge_s256, pkce_pair_from_entropy, pkce_verifier_from_entropy,
+    AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet,
 };
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
-pub use error::{TemperaApiError, normalize_error_body};
-pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
+pub use error::{normalize_error_body, TemperaApiError};
+pub use mcp::{parse_mcp_error, McpError, McpRequestBuilder, MCP_PROTOCOL_VERSION};
 pub use surface::{
-    AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
-    MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,
-    MCP_ERROR_METHOD_NOT_FOUND, MCP_ERROR_PLAN_LIMIT, MCP_METHODS, MCP_PATH, McpMethodSpec,
-    OPERATIONS, OperationSpec, PRODUCTS, ProductSpec, REVOKE_PATH, SCOPES, SURFACE_VERSION,
-    TOKEN_PATH, find_operation, find_product,
+    find_operation, find_product, EnvironmentTarget, McpMethodSpec, OperationSpec, ProductSpec,
+    AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, INTROSPECT_PATH, MCP_ERROR_INTERNAL,
+    MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST, MCP_ERROR_METHOD_NOT_FOUND,
+    MCP_ERROR_PLAN_LIMIT, MCP_METHODS, MCP_PATH, OPERATIONS, PRODUCTS, REVOKE_PATH, SCOPES,
+    SURFACE_VERSION, TOKEN_PATH,
 };
 
 #[cfg(test)]
@@ -84,9 +84,15 @@ mod tests {
         assert_eq!(production.control_plane_url, "https://api.tempera.dev");
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
-        assert_eq!(production.tempera_code_api_url, "https://code-api.tempera.dev");
+        assert_eq!(
+            production.tempera_code_api_url,
+            "https://code-api.tempera.dev"
+        );
         assert_eq!(production.tempera_llm_api_url, "https://llm.tempera.dev");
-        assert_eq!(production.tempera_workflows_api_url, "https://workflows.tempera.dev");
+        assert_eq!(
+            production.tempera_workflows_api_url,
+            "https://workflows.tempera.dev"
+        );
         assert_eq!(production.tempera_gym_url, "https://gym.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
@@ -107,7 +113,11 @@ mod tests {
         assert_eq!(spec.method, "GET");
         assert_eq!(spec.full_url(), "https://mcp.tempera.dev/v1/traces/t1/tr1");
 
-        let error = normalize_error_body(429, "Too Many Requests", "{\"error\":\"quota\",\"message\":\"limit\"}");
+        let error = normalize_error_body(
+            429,
+            "Too Many Requests",
+            "{\"error\":\"quota\",\"message\":\"limit\"}",
+        );
         assert_eq!(error.code.as_deref(), Some("quota"));
 
         let (id, body) = McpRequestBuilder::new().ping_body();

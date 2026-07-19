@@ -379,7 +379,10 @@ mod tests {
 
     #[test]
     fn control_plane_shape_yields_code_and_message() {
-        let error = normalize_error_body(401, "", r#"{"error":"invalid_token","message":"token expired"}"#,
+        let error = normalize_error_body(
+            401,
+            "",
+            r#"{"error":"invalid_token","message":"token expired"}"#,
         );
         assert_eq!(error.status, 401);
         assert_eq!(error.code.as_deref(), Some("invalid_token"));
@@ -389,7 +392,10 @@ mod tests {
 
     #[test]
     fn palette_shape_ignores_extra_status_member() {
-        let error = normalize_error_body(404, "", r#"{"error":"not_found","message":"trace not found","status":404}"#,
+        let error = normalize_error_body(
+            404,
+            "",
+            r#"{"error":"not_found","message":"trace not found","status":404}"#,
         );
         assert_eq!(error.code.as_deref(), Some("not_found"));
         assert_eq!(error.message, "trace not found");
@@ -441,7 +447,10 @@ mod tests {
 
     #[test]
     fn remi_shape_without_request_id() {
-        let error = normalize_error_body(422, "", r#"{"error":{"code":"bad_scope","message":"scope is malformed"}}"#,
+        let error = normalize_error_body(
+            422,
+            "",
+            r#"{"error":{"code":"bad_scope","message":"scope is malformed"}}"#,
         );
         assert_eq!(error.code.as_deref(), Some("bad_scope"));
         assert_eq!(error.message, "scope is malformed");
@@ -450,7 +459,10 @@ mod tests {
 
     #[test]
     fn escaped_quotes_and_escapes_inside_messages_survive() {
-        let error = normalize_error_body(400, "", r#"{"error":"bad_input","message":"field \"name\" is bad\n\ttab \\ slash \/ u: é"}"#,
+        let error = normalize_error_body(
+            400,
+            "",
+            r#"{"error":"bad_input","message":"field \"name\" is bad\n\ttab \\ slash \/ u: é"}"#,
         );
         assert_eq!(error.code.as_deref(), Some("bad_input"));
         assert_eq!(
@@ -507,7 +519,11 @@ mod tests {
 
     #[test]
     fn error_object_without_message_uses_status_text() {
-        let error = normalize_error_body(500, "Internal Server Error", r#"{"error":{"code":"opaque"}}"#);
+        let error = normalize_error_body(
+            500,
+            "Internal Server Error",
+            r#"{"error":{"code":"opaque"}}"#,
+        );
         assert_eq!(error.code.as_deref(), Some("opaque"));
         assert_eq!(error.message, "Internal Server Error");
     }
