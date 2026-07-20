@@ -54,6 +54,13 @@ Data Engine issue https://github.com/tempera-dev/data-engine/issues/39 owns
 turning those absences into explicit, scope/effect/schema-pinned admission
 decisions; none should become a tool merely to mirror REST coverage.
 
+Source-verification gap: SDK CI verifies the committed source lock and generated
+surface, but currently has no credential for a fresh checkout of the private
+Data Engine producer. SDK issue https://github.com/tempera-dev/tempera-sdk/issues/27
+owns the least-privilege, exact-commit producer checkout and fail-closed source
+verification. Until it passes, local exact-SHA verification is evidence for this
+draft but not a substitute for the required cross-repository CI receipt.
+
 The same release also corrects the aggregate scope registry to Auth Hub main:
 `memory:read`, `memory:write`, `memory:manage`, and `review:resolve` are added;
 the unregistered `cyber:research` and `clinical:run` constants are removed.

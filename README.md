@@ -45,7 +45,7 @@ a live hosted service, or an undocumented endpoint.
 | `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 12 | `tempera-workflows` |
 | `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
-| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 87 | `data-engine` |
+| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 46 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 Palette also ships seven fully generated per-language clients inside its own
@@ -184,8 +184,10 @@ the committed site is always current thanks to the drift gate).
   content SHA-256, generator version, and generated-operation digest. The sync
   rejects dirty producer checkouts and reads source bytes with `git show`.
   When both repositories are checked out, refresh and verify it with
-  `python3 scripts/sync-data-engine-openapi.py --check`; CI always verifies
-  bidirectional parity: no phantom SDK method and no omitted producer route.
+  `python3 scripts/sync-data-engine-openapi.py --check`. SDK CI verifies the
+  committed lock and generated surface in both directions. Re-verifying the
+  lock against a private producer checkout requires the cross-repository check
+  tracked in [issue #27](https://github.com/tempera-dev/tempera-sdk/issues/27).
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - The endpoint-change rollout process is documented in
