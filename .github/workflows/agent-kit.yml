@@ -33,7 +33,7 @@ jobs:
         id: contract-reader
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.TEMPERA_CONTRACT_READER_APP_ID }}
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
           private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
           owner: tempera-dev
           repositories: auth-hub
