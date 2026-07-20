@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tempera Cross-Repo Review"
+  short_description: "Review dependent Tempera pull requests safely"
+  default_prompt: "Use $tempera-review-cross-repo to review a Tempera change across source and consumer repositories."
