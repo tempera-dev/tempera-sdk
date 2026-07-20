@@ -1,3 +1,7 @@
 Vendored from palette repo: sdks/openapi/palette-api.json
-Origin path: /home/user/palette/sdks/openapi/palette-api.json
+Repository: https://github.com/tempera-dev/palette
+Revision: 8d78defac65dabdb2df309ce00153da8b51445ee
+SHA-256: a9917e9a67d08629b5cfba66443fa663c0d8d5ea5c3c466b8580d6a1debf5bb8
+Review: https://github.com/tempera-dev/palette/pull/10
+Availability: source-pinned pull request; not a merged production release
 Generated upstream from the palette Rust handlers (cargo xtask regen-spec). Do not hand-edit; refresh by re-copying the upstream committed spec.

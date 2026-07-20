@@ -1,0 +1,95 @@
+{
+  "availability": "source_pinned_pull_request",
+  "operations": [
+    {
+      "body": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "method": "POST",
+      "operationId": "evalResults.importTemperaBundle",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "responseCodes": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "409",
+        "413",
+        "422",
+        "503"
+      ],
+      "sdkOperationId": "importTemperaBundle"
+    },
+    {
+      "body": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "method": "POST",
+      "operationId": "evalResults.recordTemperaDecision",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "responseCodes": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "409",
+        "413",
+        "422",
+        "503"
+      ],
+      "sdkOperationId": "recordTemperaDecision"
+    },
+    {
+      "body": [],
+      "method": "GET",
+      "operationId": "evalResults.getTemperaEvidence",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "kind",
+        "external_id"
+      ],
+      "requiredBody": [],
+      "responseCodes": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "404"
+      ],
+      "sdkOperationId": "getTemperaEvidence"
+    }
+  ],
+  "receiptSchema": "#/components/schemas/TemperaEvidenceReceipt",
+  "repository": "https://github.com/tempera-dev/palette",
+  "requestSchema": "#/components/schemas/ImportTemperaEvidenceRequest",
+  "requiredScope": "eval:run",
+  "reviewUrl": "https://github.com/tempera-dev/palette/pull/10",
+  "revision": "8d78defac65dabdb2df309ce00153da8b51445ee",
+  "schemaVersion": 1,
+  "sourcePath": "sdks/openapi/palette-api.json",
+  "sourceSha256": "sha256:a9917e9a67d08629b5cfba66443fa663c0d8d5ea5c3c466b8580d6a1debf5bb8"
+}

@@ -69,7 +69,7 @@ export class TemperaMcpClient {
   }
 
   /** Open an MCP session and fetch server capabilities and instructions. */
-  initialize({ name = "tempera-sdk", version = "0.5.0" } = {}) {
+  initialize({ name = "tempera-sdk", version = "0.7.0" } = {}) {
     return this.rpc("initialize", {
       protocolVersion: MCP_PROTOCOL_VERSION,
       capabilities: {},

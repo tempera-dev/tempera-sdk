@@ -208,6 +208,12 @@ export interface PaletteClient extends TemperaProductClientBase {
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch usage totals for a tenant project. */
   getUsageSummary(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt. */
+  importTemperaBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt. */
+  recordTemperaDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload. */
+  getTemperaEvidence(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TempoClient extends TemperaProductClientBase {

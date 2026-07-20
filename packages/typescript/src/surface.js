@@ -1170,6 +1170,72 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "admin",
       "description": "Fetch usage totals for a tenant project."
+    },
+    {
+      "id": "importTemperaBundle",
+      "method": "POST",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
+    },
+    {
+      "id": "recordTemperaDecision",
+      "method": "POST",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
+    },
+    {
+      "id": "getTemperaEvidence",
+      "method": "GET",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "kind",
+        "external_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
     }
   ],
   "tempo": [
