@@ -183,8 +183,9 @@ the committed site is always current thanks to the drift gate).
   includes the repository, branch, 40-character commit, path, Git blob,
   content SHA-256, generator version, and generated-operation digest. The sync
   rejects dirty producer checkouts and reads source bytes with `git show`.
-  When both repositories are checked out, refresh and verify it with
-  `python3 scripts/sync-data-engine-openapi.py --check`. SDK CI verifies the
+  When both repositories are checked out, refresh and verify it with explicit
+  `--source-repo`, `--source-branch`, and 40-character `--source-commit`
+  arguments; detached exact-commit producer checkouts are supported. SDK CI verifies the
   committed lock and generated surface in both directions. Re-verifying the
   lock against a private producer checkout requires the cross-repository check
   tracked in [issue #27](https://github.com/tempera-dev/tempera-sdk/issues/27).
@@ -203,7 +204,10 @@ or individually:
 
 ```sh
 python3 scripts/check-sdk-surface.py
-python3 scripts/sync-data-engine-openapi.py --check
+python3 scripts/sync-data-engine-openapi.py --check \
+  --source ../data-engine/api/openapi.yaml \
+  --source-repo tempera-dev/data-engine --source-branch main \
+  --source-commit <40-character-producer-commit>
 npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml

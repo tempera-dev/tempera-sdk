@@ -21,6 +21,27 @@ def git(repo: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
 
 
+def head(repo: Path) -> str:
+    return subprocess.check_output(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True
+    ).strip()
+
+
+def create_source_repo(repo: Path) -> tuple[Path, str]:
+    git(repo, "init", "-b", "main")
+    git(repo, "config", "user.name", "Tempera SDK test")
+    git(repo, "config", "user.email", "sdk-test@tempera.invalid")
+    git(repo, "remote", "add", "origin", "https://github.com/tempera-dev/data-engine.git")
+    source = repo / "api" / "openapi.yaml"
+    source.parent.mkdir()
+    source.write_text("openapi: 3.1.0\npaths: {}\n", encoding="utf-8")
+    git(repo, "add", "api/openapi.yaml")
+    git(repo, "commit", "-m", "fixture")
+    commit = head(repo)
+    git(repo, "update-ref", "refs/remotes/origin/main", commit)
+    return source, commit
+
+
 class SourceLockTest(unittest.TestCase):
     def test_route_identity_ignores_parameter_spelling(self) -> None:
         self.assertEqual(
@@ -31,19 +52,7 @@ class SourceLockTest(unittest.TestCase):
     def test_committed_source_uses_git_bytes_and_rejects_dirty_repo(self) -> None:
         with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
             repo = Path(directory)
-            git(repo, "init", "-b", "main")
-            git(repo, "config", "user.name", "Tempera SDK test")
-            git(repo, "config", "user.email", "sdk-test@tempera.invalid")
-            git(repo, "remote", "add", "origin", "https://github.com/tempera-dev/data-engine.git")
-            source = repo / "api" / "openapi.yaml"
-            source.parent.mkdir()
-            source.write_text("openapi: 3.1.0\npaths: {}\n", encoding="utf-8")
-            git(repo, "add", "api/openapi.yaml")
-            git(repo, "commit", "-m", "fixture")
-            head = subprocess.check_output(
-                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True
-            ).strip()
-            git(repo, "update-ref", "refs/remotes/origin/main", head)
+            source, _ = create_source_repo(repo)
 
             source_bytes, metadata = sync.committed_source(source)
             self.assertEqual(source_bytes, b"openapi: 3.1.0\npaths: {}\n")
@@ -62,6 +71,55 @@ class SourceLockTest(unittest.TestCase):
             git(repo, "commit", "-m", "unpushed fixture")
             with self.assertRaisesRegex(ValueError, "not reachable from origin/main"):
                 sync.committed_source(source)
+
+    def test_detached_exact_commit_is_supported(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, commit = create_source_repo(repo)
+            git(repo, "checkout", "--detach", commit)
+
+            source_bytes, metadata = sync.committed_source(
+                source,
+                source_commit=commit,
+            )
+            self.assertEqual(source_bytes, b"openapi: 3.1.0\npaths: {}\n")
+            self.assertEqual(metadata["source_branch"], "main")
+            self.assertEqual(metadata["source_commit"], commit)
+
+    def test_exact_ancestor_reads_committed_bytes_not_current_file(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, first = create_source_repo(repo)
+            source.write_text("openapi: 3.1.1\npaths: {}\n", encoding="utf-8")
+            git(repo, "add", "api/openapi.yaml")
+            git(repo, "commit", "-m", "newer fixture")
+            git(repo, "update-ref", "refs/remotes/origin/main", head(repo))
+
+            source_bytes, metadata = sync.committed_source(source, source_commit=first)
+            self.assertEqual(source_bytes, b"openapi: 3.1.0\npaths: {}\n")
+            self.assertEqual(metadata["source_commit"], first)
+
+    def test_ambiguous_commit_and_wrong_origin_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, _ = create_source_repo(repo)
+            with self.assertRaisesRegex(ValueError, "source commit must be HEAD or 40"):
+                sync.committed_source(source, source_commit="main~1")
+            git(repo, "remote", "set-url", "origin", "https://github.com/example/wrong.git")
+            with self.assertRaisesRegex(ValueError, "source origin .* does not match"):
+                sync.committed_source(source)
+
+    def test_symlink_source_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, _ = create_source_repo(repo)
+            alias = repo / "api" / "alias.yaml"
+            alias.symlink_to("openapi.yaml")
+            git(repo, "add", "api/alias.yaml")
+            git(repo, "commit", "-m", "symlink fixture")
+            git(repo, "update-ref", "refs/remotes/origin/main", head(repo))
+            with self.assertRaisesRegex(ValueError, "not a symlink"):
+                sync.committed_source(alias)
 
 
 if __name__ == "__main__":

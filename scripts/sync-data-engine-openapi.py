@@ -10,6 +10,10 @@ Usage:
   python3 scripts/sync-data-engine-openapi.py
   python3 scripts/sync-data-engine-openapi.py --check
   python3 scripts/sync-data-engine-openapi.py --source /path/to/openapi.yaml
+  python3 scripts/sync-data-engine-openapi.py --check \
+    --source /path/to/openapi.yaml \
+    --source-repo tempera-dev/data-engine --source-branch main \
+    --source-commit 0123456789abcdef0123456789abcdef01234567
 
 The default source is the sibling data-engine checkout.  CI validates the
 committed lock; integration jobs should additionally run ``--check`` with a
@@ -34,7 +38,12 @@ DEFAULT_SOURCE = ROOT.parent / "data-engine" / "api" / "openapi.yaml"
 METHOD_RE = re.compile(r"^    (get|post|put|patch|delete):\s*$")
 PATH_RE = re.compile(r"^  (/[^\s]*):\s*$")
 OPERATION_ID_RE = re.compile(r"^      operationId:\s*([^\s#]+)\s*$")
-GENERATOR_VERSION = "sync-data-engine-openapi.py@2"
+GENERATOR_VERSION = "sync-data-engine-openapi.py@3"
+DEFAULT_SOURCE_REPO = "tempera-dev/data-engine"
+DEFAULT_SOURCE_BRANCH = "main"
+SOURCE_REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+SOURCE_BRANCH_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
+SOURCE_COMMIT_RE = re.compile(r"^(?:HEAD|[0-9a-f]{40})$")
 
 
 def extract_operations_text(source_text: str, source_label: str) -> list[dict[str, str]]:
@@ -109,28 +118,61 @@ def run_git(repo: Path, *args: str) -> str:
     return result.stdout.strip()
 
 
-def canonical_repository(remote: str) -> str:
-    match = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?$", remote)
-    if not match:
-        raise ValueError(f"cannot derive canonical GitHub repository from {remote!r}")
-    return match.group(1)
+def canonical_repository(remote: str) -> str | None:
+    for pattern in (
+        r"git@github\.com:([^/]+/[^/]+?)(?:\.git)?",
+        r"ssh://git@github\.com/([^/]+/[^/]+?)(?:\.git)?/?",
+        r"https://github\.com/([^/]+/[^/]+?)(?:\.git)?/?",
+    ):
+        match = re.fullmatch(pattern, remote)
+        if match:
+            return match.group(1)
+    return None
 
 
-def committed_source(source: Path) -> tuple[bytes, dict[str, str]]:
+def committed_source(
+    source: Path,
+    *,
+    source_repo: str = DEFAULT_SOURCE_REPO,
+    source_branch: str = DEFAULT_SOURCE_BRANCH,
+    source_commit: str = "HEAD",
+) -> tuple[bytes, dict[str, str]]:
+    if not SOURCE_REPO_RE.fullmatch(source_repo):
+        raise ValueError("source repo must be an owner/name GitHub repository")
+    if (
+        not SOURCE_BRANCH_RE.fullmatch(source_branch)
+        or ".." in source_branch
+        or "//" in source_branch
+    ):
+        raise ValueError("source branch is unsafe")
+    if not SOURCE_COMMIT_RE.fullmatch(source_commit):
+        raise ValueError("source commit must be HEAD or 40 lowercase hexadecimal characters")
+    source = source.absolute()
+    if source.is_symlink():
+        raise ValueError(f"source must be a regular file, not a symlink: {source}")
     source = source.resolve()
-    repo = Path(run_git(source.parent, "rev-parse", "--show-toplevel"))
+    repo = Path(run_git(source.parent, "rev-parse", "--show-toplevel")).resolve()
     try:
         source_path = source.relative_to(repo).as_posix()
     except ValueError as error:
         raise ValueError(f"source {source} is outside Git repository {repo}") from error
+    current = repo
+    for part in Path(source_path).parts:
+        current /= part
+        if current.is_symlink():
+            raise ValueError(f"source must be a regular file, not a symlink: {source_path}")
+    if not source.is_file():
+        raise ValueError(f"source must be a regular file: {source_path}")
     dirty = run_git(repo, "status", "--porcelain")
     if dirty:
         raise ValueError(f"source repository is dirty; refusing provenance from {repo}")
-    commit = run_git(repo, "rev-parse", "HEAD")
+    origin = canonical_repository(run_git(repo, "remote", "get-url", "origin"))
+    if origin != source_repo:
+        raise ValueError(f"source origin {origin!r} does not match {source_repo!r}")
+    commit = run_git(repo, "rev-parse", f"{source_commit}^{{commit}}")
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError(f"source commit is not a 40-character SHA: {commit!r}")
-    branch = run_git(repo, "symbolic-ref", "--quiet", "--short", "HEAD")
-    remote_ref = f"refs/remotes/origin/{branch}"
+    remote_ref = f"refs/remotes/origin/{source_branch}"
     remote_commit = run_git(repo, "rev-parse", "--verify", remote_ref)
     reachable = subprocess.run(
         ["git", "-C", str(repo), "merge-base", "--is-ancestor", commit, remote_commit],
@@ -139,10 +181,31 @@ def committed_source(source: Path) -> tuple[bytes, dict[str, str]]:
     )
     if reachable.returncode != 0:
         raise ValueError(
-            f"source commit {commit} is not reachable from origin/{branch}; "
+            f"source commit {commit} is not reachable from origin/{source_branch}; "
             "push the source commit before generating provenance"
         )
-    blob = run_git(repo, "rev-parse", f"{commit}:{source_path}")
+    tree = subprocess.run(
+        ["git", "-C", str(repo), "ls-tree", "-z", commit, "--", source_path],
+        capture_output=True,
+        check=False,
+    )
+    if tree.returncode != 0:
+        raise ValueError(
+            f"git ls-tree {commit} -- {source_path} failed: "
+            + tree.stderr.decode("utf-8", errors="replace").strip()
+        )
+    entries = [entry for entry in tree.stdout.split(b"\0") if entry]
+    if len(entries) != 1 or b"\t" not in entries[0]:
+        raise ValueError(f"source path does not resolve to one Git entry: {source_path}")
+    tree_metadata, recorded_path = entries[0].split(b"\t", 1)
+    mode, object_type, blob = tree_metadata.decode().split()
+    if (
+        recorded_path.decode() != source_path
+        or object_type != "blob"
+        or mode not in {"100644", "100755"}
+        or not re.fullmatch(r"[0-9a-f]{40}", blob)
+    ):
+        raise ValueError(f"source is not a regular Git file: {source_path}")
     result = subprocess.run(
         ["git", "-C", str(repo), "show", f"{commit}:{source_path}"],
         capture_output=True,
@@ -154,8 +217,8 @@ def committed_source(source: Path) -> tuple[bytes, dict[str, str]]:
             + result.stderr.decode("utf-8", errors="replace").strip()
         )
     metadata = {
-        "source_repo": canonical_repository(run_git(repo, "remote", "get-url", "origin")),
-        "source_branch": branch,
+        "source_repo": source_repo,
+        "source_branch": source_branch,
         "source_commit": commit,
         "source_path": source_path,
         "source_blob_sha": blob,
@@ -215,8 +278,11 @@ def main() -> int:
         type=Path,
         default=Path(os.environ.get("TEMPERA_DATA_ENGINE_OPENAPI", DEFAULT_SOURCE)),
     )
+    parser.add_argument("--source-repo", default=DEFAULT_SOURCE_REPO)
+    parser.add_argument("--source-branch", default=DEFAULT_SOURCE_BRANCH)
+    parser.add_argument("--source-commit", default="HEAD")
     args = parser.parse_args()
-    if not args.source.is_file():
+    if args.source.is_symlink() or not args.source.is_file():
         print(
             f"data-engine OpenAPI source not found: {args.source}; "
             "set TEMPERA_DATA_ENGINE_OPENAPI or pass --source",
@@ -224,7 +290,12 @@ def main() -> int:
         )
         return 2
     try:
-        source_bytes, source_metadata = committed_source(args.source)
+        source_bytes, source_metadata = committed_source(
+            args.source,
+            source_repo=args.source_repo,
+            source_branch=args.source_branch,
+            source_commit=args.source_commit,
+        )
         source_text = source_bytes.decode("utf-8")
         operations = extract_operations_text(
             source_text,

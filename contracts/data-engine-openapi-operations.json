@@ -6,7 +6,7 @@
   "source_path": "api/openapi.yaml",
   "source_blob_sha": "9373363905a042ccb6b45927bb307adef35346ca",
   "source_sha256": "4d9e6528f6a95601f67b693ad5da903c79cdfdb3bdd21bf233c1d304a8a9270f",
-  "generated_with": "sync-data-engine-openapi.py@2",
+  "generated_with": "sync-data-engine-openapi.py@3",
   "generated_sha256": "a144154cb431c79318cf838cc559d59cc17f24b0e47d255d950ff7fa3a632d55",
   "operations": [
     {

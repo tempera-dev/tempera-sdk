@@ -33,7 +33,17 @@ Data Engine is additionally pinned in
 `contracts/data-engine-openapi-operations.json`. Its sync tool rejects a dirty
 producer checkout, reads the contract with `git show <commit>:<path>`, records
 repo/branch/40-character commit/path/Git blob/content SHA-256/generator/output
-digest provenance, and checks both phantom and missing SDK operations.
+digest provenance, and checks both phantom and missing SDK operations. Pass the
+producer repository, remote branch, and exact commit explicitly; the producer
+checkout may be detached at that commit, and ambiguous revision expressions are
+rejected.
+
+```sh
+python3 scripts/sync-data-engine-openapi.py --check \
+  --source ../data-engine/api/openapi.yaml \
+  --source-repo tempera-dev/data-engine --source-branch main \
+  --source-commit <40-character-producer-commit>
+```
 
 ## When a product endpoint changes
 
