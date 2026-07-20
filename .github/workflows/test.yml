@@ -6,6 +6,72 @@ on:
     branches: [main]
 
 jobs:
+  data-engine-exact-source:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Data Engine source lock
+        id: data-engine-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("contracts/data-engine-openapi-operations.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          expected = {
+              "source_repo": "tempera-dev/data-engine",
+              "source_branch": "main",
+              "source_path": "api/openapi.yaml",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+                  )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: data-engine
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/data-engine
+          ref: ${{ steps.data-engine-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .data-engine-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - name: Verify exact committed Data Engine source
+        run: |
+          python3 scripts/sync-data-engine-openapi.py \
+            --check \
+            --source .data-engine-source/api/openapi.yaml \
+            --source-repo tempera-dev/data-engine \
+            --source-branch main \
+            --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+
   sdk:
     runs-on: ubuntu-latest
     steps:
