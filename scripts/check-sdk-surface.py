@@ -108,6 +108,18 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
             "data-engine OpenAPI operation lock lacks provenance: "
             + ", ".join(missing_provenance)
         )
+    expected_lock_values = {
+        "schema_version": 2,
+        "source_repo": "tempera-dev/data-engine",
+        "source_branch": "main",
+        "source_path": "api/openapi.yaml",
+        "generated_with": "sync-data-engine-openapi.py@3",
+    }
+    for key, expected in expected_lock_values.items():
+        if lock.get(key) != expected:
+            failures.append(
+                f"data-engine OpenAPI operation lock {key} {lock.get(key)!r} != {expected!r}"
+            )
     if not re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))):
         failures.append("data-engine OpenAPI operation lock source_commit is not a 40-character SHA")
     if not re.fullmatch(r"[0-9a-f]{40,64}", str(lock.get("source_blob_sha", ""))):

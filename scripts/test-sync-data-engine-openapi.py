@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import tempfile
 import unittest
@@ -15,6 +16,12 @@ SPEC = importlib.util.spec_from_file_location("sync_data_engine_openapi", SCRIPT
 assert SPEC and SPEC.loader
 sync = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(sync)
+
+CHECK_SCRIPT = Path(__file__).with_name("check-sdk-surface.py")
+CHECK_SPEC = importlib.util.spec_from_file_location("check_sdk_surface", CHECK_SCRIPT)
+assert CHECK_SPEC and CHECK_SPEC.loader
+check_surface = importlib.util.module_from_spec(CHECK_SPEC)
+CHECK_SPEC.loader.exec_module(check_surface)
 
 
 def git(repo: Path, *args: str) -> None:
@@ -120,6 +127,25 @@ class SourceLockTest(unittest.TestCase):
             git(repo, "update-ref", "refs/remotes/origin/main", head(repo))
             with self.assertRaisesRegex(ValueError, "not a symlink"):
                 sync.committed_source(alias)
+
+    def test_local_gate_rejects_noncanonical_lock_metadata(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            lock_path = Path(directory) / "data-engine-lock.json"
+            lock = json.loads(sync.LOCK.read_text())
+            lock["source_repo"] = "example/wrong"
+            lock_path.write_text(json.dumps(lock), encoding="utf-8")
+            original = check_surface.DATA_ENGINE_OPERATION_LOCK
+            check_surface.DATA_ENGINE_OPERATION_LOCK = lock_path
+            try:
+                surface = json.loads((sync.ROOT / "surface.json").read_text())
+                failures = check_surface.validate_data_engine_openapi_bindings(surface)
+            finally:
+                check_surface.DATA_ENGINE_OPERATION_LOCK = original
+            self.assertIn(
+                "data-engine OpenAPI operation lock source_repo 'example/wrong' != "
+                "'tempera-dev/data-engine'",
+                failures,
+            )
 
 
 if __name__ == "__main__":
