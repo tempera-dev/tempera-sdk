@@ -132,6 +132,19 @@ class DispatchTest(unittest.TestCase):
             {"tenant_id": "t1", "project_id": "p1", "kind": "fact", "text": "hello"},
         )
 
+    def test_json_request_bodies_use_the_compact_wire_shape(self):
+        client, transport = make_client()
+        client.cradle.execute({"lane": "wasm", "source": {"kind": "wasm_wat", "text": "fixture-雪-🙂"}})
+        self.assertEqual(
+            transport.calls[0]["data"],
+            '{"lane":"wasm","source":{"kind":"wasm_wat","text":"fixture-雪-🙂"}}'.encode(),
+        )
+
+    def test_json_request_bodies_preserve_unpaired_surrogates_as_escapes(self):
+        client, transport = make_client()
+        client.cradle.execute({"text": f"{chr(0xD800)}{chr(0xDC00)}"})
+        self.assertEqual(transport.calls[0]["data"], b'{"text":"\\ud800\\udc00"}')
+
     def test_undeclared_parameters_pass_through_for_forward_compatibility(self):
         client, transport = make_client()
         client.tempo.list_sessions({"future_filter": "x"})
