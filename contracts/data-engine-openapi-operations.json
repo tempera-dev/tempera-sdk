@@ -1,95 +1,289 @@
 {
-  "schemaVersion": 1,
-  "source": "data-engine/api/openapi.yaml",
-  "sourceSha256": "54146be92a44a02118a41eaebea9e55e83aab7d6a3109ed374b69392c47a4146",
+  "schema_version": 2,
+  "source_repo": "tempera-dev/data-engine",
+  "source_branch": "main",
+  "source_commit": "639c151012747e376938d1cfea71f7b2011b9116",
+  "source_path": "api/openapi.yaml",
+  "source_blob_sha": "9373363905a042ccb6b45927bb307adef35346ca",
+  "source_sha256": "4d9e6528f6a95601f67b693ad5da903c79cdfdb3bdd21bf233c1d304a8a9270f",
+  "generated_with": "sync-data-engine-openapi.py@2",
+  "generated_sha256": "a144154cb431c79318cf838cc559d59cc17f24b0e47d255d950ff7fa3a632d55",
   "operations": [
-    {"sdkOperationId":"health","operationId":"health.get","method":"GET","path":"/v1/health"},
-    {"sdkOperationId":"listDomainPacks","operationId":"projects.domainPacks.list","method":"GET","path":"/v1/{parent}/domain-packs"},
-    {"sdkOperationId":"getDomainPack","operationId":"projects.domainPacks.get","method":"GET","path":"/v1/{parent}/domain-packs/{packId}"},
-    {"sdkOperationId":"listDomains","operationId":"projects.domains.list","method":"GET","path":"/v1/{parent}/domains"},
-    {"sdkOperationId":"getDomain","operationId":"projects.domains.get","method":"GET","path":"/v1/{parent}/domains/{domainId}"},
-    {"sdkOperationId":"enableDomain","operationId":"projects.domains.enable","method":"POST","path":"/v1/{parent}/domains/{domainId}:enable"},
-    {"sdkOperationId":"generateDomain","operationId":"projects.domains.generate","method":"POST","path":"/v1/{parent}/domains/{domainId}:generate"},
-    {"sdkOperationId":"listEnvironments","operationId":"projects.environments.list","method":"GET","path":"/v1/{parent}/environments"},
-    {"sdkOperationId":"getEnvironment","operationId":"projects.environments.get","method":"GET","path":"/v1/{parent}/environments/{environmentId}"},
-    {"sdkOperationId":"getOperation","operationId":"projects.operations.get","method":"GET","path":"/v1/{parent}/operations/{operationId}"},
-    {"sdkOperationId":"cancelOperation","operationId":"projects.operations.cancel","method":"POST","path":"/v1/{parent}/operations/{operationId}:cancel"},
-    {"sdkOperationId":"deleteOperation","operationId":"projects.operations.delete","method":"DELETE","path":"/v1/{parent}/operations/{operationId}"},
-    {"sdkOperationId":"createConnector","operationId":"projects.connectors.create","method":"POST","path":"/v1/{parent}/connectors"},
-    {"sdkOperationId":"listConnectors","operationId":"projects.connectors.list","method":"GET","path":"/v1/{parent}/connectors"},
-    {"sdkOperationId":"getConnector","operationId":"projects.connectors.get","method":"GET","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"patchConnector","operationId":"projects.connectors.patch","method":"PATCH","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"deleteConnector","operationId":"projects.connectors.delete","method":"DELETE","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"syncConnector","operationId":"projects.connectors.sync","method":"POST","path":"/v1/{parent}/connectors/{connectorId}:sync"},
-    {"sdkOperationId":"createRepository","operationId":"projects.repositories.create","method":"POST","path":"/v1/{parent}/repositories"},
-    {"sdkOperationId":"listRepositories","operationId":"projects.repositories.list","method":"GET","path":"/v1/{parent}/repositories"},
-    {"sdkOperationId":"getRepository","operationId":"projects.repositories.get","method":"GET","path":"/v1/{parent}/repositories/{repositoryId}"},
-    {"sdkOperationId":"patchRepository","operationId":"projects.repositories.patch","method":"PATCH","path":"/v1/{parent}/repositories/{repositoryId}"},
-    {"sdkOperationId":"syncRepository","operationId":"projects.repositories.sync","method":"POST","path":"/v1/{parent}/repositories/{repositoryId}:sync"},
-    {"sdkOperationId":"generateRepositoryTasks","operationId":"projects.repositories.generateTasks","method":"POST","path":"/v1/{parent}/repositories/{repositoryId}:generate-tasks"},
-    {"sdkOperationId":"createTaskSet","operationId":"projects.taskSets.create","method":"POST","path":"/v1/{parent}/task-sets"},
-    {"sdkOperationId":"listTaskSets","operationId":"projects.taskSets.list","method":"GET","path":"/v1/{parent}/task-sets"},
-    {"sdkOperationId":"getTaskSet","operationId":"projects.taskSets.get","method":"GET","path":"/v1/{parent}/task-sets/{taskSetId}"},
-    {"sdkOperationId":"listTaskSetTasks","operationId":"projects.taskSets.tasks.list","method":"GET","path":"/v1/{parent}/task-sets/{taskSetId}/tasks"},
-    {"sdkOperationId":"publishTaskSet","operationId":"projects.taskSets.publish","method":"POST","path":"/v1/{parent}/task-sets/{taskSetId}:publish"},
-    {"sdkOperationId":"listUseCases","operationId":"projects.useCases.list","method":"GET","path":"/v1/{parent}/use-cases"},
-    {"sdkOperationId":"getUseCase","operationId":"projects.useCases.get","method":"GET","path":"/v1/{parent}/use-cases/{useCaseId}"},
-    {"sdkOperationId":"ingestArtifact","operationId":"projects.artifacts.ingest","method":"POST","path":"/v1/{parent}/artifacts:ingest"},
-    {"sdkOperationId":"ingestWeb","operationId":"projects.web.ingest","method":"POST","path":"/v1/{parent}/web:ingest"},
-    {"sdkOperationId":"runUseCase","operationId":"projects.pipelines.runUseCase","method":"POST","path":"/v1/{parent}/pipelines:run-use-case"},
-    {"sdkOperationId":"createCampaign","operationId":"projects.campaigns.create","method":"POST","path":"/v1/{parent}/campaigns"},
-    {"sdkOperationId":"listCampaigns","operationId":"projects.campaigns.list","method":"GET","path":"/v1/{parent}/campaigns"},
-    {"sdkOperationId":"listArtifacts","operationId":"projects.artifacts.list","method":"GET","path":"/v1/{parent}/artifacts"},
-    {"sdkOperationId":"getArtifact","operationId":"projects.artifacts.get","method":"GET","path":"/v1/{parent}/artifacts/{artifactId}"},
-    {"sdkOperationId":"listArtifactLabels","operationId":"projects.artifacts.labels.list","method":"GET","path":"/v1/{parent}/artifacts/{artifactId}/labels"},
-    {"sdkOperationId":"createJob","operationId":"projects.jobs.create","method":"POST","path":"/v1/{parent}/jobs"},
-    {"sdkOperationId":"getJob","operationId":"projects.jobs.get","method":"GET","path":"/v1/{parent}/jobs/{jobId}"},
-    {"sdkOperationId":"getJobResults","operationId":"projects.jobs.results.list","method":"GET","path":"/v1/{parent}/jobs/{jobId}/results"},
-    {"sdkOperationId":"listExpertTasks","operationId":"projects.expertTasks.list","method":"GET","path":"/v1/{parent}/expert-tasks"},
-    {"sdkOperationId":"getMetrics","operationId":"projects.metrics.get","method":"GET","path":"/v1/{parent}/metrics"},
-    {"sdkOperationId":"getEcosystemReadiness","operationId":"projects.ecosystem.readiness.get","method":"GET","path":"/v1/{parent}/ecosystem/readiness"},
-    {"sdkOperationId":"emitEval","operationId":"projects.products.emitEval","method":"POST","path":"/v1/{parent}/products:emit-eval"},
-    {"sdkOperationId":"deriveBundle","operationId":"projects.products.derive","method":"POST","path":"/v1/{parent}/products/{productId}:derive"},
-    {"sdkOperationId":"getProduct","operationId":"projects.products.get","method":"GET","path":"/v1/{parent}/products/{productId}"},
-    {"sdkOperationId":"runEnvironment","operationId":"projects.environments.run","method":"POST","path":"/v1/{parent}/environments/{environmentId}:run"},
-    {"sdkOperationId":"patchArtifact","operationId":"projects.artifacts.patch","method":"PATCH","path":"/v1/{parent}/artifacts/{artifactId}"},
-    {"sdkOperationId":"archiveArtifact","operationId":"projects.artifacts.archive","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:archive"},
-    {"sdkOperationId":"purgeArtifact","operationId":"projects.artifacts.purge","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:purge"},
-    {"sdkOperationId":"expireArtifactRetention","operationId":"projects.artifacts.expireRetention","method":"POST","path":"/v1/{parent}/artifacts:expire-retention"},
-    {"sdkOperationId":"listJobs","operationId":"projects.jobs.list","method":"GET","path":"/v1/{parent}/jobs"},
-    {"sdkOperationId":"cancelJob","operationId":"projects.jobs.cancel","method":"POST","path":"/v1/{parent}/jobs/{jobId}:cancel"},
-    {"sdkOperationId":"createLabel","operationId":"projects.labels.create","method":"POST","path":"/v1/{parent}/labels"},
-    {"sdkOperationId":"listLabels","operationId":"projects.labels.list","method":"GET","path":"/v1/{parent}/labels"},
-    {"sdkOperationId":"getLabel","operationId":"projects.labels.get","method":"GET","path":"/v1/{parent}/labels/{labelId}"},
-    {"sdkOperationId":"patchLabel","operationId":"projects.labels.patch","method":"PATCH","path":"/v1/{parent}/labels/{labelId}"},
-    {"sdkOperationId":"createVerifier","operationId":"projects.verifiers.create","method":"POST","path":"/v1/{parent}/verifiers"},
-    {"sdkOperationId":"listVerifiers","operationId":"projects.verifiers.list","method":"GET","path":"/v1/{parent}/verifiers"},
-    {"sdkOperationId":"getVerifier","operationId":"projects.verifiers.get","method":"GET","path":"/v1/{parent}/verifiers/{verifierId}"},
-    {"sdkOperationId":"patchVerifier","operationId":"projects.verifiers.patch","method":"PATCH","path":"/v1/{parent}/verifiers/{verifierId}"},
-    {"sdkOperationId":"runVerifier","operationId":"projects.verifiers.run","method":"POST","path":"/v1/{parent}/verifiers/{verifierId}:run"},
-    {"sdkOperationId":"createEval","operationId":"projects.evals.create","method":"POST","path":"/v1/{parent}/evals"},
-    {"sdkOperationId":"listEvals","operationId":"projects.evals.list","method":"GET","path":"/v1/{parent}/evals"},
-    {"sdkOperationId":"getEval","operationId":"projects.evals.get","method":"GET","path":"/v1/{parent}/evals/{evalId}"},
-    {"sdkOperationId":"runEval","operationId":"projects.evals.run","method":"POST","path":"/v1/{parent}/evals/{evalId}:run"},
-    {"sdkOperationId":"listRuns","operationId":"projects.runs.list","method":"GET","path":"/v1/{parent}/runs"},
-    {"sdkOperationId":"getRun","operationId":"projects.runs.get","method":"GET","path":"/v1/{parent}/runs/{runId}"},
-    {"sdkOperationId":"listProducts","operationId":"projects.products.list","method":"GET","path":"/v1/{parent}/products"},
-    {"sdkOperationId":"emitProduct","operationId":"projects.products.emit","method":"POST","path":"/v1/{parent}/products:emit"},
-    {"sdkOperationId":"emitRlvr","operationId":"projects.products.emitRlvr","method":"POST","path":"/v1/{parent}/products:emit-rlvr"},
-    {"sdkOperationId":"emitPreference","operationId":"projects.products.emitPreference","method":"POST","path":"/v1/{parent}/products:emit-preference"},
-    {"sdkOperationId":"emitSft","operationId":"projects.products.emitSft","method":"POST","path":"/v1/{parent}/products:emit-sft"},
-    {"sdkOperationId":"transitionCampaign","operationId":"projects.campaigns.transition","method":"POST","path":"/v1/{parent}/campaigns/{campaignId}:transition"},
-    {"sdkOperationId":"resolveExpertTask","operationId":"projects.expertTasks.resolve","method":"POST","path":"/v1/{parent}/expert-tasks/{expertTaskId}:resolve"},
-    {"sdkOperationId":"getLabelQuality","operationId":"projects.labelQuality.get","method":"GET","path":"/v1/{parent}/label-quality"},
-    {"sdkOperationId":"profileDataset","operationId":"projects.datasets.profile","method":"POST","path":"/v1/{parent}/datasets:profile"},
-    {"sdkOperationId":"validateProduct","operationId":"projects.products.validate","method":"POST","path":"/v1/{parent}/products/{productId}:validate"},
-    {"sdkOperationId":"checkProductLeakage","operationId":"projects.products.checkLeakage","method":"POST","path":"/v1/{parent}/products:check-leakage"},
-    {"sdkOperationId":"getProductManifest","operationId":"projects.products.manifest.get","method":"GET","path":"/v1/{parent}/products/{productId}/manifest"},
-    {"sdkOperationId":"extractSource","operationId":"projects.sources.extract","method":"POST","path":"/v1/{parent}/sources:extract"},
-    {"sdkOperationId":"createTool","operationId":"projects.tools.create","method":"POST","path":"/v1/{parent}/tools"},
-    {"sdkOperationId":"listTools","operationId":"projects.tools.list","method":"GET","path":"/v1/{parent}/tools"},
-    {"sdkOperationId":"getTool","operationId":"projects.tools.get","method":"GET","path":"/v1/{parent}/tools/{toolName}"},
-    {"sdkOperationId":"deleteTool","operationId":"projects.tools.delete","method":"DELETE","path":"/v1/{parent}/tools/{toolName}"},
-    {"sdkOperationId":"invokeTool","operationId":"projects.tools.invoke","method":"POST","path":"/v1/{parent}/tools/{toolName}:invoke"}
+    {
+      "sdkOperationId": "health",
+      "operationId": "health.get",
+      "method": "GET",
+      "path": "/v1/health"
+    },
+    {
+      "sdkOperationId": "admitTrainingRelease",
+      "operationId": "projects.trainingReleases.admit",
+      "method": "POST",
+      "path": "/v1/{parent}/training-releases:admit"
+    },
+    {
+      "sdkOperationId": "getTrainingRelease",
+      "operationId": "projects.trainingReleases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/training-releases/{releaseId}"
+    },
+    {
+      "sdkOperationId": "createEvidenceRecord",
+      "operationId": "projects.evidenceRecords.create",
+      "method": "POST",
+      "path": "/v1/{parent}/evidenceRecords"
+    },
+    {
+      "sdkOperationId": "listEvidenceRecords",
+      "operationId": "projects.evidenceRecords.list",
+      "method": "GET",
+      "path": "/v1/{parent}/evidenceRecords"
+    },
+    {
+      "sdkOperationId": "getEvidenceRecord",
+      "operationId": "projects.evidenceRecords.get",
+      "method": "GET",
+      "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}"
+    },
+    {
+      "sdkOperationId": "createEpisode",
+      "operationId": "projects.episodes.create",
+      "method": "POST",
+      "path": "/v1/{parent}/episodes"
+    },
+    {
+      "sdkOperationId": "listEpisodes",
+      "operationId": "projects.episodes.list",
+      "method": "GET",
+      "path": "/v1/{parent}/episodes"
+    },
+    {
+      "sdkOperationId": "getEpisode",
+      "operationId": "projects.episodes.get",
+      "method": "GET",
+      "path": "/v1/{parent}/episodes/{episodeId}"
+    },
+    {
+      "sdkOperationId": "queryResearchRetrieval",
+      "operationId": "query_research_retrieval",
+      "method": "POST",
+      "path": "/v1/{parent}/researchRetrieval:query"
+    },
+    {
+      "sdkOperationId": "createResearchCatalogEntry",
+      "operationId": "projects.researchCatalogEntries.create",
+      "method": "POST",
+      "path": "/v1/{parent}/researchCatalogEntries"
+    },
+    {
+      "sdkOperationId": "listResearchCatalogEntries",
+      "operationId": "projects.researchCatalogEntries.list",
+      "method": "GET",
+      "path": "/v1/{parent}/researchCatalogEntries"
+    },
+    {
+      "sdkOperationId": "getResearchCatalogEntry",
+      "operationId": "projects.researchCatalogEntries.get",
+      "method": "GET",
+      "path": "/v1/{parent}/researchCatalogEntries/{entryId}"
+    },
+    {
+      "sdkOperationId": "listConnectors",
+      "operationId": "projects.connectors.list",
+      "method": "GET",
+      "path": "/v1/{parent}/connectors"
+    },
+    {
+      "sdkOperationId": "listUseCases",
+      "operationId": "projects.useCases.list",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases"
+    },
+    {
+      "sdkOperationId": "getUseCase",
+      "operationId": "projects.useCases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases/{useCaseId}"
+    },
+    {
+      "sdkOperationId": "ingestArtifact",
+      "operationId": "projects.artifacts.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/artifacts:ingest"
+    },
+    {
+      "sdkOperationId": "ingestWeb",
+      "operationId": "projects.web.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/web:ingest"
+    },
+    {
+      "sdkOperationId": "runUseCase",
+      "operationId": "projects.pipelines.runUseCase",
+      "method": "POST",
+      "path": "/v1/{parent}/pipelines:run-use-case"
+    },
+    {
+      "sdkOperationId": "createCampaign",
+      "operationId": "projects.campaigns.create",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns"
+    },
+    {
+      "sdkOperationId": "listCampaigns",
+      "operationId": "projects.campaigns.list",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns"
+    },
+    {
+      "sdkOperationId": "transitionCampaign",
+      "operationId": "projects.campaigns.transition",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns/{campaign_id}:transition"
+    },
+    {
+      "sdkOperationId": "listArtifacts",
+      "operationId": "projects.artifacts.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts"
+    },
+    {
+      "sdkOperationId": "getArtifact",
+      "operationId": "projects.artifacts.get",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}"
+    },
+    {
+      "sdkOperationId": "listArtifactLabels",
+      "operationId": "projects.artifacts.labels.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}/labels"
+    },
+    {
+      "sdkOperationId": "profileDataset",
+      "operationId": "projects.datasets.profile",
+      "method": "POST",
+      "path": "/v1/{parent}/datasets:profile"
+    },
+    {
+      "sdkOperationId": "createJob",
+      "operationId": "projects.jobs.create",
+      "method": "POST",
+      "path": "/v1/{parent}/jobs"
+    },
+    {
+      "sdkOperationId": "getJob",
+      "operationId": "projects.jobs.get",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}"
+    },
+    {
+      "sdkOperationId": "getJobResults",
+      "operationId": "projects.jobs.results.list",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}/results"
+    },
+    {
+      "sdkOperationId": "listExpertTasks",
+      "operationId": "projects.expertTasks.list",
+      "method": "GET",
+      "path": "/v1/{parent}/expert-tasks"
+    },
+    {
+      "sdkOperationId": "resolveExpertTask",
+      "operationId": "projects.expertTasks.resolve",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve"
+    },
+    {
+      "sdkOperationId": "getMetrics",
+      "operationId": "projects.metrics.get",
+      "method": "GET",
+      "path": "/v1/{parent}/metrics"
+    },
+    {
+      "sdkOperationId": "getLabelQuality",
+      "operationId": "projects.labelQuality.get",
+      "method": "GET",
+      "path": "/v1/{parent}/label-quality"
+    },
+    {
+      "sdkOperationId": "getEcosystemReadiness",
+      "operationId": "projects.ecosystem.readiness.get",
+      "method": "GET",
+      "path": "/v1/{parent}/ecosystem/readiness"
+    },
+    {
+      "sdkOperationId": "emitEval",
+      "operationId": "projects.products.emitEval",
+      "method": "POST",
+      "path": "/v1/{parent}/products:emit-eval"
+    },
+    {
+      "sdkOperationId": "deriveBundle",
+      "operationId": "projects.products.derive",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:derive"
+    },
+    {
+      "sdkOperationId": "getProduct",
+      "operationId": "projects.products.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}"
+    },
+    {
+      "sdkOperationId": "validateProduct",
+      "operationId": "projects.products.validate",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:validate"
+    },
+    {
+      "sdkOperationId": "checkProductLeakage",
+      "operationId": "projects.products.checkLeakage",
+      "method": "POST",
+      "path": "/v1/{parent}/products:check-leakage"
+    },
+    {
+      "sdkOperationId": "getProductManifest",
+      "operationId": "projects.products.manifest.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}/manifest"
+    },
+    {
+      "sdkOperationId": "extractSource",
+      "operationId": "projects.sources.extract",
+      "method": "POST",
+      "path": "/v1/{parent}/sources:extract"
+    },
+    {
+      "sdkOperationId": "createTool",
+      "operationId": "projects.tools.create",
+      "method": "POST",
+      "path": "/v1/{parent}/tools"
+    },
+    {
+      "sdkOperationId": "listTools",
+      "operationId": "projects.tools.list",
+      "method": "GET",
+      "path": "/v1/{parent}/tools"
+    },
+    {
+      "sdkOperationId": "getTool",
+      "operationId": "projects.tools.get",
+      "method": "GET",
+      "path": "/v1/{parent}/tools/{toolName}"
+    },
+    {
+      "sdkOperationId": "deleteTool",
+      "operationId": "projects.tools.delete",
+      "method": "DELETE",
+      "path": "/v1/{parent}/tools/{toolName}"
+    },
+    {
+      "sdkOperationId": "invokeTool",
+      "operationId": "projects.tools.invoke",
+      "method": "POST",
+      "path": "/v1/{parent}/tools/{toolName}:invoke"
+    }
   ]
 }

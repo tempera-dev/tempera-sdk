@@ -26,6 +26,7 @@ loops over the generated tables; `npm test` at the repo root runs all of it.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import subprocess
@@ -73,12 +74,10 @@ def package_versions() -> dict[str, str]:
     return versions
 
 
-def canonical_sdk_path(path: str) -> str:
-    """Translate SDK snake_case project paths to data-engine AIP templates."""
-    path = path.replace("/v1/projects/{project_id}", "/v1/{parent}")
-    return re.sub(r"\{([a-z0-9_]+)\}", lambda match: "{" + re.sub(
-        r"_([a-z0-9])", lambda part: part.group(1).upper(), match.group(1)
-    ) + "}", path)
+def route_identity(method: str, path: str) -> tuple[str, str]:
+    """Match route templates structurally, independent of parameter spelling."""
+    path = re.sub(r"^/v1/projects/\{[^}]+\}", "/v1/{parent}", path)
+    return method, re.sub(r"\{[^}]+\}", "{}", path)
 
 
 def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
@@ -93,7 +92,38 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
     if len(indexed) != len(operations):
         return ["data-engine OpenAPI operation lock has duplicate SDK operation IDs"]
     failures: list[str] = []
-    for operation in surface.get("operations", {}).get("dataEngine", []):
+    required_provenance = {
+        "source_repo",
+        "source_branch",
+        "source_commit",
+        "source_path",
+        "source_blob_sha",
+        "source_sha256",
+        "generated_with",
+        "generated_sha256",
+    }
+    missing_provenance = sorted(required_provenance - set(lock))
+    if missing_provenance:
+        failures.append(
+            "data-engine OpenAPI operation lock lacks provenance: "
+            + ", ".join(missing_provenance)
+        )
+    if not re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))):
+        failures.append("data-engine OpenAPI operation lock source_commit is not a 40-character SHA")
+    for digest_key in ("source_sha256", "generated_sha256"):
+        if not re.fullmatch(r"[0-9a-f]{64}", str(lock.get(digest_key, ""))):
+            failures.append(f"data-engine OpenAPI operation lock {digest_key} is not SHA-256")
+    generated_bytes = (
+        json.dumps(operations, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+    if lock.get("generated_sha256") != hashlib.sha256(generated_bytes).hexdigest():
+        failures.append("data-engine OpenAPI operation lock generated_sha256 does not match operations")
+    surface_operations = surface.get("operations", {}).get("dataEngine", [])
+    surface_ids = {operation.get("id") for operation in surface_operations}
+    lock_ids = set(indexed)
+    for missing in sorted(lock_ids - surface_ids):
+        failures.append(f"dataEngine.{missing}: lock operation is missing from SDK surface")
+    for operation in surface_operations:
         label = f"dataEngine.{operation.get('id', '?')}"
         authoritative = indexed.get(operation.get("id"))
         if authoritative is None:
@@ -101,7 +131,9 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
             continue
         if operation.get("method") != authoritative.get("method"):
             failures.append(f"{label}: method differs from {authoritative.get('operationId')}")
-        if canonical_sdk_path(operation.get("path", "")) != authoritative.get("path"):
+        if route_identity(operation.get("method", ""), operation.get("path", "")) != route_identity(
+            authoritative.get("method", ""), authoritative.get("path", "")
+        ):
             failures.append(f"{label}: path differs from {authoritative.get('operationId')}")
     return failures
 

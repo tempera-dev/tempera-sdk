@@ -179,10 +179,13 @@ the committed site is always current thanks to the drift gate).
   diff (surface tables and docs site), one version across the three packages,
   uniform-primitive markers, and data-engine operation/path/method parity.
 - `contracts/data-engine-openapi-operations.json` is a checked operation lock
-  generated from data-engine's authoritative OpenAPI. When both repositories
-  are checked out, refresh and verify it with
+  generated from data-engine's authoritative committed OpenAPI. Its provenance
+  includes the repository, branch, 40-character commit, path, Git blob,
+  content SHA-256, generator version, and generated-operation digest. The sync
+  rejects dirty producer checkouts and reads source bytes with `git show`.
+  When both repositories are checked out, refresh and verify it with
   `python3 scripts/sync-data-engine-openapi.py --check`; CI always verifies
-  that the committed lock covers every typed data-engine SDK operation.
+  bidirectional parity: no phantom SDK method and no omitted producer route.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - The endpoint-change rollout process is documented in

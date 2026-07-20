@@ -5,11 +5,11 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 2
+SURFACE_VERSION = 3
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'workflow:read', 'workflow:write', 'workflow:run', 'pii:unmask', 'cyber:research', 'clinical:run', 'model:read', 'model:invoke', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'model:read', 'model:invoke', 'pii:unmask', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
 
@@ -2255,120 +2255,254 @@ OPERATIONS = {
             "description": "Check data-engine liveness; returns the service status."
         },
         {
-            "id": "list_domain_packs",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/domain-packs",
+            "id": "admit_training_release",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/training-releases:admit",
             "auth": "product",
             "path_params": [
                 "project_id"
             ],
-            "query": [
-                "page_size",
-                "page_token"
-            ],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List installed versioned domain packs from data-engine's OpenAPI contract."
-        },
-        {
-            "id": "get_domain_pack",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/domain-packs/{pack_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "pack_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one installed versioned domain-pack manifest."
-        },
-        {
-            "id": "list_domains",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/domains",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [
-                "page_size",
-                "page_token"
-            ],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List immutable domain-pack bindings enabled for a project."
-        },
-        {
-            "id": "get_domain",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/domains/{domain_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "domain_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one project-enabled, digest-pinned domain binding."
-        },
-        {
-            "id": "enable_domain",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/domains/{domain_id}:enable",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "domain_id"
-            ],
             "query": [],
             "body": [
-                "profile"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers."
-        },
-        {
-            "id": "generate_domain",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/domains/{domain_id}:generate",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "domain_id"
-            ],
-            "query": [],
-            "body": [
-                "task_family",
-                "model_profile",
-                "artifact_names",
-                "seed",
-                "hard_budgets"
+                "training_product_id",
+                "heldout_product_id",
+                "idempotency_key"
             ],
             "required_body": [
-                "task_family",
-                "hard_budgets"
+                "training_product_id",
+                "heldout_product_id",
+                "idempotency_key"
+            ],
+            "body_defaults": {},
+            "scope": "training:publish",
+            "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints."
+        },
+        {
+            "id": "get_training_release",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/training-releases/{release_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "release_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "training:publish",
+            "description": "Revalidate and fetch one training release, including any durable stale state."
+        },
+        {
+            "id": "create_evidence_record",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/evidenceRecords",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "schema_version",
+                "domain",
+                "evidence_type",
+                "payload_schema",
+                "payload",
+                "source_artifact_refs",
+                "artifact_refs",
+                "verification_state",
+                "verifier_receipt_artifact_refs",
+                "quality_flags",
+                "provenance"
+            ],
+            "required_body": [
+                "schema_version",
+                "domain",
+                "evidence_type",
+                "payload_schema",
+                "payload",
+                "source_artifact_refs",
+                "verification_state"
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified."
+            "description": "Create an immutable shared evidence record by canonical content hash."
         },
         {
-            "id": "list_environments",
+            "id": "list_evidence_records",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/environments",
+            "path": "/v1/projects/{project_id}/evidenceRecords",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token",
+                "domain"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List immutable shared evidence records with bounded cursor pagination."
+        },
+        {
+            "id": "get_evidence_record",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/evidenceRecords/{evidence_record_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "evidence_record_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Fetch one immutable shared evidence record by its platform digest."
+        },
+        {
+            "id": "create_episode",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/episodes",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "schema_version",
+                "domain",
+                "context_evidence_ref",
+                "environment_ref",
+                "seed",
+                "observations",
+                "tool_calls",
+                "measured_outcomes",
+                "verifier_results",
+                "reward_components",
+                "terminal_reason",
+                "uncertainty",
+                "provenance",
+                "safety_events"
+            ],
+            "required_body": [
+                "schema_version",
+                "domain",
+                "context_evidence_ref",
+                "environment_ref",
+                "seed",
+                "observations",
+                "measured_outcomes",
+                "verifier_results",
+                "reward_components",
+                "terminal_reason"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Create an immutable shared episode by canonical content hash."
+        },
+        {
+            "id": "list_episodes",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/episodes",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "page_size",
+                "page_token",
+                "domain"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List immutable shared episodes with bounded cursor pagination."
+        },
+        {
+            "id": "get_episode",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/episodes/{episode_id}",
+            "auth": "product",
+            "path_params": [
+                "project_id",
+                "episode_id"
+            ],
+            "query": [],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Fetch one immutable shared episode by its platform digest."
+        },
+        {
+            "id": "query_research_retrieval",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/researchRetrieval:query",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "contractVersion",
+                "requestId",
+                "obligation",
+                "kinds",
+                "epistemicStatuses",
+                "checkerTrust",
+                "includeEquivalent",
+                "includeFailures",
+                "under",
+                "limit"
+            ],
+            "required_body": [
+                "contractVersion",
+                "requestId",
+                "obligation",
+                "limit"
+            ],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Retrieve deterministic candidates for one exact canonical typed research obligation."
+        },
+        {
+            "id": "create_research_catalog_entry",
+            "method": "POST",
+            "path": "/v1/projects/{project_id}/researchCatalogEntries",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [],
+            "body": [
+                "kind",
+                "version",
+                "obligationHash",
+                "capabilityRoute",
+                "provenance",
+                "tags",
+                "contentHash"
+            ],
+            "required_body": [
+                "kind",
+                "version",
+                "obligationHash",
+                "capabilityRoute",
+                "provenance"
+            ],
+            "body_defaults": {},
+            "scope": "dataset:write",
+            "description": "Create an immutable executable research catalog entry by canonical content hash."
+        },
+        {
+            "id": "list_research_catalog_entries",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/researchCatalogEntries",
             "auth": "product",
             "path_params": [
                 "project_id"
@@ -2380,92 +2514,24 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "List installed descriptor-only environment definitions without claiming their execution lane is available."
+            "scope": "dataset:read",
+            "description": "List immutable executable research catalog entries with bounded pagination."
         },
         {
-            "id": "get_environment",
+            "id": "get_research_catalog_entry",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/environments/{environment_id}",
+            "path": "/v1/projects/{project_id}/researchCatalogEntries/{entry_id}",
             "auth": "product",
             "path_params": [
                 "project_id",
-                "environment_id"
+                "entry_id"
             ],
             "query": [],
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Get one installed environment descriptor."
-        },
-        {
-            "id": "get_operation",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/operations/{operation_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "operation_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get an asynchronous data-engine operation and its current terminal state."
-        },
-        {
-            "id": "cancel_operation",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/operations/{operation_id}:cancel",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "operation_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers."
-        },
-        {
-            "id": "delete_operation",
-            "method": "DELETE",
-            "path": "/v1/projects/{project_id}/operations/{operation_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "operation_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Delete a completed data-engine operation; pass Idempotency-Key through operation headers."
-        },
-        {
-            "id": "create_connector",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/connectors",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [
-                "source",
-                "pack_id",
-                "mode",
-                "config"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Register an approved domain-pack source connector; pass Idempotency-Key through operation headers."
+            "scope": "dataset:read",
+            "description": "Fetch one immutable executable research catalog entry by content hash."
         },
         {
             "id": "list_connectors",
@@ -2482,288 +2548,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List registered source connectors for a project."
-        },
-        {
-            "id": "get_connector",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "connector_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get a source connector and its current ETag."
-        },
-        {
-            "id": "patch_connector",
-            "method": "PATCH",
-            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "connector_id"
-            ],
-            "query": [],
-            "body": [
-                "update_mask",
-                "mode",
-                "config"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers."
-        },
-        {
-            "id": "delete_connector",
-            "method": "DELETE",
-            "path": "/v1/projects/{project_id}/connectors/{connector_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "connector_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Delete a connector registration; pass If-Match and Idempotency-Key through operation headers."
-        },
-        {
-            "id": "sync_connector",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/connectors/{connector_id}:sync",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "connector_id"
-            ],
-            "query": [],
-            "body": [
-                "cursor",
-                "artifacts"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Start a bounded connector sync; pass Idempotency-Key through operation headers."
-        },
-        {
-            "id": "create_repository",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/repositories",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [
-                "provider",
-                "provider_repository_id",
-                "owner",
-                "repository",
-                "visibility",
-                "default_branch",
-                "connection_ref"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Register a GitHub repository reference; pass Idempotency-Key through operation headers."
-        },
-        {
-            "id": "list_repositories",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/repositories",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [
-                "page_size",
-                "page_token"
-            ],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List registered project repositories."
-        },
-        {
-            "id": "get_repository",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/repositories/{repository_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "repository_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one repository reference and its current ETag."
-        },
-        {
-            "id": "patch_repository",
-            "method": "PATCH",
-            "path": "/v1/projects/{project_id}/repositories/{repository_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "repository_id"
-            ],
-            "query": [],
-            "body": [
-                "visibility",
-                "default_branch",
-                "connection_ref",
-                "resolved_contract_hash",
-                "update_mask"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers."
-        },
-        {
-            "id": "sync_repository",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/repositories/{repository_id}:sync",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "repository_id"
-            ],
-            "query": [],
-            "body": [
-                "ref",
-                "commit",
-                "snapshot"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Record a repository snapshot through the authenticated provider boundary; returns an operation."
-        },
-        {
-            "id": "generate_repository_tasks",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/repositories/{repository_id}:generate-tasks",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "repository_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured."
-        },
-        {
-            "id": "create_task_set",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/task-sets",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [
-                "task_set_id",
-                "repository",
-                "snapshot",
-                "tasks",
-                "status",
-                "publication_state",
-                "metadata"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Import an immutable worker-produced task set; pass Idempotency-Key through operation headers."
-        },
-        {
-            "id": "list_task_sets",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/task-sets",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [
-                "page_size",
-                "page_token"
-            ],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List repository task sets and publication state."
-        },
-        {
-            "id": "get_task_set",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "task_set_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one immutable repository task set and its current ETag."
-        },
-        {
-            "id": "list_task_set_tasks",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}/tasks",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "task_set_id"
-            ],
-            "query": [
-                "page_size",
-                "page_token"
-            ],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List structurally distinct evaluation and backlog tasks in a task set."
-        },
-        {
-            "id": "publish_task_set",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/task-sets/{task_set_id}:publish",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "task_set_id"
-            ],
-            "query": [],
-            "body": [
-                "task_names"
-            ],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers."
         },
         {
             "id": "list_use_cases",
@@ -2780,7 +2566,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
         },
         {
@@ -2796,7 +2582,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
         },
         {
@@ -2817,7 +2603,7 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:write",
             "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
         },
         {
@@ -2839,7 +2625,7 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:write",
             "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
         },
         {
@@ -2861,8 +2647,8 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote)."
+            "scope": "eval:run",
+            "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
         },
         {
             "id": "create_campaign",
@@ -2882,7 +2668,7 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:write",
             "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
         },
         {
@@ -2900,7 +2686,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List a project's data campaigns with pagination."
         },
         {
@@ -2922,7 +2708,7 @@ OPERATIONS = {
                 "idempotency_key"
             ],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:write",
             "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
         },
         {
@@ -2941,7 +2727,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
         },
         {
@@ -2959,7 +2745,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
         },
         {
@@ -2978,7 +2764,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List the labels attached to one artifact."
         },
         {
@@ -2996,8 +2782,8 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Profile dataset quality before export: counts by artifact type and source, duplicate raw_hash groups, label coverage, and per-label distributions."
+            "scope": "dataset:write",
+            "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
         },
         {
             "id": "create_job",
@@ -3018,8 +2804,8 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll."
+            "scope": "eval:run",
+            "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
         },
         {
             "id": "get_job",
@@ -3034,7 +2820,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch one labeling job with its state and progress."
         },
         {
@@ -3053,7 +2839,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "List the deterministic label results a job produced."
         },
         {
@@ -3073,8 +2859,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "List the human residual review tasks queued for experts, optionally filtered by status (OPEN or RESOLVED) and campaign."
+            "scope": "dataset:read",
+            "description": "List human residual review tasks, optionally filtered by status and campaign."
         },
         {
             "id": "resolve_expert_task",
@@ -3102,8 +2888,8 @@ OPERATIONS = {
                 "review_context"
             ],
             "body_defaults": {},
-            "scope": None,
-            "description": "Resolve, abstain, flag, or adjudicate one human residual; the idempotency key binds one exact normalized decision to one expert task."
+            "scope": "review:resolve",
+            "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
         },
         {
             "id": "get_metrics",
@@ -3117,7 +2903,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch data-engine usage and quality metrics for a project."
         },
         {
@@ -3132,8 +2918,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Fetch the label quality report: per-verifier stats, cross-verifier disagreements, the needs_expert backlog, and the auto-resolution rate."
+            "scope": "dataset:read",
+            "description": "Fetch the project label-quality report and unresolved expert backlog."
         },
         {
             "id": "get_ecosystem_readiness",
@@ -3147,7 +2933,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch public-site and ecosystem readiness signals for a project."
         },
         {
@@ -3167,7 +2953,7 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "eval:run",
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
         },
         {
@@ -3190,8 +2976,8 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages."
+            "scope": "eval:run",
+            "description": "Derive a deterministic post-training bundle from a ready product."
         },
         {
             "id": "get_product",
@@ -3206,7 +2992,7 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
+            "scope": "dataset:read",
             "description": "Fetch one emitted product bundle with its status and manifest URL."
         },
         {
@@ -3222,8 +3008,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Validate an emitted product bundle's referential integrity and hygiene; missing artifacts, labels, or manifest are errors, duplicates and needs_expert labels are warnings."
+            "scope": "dataset:write",
+            "description": "Validate an emitted product bundle's referential integrity and hygiene."
         },
         {
             "id": "check_product_leakage",
@@ -3241,8 +3027,8 @@ OPERATIONS = {
                 "product_ids"
             ],
             "body_defaults": {},
-            "scope": None,
-            "description": "Check raw_hash leakage between exactly two product bundles for train/eval split hygiene, including overlap ratios and the overlapping hashes."
+            "scope": "dataset:write",
+            "description": "Check raw-hash leakage between exactly two product bundles."
         },
         {
             "id": "get_product_manifest",
@@ -3257,8 +3043,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Fetch an integrity-checked, bounded, remotely consumable manifest for an emitted eval product."
+            "scope": "dataset:read",
+            "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
         },
         {
             "id": "extract_source",
@@ -3289,8 +3075,8 @@ OPERATIONS = {
                 "connector"
             ],
             "body_defaults": {},
-            "scope": None,
-            "description": "Extract objects or records from a configured source connector (s3, snowflake, salesforce) into content-addressed artifacts; fails closed when the connector's env config is absent."
+            "scope": "dataset:write",
+            "description": "Extract bounded objects or records from a configured source connector."
         },
         {
             "id": "create_tool",
@@ -3316,8 +3102,8 @@ OPERATIONS = {
                 "implementation"
             ],
             "body_defaults": {},
-            "scope": None,
-            "description": "Create or version-bump a stored custom tool; identical re-creates are idempotent and a changed definition creates a new monotonic version."
+            "scope": "dataset:write",
+            "description": "Create or version-bump a stored custom tool."
         },
         {
             "id": "list_tools",
@@ -3331,8 +3117,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "List every stored custom tool for the project with usage stats (invocation count, last invoked, error count)."
+            "scope": "dataset:read",
+            "description": "List stored custom tools and their usage statistics."
         },
         {
             "id": "get_tool",
@@ -3347,8 +3133,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Fetch one stored custom tool with its definition and usage stats."
+            "scope": "dataset:read",
+            "description": "Fetch one stored custom tool and its usage statistics."
         },
         {
             "id": "delete_tool",
@@ -3363,8 +3149,8 @@ OPERATIONS = {
             "body": [],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Hard-delete a stored custom tool and every retained version; the deletion is recorded in the custom tool audit log."
+            "scope": "dataset:write",
+            "description": "Delete a stored custom tool and every retained version."
         },
         {
             "id": "invoke_tool",
@@ -3381,426 +3167,8 @@ OPERATIONS = {
             ],
             "required_body": [],
             "body_defaults": {},
-            "scope": None,
-            "description": "Invoke a stored custom tool; deterministic_wasm tools execute in the cradle sandbox and llm_prompt tools render the stored template with the caller arguments."
-        },
-        {
-            "id": "run_environment",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/environments/{environment_id}:run",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "environment_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Request an environment run; availability remains explicit until its qualified execution lane is enabled."
-        },
-        {
-            "id": "patch_artifact",
-            "method": "PATCH",
-            "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "artifact_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Patch an artifact when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "archive_artifact",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/artifacts/{artifact_id}:archive",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "artifact_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Archive an artifact through the documented data-engine lifecycle endpoint."
-        },
-        {
-            "id": "purge_artifact",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/artifacts/{artifact_id}:purge",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "artifact_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Purge an archived artifact through the documented data-engine lifecycle endpoint."
-        },
-        {
-            "id": "expire_artifact_retention",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/artifacts:expire-retention",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Apply due artifact retention policies through the REST-only lifecycle endpoint."
-        },
-        {
-            "id": "list_jobs",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/jobs",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List labeling jobs when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "cancel_job",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/jobs/{job_id}:cancel",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "job_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Cancel a labeling job through the documented data-engine lifecycle endpoint."
-        },
-        {
-            "id": "create_label",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/labels",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Create an artifact label when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "list_labels",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/labels",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List artifact labels when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "get_label",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/labels/{label_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "label_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one artifact label when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "patch_label",
-            "method": "PATCH",
-            "path": "/v1/projects/{project_id}/labels/{label_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "label_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Patch an artifact label when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "create_verifier",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/verifiers",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Create a verifier when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "list_verifiers",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/verifiers",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List verifiers when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "get_verifier",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/verifiers/{verifier_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "verifier_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one verifier when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "patch_verifier",
-            "method": "PATCH",
-            "path": "/v1/projects/{project_id}/verifiers/{verifier_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "verifier_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Patch a verifier when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "run_verifier",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/verifiers/{verifier_id}:run",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "verifier_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Run a verifier when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "create_eval",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/evals",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Create an evaluation definition when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "list_evals",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/evals",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List evaluation definitions when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "get_eval",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/evals/{eval_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "eval_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one evaluation definition when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "run_eval",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/evals/{eval_id}:run",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "eval_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Run an evaluation definition when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "list_runs",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/runs",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List evaluation runs when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "get_run",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/runs/{run_id}",
-            "auth": "product",
-            "path_params": [
-                "project_id",
-                "run_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Get one evaluation run when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "list_products",
-            "method": "GET",
-            "path": "/v1/projects/{project_id}/products",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "List emitted data products when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "emit_product",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/products:emit",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Emit a generic data product when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "emit_rlvr",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/products:emit-rlvr",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Emit an RLVR product when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "emit_preference",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/products:emit-preference",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Emit a preference product when the documented data-engine implementation is enabled."
-        },
-        {
-            "id": "emit_sft",
-            "method": "POST",
-            "path": "/v1/projects/{project_id}/products:emit-sft",
-            "auth": "product",
-            "path_params": [
-                "project_id"
-            ],
-            "query": [],
-            "body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Emit an SFT product when the documented data-engine implementation is enabled."
+            "scope": "dataset:write",
+            "description": "Invoke a stored custom tool through its configured execution boundary."
         }
     ]
 }
