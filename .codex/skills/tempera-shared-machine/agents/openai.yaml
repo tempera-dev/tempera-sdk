@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tempera Shared Machine"
+  short_description: "Coordinate safe parallel worktrees and caches"
+  default_prompt: "Use $tempera-shared-machine to prepare a safe parallel Tempera worktree and verify machine isolation."
