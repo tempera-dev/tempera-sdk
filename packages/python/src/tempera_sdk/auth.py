@@ -17,6 +17,13 @@ from .surface import AUDIENCES, DEFAULT_AUDIENCE, ISSUER_PATHS, PRODUCTS
 
 Transport = Callable[[str, str, dict[str, str], "bytes | None"], Any]
 
+_COMPACT_JSON_ENCODER = json.JSONEncoder(ensure_ascii=False, separators=(",", ":"))
+
+
+def _encode_json(value: Any) -> bytes:
+    """Encode a compact UTF-8 request body without insignificant whitespace."""
+    return _COMPACT_JSON_ENCODER.encode(value).encode("utf-8", errors="backslashreplace")
+
 
 def _b64url(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")

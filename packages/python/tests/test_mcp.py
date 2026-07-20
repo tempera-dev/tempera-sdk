@@ -21,7 +21,7 @@ class GatewayTransport:
 
     def __call__(self, method, url, headers, data):
         request = json.loads(data)
-        self.calls.append({"method": method, "url": url, "headers": headers, "request": request})
+        self.calls.append({"method": method, "url": url, "headers": headers, "data": data, "request": request})
         return self.handler(request)
 
 
@@ -52,6 +52,16 @@ class McpClientTest(unittest.TestCase):
         self.assertEqual(MCP_PROTOCOL_VERSION, "2025-06-18")
         self.assertEqual(transport.calls[1]["request"]["method"], "ping")
         self.assertEqual(transport.calls[2]["request"]["method"], "tools/list")
+
+    def test_json_rpc_request_bodies_use_the_compact_wire_shape(self):
+        client, transport = gateway_client(
+            lambda request: {"jsonrpc": "2.0", "id": request["id"], "result": {}}
+        )
+        client.ping()
+        self.assertEqual(
+            transport.calls[0]["data"],
+            b'{"jsonrpc":"2.0","id":1,"method":"ping"}',
+        )
 
     def test_call_tool_whoami_and_status_wrap_tools_call(self):
         client, transport = gateway_client(
