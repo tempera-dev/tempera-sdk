@@ -110,6 +110,8 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
         )
     if not re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))):
         failures.append("data-engine OpenAPI operation lock source_commit is not a 40-character SHA")
+    if not re.fullmatch(r"[0-9a-f]{40,64}", str(lock.get("source_blob_sha", ""))):
+        failures.append("data-engine OpenAPI operation lock source_blob_sha is not a Git object ID")
     for digest_key in ("source_sha256", "generated_sha256"):
         if not re.fullmatch(r"[0-9a-f]{64}", str(lock.get(digest_key, ""))):
             failures.append(f"data-engine OpenAPI operation lock {digest_key} is not SHA-256")

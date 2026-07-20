@@ -40,6 +40,10 @@ class SourceLockTest(unittest.TestCase):
             source.write_text("openapi: 3.1.0\npaths: {}\n", encoding="utf-8")
             git(repo, "add", "api/openapi.yaml")
             git(repo, "commit", "-m", "fixture")
+            head = subprocess.check_output(
+                ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True
+            ).strip()
+            git(repo, "update-ref", "refs/remotes/origin/main", head)
 
             source_bytes, metadata = sync.committed_source(source)
             self.assertEqual(source_bytes, b"openapi: 3.1.0\npaths: {}\n")
@@ -50,6 +54,13 @@ class SourceLockTest(unittest.TestCase):
 
             (repo / "dirty-marker").write_text("dirty\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "source repository is dirty"):
+                sync.committed_source(source)
+            (repo / "dirty-marker").unlink()
+
+            source.write_text("openapi: 3.1.0\npaths:\n  /new: {}\n", encoding="utf-8")
+            git(repo, "add", "api/openapi.yaml")
+            git(repo, "commit", "-m", "unpushed fixture")
+            with self.assertRaisesRegex(ValueError, "not reachable from origin/main"):
                 sync.committed_source(source)
 
 

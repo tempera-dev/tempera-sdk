@@ -130,6 +130,18 @@ def committed_source(source: Path) -> tuple[bytes, dict[str, str]]:
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError(f"source commit is not a 40-character SHA: {commit!r}")
     branch = run_git(repo, "symbolic-ref", "--quiet", "--short", "HEAD")
+    remote_ref = f"refs/remotes/origin/{branch}"
+    remote_commit = run_git(repo, "rev-parse", "--verify", remote_ref)
+    reachable = subprocess.run(
+        ["git", "-C", str(repo), "merge-base", "--is-ancestor", commit, remote_commit],
+        capture_output=True,
+        check=False,
+    )
+    if reachable.returncode != 0:
+        raise ValueError(
+            f"source commit {commit} is not reachable from origin/{branch}; "
+            "push the source commit before generating provenance"
+        )
     blob = run_git(repo, "rev-parse", f"{commit}:{source_path}")
     result = subprocess.run(
         ["git", "-C", str(repo), "show", f"{commit}:{source_path}"],
