@@ -39,6 +39,14 @@ admission and reads, but Auth Hub does not register that scope on its current
 default branch. The SDK records the requirement and marks these operations as
 centrally unavailable until the Hosted Platform owner lands the Auth Hub scope.
 
+Canonical-source gap: the remaining Data Engine scope assignments in this
+release are verified against `src/data_engine/app.py::_required_scope` at the
+pinned producer commit, but `api/openapi.yaml` does not yet encode them as
+machine-readable per-operation metadata. Data Engine issue
+https://github.com/tempera-dev/data-engine/issues/38 owns making those auth
+requirements contract-derived; this SDK correction must not be described as
+fully OpenAPI-derived until that producer change lands and the lock is refreshed.
+
 The same release also corrects the aggregate scope registry to Auth Hub main:
 `memory:read`, `memory:write`, `memory:manage`, and `review:resolve` are added;
 the unregistered `cyber:research` and `clinical:run` constants are removed.
