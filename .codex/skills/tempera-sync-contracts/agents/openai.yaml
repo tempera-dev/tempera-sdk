@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tempera Contract Sync"
+  short_description: "Keep APIs, SDKs, MCP, and workflows aligned"
+  default_prompt: "Use $tempera-sync-contracts to check and synchronize Tempera API, SDK, MCP, Workflow, and agent-kit contracts."
