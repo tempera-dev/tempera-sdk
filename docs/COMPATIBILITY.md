@@ -47,6 +47,13 @@ https://github.com/tempera-dev/data-engine/issues/38 owns making those auth
 requirements contract-derived; this SDK correction must not be described as
 fully OpenAPI-derived until that producer change lands and the lock is refreshed.
 
+MCP exposure decision: this SDK release does not expand Data Engine's 36-tool
+model-facing registry. Nine producer-backed REST operations—Episode,
+EvidenceRecord, and ResearchCatalogEntry create/get/list—remain unexposed.
+Data Engine issue https://github.com/tempera-dev/data-engine/issues/39 owns
+turning those absences into explicit, scope/effect/schema-pinned admission
+decisions; none should become a tool merely to mirror REST coverage.
+
 The same release also corrects the aggregate scope registry to Auth Hub main:
 `memory:read`, `memory:write`, `memory:manage`, and `review:resolve` are added;
 the unregistered `cyber:research` and `clinical:run` constants are removed.
