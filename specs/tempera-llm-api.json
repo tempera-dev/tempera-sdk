@@ -78,8 +78,28 @@
               }
             }
           },
+          "401": {
+            "description": "Missing/invalid bearer token, requires scope model:invoke",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
           "402": {
             "description": "Insufficient credits (from control-plane on debit)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Wrong audience or missing model:invoke scope",
             "content": {
               "application/json": {
                 "schema": {
@@ -99,7 +119,7 @@
             }
           },
           "503": {
-            "description": "Upstream provider unavailable",
+            "description": "Upstream provider or token introspection unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -108,7 +128,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/v1/models": {
@@ -127,8 +152,43 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Missing/invalid bearer token, requires scope model:read",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Wrong audience or missing model:read scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Token introspection unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/v1/responses": {
@@ -161,7 +221,7 @@
         },
         "responses": {
           "200": {
-            "description": "Response (skeleton)",
+            "description": "Response (JSON when non-streaming, or an SSE text/event-stream when the request set stream:true)",
             "content": {
               "application/json": {
                 "schema": {
@@ -180,6 +240,26 @@
               }
             }
           },
+          "401": {
+            "description": "Missing/invalid bearer token, requires scope model:invoke",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Wrong audience or missing model:invoke scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
           "404": {
             "description": "No provider configured for the model",
             "content": {
@@ -189,8 +269,23 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Upstream provider or token introspection unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -520,6 +615,13 @@
             "minimum": 0
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Static gateway token, or an Auth Hub token/API key with audience `tempera-llm` (or `tempera-code` during migration) carrying `model:invoke` (inference) / `model:read` (catalog)."
       }
     }
   },

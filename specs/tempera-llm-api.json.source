@@ -1,3 +1,13 @@
-Vendored from tempera-llm repo: sdks/openapi/tempera-llm-api.json
-Origin path: /home/user/tempera-llm/sdks/openapi/tempera-llm-api.json
-Generated upstream from the tempera-llm Rust handlers (cargo xtask). Do not hand-edit; refresh by re-copying the upstream committed spec.
+{
+  "generated_path": "specs/tempera-llm-api.json",
+  "generated_sha256": "ebe623493cf9ca78e34c0c55dfb2e6b1fb7e653d57d8d96b4e3f5cb593cac892",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "cd67a18dc27ba09290e4de4b8deb58c77d9faaf2",
+  "source_branch": "claude/billing-api-consistency-cbp8cy",
+  "source_commit": "5c0b6d9bb026818540a55dc8946678e14485f771",
+  "source_mode": "100644",
+  "source_path": "sdks/openapi/tempera-llm-api.json",
+  "source_repo": "tempera-dev/tempera-llm",
+  "source_sha256": "ebe623493cf9ca78e34c0c55dfb2e6b1fb7e653d57d8d96b4e3f5cb593cac892"
+}

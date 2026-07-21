@@ -1,3 +1,13 @@
-Vendored from tempera-workflows repo: sdks/openapi/tempera-workflows-api.json
-Origin path: /home/user/tempera-workflows/sdks/openapi/tempera-workflows-api.json
-Generated upstream from the tempera-workflows implementation and drift-gated there. Do not hand-edit; refresh by re-copying the upstream committed spec.
+{
+  "generated_path": "specs/tempera-workflows-api.json",
+  "generated_sha256": "4a5cabfb5c02e1ed5e7606c9508ddad32f64158a6357cd13fb613431478b1648",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "6aa07e997d1f107811db982f9c0c3657f0aa213d",
+  "source_branch": "main",
+  "source_commit": "b135c6c72d3e67acd66be4c40ecec111350ed9e3",
+  "source_mode": "100644",
+  "source_path": "sdks/openapi/tempera-workflows-api.json",
+  "source_repo": "tempera-dev/tempera-workflows",
+  "source_sha256": "4a5cabfb5c02e1ed5e7606c9508ddad32f64158a6357cd13fb613431478b1648"
+}

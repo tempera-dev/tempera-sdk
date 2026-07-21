@@ -1644,6 +1644,53 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
     },
     {
+      "id": "composeWorkflow",
+      "method": "POST",
+      "path": "/v1/workflows/{workflow_id}:compose",
+      "auth": "product",
+      "pathParams": [
+        "workflow_id"
+      ],
+      "query": [],
+      "body": [
+        "prompt",
+        "draft",
+        "history",
+        "attachments",
+        "model"
+      ],
+      "requiredBody": [
+        "prompt"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
+    },
+    {
+      "id": "assistJson",
+      "method": "POST",
+      "path": "/v1/workflows:assistJson",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "mode",
+        "purpose",
+        "expectedRoot",
+        "context",
+        "current",
+        "prompt"
+      ],
+      "requiredBody": [
+        "mode",
+        "purpose",
+        "expectedRoot"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
+    },
+    {
       "id": "createRun",
       "method": "POST",
       "path": "/v1/workflows/{workflow_id}/runs",
