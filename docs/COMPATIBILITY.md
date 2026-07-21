@@ -4,12 +4,12 @@
 
 - Owner: Contract Spine (Lane 1).
 - Compatibility class: breaking pre-1.0 SDK correction; package `0.9.0`, surface version `3`.
-- Producer: `tempera-dev/data-engine@639c151012747e376938d1cfea71f7b2011b9116`, `api/openapi.yaml`.
+- Producer: `tempera-dev/data-engine@244baa0d7b22976fe7c9dad872ef705e6486caf0`, `api/openapi.yaml`.
 - Consumers: TypeScript, Python, and Rust aggregate clients; Tempera Workflows' vendored SDK and Data Engine locks.
 - Telemetry: none of the removed methods had a matching producer route, so successful calls could not have reached Data Engine. Consumer source search and Workflows lock checks replace route telemetry for this correction.
-- Migration: replace removed calls only with an operation present in the committed Data Engine contract. The 12 newly generated methods below cover all previously omitted producer routes. Workflows must re-vendor the exact released SDK surface and Data Engine lock before this change merges.
+- Migration: replace removed calls only with an operation present in the committed Data Engine contract. The 12 reconciliation methods plus four assignment-lifecycle methods below cover all previously omitted producer routes. Workflows must re-vendor the exact released SDK surface and Data Engine lock before this change merges.
 - Rollback: revert the SDK release and consumer lock together; do not restore phantom routes to Data Engine.
-- Removal evidence: bidirectional `sync-data-engine-openapi.py --check` reports 46 of 46 REST operations represented, with zero phantom and zero missing operations.
+- Removal evidence: bidirectional `sync-data-engine-openapi.py --check` reports 50 of 50 REST operations represented, with zero phantom and zero missing operations.
 
 Removed phantom methods:
 
@@ -34,6 +34,13 @@ Added producer-backed methods:
 `getEpisode`, `queryResearchRetrieval`, `createResearchCatalogEntry`,
 `listResearchCatalogEntries`, and `getResearchCatalogEntry`.
 
+Producer additions incorporated after the initial reconciliation:
+
+`claimExpertTask`, `renewExpertTaskAssignment`, `releaseExpertTaskAssignment`,
+and `saveExpertTaskDraft`. `resolveExpertTask` also accepts the producer's
+optional `lease_token`. All five assignment-aware calls use the existing
+`review:resolve` scope enforced by the Data Engine runtime.
+
 Auth registration: Data Engine requires `training:publish` for training-release
 admission and reads. Auth Hub registers that scope for the `data-engine`
 audience at commit `03136c97be6ce5753e6a28abac88432773640d6f`; only attributed
@@ -49,8 +56,9 @@ requirements contract-derived; this SDK correction must not be described as
 fully OpenAPI-derived until that producer change lands and the lock is refreshed.
 
 MCP exposure decision: this SDK release does not expand Data Engine's 36-tool
-model-facing registry. Nine producer-backed REST operations—Episode,
-EvidenceRecord, and ResearchCatalogEntry create/get/list—remain unexposed.
+model-facing registry. Thirteen producer-backed REST operations—Episode,
+EvidenceRecord, and ResearchCatalogEntry create/get/list plus the four
+assignment-lifecycle operations—remain unexposed.
 Data Engine issue https://github.com/tempera-dev/data-engine/issues/39 owns
 turning those absences into explicit, scope/effect/schema-pinned admission
 decisions; none should become a tool merely to mirror REST coverage.

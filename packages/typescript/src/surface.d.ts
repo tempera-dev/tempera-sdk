@@ -418,6 +418,14 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision. */
   resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically claim one open expert task with an exclusive renewable lease. */
+  claimExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Renew the authenticated reviewer's active expert-task lease. */
+  renewExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Release the authenticated reviewer's active expert-task lease for reassignment. */
+  releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Autosave a version-checked draft under the active reviewer lease. */
+  saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the project label-quality report and unresolved expert backlog. */

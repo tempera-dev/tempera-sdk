@@ -2848,6 +2848,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "evidence",
         "annotator_id",
         "idempotency_key",
+        "lease_token",
         "review_context"
       ],
       "requiredBody": [
@@ -2858,6 +2859,100 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "review:resolve",
       "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+    },
+    {
+      "id": "claimExpertTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:claim",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "lease_duration_seconds"
+      ],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Atomically claim one open expert task with an exclusive renewable lease."
+    },
+    {
+      "id": "renewExpertTaskAssignment",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:renew",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "lease_duration_seconds"
+      ],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Renew the authenticated reviewer's active expert-task lease."
+    },
+    {
+      "id": "releaseExpertTaskAssignment",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:release",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
+    },
+    {
+      "id": "saveExpertTaskDraft",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:save-draft",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "expert_task_id"
+      ],
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "draft",
+        "expected_version"
+      ],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token",
+        "draft",
+        "expected_version"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Autosave a version-checked draft under the active reviewer lease."
     },
     {
       "id": "getMetrics",

@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 46 |
+| Typed operations | 50 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -1667,6 +1667,7 @@ Resolve, abstain, flag, or adjudicate one human residual with an idempotent norm
 | `evidence` | no | — |
 | `annotator_id` | no | — |
 | `idempotency_key` | yes | — |
+| `lease_token` | no | — |
 | `review_context` | yes | — |
 
 <CodeGroup>
@@ -1698,6 +1699,247 @@ let spec = client.build_request("data_engine", "resolve_expert_task", &[
     ("label", "<label>".into()),
     ("outcome", "<outcome>".into()),
     ("confidence", "<confidence>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### claimExpertTask
+
+`POST /v1/projects/{project_id}/expert-tasks/{expert_task_id}:claim`
+
+Atomically claim one open expert task with an exclusive renewable lease.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.claimExpertTask()` · Python `client.data_engine.claim_expert_task()` · Rust `build_request("data_engine", "claim_expert_task", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `expert_task_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotency_key` | yes | — |
+| `lease_token` | yes | — |
+| `lease_duration_seconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.claimExpertTask({
+  project_id: "<project_id>",
+  expert_task_id: "<expert_task_id>",
+  idempotency_key: "<idempotency_key>",
+  lease_token: "<lease_token>",
+  lease_duration_seconds: "<lease_duration_seconds>",
+});
+```
+
+```python Python
+result = client.data_engine.claim_expert_task({
+    "project_id": "<project_id>",
+    "expert_task_id": "<expert_task_id>",
+    "idempotency_key": "<idempotency_key>",
+    "lease_token": "<lease_token>",
+    "lease_duration_seconds": "<lease_duration_seconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "claim_expert_task", &[
+    ("project_id", "<project_id>".into()),
+    ("expert_task_id", "<expert_task_id>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("lease_token", "<lease_token>".into()),
+    ("lease_duration_seconds", "<lease_duration_seconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### renewExpertTaskAssignment
+
+`POST /v1/projects/{project_id}/expert-tasks/{expert_task_id}:renew`
+
+Renew the authenticated reviewer's active expert-task lease.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.renewExpertTaskAssignment()` · Python `client.data_engine.renew_expert_task_assignment()` · Rust `build_request("data_engine", "renew_expert_task_assignment", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `expert_task_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotency_key` | yes | — |
+| `lease_token` | yes | — |
+| `lease_duration_seconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.renewExpertTaskAssignment({
+  project_id: "<project_id>",
+  expert_task_id: "<expert_task_id>",
+  idempotency_key: "<idempotency_key>",
+  lease_token: "<lease_token>",
+  lease_duration_seconds: "<lease_duration_seconds>",
+});
+```
+
+```python Python
+result = client.data_engine.renew_expert_task_assignment({
+    "project_id": "<project_id>",
+    "expert_task_id": "<expert_task_id>",
+    "idempotency_key": "<idempotency_key>",
+    "lease_token": "<lease_token>",
+    "lease_duration_seconds": "<lease_duration_seconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "renew_expert_task_assignment", &[
+    ("project_id", "<project_id>".into()),
+    ("expert_task_id", "<expert_task_id>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("lease_token", "<lease_token>".into()),
+    ("lease_duration_seconds", "<lease_duration_seconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### releaseExpertTaskAssignment
+
+`POST /v1/projects/{project_id}/expert-tasks/{expert_task_id}:release`
+
+Release the authenticated reviewer's active expert-task lease for reassignment.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.releaseExpertTaskAssignment()` · Python `client.data_engine.release_expert_task_assignment()` · Rust `build_request("data_engine", "release_expert_task_assignment", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `expert_task_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotency_key` | yes | — |
+| `lease_token` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.releaseExpertTaskAssignment({
+  project_id: "<project_id>",
+  expert_task_id: "<expert_task_id>",
+  idempotency_key: "<idempotency_key>",
+  lease_token: "<lease_token>",
+});
+```
+
+```python Python
+result = client.data_engine.release_expert_task_assignment({
+    "project_id": "<project_id>",
+    "expert_task_id": "<expert_task_id>",
+    "idempotency_key": "<idempotency_key>",
+    "lease_token": "<lease_token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "release_expert_task_assignment", &[
+    ("project_id", "<project_id>".into()),
+    ("expert_task_id", "<expert_task_id>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("lease_token", "<lease_token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### saveExpertTaskDraft
+
+`POST /v1/projects/{project_id}/expert-tasks/{expert_task_id}:save-draft`
+
+Autosave a version-checked draft under the active reviewer lease.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.saveExpertTaskDraft()` · Python `client.data_engine.save_expert_task_draft()` · Rust `build_request("data_engine", "save_expert_task_draft", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `expert_task_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotency_key` | yes | — |
+| `lease_token` | yes | — |
+| `draft` | yes | — |
+| `expected_version` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.saveExpertTaskDraft({
+  project_id: "<project_id>",
+  expert_task_id: "<expert_task_id>",
+  idempotency_key: "<idempotency_key>",
+  lease_token: "<lease_token>",
+  draft: "<draft>",
+});
+```
+
+```python Python
+result = client.data_engine.save_expert_task_draft({
+    "project_id": "<project_id>",
+    "expert_task_id": "<expert_task_id>",
+    "idempotency_key": "<idempotency_key>",
+    "lease_token": "<lease_token>",
+    "draft": "<draft>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "save_expert_task_draft", &[
+    ("project_id", "<project_id>".into()),
+    ("expert_task_id", "<expert_task_id>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("lease_token", "<lease_token>".into()),
+    ("draft", "<draft>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
