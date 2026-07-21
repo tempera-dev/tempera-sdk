@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "f9bd82ee643cddbf595b61406f073d0276780f21",
+    "commit": "7f6c8657ff33ec46a6aa536f1d1a0bb3fb9db892",
     "files": [
       {
-        "git_blob": "ace18e15a551cc2e9ba129060353d330dddf8aea",
+        "git_blob": "ca20e4020c5f301550e201325fa4ff62e3d91067",
         "path": "api/openapi.yaml",
-        "sha256": "031a3af4d5bcd27d0d00fd9cae96f316f9f2a85f4b6bf4ef64e09e436272a301"
+        "sha256": "8b30b5bb8c919e9804b9a63b561af032e7d14735a1f03710f468e76b286e6325"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -20,9 +20,9 @@
         "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "60585cf1bb3303270b3e1ebc596f4fc40c9b8a96",
+        "git_blob": "f0edfd9fb96ee3fc7fbe22124d2e2892c70f949a",
         "path": "src/data_engine/mcp.py",
-        "sha256": "a2a6f8296d33b4852f4ed911475955d8b9aeb088d96f70f8f448e3d4f8139f54"
+        "sha256": "e538a968aa7d11fe4f800181b13d5a8440c0b69dd7bf3f770462d3530d295e69"
       },
       {
         "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
@@ -1999,6 +1999,13 @@
           "campaign": {
             "additionalProperties": false,
             "properties": {
+              "annotation_schema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "annotation_schema_version": {
+                "type": "string"
+              },
               "budget_cents": {
                 "type": "integer"
               },
@@ -2087,6 +2094,13 @@
             "items": {
               "additionalProperties": false,
               "properties": {
+                "annotation_schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "annotation_schema_version": {
+                  "type": "string"
+                },
                 "artifact_name": {
                   "type": "string"
                 },
@@ -2494,6 +2508,10 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "annotation_schema": {
+            "additionalProperties": true,
+            "type": "object"
+          },
           "budget_cents": {
             "description": "Planning metadata; not an enforced spend limit in this release.",
             "maximum": 9223372036854775807,
@@ -2582,6 +2600,13 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
+          "annotation_schema": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "annotation_schema_version": {
+            "type": "string"
+          },
           "budget_cents": {
             "type": "integer"
           },
@@ -2797,6 +2822,13 @@
             "items": {
               "additionalProperties": false,
               "properties": {
+                "annotation_schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "annotation_schema_version": {
+                  "type": "string"
+                },
                 "budget_cents": {
                   "type": "integer"
                 },
@@ -3728,6 +3760,13 @@
             "items": {
               "additionalProperties": false,
               "properties": {
+                "annotation_schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "annotation_schema_version": {
+                  "type": "string"
+                },
                 "artifact_name": {
                   "type": "string"
                 },
@@ -3835,6 +3874,10 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "annotation": {
+            "additionalProperties": true,
+            "type": "object"
+          },
           "confidence": {
             "maximum": 1,
             "minimum": 0,
@@ -4000,6 +4043,13 @@
           "expert_task": {
             "additionalProperties": false,
             "properties": {
+              "annotation_schema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "annotation_schema_version": {
+                "type": "string"
+              },
               "artifact_name": {
                 "type": "string"
               },
