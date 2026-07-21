@@ -2726,6 +2726,488 @@
         }
       }
     },
+    "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles": {
+      "post": {
+        "tags": [
+          "evalResults"
+        ],
+        "operationId": "evalResults.importTemperaBundle",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "description": "tenant_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "Bearer API token for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-api-key",
+            "in": "header",
+            "description": "API key alternative for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-project-id",
+            "in": "header",
+            "description": "Strict-auth project scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-environment-id",
+            "in": "header",
+            "description": "Strict-auth environment scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportTemperaEvidenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotently store a verified official Tempera result bundle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperaEvidenceReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed, non-canonical, unsafe, or signature-invalid evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Credentials lack the required scope or the evidence key is not trusted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The external id already binds different content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Evidence exceeds the request limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body does not match the schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No Tempera evaluation release-key trust anchor is configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions": {
+      "post": {
+        "tags": [
+          "evalResults"
+        ],
+        "operationId": "evalResults.recordTemperaDecision",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "description": "tenant_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "Bearer API token for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-api-key",
+            "in": "header",
+            "description": "API key alternative for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-project-id",
+            "in": "header",
+            "description": "Strict-auth project scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-environment-id",
+            "in": "header",
+            "description": "Strict-auth environment scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportTemperaEvidenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotently store a verified preregistered Tempera A/B decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperaEvidenceReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed, non-canonical, unsafe, or signature-invalid evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Credentials lack the required scope or the evidence key is not trusted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The external id already binds different content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Evidence exceeds the request limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body does not match the schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No Tempera evaluation release-key trust anchor is configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}": {
+      "get": {
+        "tags": [
+          "evalResults"
+        ],
+        "operationId": "evalResults.getTemperaEvidence",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "description": "tenant_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "description": "result_bundle or ab_decision",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "external_id",
+            "in": "path",
+            "description": "Bundle or experiment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "Bearer API token for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-api-key",
+            "in": "header",
+            "description": "API key alternative for strict auth",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-project-id",
+            "in": "header",
+            "description": "Strict-auth project scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "x-palette-environment-id",
+            "in": "header",
+            "description": "Strict-auth environment scope",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read a scoped external evidence receipt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperaEvidenceReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid evidence kind or identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Credentials lack the required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found in this tenant/project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic": {
       "post": {
         "tags": [
@@ -10797,6 +11279,13 @@
           }
         }
       },
+      "ExternalEvalEvidenceKind": {
+        "type": "string",
+        "enum": [
+          "result_bundle",
+          "ab_decision"
+        ]
+      },
       "FailureMode": {
         "type": "string",
         "description": "A deterministically-inferred class of failure.",
@@ -11029,6 +11518,28 @@
           "source": {
             "type": "string",
             "description": "Registered importer key, e.g. `temporal_history` or `native`."
+          }
+        }
+      },
+      "ImportTemperaEvidenceRequest": {
+        "type": "object",
+        "required": [
+          "canonical_json",
+          "signature_base64",
+          "public_key_pem"
+        ],
+        "properties": {
+          "canonical_json": {
+            "type": "string",
+            "description": "Canonical compact JSON signed by the release/decision key. The endpoint\nrejects equivalent but non-canonical JSON so the verified bytes are\nunambiguous across SDKs."
+          },
+          "public_key_pem": {
+            "type": "string",
+            "description": "PEM SubjectPublicKeyInfo for the Ed25519 key whose exact byte digest is\npinned inside the signed payload."
+          },
+          "signature_base64": {
+            "type": "string",
+            "description": "Standard-base64 detached Ed25519 signature over `canonical_json` bytes."
           }
         }
       },
@@ -13025,6 +13536,107 @@
           }
         }
       },
+      "TemperaEvidenceReceipt": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "tenant_id",
+          "project_id",
+          "kind",
+          "external_id",
+          "source_schema_version",
+          "declared_content_sha256",
+          "signed_payload_sha256",
+          "signature_sha256",
+          "public_key_sha256",
+          "summary",
+          "stored_at",
+          "created"
+        ],
+        "properties": {
+          "created": {
+            "type": "boolean"
+          },
+          "declared_content_sha256": {
+            "type": "string"
+          },
+          "external_id": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ExternalEvalEvidenceKind"
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "public_key_sha256": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "signature_sha256": {
+            "type": "string"
+          },
+          "signed_payload_sha256": {
+            "type": "string"
+          },
+          "source_schema_version": {
+            "type": "string"
+          },
+          "stored_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/TemperaEvidenceSummary"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/TenantId"
+          }
+        }
+      },
+      "TemperaEvidenceSummary": {
+        "type": "object",
+        "properties": {
+          "experiment_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "run_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "split": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "suite_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "suite_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verdict": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
       "TenantId": {
         "type": "string"
       },
@@ -13474,6 +14086,10 @@
     {
       "name": "experiments",
       "description": "Baseline/candidate experiments"
+    },
+    {
+      "name": "evalResults",
+      "description": "Official external evaluation evidence"
     },
     {
       "name": "calibrations",

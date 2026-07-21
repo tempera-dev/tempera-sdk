@@ -919,7 +919,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.5.0");\n'
+        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.9.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
         'let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);\n'
         "let (id, body) = mcp.whoami_body();\n"
