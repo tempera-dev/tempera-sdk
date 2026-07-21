@@ -3,7 +3,7 @@
 ## 2026-07-20 — Data Engine contract reconciliation
 
 - Owner: Contract Spine (Lane 1).
-- Compatibility class: breaking pre-1.0 SDK correction; package `0.7.0`, surface version `3`.
+- Compatibility class: breaking pre-1.0 SDK correction; package `0.9.0`, surface version `3`.
 - Producer: `tempera-dev/data-engine@639c151012747e376938d1cfea71f7b2011b9116`, `api/openapi.yaml`.
 - Consumers: TypeScript, Python, and Rust aggregate clients; Tempera Workflows' vendored SDK and Data Engine locks.
 - Telemetry: none of the removed methods had a matching producer route, so successful calls could not have reached Data Engine. Consumer source search and Workflows lock checks replace route telemetry for this correction.
@@ -66,7 +66,36 @@ The same release also corrects the aggregate scope registry to Auth Hub main:
 the unregistered `cyber:research` and `clinical:run` constants are removed.
 Consumers using either removed constant must first land a reviewed Auth Hub
 scope contract rather than asking the SDK to advertise an unissuable scope.
+## 2026-07-21 — pin remaining private producer contracts and add Workflows authoring helpers
 
+- **Class:** additive SDK change plus non-route contract refreshes.
+- **Owner:** Contract Spine; producer behavior remains owned by Workflows,
+  Cradle, Gym, and Tempera LLM.
+- **Added:** `temperaWorkflows.composeWorkflow` and
+  `temperaWorkflows.assistJson` in TypeScript, Python, and Rust. Both are
+  non-running authoring helpers guarded by `workflow:write`; neither stores a
+  workflow or executes a node.
+- **Producer evidence:** exact committed locks now cover
+  `tempera-dev/tempera-workflows@b135c6c72d3e67acd66be4c40ecec111350ed9e3`,
+  `tempera-dev/cradle@daba206b8cab083d9ddf54a91cd95a7f98ac004f`,
+  `tempera-dev/tempera-gym@7bac3b36085c6ba3a1f34ad793259fa54b9558de`,
+  and
+  `tempera-dev/tempera-llm@5c0b6d9bb026818540a55dc8946678e14485f771`.
+  Each lock records the canonical path, Git blob, source SHA-256, generator,
+  and generated artifact SHA-256.
+- **Compatibility:** no producer route or schema was removed. Cradle adds
+  egress receipt fields, Gym adds rollout request metadata, and Tempera LLM
+  adds auth/security metadata to existing routes. Workflows adds two routes
+  and their request/response schemas.
+- **Migration:** no existing call changes. Consumers may adopt the new
+  Workflows methods after upgrading.
+- **Rollout:** release as aggregate SDK `0.8.0`; the four private source jobs,
+  bidirectional strict drift gate, and all-language tests must execute before
+  merge.
+- **Rollback:** revert the SDK release without changing producer behavior; the
+  prior `0.7.0` methods remain compatible with all unchanged routes.
+- **Affected consumers:** aggregate TypeScript, Python, and Rust SDK users and
+  the independently owned Workflows consumer surface.
 ## 2026-07-21 — remove phantom Control Plane model-profile methods
 
 - **Class:** corrective breaking consumer change.

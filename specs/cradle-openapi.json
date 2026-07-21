@@ -3412,6 +3412,13 @@
           }
         }
       },
+      "EgressChannel": {
+        "type": "string",
+        "description": "Named egress channels a caller can request under `policy.egress`. Each channel\nis a managed, credential-attaching forwarding endpoint the daemon provides to\nexecuted code; raw network access is never granted. Unknown channel names are\nrejected by deserialization (like every other policy key), so a typo cannot\nsilently widen exposure.\n\n`tempera-llm` grants the executed code a single forwarding endpoint (exposed\nas `TEMPERA_LLM_PROXY_URL`) that relays only to the daemon-configured\ntempera-llm gateway, with the daemon attaching its held bearer token\nserver-side so user code never sees credentials.",
+        "enum": [
+          "tempera-llm"
+        ]
+      },
       "EgressRecord": {
         "type": "object",
         "required": [
@@ -3431,6 +3438,36 @@
           "port": {
             "type": "integer",
             "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "EgressUsage": {
+        "type": "object",
+        "description": "Managed forwarding-endpoint usage for one egress channel, recorded in the\nexecution result so an auditor can see how much a run relied on external\nservices. `bytes_out` is the total request payload the executed code sent into\nthe forwarding endpoint; `bytes_in` is the total response payload relayed back.",
+        "required": [
+          "channel",
+          "requests",
+          "bytes_in",
+          "bytes_out"
+        ],
+        "properties": {
+          "bytes_in": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "bytes_out": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "channel": {
+            "type": "string"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int64",
             "minimum": 0
           }
         }
@@ -3567,6 +3604,13 @@
             "items": {
               "$ref": "#/components/schemas/EgressRecord"
             }
+          },
+          "egress_usage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EgressUsage"
+            },
+            "description": "Per-channel managed-egress usage counters for auditability. Empty unless a\n`policy.egress` channel was granted and the executed code used it. Because\na granted egress channel reaches a non-deterministic external service, any\nrun with a non-empty list here also reports `deterministic: false`."
           },
           "engine_version": {
             "type": "string"
@@ -3968,6 +4012,13 @@
           },
           "double_jail": {
             "type": "boolean"
+          },
+          "egress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EgressChannel"
+            },
+            "description": "Managed egress channels granted to the executed code. Empty (the default)\nmeans the sandbox has no reachable network at all. Each named channel is a\ndaemon-provided, credential-attaching forwarding endpoint — never raw\nnetwork access. A lane must reject a channel it cannot enforce, and the\ndaemon must fail closed when a requested channel is not configured."
           },
           "env": {
             "type": "object",

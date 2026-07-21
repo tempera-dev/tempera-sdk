@@ -272,6 +272,16 @@
                     "type": "string",
                     "default": "gpt-4o-mini",
                     "description": "tempera-llm model id; only used when policy is llm."
+                  },
+                  "data_engine_product_id": {
+                    "type": "string",
+                    "description": "Data Engine product id for a manifest-bound PUBLIC Risk RLVR rollout. Only valid with risk-normalization-verification-v1; the service project and credentials are deployment config. Centrally introspected callers need dataset:read and eval:run, plus org/project/environment/sub claims bound to that config."
+                  },
+                  "data_engine_max_records": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 256,
+                    "default": 256
                   }
                 }
               }
