@@ -7,7 +7,7 @@ export const TEMPERA_SURFACE_VERSION = 3;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -2971,6 +2971,47 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "review:resolve",
       "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
+    },
+    {
+      "id": "createReviewQualificationTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/review-qualification-tasks",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [],
+      "body": [
+        "source_expert_task_name",
+        "expected_label",
+        "mode",
+        "feedback_policy",
+        "idempotency_key"
+      ],
+      "requiredBody": [
+        "source_expert_task_name",
+        "expected_label",
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:gold:manage",
+      "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
+    },
+    {
+      "id": "getReviewerQualification",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/campaigns/{campaign_id}/reviewer-qualification",
+      "auth": "product",
+      "pathParams": [
+        "project_id",
+        "campaign_id"
+      ],
+      "query": [],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
     },
     {
       "id": "getMetrics",

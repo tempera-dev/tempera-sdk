@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "a7342f3cf871c4aacf7cb1a990242296f02ef4e8",
+    "commit": "f9bd82ee643cddbf595b61406f073d0276780f21",
     "files": [
       {
-        "git_blob": "9ed3a2b69c00a7e5b332fe3a815c64d098133713",
+        "git_blob": "ace18e15a551cc2e9ba129060353d330dddf8aea",
         "path": "api/openapi.yaml",
-        "sha256": "202b6b7ef08748eff31ebc23ca85bfdb71c89c212d175a84adbfb0d8560b0b9c"
+        "sha256": "031a3af4d5bcd27d0d00fd9cae96f316f9f2a85f4b6bf4ef64e09e436272a301"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "a0a107807571284405f843a907707319e7b3aa1a",
+        "git_blob": "0849f58d623b9415b29b92eda8490a58e5960a5e",
         "path": "src/data_engine/app.py",
-        "sha256": "266fa2126b04473d8ab32fb85bd68e87a7c9366452ebc80b3c5a3255ec8987ff"
+        "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "09b1ea4ebc40515adeb394720fd14ffdcd4bb488",
+        "git_blob": "60585cf1bb3303270b3e1ebc596f4fc40c9b8a96",
         "path": "src/data_engine/mcp.py",
-        "sha256": "bed9a215c5e90a42334bf946c6dee30655c2dadb1f1974b69d693b492abf1214"
+        "sha256": "a2a6f8296d33b4852f4ed911475955d8b9aeb088d96f70f8f448e3d4f8139f54"
       },
       {
-        "git_blob": "3c2c3b15ae9ee71e30ac6eecce63cc190a48778d",
+        "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "c0af0b1a1bef1a41e1899d1c3de7abf198986ec38b532489d45357f38f02275c"
+        "sha256": "2bbc6369b74f3ed24ff475d212042b6259b55ec75b67a26099f792533eb2f950"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -2011,6 +2011,31 @@
               "name": {
                 "type": "string"
               },
+              "qualification_policy": {
+                "additionalProperties": false,
+                "properties": {
+                  "min_accuracy": {
+                    "type": "number"
+                  },
+                  "min_gold_reviews": {
+                    "type": "integer"
+                  },
+                  "mode": {
+                    "enum": [
+                      "disabled",
+                      "shadow",
+                      "required"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mode",
+                  "min_gold_reviews",
+                  "min_accuracy"
+                ],
+                "type": "object"
+              },
               "required_reviews": {
                 "type": "integer"
               },
@@ -2051,6 +2076,7 @@
               "rubric",
               "skill_tags",
               "required_reviews",
+              "qualification_policy",
               "status",
               "create_time",
               "update_time"
@@ -2082,6 +2108,9 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "qualification_task": {
+                  "type": "boolean"
                 },
                 "reason": {
                   "type": "string"
@@ -2129,6 +2158,7 @@
                 "rubric_version",
                 "reason",
                 "review_role",
+                "qualification_task",
                 "status",
                 "resolution_label_name",
                 "create_time",
@@ -2481,6 +2511,35 @@
             "minLength": 1,
             "type": "string"
           },
+          "qualification_policy": {
+            "additionalProperties": false,
+            "properties": {
+              "min_accuracy": {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              "min_gold_reviews": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "mode": {
+                "enum": [
+                  "disabled",
+                  "shadow",
+                  "required"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "mode",
+              "min_gold_reviews",
+              "min_accuracy"
+            ],
+            "type": "object"
+          },
           "required_reviews": {
             "default": 1,
             "description": "Independent primary review slots for each residual label.",
@@ -2535,6 +2594,31 @@
           "name": {
             "type": "string"
           },
+          "qualification_policy": {
+            "additionalProperties": false,
+            "properties": {
+              "min_accuracy": {
+                "type": "number"
+              },
+              "min_gold_reviews": {
+                "type": "integer"
+              },
+              "mode": {
+                "enum": [
+                  "disabled",
+                  "shadow",
+                  "required"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "mode",
+              "min_gold_reviews",
+              "min_accuracy"
+            ],
+            "type": "object"
+          },
           "required_reviews": {
             "type": "integer"
           },
@@ -2575,6 +2659,7 @@
           "rubric",
           "skill_tags",
           "required_reviews",
+          "qualification_policy",
           "status",
           "create_time",
           "update_time"
@@ -2724,6 +2809,31 @@
                 "name": {
                   "type": "string"
                 },
+                "qualification_policy": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "min_accuracy": {
+                      "type": "number"
+                    },
+                    "min_gold_reviews": {
+                      "type": "integer"
+                    },
+                    "mode": {
+                      "enum": [
+                        "disabled",
+                        "shadow",
+                        "required"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mode",
+                    "min_gold_reviews",
+                    "min_accuracy"
+                  ],
+                  "type": "object"
+                },
                 "required_reviews": {
                   "type": "integer"
                 },
@@ -2764,6 +2874,7 @@
                 "rubric",
                 "skill_tags",
                 "required_reviews",
+                "qualification_policy",
                 "status",
                 "create_time",
                 "update_time"
@@ -3639,6 +3750,9 @@
                 "name": {
                   "type": "string"
                 },
+                "qualification_task": {
+                  "type": "boolean"
+                },
                 "reason": {
                   "type": "string"
                 },
@@ -3685,6 +3799,7 @@
                 "rubric_version",
                 "reason",
                 "review_role",
+                "qualification_task",
                 "status",
                 "resolution_label_name",
                 "create_time",
@@ -3907,6 +4022,9 @@
               "name": {
                 "type": "string"
               },
+              "qualification_task": {
+                "type": "boolean"
+              },
               "reason": {
                 "type": "string"
               },
@@ -3953,6 +4071,7 @@
               "rubric_version",
               "reason",
               "review_role",
+              "qualification_task",
               "status",
               "resolution_label_name",
               "create_time",
@@ -4039,6 +4158,10 @@
               "create_time",
               "update_time"
             ],
+            "type": "object"
+          },
+          "qualification_result": {
+            "additionalProperties": true,
             "type": "object"
           }
         },

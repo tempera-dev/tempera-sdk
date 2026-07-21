@@ -7,7 +7,7 @@ pub const SURFACE_VERSION: u32 = 3;
 
 pub const AUDIENCES: &[&str] = &["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"];
 pub const DEFAULT_AUDIENCE: &str = "palette";
-pub const SCOPES: &[&str] = &["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"];
+pub const SCOPES: &[&str] = &["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"];
 
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";
 pub const TOKEN_PATH: &str = "/oauth/token";
@@ -2444,6 +2444,34 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body_defaults: &[],
         scope: Some("review:resolve"),
         description: "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
+    },
+    OperationSpec {
+        product: "data_engine",
+        id: "create_review_qualification_task",
+        method: "POST",
+        path: "/v1/projects/{project_id}/review-qualification-tasks",
+        auth: "product",
+        path_params: &["project_id"],
+        query: &[],
+        body: &["source_expert_task_name", "expected_label", "mode", "feedback_policy", "idempotency_key"],
+        required_body: &["source_expert_task_name", "expected_label", "idempotency_key"],
+        body_defaults: &[],
+        scope: Some("review:gold:manage"),
+        description: "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
+    },
+    OperationSpec {
+        product: "data_engine",
+        id: "get_reviewer_qualification",
+        method: "GET",
+        path: "/v1/projects/{project_id}/campaigns/{campaign_id}/reviewer-qualification",
+        auth: "product",
+        path_params: &["project_id", "campaign_id"],
+        query: &[],
+        body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: Some("review:resolve"),
+        description: "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
     },
     OperationSpec {
         product: "data_engine",

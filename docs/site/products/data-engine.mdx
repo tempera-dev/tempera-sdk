@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 51 |
+| Typed operations | 53 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -1993,6 +1993,109 @@ let spec = client.build_request("data_engine", "get_review_operations", &[
     ("project_id", "<project_id>".into()),
     ("window_seconds", "<window_seconds>".into()),
     ("sla_target_seconds", "<sla_target_seconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createReviewQualificationTask
+
+`POST /v1/projects/{project_id}/review-qualification-tasks`
+
+Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:gold:manage`
+- **Call as:** TypeScript `client.dataEngine.createReviewQualificationTask()` · Python `client.data_engine.create_review_qualification_task()` · Rust `build_request("data_engine", "create_review_qualification_task", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `source_expert_task_name` | yes | — |
+| `expected_label` | yes | — |
+| `mode` | no | — |
+| `feedback_policy` | no | — |
+| `idempotency_key` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createReviewQualificationTask({
+  project_id: "<project_id>",
+  source_expert_task_name: "<source_expert_task_name>",
+  expected_label: "<expected_label>",
+  mode: "<mode>",
+});
+```
+
+```python Python
+result = client.data_engine.create_review_qualification_task({
+    "project_id": "<project_id>",
+    "source_expert_task_name": "<source_expert_task_name>",
+    "expected_label": "<expected_label>",
+    "mode": "<mode>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_review_qualification_task", &[
+    ("project_id", "<project_id>".into()),
+    ("source_expert_task_name", "<source_expert_task_name>".into()),
+    ("expected_label", "<expected_label>".into()),
+    ("mode", "<mode>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getReviewerQualification
+
+`GET /v1/projects/{project_id}/campaigns/{campaign_id}/reviewer-qualification`
+
+Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.getReviewerQualification()` · Python `client.data_engine.get_reviewer_qualification()` · Rust `build_request("data_engine", "get_reviewer_qualification", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `campaign_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getReviewerQualification({
+  project_id: "<project_id>",
+  campaign_id: "<campaign_id>",
+});
+```
+
+```python Python
+result = client.data_engine.get_reviewer_qualification({
+    "project_id": "<project_id>",
+    "campaign_id": "<campaign_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_reviewer_qualification", &[
+    ("project_id", "<project_id>".into()),
+    ("campaign_id", "<campaign_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

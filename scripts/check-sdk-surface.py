@@ -246,8 +246,11 @@ def validate_data_engine_mcp_contracts() -> list[str]:
     }
     if exposed != set(by_tool):
         failures.append("Data Engine exposed decisions differ from exact tools artifact")
-    if len(exposed) != 36 or len(denied) != 14 or exposed & denied:
-        failures.append("Data Engine MCP admission is not the reviewed 36 expose / 14 deny split")
+    if len(exposed) != 36 or exposed | denied != set(by_operation) or exposed & denied:
+        failures.append(
+            "Data Engine MCP admission must classify every authenticated operation "
+            "while preserving the reviewed 36-tool exposure boundary"
+        )
     for operation_id, authoritative in expected_operations.items():
         record = by_operation.get(operation_id) or {}
         if record.get("required_scope") != authoritative.get("requiredScope"):
