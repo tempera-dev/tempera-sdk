@@ -1,4 +1,13 @@
-Vendored from cradle repo: sdks/openapi.json
-Origin path: /home/user/cradle/sdks/openapi.json
-(The task referenced /home/user/cradle/api/openapi.json; the committed cradle spec actually lives at sdks/openapi.json.)
-Generated upstream from the cradle Rust handlers. Do not hand-edit; refresh by re-copying the upstream committed spec.
+{
+  "generated_path": "specs/cradle-openapi.json",
+  "generated_sha256": "5838e4047c8cc35654688dcdc1b1d1c61b572dcb1cfb4617ce8ff0195878750a",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "14a9fef67791c2b603a6886cffb5c5192ff382ba",
+  "source_branch": "main",
+  "source_commit": "daba206b8cab083d9ddf54a91cd95a7f98ac004f",
+  "source_mode": "100644",
+  "source_path": "sdks/openapi.json",
+  "source_repo": "tempera-dev/cradle",
+  "source_sha256": "5838e4047c8cc35654688dcdc1b1d1c61b572dcb1cfb4617ce8ff0195878750a"
+}

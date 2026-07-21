@@ -276,6 +276,10 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Validate a workflow definition without storing it; returns the full diagnostic list. */
   validateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it. */
+  composeWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node. */
+  assistJson(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Start a run of a stored workflow with an optional input document and idempotency key. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run a workflow to completion and return its output in a single call. */
