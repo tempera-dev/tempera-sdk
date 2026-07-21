@@ -64,7 +64,9 @@ jobs:
         with:
           python-version: "3.13"
       - name: Verify exact committed Data Engine source
-        run: python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+        run: |
+          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+          python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
 
   auth-hub-exact-source:
     permissions:

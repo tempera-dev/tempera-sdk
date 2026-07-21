@@ -2946,6 +2946,24 @@ OPERATIONS = {
             "description": "Autosave a version-checked draft under the active reviewer lease."
         },
         {
+            "id": "get_review_operations",
+            "method": "GET",
+            "path": "/v1/projects/{project_id}/review-operations",
+            "auth": "product",
+            "path_params": [
+                "project_id"
+            ],
+            "query": [
+                "window_seconds",
+                "sla_target_seconds"
+            ],
+            "body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "review:resolve",
+            "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
+        },
+        {
             "id": "get_metrics",
             "method": "GET",
             "path": "/v1/projects/{project_id}/metrics",

@@ -17,8 +17,11 @@ Fails when the three language packages can drift apart:
 6. No tracked file may mention a legacy product codename; the current
    product names (palette, tempo, cradle, remi, tempOS, temp.js) are the
    only ones allowed.
-7. Every typed data-engine operation must exactly match the corresponding
-   data-engine OpenAPI operation recorded in the committed contract lock.
+7. Every typed data-engine operation and scope must exactly match canonical
+   OpenAPI metadata recorded in the committed contract lock.
+8. Data Engine's exact MCP catalog must retain one reviewed expose/deny
+   decision per authenticated operation without turning REST coverage into
+   model exposure.
 
 Runtime conformance (every operation dispatching the right method, path, and
 auth header) is asserted per-language by each package's own test suite, which
@@ -35,6 +38,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_ENGINE_OPERATION_LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
+DATA_ENGINE_MCP_ADMISSION = ROOT / "specs" / "data-engine-mcp-admission.json"
+DATA_ENGINE_MCP_TOOLS = ROOT / "specs" / "data-engine-mcp-tools.json"
 
 # Hand-written files must keep exposing the uniform primitives by these names.
 REQUIRED_MARKERS = {
@@ -109,11 +114,11 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
             + ", ".join(missing_provenance)
         )
     expected_lock_values = {
-        "schema_version": 2,
+        "schema_version": 3,
         "source_repo": "tempera-dev/data-engine",
         "source_branch": "main",
         "source_path": "api/openapi.yaml",
-        "generated_with": "sync-data-engine-openapi.py@3",
+        "generated_with": "sync-data-engine-openapi.py@4",
     }
     for key, expected in expected_lock_values.items():
         if lock.get(key) != expected:
@@ -149,6 +154,113 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
             authoritative.get("method", ""), authoritative.get("path", "")
         ):
             failures.append(f"{label}: path differs from {authoritative.get('operationId')}")
+        expected_audience = None if operation.get("auth") == "none" else "data-engine"
+        if authoritative.get("audience") != expected_audience:
+            failures.append(
+                f"{label}: audience {expected_audience!r} differs from canonical "
+                f"{authoritative.get('audience')!r}"
+            )
+        if operation.get("scope") != authoritative.get("requiredScope"):
+            failures.append(
+                f"{label}: scope {operation.get('scope')!r} differs from canonical "
+                f"{authoritative.get('requiredScope')!r}"
+            )
+    return failures
+
+
+def validate_data_engine_mcp_contracts() -> list[str]:
+    """Bind curated model exposure to exact producer artifacts and auth truth."""
+    failures: list[str] = []
+    try:
+        operation_lock = json.loads(DATA_ENGINE_OPERATION_LOCK.read_text())
+        admission_bytes = DATA_ENGINE_MCP_ADMISSION.read_bytes()
+        tools_bytes = DATA_ENGINE_MCP_TOOLS.read_bytes()
+        admission = json.loads(admission_bytes)
+        tools = json.loads(tools_bytes)
+    except (OSError, json.JSONDecodeError) as error:
+        return [f"invalid Data Engine MCP contract artifact: {error}"]
+
+    expected_sources = {
+        DATA_ENGINE_MCP_ADMISSION: "api/mcp-admission.json",
+        DATA_ENGINE_MCP_TOOLS: "api/mcp-tools.json",
+    }
+    for artifact, source_path in expected_sources.items():
+        source_lock_path = artifact.with_name(artifact.name + ".source")
+        try:
+            source_lock = json.loads(source_lock_path.read_text())
+        except (OSError, json.JSONDecodeError) as error:
+            failures.append(f"invalid {source_lock_path.relative_to(ROOT)}: {error}")
+            continue
+        expected = {
+            "schema_version": 1,
+            "source_repo": "tempera-dev/data-engine",
+            "source_branch": "main",
+            "source_commit": operation_lock.get("source_commit"),
+            "source_path": source_path,
+            "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",
+            "generated_path": artifact.relative_to(ROOT).as_posix(),
+        }
+        for key, value in expected.items():
+            if source_lock.get(key) != value:
+                failures.append(
+                    f"{source_lock_path.relative_to(ROOT)} {key} "
+                    f"{source_lock.get(key)!r} != {value!r}"
+                )
+        content = artifact.read_bytes()
+        content_digest = hashlib.sha256(content).hexdigest()
+        if source_lock.get("source_sha256") != content_digest:
+            failures.append(f"{artifact.relative_to(ROOT)} differs from source SHA-256")
+        if source_lock.get("generated_sha256") != content_digest:
+            failures.append(f"{artifact.relative_to(ROOT)} generated SHA-256 is stale")
+
+    if admission.get("schema") != "data-engine.mcp-admission.v1":
+        failures.append("Data Engine MCP admission schema is not v1")
+    if tools.get("schema") != "data-engine.mcp-tools.v1":
+        failures.append("Data Engine MCP tools schema is not v1")
+    records = admission.get("operations")
+    tool_list = tools.get("tools")
+    if not isinstance(records, list) or not isinstance(tool_list, list):
+        return [*failures, "Data Engine MCP artifacts lack operation/tool arrays"]
+    by_operation = {record.get("operation_id"): record for record in records}
+    by_tool = {tool.get("name"): tool for tool in tool_list}
+    if len(by_operation) != len(records):
+        failures.append("Data Engine MCP admission has duplicate operation IDs")
+    if len(by_tool) != len(tool_list):
+        failures.append("Data Engine MCP tools artifact has duplicate tool names")
+    expected_operations = {
+        operation.get("operationId"): operation
+        for operation in operation_lock.get("operations", [])
+        if operation.get("operationId") != "health.get"
+    }
+    if set(by_operation) != set(expected_operations):
+        failures.append("Data Engine MCP decisions do not cover exact authenticated SDK operations")
+    exposed = {
+        operation_id
+        for operation_id, record in by_operation.items()
+        if record.get("decision") == "expose"
+    }
+    denied = {
+        operation_id
+        for operation_id, record in by_operation.items()
+        if record.get("decision") == "deny"
+    }
+    if exposed != set(by_tool):
+        failures.append("Data Engine exposed decisions differ from exact tools artifact")
+    if len(exposed) != 36 or len(denied) != 14 or exposed & denied:
+        failures.append("Data Engine MCP admission is not the reviewed 36 expose / 14 deny split")
+    for operation_id, authoritative in expected_operations.items():
+        record = by_operation.get(operation_id) or {}
+        if record.get("required_scope") != authoritative.get("requiredScope"):
+            failures.append(f"{operation_id}: MCP admission scope differs from OpenAPI auth metadata")
+        if record.get("effect") not in {"safe", "read", "write", "destructive"}:
+            failures.append(f"{operation_id}: MCP admission effect is invalid")
+        fixtures = record.get("schema_fixtures") or {}
+        for field in ("input_sha256", "output_sha256"):
+            if re.fullmatch(r"[0-9a-f]{64}", str(fixtures.get(field, ""))) is None:
+                failures.append(f"{operation_id}: missing {field} fixture digest")
+    expected_tools_digest = admission.get("policy", {}).get("mcp_tools_artifact", {}).get("sha256")
+    if expected_tools_digest != hashlib.sha256(tools_bytes).hexdigest():
+        failures.append("Data Engine MCP admission does not bind the vendored tools artifact")
     return failures
 
 
@@ -210,6 +322,7 @@ def main() -> int:
     # yet silently dropped from the public TemperaClient type. Guard against it.
     surface = json.loads((ROOT / "surface.json").read_text())
     failures.extend(validate_data_engine_openapi_bindings(surface))
+    failures.extend(validate_data_engine_mcp_contracts())
     index_dts = (ROOT / "packages/typescript/src/index.d.ts").read_text()
     client_type = re.search(r"export type TemperaClient = \{(.*?)\n\};", index_dts, re.DOTALL)
     if client_type is None:

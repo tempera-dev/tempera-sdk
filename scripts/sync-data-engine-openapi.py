@@ -38,7 +38,10 @@ DEFAULT_SOURCE = ROOT.parent / "data-engine" / "api" / "openapi.yaml"
 METHOD_RE = re.compile(r"^    (get|post|put|patch|delete):\s*$")
 PATH_RE = re.compile(r"^  (/[^\s]*):\s*$")
 OPERATION_ID_RE = re.compile(r"^      operationId:\s*([^\s#]+)\s*$")
-GENERATOR_VERSION = "sync-data-engine-openapi.py@3"
+AUTH_EXTENSION_RE = re.compile(
+    r"^      x-tempera-(audience|required-scope):\s*([^\s#]+)\s*$"
+)
+GENERATOR_VERSION = "sync-data-engine-openapi.py@4"
 DEFAULT_SOURCE_REPO = "tempera-dev/data-engine"
 DEFAULT_SOURCE_BRANCH = "main"
 SOURCE_REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
@@ -46,14 +49,16 @@ SOURCE_BRANCH_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
 SOURCE_COMMIT_RE = re.compile(r"^(?:HEAD|[0-9a-f]{40})$")
 
 
-def extract_operations_text(source_text: str, source_label: str) -> list[dict[str, str]]:
-    """Extract the OpenAPI paths section's operation identity triples.
+def extract_operations_text(
+    source_text: str, source_label: str
+) -> list[dict[str, str | None]]:
+    """Extract operation identities and canonical auth metadata.
 
     The data-engine contract deliberately uses conventional block YAML for
     paths, methods, and operation IDs.  Parsing this narrow grammar avoids a
     runtime YAML dependency in all SDK language CI jobs.
     """
-    operations: list[dict[str, str]] = []
+    operations: list[dict[str, str | None]] = []
     in_paths = False
     path: str | None = None
     method: str | None = None
@@ -83,7 +88,17 @@ def extract_operations_text(source_text: str, source_label: str) -> list[dict[st
                     "path": path,
                 }
             )
-            method = None
+            continue
+        auth_match = AUTH_EXTENSION_RE.match(raw)
+        if auth_match and method is not None and operations:
+            key = "audience" if auth_match.group(1) == "audience" else "requiredScope"
+            if key in operations[-1]:
+                raise ValueError(
+                    f"duplicate x-tempera-{auth_match.group(1)} for "
+                    f"{operations[-1]['operationId']!r} in {source_label}"
+                )
+            value = auth_match.group(2).strip("'\"")
+            operations[-1][key] = None if value == "null" else value
     if not operations:
         raise ValueError(f"no OpenAPI operations found in {source_label}")
     seen: set[str] = set()
@@ -92,10 +107,16 @@ def extract_operations_text(source_text: str, source_label: str) -> list[dict[st
         if operation_id in seen:
             raise ValueError(f"duplicate operationId {operation_id!r} in {source_label}")
         seen.add(operation_id)
+        missing = {"audience", "requiredScope"} - set(operation)
+        if missing:
+            raise ValueError(
+                f"operationId {operation_id!r} lacks canonical auth metadata "
+                f"{sorted(missing)} in {source_label}"
+            )
     return operations
 
 
-def extract_operations(source: Path) -> list[dict[str, str]]:
+def extract_operations(source: Path) -> list[dict[str, str | None]]:
     return extract_operations_text(source.read_text(encoding="utf-8"), str(source))
 
 
@@ -227,7 +248,11 @@ def committed_source(
     return result.stdout, metadata
 
 
-def render(source_label: str, source_metadata: dict[str, str], operations: list[dict[str, str]]) -> str:
+def render(
+    source_label: str,
+    source_metadata: dict[str, str],
+    operations: list[dict[str, str | None]],
+) -> str:
     surface = json.loads((ROOT / "surface.json").read_text(encoding="utf-8"))
     by_identity = {
         route_identity(operation["method"], operation["path"]): operation
@@ -235,7 +260,7 @@ def render(source_label: str, source_metadata: dict[str, str], operations: list[
     }
     if len(by_identity) != len(operations):
         raise ValueError(f"duplicate structural route identity in {source_label}")
-    bindings: list[dict[str, str]] = []
+    bindings: list[dict[str, str | None]] = []
     for sdk_operation in surface["operations"]["dataEngine"]:
         identity = route_identity(sdk_operation["method"], sdk_operation["path"])
         operation = by_identity.get(identity)
@@ -261,7 +286,7 @@ def render(source_label: str, source_metadata: dict[str, str], operations: list[
         )
     generated_bytes = (json.dumps(bindings, sort_keys=True, separators=(",", ":")) + "\n").encode()
     lock = {
-        "schema_version": 2,
+        "schema_version": 3,
         **source_metadata,
         "generated_with": GENERATOR_VERSION,
         "generated_sha256": hashlib.sha256(generated_bytes).hexdigest(),

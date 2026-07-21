@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import subprocess
@@ -50,6 +51,43 @@ def create_source_repo(repo: Path) -> tuple[Path, str]:
 
 
 class SourceLockTest(unittest.TestCase):
+    def test_extracts_canonical_auth_metadata(self) -> None:
+        operations = sync.extract_operations_text(
+            """paths:
+  /v1/{parent}/things:
+    get:
+      operationId: projects.things.list
+      x-tempera-audience: data-engine
+      x-tempera-required-scope: dataset:read
+      responses: {}
+""",
+            "fixture",
+        )
+        self.assertEqual(
+            operations,
+            [
+                {
+                    "operationId": "projects.things.list",
+                    "method": "GET",
+                    "path": "/v1/{parent}/things",
+                    "audience": "data-engine",
+                    "requiredScope": "dataset:read",
+                }
+            ],
+        )
+
+    def test_missing_canonical_auth_metadata_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "lacks canonical auth metadata"):
+            sync.extract_operations_text(
+                """paths:
+  /v1/{parent}/things:
+    get:
+      operationId: projects.things.list
+      responses: {}
+""",
+                "fixture",
+            )
+
     def test_route_identity_ignores_parameter_spelling(self) -> None:
         self.assertEqual(
             sync.route_identity("GET", "/v1/projects/{project_id}/campaigns/{campaign_id}"),
@@ -57,7 +95,9 @@ class SourceLockTest(unittest.TestCase):
         )
 
     def test_committed_source_uses_git_bytes_and_rejects_dirty_repo(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+        with tempfile.TemporaryDirectory(
+            prefix="tempera-sdk-source-lock-"
+        ) as directory:
             repo = Path(directory)
             source, _ = create_source_repo(repo)
 
@@ -146,6 +186,39 @@ class SourceLockTest(unittest.TestCase):
                 "'tempera-dev/data-engine'",
                 failures,
             )
+
+    def test_local_gate_rejects_canonical_scope_drift(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            lock_path = Path(directory) / "data-engine-lock.json"
+            lock = json.loads(sync.LOCK.read_text())
+            operation = next(
+                item
+                for item in lock["operations"]
+                if item["sdkOperationId"] == "getMetrics"
+            )
+            operation["requiredScope"] = "dataset:write"
+            operation_bytes = (
+                json.dumps(
+                    lock["operations"], sort_keys=True, separators=(",", ":")
+                )
+                + "\n"
+            ).encode()
+            lock["generated_sha256"] = hashlib.sha256(operation_bytes).hexdigest()
+            lock_path.write_text(json.dumps(lock), encoding="utf-8")
+            original = check_surface.DATA_ENGINE_OPERATION_LOCK
+            check_surface.DATA_ENGINE_OPERATION_LOCK = lock_path
+            try:
+                surface = json.loads((sync.ROOT / "surface.json").read_text())
+                failures = check_surface.validate_data_engine_openapi_bindings(surface)
+            finally:
+                check_surface.DATA_ENGINE_OPERATION_LOCK = original
+            self.assertIn(
+                "dataEngine.getMetrics: scope 'dataset:read' differs from canonical 'dataset:write'",
+                failures,
+            )
+
+    def test_vendored_mcp_contract_matches_operation_auth_lock(self) -> None:
+        self.assertEqual(check_surface.validate_data_engine_mcp_contracts(), [])
 
 
 if __name__ == "__main__":

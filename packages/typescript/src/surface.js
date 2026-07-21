@@ -2955,6 +2955,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Autosave a version-checked draft under the active reviewer lease."
     },
     {
+      "id": "getReviewOperations",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/review-operations",
+      "auth": "product",
+      "pathParams": [
+        "project_id"
+      ],
+      "query": [
+        "window_seconds",
+        "sla_target_seconds"
+      ],
+      "body": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
+    },
+    {
       "id": "getMetrics",
       "method": "GET",
       "path": "/v1/projects/{project_id}/metrics",

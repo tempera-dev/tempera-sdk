@@ -426,6 +426,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Autosave a version-checked draft under the active reviewer lease. */
   saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations. */
+  getReviewOperations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the project label-quality report and unresolved expert backlog. */

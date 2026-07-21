@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 50 |
+| Typed operations | 51 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -1940,6 +1940,59 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
     ("idempotency_key", "<idempotency_key>".into()),
     ("lease_token", "<lease_token>".into()),
     ("draft", "<draft>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getReviewOperations
+
+`GET /v1/projects/{project_id}/review-operations`
+
+Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.
+
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.getReviewOperations()` · Python `client.data_engine.get_review_operations()` · Rust `build_request("data_engine", "get_review_operations", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `window_seconds` | no | — |
+| `sla_target_seconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.getReviewOperations({
+  project_id: "<project_id>",
+  window_seconds: "<window_seconds>",
+  sla_target_seconds: "<sla_target_seconds>",
+});
+```
+
+```python Python
+result = client.data_engine.get_review_operations({
+    "project_id": "<project_id>",
+    "window_seconds": "<window_seconds>",
+    "sla_target_seconds": "<sla_target_seconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "get_review_operations", &[
+    ("project_id", "<project_id>".into()),
+    ("window_seconds", "<window_seconds>".into()),
+    ("sla_target_seconds", "<sla_target_seconds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
