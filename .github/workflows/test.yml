@@ -6,6 +6,63 @@ on:
     branches: [main]
 
 jobs:
+  palette-exact-source:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Palette source lock
+        id: palette-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("specs/palette-api.json.source").read_text(encoding="utf-8")
+          )
+          expected = {
+              "source_repo": "tempera-dev/palette",
+              "source_branch": "main",
+              "source_path": "sdks/openapi/palette-api.json",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+                  )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: palette
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/palette
+          ref: ${{ steps.palette-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .palette-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Verify exact committed Palette source
+        run: |
+          git -C .palette-source fetch --no-tags origin main:refs/remotes/origin/main
+          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .palette-source --source-repo tempera-dev/palette --source-branch main --commit "${{ steps.palette-lock.outputs.commit }}" --source-path sdks/openapi/palette-api.json --generated-with source_lock.py@1+palette-api-dump-openapi --generated-file specs/palette-api.json --generated-path specs/palette-api.json --lock specs/palette-api.json.source
+
   sdk:
     runs-on: ubuntu-latest
     steps:
@@ -17,6 +74,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py
       - run: npm --prefix packages/typescript test
       - run: python3 -m unittest discover -s packages/python/tests
