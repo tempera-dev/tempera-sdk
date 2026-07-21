@@ -15,7 +15,7 @@
         "tags": [
           "health"
         ],
-        "operationId": "health.health",
+        "operationId": "health.check",
         "responses": {
           "200": {
             "description": "Runtime is accepting requests",
@@ -35,7 +35,7 @@
         "tags": [
           "alerts"
         ],
-        "operationId": "alerts.evaluate-alert",
+        "operationId": "alerts.evaluate",
         "parameters": [
           {
             "name": "tenant_id",
@@ -172,7 +172,7 @@
         "tags": [
           "apiKeys"
         ],
-        "operationId": "apiKeys.create-api-key",
+        "operationId": "apiKeys.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -309,7 +309,7 @@
         "tags": [
           "apiKeys"
         ],
-        "operationId": "apiKeys.revoke-api-key",
+        "operationId": "apiKeys.revoke",
         "parameters": [
           {
             "name": "tenant_id",
@@ -455,7 +455,7 @@
         "tags": [
           "archive"
         ],
-        "operationId": "archive.query-archive-spans",
+        "operationId": "archive.querySpans",
         "parameters": [
           {
             "name": "tenant_id",
@@ -622,7 +622,7 @@
         "tags": [
           "archive"
         ],
-        "operationId": "archive.archive-trace",
+        "operationId": "archive.archiveTrace",
         "parameters": [
           {
             "name": "tenant_id",
@@ -759,7 +759,7 @@
         "tags": [
           "audit"
         ],
-        "operationId": "audit.list-audit-events",
+        "operationId": "audit.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -880,7 +880,7 @@
         "tags": [
           "calibrations"
         ],
-        "operationId": "calibrations.run-calibration",
+        "operationId": "calibrations.run",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1036,7 +1036,7 @@
         "tags": [
           "connect"
         ],
-        "operationId": "connect.get-palette-connect-status",
+        "operationId": "connect.getStatus",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1154,7 +1154,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.list-connectors",
+        "operationId": "connectors.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1296,7 +1296,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.connect-connector",
+        "operationId": "connectors.connect",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1434,7 +1434,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.invoke-connector-tool",
+        "operationId": "connectors.invokeTool",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1572,7 +1572,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.get-connector-skills",
+        "operationId": "connectors.getSkills",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1709,7 +1709,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.connector-status",
+        "operationId": "connectors.status",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1846,7 +1846,7 @@
         "tags": [
           "connectors"
         ],
-        "operationId": "connectors.list-connector-tools",
+        "operationId": "connectors.listTools",
         "parameters": [
           {
             "name": "tenant_id",
@@ -1997,7 +1997,7 @@
         "tags": [
           "datasets"
         ],
-        "operationId": "datasets.create-dataset",
+        "operationId": "datasets.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2125,7 +2125,7 @@
         "tags": [
           "datasets"
         ],
-        "operationId": "datasets.promote-dataset-case-from-trace",
+        "operationId": "datasets.promoteCaseFromTrace",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2272,7 +2272,7 @@
         "tags": [
           "datasets"
         ],
-        "operationId": "datasets.create-dataset-version",
+        "operationId": "datasets.createVersion",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2419,7 +2419,7 @@
         "tags": [
           "evals"
         ],
-        "operationId": "evals.run-deterministic-eval",
+        "operationId": "evals.runDeterministic",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2575,7 +2575,7 @@
         "tags": [
           "evals"
         ],
-        "operationId": "evals.run-judge-eval",
+        "operationId": "evals.runJudge",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2731,7 +2731,7 @@
         "tags": [
           "experiments"
         ],
-        "operationId": "experiments.run-deterministic-experiment",
+        "operationId": "experiments.runDeterministic",
         "parameters": [
           {
             "name": "tenant_id",
@@ -2887,7 +2887,7 @@
         "tags": [
           "experiments"
         ],
-        "operationId": "experiments.run-judge-experiment",
+        "operationId": "experiments.runJudge",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3043,7 +3043,7 @@
         "tags": [
           "gates"
         ],
-        "operationId": "gates.create-gate",
+        "operationId": "gates.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3171,7 +3171,7 @@
         "tags": [
           "gates"
         ],
-        "operationId": "gates.run-gate",
+        "operationId": "gates.run",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3318,7 +3318,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.import-source",
+        "operationId": "ingest.importSource",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3459,7 +3459,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.replay-dead-letter",
+        "operationId": "ingest.replayDeadLetter",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3604,7 +3604,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.get-ingest-queue-status",
+        "operationId": "ingest.getQueueStatus",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3722,7 +3722,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.drain-trace-ingested",
+        "operationId": "ingest.drainTraceIngested",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3859,7 +3859,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.drain-trace-writes",
+        "operationId": "ingest.drainTraceWrites",
         "parameters": [
           {
             "name": "tenant_id",
@@ -3996,7 +3996,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.reconcile-trace",
+        "operationId": "ingest.reconcileTrace",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4133,7 +4133,7 @@
         "tags": [
           "judge"
         ],
-        "operationId": "judge.evaluate-judge",
+        "operationId": "judge.evaluate",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4261,7 +4261,7 @@
         "tags": [
           "judge"
         ],
-        "operationId": "judge.list-judge-ledger",
+        "operationId": "judge.listLedger",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4338,7 +4338,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/JudgeAuditRecord"
+                    "$ref": "#/components/schemas/PublicJudgeAuditRecord"
                   }
                 }
               }
@@ -4382,7 +4382,7 @@
         "tags": [
           "online"
         ],
-        "operationId": "online.decide-online-sampling",
+        "operationId": "online.decideSampling",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4519,7 +4519,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.ingest-otlp",
+        "operationId": "ingest.otlp",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4674,7 +4674,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.list-prompts",
+        "operationId": "prompts.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4790,7 +4790,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.create-prompt",
+        "operationId": "prompts.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -4918,7 +4918,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.get-prompt",
+        "operationId": "prompts.get",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5055,7 +5055,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.diff-prompt-versions",
+        "operationId": "prompts.diffVersions",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5208,7 +5208,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.list-prompt-versions",
+        "operationId": "prompts.listVersions",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5343,7 +5343,7 @@
         "tags": [
           "prompts"
         ],
-        "operationId": "prompts.add-prompt-version",
+        "operationId": "prompts.addVersion",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5490,7 +5490,7 @@
         "tags": [
           "providerSecrets"
         ],
-        "operationId": "providerSecrets.list-provider-secrets",
+        "operationId": "providerSecrets.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5609,7 +5609,7 @@
         "tags": [
           "providerSecrets"
         ],
-        "operationId": "providerSecrets.create-provider-secret",
+        "operationId": "providerSecrets.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5737,7 +5737,7 @@
         "tags": [
           "providerSecrets"
         ],
-        "operationId": "providerSecrets.revoke-provider-secret",
+        "operationId": "providerSecrets.revoke",
         "parameters": [
           {
             "name": "tenant_id",
@@ -5874,7 +5874,7 @@
         "tags": [
           "reviews"
         ],
-        "operationId": "reviews.create-review-queue",
+        "operationId": "reviews.createQueue",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6002,7 +6002,7 @@
         "tags": [
           "reviews"
         ],
-        "operationId": "reviews.list-review-tasks",
+        "operationId": "reviews.listTasks",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6150,7 +6150,7 @@
         "tags": [
           "reviews"
         ],
-        "operationId": "reviews.enqueue-review-task-from-trace",
+        "operationId": "reviews.enqueueTaskFromTrace",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6297,7 +6297,7 @@
         "tags": [
           "reviews"
         ],
-        "operationId": "reviews.submit-review-annotation",
+        "operationId": "reviews.submitAnnotation",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6453,7 +6453,7 @@
         "tags": [
           "reviews"
         ],
-        "operationId": "reviews.promote-review-annotation",
+        "operationId": "reviews.promoteAnnotation",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6618,7 +6618,7 @@
         "tags": [
           "scenarios"
         ],
-        "operationId": "scenarios.list-scenarios",
+        "operationId": "scenarios.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6752,7 +6752,7 @@
         "tags": [
           "scenarios"
         ],
-        "operationId": "scenarios.create-scenario",
+        "operationId": "scenarios.create",
         "parameters": [
           {
             "name": "tenant_id",
@@ -6880,7 +6880,7 @@
         "tags": [
           "scenarios"
         ],
-        "operationId": "scenarios.mine-scenarios",
+        "operationId": "scenarios.mine",
         "parameters": [
           {
             "name": "tenant_id",
@@ -7018,7 +7018,7 @@
         "tags": [
           "scenarios"
         ],
-        "operationId": "scenarios.get-scenario",
+        "operationId": "scenarios.get",
         "parameters": [
           {
             "name": "tenant_id",
@@ -7155,7 +7155,7 @@
         "tags": [
           "search"
         ],
-        "operationId": "search.search-spans",
+        "operationId": "search.spans",
         "parameters": [
           {
             "name": "tenant_id",
@@ -7346,7 +7346,7 @@
         "tags": [
           "spans"
         ],
-        "operationId": "spans.get-span",
+        "operationId": "spans.get",
         "parameters": [
           {
             "name": "tenant_id",
@@ -7499,7 +7499,7 @@
         "tags": [
           "spans"
         ],
-        "operationId": "spans.get-span-io",
+        "operationId": "spans.getIo",
         "parameters": [
           {
             "name": "tenant_id",
@@ -7652,7 +7652,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.ingest-otlp-json-collector",
+        "operationId": "ingest.otlpJsonCollector",
         "parameters": [
           {
             "name": "durability",
@@ -7792,7 +7792,7 @@
         "tags": [
           "ingest"
         ],
-        "operationId": "ingest.ingest-native",
+        "operationId": "ingest.native",
         "parameters": [
           {
             "name": "durability",
@@ -7930,7 +7930,7 @@
         "tags": [
           "traces"
         ],
-        "operationId": "traces.list-traces",
+        "operationId": "traces.list",
         "parameters": [
           {
             "name": "tenant_id",
@@ -8165,7 +8165,7 @@
         "tags": [
           "traces"
         ],
-        "operationId": "traces.get-trace",
+        "operationId": "traces.get",
         "parameters": [
           {
             "name": "tenant_id",
@@ -8309,7 +8309,7 @@
         "tags": [
           "usage"
         ],
-        "operationId": "usage.get-usage-summary",
+        "operationId": "usage.getSummary",
         "parameters": [
           {
             "name": "tenant_id",
@@ -11950,6 +11950,60 @@
               "null"
             ],
             "format": "date-time"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/TenantId"
+          }
+        }
+      },
+      "PublicJudgeAuditRecord": {
+        "type": "object",
+        "description": "Client-facing judge ledger row. The backing `provider`, the `provider_secret_id`,\nand our raw `provider_cost` are INTERNAL (staff-only) and must never reach a\ncustomer — exposing `provider_cost` alongside `charged_cost` would also leak our\nmargin (billing-credits-contract §11). Only customer-facing fields appear here,\nincluding `charged_cost` (the amount the customer actually pays).",
+        "required": [
+          "judge_call_id",
+          "tenant_id",
+          "project_id",
+          "evaluator_id",
+          "model",
+          "request_hash",
+          "response_hash",
+          "score",
+          "charged_cost",
+          "cached",
+          "created_at"
+        ],
+        "properties": {
+          "cached": {
+            "type": "boolean"
+          },
+          "charged_cost": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evaluator_id": {
+            "type": "string"
+          },
+          "judge_call_id": {
+            "$ref": "#/components/schemas/JudgeCallId"
+          },
+          "model": {
+            "type": "string"
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "request_hash": {
+            "$ref": "#/components/schemas/Sha256Hash"
+          },
+          "response_hash": {
+            "$ref": "#/components/schemas/Sha256Hash"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
           },
           "tenant_id": {
             "$ref": "#/components/schemas/TenantId"
