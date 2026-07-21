@@ -23,7 +23,7 @@
       "product": "controlPlane",
       "review_after": "2026-08-01",
       "rollback": "Keep compatibility aliases only through an announced deprecation; revert additive generated methods independently.",
-      "upstream_only_routes": 23
+      "upstream_only_routes": 24
     },
     {
       "compatibility": "additive_consumer_catchup",

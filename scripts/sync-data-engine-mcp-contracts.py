@@ -63,6 +63,16 @@ def expected_files(source_repo_dir: Path, commit: str) -> dict[Path, bytes]:
     if len(commits) != 1:
         raise ValueError(f"MCP artifacts resolved to different commits: {sorted(commits)}")
 
+    openapi_bytes, openapi_metadata = openapi_sync.committed_source(
+        source_repo_dir / "api/openapi.yaml",
+        source_commit=commit,
+    )
+    openapi_operations = openapi_sync.extract_operations_text(
+        openapi_bytes.decode("utf-8"),
+        f"{openapi_metadata['source_repo']}@{openapi_metadata['source_commit']}:"
+        f"{openapi_metadata['source_path']}",
+    )
+
     admission = documents["api/mcp-admission.json"]
     tools = documents["api/mcp-tools.json"]
     if admission.get("schema") != "data-engine.mcp-admission.v1":
@@ -81,9 +91,29 @@ def expected_files(source_repo_dir: Path, commit: str) -> dict[Path, bytes]:
     expected_tool_digest = policy.get("mcp_tools_artifact", {}).get("sha256")
     if expected_tool_digest != digest(outputs[ARTIFACTS["api/mcp-tools.json"]]):
         raise ValueError("MCP admission does not bind the exact tools artifact")
-    if (len(operations), len(tool_list)) != (50, 36):
+    operation_ids = [operation.get("operation_id") for operation in operations]
+    openapi_operation_ids = {
+        operation["operationId"]
+        for operation in openapi_operations
+        if operation["operationId"] not in {"health.get", "mcp.jsonrpc"}
+    }
+    if len(operation_ids) != len(set(operation_ids)):
+        raise ValueError("MCP admission contains duplicate operation decisions")
+    if set(operation_ids) != openapi_operation_ids:
         raise ValueError(
-            f"unexpected MCP decision/tool counts: {len(operations)}/{len(tool_list)}"
+            "MCP admission decisions differ from authenticated OpenAPI operations "
+            f"(missing={sorted(openapi_operation_ids - set(operation_ids))}, "
+            f"extra={sorted(set(operation_ids) - openapi_operation_ids)})"
+        )
+    decisions = [operation.get("decision") for operation in operations]
+    invalid_decisions = sorted({decision for decision in decisions if decision not in {"expose", "deny"}})
+    exposed_count = decisions.count("expose")
+    if invalid_decisions:
+        raise ValueError(f"unexpected MCP admission decisions: {invalid_decisions}")
+    if len(tool_list) != 36 or exposed_count != len(tool_list):
+        raise ValueError(
+            "unexpected MCP exposure/tool counts: "
+            f"{exposed_count} exposed decisions/{len(tool_list)} tools"
         )
     return outputs
 

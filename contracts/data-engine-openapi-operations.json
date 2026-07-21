@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "6357839770bdb2d586915d4d1c14066fd77840b8",
+  "source_commit": "1ac9a5cccc5e087fefbfeed4b8e7b21c82751578",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "9ed3a2b69c00a7e5b332fe3a815c64d098133713",
-  "source_sha256": "202b6b7ef08748eff31ebc23ca85bfdb71c89c212d175a84adbfb0d8560b0b9c",
+  "source_blob_sha": "ace18e15a551cc2e9ba129060353d330dddf8aea",
+  "source_sha256": "031a3af4d5bcd27d0d00fd9cae96f316f9f2a85f4b6bf4ef64e09e436272a301",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "5c5569b9a2663aa0134ee9a6f935a0b6cbaf45203d335a65331ab12d9c8f8da8",
+  "generated_sha256": "cca48789be4fd4991857d731131e3d65db08cfa5939b233a13ffdb7a16daa6f9",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -294,6 +294,22 @@
       "operationId": "projects.reviewOperations.get",
       "method": "GET",
       "path": "/v1/{parent}/review-operations",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "createReviewQualificationTask",
+      "operationId": "projects.reviewQualificationTasks.create",
+      "method": "POST",
+      "path": "/v1/{parent}/review-qualification-tasks",
+      "audience": "data-engine",
+      "requiredScope": "review:gold:manage"
+    },
+    {
+      "sdkOperationId": "getReviewerQualification",
+      "operationId": "projects.reviewerQualifications.get",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },

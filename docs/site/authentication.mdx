@@ -201,7 +201,8 @@ is the default when none is specified.
 | `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `extractSource`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
 | `eval:run` | data-engine: `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; tempera-gym: `createRollout` |
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
-| `review:resolve` | data-engine: `claimExpertTask`, `getReviewOperations`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
+| `review:gold:manage` | data-engine: `createReviewQualificationTask` |
+| `review:resolve` | data-engine: `claimExpertTask`, `getReviewOperations`, `getReviewerQualification`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |

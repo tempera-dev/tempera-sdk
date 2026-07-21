@@ -140,8 +140,8 @@
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
         "input_sha256": "5553fd25ac32291b94a9553ec05f0af24db15d8398df274e955e8bec67669466",
-        "mcp_input_schema_sha256": "759ce3bbd11191cd05cae3f7c345f31a939fc73c22f13cfa79232f782f93609b",
-        "mcp_output_schema_sha256": "91c0c9eec87783d3632e5a73c26d24cfcb8a2af1cc77e7418e1d3766dba183e7",
+        "mcp_input_schema_sha256": "a07e0a8b539e4ac1f5de3e7c032af67a7ba602e62ca84fa1be525123001d7ae4",
+        "mcp_output_schema_sha256": "1f4546493a765c4836f5a2de6ce28fc00ae0e66bc5d2fa574b34bec8848a3f9b",
         "output_sha256": "8dcfc13b16a10553bead8dde011699a1b7e3534289a9e065224eb4cdc3fbbbcd"
       }
     },
@@ -170,7 +170,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "505de8cb693a22a7a6fb62f357070f4ef32637982ac8064f3e816d42b4330c0a",
         "mcp_input_schema_sha256": "0cc22e282df6499e3c82b5e4a16d9e11cc3a8ec68244a2d58beec08ebaf5cb9e",
-        "mcp_output_schema_sha256": "cf1b21e599ba90b1158c11ceb0faea047f4c2ceb45808d3fca1e0524921c0815",
+        "mcp_output_schema_sha256": "9a0c4a23b42f14bd3d8b17f16b85ac8cb5cbeedb1ba32f4b41a8585b555e3973",
         "output_sha256": "73fa1c4bcdfba25822662147601bc0c27c64587144d50ff7f7f1fd5cab5cf963"
       }
     },
@@ -546,7 +546,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "d1ba3f73123243f801391c5d8d880b9f80e2481718bc2d195d8256f7641b7b94",
         "mcp_input_schema_sha256": "0778e3f04f344fd3f1a65956abd266b3b770e73e9edf0560282bc2d18d8790a0",
-        "mcp_output_schema_sha256": "49d1941b91d316457e42f72975f35eeb3375d6a41ffcf339631fd7c7971523bc",
+        "mcp_output_schema_sha256": "00d5c1d53668da2b2fc2da9be2b6509b42f01d1dd411b075b710520a7796b9d8",
         "output_sha256": "8c6f9abc1928c37c74332b4d283052eabe6a8d9b998891db896fbcc62f80647e"
       }
     },
@@ -575,7 +575,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "2e40a61f458a24efbf79badecc9d6e621955caf8b26013d1642813c867a3c48b",
         "mcp_input_schema_sha256": "bd2739b4e385539cff7989b46c4432dcfc77e097a2cfbfbdc4e30539fc884aaa",
-        "mcp_output_schema_sha256": "d7e7a03ae12917d54da01ac7b73eb3b486677f249e0ff6544ced77a5525b82c0",
+        "mcp_output_schema_sha256": "77c37f555124e211bf5a89e250076dd38420d310e69c8116d4652bbd1eff8841",
         "output_sha256": "ed79ede40473e7c18141d5187d04a8a99a724c70bb9a9feb5854b3e174d012d1"
       }
     },
@@ -751,7 +751,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
         "mcp_input_schema_sha256": "39f077ab10d493577b7bbb4f418c7026ddd248792cb860b969a73ee25feb8220",
-        "mcp_output_schema_sha256": "dde67fd79b25da4550d3f19c5e02566eec10779eeca359235e2a05d3f7201716",
+        "mcp_output_schema_sha256": "398700d00c34c98fc50bb5c59002426fc6ced1a6d305d55183cb0c70e345c6f7",
         "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
       }
     },
@@ -1019,6 +1019,52 @@
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
         "output_sha256": "3f230fdf697dc5a1a8d52acdbb61b87361334c453862680800be7f8e0a128b8a"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.reviewQualificationTasks.create",
+      "path": "/v1/{parent}/review-qualification-tasks",
+      "reason": "Gold-task creation requires dedicated administrative controls and remains REST-only.",
+      "required_scope": "review:gold:manage",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "20fbbb3e8f0e69d8cc60fdc1bae028d5af4b4e06ed51a6d7017e7a1be1ae5955",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "b5ca9b68aa63ea726ba63b88526ae94e15657931469c49e3c101c9962900950f"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.reviewerQualifications.get",
+      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+      "reason": "Reviewer qualification is caller-bound human-review application state, not a model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "9097cc63724f8dc426f1647b0f9576b9b21dd4004b456094499ccfccd403fc78",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "2fe56d5aa806aefb1f98436c54b806800921edad7e2fb7006bcdd95f6ed68b00"
       }
     },
     {
@@ -1373,8 +1419,8 @@
     }
   ],
   "policy": {
-    "authenticated_operation_count": 50,
-    "denied_count": 14,
+    "authenticated_operation_count": 52,
+    "denied_count": 16,
     "excluded_transport_operations": [
       "health.get",
       "mcp.jsonrpc"
@@ -1382,19 +1428,19 @@
     "exposed_count": 36,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "b9625092bdb1cf4809ebbc2bebdedf4c7fbaa2c60828f1c9546472075151899a"
+      "sha256": "28726aa77f0d5c6c72f135e2ddea247840a7920e45f123663ec51399503b1d95"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "a7342f3cf871c4aacf7cb1a990242296f02ef4e8",
+    "commit": "f9bd82ee643cddbf595b61406f073d0276780f21",
     "files": [
       {
-        "git_blob": "9ed3a2b69c00a7e5b332fe3a815c64d098133713",
+        "git_blob": "ace18e15a551cc2e9ba129060353d330dddf8aea",
         "path": "api/openapi.yaml",
-        "sha256": "202b6b7ef08748eff31ebc23ca85bfdb71c89c212d175a84adbfb0d8560b0b9c"
+        "sha256": "031a3af4d5bcd27d0d00fd9cae96f316f9f2a85f4b6bf4ef64e09e436272a301"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1402,19 +1448,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "a0a107807571284405f843a907707319e7b3aa1a",
+        "git_blob": "0849f58d623b9415b29b92eda8490a58e5960a5e",
         "path": "src/data_engine/app.py",
-        "sha256": "266fa2126b04473d8ab32fb85bd68e87a7c9366452ebc80b3c5a3255ec8987ff"
+        "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "09b1ea4ebc40515adeb394720fd14ffdcd4bb488",
+        "git_blob": "60585cf1bb3303270b3e1ebc596f4fc40c9b8a96",
         "path": "src/data_engine/mcp.py",
-        "sha256": "bed9a215c5e90a42334bf946c6dee30655c2dadb1f1974b69d693b492abf1214"
+        "sha256": "a2a6f8296d33b4852f4ed911475955d8b9aeb088d96f70f8f448e3d4f8139f54"
       },
       {
-        "git_blob": "3c2c3b15ae9ee71e30ac6eecce63cc190a48778d",
+        "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "c0af0b1a1bef1a41e1899d1c3de7abf198986ec38b532489d45357f38f02275c"
+        "sha256": "2bbc6369b74f3ed24ff475d212042b6259b55ec75b67a26099f792533eb2f950"
       }
     ],
     "repository": "tempera-dev/data-engine"

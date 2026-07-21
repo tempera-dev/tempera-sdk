@@ -1,5 +1,31 @@
 # SDK compatibility ledger
 
+## 2026-07-21 — Data Engine review qualification v1
+
+- Owner: Contract Spine (Lane 1) consuming the Lane 2 producer contract.
+- Compatibility class: additive SDK surface and exact-source refresh.
+- Producer: `tempera-dev/data-engine@1ac9a5cccc5e087fefbfeed4b8e7b21c82751578`.
+- Authority: `tempera-dev/auth-hub@f7c2815bc02d642e14f31295242964eb2e3a5c07`
+  registers `review:gold:manage` for Data Engine owner/admin OAuth principals
+  and excludes it from API keys.
+- Auth refresh note: the exact current control-plane contract also adds the
+  staff-only `adminOperationalProvenance` route. It remains deliberately
+  upstream-only rather than becoming a general aggregate SDK method; the
+  count-pinned migration classification advances from 23 to 24.
+- Added: `createReviewQualificationTask` under `review:gold:manage` and
+  `getReviewerQualification` under `review:resolve`, in TypeScript, Python, and
+  Rust. The create request preserves the producer's write-only
+  `expected_label`; the read is caller-bound and excludes blind-probe results.
+- MCP: both operations remain explicitly REST-only. The producer admission
+  catalog now records 52 authenticated operations as 36 exposed and 16 denied;
+  the SDK check derives total coverage from the exact OpenAPI instead of a stale
+  fixed count.
+- Migration: none; existing methods and routes are unchanged.
+- Rollout: regenerate and test all three clients, then re-vendor the exact SDK
+  and Data Engine locks in Workflows and the exact Data Engine catalog in MCP.
+- Rollback: revert the SDK and downstream consumer locks together; do not remove
+  the producer operations.
+
 ## 2026-07-20 — Data Engine contract reconciliation
 
 - Owner: Contract Spine (Lane 1).

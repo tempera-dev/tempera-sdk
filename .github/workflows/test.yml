@@ -125,7 +125,7 @@ jobs:
       - name: Verify exact committed Auth Hub source
         run: |
           git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
-          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .auth-hub-source --source-repo tempera-dev/auth-hub --source-branch main --commit "${{ steps.auth-hub-lock.outputs.commit }}" --source-path contracts/control-plane.openapi.json --generated-with source_lock.py@1+verbatim-openapi-copy --generated-file specs/control-plane.openapi.json --generated-path specs/control-plane.openapi.json --lock specs/control-plane.openapi.json.source
+          python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit "${{ steps.auth-hub-lock.outputs.commit }}"
 
   palette-exact-source:
     permissions:

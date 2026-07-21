@@ -105,9 +105,36 @@
       "get": {
         "operationId": "getMe",
         "summary": "Return the current authenticated principal and active workspace context.",
+        "parameters": [
+          {
+            "name": "X-Tempera-Reference-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "Platform-staff-only reference-load marker. When a platform staff principal supplies this header, it must be a UUID and the serving runtime must have complete source, machine, and image provenance.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Current principal",
+            "headers": {
+              "X-Tempera-Reference-Request-Id": {
+                "description": "Staff-only reference-load echo when the request supplies a reference request identity.",
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "X-Tempera-Source-Commit": {
+                "description": "Staff-only serving source SHA for a reference-load request.",
+                "schema": { "type": "string", "pattern": "^[a-f0-9]{40}$" }
+              },
+              "X-Tempera-Machine-Id": {
+                "description": "Staff-only serving machine identity for a reference-load request.",
+                "schema": { "type": "string" }
+              },
+              "X-Tempera-Image-Ref-Sha256": {
+                "description": "Staff-only SHA-256 of the serving immutable image reference.",
+                "schema": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -118,6 +145,22 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
+          },
+          "400": {
+            "description": "A platform staff principal supplied an invalid X-Tempera-Reference-Request-Id header.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "503": {
+            "description": "A platform staff reference-load request cannot be served because runtime source, machine, or image provenance is incomplete.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
           }
         }
       }
@@ -1821,6 +1864,41 @@
         }
       }
     },
+    "/admin/operations/provenance": {
+      "get": {
+        "operationId": "adminOperationalProvenance",
+        "summary": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
+        "responses": {
+          "200": {
+            "description": "Serving runtime provenance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["source_commit", "machine_id", "image_ref_sha256"],
+                  "properties": {
+                    "source_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+                    "machine_id": { "type": "string" },
+                    "image_ref_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/MissingScope" },
+          "503": {
+            "description": "Serving runtime provenance is incomplete",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/step-up": {
       "post": {
         "operationId": "adminStepUp",
@@ -2288,11 +2366,11 @@
       },
       "Scope": {
         "type": "string",
-        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
+        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve and training:publish are intentionally excluded.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, and training:publish are intentionally excluded.",
         "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
       },
       "ResourceAudience": {
