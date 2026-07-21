@@ -1,4 +1,4 @@
-# Compatibility ledger
+# SDK compatibility ledger
 
 ## 2026-07-20 — Data Engine contract reconciliation
 
@@ -55,15 +55,40 @@ Data Engine issue https://github.com/tempera-dev/data-engine/issues/39 owns
 turning those absences into explicit, scope/effect/schema-pinned admission
 decisions; none should become a tool merely to mirror REST coverage.
 
-Source-verification gap: SDK CI verifies the committed source lock and generated
-surface, but currently has no credential for a fresh checkout of the private
-Data Engine producer. SDK issue https://github.com/tempera-dev/tempera-sdk/issues/27
-owns the least-privilege, exact-commit producer checkout and fail-closed source
-verification. Until it passes, local exact-SHA verification is evidence for this
-draft but not a substitute for the required cross-repository CI receipt.
+Source verification: SDK CI uses the least-privilege Tempera Contract Reader
+GitHub App to check out the private Data Engine repository at the lock's exact
+commit and rerun the committed-source check. A merge requires that real-runner
+job together with the aggregate SDK job; local checkout evidence alone is not
+sufficient.
 
 The same release also corrects the aggregate scope registry to Auth Hub main:
 `memory:read`, `memory:write`, `memory:manage`, and `review:resolve` are added;
 the unregistered `cyber:research` and `clinical:run` constants are removed.
 Consumers using either removed constant must first land a reviewed Auth Hub
 scope contract rather than asking the SDK to advertise an unissuable scope.
+
+## 2026-07-21 — remove phantom Control Plane model-profile methods
+
+- **Class:** corrective breaking consumer change.
+- **Owner:** Contract Spine.
+- **Removed:** `listModelProfiles`, `getModelProfile`, `createModelProfile`,
+  `updateModelProfile`, and `deleteModelProfile` in TypeScript, Python, and
+  Rust.
+- **Producer evidence:** `tempera-dev/auth-hub` commit
+  `d59222ff6f54374d82cee4f5b04a2080112ef945`,
+  `contracts/control-plane.openapi.json`, blob
+  `5723eb65d8fc9fef3041216fab138763563ae7f5`, SHA-256
+  `957b0ab9e0fd7b5a0a5ad88fcb0563c67918162e741c1806187d9b291ae21c02`.
+  The exact 61-operation producer contract has no `/model-profiles` route.
+- **Consumer evidence:** organization code search found no release-path usage
+  outside the SDK's own generated surface and documentation. Calls could only
+  receive the producer's `404 not_found`; there is no functioning behavior to
+  preserve.
+- **Migration:** remove calls to these methods. There is no replacement
+  operation. Use a future generated method only after Auth Hub publishes a
+  reviewed canonical route.
+- **Rollout:** release as aggregate SDK `0.7.0`; exact-source and all-language
+  checks must pass before merge.
+- **Rollback:** do not restore phantom methods. If a legitimate producer route
+  lands, add it source-first as a new compatible SDK operation.
+- **Affected consumers:** aggregate TypeScript, Python, and Rust SDK users.
