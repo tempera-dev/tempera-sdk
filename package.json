@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "python3 scripts/check-sdk-surface.py && npm --prefix packages/typescript test && PYTHONPATH=packages/python/src${PYTHONPATH:+:$PYTHONPATH} python3 -m unittest discover -s packages/python/tests && cargo test --manifest-path packages/rust/Cargo.toml"
+    "test": "python3 scripts/test-sync-data-engine-openapi.py && python3 scripts/check-sdk-surface.py && npm --prefix packages/typescript test && PYTHONPATH=packages/python/src${PYTHONPATH:+:$PYTHONPATH} python3 -m unittest discover -s packages/python/tests && cargo test --manifest-path packages/rust/Cargo.toml"
   }
 }

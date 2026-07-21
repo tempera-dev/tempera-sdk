@@ -192,19 +192,22 @@ is the default when none is specified.
 | Scope | Used by |
 |---|---|
 | `mcp:invoke` | the [MCP gateway](/mcp-gateway) — required for every tool call. |
+| `memory:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `memory:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `memory:manage` | No typed SDK operation declares it yet; enforced server-side. |
 | `trace:read` | palette: `archiveTrace`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `searchSpans` |
 | `trace:write` | palette: `importSource`, `ingestSpan` |
-| `dataset:read` | tempera-gym: `getRun`, `listEnvironments`, `listRuns` |
-| `dataset:write` | palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
-| `eval:run` | data-engine: `generateDomain`; tempera-gym: `createRollout` |
+| `dataset:read` | data-engine: `getArtifact`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listConnectors`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `getRun`, `listEnvironments`, `listRuns` |
+| `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `extractSource`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
+| `eval:run` | data-engine: `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; tempera-gym: `createRollout` |
+| `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
+| `review:resolve` | data-engine: `claimExpertTask`, `getReviewOperations`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |
-| `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
-| `cyber:research` | No typed SDK operation declares it yet; enforced server-side. |
-| `clinical:run` | No typed SDK operation declares it yet; enforced server-side. |
 | `model:read` | auth-hub: `getModelCatalog`; Tempera Code: `listModels`; tempera-llm: `listModels` |
 | `model:invoke` | Tempera Code: `createResponse`; tempera-llm: `createChatCompletion`, `createResponse` |
+| `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 
 ## Issuer endpoints

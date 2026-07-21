@@ -66,6 +66,7 @@ mod tests {
         assert!(SCOPES.contains(&"mcp:invoke"));
         assert!(SCOPES.contains(&"model:read"));
         assert!(SCOPES.contains(&"model:invoke"));
+        assert!(SCOPES.contains(&"training:publish"));
         assert!(SCOPES.contains(&"admin"));
         assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
         assert!(AUDIENCES.contains(&"tempera-code"));

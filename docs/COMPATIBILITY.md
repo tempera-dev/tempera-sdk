@@ -1,5 +1,80 @@
 # SDK compatibility ledger
 
+## 2026-07-20 — Data Engine contract reconciliation
+
+- Owner: Contract Spine (Lane 1).
+- Compatibility class: breaking pre-1.0 SDK correction; package `0.9.0`, surface version `3`.
+- Producer: `tempera-dev/data-engine@6357839770bdb2d586915d4d1c14066fd77840b8`, `api/openapi.yaml`, `api/mcp-admission.json`, and `api/mcp-tools.json`.
+- Consumers: TypeScript, Python, and Rust aggregate clients; Tempera Workflows' vendored SDK and Data Engine locks.
+- Telemetry: none of the removed methods had a matching producer route, so successful calls could not have reached Data Engine. Consumer source search and Workflows lock checks replace route telemetry for this correction.
+- Migration: replace removed calls only with an operation present in the committed Data Engine contract. The 12 reconciliation methods, four assignment-lifecycle methods, and review-operations snapshot below cover all previously omitted producer routes. Workflows must re-vendor the exact released SDK surface and Data Engine locks before this change merges.
+- Rollback: revert the SDK release and consumer lock together; do not restore phantom routes to Data Engine.
+- Removal evidence: bidirectional `sync-data-engine-openapi.py --check` reports 51 of 51 REST operations represented, with zero phantom and zero missing operations.
+
+Removed phantom methods:
+
+`archiveArtifact`, `cancelJob`, `cancelOperation`, `createConnector`, `createEval`,
+`createLabel`, `createRepository`, `createTaskSet`, `createVerifier`,
+`deleteConnector`, `deleteOperation`, `emitPreference`, `emitProduct`, `emitRlvr`,
+`emitSft`, `enableDomain`, `expireArtifactRetention`, `generateDomain`,
+`generateRepositoryTasks`, `getConnector`, `getDomain`, `getDomainPack`,
+`getEnvironment`, `getEval`, `getLabel`, `getOperation`, `getRepository`,
+`getRun`, `getTaskSet`, `getVerifier`, `listDomainPacks`, `listDomains`,
+`listEnvironments`, `listEvals`, `listJobs`, `listLabels`, `listProducts`,
+`listRepositories`, `listRuns`, `listTaskSetTasks`, `listTaskSets`,
+`listVerifiers`, `patchArtifact`, `patchConnector`, `patchLabel`,
+`patchRepository`, `patchVerifier`, `publishTaskSet`, `purgeArtifact`,
+`runEnvironment`, `runEval`, `runVerifier`, `syncConnector`, and
+`syncRepository`.
+
+Added producer-backed methods:
+
+`admitTrainingRelease`, `getTrainingRelease`, `createEvidenceRecord`,
+`listEvidenceRecords`, `getEvidenceRecord`, `createEpisode`, `listEpisodes`,
+`getEpisode`, `queryResearchRetrieval`, `createResearchCatalogEntry`,
+`listResearchCatalogEntries`, and `getResearchCatalogEntry`.
+
+Producer additions incorporated after the initial reconciliation:
+
+`claimExpertTask`, `renewExpertTaskAssignment`, `releaseExpertTaskAssignment`,
+and `saveExpertTaskDraft`. `resolveExpertTask` also accepts the producer's
+optional `lease_token`. All five assignment-aware calls use the existing
+`review:resolve` scope enforced by the Data Engine runtime.
+
+`getReviewOperations` adds the producer's bounded, read-only human-review
+operations snapshot. It uses the canonical `review:resolve` scope and does not
+mutate, promote, or expose review decisions to models.
+
+Auth registration: Data Engine requires `training:publish` for training-release
+admission and reads. Auth Hub registers that scope for the `data-engine`
+audience at commit `03136c97be6ce5753e6a28abac88432773640d6f`; only attributed
+owner/admin OAuth principals may receive it, and API keys are excluded. The SDK
+therefore treats these operations as centrally reachable under that policy.
+
+Canonical auth source: every Data Engine OpenAPI operation now carries explicit
+`x-tempera-audience` and `x-tempera-required-scope` metadata, runtime-checked by
+the producer. The SDK operation lock stores those fields and the SDK gate
+compares every generated operation's auth mode and scope in both directions.
+
+MCP exposure decision: this SDK release does not expand Data Engine's 36-tool
+model-facing registry. Fourteen producer-backed REST operations—Episode,
+EvidenceRecord, and ResearchCatalogEntry create/get/list, the four
+assignment-lifecycle operations, and `getReviewOperations`—have explicit deny
+records. The vendored producer admission and tools artifacts bind exact scope,
+effect, guard, idempotency, and schema-fixture evidence for all 50 authenticated
+project operations. None becomes a tool merely to mirror REST coverage.
+
+Source verification: SDK CI uses the least-privilege Tempera Contract Reader
+GitHub App to check out the private Data Engine repository at the locks' shared
+exact commit and reproduce the OpenAPI auth/operation lock plus both MCP
+artifacts. A merge requires that real-runner job together with the aggregate SDK
+job; local checkout evidence alone is not sufficient.
+
+The same release also corrects the aggregate scope registry to Auth Hub main:
+`memory:read`, `memory:write`, `memory:manage`, and `review:resolve` are added;
+the unregistered `cyber:research` and `clinical:run` constants are removed.
+Consumers using either removed constant must first land a reviewed Auth Hub
+scope contract rather than asking the SDK to advertise an unissuable scope.
 ## 2026-07-21 — pin remaining private producer contracts and add Workflows authoring helpers
 
 - **Class:** additive SDK change plus non-route contract refreshes.
@@ -30,7 +105,6 @@
   prior `0.7.0` methods remain compatible with all unchanged routes.
 - **Affected consumers:** aggregate TypeScript, Python, and Rust SDK users and
   the independently owned Workflows consumer surface.
-
 ## 2026-07-21 — remove phantom Control Plane model-profile methods
 
 - **Class:** corrective breaking consumer change.

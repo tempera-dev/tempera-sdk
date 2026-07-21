@@ -3,7 +3,7 @@
 // product-client interfaces used by createTemperaClient().
 
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym";
-export type TemperaScope = "mcp:invoke" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "workflow:read" | "workflow:write" | "workflow:run" | "pii:unmask" | "cyber:research" | "clinical:run" | "model:read" | "model:invoke" | "admin";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "model:read" | "model:invoke" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaCode" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
@@ -358,62 +358,32 @@ export interface RemiClient extends TemperaProductClientBase {
 export interface DataEngineClient extends TemperaProductClientBase {
   /** Check data-engine liveness; returns the service status. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List installed versioned domain packs from data-engine's OpenAPI contract. */
-  listDomainPacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one installed versioned domain-pack manifest. */
-  getDomainPack(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List immutable domain-pack bindings enabled for a project. */
-  listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one project-enabled, digest-pinned domain binding. */
-  getDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Enable an installed domain pack for a project; pass Idempotency-Key through the operation headers. */
-  enableDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request bounded domain task generation with brokered model-profile and artifact references; the service reports unavailable until that worker and its Cradle lane are qualified. */
-  generateDomain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List installed descriptor-only environment definitions without claiming their execution lane is available. */
-  listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one installed environment descriptor. */
-  getEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get an asynchronous data-engine operation and its current terminal state. */
-  getOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request cancellation of a running data-engine operation; pass Idempotency-Key through operation headers. */
-  cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Delete a completed data-engine operation; pass Idempotency-Key through operation headers. */
-  deleteOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Register an approved domain-pack source connector; pass Idempotency-Key through operation headers. */
-  createConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints. */
+  admitTrainingRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revalidate and fetch one training release, including any durable stale state. */
+  getTrainingRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an immutable shared evidence record by canonical content hash. */
+  createEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable shared evidence records with bounded cursor pagination. */
+  listEvidenceRecords(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one immutable shared evidence record by its platform digest. */
+  getEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an immutable shared episode by canonical content hash. */
+  createEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable shared episodes with bounded cursor pagination. */
+  listEpisodes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one immutable shared episode by its platform digest. */
+  getEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Retrieve deterministic candidates for one exact canonical typed research obligation. */
+  queryResearchRetrieval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an immutable executable research catalog entry by canonical content hash. */
+  createResearchCatalogEntry(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable executable research catalog entries with bounded pagination. */
+  listResearchCatalogEntries(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one immutable executable research catalog entry by content hash. */
+  getResearchCatalogEntry(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List registered source connectors for a project. */
   listConnectors(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get a source connector and its current ETag. */
-  getConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch mutable connector settings; pass If-Match and Idempotency-Key through operation headers. */
-  patchConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Delete a connector registration; pass If-Match and Idempotency-Key through operation headers. */
-  deleteConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Start a bounded connector sync; pass Idempotency-Key through operation headers. */
-  syncConnector(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Register a GitHub repository reference; pass Idempotency-Key through operation headers. */
-  createRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List registered project repositories. */
-  listRepositories(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one repository reference and its current ETag. */
-  getRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch mutable repository metadata; pass If-Match and Idempotency-Key through operation headers. */
-  patchRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Record a repository snapshot through the authenticated provider boundary; returns an operation. */
-  syncRepository(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request bounded repository task generation; service availability remains explicit until the approved github-evals worker gateway is configured. */
-  generateRepositoryTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Import an immutable worker-produced task set; pass Idempotency-Key through operation headers. */
-  createTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List repository task sets and publication state. */
-  listTaskSets(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one immutable repository task set and its current ETag. */
-  getTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List structurally distinct evaluation and backlog tasks in a task set. */
-  listTaskSetTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Atomically publish explicitly selected qualified tasks; pass Idempotency-Key through operation headers. */
-  publishTaskSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the MVP use-case templates (data products and pipeline templates) for a project. */
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
@@ -422,7 +392,7 @@ export interface DataEngineClient extends TemperaProductClientBase {
   ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
   ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run a complete MVP use-case pipeline end to end; verifier selects the backend (nvidia, cradle sandboxed wasm, agent, or the tempera-llm ensemble majority vote). */
+  /** Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend. */
   runUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a data campaign with a rubric, budget, target accuracy, and skill tags. */
   createCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -436,102 +406,58 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the labels attached to one artifact. */
   listArtifactLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Profile dataset quality before export: counts by artifact type and source, duplicate raw_hash groups, label coverage, and per-label distributions. */
+  /** Profile dataset quality before export, including duplicates, label coverage, and distributions. */
   profileDataset(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an asynchronous labeling job over a set of artifacts; verifier selects the backend (nvidia, cradle, agent, or ensemble). Returns an operation handle to poll. */
+  /** Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one labeling job with its state and progress. */
   getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the deterministic label results a job produced. */
   getJobResults(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the human residual review tasks queued for experts, optionally filtered by status (OPEN or RESOLVED) and campaign. */
+  /** List human residual review tasks, optionally filtered by status and campaign. */
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Resolve, abstain, flag, or adjudicate one human residual; the idempotency key binds one exact normalized decision to one expert task. */
+  /** Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision. */
   resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically claim one open expert task with an exclusive renewable lease. */
+  claimExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Renew the authenticated reviewer's active expert-task lease. */
+  renewExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Release the authenticated reviewer's active expert-task lease for reassignment. */
+  releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Autosave a version-checked draft under the active reviewer lease. */
+  saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations. */
+  getReviewOperations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the label quality report: per-verifier stats, cross-verifier disagreements, the needs_expert backlog, and the auto-resolution rate. */
+  /** Fetch the project label-quality report and unresolved expert backlog. */
   getLabelQuality(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch public-site and ecosystem readiness signals for a project. */
   getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Derive a post-training bundle from a READY product with a deterministic content-hash train/val split: sft records, preference pairs (pair_sources selects RLHF-grade expert_override vs RLAIF-grade ensemble_minority), or rlvr records carrying the executable wasm reward spec; bounded keyset pages. */
+  /** Derive a deterministic post-training bundle from a ready product. */
   deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one emitted product bundle with its status and manifest URL. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Validate an emitted product bundle's referential integrity and hygiene; missing artifacts, labels, or manifest are errors, duplicates and needs_expert labels are warnings. */
+  /** Validate an emitted product bundle's referential integrity and hygiene. */
   validateProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Check raw_hash leakage between exactly two product bundles for train/eval split hygiene, including overlap ratios and the overlapping hashes. */
+  /** Check raw-hash leakage between exactly two product bundles. */
   checkProductLeakage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch an integrity-checked, bounded, remotely consumable manifest for an emitted eval product. */
+  /** Fetch an integrity-checked, bounded manifest for an emitted eval product. */
   getProductManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Extract objects or records from a configured source connector (s3, snowflake, salesforce) into content-addressed artifacts; fails closed when the connector's env config is absent. */
+  /** Extract bounded objects or records from a configured source connector. */
   extractSource(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create or version-bump a stored custom tool; identical re-creates are idempotent and a changed definition creates a new monotonic version. */
+  /** Create or version-bump a stored custom tool. */
   createTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List every stored custom tool for the project with usage stats (invocation count, last invoked, error count). */
+  /** List stored custom tools and their usage statistics. */
   listTools(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one stored custom tool with its definition and usage stats. */
+  /** Fetch one stored custom tool and its usage statistics. */
   getTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Hard-delete a stored custom tool and every retained version; the deletion is recorded in the custom tool audit log. */
+  /** Delete a stored custom tool and every retained version. */
   deleteTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Invoke a stored custom tool; deterministic_wasm tools execute in the cradle sandbox and llm_prompt tools render the stored template with the caller arguments. */
+  /** Invoke a stored custom tool through its configured execution boundary. */
   invokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request an environment run; availability remains explicit until its qualified execution lane is enabled. */
-  runEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch an artifact when the documented data-engine implementation is enabled. */
-  patchArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Archive an artifact through the documented data-engine lifecycle endpoint. */
-  archiveArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Purge an archived artifact through the documented data-engine lifecycle endpoint. */
-  purgeArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Apply due artifact retention policies through the REST-only lifecycle endpoint. */
-  expireArtifactRetention(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List labeling jobs when the documented data-engine implementation is enabled. */
-  listJobs(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel a labeling job through the documented data-engine lifecycle endpoint. */
-  cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an artifact label when the documented data-engine implementation is enabled. */
-  createLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List artifact labels when the documented data-engine implementation is enabled. */
-  listLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one artifact label when the documented data-engine implementation is enabled. */
-  getLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch an artifact label when the documented data-engine implementation is enabled. */
-  patchLabel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a verifier when the documented data-engine implementation is enabled. */
-  createVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List verifiers when the documented data-engine implementation is enabled. */
-  listVerifiers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one verifier when the documented data-engine implementation is enabled. */
-  getVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch a verifier when the documented data-engine implementation is enabled. */
-  patchVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run a verifier when the documented data-engine implementation is enabled. */
-  runVerifier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an evaluation definition when the documented data-engine implementation is enabled. */
-  createEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List evaluation definitions when the documented data-engine implementation is enabled. */
-  listEvals(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one evaluation definition when the documented data-engine implementation is enabled. */
-  getEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run an evaluation definition when the documented data-engine implementation is enabled. */
-  runEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List evaluation runs when the documented data-engine implementation is enabled. */
-  listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one evaluation run when the documented data-engine implementation is enabled. */
-  getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List emitted data products when the documented data-engine implementation is enabled. */
-  listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Emit a generic data product when the documented data-engine implementation is enabled. */
-  emitProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Emit an RLVR product when the documented data-engine implementation is enabled. */
-  emitRlvr(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Emit a preference product when the documented data-engine implementation is enabled. */
-  emitPreference(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Emit an SFT product when the documented data-engine implementation is enabled. */
-  emitSft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

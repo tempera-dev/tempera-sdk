@@ -1,95 +1,421 @@
 {
-  "schemaVersion": 1,
-  "source": "data-engine/api/openapi.yaml",
-  "sourceSha256": "54146be92a44a02118a41eaebea9e55e83aab7d6a3109ed374b69392c47a4146",
+  "schema_version": 3,
+  "source_repo": "tempera-dev/data-engine",
+  "source_branch": "main",
+  "source_commit": "6357839770bdb2d586915d4d1c14066fd77840b8",
+  "source_path": "api/openapi.yaml",
+  "source_blob_sha": "9ed3a2b69c00a7e5b332fe3a815c64d098133713",
+  "source_sha256": "202b6b7ef08748eff31ebc23ca85bfdb71c89c212d175a84adbfb0d8560b0b9c",
+  "generated_with": "sync-data-engine-openapi.py@4",
+  "generated_sha256": "5c5569b9a2663aa0134ee9a6f935a0b6cbaf45203d335a65331ab12d9c8f8da8",
   "operations": [
-    {"sdkOperationId":"health","operationId":"health.get","method":"GET","path":"/v1/health"},
-    {"sdkOperationId":"listDomainPacks","operationId":"projects.domainPacks.list","method":"GET","path":"/v1/{parent}/domain-packs"},
-    {"sdkOperationId":"getDomainPack","operationId":"projects.domainPacks.get","method":"GET","path":"/v1/{parent}/domain-packs/{packId}"},
-    {"sdkOperationId":"listDomains","operationId":"projects.domains.list","method":"GET","path":"/v1/{parent}/domains"},
-    {"sdkOperationId":"getDomain","operationId":"projects.domains.get","method":"GET","path":"/v1/{parent}/domains/{domainId}"},
-    {"sdkOperationId":"enableDomain","operationId":"projects.domains.enable","method":"POST","path":"/v1/{parent}/domains/{domainId}:enable"},
-    {"sdkOperationId":"generateDomain","operationId":"projects.domains.generate","method":"POST","path":"/v1/{parent}/domains/{domainId}:generate"},
-    {"sdkOperationId":"listEnvironments","operationId":"projects.environments.list","method":"GET","path":"/v1/{parent}/environments"},
-    {"sdkOperationId":"getEnvironment","operationId":"projects.environments.get","method":"GET","path":"/v1/{parent}/environments/{environmentId}"},
-    {"sdkOperationId":"getOperation","operationId":"projects.operations.get","method":"GET","path":"/v1/{parent}/operations/{operationId}"},
-    {"sdkOperationId":"cancelOperation","operationId":"projects.operations.cancel","method":"POST","path":"/v1/{parent}/operations/{operationId}:cancel"},
-    {"sdkOperationId":"deleteOperation","operationId":"projects.operations.delete","method":"DELETE","path":"/v1/{parent}/operations/{operationId}"},
-    {"sdkOperationId":"createConnector","operationId":"projects.connectors.create","method":"POST","path":"/v1/{parent}/connectors"},
-    {"sdkOperationId":"listConnectors","operationId":"projects.connectors.list","method":"GET","path":"/v1/{parent}/connectors"},
-    {"sdkOperationId":"getConnector","operationId":"projects.connectors.get","method":"GET","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"patchConnector","operationId":"projects.connectors.patch","method":"PATCH","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"deleteConnector","operationId":"projects.connectors.delete","method":"DELETE","path":"/v1/{parent}/connectors/{connectorId}"},
-    {"sdkOperationId":"syncConnector","operationId":"projects.connectors.sync","method":"POST","path":"/v1/{parent}/connectors/{connectorId}:sync"},
-    {"sdkOperationId":"createRepository","operationId":"projects.repositories.create","method":"POST","path":"/v1/{parent}/repositories"},
-    {"sdkOperationId":"listRepositories","operationId":"projects.repositories.list","method":"GET","path":"/v1/{parent}/repositories"},
-    {"sdkOperationId":"getRepository","operationId":"projects.repositories.get","method":"GET","path":"/v1/{parent}/repositories/{repositoryId}"},
-    {"sdkOperationId":"patchRepository","operationId":"projects.repositories.patch","method":"PATCH","path":"/v1/{parent}/repositories/{repositoryId}"},
-    {"sdkOperationId":"syncRepository","operationId":"projects.repositories.sync","method":"POST","path":"/v1/{parent}/repositories/{repositoryId}:sync"},
-    {"sdkOperationId":"generateRepositoryTasks","operationId":"projects.repositories.generateTasks","method":"POST","path":"/v1/{parent}/repositories/{repositoryId}:generate-tasks"},
-    {"sdkOperationId":"createTaskSet","operationId":"projects.taskSets.create","method":"POST","path":"/v1/{parent}/task-sets"},
-    {"sdkOperationId":"listTaskSets","operationId":"projects.taskSets.list","method":"GET","path":"/v1/{parent}/task-sets"},
-    {"sdkOperationId":"getTaskSet","operationId":"projects.taskSets.get","method":"GET","path":"/v1/{parent}/task-sets/{taskSetId}"},
-    {"sdkOperationId":"listTaskSetTasks","operationId":"projects.taskSets.tasks.list","method":"GET","path":"/v1/{parent}/task-sets/{taskSetId}/tasks"},
-    {"sdkOperationId":"publishTaskSet","operationId":"projects.taskSets.publish","method":"POST","path":"/v1/{parent}/task-sets/{taskSetId}:publish"},
-    {"sdkOperationId":"listUseCases","operationId":"projects.useCases.list","method":"GET","path":"/v1/{parent}/use-cases"},
-    {"sdkOperationId":"getUseCase","operationId":"projects.useCases.get","method":"GET","path":"/v1/{parent}/use-cases/{useCaseId}"},
-    {"sdkOperationId":"ingestArtifact","operationId":"projects.artifacts.ingest","method":"POST","path":"/v1/{parent}/artifacts:ingest"},
-    {"sdkOperationId":"ingestWeb","operationId":"projects.web.ingest","method":"POST","path":"/v1/{parent}/web:ingest"},
-    {"sdkOperationId":"runUseCase","operationId":"projects.pipelines.runUseCase","method":"POST","path":"/v1/{parent}/pipelines:run-use-case"},
-    {"sdkOperationId":"createCampaign","operationId":"projects.campaigns.create","method":"POST","path":"/v1/{parent}/campaigns"},
-    {"sdkOperationId":"listCampaigns","operationId":"projects.campaigns.list","method":"GET","path":"/v1/{parent}/campaigns"},
-    {"sdkOperationId":"listArtifacts","operationId":"projects.artifacts.list","method":"GET","path":"/v1/{parent}/artifacts"},
-    {"sdkOperationId":"getArtifact","operationId":"projects.artifacts.get","method":"GET","path":"/v1/{parent}/artifacts/{artifactId}"},
-    {"sdkOperationId":"listArtifactLabels","operationId":"projects.artifacts.labels.list","method":"GET","path":"/v1/{parent}/artifacts/{artifactId}/labels"},
-    {"sdkOperationId":"createJob","operationId":"projects.jobs.create","method":"POST","path":"/v1/{parent}/jobs"},
-    {"sdkOperationId":"getJob","operationId":"projects.jobs.get","method":"GET","path":"/v1/{parent}/jobs/{jobId}"},
-    {"sdkOperationId":"getJobResults","operationId":"projects.jobs.results.list","method":"GET","path":"/v1/{parent}/jobs/{jobId}/results"},
-    {"sdkOperationId":"listExpertTasks","operationId":"projects.expertTasks.list","method":"GET","path":"/v1/{parent}/expert-tasks"},
-    {"sdkOperationId":"getMetrics","operationId":"projects.metrics.get","method":"GET","path":"/v1/{parent}/metrics"},
-    {"sdkOperationId":"getEcosystemReadiness","operationId":"projects.ecosystem.readiness.get","method":"GET","path":"/v1/{parent}/ecosystem/readiness"},
-    {"sdkOperationId":"emitEval","operationId":"projects.products.emitEval","method":"POST","path":"/v1/{parent}/products:emit-eval"},
-    {"sdkOperationId":"deriveBundle","operationId":"projects.products.derive","method":"POST","path":"/v1/{parent}/products/{productId}:derive"},
-    {"sdkOperationId":"getProduct","operationId":"projects.products.get","method":"GET","path":"/v1/{parent}/products/{productId}"},
-    {"sdkOperationId":"runEnvironment","operationId":"projects.environments.run","method":"POST","path":"/v1/{parent}/environments/{environmentId}:run"},
-    {"sdkOperationId":"patchArtifact","operationId":"projects.artifacts.patch","method":"PATCH","path":"/v1/{parent}/artifacts/{artifactId}"},
-    {"sdkOperationId":"archiveArtifact","operationId":"projects.artifacts.archive","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:archive"},
-    {"sdkOperationId":"purgeArtifact","operationId":"projects.artifacts.purge","method":"POST","path":"/v1/{parent}/artifacts/{artifactId}:purge"},
-    {"sdkOperationId":"expireArtifactRetention","operationId":"projects.artifacts.expireRetention","method":"POST","path":"/v1/{parent}/artifacts:expire-retention"},
-    {"sdkOperationId":"listJobs","operationId":"projects.jobs.list","method":"GET","path":"/v1/{parent}/jobs"},
-    {"sdkOperationId":"cancelJob","operationId":"projects.jobs.cancel","method":"POST","path":"/v1/{parent}/jobs/{jobId}:cancel"},
-    {"sdkOperationId":"createLabel","operationId":"projects.labels.create","method":"POST","path":"/v1/{parent}/labels"},
-    {"sdkOperationId":"listLabels","operationId":"projects.labels.list","method":"GET","path":"/v1/{parent}/labels"},
-    {"sdkOperationId":"getLabel","operationId":"projects.labels.get","method":"GET","path":"/v1/{parent}/labels/{labelId}"},
-    {"sdkOperationId":"patchLabel","operationId":"projects.labels.patch","method":"PATCH","path":"/v1/{parent}/labels/{labelId}"},
-    {"sdkOperationId":"createVerifier","operationId":"projects.verifiers.create","method":"POST","path":"/v1/{parent}/verifiers"},
-    {"sdkOperationId":"listVerifiers","operationId":"projects.verifiers.list","method":"GET","path":"/v1/{parent}/verifiers"},
-    {"sdkOperationId":"getVerifier","operationId":"projects.verifiers.get","method":"GET","path":"/v1/{parent}/verifiers/{verifierId}"},
-    {"sdkOperationId":"patchVerifier","operationId":"projects.verifiers.patch","method":"PATCH","path":"/v1/{parent}/verifiers/{verifierId}"},
-    {"sdkOperationId":"runVerifier","operationId":"projects.verifiers.run","method":"POST","path":"/v1/{parent}/verifiers/{verifierId}:run"},
-    {"sdkOperationId":"createEval","operationId":"projects.evals.create","method":"POST","path":"/v1/{parent}/evals"},
-    {"sdkOperationId":"listEvals","operationId":"projects.evals.list","method":"GET","path":"/v1/{parent}/evals"},
-    {"sdkOperationId":"getEval","operationId":"projects.evals.get","method":"GET","path":"/v1/{parent}/evals/{evalId}"},
-    {"sdkOperationId":"runEval","operationId":"projects.evals.run","method":"POST","path":"/v1/{parent}/evals/{evalId}:run"},
-    {"sdkOperationId":"listRuns","operationId":"projects.runs.list","method":"GET","path":"/v1/{parent}/runs"},
-    {"sdkOperationId":"getRun","operationId":"projects.runs.get","method":"GET","path":"/v1/{parent}/runs/{runId}"},
-    {"sdkOperationId":"listProducts","operationId":"projects.products.list","method":"GET","path":"/v1/{parent}/products"},
-    {"sdkOperationId":"emitProduct","operationId":"projects.products.emit","method":"POST","path":"/v1/{parent}/products:emit"},
-    {"sdkOperationId":"emitRlvr","operationId":"projects.products.emitRlvr","method":"POST","path":"/v1/{parent}/products:emit-rlvr"},
-    {"sdkOperationId":"emitPreference","operationId":"projects.products.emitPreference","method":"POST","path":"/v1/{parent}/products:emit-preference"},
-    {"sdkOperationId":"emitSft","operationId":"projects.products.emitSft","method":"POST","path":"/v1/{parent}/products:emit-sft"},
-    {"sdkOperationId":"transitionCampaign","operationId":"projects.campaigns.transition","method":"POST","path":"/v1/{parent}/campaigns/{campaignId}:transition"},
-    {"sdkOperationId":"resolveExpertTask","operationId":"projects.expertTasks.resolve","method":"POST","path":"/v1/{parent}/expert-tasks/{expertTaskId}:resolve"},
-    {"sdkOperationId":"getLabelQuality","operationId":"projects.labelQuality.get","method":"GET","path":"/v1/{parent}/label-quality"},
-    {"sdkOperationId":"profileDataset","operationId":"projects.datasets.profile","method":"POST","path":"/v1/{parent}/datasets:profile"},
-    {"sdkOperationId":"validateProduct","operationId":"projects.products.validate","method":"POST","path":"/v1/{parent}/products/{productId}:validate"},
-    {"sdkOperationId":"checkProductLeakage","operationId":"projects.products.checkLeakage","method":"POST","path":"/v1/{parent}/products:check-leakage"},
-    {"sdkOperationId":"getProductManifest","operationId":"projects.products.manifest.get","method":"GET","path":"/v1/{parent}/products/{productId}/manifest"},
-    {"sdkOperationId":"extractSource","operationId":"projects.sources.extract","method":"POST","path":"/v1/{parent}/sources:extract"},
-    {"sdkOperationId":"createTool","operationId":"projects.tools.create","method":"POST","path":"/v1/{parent}/tools"},
-    {"sdkOperationId":"listTools","operationId":"projects.tools.list","method":"GET","path":"/v1/{parent}/tools"},
-    {"sdkOperationId":"getTool","operationId":"projects.tools.get","method":"GET","path":"/v1/{parent}/tools/{toolName}"},
-    {"sdkOperationId":"deleteTool","operationId":"projects.tools.delete","method":"DELETE","path":"/v1/{parent}/tools/{toolName}"},
-    {"sdkOperationId":"invokeTool","operationId":"projects.tools.invoke","method":"POST","path":"/v1/{parent}/tools/{toolName}:invoke"}
+    {
+      "sdkOperationId": "health",
+      "operationId": "health.get",
+      "method": "GET",
+      "path": "/v1/health",
+      "audience": null,
+      "requiredScope": null
+    },
+    {
+      "sdkOperationId": "admitTrainingRelease",
+      "operationId": "projects.trainingReleases.admit",
+      "method": "POST",
+      "path": "/v1/{parent}/training-releases:admit",
+      "audience": "data-engine",
+      "requiredScope": "training:publish"
+    },
+    {
+      "sdkOperationId": "getTrainingRelease",
+      "operationId": "projects.trainingReleases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/training-releases/{releaseId}",
+      "audience": "data-engine",
+      "requiredScope": "training:publish"
+    },
+    {
+      "sdkOperationId": "createEvidenceRecord",
+      "operationId": "projects.evidenceRecords.create",
+      "method": "POST",
+      "path": "/v1/{parent}/evidenceRecords",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "listEvidenceRecords",
+      "operationId": "projects.evidenceRecords.list",
+      "method": "GET",
+      "path": "/v1/{parent}/evidenceRecords",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getEvidenceRecord",
+      "operationId": "projects.evidenceRecords.get",
+      "method": "GET",
+      "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "createEpisode",
+      "operationId": "projects.episodes.create",
+      "method": "POST",
+      "path": "/v1/{parent}/episodes",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "listEpisodes",
+      "operationId": "projects.episodes.list",
+      "method": "GET",
+      "path": "/v1/{parent}/episodes",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getEpisode",
+      "operationId": "projects.episodes.get",
+      "method": "GET",
+      "path": "/v1/{parent}/episodes/{episodeId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "queryResearchRetrieval",
+      "operationId": "query_research_retrieval",
+      "method": "POST",
+      "path": "/v1/{parent}/researchRetrieval:query",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "createResearchCatalogEntry",
+      "operationId": "projects.researchCatalogEntries.create",
+      "method": "POST",
+      "path": "/v1/{parent}/researchCatalogEntries",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listResearchCatalogEntries",
+      "operationId": "projects.researchCatalogEntries.list",
+      "method": "GET",
+      "path": "/v1/{parent}/researchCatalogEntries",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getResearchCatalogEntry",
+      "operationId": "projects.researchCatalogEntries.get",
+      "method": "GET",
+      "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listConnectors",
+      "operationId": "projects.connectors.list",
+      "method": "GET",
+      "path": "/v1/{parent}/connectors",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listUseCases",
+      "operationId": "projects.useCases.list",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getUseCase",
+      "operationId": "projects.useCases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases/{useCaseId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "ingestArtifact",
+      "operationId": "projects.artifacts.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/artifacts:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "ingestWeb",
+      "operationId": "projects.web.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/web:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "runUseCase",
+      "operationId": "projects.pipelines.runUseCase",
+      "method": "POST",
+      "path": "/v1/{parent}/pipelines:run-use-case",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "createCampaign",
+      "operationId": "projects.campaigns.create",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listCampaigns",
+      "operationId": "projects.campaigns.list",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "transitionCampaign",
+      "operationId": "projects.campaigns.transition",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listArtifacts",
+      "operationId": "projects.artifacts.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getArtifact",
+      "operationId": "projects.artifacts.get",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listArtifactLabels",
+      "operationId": "projects.artifacts.labels.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}/labels",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "profileDataset",
+      "operationId": "projects.datasets.profile",
+      "method": "POST",
+      "path": "/v1/{parent}/datasets:profile",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "createJob",
+      "operationId": "projects.jobs.create",
+      "method": "POST",
+      "path": "/v1/{parent}/jobs",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "getJob",
+      "operationId": "projects.jobs.get",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getJobResults",
+      "operationId": "projects.jobs.results.list",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}/results",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listExpertTasks",
+      "operationId": "projects.expertTasks.list",
+      "method": "GET",
+      "path": "/v1/{parent}/expert-tasks",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "resolveExpertTask",
+      "operationId": "projects.expertTasks.resolve",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "claimExpertTask",
+      "operationId": "projects.expertTaskAssignments.claim",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "renewExpertTaskAssignment",
+      "operationId": "projects.expertTaskAssignments.renew",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "releaseExpertTaskAssignment",
+      "operationId": "projects.expertTaskAssignments.release",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "saveExpertTaskDraft",
+      "operationId": "projects.expertTaskAssignments.saveDraft",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "getReviewOperations",
+      "operationId": "projects.reviewOperations.get",
+      "method": "GET",
+      "path": "/v1/{parent}/review-operations",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "getMetrics",
+      "operationId": "projects.metrics.get",
+      "method": "GET",
+      "path": "/v1/{parent}/metrics",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getLabelQuality",
+      "operationId": "projects.labelQuality.get",
+      "method": "GET",
+      "path": "/v1/{parent}/label-quality",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getEcosystemReadiness",
+      "operationId": "projects.ecosystem.readiness.get",
+      "method": "GET",
+      "path": "/v1/{parent}/ecosystem/readiness",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "emitEval",
+      "operationId": "projects.products.emitEval",
+      "method": "POST",
+      "path": "/v1/{parent}/products:emit-eval",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "deriveBundle",
+      "operationId": "projects.products.derive",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:derive",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "getProduct",
+      "operationId": "projects.products.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "validateProduct",
+      "operationId": "projects.products.validate",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:validate",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "checkProductLeakage",
+      "operationId": "projects.products.checkLeakage",
+      "method": "POST",
+      "path": "/v1/{parent}/products:check-leakage",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "getProductManifest",
+      "operationId": "projects.products.manifest.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}/manifest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "extractSource",
+      "operationId": "projects.sources.extract",
+      "method": "POST",
+      "path": "/v1/{parent}/sources:extract",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "createTool",
+      "operationId": "projects.tools.create",
+      "method": "POST",
+      "path": "/v1/{parent}/tools",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listTools",
+      "operationId": "projects.tools.list",
+      "method": "GET",
+      "path": "/v1/{parent}/tools",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getTool",
+      "operationId": "projects.tools.get",
+      "method": "GET",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "deleteTool",
+      "operationId": "projects.tools.delete",
+      "method": "DELETE",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "invokeTool",
+      "operationId": "projects.tools.invoke",
+      "method": "POST",
+      "path": "/v1/{parent}/tools/{toolName}:invoke",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    }
   ]
 }

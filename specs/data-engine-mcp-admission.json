@@ -1,0 +1,1422 @@
+{
+  "operations": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.artifacts.get",
+      "path": "/v1/{parent}/artifacts/{artifactId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "6a69cc1eaca80238e1453052688e1365596878ef0da0de7f34846dad1e1af59e",
+        "mcp_input_schema_sha256": "eec24faac3db5c3eef278e8d8d6dea891a885162e1774fece32bf342a11e33ed",
+        "mcp_output_schema_sha256": "12378d11b0518964822e5b182ca1f7ea197eae0b6b7f5f3a7f764c1830a3570a",
+        "output_sha256": "0c529ee2e2a8d2a6d4ecf0fb89a67690e6ce1d56728aa3b73787fb9effea0bb1"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.artifacts.ingest",
+      "path": "/v1/{parent}/artifacts:ingest",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "5d39b4820476876e0c4670c7e0da68bddb4de3b2a34bfe2dc488265f59e8d60e",
+        "mcp_input_schema_sha256": "667fa6023fc429a6fdcddf2818bed195d4fbc5e2a5cb8c104021f561d967c7c7",
+        "mcp_output_schema_sha256": "bd318183a33a0968f9e0997640be392a58c65b5a9195aba5fbf523a746f1dd8c",
+        "output_sha256": "9b0548b4b6da37d5cefaab3e966f77737ec9931d05d6bc6df221c13ea3eacab4"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.artifacts.labels.list",
+      "path": "/v1/{parent}/artifacts/{artifactId}/labels",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "5dbb70ece194f6b959f9af098eaa34f25c5d9de899281265eb79998477b4c65f",
+        "mcp_input_schema_sha256": "ea277a666fb1d84c50061e845856b9c43288644d5fbb3a397dab4460481d3754",
+        "mcp_output_schema_sha256": "8ca87c3e284ec842aac06698cc597ed67f6de2fe1787d42023eeba5228498e05",
+        "output_sha256": "0285cfea25113af4fee5e8a583070489bb29cfd1fec64b360a9e4003f19cf24b"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.artifacts.list",
+      "path": "/v1/{parent}/artifacts",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "7585111dde05dbfb2474cedd894e8b900340bc122095de4dcd54d177c803388a",
+        "mcp_input_schema_sha256": "0cc22e282df6499e3c82b5e4a16d9e11cc3a8ec68244a2d58beec08ebaf5cb9e",
+        "mcp_output_schema_sha256": "85ab90b24d56cdf708ea731707cdfad1df668191141b2ddb404a2e64c3f42fdc",
+        "output_sha256": "7fd41c23b1c4ec62db63e94652881aa395e3d40fb747fbadd0b0f14e2589f453"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.campaigns.create",
+      "path": "/v1/{parent}/campaigns",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "5553fd25ac32291b94a9553ec05f0af24db15d8398df274e955e8bec67669466",
+        "mcp_input_schema_sha256": "759ce3bbd11191cd05cae3f7c345f31a939fc73c22f13cfa79232f782f93609b",
+        "mcp_output_schema_sha256": "91c0c9eec87783d3632e5a73c26d24cfcb8a2af1cc77e7418e1d3766dba183e7",
+        "output_sha256": "8dcfc13b16a10553bead8dde011699a1b7e3534289a9e065224eb4cdc3fbbbcd"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.campaigns.list",
+      "path": "/v1/{parent}/campaigns",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "505de8cb693a22a7a6fb62f357070f4ef32637982ac8064f3e816d42b4330c0a",
+        "mcp_input_schema_sha256": "0cc22e282df6499e3c82b5e4a16d9e11cc3a8ec68244a2d58beec08ebaf5cb9e",
+        "mcp_output_schema_sha256": "cf1b21e599ba90b1158c11ceb0faea047f4c2ceb45808d3fca1e0524921c0815",
+        "output_sha256": "73fa1c4bcdfba25822662147601bc0c27c64587144d50ff7f7f1fd5cab5cf963"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "destructive",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation",
+        "explicit-destructive-annotation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.campaigns.transition",
+      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "529503a76e9947b57b3e530efdda550e239ad8e485a97ef3b89c54c59f58ad9f",
+        "mcp_input_schema_sha256": "d7930470c03b01ce555146261bc860c32c3bc202acb0696cfc05ac6d2b844354",
+        "mcp_output_schema_sha256": "39ec55a5103e6f7b81117b86437bf741d60a69a34c0a73c750deed2dec114939",
+        "output_sha256": "af3a7c1c2badb28338e157997325be0ab028704f77da310d48bfdb95c8afbf17"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.connectors.list",
+      "path": "/v1/{parent}/connectors",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "ba56c4efc8ae5107fda1240cfbaf7e8b48af05bd79027c68660cdb2d2d515340",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "2431e6fc427a2d14f160fdb9075b4c90eb300302b7119247332a24456e3c1a35",
+        "output_sha256": "dda8c9339f82d270d321e8c89b7217feec9ee82e71d738f59830549889fe427a"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.datasets.profile",
+      "path": "/v1/{parent}/datasets:profile",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "54783f79987cb82acc6e24bab55fbc24a52799f5f3672588dd223e9e8b0fdf1a",
+        "mcp_input_schema_sha256": "1b534ff565163cc6a8dcba0c1cb74fb9fac3d37d3f793fa9fa31d49595845c46",
+        "mcp_output_schema_sha256": "67fc438e361746e864cbf6bbd69629a63d6de172a5ba6e722056d5a9808735de",
+        "output_sha256": "87669930ae232a22e22a749c390684da9e1455786cabc1a6948706b2cbb1cc08"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.ecosystem.readiness.get",
+      "path": "/v1/{parent}/ecosystem/readiness",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "578122b108d4e85d0d02b459b16aabf287892487731b45cea1d2a6ed2caffa8a",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "f32346b6ccfe74fd8d2989a87414a69715da09435f1e99e50b3777166c934696",
+        "output_sha256": "ffd057ef8b015243b1c83fac955797b14836b841071000debd3f2f310f794517"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.episodes.create",
+      "path": "/v1/{parent}/episodes",
+      "reason": "Durable episode writes remain application-orchestrated REST operations.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "6fa562ee1ffd1e284b6b4cd1694662c4e25d11c4e5a06feba7dda95a4e046f15",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "df34459e7b166bffa322fe849fed46cec5725412242674a0992c4d69d6fd1994"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.episodes.get",
+      "path": "/v1/{parent}/episodes/{episodeId}",
+      "reason": "Episode retrieval remains an application-owned REST surface.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "ebed45bbdcdb62b80193ddc33027f52bdd830ba1833501552d7202f7bc74e2db",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "75ad46d91a6cde2a2958fd659274b8aee69b9f08f14c0504c7491b82e17b4dd9"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.episodes.list",
+      "path": "/v1/{parent}/episodes",
+      "reason": "Episode enumeration remains an application-owned REST surface.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "8af3cd92a89947fa7367f106bbaef29ffeb65cf91a11195da3a87c20f08d1c5f",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "3e5afb7a406fccd109e221c2aa8d68f0528996939edd08d513bdb9269444b7a8"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.evidenceRecords.create",
+      "path": "/v1/{parent}/evidenceRecords",
+      "reason": "Durable evidence writes remain application-orchestrated REST operations.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "3c9b9bfb73e67ede70270bf2a9949feb669202f9443e23be52bdd9962812d41b",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "98cf4e6687d65f0048dd438ccc055d38a599f60c12c36090c60e3365a8976225"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.evidenceRecords.get",
+      "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
+      "reason": "Evidence retrieval remains an application-owned REST surface.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "335f61ee12220a79b6cd0f5d04f14870b2c062d62780a8f6272f41209e2b82de",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "5fc848aea05c79c7d5d2110a42f8f41bc30815a3015298b8ed423625ab8d52a9"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.evidenceRecords.list",
+      "path": "/v1/{parent}/evidenceRecords",
+      "reason": "Evidence enumeration remains an application-owned REST surface.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "d3e70d400cc2eb1408ec6b5a4bd6df39422743fb20e7b934547a99c64bf0f5d3",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "c47f5d1b44e564fab133b263cdfe5f1e36177827ffbe6f4645dff71a431f9e23"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTaskAssignments.claim",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "reason": "Lease acquisition is reviewer-session orchestration, not a general model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "aed758a658bce9fbd4fd56ba49e11c51b99719f43a673c4eceff4271ddded1f7",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "4a908cdd6ee45acce59f53e7a1842c6a4b936fe3fc780e6b5f6b14ceef4c7aa5"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTaskAssignments.release",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "reason": "Lease release is reviewer-session orchestration, not a general model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "ce9346f8e1e6326724d38a1ef4aaf781b7bed469fd4930945e3c792b3751f7b1",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "be90e8a5a081d3fb6c9cf4617037dd2c148311463d340ed608a45ea7c6603578"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTaskAssignments.renew",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "reason": "Lease renewal is reviewer-session orchestration, not a general model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "67ecb92b69aec3b13ecdb8fe19065adc75acddee9fa23ce8eed1f107445af1c4",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "2928aac30df8be612bdb912a8c14a34d6a2640c4ad76ce2da25f75afdc4829b4"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTaskAssignments.saveDraft",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "reason": "Reviewer draft persistence remains a human-review application surface.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "b52dacbf1f61b2f275087000c57933e4df9fee7111dc59cde7c35c97e56c4ed5",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "23a011a70aa4caa4d45474b0c407a3ff9f651b6382c0e43759d035bdfac5f49e"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.expertTasks.list",
+      "path": "/v1/{parent}/expert-tasks",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "d1ba3f73123243f801391c5d8d880b9f80e2481718bc2d195d8256f7641b7b94",
+        "mcp_input_schema_sha256": "0778e3f04f344fd3f1a65956abd266b3b770e73e9edf0560282bc2d18d8790a0",
+        "mcp_output_schema_sha256": "49d1941b91d316457e42f72975f35eeb3375d6a41ffcf339631fd7c7971523bc",
+        "output_sha256": "8c6f9abc1928c37c74332b4d283052eabe6a8d9b998891db896fbcc62f80647e"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTasks.resolve",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "2e40a61f458a24efbf79badecc9d6e621955caf8b26013d1642813c867a3c48b",
+        "mcp_input_schema_sha256": "bd2739b4e385539cff7989b46c4432dcfc77e097a2cfbfbdc4e30539fc884aaa",
+        "mcp_output_schema_sha256": "d7e7a03ae12917d54da01ac7b73eb3b486677f249e0ff6544ced77a5525b82c0",
+        "output_sha256": "ed79ede40473e7c18141d5187d04a8a99a724c70bb9a9feb5854b3e174d012d1"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation",
+        "explicit-open-world-annotation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.jobs.create",
+      "path": "/v1/{parent}/jobs",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "885c0ec0989537d507b72b937203b563d42e4619f483620daa015216f5bc5e98",
+        "mcp_input_schema_sha256": "b955a974e0754ccc65985bedac34aa4e0a1319f14ba20528a1b4ba04dae046cf",
+        "mcp_output_schema_sha256": "23349caa3d6ad8ef386c455386a4a0ea4bfc988f1b8939cec625b34ef1915cbf",
+        "output_sha256": "1fae1f10de430c85b79d86d0845c45a47bc4ebcbcd0330266fde753ba388a65a"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.jobs.get",
+      "path": "/v1/{parent}/jobs/{jobId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "bef400c6f1b2158e9b7c2a5ceea48af61e548a120b4d9e3dd48093bc74e9fa25",
+        "mcp_input_schema_sha256": "efe50c93dbd05f4d52f3416b9860e4dd1cd45acc4bda73a9f59d57eb55fa5ca0",
+        "mcp_output_schema_sha256": "dabd4c6311908e5275c5b72768165114916cd865f5ca7340358e51a8da0a9da1",
+        "output_sha256": "6a6f9698f15f51ab39f29f84a2f7731cf0d866cb884aebf34714e5bf6f8c2619"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.jobs.results.list",
+      "path": "/v1/{parent}/jobs/{jobId}/results",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "552549206d1d552aca45b287838df6980b4c195ec4f8d064e2aeb4d623c1093d",
+        "mcp_input_schema_sha256": "efe50c93dbd05f4d52f3416b9860e4dd1cd45acc4bda73a9f59d57eb55fa5ca0",
+        "mcp_output_schema_sha256": "03c535f8d59eac1b565782aea9390c9d45512362964b27a154f2e66cad2ef17d",
+        "output_sha256": "19ae9c4abc52ed4769fbf3da6cb197ef7cf72452702a62c3300f40f4f83327a3"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.labelQuality.get",
+      "path": "/v1/{parent}/label-quality",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "19bdbeac3a34a8f0f9517d6df74befa558c117ca4b9144d9666988a31a15384c",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "c3c3819ddd8d217f9a21f3fa811b59f77a7329d69af209afb0470bb63928ba2f",
+        "output_sha256": "d769412bc844848baa77b9e980bc4e6abae2276edc12e23a2bd49440afc890b2"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.metrics.get",
+      "path": "/v1/{parent}/metrics",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "c1851171270d813392f67ef55be17fda2b5235d8d7e801508716c225952b6018",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "c44090d11b366ff50f6d3c853e54b857ff9611f79ef55b34b71f2b5ccd07eb47",
+        "output_sha256": "102f58f0b3f8c6c087e4c9fc57589eea2db784f6fcda8ac092408b34472e1752"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation",
+        "explicit-open-world-annotation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.pipelines.runUseCase",
+      "path": "/v1/{parent}/pipelines:run-use-case",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
+        "mcp_input_schema_sha256": "39f077ab10d493577b7bbb4f418c7026ddd248792cb860b969a73ee25feb8220",
+        "mcp_output_schema_sha256": "dde67fd79b25da4550d3f19c5e02566eec10779eeca359235e2a05d3f7201716",
+        "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.products.checkLeakage",
+      "path": "/v1/{parent}/products:check-leakage",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "026fe59f40a1af58464c52a8ad6310c530aec0b27c3cb174f4762c6f2148a496",
+        "mcp_input_schema_sha256": "07cc244bb81e74173bf0020a912e6d8c2b979f79f2068286bc2a4c01150f0711",
+        "mcp_output_schema_sha256": "a391903d29bb23e6cd4b7a873a95b6b386c6dc8aeed844f1e4852aae6a293837",
+        "output_sha256": "cdf4a2f71c55cab22cd0b423eb1cd109e1c2a80f6fb802d609df2364c33be2db"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.products.derive",
+      "path": "/v1/{parent}/products/{productId}:derive",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "a78391de2e743dd5c6ec9101eb942c2143b8e71707e834edbeba700a2f066032",
+        "mcp_input_schema_sha256": "f854807e28cac321f95afa72cb5e510ad19d96712c9f17aba14120a817ccda1c",
+        "mcp_output_schema_sha256": "afc2a802ef62fb5bc21696f3eedcf8d257d9879279236527a278341b2620ba80",
+        "output_sha256": "353d430f858b26a1cc8cd62e18fd921cb5f6837792c684c5f4223242b30e626b"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.products.emitEval",
+      "path": "/v1/{parent}/products:emit-eval",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "1703021cf81a2f51a113f7066c53160b2d4b2da8cea534b8dea62d9defaae09b",
+        "mcp_input_schema_sha256": "a7e08535f6eef258cb500f02302de26e4755d990b12143b1e12216fbf1c40a76",
+        "mcp_output_schema_sha256": "2088b2ae997e46e298240a91daea5645e717461037c66f7b480f2b0409ec37ab",
+        "output_sha256": "068dd8159cdd6a2260c58ecac9dafc2b0ec891163665af512d253c5b5f06eb65"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.products.get",
+      "path": "/v1/{parent}/products/{productId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "efae8dd7765275c6d5f5fbc874450446ff89f62115234d8a52cfa59b9e3b5586",
+        "mcp_input_schema_sha256": "8f42c29c57e16339c7f5021a0813123f4bd4723426f84df2128f70dffeee5a61",
+        "mcp_output_schema_sha256": "fccfd3c7eca3b7ae21fc4a8c4be108492834969149c5431918a226334aceddb6",
+        "output_sha256": "84fb37ab9eaf3b9a8300ca0be8749033d79f903b0aad43fd99f7be0a8bc68998"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.products.manifest.get",
+      "path": "/v1/{parent}/products/{productId}/manifest",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "05e211ab1e0526fff02a41657f6513215407087f2abbf4e86ca7efbe2f8437f7",
+        "mcp_input_schema_sha256": "8f42c29c57e16339c7f5021a0813123f4bd4723426f84df2128f70dffeee5a61",
+        "mcp_output_schema_sha256": "85bfc85f170f6435f82d86f1387d62c1be2c28a6b2cc5ac5a88a3a2746a33aa2",
+        "output_sha256": "c228c7a15642e3625ab1fdbb2fa26876b0c2417aa77c05caf6ba03c8cf3cfcf6"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.products.validate",
+      "path": "/v1/{parent}/products/{productId}:validate",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "2c671ada8a7dc4d6939031f26e944e07ada7d0bf337f7c0a5cda6826ce54402d",
+        "mcp_input_schema_sha256": "8f42c29c57e16339c7f5021a0813123f4bd4723426f84df2128f70dffeee5a61",
+        "mcp_output_schema_sha256": "df8def6c1b8f4b5740c433289f0a0714e61ae65dca3327709d6c68709587f1e9",
+        "output_sha256": "e96a338157a1ab43bc0939643e01c72e7d4d129090e623e5478c20a60317eefd"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.researchCatalogEntries.create",
+      "path": "/v1/{parent}/researchCatalogEntries",
+      "reason": "Research catalog publication requires producer workflow controls outside MCP.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "c9e95b887815729491b814d9d444fec58e14d6dd6e4a99596c434217597dc593",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "ccd477cce27960bf123d939f48138546f5aed13fd1c8a4f96ac529392aa01c03"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.researchCatalogEntries.get",
+      "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
+      "reason": "Raw catalog entry retrieval remains an application surface; use curated research retrieval.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "b76b8fac3db9b06da6d56d4d66634ac0e5166dd0e9c70eb26de78d774c464a0e",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "246da8e36ba75594abcbff8481be3fd684cccc29ac6a737ffb04950ef59d75a6"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.researchCatalogEntries.list",
+      "path": "/v1/{parent}/researchCatalogEntries",
+      "reason": "Raw catalog enumeration remains an application surface; use curated research retrieval.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "66eb58eccb5003dbcd7b4c4d89c7297c8f2c79ece1b32f119fd47304f358fd44",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "d63b42e81d8419503c8bb93b923ee827d4dd955a770c7255621271569b214d6d"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.reviewOperations.get",
+      "path": "/v1/{parent}/review-operations",
+      "reason": "Review-operation state is consumed by the human-review application, not exposed as a model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "71427f006939bf7acf7d709e94b6535390e92a221a2ab7cd0bfa5dd79fd4fd46",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "3f230fdf697dc5a1a8d52acdbb61b87361334c453862680800be7f8e0a128b8a"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.sources.extract",
+      "path": "/v1/{parent}/sources:extract",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "9c3b3ba33aff2941a5378052b7c62baee583024d09f4678482757d0df66e670a",
+        "mcp_input_schema_sha256": "85242369b3b14607e0465a9e35a2bd338380385851b5dbbb1c4e81df975f9f88",
+        "mcp_output_schema_sha256": "704c98b19ae770bb4bbd80e4c89d05f87ec9a973e70cfd440268d7f3502b9529",
+        "output_sha256": "aaaa0ab0600fc283de465173a993ef3140d5a3aac8561a8e8434960f32c48061"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.tools.create",
+      "path": "/v1/{parent}/tools",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f3636a6fb358c6b176b1d80fe7e5adde98d83c862809b556222f6170549afb99",
+        "mcp_input_schema_sha256": "d38db0ee305dea57db56de4ce7d0fcdc60f591b8c2a60c18c16c802e3381d794",
+        "mcp_output_schema_sha256": "3aaecb721f78f84f2d5b1165899d48434917b19d8034769f69283bf3503684b7",
+        "output_sha256": "5c5577167e199a87c5ea175acb116994a1753cf1701bf2a94e9b75950922db21"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "destructive",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation",
+        "explicit-destructive-annotation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "DELETE",
+      "operation_id": "projects.tools.delete",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "99bdc2fcabbe62d1933f5cf0db37fe0bd696556d4be6578ba1c4bc8f3a602ce8",
+        "mcp_input_schema_sha256": "294defd11ea18dd1b0d614b9bcf2515a8f591daf4874fb907d9e9a6eb3ff0b5b",
+        "mcp_output_schema_sha256": "5a126bf0665d4804026c699cef3757c4de42019699ee7b7464580abea3185942",
+        "output_sha256": "f3f4f553f9dde1c92016b12a876192f809d2c00f4c2214eb3bdd976cd452bd39"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.tools.get",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "6a6ba3db2551553f84e64864328305900ef779112d412e8cc71731a98bf75e40",
+        "mcp_input_schema_sha256": "294defd11ea18dd1b0d614b9bcf2515a8f591daf4874fb907d9e9a6eb3ff0b5b",
+        "mcp_output_schema_sha256": "3aaecb721f78f84f2d5b1165899d48434917b19d8034769f69283bf3503684b7",
+        "output_sha256": "ef1c62691491f6ee39d4fef0ad4df07f591cc0669afbb5c10617128c473e929a"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.tools.invoke",
+      "path": "/v1/{parent}/tools/{toolName}:invoke",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "336e7e3dbddd7e7d5d31427707c1868ef2482af7c96a6af2392cc97cbf964b31",
+        "mcp_input_schema_sha256": "0be17f60ed2ff29974d1a0582c372d53feb455a9019c5fd889a5f83cb7e92872",
+        "mcp_output_schema_sha256": "d77645bccd43a8afe525e4edb72c67cd6a73f685c965e5556a1fdd81f38c61cd",
+        "output_sha256": "7b72a2313fd99b3caa9ec640ab76ad0413799277909a85ad1896f50e71ec415c"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.tools.list",
+      "path": "/v1/{parent}/tools",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "2ff65ddf55fb8cb448736fc0d7b053adf430625f175986913ec08d564eb075c8",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "3f9d0b5906ce75cb671b2da99290803bab95a43ca5407505f68d057313469b1b",
+        "output_sha256": "3a4f0b10f82657dc8753d3449af4628bdc1f8e9508eb890710d805a0dea737f6"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.trainingReleases.admit",
+      "path": "/v1/{parent}/training-releases:admit",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "training:publish",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "083f80ba31cc811f01471c1a6dcd8ecf471c4a5cb6d9294cae00d840ec541614",
+        "mcp_input_schema_sha256": "cbd827f5d4d92f890887a6c2b2fc7a924729783bbb756cce28cc7960ebe7f030",
+        "mcp_output_schema_sha256": "153e662a60d242c8fdbcccae4efd51bfd6ecf9238d58b4a1cc2d41f122466aca",
+        "output_sha256": "fbebc351a6780b94610dc7d05f2b57e61e59106fe2e0aeefcf031aeb67353eb9"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.trainingReleases.get",
+      "path": "/v1/{parent}/training-releases/{releaseId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "training:publish",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "879275c6c1a95ee5beaaaa87a7b66fe5a4187549a289058e2ad62a0b1d37e7f4",
+        "mcp_input_schema_sha256": "ce355c3b25d4e65ea44f2759fa080ddf0683ca6a2160d0bfbec774d4a3a589b6",
+        "mcp_output_schema_sha256": "153e662a60d242c8fdbcccae4efd51bfd6ecf9238d58b4a1cc2d41f122466aca",
+        "output_sha256": "e2da1650eb8d0168db1285f7972dd95b29c6bdb4f8fbedd9630e7669395e5ab1"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.useCases.get",
+      "path": "/v1/{parent}/use-cases/{useCaseId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "9833e9c8001e77200c558694f51a193ab10d3c7ce617c7c48b443cddb2a932f8",
+        "mcp_input_schema_sha256": "0afddf9d62eac23f99b5e91fe7469cfdbd7868f9bb6a9716a284e4a9cc0e223b",
+        "mcp_output_schema_sha256": "56c9a181ee365176a271d9dbee2c0c2016410660a9039028652a52aacfb3e4c6",
+        "output_sha256": "9c2f73cb597aafbbd4ef8805e7db3466bb53589bb26712dd8b441365cbd1df11"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.useCases.list",
+      "path": "/v1/{parent}/use-cases",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f008eb721788fba4134b5c7769b7593e440eb03a654de9a41a5f1561076e5101",
+        "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
+        "mcp_output_schema_sha256": "7317abc58075f87c0f518f75938308a7a54657ba6b72330e3c15bedaa0de5cce",
+        "output_sha256": "376a640d4dc86dd115d665321d144f4ba3a858e0c51660ca3f1c25ce440beb74"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "decision": "expose",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation",
+        "explicit-open-world-annotation"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.web.ingest",
+      "path": "/v1/{parent}/web:ingest",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "8af0f7f99e9c0efec2d342ba09d3adea044e6a213fee2cf9c08e0b8a3b016c23",
+        "mcp_input_schema_sha256": "018d8fed73e72522c6ab0b015caab54c9993b8bec4058c1ba5c637f9fa0f567d",
+        "mcp_output_schema_sha256": "bd318183a33a0968f9e0997640be392a58c65b5a9195aba5fbf523a746f1dd8c",
+        "output_sha256": "c3620c79d03e2c74fbfb5f353c3e7947dfb9e5b9ae9e19a8ef431d63a7c4a700"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "read",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "POST",
+      "operation_id": "query_research_retrieval",
+      "path": "/v1/{parent}/researchRetrieval:query",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "c11c80c0f6c6065e256b6272f78a7cfcdb89b7930cdb04d8a46c9817731d69c8",
+        "mcp_input_schema_sha256": "347a34e762bbb1373ea07d293fda11237a867a83e773f108f549162439edd418",
+        "mcp_output_schema_sha256": "cd4a703dbcccf5f188881bebbd8d07e722d312c444148eaaafa6b623fd275784",
+        "output_sha256": "e72bf14b7af6c6dbc187bee6a8902efd19ff932cba47452cc2a4623aed59ba15"
+      }
+    }
+  ],
+  "policy": {
+    "authenticated_operation_count": 50,
+    "denied_count": 14,
+    "excluded_transport_operations": [
+      "health.get",
+      "mcp.jsonrpc"
+    ],
+    "exposed_count": 36,
+    "mcp_tools_artifact": {
+      "path": "api/mcp-tools.json",
+      "sha256": "b9625092bdb1cf4809ebbc2bebdedf4c7fbaa2c60828f1c9546472075151899a"
+    },
+    "promotion_requirement": "producer security review"
+  },
+  "producer": "data-engine",
+  "schema": "data-engine.mcp-admission.v1",
+  "source": {
+    "commit": "a7342f3cf871c4aacf7cb1a990242296f02ef4e8",
+    "files": [
+      {
+        "git_blob": "9ed3a2b69c00a7e5b332fe3a815c64d098133713",
+        "path": "api/openapi.yaml",
+        "sha256": "202b6b7ef08748eff31ebc23ca85bfdb71c89c212d175a84adbfb0d8560b0b9c"
+      },
+      {
+        "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
+        "path": "scripts/generate-mcp-admission.py",
+        "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
+      },
+      {
+        "git_blob": "a0a107807571284405f843a907707319e7b3aa1a",
+        "path": "src/data_engine/app.py",
+        "sha256": "266fa2126b04473d8ab32fb85bd68e87a7c9366452ebc80b3c5a3255ec8987ff"
+      },
+      {
+        "git_blob": "09b1ea4ebc40515adeb394720fd14ffdcd4bb488",
+        "path": "src/data_engine/mcp.py",
+        "sha256": "bed9a215c5e90a42334bf946c6dee30655c2dadb1f1974b69d693b492abf1214"
+      },
+      {
+        "git_blob": "3c2c3b15ae9ee71e30ac6eecce63cc190a48778d",
+        "path": "src/data_engine/mcp_admission.py",
+        "sha256": "c0af0b1a1bef1a41e1899d1c3de7abf198986ec38b532489d45357f38f02275c"
+      }
+    ],
+    "repository": "tempera-dev/data-engine"
+  }
+}

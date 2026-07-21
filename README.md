@@ -45,7 +45,7 @@ a live hosted service, or an undocumented endpoint.
 | `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
 | `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
-| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 87 | `data-engine` |
+| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 51 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 Palette also ships seven fully generated per-language clients inside its own
@@ -178,11 +178,24 @@ the committed site is always current thanks to the drift gate).
 - `scripts/check-sdk-surface.py` gates: manifest invariants, regenerate-and-
   diff (surface tables and docs site), one version across the three packages,
   uniform-primitive markers, and data-engine operation/path/method parity.
-- `contracts/data-engine-openapi-operations.json` is a checked operation lock
-  generated from data-engine's authoritative OpenAPI. When both repositories
-  are checked out, refresh and verify it with
-  `python3 scripts/sync-data-engine-openapi.py --check`; CI always verifies
-  that the committed lock covers every typed data-engine SDK operation.
+- `contracts/data-engine-openapi-operations.json` is a checked operation and
+  auth lock generated from data-engine's authoritative committed OpenAPI. Its
+  provenance
+  includes the repository, branch, 40-character commit, path, Git blob,
+  content SHA-256, generator version, and generated-operation digest. The sync
+  rejects dirty producer checkouts and reads source bytes with `git show`.
+  When both repositories are checked out, refresh and verify it with explicit
+  `--source-repo`, `--source-branch`, and 40-character `--source-commit`
+  arguments; detached exact-commit producer checkouts are supported. SDK CI
+  verifies the committed lock and generated surface in both directions,
+  including exact per-operation audience and scope parity.
+- `specs/data-engine-mcp-admission.json` and
+  `specs/data-engine-mcp-tools.json` vendor the producer's exact curated MCP
+  decisions and static `tools/list` serialization. Their adjacent `.source`
+  locks bind the same immutable Data Engine commit as the OpenAPI lock. The SDK
+  gate requires all 50 authenticated project operations to be explicitly
+  exposed or denied and rejects scope, schema-fixture, or catalog drift without
+  turning REST coverage into model exposure.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - The endpoint-change rollout process is documented in
@@ -198,7 +211,13 @@ or individually:
 
 ```sh
 python3 scripts/check-sdk-surface.py
-python3 scripts/sync-data-engine-openapi.py --check
+python3 scripts/sync-data-engine-openapi.py --check \
+  --source ../data-engine/api/openapi.yaml \
+  --source-repo tempera-dev/data-engine --source-branch main \
+  --source-commit <40-character-producer-commit>
+python3 scripts/sync-data-engine-mcp-contracts.py --check \
+  --source-repo-dir ../data-engine \
+  --source-commit <40-character-producer-commit>
 npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml
