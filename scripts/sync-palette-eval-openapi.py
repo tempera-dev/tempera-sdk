@@ -29,13 +29,13 @@ DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "fe9227c4a1162fd079a3ee9ac0355666eae5d856"
+PALETTE_REVISION = "95627810c43d97ae61270a3a1ce7d5f03079d9f5"
 PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
 PALETTE_SOURCE_BLOB = "c9b1e11d3096adb5ae1af287c5b87e223787b451"
 PALETTE_SOURCE_SHA256 = (
     "sha256:26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0"
 )
-PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/14"
+PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/16"
 PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
 REQUEST_SCHEMA = "#/components/schemas/ImportTemperaEvidenceRequest"
