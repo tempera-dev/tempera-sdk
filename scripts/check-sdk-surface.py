@@ -22,6 +22,8 @@ Fails when the three language packages can drift apart:
 8. Data Engine's exact MCP catalog must retain one reviewed expose/deny
    decision per authenticated operation without turning REST coverage into
    model exposure.
+9. The signed Tempera evidence operations must exactly match the source-pinned
+   Palette OpenAPI artifact and committed operation lock.
 
 Runtime conformance (every operation dispatching the right method, path, and
 auth header) is asserted per-language by each package's own test suite, which
@@ -294,7 +296,26 @@ def main() -> int:
             "generated docs site (docs/site/) is stale (run python3 scripts/gen-sdk-docs.py)"
         )
 
-    # 3b: reference data may retain reserved production targets, but public
+    # 3b: signed evaluation evidence is a real Palette server surface. Its
+    # operation lock binds the vendored generated OpenAPI bytes, source
+    # revision, operation IDs, request/receipt schemas, and SDK methods.
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/sync-palette-eval-openapi.py"),
+            "--check",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append(
+            "Palette evaluation OpenAPI lock is stale or differs from its source pin"
+        )
+
+    # 3c: reference data may retain reserved production targets, but public
     # quickstarts must not present those targets as generally available.
     readme = (ROOT / "README.md").read_text()
     for forbidden in FORBIDDEN_README_EXAMPLES:

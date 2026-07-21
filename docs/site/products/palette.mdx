@@ -18,7 +18,7 @@ Agent observability: trace and span ingestion, search, datasets, evals, experime
 | Audience | `palette` |
 | Auth | bearer minted for audience palette, central tp_ API key, or product x-palette-api-key header |
 | Client | TypeScript `client.palette` · Python `client.palette` · Rust `build_request("palette", ...)` |
-| Typed operations | 15 |
+| Typed operations | 18 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.palette.request(path, options)` (TypeScript) /
@@ -864,6 +864,180 @@ result = client.palette.get_usage_summary({
 let spec = client.build_request("palette", "get_usage_summary", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### importTemperaBundle
+
+`POST /v1/eval-results/{tenant_id}/{project_id}/tempera/bundles`
+
+Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.
+
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.palette.importTemperaBundle()` · Python `client.palette.import_tempera_bundle()` · Rust `build_request("palette", "import_tempera_bundle", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `canonical_json` | yes | — |
+| `signature_base64` | yes | — |
+| `public_key_pem` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.palette.importTemperaBundle({
+  tenant_id: "<tenant_id>",
+  project_id: "<project_id>",
+  canonical_json: "<canonical_json>",
+  signature_base64: "<signature_base64>",
+  public_key_pem: "<public_key_pem>",
+});
+```
+
+```python Python
+result = client.palette.import_tempera_bundle({
+    "tenant_id": "<tenant_id>",
+    "project_id": "<project_id>",
+    "canonical_json": "<canonical_json>",
+    "signature_base64": "<signature_base64>",
+    "public_key_pem": "<public_key_pem>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("palette", "import_tempera_bundle", &[
+    ("tenant_id", "<tenant_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("canonical_json", "<canonical_json>".into()),
+    ("signature_base64", "<signature_base64>".into()),
+    ("public_key_pem", "<public_key_pem>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### recordTemperaDecision
+
+`POST /v1/eval-results/{tenant_id}/{project_id}/tempera/decisions`
+
+Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.
+
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.palette.recordTemperaDecision()` · Python `client.palette.record_tempera_decision()` · Rust `build_request("palette", "record_tempera_decision", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `canonical_json` | yes | — |
+| `signature_base64` | yes | — |
+| `public_key_pem` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.palette.recordTemperaDecision({
+  tenant_id: "<tenant_id>",
+  project_id: "<project_id>",
+  canonical_json: "<canonical_json>",
+  signature_base64: "<signature_base64>",
+  public_key_pem: "<public_key_pem>",
+});
+```
+
+```python Python
+result = client.palette.record_tempera_decision({
+    "tenant_id": "<tenant_id>",
+    "project_id": "<project_id>",
+    "canonical_json": "<canonical_json>",
+    "signature_base64": "<signature_base64>",
+    "public_key_pem": "<public_key_pem>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("palette", "record_tempera_decision", &[
+    ("tenant_id", "<tenant_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("canonical_json", "<canonical_json>".into()),
+    ("signature_base64", "<signature_base64>".into()),
+    ("public_key_pem", "<public_key_pem>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getTemperaEvidence
+
+`GET /v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}`
+
+Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.
+
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.palette.getTemperaEvidence()` · Python `client.palette.get_tempera_evidence()` · Rust `build_request("palette", "get_tempera_evidence", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `kind` | yes | Substituted into the URL path (percent-encoded). |
+| `external_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.palette.getTemperaEvidence({
+  tenant_id: "<tenant_id>",
+  project_id: "<project_id>",
+  kind: "<kind>",
+  external_id: "<external_id>",
+});
+```
+
+```python Python
+result = client.palette.get_tempera_evidence({
+    "tenant_id": "<tenant_id>",
+    "project_id": "<project_id>",
+    "kind": "<kind>",
+    "external_id": "<external_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("palette", "get_tempera_evidence", &[
+    ("tenant_id", "<tenant_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("kind", "<kind>".into()),
+    ("external_id", "<external_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
