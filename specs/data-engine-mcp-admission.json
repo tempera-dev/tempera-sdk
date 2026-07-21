@@ -140,8 +140,8 @@
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
         "input_sha256": "5553fd25ac32291b94a9553ec05f0af24db15d8398df274e955e8bec67669466",
-        "mcp_input_schema_sha256": "a07e0a8b539e4ac1f5de3e7c032af67a7ba602e62ca84fa1be525123001d7ae4",
-        "mcp_output_schema_sha256": "1f4546493a765c4836f5a2de6ce28fc00ae0e66bc5d2fa574b34bec8848a3f9b",
+        "mcp_input_schema_sha256": "42eb1b692c4a9b13ce607fb249b50978716bf8a821f874fc00b678f865850fab",
+        "mcp_output_schema_sha256": "2c914053af58d6918881234f812825cac2fe35570d5aa7fa41dc6bca0cdc87ed",
         "output_sha256": "8dcfc13b16a10553bead8dde011699a1b7e3534289a9e065224eb4cdc3fbbbcd"
       }
     },
@@ -170,7 +170,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "505de8cb693a22a7a6fb62f357070f4ef32637982ac8064f3e816d42b4330c0a",
         "mcp_input_schema_sha256": "0cc22e282df6499e3c82b5e4a16d9e11cc3a8ec68244a2d58beec08ebaf5cb9e",
-        "mcp_output_schema_sha256": "9a0c4a23b42f14bd3d8b17f16b85ac8cb5cbeedb1ba32f4b41a8585b555e3973",
+        "mcp_output_schema_sha256": "682f2d808d2e7ca10e3287e7635b4be230fc662682428d700fe84af72d23c85a",
         "output_sha256": "73fa1c4bcdfba25822662147601bc0c27c64587144d50ff7f7f1fd5cab5cf963"
       }
     },
@@ -546,7 +546,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "d1ba3f73123243f801391c5d8d880b9f80e2481718bc2d195d8256f7641b7b94",
         "mcp_input_schema_sha256": "0778e3f04f344fd3f1a65956abd266b3b770e73e9edf0560282bc2d18d8790a0",
-        "mcp_output_schema_sha256": "00d5c1d53668da2b2fc2da9be2b6509b42f01d1dd411b075b710520a7796b9d8",
+        "mcp_output_schema_sha256": "486d47e2a277c9b9d86cacec631ba86548581ddfb9ad0851a91f680a63ae1b96",
         "output_sha256": "8c6f9abc1928c37c74332b4d283052eabe6a8d9b998891db896fbcc62f80647e"
       }
     },
@@ -574,8 +574,8 @@
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
         "input_sha256": "2e40a61f458a24efbf79badecc9d6e621955caf8b26013d1642813c867a3c48b",
-        "mcp_input_schema_sha256": "bd2739b4e385539cff7989b46c4432dcfc77e097a2cfbfbdc4e30539fc884aaa",
-        "mcp_output_schema_sha256": "77c37f555124e211bf5a89e250076dd38420d310e69c8116d4652bbd1eff8841",
+        "mcp_input_schema_sha256": "73d80283d5f6640cf539be754d2f355c1f05fcd950ae4a5a606c4407e62f3187",
+        "mcp_output_schema_sha256": "e863c584c889ff6d0bf4f3fb53405194ce66f96254b5bb34c9a3829d9efd68e0",
         "output_sha256": "ed79ede40473e7c18141d5187d04a8a99a724c70bb9a9feb5854b3e174d012d1"
       }
     },
@@ -751,7 +751,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
         "mcp_input_schema_sha256": "39f077ab10d493577b7bbb4f418c7026ddd248792cb860b969a73ee25feb8220",
-        "mcp_output_schema_sha256": "398700d00c34c98fc50bb5c59002426fc6ced1a6d305d55183cb0c70e345c6f7",
+        "mcp_output_schema_sha256": "c3eb351a0e01cd678e4f993d59bc2b3266081b7265171c6bc59ed8933729913a",
         "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
       }
     },
@@ -1428,19 +1428,19 @@
     "exposed_count": 36,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "28726aa77f0d5c6c72f135e2ddea247840a7920e45f123663ec51399503b1d95"
+      "sha256": "7fa3a12f96abb984b093724cb281bd9a20c020e987f22dcb251bbac6e675c0ce"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "f9bd82ee643cddbf595b61406f073d0276780f21",
+    "commit": "f8239a3cf2388cc5faa0e6a7b7194e85fb3eb038",
     "files": [
       {
-        "git_blob": "ace18e15a551cc2e9ba129060353d330dddf8aea",
+        "git_blob": "ca20e4020c5f301550e201325fa4ff62e3d91067",
         "path": "api/openapi.yaml",
-        "sha256": "031a3af4d5bcd27d0d00fd9cae96f316f9f2a85f4b6bf4ef64e09e436272a301"
+        "sha256": "8b30b5bb8c919e9804b9a63b561af032e7d14735a1f03710f468e76b286e6325"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1453,9 +1453,9 @@
         "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "60585cf1bb3303270b3e1ebc596f4fc40c9b8a96",
+        "git_blob": "f0edfd9fb96ee3fc7fbe22124d2e2892c70f949a",
         "path": "src/data_engine/mcp.py",
-        "sha256": "a2a6f8296d33b4852f4ed911475955d8b9aeb088d96f70f8f448e3d4f8139f54"
+        "sha256": "e538a968aa7d11fe4f800181b13d5a8440c0b69dd7bf3f770462d3530d295e69"
       },
       {
         "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
