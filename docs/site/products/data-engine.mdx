@@ -64,7 +64,6 @@ Admit exact training and heldout product generations after revalidating integrit
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Scope:** `training:publish`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.dataEngine.admitTrainingRelease()` · Python `client.data_engine.admit_training_release()` · Rust `build_request("data_engine", "admit_training_release", params)`
 
 **Path parameters**
@@ -122,7 +121,6 @@ Revalidate and fetch one training release, including any durable stale state.
 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Scope:** `training:publish`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.dataEngine.getTrainingRelease()` · Python `client.data_engine.get_training_release()` · Rust `build_request("data_engine", "get_training_release", params)`
 
 **Path parameters**

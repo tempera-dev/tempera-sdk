@@ -34,10 +34,11 @@ Added producer-backed methods:
 `getEpisode`, `queryResearchRetrieval`, `createResearchCatalogEntry`,
 `listResearchCatalogEntries`, and `getResearchCatalogEntry`.
 
-Known auth gap: Data Engine requires `training:publish` for training-release
-admission and reads, but Auth Hub does not register that scope on its current
-default branch. The SDK records the requirement and marks these operations as
-centrally unavailable until the Hosted Platform owner lands the Auth Hub scope.
+Auth registration: Data Engine requires `training:publish` for training-release
+admission and reads. Auth Hub registers that scope for the `data-engine`
+audience at commit `03136c97be6ce5753e6a28abac88432773640d6f`; only attributed
+owner/admin OAuth principals may receive it, and API keys are excluded. The SDK
+therefore treats these operations as centrally reachable under that policy.
 
 Canonical-source gap: the remaining Data Engine scope assignments in this
 release are verified against `src/data_engine/app.py::_required_scope` at the

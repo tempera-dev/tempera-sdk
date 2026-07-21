@@ -22,6 +22,7 @@
     "dataset:read",
     "dataset:write",
     "eval:run",
+    "training:publish",
     "review:resolve",
     "workflow:read",
     "workflow:write",
@@ -31,14 +32,7 @@
     "pii:unmask",
     "admin"
   ],
-  "scopeGaps": {
-    "training:publish": {
-      "owner": "auth-hub hosted platform lane",
-      "reportedDate": "2026-07-20",
-      "status": "required by data-engine but not registered by auth-hub",
-      "migration": "Register and issue the scope for the data-engine audience before declaring training-release operations centrally reachable."
-    }
-  },
+  "scopeGaps": {},
   "environments": {
     "local": {
       "publicSiteUrl": "http://localhost:3000",
