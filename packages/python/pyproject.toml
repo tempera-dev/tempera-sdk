@@ -1,6 +1,6 @@
 [project]
 name = "tempera-sdk"
-version = "0.6.0"
+version = "0.7.0"
 description = "Aggregated SDK for Tempera products"
 requires-python = ">=3.10"
 license = { text = "UNLICENSED" }
