@@ -135,16 +135,6 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   rotateApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an API key (idempotent). */
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List model profiles in the active project without exposing broker credential references. */
-  listModelProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get one project-scoped model profile without exposing its broker credential reference. */
-  getModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a project-scoped managed or BYOK model profile using a write-only control-plane broker reference. */
-  createModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Update mutable model-profile metadata or replace its write-only broker reference. */
-  updateModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Soft-delete a model profile from the active project. */
-  deleteModelProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the OAuth grants the user has approved in the active workspace. */
   listGrants(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an OAuth grant and every refresh token issued under it. */

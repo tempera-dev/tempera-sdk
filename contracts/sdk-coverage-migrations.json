@@ -19,11 +19,11 @@
       "duplicate_routes": 1,
       "migration": "Classify dedicated OAuth, webhook, and MCP transports; remove the five phantom model-profile methods; generate remaining eligible operations from the exact Auth Hub contract.",
       "owner": "contract-spine with hosted-platform contract handoff",
-      "phantom_routes": 5,
+      "phantom_routes": 0,
       "product": "controlPlane",
       "review_after": "2026-08-01",
       "rollback": "Keep compatibility aliases only through an announced deprecation; revert additive generated methods independently.",
-      "upstream_only_routes": 8
+      "upstream_only_routes": 23
     },
     {
       "compatibility": "additive_consumer_catchup",
