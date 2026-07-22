@@ -4,7 +4,7 @@
   "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",
   "schema_version": 1,
   "source_blob_sha": "3d5d0f8439b0434a9bebf415a6f1cd169d8c5399",
-  "source_branch": "jaden/release-dedup-v2-restack-clean",
+  "source_branch": "main",
   "source_commit": "56c1776c9a29343e8031bdf0bb3564403cdcf701",
   "source_path": "api/mcp-admission.json",
   "source_repo": "tempera-dev/data-engine",

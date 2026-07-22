@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
-  "source_branch": "jaden/release-dedup-v2-restack-clean",
+  "source_branch": "main",
   "source_commit": "56c1776c9a29343e8031bdf0bb3564403cdcf701",
   "source_path": "api/openapi.yaml",
   "source_blob_sha": "da01fca9de2a9cb813bbcc475cea2e884d7131fd",
