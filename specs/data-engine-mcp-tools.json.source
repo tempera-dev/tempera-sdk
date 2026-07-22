@@ -1,12 +1,12 @@
 {
   "generated_path": "specs/data-engine-mcp-tools.json",
-  "generated_sha256": "54d34cde14a589ed33e973271d9ac56b6e88c8da7819fe51990d392f9f227296",
+  "generated_sha256": "d53828c99038f3a98f7aadb7ad33dda859d4744b808b5ff093c249aeabbc1e05",
   "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",
   "schema_version": 1,
-  "source_blob_sha": "e9cc2c38b1bec98cdfdb0baed313cdcd7ebd7946",
+  "source_blob_sha": "1c80b1f870a4b8ce6511fb98b297e66fc7bf2b92",
   "source_branch": "jaden/release-dedup-v2-restack-clean",
-  "source_commit": "595f2eee70da9758a39ccc9fa649bd3a6545126a",
+  "source_commit": "56c1776c9a29343e8031bdf0bb3564403cdcf701",
   "source_path": "api/mcp-tools.json",
   "source_repo": "tempera-dev/data-engine",
-  "source_sha256": "54d34cde14a589ed33e973271d9ac56b6e88c8da7819fe51990d392f9f227296"
+  "source_sha256": "d53828c99038f3a98f7aadb7ad33dda859d4744b808b5ff093c249aeabbc1e05"
 }

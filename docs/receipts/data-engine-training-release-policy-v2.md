@@ -11,7 +11,7 @@ names do not change.
 
 - Repository: `tempera-dev/data-engine`
 - Review-train branch: `jaden/release-dedup-v2-restack-clean`
-- Commit: `595f2eee70da9758a39ccc9fa649bd3a6545126a`
+- Commit: `56c1776c9a29343e8031bdf0bb3564403cdcf701`
 - OpenAPI: `api/openapi.yaml`
 - OpenAPI SHA-256:
   `f88ef55de1b174e760857106aa54d6dbc8dc80ae6380ddefd81b8df2e5bf7ec4`
@@ -42,9 +42,9 @@ schemas; they must not rebuild these bounds from this prose.
 - `contracts/data-engine-openapi-operations.json` pins the exact OpenAPI
   provenance and its operation-index digest.
 - `specs/data-engine-mcp-admission.json` SHA-256:
-  `0d3b4660fa1d467149076f1325bda21c85de1d657af58733fe69aa6772239fe0`
+  `28be9964f88f978d362fab47bcb62e6b7d6119a8d6fbf2df23682958e748c591`
 - `specs/data-engine-mcp-tools.json` SHA-256:
-  `54d34cde14a589ed33e973271d9ac56b6e88c8da7819fe51990d392f9f227296`
+  `d53828c99038f3a98f7aadb7ad33dda859d4744b808b5ff093c249aeabbc1e05`
 
 ## Verification and deferred staging
 
