@@ -42,9 +42,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_ENGINE_OPERATION_LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
 DATA_ENGINE_MCP_ADMISSION = ROOT / "specs" / "data-engine-mcp-admission.json"
 DATA_ENGINE_MCP_TOOLS = ROOT / "specs" / "data-engine-mcp-tools.json"
-DATA_ENGINE_REVIEW_TRAIN_BRANCHES = {
-    "jaden/release-dedup-v2-restack-clean",
-}
 
 # Hand-written files must keep exposing the uniform primitives by these names.
 REQUIRED_MARKERS = {
@@ -121,6 +118,7 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
     expected_lock_values = {
         "schema_version": 3,
         "source_repo": "tempera-dev/data-engine",
+        "source_branch": "main",
         "source_path": "api/openapi.yaml",
         "generated_with": "sync-data-engine-openapi.py@4",
     }
@@ -129,12 +127,6 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
             failures.append(
                 f"data-engine OpenAPI operation lock {key} {lock.get(key)!r} != {expected!r}"
             )
-    source_branch = lock.get("source_branch")
-    if source_branch != "main" and source_branch not in DATA_ENGINE_REVIEW_TRAIN_BRANCHES:
-        failures.append(
-            "data-engine OpenAPI operation lock source_branch must be main or a "
-            f"reviewed train branch, got {source_branch!r}"
-        )
     if not re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))):
         failures.append("data-engine OpenAPI operation lock source_commit is not a 40-character SHA")
     if not re.fullmatch(r"[0-9a-f]{40,64}", str(lock.get("source_blob_sha", ""))):
@@ -204,7 +196,7 @@ def validate_data_engine_mcp_contracts() -> list[str]:
         expected = {
             "schema_version": 1,
             "source_repo": "tempera-dev/data-engine",
-            "source_branch": operation_lock.get("source_branch"),
+            "source_branch": "main",
             "source_commit": operation_lock.get("source_commit"),
             "source_path": source_path,
             "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",

@@ -1,6 +1,6 @@
 # Data Engine training-release policy v2 consumer receipt
 
-Status: review-train consumer; not a staged runtime receipt.
+Status: merged-consumer provenance; not a staged runtime receipt.
 
 This SDK change vendors the exact Data Engine contract prepared by
 [Data Engine #76](https://github.com/tempera-dev/data-engine/pull/76). It is
@@ -10,17 +10,15 @@ names do not change.
 ## Exact producer input
 
 - Repository: `tempera-dev/data-engine`
-- Review-train branch: `jaden/release-dedup-v2-restack-clean`
+- Source branch: `main`
 - Commit: `56c1776c9a29343e8031bdf0bb3564403cdcf701`
 - OpenAPI: `api/openapi.yaml`
 - OpenAPI SHA-256:
   `f88ef55de1b174e760857106aa54d6dbc8dc80ae6380ddefd81b8df2e5bf7ec4`
 
 The committed SDK lock and vendored MCP artifacts are generated only from
-those Git bytes. The temporary reviewed branch is allowlisted solely to permit
-this dormant consumer to merge before the additive provider; immediately after
-the provider lands, this receipt must be regenerated with `source_branch:
-main` and the same reachable producer commit (or its merged successor).
+those Git bytes. Data Engine #76 is now merged, and the pinned commit is
+reachable from `main`; the temporary review-train allowlist has been removed.
 
 ## Consumer behavior
 
