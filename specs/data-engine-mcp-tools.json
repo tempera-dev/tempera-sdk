@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "f8239a3cf2388cc5faa0e6a7b7194e85fb3eb038",
+    "commit": "533733de245b1462651d95dc3b2ee58bb7610817",
     "files": [
       {
-        "git_blob": "ca20e4020c5f301550e201325fa4ff62e3d91067",
+        "git_blob": "6faab8ba56ce9e9218cdcb72276fbdecf4fb8fea",
         "path": "api/openapi.yaml",
-        "sha256": "8b30b5bb8c919e9804b9a63b561af032e7d14735a1f03710f468e76b286e6325"
+        "sha256": "940671385995df4027babea00349300b02fff06e33f1d975e5c01d91d08db108"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -20,9 +20,9 @@
         "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "f0edfd9fb96ee3fc7fbe22124d2e2892c70f949a",
+        "git_blob": "3bb72494d531fa75cac1477623bd6587ee140d19",
         "path": "src/data_engine/mcp.py",
-        "sha256": "e538a968aa7d11fe4f800181b13d5a8440c0b69dd7bf3f770462d3530d295e69"
+        "sha256": "83460266af792389f6f13997b1b619f3e0e016b30ad404e17d63c0b15452de93"
       },
       {
         "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
@@ -5416,6 +5416,118 @@
           "name": {
             "type": "string"
           },
+          "policy_receipt": {
+            "additionalProperties": false,
+            "properties": {
+              "exact_overlap_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_exact_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_near_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_unit_count": {
+                "maximum": 64,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "near_duplicate_algorithm": {
+                "const": "bottom-1024-count-sketch-5-byte-multiset-jaccard.v3"
+              },
+              "near_duplicate_overlap_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "near_duplicate_threshold": {
+                "const": 0.9
+              },
+              "passed_checks": {
+                "items": {
+                  "enum": [
+                    "artifact_integrity",
+                    "human_training_consent",
+                    "secret_scan",
+                    "exact_training_uniqueness",
+                    "exact_heldout_uniqueness",
+                    "near_duplicate_training_uniqueness",
+                    "near_duplicate_heldout_uniqueness",
+                    "exact_heldout_separation",
+                    "near_duplicate_heldout_separation"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 9,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "policy_digest": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "scanner_version": {
+                "const": "data-engine.release-policy-scanner.v2"
+              },
+              "schema": {
+                "const": "data-engine.training-release-policy.v2"
+              },
+              "secret_match_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "LEGACY_UNVERIFIED"
+                ],
+                "type": "string"
+              },
+              "training_exact_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "training_near_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "training_unit_count": {
+                "maximum": 64,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "schema",
+              "status",
+              "scanner_version",
+              "near_duplicate_algorithm",
+              "near_duplicate_threshold",
+              "training_unit_count",
+              "heldout_unit_count",
+              "secret_match_count",
+              "training_exact_duplicate_pair_count",
+              "heldout_exact_duplicate_pair_count",
+              "training_near_duplicate_pair_count",
+              "heldout_near_duplicate_pair_count",
+              "exact_overlap_count",
+              "near_duplicate_overlap_count",
+              "policy_digest",
+              "passed_checks"
+            ],
+            "type": "object"
+          },
           "project": {
             "type": "string"
           },
@@ -5476,6 +5588,7 @@
           "heldout_snapshot_hash",
           "heldout_manifest_sha256",
           "raw_hash_overlap_count",
+          "policy_receipt",
           "admission_hash",
           "status",
           "stale_reason",
@@ -5539,6 +5652,118 @@
           "name": {
             "type": "string"
           },
+          "policy_receipt": {
+            "additionalProperties": false,
+            "properties": {
+              "exact_overlap_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_exact_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_near_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "heldout_unit_count": {
+                "maximum": 64,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "near_duplicate_algorithm": {
+                "const": "bottom-1024-count-sketch-5-byte-multiset-jaccard.v3"
+              },
+              "near_duplicate_overlap_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "near_duplicate_threshold": {
+                "const": 0.9
+              },
+              "passed_checks": {
+                "items": {
+                  "enum": [
+                    "artifact_integrity",
+                    "human_training_consent",
+                    "secret_scan",
+                    "exact_training_uniqueness",
+                    "exact_heldout_uniqueness",
+                    "near_duplicate_training_uniqueness",
+                    "near_duplicate_heldout_uniqueness",
+                    "exact_heldout_separation",
+                    "near_duplicate_heldout_separation"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 9,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "policy_digest": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "scanner_version": {
+                "const": "data-engine.release-policy-scanner.v2"
+              },
+              "schema": {
+                "const": "data-engine.training-release-policy.v2"
+              },
+              "secret_match_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "LEGACY_UNVERIFIED"
+                ],
+                "type": "string"
+              },
+              "training_exact_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "training_near_duplicate_pair_count": {
+                "maximum": 0,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "training_unit_count": {
+                "maximum": 64,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "schema",
+              "status",
+              "scanner_version",
+              "near_duplicate_algorithm",
+              "near_duplicate_threshold",
+              "training_unit_count",
+              "heldout_unit_count",
+              "secret_match_count",
+              "training_exact_duplicate_pair_count",
+              "heldout_exact_duplicate_pair_count",
+              "training_near_duplicate_pair_count",
+              "heldout_near_duplicate_pair_count",
+              "exact_overlap_count",
+              "near_duplicate_overlap_count",
+              "policy_digest",
+              "passed_checks"
+            ],
+            "type": "object"
+          },
           "project": {
             "type": "string"
           },
@@ -5599,6 +5824,7 @@
           "heldout_snapshot_hash",
           "heldout_manifest_sha256",
           "raw_hash_overlap_count",
+          "policy_receipt",
           "admission_hash",
           "status",
           "stale_reason",

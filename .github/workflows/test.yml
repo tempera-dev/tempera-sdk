@@ -29,21 +29,30 @@ jobs:
                   encoding="utf-8"
               )
           )
+          source_branch = lock.get("source_branch")
+          allowed_branches = {
+              "main",
+              "jaden/release-dedup-v2-restack-clean",
+          }
           expected = {
               "source_repo": "tempera-dev/data-engine",
-              "source_branch": "main",
               "source_path": "api/openapi.yaml",
           }
           for field, value in expected.items():
               if lock.get(field) != value:
                   raise SystemExit(
-                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
-                  )
+                  f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+              )
+          if source_branch not in allowed_branches:
+              raise SystemExit(
+                  f"refusing non-allowlisted source_branch: {source_branch!r}"
+              )
           commit = lock.get("source_commit", "")
           if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
               raise SystemExit("source_commit must be a 40-character lowercase SHA")
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
               output.write(f"commit={commit}\n")
+              output.write(f"branch={source_branch}\n")
           PY
       - name: Mint private contract reader token
         id: contract-reader
@@ -65,8 +74,9 @@ jobs:
           python-version: "3.13"
       - name: Verify exact committed Data Engine source
         run: |
-          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
-          python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+          git -C .data-engine-source fetch --no-tags origin "${{ steps.data-engine-lock.outputs.branch }}:refs/remotes/origin/${{ steps.data-engine-lock.outputs.branch }}"
+          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch "${{ steps.data-engine-lock.outputs.branch }}" --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+          python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch "${{ steps.data-engine-lock.outputs.branch }}" --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
 
   auth-hub-exact-source:
     permissions:
