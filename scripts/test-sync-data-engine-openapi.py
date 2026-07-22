@@ -133,6 +133,19 @@ class SourceLockTest(unittest.TestCase):
             self.assertEqual(metadata["source_branch"], "main")
             self.assertEqual(metadata["source_commit"], commit)
 
+    def test_review_train_branch_requires_a_reachable_exact_commit(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, commit = create_source_repo(repo)
+            branch = "jaden/release-dedup-v2-restack-clean"
+            git(repo, "update-ref", f"refs/remotes/origin/{branch}", commit)
+
+            _, metadata = sync.committed_source(
+                source, source_branch=branch, source_commit=commit
+            )
+            self.assertEqual(metadata["source_branch"], branch)
+            self.assertEqual(metadata["source_commit"], commit)
+
     def test_exact_ancestor_reads_committed_bytes_not_current_file(self) -> None:
         with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
             repo = Path(directory)

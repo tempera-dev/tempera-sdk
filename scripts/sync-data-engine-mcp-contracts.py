@@ -34,13 +34,16 @@ def lock_path(destination: Path) -> Path:
     return destination.with_name(destination.name + ".source")
 
 
-def expected_files(source_repo_dir: Path, commit: str) -> dict[Path, bytes]:
+def expected_files(
+    source_repo_dir: Path, commit: str, source_branch: str = "main"
+) -> dict[Path, bytes]:
     outputs: dict[Path, bytes] = {}
     documents: dict[str, dict] = {}
     commits: set[str] = set()
     for source_path, destination in ARTIFACTS.items():
         source_bytes, metadata = openapi_sync.committed_source(
             source_repo_dir / source_path,
+            source_branch=source_branch,
             source_commit=commit,
         )
         try:
@@ -65,6 +68,7 @@ def expected_files(source_repo_dir: Path, commit: str) -> dict[Path, bytes]:
 
     openapi_bytes, openapi_metadata = openapi_sync.committed_source(
         source_repo_dir / "api/openapi.yaml",
+        source_branch=source_branch,
         source_commit=commit,
     )
     openapi_operations = openapi_sync.extract_operations_text(
@@ -122,12 +126,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--source-repo-dir", type=Path, required=True)
+    parser.add_argument("--source-branch", default="main")
     parser.add_argument("--source-commit", required=True)
     args = parser.parse_args()
     if re.fullmatch(r"[0-9a-f]{40}", args.source_commit) is None:
         parser.error("--source-commit must be an exact 40-character SHA")
     try:
-        outputs = expected_files(args.source_repo_dir.resolve(), args.source_commit)
+        outputs = expected_files(
+            args.source_repo_dir.resolve(), args.source_commit, args.source_branch
+        )
         if args.check:
             stale = [
                 path
