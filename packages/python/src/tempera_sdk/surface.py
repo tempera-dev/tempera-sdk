@@ -4021,8 +4021,8 @@ OPERATIONS = {
             "upstream_operation_id": "nodeTypes.list",
             "method": "GET",
             "path": "/v1/node-types",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4041,8 +4041,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.list",
             "method": "GET",
             "path": "/v1/runs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4062,8 +4062,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.get",
             "method": "GET",
             "path": "/v1/runs/{runId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4081,8 +4081,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.cancel",
             "method": "POST",
             "path": "/v1/runs/{runId}:cancel",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4100,8 +4100,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.signal",
             "method": "POST",
             "path": "/v1/runs/{runId}:signal",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4121,7 +4121,7 @@ OPERATIONS = {
                 "payloadDigest"
             ],
             "body_defaults": {},
-            "scope": None,
+            "scope": "workflow:run",
             "description": "Consume a durable external callback and resume a waiting run."
         },
         {
@@ -4129,8 +4129,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.list",
             "method": "GET",
             "path": "/v1/workflows",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4149,8 +4149,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.create",
             "method": "POST",
             "path": "/v1/workflows",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4176,31 +4176,12 @@ OPERATIONS = {
             "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
         },
         {
-            "id": "get_workflow",
-            "upstream_operation_id": "workflows.get",
-            "method": "GET",
-            "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "workflowId"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": "workflow:read",
-            "description": "Fetch one stored workflow definition."
-        },
-        {
             "id": "delete_workflow",
             "upstream_operation_id": "workflows.delete",
             "method": "DELETE",
             "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4214,12 +4195,31 @@ OPERATIONS = {
             "description": "Delete a stored workflow definition."
         },
         {
+            "id": "get_workflow",
+            "upstream_operation_id": "workflows.get",
+            "method": "GET",
+            "path": "/v1/workflows/{workflowId}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "workflowId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:read",
+            "description": "Fetch one stored workflow definition."
+        },
+        {
             "id": "update_workflow",
             "upstream_operation_id": "workflows.update",
             "method": "PATCH",
             "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4253,8 +4253,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.create",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}/runs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4279,8 +4279,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.call",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:call",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4302,12 +4302,37 @@ OPERATIONS = {
             "description": "Run a workflow to completion and return its output in a single call."
         },
         {
+            "id": "compile_bio_campaign",
+            "upstream_operation_id": "workflows.compileBioCampaign",
+            "method": "POST",
+            "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "workflowId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "deadlineMs",
+                "maxRounds",
+                "name",
+                "signalExpiresAfterSeconds",
+                "signalPrefix"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:write",
+            "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
+        },
+        {
             "id": "compose_workflow",
             "upstream_operation_id": "workflows.compose",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:compose",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4333,8 +4358,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.assistJson",
             "method": "POST",
             "path": "/v1/workflows:assistJson",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4361,8 +4386,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.validate",
             "method": "POST",
             "path": "/v1/workflows:validate",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],

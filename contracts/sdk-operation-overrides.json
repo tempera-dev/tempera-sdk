@@ -27,6 +27,7 @@
     {"product": "temperaGym", "method": "GET", "path": "/v1/sealed-evaluations", "upstream_operation_id": "sealedEvaluations.list", "id": "listSealedEvaluations"},
     {"product": "temperaGym", "method": "POST", "path": "/v1/sealed-evaluations:precommit", "upstream_operation_id": "sealedEvaluations.precommit", "id": "precommitSealedEvaluation"},
     {"product": "temperaGym", "method": "GET", "path": "/v1/sealed-evaluations/{evaluation}", "upstream_operation_id": "sealedEvaluations.get", "id": "getSealedEvaluation"},
-    {"product": "temperaGym", "method": "POST", "path": "/v1/sealed-evaluations/{evaluation}:run", "upstream_operation_id": "sealedEvaluations.run", "id": "runSealedEvaluation"}
+    {"product": "temperaGym", "method": "POST", "path": "/v1/sealed-evaluations/{evaluation}:run", "upstream_operation_id": "sealedEvaluations.run", "id": "runSealedEvaluation"},
+    {"product": "temperaWorkflows", "method": "POST", "path": "/v1/workflows/{workflowId}:compileBioCampaign", "upstream_operation_id": "workflows.compileBioCampaign", "id": "compileBioCampaign"}
   ]
 }

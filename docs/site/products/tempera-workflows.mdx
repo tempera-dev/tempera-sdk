@@ -21,7 +21,7 @@ Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of ty
 | Audience | `tempera-workflows` |
 | Auth | bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key |
 | Client | TypeScript `client.temperaWorkflows` · Python `client.tempera_workflows` · Rust `build_request("tempera_workflows", ...)` |
-| Typed operations | 16 |
+| Typed operations | 17 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaWorkflows.request(path, options)` (TypeScript) /
@@ -64,7 +64,7 @@ let spec = client.build_request("tempera_workflows", "health", &[])?;
 List the typed node catalog: native orchestration nodes plus the sdk.\<product>.\<operation> nodes generated from the SDK surface.
 
 - **Producer operationId:** `nodeTypes.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
 - **Call as:** TypeScript `client.temperaWorkflows.listNodeTypes()` · Python `client.tempera_workflows.list_node_types()` · Rust `build_request("tempera_workflows", "list_node_types", params)`
 
@@ -109,7 +109,7 @@ let spec = client.build_request("tempera_workflows", "list_node_types", &[
 List workflow runs, optionally filtered to one workflow.
 
 - **Producer operationId:** `runs.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
 - **Call as:** TypeScript `client.temperaWorkflows.listRuns()` · Python `client.tempera_workflows.list_runs()` · Rust `build_request("tempera_workflows", "list_runs", params)`
 
@@ -155,7 +155,7 @@ let spec = client.build_request("tempera_workflows", "list_runs", &[
 Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/\{run_id\}/events is passthrough-only.
 
 - **Producer operationId:** `runs.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
 - **Call as:** TypeScript `client.temperaWorkflows.getRun()` · Python `client.tempera_workflows.get_run()` · Rust `build_request("tempera_workflows", "get_run", params)`
 
@@ -196,7 +196,7 @@ let spec = client.build_request("tempera_workflows", "get_run", &[
 Cancel a queued or running workflow run.
 
 - **Producer operationId:** `runs.cancel`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
 - **Call as:** TypeScript `client.temperaWorkflows.cancelRun()` · Python `client.tempera_workflows.cancel_run()` · Rust `build_request("tempera_workflows", "cancel_run", params)`
 
@@ -237,7 +237,8 @@ let spec = client.build_request("tempera_workflows", "cancel_run", &[
 Consume a durable external callback and resume a waiting run.
 
 - **Producer operationId:** `runs.signal`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `workflow:run`
 - **Call as:** TypeScript `client.temperaWorkflows.runsSignal()` · Python `client.tempera_workflows.runs_signal()` · Rust `build_request("tempera_workflows", "runs_signal", params)`
 
 **Path parameters**
@@ -298,7 +299,7 @@ let spec = client.build_request("tempera_workflows", "runs_signal", &[
 List stored workflow definitions, newest first.
 
 - **Producer operationId:** `workflows.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
 - **Call as:** TypeScript `client.temperaWorkflows.listWorkflows()` · Python `client.tempera_workflows.list_workflows()` · Rust `build_request("tempera_workflows", "list_workflows", params)`
 
@@ -343,7 +344,7 @@ let spec = client.build_request("tempera_workflows", "list_workflows", &[
 Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.
 
 - **Producer operationId:** `workflows.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.createWorkflow()` · Python `client.tempera_workflows.create_workflow()` · Rust `build_request("tempera_workflows", "create_workflow", params)`
 
@@ -395,47 +396,6 @@ let spec = client.build_request("tempera_workflows", "create_workflow", &[
 
 </CodeGroup>
 
-### getWorkflow
-
-`GET /v1/workflows/{workflowId}`
-
-Fetch one stored workflow definition.
-
-- **Producer operationId:** `workflows.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
-- **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.getWorkflow()` · Python `client.tempera_workflows.get_workflow()` · Rust `build_request("tempera_workflows", "get_workflow", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workflowId` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaWorkflows.getWorkflow({
-  workflowId: "<workflowId>",
-});
-```
-
-```python Python
-result = client.tempera_workflows.get_workflow({
-    "workflowId": "<workflowId>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_workflows", "get_workflow", &[
-    ("workflowId", "<workflowId>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### deleteWorkflow
 
 `DELETE /v1/workflows/{workflowId}`
@@ -443,7 +403,7 @@ let spec = client.build_request("tempera_workflows", "get_workflow", &[
 Delete a stored workflow definition.
 
 - **Producer operationId:** `workflows.delete`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.deleteWorkflow()` · Python `client.tempera_workflows.delete_workflow()` · Rust `build_request("tempera_workflows", "delete_workflow", params)`
 
@@ -477,6 +437,47 @@ let spec = client.build_request("tempera_workflows", "delete_workflow", &[
 
 </CodeGroup>
 
+### getWorkflow
+
+`GET /v1/workflows/{workflowId}`
+
+Fetch one stored workflow definition.
+
+- **Producer operationId:** `workflows.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `workflow:read`
+- **Call as:** TypeScript `client.temperaWorkflows.getWorkflow()` · Python `client.tempera_workflows.get_workflow()` · Rust `build_request("tempera_workflows", "get_workflow", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workflowId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.getWorkflow({
+  workflowId: "<workflowId>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.get_workflow({
+    "workflowId": "<workflowId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "get_workflow", &[
+    ("workflowId", "<workflowId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### updateWorkflow
 
 `PATCH /v1/workflows/{workflowId}`
@@ -484,7 +485,7 @@ let spec = client.build_request("tempera_workflows", "delete_workflow", &[
 Replace a stored workflow definition with a new validated revision.
 
 - **Producer operationId:** `workflows.update`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.updateWorkflow()` · Python `client.tempera_workflows.update_workflow()` · Rust `build_request("tempera_workflows", "update_workflow", params)`
 
@@ -558,7 +559,7 @@ let spec = client.build_request("tempera_workflows", "update_workflow", &[
 Start a run of a stored workflow with an optional input document and idempotency key.
 
 - **Producer operationId:** `runs.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
 - **Call as:** TypeScript `client.temperaWorkflows.createRun()` · Python `client.tempera_workflows.create_run()` · Rust `build_request("tempera_workflows", "create_run", params)`
 
@@ -619,7 +620,7 @@ let spec = client.build_request("tempera_workflows", "create_run", &[
 Run a workflow to completion and return its output in a single call.
 
 - **Producer operationId:** `workflows.call`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
 - **Call as:** TypeScript `client.temperaWorkflows.callWorkflow()` · Python `client.tempera_workflows.call_workflow()` · Rust `build_request("tempera_workflows", "call_workflow", params)`
 
@@ -674,6 +675,66 @@ let spec = client.build_request("tempera_workflows", "call_workflow", &[
 
 </CodeGroup>
 
+### compileBioCampaign
+
+`POST /v1/workflows/{workflowId}:compileBioCampaign`
+
+Compile a validated, unsaved, bounded Bio campaign workflow draft.
+
+- **Producer operationId:** `workflows.compileBioCampaign`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `workflow:write`
+- **Call as:** TypeScript `client.temperaWorkflows.compileBioCampaign()` · Python `client.tempera_workflows.compile_bio_campaign()` · Rust `build_request("tempera_workflows", "compile_bio_campaign", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workflowId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `deadlineMs` | no | — |
+| `maxRounds` | no | — |
+| `name` | no | — |
+| `signalExpiresAfterSeconds` | no | — |
+| `signalPrefix` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.compileBioCampaign({
+  workflowId: "<workflowId>",
+  deadlineMs: "<deadlineMs>",
+  maxRounds: "<maxRounds>",
+  name: "<name>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.compile_bio_campaign({
+    "workflowId": "<workflowId>",
+    "deadlineMs": "<deadlineMs>",
+    "maxRounds": "<maxRounds>",
+    "name": "<name>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "compile_bio_campaign", &[
+    ("workflowId", "<workflowId>".into()),
+    ("deadlineMs", "<deadlineMs>".into()),
+    ("maxRounds", "<maxRounds>".into()),
+    ("name", "<name>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### composeWorkflow
 
 `POST /v1/workflows/{workflowId}:compose`
@@ -681,7 +742,7 @@ let spec = client.build_request("tempera_workflows", "call_workflow", &[
 Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.
 
 - **Producer operationId:** `workflows.compose`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.composeWorkflow()` · Python `client.tempera_workflows.compose_workflow()` · Rust `build_request("tempera_workflows", "compose_workflow", params)`
 
@@ -741,7 +802,7 @@ let spec = client.build_request("tempera_workflows", "compose_workflow", &[
 Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.
 
 - **Producer operationId:** `workflows.assistJson`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.assistJson()` · Python `client.tempera_workflows.assist_json()` · Rust `build_request("tempera_workflows", "assist_json", params)`
 
@@ -793,7 +854,7 @@ let spec = client.build_request("tempera_workflows", "assist_json", &[
 Validate a workflow definition without storing it; returns the full diagnostic list.
 
 - **Producer operationId:** `workflows.validate`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
 - **Call as:** TypeScript `client.temperaWorkflows.validateWorkflow()` · Python `client.tempera_workflows.validate_workflow()` · Rust `build_request("tempera_workflows", "validate_workflow", params)`
 

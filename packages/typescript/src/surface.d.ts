@@ -446,16 +446,18 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   listWorkflows(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored. */
   createWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one stored workflow definition. */
-  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete a stored workflow definition. */
   deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one stored workflow definition. */
+  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Replace a stored workflow definition with a new validated revision. */
   updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Start a run of a stored workflow with an optional input document and idempotency key. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run a workflow to completion and return its output in a single call. */
   callWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Compile a validated, unsaved, bounded Bio campaign workflow draft. */
+  compileBioCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it. */
   composeWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node. */

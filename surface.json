@@ -2917,20 +2917,21 @@
         "id": "listNodeTypes",
         "method": "GET",
         "path": "/v1/node-types",
-        "auth": "product",
+        "auth": "oauthResource",
         "scope": "workflow:read",
         "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
         "upstreamOperationId": "nodeTypes.list",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "listRuns",
         "method": "GET",
         "path": "/v1/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "workflowId",
           "pageSize",
@@ -2938,37 +2939,40 @@
         ],
         "scope": "workflow:read",
         "description": "List workflow runs, optionally filtered to one workflow.",
-        "upstreamOperationId": "runs.list"
+        "upstreamOperationId": "runs.list",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "getRun",
         "method": "GET",
         "path": "/v1/runs/{runId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "scope": "workflow:read",
         "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
-        "upstreamOperationId": "runs.get"
+        "upstreamOperationId": "runs.get",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "cancelRun",
         "method": "POST",
         "path": "/v1/runs/{runId}:cancel",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "scope": "workflow:run",
         "description": "Cancel a queued or running workflow run.",
-        "upstreamOperationId": "runs.cancel"
+        "upstreamOperationId": "runs.cancel",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "runsSignal",
         "method": "POST",
         "path": "/v1/runs/{runId}:signal",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Consume a durable external callback and resume a waiting run.",
         "upstreamOperationId": "runs.signal",
         "pathParams": [
@@ -2985,26 +2989,29 @@
           "idempotencyKey",
           "payload",
           "payloadDigest"
-        ]
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:run"
       },
       {
         "id": "listWorkflows",
         "method": "GET",
         "path": "/v1/workflows",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "pageSize",
           "pageToken"
         ],
         "scope": "workflow:read",
         "description": "List stored workflow definitions, newest first.",
-        "upstreamOperationId": "workflows.list"
+        "upstreamOperationId": "workflows.list",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "createWorkflow",
         "method": "POST",
         "path": "/v1/workflows",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "contractVersion",
           "description",
@@ -3023,37 +3030,40 @@
         ],
         "scope": "workflow:write",
         "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
-        "upstreamOperationId": "workflows.create"
-      },
-      {
-        "id": "getWorkflow",
-        "method": "GET",
-        "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
-        "pathParams": [
-          "workflowId"
-        ],
-        "scope": "workflow:read",
-        "description": "Fetch one stored workflow definition.",
-        "upstreamOperationId": "workflows.get"
+        "upstreamOperationId": "workflows.create",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "deleteWorkflow",
         "method": "DELETE",
         "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
         "scope": "workflow:write",
         "description": "Delete a stored workflow definition.",
-        "upstreamOperationId": "workflows.delete"
+        "upstreamOperationId": "workflows.delete",
+        "authAudience": "tempera-workflows"
+      },
+      {
+        "id": "getWorkflow",
+        "method": "GET",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "oauthResource",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:read",
+        "description": "Fetch one stored workflow definition.",
+        "upstreamOperationId": "workflows.get",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "updateWorkflow",
         "method": "PATCH",
         "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3078,13 +3088,14 @@
         "upstreamOperationId": "workflows.update",
         "query": [
           "updateMask"
-        ]
+        ],
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "createRun",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3098,13 +3109,14 @@
         ],
         "scope": "workflow:run",
         "description": "Start a run of a stored workflow with an optional input document and idempotency key.",
-        "upstreamOperationId": "runs.create"
+        "upstreamOperationId": "runs.create",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "callWorkflow",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}:call",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3119,13 +3131,34 @@
         ],
         "scope": "workflow:run",
         "description": "Run a workflow to completion and return its output in a single call.",
-        "upstreamOperationId": "workflows.call"
+        "upstreamOperationId": "workflows.call",
+        "authAudience": "tempera-workflows"
+      },
+      {
+        "id": "compileBioCampaign",
+        "method": "POST",
+        "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+        "auth": "oauthResource",
+        "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
+        "upstreamOperationId": "workflows.compileBioCampaign",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "deadlineMs",
+          "maxRounds",
+          "name",
+          "signalExpiresAfterSeconds",
+          "signalPrefix"
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:write"
       },
       {
         "id": "composeWorkflow",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}:compose",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3141,13 +3174,14 @@
         ],
         "scope": "workflow:write",
         "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
-        "upstreamOperationId": "workflows.compose"
+        "upstreamOperationId": "workflows.compose",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "assistJson",
         "method": "POST",
         "path": "/v1/workflows:assistJson",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "context",
           "current",
@@ -3163,13 +3197,14 @@
         ],
         "scope": "workflow:write",
         "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
-        "upstreamOperationId": "workflows.assistJson"
+        "upstreamOperationId": "workflows.assistJson",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "validateWorkflow",
         "method": "POST",
         "path": "/v1/workflows:validate",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "contractVersion",
           "description",
@@ -3188,7 +3223,8 @@
         ],
         "scope": "workflow:write",
         "description": "Validate a workflow definition without storing it; returns the full diagnostic list.",
-        "upstreamOperationId": "workflows.validate"
+        "upstreamOperationId": "workflows.validate",
+        "authAudience": "tempera-workflows"
       }
     ],
     "temperaGym": [

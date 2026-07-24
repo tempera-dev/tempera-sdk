@@ -16,6 +16,44 @@ SPEC.loader.exec_module(MODULE)
 
 
 class SynchronizeProductTests(unittest.TestCase):
+    def test_workflows_campaign_compiler_keeps_the_canonical_sdk_name(self) -> None:
+        path = "/v1/workflows/{workflowId}:compileBioCampaign"
+        identity = MODULE.product_route("temperaWorkflows", "POST", path)
+        overrides = MODULE.load_overrides()["temperaWorkflows"]
+        surface = {"operations": {"temperaWorkflows": []}}
+        producer = {
+            "paths": {
+                path: {
+                    "post": {
+                        "operationId": "workflows.compileBioCampaign",
+                        "summary": "Compile a Bio campaign",
+                        "parameters": [
+                            {
+                                "name": "workflowId",
+                                "in": "path",
+                                "required": True,
+                            }
+                        ],
+                    }
+                }
+            }
+        }
+
+        MODULE.synchronize_product(
+            surface,
+            "temperaWorkflows",
+            producer,
+            set(),
+            {identity: overrides[identity]},
+        )
+
+        operation = surface["operations"]["temperaWorkflows"][0]
+        self.assertEqual(operation["id"], "compileBioCampaign")
+        self.assertEqual(
+            operation["upstreamOperationId"],
+            "workflows.compileBioCampaign",
+        )
+
     def test_preserves_sdk_identity_across_aip_path_migration(self) -> None:
         surface = {
             "operations": {

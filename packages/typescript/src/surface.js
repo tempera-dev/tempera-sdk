@@ -4030,8 +4030,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "nodeTypes.list",
       "method": "GET",
       "path": "/v1/node-types",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4050,8 +4050,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.list",
       "method": "GET",
       "path": "/v1/runs",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4071,8 +4071,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.get",
       "method": "GET",
       "path": "/v1/runs/{runId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "runId"
       ],
@@ -4090,8 +4090,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.cancel",
       "method": "POST",
       "path": "/v1/runs/{runId}:cancel",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "runId"
       ],
@@ -4109,8 +4109,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.signal",
       "method": "POST",
       "path": "/v1/runs/{runId}:signal",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "runId"
       ],
@@ -4130,7 +4130,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "payloadDigest"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "workflow:run",
       "description": "Consume a durable external callback and resume a waiting run."
     },
     {
@@ -4138,8 +4138,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "workflows.list",
       "method": "GET",
       "path": "/v1/workflows",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4158,8 +4158,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "workflows.create",
       "method": "POST",
       "path": "/v1/workflows",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4185,31 +4185,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
     },
     {
-      "id": "getWorkflow",
-      "upstreamOperationId": "workflows.get",
-      "method": "GET",
-      "path": "/v1/workflows/{workflowId}",
-      "auth": "product",
-      "authAudience": null,
-      "pathParams": [
-        "workflowId"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:read",
-      "description": "Fetch one stored workflow definition."
-    },
-    {
       "id": "deleteWorkflow",
       "upstreamOperationId": "workflows.delete",
       "method": "DELETE",
       "path": "/v1/workflows/{workflowId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "workflowId"
       ],
@@ -4223,12 +4204,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Delete a stored workflow definition."
     },
     {
+      "id": "getWorkflow",
+      "upstreamOperationId": "workflows.get",
+      "method": "GET",
+      "path": "/v1/workflows/{workflowId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "Fetch one stored workflow definition."
+    },
+    {
       "id": "updateWorkflow",
       "upstreamOperationId": "workflows.update",
       "method": "PATCH",
       "path": "/v1/workflows/{workflowId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "workflowId"
       ],
@@ -4262,8 +4262,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.create",
       "method": "POST",
       "path": "/v1/workflows/{workflowId}/runs",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "workflowId"
       ],
@@ -4288,8 +4288,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "workflows.call",
       "method": "POST",
       "path": "/v1/workflows/{workflowId}:call",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "workflowId"
       ],
@@ -4311,12 +4311,37 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Run a workflow to completion and return its output in a single call."
     },
     {
+      "id": "compileBioCampaign",
+      "upstreamOperationId": "workflows.compileBioCampaign",
+      "method": "POST",
+      "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "deadlineMs",
+        "maxRounds",
+        "name",
+        "signalExpiresAfterSeconds",
+        "signalPrefix"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
+    },
+    {
       "id": "composeWorkflow",
       "upstreamOperationId": "workflows.compose",
       "method": "POST",
       "path": "/v1/workflows/{workflowId}:compose",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "workflowId"
       ],
@@ -4342,8 +4367,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "workflows.assistJson",
       "method": "POST",
       "path": "/v1/workflows:assistJson",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4370,8 +4395,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "workflows.validate",
       "method": "POST",
       "path": "/v1/workflows:validate",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
