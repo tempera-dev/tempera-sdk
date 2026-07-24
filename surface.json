@@ -21,7 +21,8 @@
     "tempera-code",
     "tempera-llm",
     "tempera-workflows",
-    "tempera-gym"
+    "tempera-gym",
+    "tempera-bio"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -40,8 +41,16 @@
     "workflow:read",
     "workflow:write",
     "workflow:run",
+    "bio:source:read",
+    "bio:proposal:write",
+    "bio:measurement:verify",
+    "bio:decision:write",
+    "bio:experiment:approve",
+    "bio:experiment:submit",
+    "bio:signer:manage",
     "model:read",
     "model:invoke",
+    "usage:reserve",
     "pii:unmask",
     "admin"
   ],
@@ -109,7 +118,7 @@
     }
   },
   "errorContract": {
-    "$comment": "Every language exposes TemperaApiError with exactly these fields, preferring the canonical google.rpc.Status REST mapping while retaining legacy fleet compatibility during migration.",
+    "$comment": "Every language exposes TemperaApiError with exactly these fields, populated by normalizing the six wire error shapes in the fleet.",
     "name": "TemperaApiError",
     "fields": [
       "status",
@@ -121,7 +130,7 @@
       "body"
     ],
     "normalization": [
-      "If body.error is an object: code = string body.error.status when present, otherwise legacy string body.error.code; message = body.error.message; requestId = body.error.requestId with body.error.request_id as a migration fallback.",
+      "If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine; data-engine bodies always carry request_id).",
       "Else if body.error is a string and body.message is present: code = body.error, message = body.message (control plane, palette).",
       "Else if body.error is a string: code = null, message = body.error (tempo).",
       "Else: code = null, message = the HTTP status text.",
@@ -132,7 +141,7 @@
       "palette": "{\"error\": \"<code>\", \"message\": \"<text>\", \"status\": <int>}",
       "tempo": "{\"error\": \"<message>\"}",
       "cradle": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}",
-      "remi": "{\"error\": {\"code\": <http-int>, \"status\": \"<google.rpc.Code>\", \"message\": \"<text>\", \"details\": [{\"@type\": \"<type-url>\", ...}]}}",
+      "remi": "{\"error\": {\"code\": \"<code>\", \"message\": \"<text>\"}}",
       "dataEngine": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}"
     }
   },
@@ -639,7 +648,7 @@
         "upstreamOperationId": "providerConnections.resolve"
       },
       {
-        "id": "experimentProviderConnectionsList",
+        "id": "listExperimentProviderConnections",
         "method": "GET",
         "path": "/v1/experiment-provider-connections",
         "auth": "account",
@@ -651,7 +660,7 @@
         ]
       },
       {
-        "id": "experimentProviderConnectionsCreate",
+        "id": "createExperimentProviderConnection",
         "method": "POST",
         "path": "/v1/experiment-provider-connections",
         "auth": "account",
@@ -679,7 +688,7 @@
         ]
       },
       {
-        "id": "experimentProviderConnectionsRevoke",
+        "id": "revokeExperimentProviderConnection",
         "method": "DELETE",
         "path": "/v1/experiment-provider-connections/{id}",
         "auth": "account",
@@ -690,10 +699,10 @@
         ]
       },
       {
-        "id": "experimentProviderConnectionsResolve",
+        "id": "resolveExperimentProviderConnection",
         "method": "POST",
         "path": "/v1/experiment-provider-connections/{id}:resolve",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.",
         "upstreamOperationId": "experimentProviderConnections.resolve",
         "pathParams": [
@@ -720,25 +729,29 @@
           "mcpPrepareReceiptDigest",
           "mcpCommitReceiptDigest",
           "submissionIdempotencyKey"
-        ]
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "bio:experiment:submit"
       },
       {
-        "id": "bioSignerKeysList",
+        "id": "listBioSignerKeys",
         "method": "GET",
         "path": "/v1/bio-signer-keys",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "List versioned public Ed25519 verifier keys for an authorized human administrator.",
         "upstreamOperationId": "bioSignerKeys.list",
+        "authAudience": "tempera-bio",
+        "scope": "bio:signer:manage",
         "query": [
           "pageSize",
           "pageToken"
         ]
       },
       {
-        "id": "bioSignerKeysCreate",
+        "id": "createBioSignerKey",
         "method": "POST",
         "path": "/v1/bio-signer-keys",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected.",
         "upstreamOperationId": "bioSignerKeys.create",
         "body": [
@@ -754,36 +767,42 @@
           "environmentId",
           "keyId",
           "publicJwk"
-        ]
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:signer:manage"
       },
       {
-        "id": "bioSignerKeysRevoke",
+        "id": "revokeBioSignerKey",
         "method": "DELETE",
         "path": "/v1/bio-signer-keys/{id}",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Revoke a public verifier key while retaining its history.",
         "upstreamOperationId": "bioSignerKeys.revoke",
         "pathParams": [
           "id"
-        ]
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:signer:manage"
       },
       {
-        "id": "experimentApprovalsList",
+        "id": "listExperimentApprovals",
         "method": "GET",
         "path": "/v1/experiment-approvals",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "List exact, single-use experiment approvals for an authorized human approver.",
         "upstreamOperationId": "experimentApprovals.list",
+        "authAudience": "tempera-bio",
+        "scope": "bio:experiment:approve",
         "query": [
           "pageSize",
           "pageToken"
         ]
       },
       {
-        "id": "experimentApprovalsCreate",
+        "id": "createExperimentApproval",
         "method": "POST",
         "path": "/v1/experiment-approvals",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.",
         "upstreamOperationId": "experimentApprovals.create",
         "body": [
@@ -805,18 +824,22 @@
           "connectionId",
           "mcpPrepareReceiptDigest",
           "expiresAt"
-        ]
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:experiment:approve"
       },
       {
-        "id": "experimentApprovalsRevoke",
+        "id": "revokeExperimentApproval",
         "method": "DELETE",
         "path": "/v1/experiment-approvals/{id}",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Revoke an unused experiment approval. Consumed approvals remain immutable.",
         "upstreamOperationId": "experimentApprovals.revoke",
         "pathParams": [
           "id"
-        ]
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:experiment:approve"
       },
       {
         "id": "listAuditLog",
@@ -3149,32 +3172,35 @@
         "id": "listEnvironments",
         "method": "GET",
         "path": "/v1/environments",
-        "auth": "product",
+        "auth": "oauthResource",
         "scope": "dataset:read",
         "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
         "upstreamOperationId": "environments.list",
+        "authAudience": "tempera-gym",
         "query": [
           "pageSize",
           "pageToken"
         ]
       },
       {
-        "id": "domainsList",
+        "id": "listDomains",
         "method": "GET",
         "path": "/v1/domains",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Domain capabilities represented in the versioned task catalog.",
         "upstreamOperationId": "domains.list",
+        "scope": "dataset:read",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "tasksList",
+        "id": "listTasks",
         "method": "GET",
         "path": "/v1/tasks",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List versioned task definitions without agent inputs.",
         "upstreamOperationId": "tasks.list",
         "query": [
@@ -3182,13 +3208,15 @@
           "family",
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "tasksGet",
+        "id": "getTask",
         "method": "GET",
         "path": "/v1/tasks/{task}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Get one immutable task definition including its agent-visible input.",
         "upstreamOperationId": "tasks.get",
         "pathParams": [
@@ -3196,13 +3224,15 @@
         ],
         "query": [
           "version"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "tasksEvaluate",
+        "id": "evaluateTask",
         "method": "POST",
         "path": "/v1/tasks/{task}:evaluate",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Deterministically verify one candidate without creating an episode.",
         "upstreamOperationId": "tasks.evaluate",
         "pathParams": [
@@ -3218,25 +3248,29 @@
         ],
         "requiredBody": [
           "candidate"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "verifiersList",
+        "id": "listVerifiers",
         "method": "GET",
         "path": "/v1/verifiers",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List verifier identities and bound tasks without grader content.",
         "upstreamOperationId": "verifiers.list",
+        "scope": "dataset:read",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "episodesList",
+        "id": "listEpisodes",
         "method": "GET",
         "path": "/v1/episodes",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List durable episode snapshots, newest first.",
         "upstreamOperationId": "episodes.list",
         "query": [
@@ -3244,13 +3278,15 @@
           "status",
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "episodesCreate",
+        "id": "createEpisode",
         "method": "POST",
         "path": "/v1/episodes",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Reset a versioned task into a durable episode.",
         "upstreamOperationId": "episodes.create",
         "body": [
@@ -3260,24 +3296,28 @@
         "requiredBody": [
           "task",
           "seed"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "episodesGet",
+        "id": "getEpisode",
         "method": "GET",
         "path": "/v1/episodes/{episode}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Read and content-verify one durable episode snapshot.",
         "upstreamOperationId": "episodes.get",
         "pathParams": [
           "episode"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "episodesStep",
+        "id": "stepEpisode",
         "method": "POST",
         "path": "/v1/episodes/{episode}:step",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Apply one schema-validated action and persist the transition.",
         "upstreamOperationId": "episodes.step",
         "pathParams": [
@@ -3289,13 +3329,15 @@
         ],
         "requiredBody": [
           "action"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "episodesExport",
+        "id": "exportEpisode",
         "method": "POST",
         "path": "/v1/episodes/{episode}:export",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Retain a completed Gym episode and trajectory in Data Engine.",
         "upstreamOperationId": "episodes.export",
         "pathParams": [
@@ -3308,13 +3350,15 @@
         ],
         "requiredBody": [
           "context_evidence_ref"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       },
       {
         "id": "listRuns",
         "method": "GET",
         "path": "/v1/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "environmentId",
           "pageSize",
@@ -3322,25 +3366,27 @@
         ],
         "scope": "dataset:read",
         "description": "List persisted rollout run index records, newest first.",
-        "upstreamOperationId": "runs.list"
+        "upstreamOperationId": "runs.list",
+        "authAudience": "tempera-gym"
       },
       {
         "id": "getRun",
         "method": "GET",
         "path": "/v1/runs/{run}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "run"
         ],
         "scope": "dataset:read",
         "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
-        "upstreamOperationId": "runs.get"
+        "upstreamOperationId": "runs.get",
+        "authAudience": "tempera-gym"
       },
       {
         "id": "createRollout",
         "method": "POST",
         "path": "/v1/rollouts",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "environmentId",
           "policy",
@@ -3356,37 +3402,42 @@
         ],
         "scope": "eval:run",
         "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
-        "upstreamOperationId": "rollouts.create"
+        "upstreamOperationId": "rollouts.create",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "sealedEvaluatorsList",
+        "id": "listSealedEvaluators",
         "method": "GET",
         "path": "/v1/sealed-evaluators",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Discover boot-trusted exact sealed-evaluator identities.",
         "upstreamOperationId": "sealedEvaluators.list",
+        "scope": "dataset:read",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "sealedEvaluationsList",
+        "id": "listSealedEvaluations",
         "method": "GET",
         "path": "/v1/sealed-evaluations",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List persisted sealed-evaluation precommits and results.",
         "upstreamOperationId": "sealedEvaluations.list",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "sealedEvaluationsPrecommit",
+        "id": "precommitSealedEvaluation",
         "method": "POST",
         "path": "/v1/sealed-evaluations:precommit",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Persist an opaque sealed-suite commitment before policy freeze.",
         "upstreamOperationId": "sealedEvaluations.precommit",
         "body": [
@@ -3400,24 +3451,28 @@
           "qualification_policy",
           "suite",
           "trainer"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "sealedEvaluationsGet",
+        "id": "getSealedEvaluation",
         "method": "GET",
         "path": "/v1/sealed-evaluations/{evaluation}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Read one verified precommit and aggregate sealed result.",
         "upstreamOperationId": "sealedEvaluations.get",
         "pathParams": [
           "evaluation"
-        ]
+        ],
+        "scope": "dataset:read",
+        "authAudience": "tempera-gym"
       },
       {
-        "id": "sealedEvaluationsRun",
+        "id": "runSealedEvaluation",
         "method": "POST",
         "path": "/v1/sealed-evaluations/{evaluation}:run",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Evaluate one frozen policy through its exact sealed adapter.",
         "upstreamOperationId": "sealedEvaluations.run",
         "pathParams": [
@@ -3430,7 +3485,9 @@
         "requiredBody": [
           "policy_submission",
           "training_report"
-        ]
+        ],
+        "scope": "eval:run",
+        "authAudience": "tempera-gym"
       }
     ],
     "cradle": [
@@ -4762,11 +4819,10 @@
         }
       },
       {
-        "id": "projectsDiscoveryReleasesCommit",
+        "id": "commitDiscoveryRelease",
         "method": "POST",
         "path": "/v1/{parent}/discoveryReleases:commit",
         "auth": "product",
-        "scope": "eval:run",
         "description": "Atomically commit an immutable discovery release graph.",
         "upstreamOperationId": "projects.discoveryReleases.commit",
         "pathParams": [
@@ -4800,14 +4856,14 @@
           "budget",
           "eligibility",
           "prospectiveExecution"
-        ]
+        ],
+        "scope": "eval:run"
       },
       {
-        "id": "projectsDiscoveryReleasesGet",
+        "id": "getDiscoveryRelease",
         "method": "GET",
         "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
         "auth": "product",
-        "scope": "dataset:read",
         "description": "Get one immutable discovery release.",
         "upstreamOperationId": "projects.discoveryReleases.get",
         "pathParams": [
@@ -4816,7 +4872,8 @@
         ],
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "scope": "dataset:read"
       },
       {
         "id": "createEvidenceRecord",

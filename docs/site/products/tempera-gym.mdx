@@ -64,7 +64,7 @@ let spec = client.build_request("tempera_gym", "health", &[])?;
 List the gym pack's environment catalog, including implementation status and per-environment manifests.
 
 - **Producer operationId:** `environments.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.listEnvironments()` · Python `client.tempera_gym.list_environments()` · Rust `build_request("tempera_gym", "list_environments", params)`
 
@@ -102,15 +102,16 @@ let spec = client.build_request("tempera_gym", "list_environments", &[
 
 </CodeGroup>
 
-### domainsList
+### listDomains
 
 `GET /v1/domains`
 
 Domain capabilities represented in the versioned task catalog.
 
 - **Producer operationId:** `domains.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.domainsList()` · Python `client.tempera_gym.domains_list()` · Rust `build_request("tempera_gym", "domains_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listDomains()` · Python `client.tempera_gym.list_domains()` · Rust `build_request("tempera_gym", "list_domains", params)`
 
 **Query parameters**
 
@@ -122,21 +123,21 @@ Domain capabilities represented in the versioned task catalog.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.domainsList({
+const result = await client.temperaGym.listDomains({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.domains_list({
+result = client.tempera_gym.list_domains({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "domains_list", &[
+let spec = client.build_request("tempera_gym", "list_domains", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -146,15 +147,16 @@ let spec = client.build_request("tempera_gym", "domains_list", &[
 
 </CodeGroup>
 
-### tasksList
+### listTasks
 
 `GET /v1/tasks`
 
 List versioned task definitions without agent inputs.
 
 - **Producer operationId:** `tasks.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.tasksList()` · Python `client.tempera_gym.tasks_list()` · Rust `build_request("tempera_gym", "tasks_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listTasks()` · Python `client.tempera_gym.list_tasks()` · Rust `build_request("tempera_gym", "list_tasks", params)`
 
 **Query parameters**
 
@@ -168,21 +170,21 @@ List versioned task definitions without agent inputs.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.tasksList({
+const result = await client.temperaGym.listTasks({
   domain: "<domain>",
   family: "<family>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.tasks_list({
+result = client.tempera_gym.list_tasks({
     "domain": "<domain>",
     "family": "<family>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "tasks_list", &[
+let spec = client.build_request("tempera_gym", "list_tasks", &[
     ("domain", "<domain>".into()),
     ("family", "<family>".into()),
 ])?;
@@ -192,15 +194,16 @@ let spec = client.build_request("tempera_gym", "tasks_list", &[
 
 </CodeGroup>
 
-### tasksGet
+### getTask
 
 `GET /v1/tasks/{task}`
 
 Get one immutable task definition including its agent-visible input.
 
 - **Producer operationId:** `tasks.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.tasksGet()` · Python `client.tempera_gym.tasks_get()` · Rust `build_request("tempera_gym", "tasks_get", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.getTask()` · Python `client.tempera_gym.get_task()` · Rust `build_request("tempera_gym", "get_task", params)`
 
 **Path parameters**
 
@@ -217,21 +220,21 @@ Get one immutable task definition including its agent-visible input.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.tasksGet({
+const result = await client.temperaGym.getTask({
   task: "<task>",
   version: "<version>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.tasks_get({
+result = client.tempera_gym.get_task({
     "task": "<task>",
     "version": "<version>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "tasks_get", &[
+let spec = client.build_request("tempera_gym", "get_task", &[
     ("task", "<task>".into()),
     ("version", "<version>".into()),
 ])?;
@@ -241,15 +244,16 @@ let spec = client.build_request("tempera_gym", "tasks_get", &[
 
 </CodeGroup>
 
-### tasksEvaluate
+### evaluateTask
 
 `POST /v1/tasks/{task}:evaluate`
 
 Deterministically verify one candidate without creating an episode.
 
 - **Producer operationId:** `tasks.evaluate`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.tasksEvaluate()` · Python `client.tempera_gym.tasks_evaluate()` · Rust `build_request("tempera_gym", "tasks_evaluate", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.evaluateTask()` · Python `client.tempera_gym.evaluate_task()` · Rust `build_request("tempera_gym", "evaluate_task", params)`
 
 **Path parameters**
 
@@ -274,7 +278,7 @@ Deterministically verify one candidate without creating an episode.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.tasksEvaluate({
+const result = await client.temperaGym.evaluateTask({
   task: "<task>",
   candidate: "<candidate>",
   seed: "<seed>",
@@ -283,7 +287,7 @@ const result = await client.temperaGym.tasksEvaluate({
 ```
 
 ```python Python
-result = client.tempera_gym.tasks_evaluate({
+result = client.tempera_gym.evaluate_task({
     "task": "<task>",
     "candidate": "<candidate>",
     "seed": "<seed>",
@@ -292,7 +296,7 @@ result = client.tempera_gym.tasks_evaluate({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "tasks_evaluate", &[
+let spec = client.build_request("tempera_gym", "evaluate_task", &[
     ("task", "<task>".into()),
     ("candidate", "<candidate>".into()),
     ("seed", "<seed>".into()),
@@ -304,15 +308,16 @@ let spec = client.build_request("tempera_gym", "tasks_evaluate", &[
 
 </CodeGroup>
 
-### verifiersList
+### listVerifiers
 
 `GET /v1/verifiers`
 
 List verifier identities and bound tasks without grader content.
 
 - **Producer operationId:** `verifiers.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.verifiersList()` · Python `client.tempera_gym.verifiers_list()` · Rust `build_request("tempera_gym", "verifiers_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listVerifiers()` · Python `client.tempera_gym.list_verifiers()` · Rust `build_request("tempera_gym", "list_verifiers", params)`
 
 **Query parameters**
 
@@ -324,21 +329,21 @@ List verifier identities and bound tasks without grader content.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.verifiersList({
+const result = await client.temperaGym.listVerifiers({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.verifiers_list({
+result = client.tempera_gym.list_verifiers({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "verifiers_list", &[
+let spec = client.build_request("tempera_gym", "list_verifiers", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -348,15 +353,16 @@ let spec = client.build_request("tempera_gym", "verifiers_list", &[
 
 </CodeGroup>
 
-### episodesList
+### listEpisodes
 
 `GET /v1/episodes`
 
 List durable episode snapshots, newest first.
 
 - **Producer operationId:** `episodes.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.episodesList()` · Python `client.tempera_gym.episodes_list()` · Rust `build_request("tempera_gym", "episodes_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listEpisodes()` · Python `client.tempera_gym.list_episodes()` · Rust `build_request("tempera_gym", "list_episodes", params)`
 
 **Query parameters**
 
@@ -370,21 +376,21 @@ List durable episode snapshots, newest first.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.episodesList({
+const result = await client.temperaGym.listEpisodes({
   domain: "<domain>",
   status: "<status>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.episodes_list({
+result = client.tempera_gym.list_episodes({
     "domain": "<domain>",
     "status": "<status>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "episodes_list", &[
+let spec = client.build_request("tempera_gym", "list_episodes", &[
     ("domain", "<domain>".into()),
     ("status", "<status>".into()),
 ])?;
@@ -394,15 +400,16 @@ let spec = client.build_request("tempera_gym", "episodes_list", &[
 
 </CodeGroup>
 
-### episodesCreate
+### createEpisode
 
 `POST /v1/episodes`
 
 Reset a versioned task into a durable episode.
 
 - **Producer operationId:** `episodes.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.episodesCreate()` · Python `client.tempera_gym.episodes_create()` · Rust `build_request("tempera_gym", "episodes_create", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.createEpisode()` · Python `client.tempera_gym.create_episode()` · Rust `build_request("tempera_gym", "create_episode", params)`
 
 **Body parameters**
 
@@ -414,21 +421,21 @@ Reset a versioned task into a durable episode.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.episodesCreate({
+const result = await client.temperaGym.createEpisode({
   task: "<task>",
   seed: "<seed>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.episodes_create({
+result = client.tempera_gym.create_episode({
     "task": "<task>",
     "seed": "<seed>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "episodes_create", &[
+let spec = client.build_request("tempera_gym", "create_episode", &[
     ("task", "<task>".into()),
     ("seed", "<seed>".into()),
 ])?;
@@ -438,15 +445,16 @@ let spec = client.build_request("tempera_gym", "episodes_create", &[
 
 </CodeGroup>
 
-### episodesGet
+### getEpisode
 
 `GET /v1/episodes/{episode}`
 
 Read and content-verify one durable episode snapshot.
 
 - **Producer operationId:** `episodes.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.episodesGet()` · Python `client.tempera_gym.episodes_get()` · Rust `build_request("tempera_gym", "episodes_get", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.getEpisode()` · Python `client.tempera_gym.get_episode()` · Rust `build_request("tempera_gym", "get_episode", params)`
 
 **Path parameters**
 
@@ -457,19 +465,19 @@ Read and content-verify one durable episode snapshot.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.episodesGet({
+const result = await client.temperaGym.getEpisode({
   episode: "<episode>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.episodes_get({
+result = client.tempera_gym.get_episode({
     "episode": "<episode>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "episodes_get", &[
+let spec = client.build_request("tempera_gym", "get_episode", &[
     ("episode", "<episode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -478,15 +486,16 @@ let spec = client.build_request("tempera_gym", "episodes_get", &[
 
 </CodeGroup>
 
-### episodesStep
+### stepEpisode
 
 `POST /v1/episodes/{episode}:step`
 
 Apply one schema-validated action and persist the transition.
 
 - **Producer operationId:** `episodes.step`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.episodesStep()` · Python `client.tempera_gym.episodes_step()` · Rust `build_request("tempera_gym", "episodes_step", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.stepEpisode()` · Python `client.tempera_gym.step_episode()` · Rust `build_request("tempera_gym", "step_episode", params)`
 
 **Path parameters**
 
@@ -504,7 +513,7 @@ Apply one schema-validated action and persist the transition.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.episodesStep({
+const result = await client.temperaGym.stepEpisode({
   episode: "<episode>",
   action: "<action>",
   receipts: "<receipts>",
@@ -512,7 +521,7 @@ const result = await client.temperaGym.episodesStep({
 ```
 
 ```python Python
-result = client.tempera_gym.episodes_step({
+result = client.tempera_gym.step_episode({
     "episode": "<episode>",
     "action": "<action>",
     "receipts": "<receipts>",
@@ -520,7 +529,7 @@ result = client.tempera_gym.episodes_step({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "episodes_step", &[
+let spec = client.build_request("tempera_gym", "step_episode", &[
     ("episode", "<episode>".into()),
     ("action", "<action>".into()),
     ("receipts", "<receipts>".into()),
@@ -531,15 +540,16 @@ let spec = client.build_request("tempera_gym", "episodes_step", &[
 
 </CodeGroup>
 
-### episodesExport
+### exportEpisode
 
 `POST /v1/episodes/{episode}:export`
 
 Retain a completed Gym episode and trajectory in Data Engine.
 
 - **Producer operationId:** `episodes.export`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.episodesExport()` · Python `client.tempera_gym.episodes_export()` · Rust `build_request("tempera_gym", "episodes_export", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.exportEpisode()` · Python `client.tempera_gym.export_episode()` · Rust `build_request("tempera_gym", "export_episode", params)`
 
 **Path parameters**
 
@@ -558,7 +568,7 @@ Retain a completed Gym episode and trajectory in Data Engine.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.episodesExport({
+const result = await client.temperaGym.exportEpisode({
   episode: "<episode>",
   context_evidence_ref: "<context_evidence_ref>",
   verifier_receipt_artifact_ref: "<verifier_receipt_artifact_ref>",
@@ -567,7 +577,7 @@ const result = await client.temperaGym.episodesExport({
 ```
 
 ```python Python
-result = client.tempera_gym.episodes_export({
+result = client.tempera_gym.export_episode({
     "episode": "<episode>",
     "context_evidence_ref": "<context_evidence_ref>",
     "verifier_receipt_artifact_ref": "<verifier_receipt_artifact_ref>",
@@ -576,7 +586,7 @@ result = client.tempera_gym.episodes_export({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "episodes_export", &[
+let spec = client.build_request("tempera_gym", "export_episode", &[
     ("episode", "<episode>".into()),
     ("context_evidence_ref", "<context_evidence_ref>".into()),
     ("verifier_receipt_artifact_ref", "<verifier_receipt_artifact_ref>".into()),
@@ -595,7 +605,7 @@ let spec = client.build_request("tempera_gym", "episodes_export", &[
 List persisted rollout run index records, newest first.
 
 - **Producer operationId:** `runs.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.listRuns()` · Python `client.tempera_gym.list_runs()` · Rust `build_request("tempera_gym", "list_runs", params)`
 
@@ -641,7 +651,7 @@ let spec = client.build_request("tempera_gym", "list_runs", &[
 Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.
 
 - **Producer operationId:** `runs.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.getRun()` · Python `client.tempera_gym.get_run()` · Rust `build_request("tempera_gym", "get_run", params)`
 
@@ -682,7 +692,7 @@ let spec = client.build_request("tempera_gym", "get_run", &[
 Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.
 
 - **Producer operationId:** `rollouts.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.temperaGym.createRollout()` · Python `client.tempera_gym.create_rollout()` · Rust `build_request("tempera_gym", "create_rollout", params)`
 
@@ -728,15 +738,16 @@ let spec = client.build_request("tempera_gym", "create_rollout", &[
 
 </CodeGroup>
 
-### sealedEvaluatorsList
+### listSealedEvaluators
 
 `GET /v1/sealed-evaluators`
 
 Discover boot-trusted exact sealed-evaluator identities.
 
 - **Producer operationId:** `sealedEvaluators.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.sealedEvaluatorsList()` · Python `client.tempera_gym.sealed_evaluators_list()` · Rust `build_request("tempera_gym", "sealed_evaluators_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluators()` · Python `client.tempera_gym.list_sealed_evaluators()` · Rust `build_request("tempera_gym", "list_sealed_evaluators", params)`
 
 **Query parameters**
 
@@ -748,21 +759,21 @@ Discover boot-trusted exact sealed-evaluator identities.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.sealedEvaluatorsList({
+const result = await client.temperaGym.listSealedEvaluators({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.sealed_evaluators_list({
+result = client.tempera_gym.list_sealed_evaluators({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "sealed_evaluators_list", &[
+let spec = client.build_request("tempera_gym", "list_sealed_evaluators", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -772,15 +783,16 @@ let spec = client.build_request("tempera_gym", "sealed_evaluators_list", &[
 
 </CodeGroup>
 
-### sealedEvaluationsList
+### listSealedEvaluations
 
 `GET /v1/sealed-evaluations`
 
 List persisted sealed-evaluation precommits and results.
 
 - **Producer operationId:** `sealedEvaluations.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.sealedEvaluationsList()` · Python `client.tempera_gym.sealed_evaluations_list()` · Rust `build_request("tempera_gym", "sealed_evaluations_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluations()` · Python `client.tempera_gym.list_sealed_evaluations()` · Rust `build_request("tempera_gym", "list_sealed_evaluations", params)`
 
 **Query parameters**
 
@@ -792,21 +804,21 @@ List persisted sealed-evaluation precommits and results.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.sealedEvaluationsList({
+const result = await client.temperaGym.listSealedEvaluations({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.sealed_evaluations_list({
+result = client.tempera_gym.list_sealed_evaluations({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "sealed_evaluations_list", &[
+let spec = client.build_request("tempera_gym", "list_sealed_evaluations", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -816,15 +828,16 @@ let spec = client.build_request("tempera_gym", "sealed_evaluations_list", &[
 
 </CodeGroup>
 
-### sealedEvaluationsPrecommit
+### precommitSealedEvaluation
 
 `POST /v1/sealed-evaluations:precommit`
 
 Persist an opaque sealed-suite commitment before policy freeze.
 
 - **Producer operationId:** `sealedEvaluations.precommit`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.sealedEvaluationsPrecommit()` · Python `client.tempera_gym.sealed_evaluations_precommit()` · Rust `build_request("tempera_gym", "sealed_evaluations_precommit", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.precommitSealedEvaluation()` · Python `client.tempera_gym.precommit_sealed_evaluation()` · Rust `build_request("tempera_gym", "precommit_sealed_evaluation", params)`
 
 **Body parameters**
 
@@ -838,7 +851,7 @@ Persist an opaque sealed-suite commitment before policy freeze.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.sealedEvaluationsPrecommit({
+const result = await client.temperaGym.precommitSealedEvaluation({
   evaluator: "<evaluator>",
   qualification_policy: "<qualification_policy>",
   suite: "<suite>",
@@ -846,7 +859,7 @@ const result = await client.temperaGym.sealedEvaluationsPrecommit({
 ```
 
 ```python Python
-result = client.tempera_gym.sealed_evaluations_precommit({
+result = client.tempera_gym.precommit_sealed_evaluation({
     "evaluator": "<evaluator>",
     "qualification_policy": "<qualification_policy>",
     "suite": "<suite>",
@@ -854,7 +867,7 @@ result = client.tempera_gym.sealed_evaluations_precommit({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "sealed_evaluations_precommit", &[
+let spec = client.build_request("tempera_gym", "precommit_sealed_evaluation", &[
     ("evaluator", "<evaluator>".into()),
     ("qualification_policy", "<qualification_policy>".into()),
     ("suite", "<suite>".into()),
@@ -865,15 +878,16 @@ let spec = client.build_request("tempera_gym", "sealed_evaluations_precommit", &
 
 </CodeGroup>
 
-### sealedEvaluationsGet
+### getSealedEvaluation
 
 `GET /v1/sealed-evaluations/{evaluation}`
 
 Read one verified precommit and aggregate sealed result.
 
 - **Producer operationId:** `sealedEvaluations.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.sealedEvaluationsGet()` · Python `client.tempera_gym.sealed_evaluations_get()` · Rust `build_request("tempera_gym", "sealed_evaluations_get", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.getSealedEvaluation()` · Python `client.tempera_gym.get_sealed_evaluation()` · Rust `build_request("tempera_gym", "get_sealed_evaluation", params)`
 
 **Path parameters**
 
@@ -884,19 +898,19 @@ Read one verified precommit and aggregate sealed result.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.sealedEvaluationsGet({
+const result = await client.temperaGym.getSealedEvaluation({
   evaluation: "<evaluation>",
 });
 ```
 
 ```python Python
-result = client.tempera_gym.sealed_evaluations_get({
+result = client.tempera_gym.get_sealed_evaluation({
     "evaluation": "<evaluation>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "sealed_evaluations_get", &[
+let spec = client.build_request("tempera_gym", "get_sealed_evaluation", &[
     ("evaluation", "<evaluation>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -905,15 +919,16 @@ let spec = client.build_request("tempera_gym", "sealed_evaluations_get", &[
 
 </CodeGroup>
 
-### sealedEvaluationsRun
+### runSealedEvaluation
 
 `POST /v1/sealed-evaluations/{evaluation}:run`
 
 Evaluate one frozen policy through its exact sealed adapter.
 
 - **Producer operationId:** `sealedEvaluations.run`
-- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaGym.sealedEvaluationsRun()` · Python `client.tempera_gym.sealed_evaluations_run()` · Rust `build_request("tempera_gym", "sealed_evaluations_run", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.runSealedEvaluation()` · Python `client.tempera_gym.run_sealed_evaluation()` · Rust `build_request("tempera_gym", "run_sealed_evaluation", params)`
 
 **Path parameters**
 
@@ -931,7 +946,7 @@ Evaluate one frozen policy through its exact sealed adapter.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.sealedEvaluationsRun({
+const result = await client.temperaGym.runSealedEvaluation({
   evaluation: "<evaluation>",
   policy_submission: "<policy_submission>",
   training_report: "<training_report>",
@@ -939,7 +954,7 @@ const result = await client.temperaGym.sealedEvaluationsRun({
 ```
 
 ```python Python
-result = client.tempera_gym.sealed_evaluations_run({
+result = client.tempera_gym.run_sealed_evaluation({
     "evaluation": "<evaluation>",
     "policy_submission": "<policy_submission>",
     "training_report": "<training_report>",
@@ -947,7 +962,7 @@ result = client.tempera_gym.sealed_evaluations_run({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "sealed_evaluations_run", &[
+let spec = client.build_request("tempera_gym", "run_sealed_evaluation", &[
     ("evaluation", "<evaluation>".into()),
     ("policy_submission", "<policy_submission>".into()),
     ("training_report", "<training_report>".into()),

@@ -42,7 +42,7 @@ class SynchronizeProductTests(unittest.TestCase):
             }
         }
 
-        MODULE.synchronize_product(surface, "dataEngine", producer, set())
+        MODULE.synchronize_product(surface, "dataEngine", producer, set(), {})
 
         operation = surface["operations"]["dataEngine"][0]
         self.assertEqual(operation["id"], "runUseCase")
@@ -66,7 +66,7 @@ class SynchronizeProductTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "phantom surface routes"):
             MODULE.synchronize_product(
-                surface, "dataEngine", {"paths": {}}, set()
+                surface, "dataEngine", {"paths": {}}, set(), {}
             )
 
 

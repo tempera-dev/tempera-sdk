@@ -1242,7 +1242,7 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
 
 </CodeGroup>
 
-### experimentProviderConnectionsList
+### listExperimentProviderConnections
 
 `GET /v1/experiment-provider-connections`
 
@@ -1250,7 +1250,7 @@ List external experiment-provider metadata. Secret references and values are nev
 
 - **Producer operationId:** `experimentProviderConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsList()` · Python `client.control_plane.experiment_provider_connections_list()` · Rust `build_request("control_plane", "experiment_provider_connections_list", params)`
+- **Call as:** TypeScript `client.controlPlane.listExperimentProviderConnections()` · Python `client.control_plane.list_experiment_provider_connections()` · Rust `build_request("control_plane", "list_experiment_provider_connections", params)`
 
 **Query parameters**
 
@@ -1262,21 +1262,21 @@ List external experiment-provider metadata. Secret references and values are nev
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentProviderConnectionsList({
+const result = await client.controlPlane.listExperimentProviderConnections({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.control_plane.experiment_provider_connections_list({
+result = client.control_plane.list_experiment_provider_connections({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_provider_connections_list", &[
+let spec = client.build_request("control_plane", "list_experiment_provider_connections", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -1286,7 +1286,7 @@ let spec = client.build_request("control_plane", "experiment_provider_connection
 
 </CodeGroup>
 
-### experimentProviderConnectionsCreate
+### createExperimentProviderConnection
 
 `POST /v1/experiment-provider-connections`
 
@@ -1294,7 +1294,7 @@ Register a tenant-scoped experiment provider using only an external secret refer
 
 - **Producer operationId:** `experimentProviderConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsCreate()` · Python `client.control_plane.experiment_provider_connections_create()` · Rust `build_request("control_plane", "experiment_provider_connections_create", params)`
+- **Call as:** TypeScript `client.controlPlane.createExperimentProviderConnection()` · Python `client.control_plane.create_experiment_provider_connection()` · Rust `build_request("control_plane", "create_experiment_provider_connection", params)`
 
 **Body parameters**
 
@@ -1312,7 +1312,7 @@ Register a tenant-scoped experiment provider using only an external secret refer
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentProviderConnectionsCreate({
+const result = await client.controlPlane.createExperimentProviderConnection({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
@@ -1320,7 +1320,7 @@ const result = await client.controlPlane.experimentProviderConnectionsCreate({
 ```
 
 ```python Python
-result = client.control_plane.experiment_provider_connections_create({
+result = client.control_plane.create_experiment_provider_connection({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
@@ -1328,7 +1328,7 @@ result = client.control_plane.experiment_provider_connections_create({
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_provider_connections_create", &[
+let spec = client.build_request("control_plane", "create_experiment_provider_connection", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
@@ -1339,7 +1339,7 @@ let spec = client.build_request("control_plane", "experiment_provider_connection
 
 </CodeGroup>
 
-### experimentProviderConnectionsRevoke
+### revokeExperimentProviderConnection
 
 `DELETE /v1/experiment-provider-connections/{id}`
 
@@ -1347,7 +1347,7 @@ Revoke an experiment-provider connection. An unknown id is a no-op.
 
 - **Producer operationId:** `experimentProviderConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsRevoke()` · Python `client.control_plane.experiment_provider_connections_revoke()` · Rust `build_request("control_plane", "experiment_provider_connections_revoke", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentProviderConnection()` · Python `client.control_plane.revoke_experiment_provider_connection()` · Rust `build_request("control_plane", "revoke_experiment_provider_connection", params)`
 
 **Path parameters**
 
@@ -1358,19 +1358,19 @@ Revoke an experiment-provider connection. An unknown id is a no-op.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentProviderConnectionsRevoke({
+const result = await client.controlPlane.revokeExperimentProviderConnection({
   id: "<id>",
 });
 ```
 
 ```python Python
-result = client.control_plane.experiment_provider_connections_revoke({
+result = client.control_plane.revoke_experiment_provider_connection({
     "id": "<id>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_provider_connections_revoke", &[
+let spec = client.build_request("control_plane", "revoke_experiment_provider_connection", &[
     ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -1379,15 +1379,16 @@ let spec = client.build_request("control_plane", "experiment_provider_connection
 
 </CodeGroup>
 
-### experimentProviderConnectionsResolve
+### resolveExperimentProviderConnection
 
 `POST /v1/experiment-provider-connections/{id}:resolve`
 
 Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.
 
 - **Producer operationId:** `experimentProviderConnections.resolve`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsResolve()` · Python `client.control_plane.experiment_provider_connections_resolve()` · Rust `build_request("control_plane", "experiment_provider_connections_resolve", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `bio:experiment:submit`
+- **Call as:** TypeScript `client.controlPlane.resolveExperimentProviderConnection()` · Python `client.control_plane.resolve_experiment_provider_connection()` · Rust `build_request("control_plane", "resolve_experiment_provider_connection", params)`
 
 **Path parameters**
 
@@ -1412,7 +1413,7 @@ Atomically consume an exact human approval and resolve a provider reference for 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentProviderConnectionsResolve({
+const result = await client.controlPlane.resolveExperimentProviderConnection({
   id: "<id>",
   orgId: "<orgId>",
   projectId: "<projectId>",
@@ -1421,7 +1422,7 @@ const result = await client.controlPlane.experimentProviderConnectionsResolve({
 ```
 
 ```python Python
-result = client.control_plane.experiment_provider_connections_resolve({
+result = client.control_plane.resolve_experiment_provider_connection({
     "id": "<id>",
     "orgId": "<orgId>",
     "projectId": "<projectId>",
@@ -1430,7 +1431,7 @@ result = client.control_plane.experiment_provider_connections_resolve({
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_provider_connections_resolve", &[
+let spec = client.build_request("control_plane", "resolve_experiment_provider_connection", &[
     ("id", "<id>".into()),
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
@@ -1442,15 +1443,16 @@ let spec = client.build_request("control_plane", "experiment_provider_connection
 
 </CodeGroup>
 
-### bioSignerKeysList
+### listBioSignerKeys
 
 `GET /v1/bio-signer-keys`
 
 List versioned public Ed25519 verifier keys for an authorized human administrator.
 
 - **Producer operationId:** `bioSignerKeys.list`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.bioSignerKeysList()` · Python `client.control_plane.bio_signer_keys_list()` · Rust `build_request("control_plane", "bio_signer_keys_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.listBioSignerKeys()` · Python `client.control_plane.list_bio_signer_keys()` · Rust `build_request("control_plane", "list_bio_signer_keys", params)`
 
 **Query parameters**
 
@@ -1462,21 +1464,21 @@ List versioned public Ed25519 verifier keys for an authorized human administrato
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.bioSignerKeysList({
+const result = await client.controlPlane.listBioSignerKeys({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.control_plane.bio_signer_keys_list({
+result = client.control_plane.list_bio_signer_keys({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "bio_signer_keys_list", &[
+let spec = client.build_request("control_plane", "list_bio_signer_keys", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -1486,15 +1488,16 @@ let spec = client.build_request("control_plane", "bio_signer_keys_list", &[
 
 </CodeGroup>
 
-### bioSignerKeysCreate
+### createBioSignerKey
 
 `POST /v1/bio-signer-keys`
 
 Register or rotate a public Ed25519 verifier key. Private key material is rejected.
 
 - **Producer operationId:** `bioSignerKeys.create`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.bioSignerKeysCreate()` · Python `client.control_plane.bio_signer_keys_create()` · Rust `build_request("control_plane", "bio_signer_keys_create", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.createBioSignerKey()` · Python `client.control_plane.create_bio_signer_key()` · Rust `build_request("control_plane", "create_bio_signer_key", params)`
 
 **Body parameters**
 
@@ -1509,7 +1512,7 @@ Register or rotate a public Ed25519 verifier key. Private key material is reject
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.bioSignerKeysCreate({
+const result = await client.controlPlane.createBioSignerKey({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
@@ -1517,7 +1520,7 @@ const result = await client.controlPlane.bioSignerKeysCreate({
 ```
 
 ```python Python
-result = client.control_plane.bio_signer_keys_create({
+result = client.control_plane.create_bio_signer_key({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
@@ -1525,7 +1528,7 @@ result = client.control_plane.bio_signer_keys_create({
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "bio_signer_keys_create", &[
+let spec = client.build_request("control_plane", "create_bio_signer_key", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
@@ -1536,15 +1539,16 @@ let spec = client.build_request("control_plane", "bio_signer_keys_create", &[
 
 </CodeGroup>
 
-### bioSignerKeysRevoke
+### revokeBioSignerKey
 
 `DELETE /v1/bio-signer-keys/{id}`
 
 Revoke a public verifier key while retaining its history.
 
 - **Producer operationId:** `bioSignerKeys.revoke`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.bioSignerKeysRevoke()` · Python `client.control_plane.bio_signer_keys_revoke()` · Rust `build_request("control_plane", "bio_signer_keys_revoke", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.revokeBioSignerKey()` · Python `client.control_plane.revoke_bio_signer_key()` · Rust `build_request("control_plane", "revoke_bio_signer_key", params)`
 
 **Path parameters**
 
@@ -1555,19 +1559,19 @@ Revoke a public verifier key while retaining its history.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.bioSignerKeysRevoke({
+const result = await client.controlPlane.revokeBioSignerKey({
   id: "<id>",
 });
 ```
 
 ```python Python
-result = client.control_plane.bio_signer_keys_revoke({
+result = client.control_plane.revoke_bio_signer_key({
     "id": "<id>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "bio_signer_keys_revoke", &[
+let spec = client.build_request("control_plane", "revoke_bio_signer_key", &[
     ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -1576,15 +1580,16 @@ let spec = client.build_request("control_plane", "bio_signer_keys_revoke", &[
 
 </CodeGroup>
 
-### experimentApprovalsList
+### listExperimentApprovals
 
 `GET /v1/experiment-approvals`
 
 List exact, single-use experiment approvals for an authorized human approver.
 
 - **Producer operationId:** `experimentApprovals.list`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentApprovalsList()` · Python `client.control_plane.experiment_approvals_list()` · Rust `build_request("control_plane", "experiment_approvals_list", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.listExperimentApprovals()` · Python `client.control_plane.list_experiment_approvals()` · Rust `build_request("control_plane", "list_experiment_approvals", params)`
 
 **Query parameters**
 
@@ -1596,21 +1601,21 @@ List exact, single-use experiment approvals for an authorized human approver.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentApprovalsList({
+const result = await client.controlPlane.listExperimentApprovals({
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.control_plane.experiment_approvals_list({
+result = client.control_plane.list_experiment_approvals({
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_approvals_list", &[
+let spec = client.build_request("control_plane", "list_experiment_approvals", &[
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -1620,15 +1625,16 @@ let spec = client.build_request("control_plane", "experiment_approvals_list", &[
 
 </CodeGroup>
 
-### experimentApprovalsCreate
+### createExperimentApproval
 
 `POST /v1/experiment-approvals`
 
 Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.
 
 - **Producer operationId:** `experimentApprovals.create`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentApprovalsCreate()` · Python `client.control_plane.experiment_approvals_create()` · Rust `build_request("control_plane", "experiment_approvals_create", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.createExperimentApproval()` · Python `client.control_plane.create_experiment_approval()` · Rust `build_request("control_plane", "create_experiment_approval", params)`
 
 **Body parameters**
 
@@ -1646,7 +1652,7 @@ Create a short-lived human approval bound to exact proposal, protocol, provider,
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentApprovalsCreate({
+const result = await client.controlPlane.createExperimentApproval({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
@@ -1654,7 +1660,7 @@ const result = await client.controlPlane.experimentApprovalsCreate({
 ```
 
 ```python Python
-result = client.control_plane.experiment_approvals_create({
+result = client.control_plane.create_experiment_approval({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
@@ -1662,7 +1668,7 @@ result = client.control_plane.experiment_approvals_create({
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_approvals_create", &[
+let spec = client.build_request("control_plane", "create_experiment_approval", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
@@ -1673,15 +1679,16 @@ let spec = client.build_request("control_plane", "experiment_approvals_create", 
 
 </CodeGroup>
 
-### experimentApprovalsRevoke
+### revokeExperimentApproval
 
 `DELETE /v1/experiment-approvals/{id}`
 
 Revoke an unused experiment approval. Consumed approvals remain immutable.
 
 - **Producer operationId:** `experimentApprovals.revoke`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.experimentApprovalsRevoke()` · Python `client.control_plane.experiment_approvals_revoke()` · Rust `build_request("control_plane", "experiment_approvals_revoke", params)`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentApproval()` · Python `client.control_plane.revoke_experiment_approval()` · Rust `build_request("control_plane", "revoke_experiment_approval", params)`
 
 **Path parameters**
 
@@ -1692,19 +1699,19 @@ Revoke an unused experiment approval. Consumed approvals remain immutable.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.experimentApprovalsRevoke({
+const result = await client.controlPlane.revokeExperimentApproval({
   id: "<id>",
 });
 ```
 
 ```python Python
-result = client.control_plane.experiment_approvals_revoke({
+result = client.control_plane.revoke_experiment_approval({
     "id": "<id>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "experiment_approvals_revoke", &[
+let spec = client.build_request("control_plane", "revoke_experiment_approval", &[
     ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json

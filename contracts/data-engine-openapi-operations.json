@@ -7,7 +7,7 @@
   "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
   "source_sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "429fbd35ba3d411ce4618b6c14768f3f83b0be394b3fbf3968475613822f5340",
+  "generated_sha256": "fc3429a0a421a267ba15d09e6dbf5a940e70387eef044d6e4e94b5045af9580b",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -354,7 +354,7 @@
       "requiredScope": "dataset:write"
     },
     {
-      "sdkOperationId": "projectsDiscoveryReleasesCommit",
+      "sdkOperationId": "commitDiscoveryRelease",
       "operationId": "projects.discoveryReleases.commit",
       "method": "POST",
       "path": "/v1/{parent}/discoveryReleases:commit",
@@ -362,7 +362,7 @@
       "requiredScope": "eval:run"
     },
     {
-      "sdkOperationId": "projectsDiscoveryReleasesGet",
+      "sdkOperationId": "getDiscoveryRelease",
       "operationId": "projects.discoveryReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",

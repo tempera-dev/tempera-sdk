@@ -162,6 +162,7 @@ For each call, the client resolves the bearer in this order:
    - `none` — no `authorization` header is sent.
    - `account` — the account-session token returned by `createHostedSession` (or
      passed as `accountToken` / `account_token` / `with_account_token`).
+   - `oauthResource` — an OAuth access token or central `tp_` API key for the operation's explicit resource audience.
    - `introspectionSecret` — the configured introspection secret
      (`introspectToken` only; server-side).
    - `product` — through `TemperaAuth.bearerFor(audience)`: the audience's
@@ -186,6 +187,7 @@ is the default when none is specified.
 | `tempera-llm` | tempera-llm |
 | `tempera-workflows` | tempera-workflows |
 | `tempera-gym` | tempera-gym |
+| `tempera-bio` | — |
 
 ## Scopes
 
@@ -197,17 +199,25 @@ is the default when none is specified.
 | `memory:manage` | No typed SDK operation declares it yet; enforced server-side. |
 | `trace:read` | palette: `archiveTrace`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `searchSpans` |
 | `trace:write` | palette: `importSource`, `ingestSpan` |
-| `dataset:read` | data-engine: `getArtifact`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listConnectors`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `projectsDiscoveryReleasesGet`, `queryResearchRetrieval`; tempera-gym: `getRun`, `listEnvironments`, `listRuns` |
+| `dataset:read` | data-engine: `getArtifact`, `getDiscoveryRelease`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listConnectors`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `getEpisode`, `getRun`, `getSealedEvaluation`, `getTask`, `listDomains`, `listEnvironments`, `listEpisodes`, `listRuns`, `listSealedEvaluations`, `listSealedEvaluators`, `listTasks`, `listVerifiers` |
 | `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `extractSource`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
-| `eval:run` | data-engine: `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `projectsDiscoveryReleasesCommit`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `createRollout` |
+| `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode` |
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask` |
 | `review:resolve` | data-engine: `claimExpertTask`, `getReviewOperations`, `getReviewerQualification`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |
+| `bio:source:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `bio:proposal:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `bio:measurement:verify` | No typed SDK operation declares it yet; enforced server-side. |
+| `bio:decision:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
+| `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection` |
+| `bio:signer:manage` | auth-hub: `createBioSignerKey`, `listBioSignerKeys`, `revokeBioSignerKey` |
 | `model:read` | auth-hub: `getModelCatalog`; tempera-llm: `listModels` |
 | `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
+| `usage:reserve` | No typed SDK operation declares it yet; enforced server-side. |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 

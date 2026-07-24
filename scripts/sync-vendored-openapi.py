@@ -123,22 +123,29 @@ def render(content: bytes, transform: str) -> bytes:
     raise ValueError(f"unknown transform {transform!r}")
 
 
-def synchronize(product: str, repo: Path, requested_commit: str, check: bool) -> None:
+def synchronize(
+    product: str,
+    repo: Path,
+    requested_commit: str,
+    check: bool,
+    source_branch: str | None = None,
+) -> None:
     config = PRODUCTS[product]
+    selected_branch = source_branch or config["source_branch"]
     source_lock = load_source_lock_module()
     commit = source_lock.validate_source(
         repo,
         config["source_repo"],
-        config["source_branch"],
+        selected_branch,
         requested_commit,
     )
     current_head = git(
-        repo, "rev-parse", f"refs/remotes/origin/{config['source_branch']}^{{commit}}"
+        repo, "rev-parse", f"refs/remotes/origin/{selected_branch}^{{commit}}"
     )
     if commit != current_head:
         raise ValueError(
             f"{product} source commit {commit} is not current "
-            f"origin/{config['source_branch']} ({current_head})"
+            f"origin/{selected_branch} ({current_head})"
         )
     blob, mode, content = source_lock.committed_file(
         repo, commit, config["source_path"]
@@ -149,7 +156,7 @@ def synchronize(product: str, repo: Path, requested_commit: str, check: bool) ->
     lock = {
         "schema_version": 1,
         "source_repo": config["source_repo"],
-        "source_branch": config["source_branch"],
+        "source_branch": selected_branch,
         "source_commit": commit,
         "source_path": config["source_path"],
         "source_blob_sha": blob,
@@ -175,6 +182,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--product", choices=sorted(PRODUCTS), required=True)
     parser.add_argument("--source-repo-dir", type=Path, required=True)
+    parser.add_argument(
+        "--source-branch",
+        help=(
+            "Exact staged producer branch. Omit for the canonical mainline "
+            "branch; the aggregate release gate rejects non-main locks."
+        ),
+    )
     parser.add_argument("--source-commit", default="HEAD")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
@@ -184,6 +198,7 @@ def main() -> int:
             args.source_repo_dir.resolve(),
             args.source_commit,
             args.check,
+            args.source_branch,
         )
         return 0
     except (

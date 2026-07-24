@@ -110,7 +110,7 @@ class UpstreamDriftTest(unittest.TestCase):
         }
 
         SYNCHRONIZER.synchronize_product(
-            surface, "remi", manifest, exclusions=set()
+            surface, "remi", manifest, exclusions=set(), overrides={}
         )
 
         self.assertEqual(
@@ -212,13 +212,143 @@ class UpstreamDriftTest(unittest.TestCase):
         }
 
         SYNCHRONIZER.synchronize_product(
-            surface, "dataEngine", spec, exclusions=set()
+            surface, "dataEngine", spec, exclusions=set(), overrides={}
         )
 
         self.assertEqual(
             surface["operations"]["dataEngine"][0]["pathParamTemplates"],
             {"parent": "projects/*"},
         )
+
+    def test_operation_id_preserves_sdk_method_across_aip_path_move(self) -> None:
+        surface = {
+            "operations": {
+                "dataEngine": [
+                    {
+                        "id": "runUseCase",
+                        "upstreamOperationId": "projects.pipelines.runUseCase",
+                        "method": "POST",
+                        "path": "/v1/{parent}/pipelines:run-use-case",
+                        "auth": "product",
+                        "description": "Run one use case.",
+                    }
+                ]
+            }
+        }
+        spec = {
+            "paths": {
+                "/v1/{parent}/pipelines:runUseCase": {
+                    "post": {
+                        "operationId": "projects.pipelines.runUseCase",
+                        "responses": {"200": {"description": "ok"}},
+                    }
+                }
+            }
+        }
+
+        SYNCHRONIZER.synchronize_product(
+            surface, "dataEngine", spec, exclusions=set(), overrides={}
+        )
+
+        operation = surface["operations"]["dataEngine"][0]
+        self.assertEqual(operation["id"], "runUseCase")
+        self.assertEqual(
+            operation["path"], "/v1/{parent}/pipelines:runUseCase"
+        )
+
+    def test_override_and_producer_auth_extensions_are_both_enforced(self) -> None:
+        surface = {"operations": {"controlPlane": []}}
+        spec = {
+            "paths": {
+                "/bio-signer-keys": {
+                    "get": {
+                        "operationId": "bioSignerKeys.list",
+                        "summary": "List Bio signer keys.",
+                        "x-tempera-auth-kind": "oauthResource",
+                        "x-tempera-auth-audience": "tempera-bio",
+                        "x-tempera-required-scope": "bio:signer:manage",
+                        "responses": {"200": {"description": "ok"}},
+                    }
+                }
+            }
+        }
+        overrides = {
+            ("GET", "/bio-signer-keys"): {
+                "upstreamOperationId": "bioSignerKeys.list",
+                "id": "listBioSignerKeys",
+            }
+        }
+
+        SYNCHRONIZER.synchronize_product(
+            surface,
+            "controlPlane",
+            spec,
+            exclusions=set(),
+            overrides=overrides,
+        )
+
+        operation = surface["operations"]["controlPlane"][0]
+        self.assertEqual(operation["id"], "listBioSignerKeys")
+        self.assertEqual(operation["auth"], "oauthResource")
+        self.assertEqual(operation["authAudience"], "tempera-bio")
+        self.assertEqual(operation["scope"], "bio:signer:manage")
+
+    def test_unauthenticated_probe_accepts_explicit_null_auth_metadata(self) -> None:
+        surface = {"operations": {"temperaGym": []}}
+        spec = {
+            "paths": {
+                "/healthz": {
+                    "get": {
+                        "operationId": "health.get",
+                        "security": [],
+                        "x-tempera-auth-audience": None,
+                        "x-tempera-required-scope": None,
+                        "responses": {"200": {"description": "ok"}},
+                    }
+                }
+            }
+        }
+
+        SYNCHRONIZER.synchronize_product(
+            surface,
+            "temperaGym",
+            spec,
+            exclusions=set(),
+            overrides={},
+        )
+
+        operation = surface["operations"]["temperaGym"][0]
+        self.assertEqual(operation["auth"], "none")
+        self.assertNotIn("authAudience", operation)
+        self.assertNotIn("scope", operation)
+
+    def test_producer_audience_implies_oauth_resource_auth(self) -> None:
+        surface = {"operations": {"temperaGym": []}}
+        spec = {
+            "paths": {
+                "/v1/tasks": {
+                    "get": {
+                        "operationId": "tasks.list",
+                        "x-tempera-auth-audience": "tempera-gym",
+                        "x-tempera-required-scope": "dataset:read",
+                        "responses": {"200": {"description": "ok"}},
+                    }
+                }
+            }
+        }
+
+        SYNCHRONIZER.synchronize_product(
+            surface,
+            "temperaGym",
+            spec,
+            exclusions=set(),
+            overrides={},
+        )
+
+        operation = surface["operations"]["temperaGym"][0]
+        self.assertEqual(operation["auth"], "oauthResource")
+        self.assertEqual(operation["authAudience"], "tempera-gym")
+        self.assertEqual(operation["scope"], "dataset:read")
 
 if __name__ == "__main__":
     unittest.main()

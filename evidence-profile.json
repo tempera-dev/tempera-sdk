@@ -1,0 +1,70 @@
+{
+  "schema_version": "tempera.evidence-profile/v1",
+  "repository": "https://github.com/tempera-dev/tempera-sdk",
+  "product": "Tempera SDK",
+  "role": "Generated cross-language client boundary for Discovery producer contracts",
+  "accepted_evidence_classes": [
+    "synthetic_fixture"
+  ],
+  "fixture_controls": {
+    "production_acceptance": "reject",
+    "packaging": "excluded"
+  },
+  "synthetic_fixture_paths": [],
+  "integrations": [
+    {
+      "integration_id": "data-engine-discovery-release-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "contracts/data-engine-openapi-operations.json",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "All three generated clients implement exact Data Engine discovery-release commit and get operations. Canonical source locks bind merged Data Engine main head 67e1c88d21961586d5efc39d5db50e0f2cd34906."
+    },
+    {
+      "integration_id": "prospective-experiment-authorization-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/control-plane.openapi.json.source",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "Producer-derived route metadata selects the tempera-bio human bearer or tempera-workflows service bearer for signer, approval, and provider-resolution operations. Canonical provenance binds merged Auth Hub main head 7167ecad3a75f787925ebce0838407fe7d3bde3a."
+    },
+    {
+      "integration_id": "gym-rl-and-sealed-evaluation-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/tempera-gym-api.json.source",
+        "packages/typescript/src/surface.js",
+        "packages/python/src/tempera_sdk/surface.py",
+        "packages/rust/src/surface.rs"
+      ],
+      "notes": "The canonical source lock and generated methods bind merged Gym main head f96317c2a4083780d00d03622181de5cf20fc79e for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+    }
+  ],
+  "physical_execution": {
+    "status": "not_applicable",
+    "human_approval_required": false,
+    "proof_refs": []
+  },
+  "claims": [],
+  "limitations": [
+    "Generated Discovery methods prove cross-language dispatch and contract conformance, not a hosted production call.",
+    "Canonical source locks prove exact contract provenance and generated-client parity; they do not prove that any hosted producer deployment has adopted those commits.",
+    "Authorization clients transport approvals and external secret references; they do not approve, resolve a secret, submit physical work, or prove provider execution without an authorized caller.",
+    "The SDK transports evidence contracts; it does not determine biological validity, experimental execution, production qualification, or dataset eligibility."
+  ]
+}

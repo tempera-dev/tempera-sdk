@@ -114,7 +114,7 @@ export function createTemperaClient({
     return trimTrailingSlash(baseUrl);
   }
 
-  function bearerFor(productKey, authKind) {
+  function bearerFor(productKey, authKind, authAudience) {
     if (authKind === "none") return null;
     if (authKind === "introspectionSecret") {
       if (!introspectionSecret) {
@@ -129,6 +129,14 @@ export function createTemperaClient({
         );
       }
       return state.accountToken;
+    }
+    if (authKind === "oauthResource") {
+      if (!auth) {
+        throw new TemperaSdkError(
+          `${productKey}: pass a TemperaAuth (with an apiKey or ${authAudience} tokens) to call this resource endpoint`,
+        );
+      }
+      return auth.bearerFor(authAudience);
     }
     const audience = TEMPERA_PRODUCTS[productKey]?.audience ?? DEFAULT_AUDIENCE;
     if (!auth) {
@@ -203,7 +211,8 @@ export function createTemperaClient({
       if (op.method === "GET" || op.method === "DELETE") query[key] = value;
       else (body ??= {})[key] = value;
     }
-    const bearer = options.bearer ?? bearerFor(productKey, op.auth);
+    const bearer =
+      options.bearer ?? bearerFor(productKey, op.auth, op.authAudience);
     return rawRequest(productKey, path, {
       method: op.method,
       body,

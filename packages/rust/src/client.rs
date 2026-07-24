@@ -12,7 +12,8 @@
 //!   GET/DELETE and into the JSON body otherwise, so a new server field is
 //!   usable before the surface tables catch up.
 //! - Auth kinds: `none`, `account` (account-session token),
-//!   `introspectionSecret`, and `product` (per-audience bearer through
+//!   `introspectionSecret`, `oauthResource` (an operation-pinned audience), and
+//!   `product` (per-product audience bearer through
 //!   [`crate::auth::TemperaAuth`], with unified tp_ API-key fallback).
 
 use crate::auth::{TemperaAuth, urlencode};
@@ -172,6 +173,13 @@ pub enum BuildError {
         /// Token audience the bearer would be minted for.
         audience: String,
     },
+    /// A generated operation is missing required static auth metadata.
+    InvalidOperationContract {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+    },
     /// No base URL is configured for the product and its env var is unset.
     MissingBaseUrl {
         /// Product key of the operation.
@@ -223,6 +231,10 @@ impl std::fmt::Display for BuildError {
             BuildError::MissingCredential { product, audience } => write!(
                 f,
                 "{product}: no credential for audience {audience}; pass a TemperaAuth with an api_key or {audience} tokens to call product endpoints"
+            ),
+            BuildError::InvalidOperationContract { product, operation } => write!(
+                f,
+                "{product}.{operation}: generated operation auth contract is invalid"
             ),
             BuildError::MissingBaseUrl { product, env_var } => write!(
                 f,
@@ -425,6 +437,20 @@ impl TemperaClient {
                         }
                     })?)
                 }
+                "oauthResource" => {
+                    let audience = op.auth_audience.ok_or_else(|| {
+                        BuildError::InvalidOperationContract {
+                            product: product.to_string(),
+                            operation: operation.to_string(),
+                        }
+                    })?;
+                    let missing = || BuildError::MissingCredential {
+                        product: product.to_string(),
+                        audience: audience.to_string(),
+                    };
+                    let auth = self.auth.as_ref().ok_or_else(missing)?;
+                    Some(auth.bearer_for(audience).ok_or_else(missing)?.to_string())
+                }
                 _ => {
                     // "product": bearer minted for the product's audience, with
                     // DEFAULT_AUDIENCE as the fallback for audience-less products.
@@ -591,6 +617,7 @@ mod tests {
                 "none" => assert_eq!(auth_header, None, "{}.{}", op.product, op.id),
                 "account" => assert_eq!(auth_header, Some("Bearer acct_token_1")),
                 "introspectionSecret" => assert_eq!(auth_header, Some("Bearer intro_secret_1")),
+                "oauthResource" => assert_eq!(auth_header, Some("Bearer tp_key_1")),
                 "product" => assert_eq!(auth_header, Some("Bearer tp_key_1")),
                 other => panic!("unexpected auth kind {other}"),
             }
@@ -1148,6 +1175,49 @@ mod tests {
             .build_request("cradle", "get_capabilities", &[])
             .unwrap();
         assert_eq!(header(&spec, "authorization"), Some("Bearer tp_key_1"));
+    }
+
+    #[test]
+    fn control_plane_discovery_operations_use_producer_pinned_audiences() {
+        let auth = TemperaAuth::new("https://api.tempera.dev")
+            .with_api_key("tp_key_1")
+            .with_tokens(
+                "tempera-bio",
+                TokenSet {
+                    access_token: "at_bio_human".into(),
+                    ..TokenSet::default()
+                },
+            )
+            .with_tokens(
+                "tempera-workflows",
+                TokenSet {
+                    access_token: "at_workflows_service".into(),
+                    ..TokenSet::default()
+                },
+            );
+        let client = TemperaClient::new()
+            .with_auth(auth)
+            .with_base_url("control_plane", base_url_for("control_plane"));
+
+        let signer = client
+            .build_request("control_plane", "list_bio_signer_keys", &[])
+            .unwrap();
+        assert_eq!(
+            header(&signer, "authorization"),
+            Some("Bearer at_bio_human")
+        );
+
+        let resolution = client
+            .build_request(
+                "control_plane",
+                "resolve_experiment_provider_connection",
+                &[("id", "connection-1".into())],
+            )
+            .unwrap();
+        assert_eq!(
+            header(&resolution, "authorization"),
+            Some("Bearer at_workflows_service")
+        );
     }
 
     #[test]

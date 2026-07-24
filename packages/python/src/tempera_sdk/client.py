@@ -166,7 +166,12 @@ class TemperaClient:
             )
         return base_url.rstrip("/")
 
-    def _bearer_for(self, product_key: str, auth_kind: str) -> str | None:
+    def _bearer_for(
+        self,
+        product_key: str,
+        auth_kind: str,
+        auth_audience: str | None = None,
+    ) -> str | None:
         attr = PRODUCT_ATTRS[product_key]
         if auth_kind == "none":
             return None
@@ -180,6 +185,13 @@ class TemperaClient:
                     f"{attr}: an account token is required; call control_plane.create_hosted_session() first or pass account_token"
                 )
             return self.account_token
+        if auth_kind == "oauthResource":
+            if self.auth is None:
+                raise TemperaSdkError(
+                    f"{attr}: pass a TemperaAuth (with an api_key or "
+                    f"{auth_audience} tokens) to call this resource endpoint"
+                )
+            return self.auth.bearer_for(str(auth_audience))
         audience = PRODUCTS[product_key]["audience"] or DEFAULT_AUDIENCE
         if self.auth is None:
             raise TemperaSdkError(
@@ -316,7 +328,15 @@ class TemperaClient:
                 if body is None:
                     body = {}
                 body[key] = value
-        resolved_bearer = bearer if bearer is not None else self._bearer_for(product_key, op["auth"])
+        resolved_bearer = (
+            bearer
+            if bearer is not None
+            else self._bearer_for(
+                product_key,
+                op["auth"],
+                op.get("auth_audience"),
+            )
+        )
         return self._raw_request(
             product_key,
             path,

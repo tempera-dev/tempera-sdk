@@ -35,7 +35,7 @@ PALETTE_SOURCE_BLOB = "32e5aed508a963fdd4e7af153c81190475beeac8"
 PALETTE_SOURCE_SHA256 = (
     "sha256:18942d5e2c26332b40050cda5a882540f14d914d717d5b94342a0afb72001dd0"
 )
-PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/16"
+PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/22"
 PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
 REQUEST_SCHEMA = "#/components/schemas/ImportTemperaEvidenceRequest"

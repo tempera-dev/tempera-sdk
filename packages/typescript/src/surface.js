@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 4;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -187,6 +187,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -203,6 +204,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/readyz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -219,6 +221,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/me",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -235,6 +238,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/orgs",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -254,6 +258,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/orgs",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -274,6 +279,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -293,6 +299,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -318,6 +325,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/sessions/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -336,6 +344,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workspace/select",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -360,6 +369,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/team/members",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -379,6 +389,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "PATCH",
       "path": "/v1/team/members/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -403,6 +414,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/team/members/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -421,6 +433,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/invites",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -440,6 +453,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/invites",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -462,6 +476,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/invites/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -480,6 +495,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/projects",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -499,6 +515,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/projects",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -521,6 +538,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/environments",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -540,6 +558,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/environments",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -562,6 +581,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/api-keys",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -581,6 +601,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/api-keys",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -610,6 +631,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/api-keys/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -628,6 +650,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/api-keys/{id}/rotate",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -646,6 +669,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/provider-connections",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -665,6 +689,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/provider-connections",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -696,6 +721,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/provider-connections/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -714,6 +740,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/provider-connections/{id}:rotate",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -737,6 +764,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/provider-connections/{id}:resolve",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -760,11 +788,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
     },
     {
-      "id": "experimentProviderConnectionsList",
+      "id": "listExperimentProviderConnections",
       "upstreamOperationId": "experimentProviderConnections.list",
       "method": "GET",
       "path": "/v1/experiment-provider-connections",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -779,11 +808,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List external experiment-provider metadata. Secret references and values are never returned."
     },
     {
-      "id": "experimentProviderConnectionsCreate",
+      "id": "createExperimentProviderConnection",
       "upstreamOperationId": "experimentProviderConnections.create",
       "method": "POST",
       "path": "/v1/experiment-provider-connections",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -813,11 +843,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Register a tenant-scoped experiment provider using only an external secret reference."
     },
     {
-      "id": "experimentProviderConnectionsRevoke",
+      "id": "revokeExperimentProviderConnection",
       "upstreamOperationId": "experimentProviderConnections.revoke",
       "method": "DELETE",
       "path": "/v1/experiment-provider-connections/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -831,11 +862,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
     },
     {
-      "id": "experimentProviderConnectionsResolve",
+      "id": "resolveExperimentProviderConnection",
       "upstreamOperationId": "experimentProviderConnections.resolve",
       "method": "POST",
       "path": "/v1/experiment-provider-connections/{id}:resolve",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
       "pathParams": [
         "id"
       ],
@@ -865,15 +897,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "submissionIdempotencyKey"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:experiment:submit",
       "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
     },
     {
-      "id": "bioSignerKeysList",
+      "id": "listBioSignerKeys",
       "upstreamOperationId": "bioSignerKeys.list",
       "method": "GET",
       "path": "/v1/bio-signer-keys",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -884,15 +917,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:signer:manage",
       "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
     },
     {
-      "id": "bioSignerKeysCreate",
+      "id": "createBioSignerKey",
       "upstreamOperationId": "bioSignerKeys.create",
       "method": "POST",
       "path": "/v1/bio-signer-keys",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -912,15 +946,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "publicJwk"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:signer:manage",
       "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
     },
     {
-      "id": "bioSignerKeysRevoke",
+      "id": "revokeBioSignerKey",
       "upstreamOperationId": "bioSignerKeys.revoke",
       "method": "DELETE",
       "path": "/v1/bio-signer-keys/{id}",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [
         "id"
       ],
@@ -930,15 +965,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:signer:manage",
       "description": "Revoke a public verifier key while retaining its history."
     },
     {
-      "id": "experimentApprovalsList",
+      "id": "listExperimentApprovals",
       "upstreamOperationId": "experimentApprovals.list",
       "method": "GET",
       "path": "/v1/experiment-approvals",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -949,15 +985,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:experiment:approve",
       "description": "List exact, single-use experiment approvals for an authorized human approver."
     },
     {
-      "id": "experimentApprovalsCreate",
+      "id": "createExperimentApproval",
       "upstreamOperationId": "experimentApprovals.create",
       "method": "POST",
       "path": "/v1/experiment-approvals",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -983,15 +1020,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "expiresAt"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:experiment:approve",
       "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
     },
     {
-      "id": "experimentApprovalsRevoke",
+      "id": "revokeExperimentApproval",
       "upstreamOperationId": "experimentApprovals.revoke",
       "method": "DELETE",
       "path": "/v1/experiment-approvals/{id}",
-      "auth": "account",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
       "pathParams": [
         "id"
       ],
@@ -1001,7 +1039,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "bio:experiment:approve",
       "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
     },
     {
@@ -1010,6 +1048,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/audit-log",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1029,6 +1068,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1048,6 +1088,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors/{id}/status",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -1066,6 +1107,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/products",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1085,6 +1127,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/products/{id}/status",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -1103,6 +1146,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/billing/status",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1119,6 +1163,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/billing/checkout",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1142,6 +1187,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/billing/portal",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1158,6 +1204,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/billing/credits",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1174,6 +1221,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/model-catalog",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1190,6 +1238,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/usage/events",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1219,6 +1268,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/usage/reservations",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1257,6 +1307,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/usage/reservations/{reservationId}:commit",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "reservationId"
       ],
@@ -1287,6 +1338,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/usage/reservations/{reservationId}:release",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "reservationId"
       ],
@@ -1313,6 +1365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/usage/reservations/{reservationId}:reconcile",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "reservationId"
       ],
@@ -1347,6 +1400,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/oauth/grants",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1366,6 +1420,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/oauth/grants/{id}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -1384,6 +1439,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/oauth/introspect",
       "auth": "introspectionSecret",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1405,6 +1461,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/oauth-authorization-server",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1421,6 +1478,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1437,6 +1495,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/{resource}",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [
         "resource"
       ],
@@ -1455,6 +1514,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/jwks.json",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1471,6 +1531,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/admin/operations/provenance",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1487,6 +1548,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/admin/step-up",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1507,6 +1569,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/admin/billing/credits/adjust",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1531,6 +1594,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/admin/billing/orgs",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1547,6 +1611,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/github/setup-sessions",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1567,6 +1632,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/github/callback",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1586,6 +1652,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/github/installations",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -1605,6 +1672,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/github/installations/{installationId}",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "installationId"
       ],
@@ -1623,6 +1691,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/github/installations/{installationId}/repositories",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "installationId"
       ],
@@ -1644,6 +1713,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot",
       "auth": "account",
+      "authAudience": null,
       "pathParams": [
         "installationId",
         "repositoryId"
@@ -1665,6 +1735,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/github/webhook",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1683,6 +1754,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/health",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -1699,6 +1771,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -1725,6 +1798,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -1749,6 +1823,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -1770,6 +1845,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/archive/{tenant_id}/{project_id}/spans",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1797,6 +1873,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -1817,6 +1894,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/audit/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1839,6 +1917,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -1864,6 +1943,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connect/status/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1883,6 +1963,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1905,6 +1986,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1928,6 +2010,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1952,6 +2035,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1973,6 +2057,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors/{tenant_id}/{project_id}/status",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -1994,6 +2079,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2017,6 +2103,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/datasets/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2040,6 +2127,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2066,6 +2154,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2088,6 +2177,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2122,6 +2212,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2157,6 +2248,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2184,6 +2276,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2211,6 +2304,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2232,6 +2326,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2270,6 +2365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2310,6 +2406,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/gates/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2338,6 +2435,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2360,6 +2458,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2387,6 +2486,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2409,6 +2509,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2428,6 +2529,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2449,6 +2551,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2470,6 +2573,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2490,6 +2594,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2518,6 +2623,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2540,6 +2646,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2568,6 +2675,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/prompts/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2590,6 +2698,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/prompts/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2618,6 +2727,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2638,6 +2748,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2661,6 +2772,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2684,6 +2796,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2710,6 +2823,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2732,6 +2846,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2759,6 +2874,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2779,6 +2895,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/review-queues/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2805,6 +2922,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2829,6 +2947,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2858,6 +2977,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2888,6 +3008,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -2915,6 +3036,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/scenarios/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2937,6 +3059,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/scenarios/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2965,6 +3088,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -2989,6 +3113,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id",
@@ -3009,6 +3134,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/search/{tenant_id}/spans",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id"
       ],
@@ -3039,6 +3165,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "trace_id",
@@ -3062,6 +3189,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "trace_id",
@@ -3085,6 +3213,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/traces/native",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3133,6 +3262,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/traces/{tenant_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id"
       ],
@@ -3167,6 +3297,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/traces/{tenant_id}/{trace_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "trace_id"
@@ -3189,6 +3320,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/usage/{tenant_id}/{project_id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "tenant_id",
         "project_id"
@@ -3210,6 +3342,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/agent-card.json",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3226,6 +3359,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/.well-known/agent.json",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3242,6 +3376,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/health",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3258,6 +3393,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/metrics",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3274,6 +3410,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/openapi.json",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3290,6 +3427,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/ready",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3306,6 +3444,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/drain",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3322,6 +3461,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/runs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3342,6 +3482,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/runs/{runId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3360,6 +3501,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/runs/{runId}/events",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3380,6 +3522,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/runs/{runId}:cancel",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3398,6 +3541,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/runs/{runId}:resume",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3416,6 +3560,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3435,6 +3580,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3456,6 +3602,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/sessions/{sessionId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3474,6 +3621,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId",
         "confirmationId"
@@ -3493,6 +3641,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions/{sessionId}/events",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3513,6 +3662,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions/{sessionId}/manager",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3531,6 +3681,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}/runs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3554,6 +3705,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}/surfaces",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3579,6 +3731,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId",
         "surfaceId"
@@ -3598,6 +3751,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}:actBatch",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3625,6 +3779,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}:adopt",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3650,6 +3805,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}:handoff",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3668,6 +3824,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions/{sessionId}:observe",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3686,6 +3843,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/sessions/{sessionId}:screenshot",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3706,6 +3864,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/sessions/{sessionId}:transform",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "sessionId"
       ],
@@ -3736,6 +3895,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3752,6 +3912,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/readyz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3768,6 +3929,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/chat/completions",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3796,6 +3958,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/models",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3815,6 +3978,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/responses",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3843,6 +4007,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3859,6 +4024,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/node-types",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3878,6 +4044,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/runs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3898,6 +4065,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/runs/{runId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3916,6 +4084,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/runs/{runId}:cancel",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "runId"
       ],
@@ -3934,6 +4103,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/workflows",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -3953,6 +4123,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -3983,6 +4154,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/workflows/{workflowId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4001,6 +4173,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/workflows/{workflowId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4019,6 +4192,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "PATCH",
       "path": "/v1/workflows/{workflowId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4053,6 +4227,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows/{workflowId}/runs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4078,6 +4253,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows/{workflowId}:call",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4104,6 +4280,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows/{workflowId}:compose",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "workflowId"
       ],
@@ -4130,6 +4307,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows:assistJson",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4157,6 +4335,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/workflows:validate",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4189,6 +4368,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4204,7 +4384,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "environments.list",
       "method": "GET",
       "path": "/v1/environments",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4219,11 +4400,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
     },
     {
-      "id": "domainsList",
+      "id": "listDomains",
       "upstreamOperationId": "domains.list",
       "method": "GET",
       "path": "/v1/domains",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4234,15 +4416,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "Domain capabilities represented in the versioned task catalog."
     },
     {
-      "id": "tasksList",
+      "id": "listTasks",
       "upstreamOperationId": "tasks.list",
       "method": "GET",
       "path": "/v1/tasks",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4255,15 +4438,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "List versioned task definitions without agent inputs."
     },
     {
-      "id": "tasksGet",
+      "id": "getTask",
       "upstreamOperationId": "tasks.get",
       "method": "GET",
       "path": "/v1/tasks/{task}",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "task"
       ],
@@ -4275,15 +4459,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "Get one immutable task definition including its agent-visible input."
     },
     {
-      "id": "tasksEvaluate",
+      "id": "evaluateTask",
       "upstreamOperationId": "tasks.evaluate",
       "method": "POST",
       "path": "/v1/tasks/{task}:evaluate",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "task"
       ],
@@ -4301,15 +4486,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "candidate"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Deterministically verify one candidate without creating an episode."
     },
     {
-      "id": "verifiersList",
+      "id": "listVerifiers",
       "upstreamOperationId": "verifiers.list",
       "method": "GET",
       "path": "/v1/verifiers",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4320,15 +4506,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "List verifier identities and bound tasks without grader content."
     },
     {
-      "id": "episodesList",
+      "id": "listEpisodes",
       "upstreamOperationId": "episodes.list",
       "method": "GET",
       "path": "/v1/episodes",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4341,15 +4528,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "List durable episode snapshots, newest first."
     },
     {
-      "id": "episodesCreate",
+      "id": "createEpisode",
       "upstreamOperationId": "episodes.create",
       "method": "POST",
       "path": "/v1/episodes",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4363,15 +4551,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "seed"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Reset a versioned task into a durable episode."
     },
     {
-      "id": "episodesGet",
+      "id": "getEpisode",
       "upstreamOperationId": "episodes.get",
       "method": "GET",
       "path": "/v1/episodes/{episode}",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "episode"
       ],
@@ -4381,15 +4570,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "Read and content-verify one durable episode snapshot."
     },
     {
-      "id": "episodesStep",
+      "id": "stepEpisode",
       "upstreamOperationId": "episodes.step",
       "method": "POST",
       "path": "/v1/episodes/{episode}:step",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "episode"
       ],
@@ -4404,15 +4594,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "action"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Apply one schema-validated action and persist the transition."
     },
     {
-      "id": "episodesExport",
+      "id": "exportEpisode",
       "upstreamOperationId": "episodes.export",
       "method": "POST",
       "path": "/v1/episodes/{episode}:export",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "episode"
       ],
@@ -4428,7 +4619,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "context_evidence_ref"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Retain a completed Gym episode and trajectory in Data Engine."
     },
     {
@@ -4436,7 +4627,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.list",
       "method": "GET",
       "path": "/v1/runs",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4456,7 +4648,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "runs.get",
       "method": "GET",
       "path": "/v1/runs/{run}",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "run"
       ],
@@ -4474,7 +4667,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "rollouts.create",
       "method": "POST",
       "path": "/v1/rollouts",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4497,11 +4691,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
     },
     {
-      "id": "sealedEvaluatorsList",
+      "id": "listSealedEvaluators",
       "upstreamOperationId": "sealedEvaluators.list",
       "method": "GET",
       "path": "/v1/sealed-evaluators",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4512,15 +4707,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "Discover boot-trusted exact sealed-evaluator identities."
     },
     {
-      "id": "sealedEvaluationsList",
+      "id": "listSealedEvaluations",
       "upstreamOperationId": "sealedEvaluations.list",
       "method": "GET",
       "path": "/v1/sealed-evaluations",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -4531,15 +4727,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "List persisted sealed-evaluation precommits and results."
     },
     {
-      "id": "sealedEvaluationsPrecommit",
+      "id": "precommitSealedEvaluation",
       "upstreamOperationId": "sealedEvaluations.precommit",
       "method": "POST",
       "path": "/v1/sealed-evaluations:precommit",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4557,15 +4754,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "trainer"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Persist an opaque sealed-suite commitment before policy freeze."
     },
     {
-      "id": "sealedEvaluationsGet",
+      "id": "getSealedEvaluation",
       "upstreamOperationId": "sealedEvaluations.get",
       "method": "GET",
       "path": "/v1/sealed-evaluations/{evaluation}",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "evaluation"
       ],
@@ -4575,15 +4773,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "dataset:read",
       "description": "Read one verified precommit and aggregate sealed result."
     },
     {
-      "id": "sealedEvaluationsRun",
+      "id": "runSealedEvaluation",
       "upstreamOperationId": "sealedEvaluations.run",
       "method": "POST",
       "path": "/v1/sealed-evaluations/{evaluation}:run",
-      "auth": "product",
+      "auth": "oauthResource",
+      "authAudience": "tempera-gym",
       "pathParams": [
         "evaluation"
       ],
@@ -4599,7 +4798,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "training_report"
       ],
       "bodyDefaults": {},
-      "scope": null,
+      "scope": "eval:run",
       "description": "Evaluate one frozen policy through its exact sealed adapter."
     }
   ],
@@ -4610,6 +4809,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/capability",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4635,6 +4835,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/completion/validate",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4673,6 +4874,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/browser/adapter/contract",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4689,6 +4891,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/launch/claim",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4709,6 +4912,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/launch/plan",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4733,6 +4937,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/register",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4759,6 +4964,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/adapter/validate",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4791,6 +4997,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/browser/admit",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4822,6 +5029,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/browser/profiles",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4838,6 +5046,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/capabilities",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4854,6 +5063,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/execute",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4881,6 +5091,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/health",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4897,6 +5108,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/integration",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4913,6 +5125,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/jobs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -4940,6 +5153,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/jobs/{id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -4958,6 +5172,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/jobs/{id}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "id"
       ],
@@ -4976,6 +5191,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/projects/{project}/modules",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "project"
       ],
@@ -4998,6 +5214,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/projects/{project}/modules/{sha256}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "project",
         "sha256"
@@ -5019,6 +5236,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/livez",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5035,6 +5253,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/readyz",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5051,6 +5270,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/health",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5067,6 +5287,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/stats",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5083,6 +5304,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/metrics",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5099,6 +5321,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/metrics/prometheus",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5115,6 +5338,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/audit",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -5134,6 +5358,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/remember",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5163,6 +5388,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/project",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5181,6 +5407,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/query",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5209,6 +5436,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/maintenance",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5232,6 +5460,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/health",
       "auth": "none",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -5248,6 +5477,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/use-cases",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5271,6 +5501,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/use-cases/{useCaseId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "useCaseId"
@@ -5292,6 +5523,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/artifacts:ingest",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5318,6 +5550,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/web:ingest",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5347,6 +5580,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/campaigns",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5378,6 +5612,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/campaigns",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5401,6 +5636,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/campaigns/{campaignId}:transition",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "campaignId"
@@ -5428,6 +5664,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "campaignId"
@@ -5449,6 +5686,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/pipelines:runUseCase",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5481,6 +5719,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/expert-tasks",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5506,6 +5745,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/review-qualification-tasks",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5536,6 +5776,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -5572,6 +5813,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -5600,6 +5842,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -5628,6 +5871,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -5655,6 +5899,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -5686,6 +5931,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/review-operations",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5709,6 +5955,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/metrics",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5729,6 +5976,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/label-quality",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5749,6 +5997,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/ecosystem/readiness",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5769,6 +6018,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/artifacts",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5793,6 +6043,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "artifactId"
@@ -5816,6 +6067,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}/labels",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "artifactId"
@@ -5840,6 +6092,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/datasets:profile",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5863,6 +6116,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/jobs",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -5893,6 +6147,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "jobId"
@@ -5914,6 +6169,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}/results",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "jobId"
@@ -5938,6 +6194,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "productId"
@@ -5959,6 +6216,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:validate",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "productId"
@@ -5980,6 +6238,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/products:checkLeakage",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6004,6 +6263,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}/manifest",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "productId"
@@ -6025,6 +6285,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/training-releases:admit",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6053,6 +6314,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/training-releases/{releaseId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "releaseId"
@@ -6074,6 +6336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:derive",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "productId"
@@ -6104,6 +6367,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/products:emitEval",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6130,6 +6394,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/sources:extract",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6167,6 +6432,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/connectors",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6190,6 +6456,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/tools",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6222,6 +6489,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/tools",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6245,6 +6513,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/tools/{toolName}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "toolName"
@@ -6266,6 +6535,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "DELETE",
       "path": "/v1/{parent}/tools/{toolName}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "toolName"
@@ -6287,6 +6557,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/tools/{toolName}:invoke",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "toolName"
@@ -6305,11 +6576,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Invoke a stored custom tool through its configured execution boundary."
     },
     {
-      "id": "projectsDiscoveryReleasesCommit",
+      "id": "commitDiscoveryRelease",
       "upstreamOperationId": "projects.discoveryReleases.commit",
       "method": "POST",
       "path": "/v1/{parent}/discoveryReleases:commit",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6349,11 +6621,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Atomically commit an immutable discovery release graph."
     },
     {
-      "id": "projectsDiscoveryReleasesGet",
+      "id": "getDiscoveryRelease",
       "upstreamOperationId": "projects.discoveryReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "discoveryReleaseId"
@@ -6375,6 +6648,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/evidenceRecords",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6415,6 +6689,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6439,6 +6714,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "evidenceRecordId"
@@ -6460,6 +6736,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/episodes",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6506,6 +6783,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/episodes",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6530,6 +6808,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/episodes/{episodeId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "episodeId"
@@ -6551,6 +6830,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/researchRetrieval:query",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6587,6 +6867,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "POST",
       "path": "/v1/{parent}/researchCatalogEntries",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6621,6 +6902,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent"
       ],
@@ -6644,6 +6926,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
       "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "parent",
         "entryId"

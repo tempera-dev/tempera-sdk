@@ -2,8 +2,8 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "model:read" | "model:invoke" | "pii:unmask" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
@@ -52,7 +52,8 @@ export type TemperaOperationSpec = {
   upstreamOperationId: string;
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
-  auth: "none" | "account" | "product" | "introspectionSecret";
+  auth: "none" | "account" | "product" | "oauthResource" | "introspectionSecret";
+  authAudience: TemperaAudience | null;
   pathParams: readonly string[];
   pathParamTemplates: Readonly<Record<string, string>>;
   query: readonly string[];
@@ -146,25 +147,25 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   /** Resolve connection runtime metadata for a tenant-bound tempera-llm service credential. */
   providerConnectionsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List external experiment-provider metadata. Secret references and values are never returned. */
-  experimentProviderConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listExperimentProviderConnections(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Register a tenant-scoped experiment provider using only an external secret reference. */
-  experimentProviderConnectionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  createExperimentProviderConnection(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an experiment-provider connection. An unknown id is a no-op. */
-  experimentProviderConnectionsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  revokeExperimentProviderConnection(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically consume an exact human approval and resolve a provider reference for tempera-workflows. */
-  experimentProviderConnectionsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  resolveExperimentProviderConnection(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List versioned public Ed25519 verifier keys for an authorized human administrator. */
-  bioSignerKeysList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listBioSignerKeys(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Register or rotate a public Ed25519 verifier key. Private key material is rejected. */
-  bioSignerKeysCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  createBioSignerKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke a public verifier key while retaining its history. */
-  bioSignerKeysRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  revokeBioSignerKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List exact, single-use experiment approvals for an authorized human approver. */
-  experimentApprovalsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listExperimentApprovals(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests. */
-  experimentApprovalsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  createExperimentApproval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an unused experiment approval. Consumed approvals remain immutable. */
-  experimentApprovalsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  revokeExperimentApproval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent audit-log events for the user and active organization (up to 50, newest first). */
   listAuditLog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the connector catalog (MCP clients, editors, and API surfaces). */
@@ -467,25 +468,25 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Domain capabilities represented in the versioned task catalog. */
-  domainsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List versioned task definitions without agent inputs. */
-  tasksList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get one immutable task definition including its agent-visible input. */
-  tasksGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  getTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Deterministically verify one candidate without creating an episode. */
-  tasksEvaluate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  evaluateTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List verifier identities and bound tasks without grader content. */
-  verifiersList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listVerifiers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List durable episode snapshots, newest first. */
-  episodesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listEpisodes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Reset a versioned task into a durable episode. */
-  episodesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  createEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read and content-verify one durable episode snapshot. */
-  episodesGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  getEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Apply one schema-validated action and persist the transition. */
-  episodesStep(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  stepEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Retain a completed Gym episode and trajectory in Data Engine. */
-  episodesExport(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  exportEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List persisted rollout run index records, newest first. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
@@ -493,15 +494,15 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Discover boot-trusted exact sealed-evaluator identities. */
-  sealedEvaluatorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listSealedEvaluators(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List persisted sealed-evaluation precommits and results. */
-  sealedEvaluationsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  listSealedEvaluations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Persist an opaque sealed-suite commitment before policy freeze. */
-  sealedEvaluationsPrecommit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  precommitSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read one verified precommit and aggregate sealed result. */
-  sealedEvaluationsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  getSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Evaluate one frozen policy through its exact sealed adapter. */
-  sealedEvaluationsRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  runSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {
@@ -656,9 +657,9 @@ export interface DataEngineClient extends TemperaProductClientBase {
   /** Invoke a stored custom tool through its configured execution boundary. */
   invokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically commit an immutable discovery release graph. */
-  projectsDiscoveryReleasesCommit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  commitDiscoveryRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get one immutable discovery release. */
-  projectsDiscoveryReleasesGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  getDiscoveryRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create an immutable shared evidence record by canonical content hash. */
   createEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List immutable shared evidence records with bounded cursor pagination. */

@@ -2386,7 +2386,7 @@ let spec = client.build_request("data_engine", "invoke_tool", &[
 
 </CodeGroup>
 
-### projectsDiscoveryReleasesCommit
+### commitDiscoveryRelease
 
 `POST /v1/{parent}/discoveryReleases:commit`
 
@@ -2396,7 +2396,7 @@ Atomically commit an immutable discovery release graph.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.projectsDiscoveryReleasesCommit()` · Python `client.data_engine.projects_discovery_releases_commit()` · Rust `build_request("data_engine", "projects_discovery_releases_commit", params)`
+- **Call as:** TypeScript `client.dataEngine.commitDiscoveryRelease()` · Python `client.data_engine.commit_discovery_release()` · Rust `build_request("data_engine", "commit_discovery_release", params)`
 
 **Path parameters**
 
@@ -2423,7 +2423,7 @@ Atomically commit an immutable discovery release graph.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.dataEngine.projectsDiscoveryReleasesCommit({
+const result = await client.dataEngine.commitDiscoveryRelease({
   parent: "<parent>",
   schemaVersion: "<schemaVersion>",
   requestId: "<requestId>",
@@ -2432,7 +2432,7 @@ const result = await client.dataEngine.projectsDiscoveryReleasesCommit({
 ```
 
 ```python Python
-result = client.data_engine.projects_discovery_releases_commit({
+result = client.data_engine.commit_discovery_release({
     "parent": "<parent>",
     "schemaVersion": "<schemaVersion>",
     "requestId": "<requestId>",
@@ -2441,7 +2441,7 @@ result = client.data_engine.projects_discovery_releases_commit({
 ```
 
 ```rust Rust
-let spec = client.build_request("data_engine", "projects_discovery_releases_commit", &[
+let spec = client.build_request("data_engine", "commit_discovery_release", &[
     ("parent", "<parent>".into()),
     ("schemaVersion", "<schemaVersion>".into()),
     ("requestId", "<requestId>".into()),
@@ -2453,7 +2453,7 @@ let spec = client.build_request("data_engine", "projects_discovery_releases_comm
 
 </CodeGroup>
 
-### projectsDiscoveryReleasesGet
+### getDiscoveryRelease
 
 `GET /v1/{parent}/discoveryReleases/{discoveryReleaseId}`
 
@@ -2463,7 +2463,7 @@ Get one immutable discovery release.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.projectsDiscoveryReleasesGet()` · Python `client.data_engine.projects_discovery_releases_get()` · Rust `build_request("data_engine", "projects_discovery_releases_get", params)`
+- **Call as:** TypeScript `client.dataEngine.getDiscoveryRelease()` · Python `client.data_engine.get_discovery_release()` · Rust `build_request("data_engine", "get_discovery_release", params)`
 
 **Path parameters**
 
@@ -2475,21 +2475,21 @@ Get one immutable discovery release.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.dataEngine.projectsDiscoveryReleasesGet({
+const result = await client.dataEngine.getDiscoveryRelease({
   parent: "<parent>",
   discoveryReleaseId: "<discoveryReleaseId>",
 });
 ```
 
 ```python Python
-result = client.data_engine.projects_discovery_releases_get({
+result = client.data_engine.get_discovery_release({
     "parent": "<parent>",
     "discoveryReleaseId": "<discoveryReleaseId>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("data_engine", "projects_discovery_releases_get", &[
+let spec = client.build_request("data_engine", "get_discovery_release", &[
     ("parent", "<parent>".into()),
     ("discoveryReleaseId", "<discoveryReleaseId>".into()),
 ])?;
