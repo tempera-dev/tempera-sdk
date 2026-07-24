@@ -1230,30 +1230,63 @@
         "description": "The error payload inside [`ErrorResponse`].",
         "required": [
           "code",
-          "message",
           "status",
-          "retryable"
+          "message",
+          "details"
         ],
         "properties": {
           "code": {
-            "type": "string",
-            "description": "Stable SCREAMING_SNAKE code (AIP-aligned), e.g. `INVALID_ARGUMENT`.",
-            "example": "INVALID_ARGUMENT"
+            "type": "integer",
+            "format": "int32",
+            "description": "Numeric HTTP status code.",
+            "example": 400,
+            "minimum": 0
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorInfo"
+            },
+            "description": "Typed machine-readable error details."
           },
           "message": {
             "type": "string",
             "description": "Human-readable description safe to show to operators."
           },
-          "retryable": {
-            "type": "boolean",
-            "description": "Whether retrying the identical request may succeed."
-          },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "description": "HTTP status carried in the body for stream/proxy contexts.",
-            "example": 400,
-            "minimum": 0
+            "type": "string",
+            "description": "Canonical `google.rpc.Code` enum name, e.g. `INVALID_ARGUMENT`.",
+            "example": "INVALID_ARGUMENT"
+          }
+        }
+      },
+      "ErrorInfo": {
+        "type": "object",
+        "description": "A typed `google.rpc.ErrorInfo` detail preserving the service reason.",
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Service namespace for the reason."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "String metadata, including the retryability decision.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "description": "Stable Workflows reason, e.g. `PAYLOAD_TOO_LARGE`."
           }
         }
       },
