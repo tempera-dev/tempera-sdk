@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "091773aa784d2f445ba9d89ceeabdba56f7b7ab7",
   "source_branch": "codex/rl-substrate-v1",
-  "source_commit": "9247f1604aec36eca1710450488a5f8de0e3ca95",
+  "source_commit": "e8cb03acb0b0b641f3860ba15f5b2a8e40d6d63c",
   "source_mode": "100644",
   "source_path": "contracts/gym-api.openapi.yaml",
   "source_repo": "tempera-dev/tempera-gym",
