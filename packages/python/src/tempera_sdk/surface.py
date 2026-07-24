@@ -128,7 +128,7 @@ PRODUCTS = {
         "repository": "https://github.com/tempera-dev/tempera-gym",
         "env_var": "TEMPERA_GYM_URL",
         "audience": "tempera-gym",
-        "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
+        "description": "Shared RL task substrate for trusted domain catalogs, deterministic durable episodes, hidden-verifier evaluation, content-addressed trajectories, and evidence-backed Data Engine export."
     },
     "cradle": {
         "name": "cradle",
@@ -1962,6 +1962,190 @@ OPERATIONS = {
             "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
         },
         {
+            "id": "list_domains",
+            "method": "GET",
+            "path": "/v1/domains",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List trusted task domains with task-family and risk-tier summaries."
+        },
+        {
+            "id": "list_tasks",
+            "method": "GET",
+            "path": "/v1/tasks",
+            "auth": "product",
+            "path_params": [],
+            "query": [
+                "domain",
+                "family"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List trusted versioned task definitions without hidden grader content."
+        },
+        {
+            "id": "get_task",
+            "method": "GET",
+            "path": "/v1/tasks/{task}",
+            "auth": "product",
+            "path_params": [
+                "task"
+            ],
+            "query": [
+                "version"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Fetch one immutable agent-visible task definition by id and optional semantic version."
+        },
+        {
+            "id": "evaluate_task",
+            "method": "POST",
+            "path": "/v1/tasks/{task}:evaluate",
+            "auth": "product",
+            "path_params": [
+                "task"
+            ],
+            "query": [
+                "version"
+            ],
+            "body": [
+                "candidate",
+                "seed",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidate"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Evaluate one candidate deterministically through the task's trusted verifier without creating an episode."
+        },
+        {
+            "id": "list_verifiers",
+            "method": "GET",
+            "path": "/v1/verifiers",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List immutable verifier identities, availability, and bound tasks without hidden scorer content."
+        },
+        {
+            "id": "list_episodes",
+            "method": "GET",
+            "path": "/v1/episodes",
+            "auth": "product",
+            "path_params": [],
+            "query": [
+                "domain",
+                "status",
+                "limit"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List durable task episodes, optionally filtered by domain or terminal status."
+        },
+        {
+            "id": "create_episode",
+            "method": "POST",
+            "path": "/v1/episodes",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "task",
+                "seed"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "task",
+                "seed"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Reset one immutable task version into a deterministic durable episode."
+        },
+        {
+            "id": "get_episode",
+            "method": "GET",
+            "path": "/v1/episodes/{episode}",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Fetch and content-verify one durable episode snapshot."
+        },
+        {
+            "id": "step_episode",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:step",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "query": [],
+            "body": [
+                "action",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "action"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Apply one schema-validated action and persist its verifier-scored transition and trajectory."
+        },
+        {
+            "id": "export_episode",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:export",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "query": [],
+            "body": [
+                "context_evidence_ref",
+                "verifier_receipt_artifact_ref",
+                "request_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "context_evidence_ref"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Export one completed episode and trajectory to Data Engine; centrally authenticated callers also require dataset:write."
+        },
+        {
             "id": "list_runs",
             "method": "GET",
             "path": "/v1/runs",
@@ -2006,7 +2190,9 @@ OPERATIONS = {
                 "policy",
                 "seed",
                 "max_steps",
-                "model"
+                "model",
+                "data_engine_product_id",
+                "data_engine_max_records"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -2015,7 +2201,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+            "description": "Execute one legacy rollout synchronously, optionally hydrate Data Engine records, persist the trajectory, and return the completed operation envelope."
         }
     ],
     "cradle": [

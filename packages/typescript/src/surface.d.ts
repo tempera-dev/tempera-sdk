@@ -304,11 +304,31 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List trusted task domains with task-family and risk-tier summaries. */
+  listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List trusted versioned task definitions without hidden grader content. */
+  listTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one immutable agent-visible task definition by id and optional semantic version. */
+  getTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Evaluate one candidate deterministically through the task's trusted verifier without creating an episode. */
+  evaluateTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List immutable verifier identities, availability, and bound tasks without hidden scorer content. */
+  listVerifiers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List durable task episodes, optionally filtered by domain or terminal status. */
+  listEpisodes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Reset one immutable task version into a deterministic durable episode. */
+  createEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch and content-verify one durable episode snapshot. */
+  getEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply one schema-validated action and persist its verifier-scored transition and trajectory. */
+  stepEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Export one completed episode and trajectory to Data Engine; centrally authenticated callers also require dataset:write. */
+  exportEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List persisted rollout run index records, newest first. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
+  /** Execute one legacy rollout synchronously, optionally hydrate Data Engine records, persist the trajectory, and return the completed operation envelope. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
