@@ -59,7 +59,7 @@ mod tests {
             "data_engine",
             "human_data",
             "temp_js",
-            "temp_o_s",
+            "temp_os",
             "arrha",
         ] {
             assert!(find_product(key).is_some(), "missing product {key}");

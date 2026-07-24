@@ -238,7 +238,7 @@ pub const PRODUCTS: &[ProductSpec] = &[
         repository: "https://github.com/tempera-dev/human-data",
         env_var: "TEMPERA_HUMAN_DATA_URL",
         audience: Some("human-data"),
-        description: "Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the agent quality loop. Passthrough client only; no typed operations yet.",
+        description: "Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, return candidate cases to the agent quality loop, and compute a typed qualification receipt.",
     },
     ProductSpec {
         key: "temp_js",
@@ -249,7 +249,7 @@ pub const PRODUCTS: &[ProductSpec] = &[
         description: "Durable JavaScript runtime bridge for Tempera agents. Passthrough client only; no typed operations yet.",
     },
     ProductSpec {
-        key: "temp_o_s",
+        key: "temp_os",
         name: "tempOS",
         repository: "https://github.com/tempera-dev/tempOS",
         env_var: "TEMPERA_TEMPOS_URL",
@@ -4419,7 +4419,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
     },
     OperationSpec {
         product: "tempera_bio",
-        id: "ingest_mave_d_b_score_set",
+        id: "ingest_mave_db_score_set",
         upstream_operation_id: "ingestMaveDBScoreSet",
         method: "POST",
         path: "/v1/sources/maveDbScoreSets:ingest",

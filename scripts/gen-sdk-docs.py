@@ -31,6 +31,8 @@ import re
 import sys
 from pathlib import Path
 
+from sdk_names import snake_case
+
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 ROLLOUT = ROOT / "docs" / "ROLLOUT.md"
@@ -59,7 +61,7 @@ MCP_ERROR_MEANINGS = {
 
 def snake(camel: str) -> str:
     """lowerCamelCase -> snake_case (matches gen-sdk-surface.py and the Rust keys)."""
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", camel).lower()
+    return snake_case(camel)
 
 
 def snake_attr(camel: str) -> str:

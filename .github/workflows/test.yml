@@ -375,6 +375,10 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
       - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/test-sdk-names.py
+      - run: python3 scripts/test-aip-conformance.py
+      - run: python3 scripts/check-aip-conformance.py
+      - run: python3 scripts/check-exact-source-gaps.py
       - run: python3 scripts/sync-openapi-surface.py --check
       - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py

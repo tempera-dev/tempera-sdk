@@ -370,7 +370,7 @@ Ingest mave d b score set.
 - **Producer operationId:** `ingestMaveDBScoreSet`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:source:read`
-- **Call as:** TypeScript `client.temperaBio.ingestMaveDBScoreSet()` · Python `client.tempera_bio.ingest_mave_d_b_score_set()` · Rust `build_request("tempera_bio", "ingest_mave_d_b_score_set", params)`
+- **Call as:** TypeScript `client.temperaBio.ingestMaveDBScoreSet()` · Python `client.tempera_bio.ingest_mave_db_score_set()` · Rust `build_request("tempera_bio", "ingest_mave_db_score_set", params)`
 
 **Body parameters**
 
@@ -387,13 +387,13 @@ const result = await client.temperaBio.ingestMaveDBScoreSet({
 ```
 
 ```python Python
-result = client.tempera_bio.ingest_mave_d_b_score_set({
+result = client.tempera_bio.ingest_mave_db_score_set({
     "scoreSetUrn": "<scoreSetUrn>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_bio", "ingest_mave_d_b_score_set", &[
+let spec = client.build_request("tempera_bio", "ingest_mave_db_score_set", &[
     ("scoreSetUrn", "<scoreSetUrn>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
