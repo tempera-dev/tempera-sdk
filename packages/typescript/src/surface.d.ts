@@ -425,10 +425,10 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   createWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one stored workflow definition. */
   getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Replace a stored workflow definition with a new validated revision. */
-  updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete a stored workflow definition. */
   deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace a stored workflow definition with a new validated revision. */
+  updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Start a run of a stored workflow with an optional input document and idempotency key. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Run a workflow to completion and return its output in a single call. */
