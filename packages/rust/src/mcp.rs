@@ -10,7 +10,7 @@
 //! error responses to [`parse_mcp_error`]. Mirrors `TemperaMcpClient` in the
 //! TypeScript and Python packages.
 
-use crate::error::{json_escape, parse_json, Json};
+use crate::error::{Json, json_escape, parse_json};
 
 /// MCP protocol revision sent in `initialize` requests.
 pub const MCP_PROTOCOL_VERSION: &str = "2025-06-18";

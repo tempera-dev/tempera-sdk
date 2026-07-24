@@ -15,7 +15,7 @@
 //!   `introspectionSecret`, and `product` (per-audience bearer through
 //!   [`crate::auth::TemperaAuth`], with unified tp_ API-key fallback).
 
-use crate::auth::{urlencode, TemperaAuth};
+use crate::auth::{TemperaAuth, urlencode};
 use crate::error::json_escape;
 use crate::surface;
 
@@ -593,12 +593,14 @@ mod tests {
             )
             .unwrap();
         assert_eq!(spec.url, "https://palette.example.test/v1/traces/tenant_1");
-        assert!(spec
-            .query
-            .contains(&("limit".to_string(), "25".to_string())));
-        assert!(spec
-            .query
-            .contains(&("status".to_string(), "error".to_string())));
+        assert!(
+            spec.query
+                .contains(&("limit".to_string(), "25".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("status".to_string(), "error".to_string()))
+        );
         assert_eq!(spec.body_json, None);
     }
 
@@ -616,12 +618,16 @@ mod tests {
                 ],
             )
             .unwrap();
-        assert!(get_spec
-            .query
-            .contains(&("new_filter".to_string(), "on".to_string())));
-        assert!(get_spec
-            .query
-            .contains(&("flag".to_string(), "true".to_string())));
+        assert!(
+            get_spec
+                .query
+                .contains(&("new_filter".to_string(), "on".to_string()))
+        );
+        assert!(
+            get_spec
+                .query
+                .contains(&("flag".to_string(), "true".to_string()))
+        );
         assert_eq!(get_spec.body_json, None);
 
         let post_spec = client
@@ -672,9 +678,11 @@ mod tests {
                 name: "trace_id".to_string(),
             }
         );
-        assert!(error
-            .to_string()
-            .contains("missing required path parameter \"trace_id\""));
+        assert!(
+            error
+                .to_string()
+                .contains("missing required path parameter \"trace_id\"")
+        );
 
         // Empty values count as missing, mirroring the TypeScript client.
         let error = client
@@ -727,9 +735,11 @@ mod tests {
                 audience: "remi".to_string(),
             }
         );
-        assert!(error
-            .to_string()
-            .contains("no credential for audience remi"));
+        assert!(
+            error
+                .to_string()
+                .contains("no credential for audience remi")
+        );
 
         // An auth without any credential for the audience also fails.
         let client = client.with_auth(TemperaAuth::new("https://api.tempera.dev"));

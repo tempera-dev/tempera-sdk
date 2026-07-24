@@ -23,18 +23,18 @@ pub mod mcp;
 pub mod surface;
 
 pub use auth::{
-    base64url_no_pad, pkce_challenge_s256, pkce_pair_from_entropy, pkce_verifier_from_entropy,
-    AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet,
+    AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet, base64url_no_pad, pkce_challenge_s256,
+    pkce_pair_from_entropy, pkce_verifier_from_entropy,
 };
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
-pub use error::{normalize_error_body, TemperaApiError};
-pub use mcp::{parse_mcp_error, McpError, McpRequestBuilder, MCP_PROTOCOL_VERSION};
+pub use error::{TemperaApiError, normalize_error_body};
+pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
 pub use surface::{
-    find_operation, find_product, EnvironmentTarget, McpMethodSpec, OperationSpec, ProductSpec,
-    AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, INTROSPECT_PATH, MCP_ERROR_INTERNAL,
-    MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST, MCP_ERROR_METHOD_NOT_FOUND,
-    MCP_ERROR_PLAN_LIMIT, MCP_METHODS, MCP_PATH, OPERATIONS, PRODUCTS, REVOKE_PATH, SCOPES,
-    SURFACE_VERSION, TOKEN_PATH,
+    AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
+    MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,
+    MCP_ERROR_METHOD_NOT_FOUND, MCP_ERROR_PLAN_LIMIT, MCP_METHODS, MCP_PATH, McpMethodSpec,
+    OPERATIONS, OperationSpec, PRODUCTS, ProductSpec, REVOKE_PATH, SCOPES, SURFACE_VERSION,
+    TOKEN_PATH, find_operation, find_product,
 };
 
 #[cfg(test)]
