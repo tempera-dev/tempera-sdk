@@ -112,25 +112,25 @@ Create a non-streaming OpenAI-compatible chat completion through the tempera-llm
 
 ```typescript TypeScript
 const result = await client.temperaLlm.createChatCompletion({
-  byok: "<byok>",
   max_tokens: "<max_tokens>",
   messages: "<messages>",
+  model: "<model>",
 });
 ```
 
 ```python Python
 result = client.tempera_llm.create_chat_completion({
-    "byok": "<byok>",
     "max_tokens": "<max_tokens>",
     "messages": "<messages>",
+    "model": "<model>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_llm", "create_chat_completion", &[
-    ("byok", "<byok>".into()),
     ("max_tokens", "<max_tokens>".into()),
     ("messages", "<messages>".into()),
+    ("model", "<model>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -208,25 +208,25 @@ Create a non-streaming OpenAI Responses-style inference request through the temp
 
 ```typescript TypeScript
 const result = await client.temperaLlm.createResponse({
-  byok: "<byok>",
   input: "<input>",
   max_output_tokens: "<max_output_tokens>",
+  model: "<model>",
 });
 ```
 
 ```python Python
 result = client.tempera_llm.create_response({
-    "byok": "<byok>",
     "input": "<input>",
     "max_output_tokens": "<max_output_tokens>",
+    "model": "<model>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_llm", "create_response", &[
-    ("byok", "<byok>".into()),
     ("input", "<input>".into()),
     ("max_output_tokens", "<max_output_tokens>".into()),
+    ("model", "<model>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

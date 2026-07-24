@@ -4831,6 +4831,33 @@ OPERATIONS = {
     ],
     "temperaBio": [
         {
+            "id": "derive_campaign_state",
+            "upstream_operation_id": "deriveCampaignState",
+            "method": "POST",
+            "path": "/v1/campaignStates:derive",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidateSet",
+                "hypothesis",
+                "program",
+                "rounds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "program",
+                "hypothesis",
+                "candidateSet",
+                "rounds"
+            ],
+            "body_defaults": {},
+            "scope": "bio:decision:write",
+            "description": "Derive campaign state."
+        },
+        {
             "id": "prepare_candidate_set",
             "upstream_operation_id": "prepareCandidateSet",
             "method": "POST",

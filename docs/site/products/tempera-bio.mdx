@@ -21,13 +21,66 @@ Fail-closed computational-biology artifact pipeline for source ingestion, propos
 | Audience | `tempera-bio` |
 | Auth | bearer minted for audience tempera-bio with the operation's bio scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaBio` · Python `client.tempera_bio` · Rust `build_request("tempera_bio", ...)` |
-| Typed operations | 8 |
+| Typed operations | 9 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaBio.request(path, options)` (TypeScript) /
 `client.tempera_bio.request(path, ...)` (Python).
 
 ## Operations
+
+### deriveCampaignState
+
+`POST /v1/campaignStates:derive`
+
+Derive campaign state.
+
+- **Producer operationId:** `deriveCampaignState`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:decision:write`
+- **Call as:** TypeScript `client.temperaBio.deriveCampaignState()` · Python `client.tempera_bio.derive_campaign_state()` · Rust `build_request("tempera_bio", "derive_campaign_state", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `candidateSet` | yes | — |
+| `hypothesis` | yes | — |
+| `program` | yes | — |
+| `rounds` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.deriveCampaignState({
+  candidateSet: "<candidateSet>",
+  hypothesis: "<hypothesis>",
+  program: "<program>",
+  rounds: "<rounds>",
+});
+```
+
+```python Python
+result = client.tempera_bio.derive_campaign_state({
+    "candidateSet": "<candidateSet>",
+    "hypothesis": "<hypothesis>",
+    "program": "<program>",
+    "rounds": "<rounds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "derive_campaign_state", &[
+    ("candidateSet", "<candidateSet>".into()),
+    ("hypothesis", "<hypothesis>".into()),
+    ("program", "<program>".into()),
+    ("rounds", "<rounds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
 
 ### prepareCandidateSet
 
@@ -147,6 +200,8 @@ const result = await client.temperaBio.deriveDecision({
   candidateSet: "<candidateSet>",
   experimentProposal: "<experimentProposal>",
   hypothesis: "<hypothesis>",
+  program: "<program>",
+  verifierReceipts: "<verifierReceipts>",
 });
 ```
 
@@ -155,6 +210,8 @@ result = client.tempera_bio.derive_decision({
     "candidateSet": "<candidateSet>",
     "experimentProposal": "<experimentProposal>",
     "hypothesis": "<hypothesis>",
+    "program": "<program>",
+    "verifierReceipts": "<verifierReceipts>",
 })
 ```
 
@@ -163,6 +220,8 @@ let spec = client.build_request("tempera_bio", "derive_decision", &[
     ("candidateSet", "<candidateSet>".into()),
     ("experimentProposal", "<experimentProposal>".into()),
     ("hypothesis", "<hypothesis>".into()),
+    ("program", "<program>".into()),
+    ("verifierReceipts", "<verifierReceipts>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -289,6 +348,9 @@ const result = await client.temperaBio.verifyMeasurement({
   candidate: "<candidate>",
   experimentProposal: "<experimentProposal>",
   hypothesis: "<hypothesis>",
+  identitySignature: "<identitySignature>",
+  program: "<program>",
+  rawMeasurementBase64: "<rawMeasurementBase64>",
 });
 ```
 
@@ -297,6 +359,9 @@ result = client.tempera_bio.verify_measurement({
     "candidate": "<candidate>",
     "experimentProposal": "<experimentProposal>",
     "hypothesis": "<hypothesis>",
+    "identitySignature": "<identitySignature>",
+    "program": "<program>",
+    "rawMeasurementBase64": "<rawMeasurementBase64>",
 })
 ```
 
@@ -305,6 +370,9 @@ let spec = client.build_request("tempera_bio", "verify_measurement", &[
     ("candidate", "<candidate>".into()),
     ("experimentProposal", "<experimentProposal>".into()),
     ("hypothesis", "<hypothesis>".into()),
+    ("identitySignature", "<identitySignature>".into()),
+    ("program", "<program>".into()),
+    ("rawMeasurementBase64", "<rawMeasurementBase64>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

@@ -262,25 +262,25 @@ Create a first-party hosted account session from email/password login or signup.
 
 ```typescript TypeScript
 const result = await client.controlPlane.createHostedSession({
-  mode: "<mode>",
   email: "<email>",
   password: "<password>",
+  mode: "<mode>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_hosted_session({
-    "mode": "<mode>",
     "email": "<email>",
     "password": "<password>",
+    "mode": "<mode>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_hosted_session", &[
-    ("mode", "<mode>".into()),
     ("email", "<email>".into()),
     ("password", "<password>".into()),
+    ("mode", "<mode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -892,6 +892,7 @@ const result = await client.controlPlane.createApiKey({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  scopes: "<scopes>",
 });
 ```
 
@@ -900,6 +901,7 @@ result = client.control_plane.create_api_key({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "scopes": "<scopes>",
 })
 ```
 
@@ -908,6 +910,7 @@ let spec = client.build_request("control_plane", "create_api_key", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("scopes", "<scopes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1068,6 +1071,9 @@ const result = await client.controlPlane.providerConnectionsCreate({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  provider: "<provider>",
+  name: "<name>",
+  secretRef: "<secretRef>",
 });
 ```
 
@@ -1076,6 +1082,9 @@ result = client.control_plane.provider_connections_create({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "provider": "<provider>",
+    "name": "<name>",
+    "secretRef": "<secretRef>",
 })
 ```
 
@@ -1084,6 +1093,9 @@ let spec = client.build_request("control_plane", "provider_connections_create", 
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("provider", "<provider>".into()),
+    ("name", "<name>".into()),
+    ("secretRef", "<secretRef>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1217,6 +1229,7 @@ const result = await client.controlPlane.providerConnectionsResolve({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  usageDelegation: "<usageDelegation>",
 });
 ```
 
@@ -1226,6 +1239,7 @@ result = client.control_plane.provider_connections_resolve({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "usageDelegation": "<usageDelegation>",
 })
 ```
 
@@ -1235,6 +1249,7 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("usageDelegation", "<usageDelegation>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1316,6 +1331,11 @@ const result = await client.controlPlane.createExperimentProviderConnection({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  provider: "<provider>",
+  providerKind: "<providerKind>",
+  name: "<name>",
+  secretRef: "<secretRef>",
+  capabilities: "<capabilities>",
 });
 ```
 
@@ -1324,6 +1344,11 @@ result = client.control_plane.create_experiment_provider_connection({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "provider": "<provider>",
+    "providerKind": "<providerKind>",
+    "name": "<name>",
+    "secretRef": "<secretRef>",
+    "capabilities": "<capabilities>",
 })
 ```
 
@@ -1332,6 +1357,11 @@ let spec = client.build_request("control_plane", "create_experiment_provider_con
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("provider", "<provider>".into()),
+    ("providerKind", "<providerKind>".into()),
+    ("name", "<name>".into()),
+    ("secretRef", "<secretRef>".into()),
+    ("capabilities", "<capabilities>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1418,6 +1448,12 @@ const result = await client.controlPlane.resolveExperimentProviderConnection({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  approvalId: "<approvalId>",
+  proposalDigest: "<proposalDigest>",
+  protocolDigest: "<protocolDigest>",
+  mcpPrepareReceiptDigest: "<mcpPrepareReceiptDigest>",
+  mcpCommitReceiptDigest: "<mcpCommitReceiptDigest>",
+  submissionIdempotencyKey: "<submissionIdempotencyKey>",
 });
 ```
 
@@ -1427,6 +1463,12 @@ result = client.control_plane.resolve_experiment_provider_connection({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "approvalId": "<approvalId>",
+    "proposalDigest": "<proposalDigest>",
+    "protocolDigest": "<protocolDigest>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "mcpCommitReceiptDigest": "<mcpCommitReceiptDigest>",
+    "submissionIdempotencyKey": "<submissionIdempotencyKey>",
 })
 ```
 
@@ -1436,6 +1478,12 @@ let spec = client.build_request("control_plane", "resolve_experiment_provider_co
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("approvalId", "<approvalId>".into()),
+    ("proposalDigest", "<proposalDigest>".into()),
+    ("protocolDigest", "<protocolDigest>".into()),
+    ("mcpPrepareReceiptDigest", "<mcpPrepareReceiptDigest>".into()),
+    ("mcpCommitReceiptDigest", "<mcpCommitReceiptDigest>".into()),
+    ("submissionIdempotencyKey", "<submissionIdempotencyKey>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1516,6 +1564,8 @@ const result = await client.controlPlane.createBioSignerKey({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  keyId: "<keyId>",
+  publicJwk: "<publicJwk>",
 });
 ```
 
@@ -1524,6 +1574,8 @@ result = client.control_plane.create_bio_signer_key({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "keyId": "<keyId>",
+    "publicJwk": "<publicJwk>",
 })
 ```
 
@@ -1532,6 +1584,8 @@ let spec = client.build_request("control_plane", "create_bio_signer_key", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("keyId", "<keyId>".into()),
+    ("publicJwk", "<publicJwk>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1656,6 +1710,11 @@ const result = await client.controlPlane.createExperimentApproval({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  proposalDigest: "<proposalDigest>",
+  protocolDigest: "<protocolDigest>",
+  connectionId: "<connectionId>",
+  mcpPrepareReceiptDigest: "<mcpPrepareReceiptDigest>",
+  expiresAt: "<expiresAt>",
 });
 ```
 
@@ -1664,6 +1723,11 @@ result = client.control_plane.create_experiment_approval({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "proposalDigest": "<proposalDigest>",
+    "protocolDigest": "<protocolDigest>",
+    "connectionId": "<connectionId>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "expiresAt": "<expiresAt>",
 })
 ```
 
@@ -1672,6 +1736,11 @@ let spec = client.build_request("control_plane", "create_experiment_approval", &
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("proposalDigest", "<proposalDigest>".into()),
+    ("protocolDigest", "<protocolDigest>".into()),
+    ("connectionId", "<connectionId>".into()),
+    ("mcpPrepareReceiptDigest", "<mcpPrepareReceiptDigest>".into()),
+    ("expiresAt", "<expiresAt>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2122,6 +2191,7 @@ const result = await client.controlPlane.recordUsage({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  metric: "<metric>",
 });
 ```
 
@@ -2130,6 +2200,7 @@ result = client.control_plane.record_usage({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "metric": "<metric>",
 })
 ```
 
@@ -2138,6 +2209,7 @@ let spec = client.build_request("control_plane", "record_usage", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("metric", "<metric>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2178,6 +2250,12 @@ const result = await client.controlPlane.usageReservationsCreate({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  idempotencyKey: "<idempotencyKey>",
+  provider: "<provider>",
+  model: "<model>",
+  configId: "<configId>",
+  byok: "<byok>",
+  maximumProviderCostMicros: "<maximumProviderCostMicros>",
 });
 ```
 
@@ -2186,6 +2264,12 @@ result = client.control_plane.usage_reservations_create({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "provider": "<provider>",
+    "model": "<model>",
+    "configId": "<configId>",
+    "byok": "<byok>",
+    "maximumProviderCostMicros": "<maximumProviderCostMicros>",
 })
 ```
 
@@ -2194,6 +2278,12 @@ let spec = client.build_request("control_plane", "usage_reservations_create", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("provider", "<provider>".into()),
+    ("model", "<model>".into()),
+    ("configId", "<configId>".into()),
+    ("byok", "<byok>".into()),
+    ("maximumProviderCostMicros", "<maximumProviderCostMicros>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2235,6 +2325,8 @@ const result = await client.controlPlane.usageReservationsCommit({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  configId: "<configId>",
+  cost: "<cost>",
 });
 ```
 
@@ -2244,6 +2336,8 @@ result = client.control_plane.usage_reservations_commit({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "configId": "<configId>",
+    "cost": "<cost>",
 })
 ```
 
@@ -2253,6 +2347,8 @@ let spec = client.build_request("control_plane", "usage_reservations_commit", &[
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("configId", "<configId>".into()),
+    ("cost", "<cost>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2354,6 +2450,9 @@ const result = await client.controlPlane.usageReservationsReconcile({
   orgId: "<orgId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
+  configId: "<configId>",
+  reason: "<reason>",
+  observedUsage: "<observedUsage>",
 });
 ```
 
@@ -2363,6 +2462,9 @@ result = client.control_plane.usage_reservations_reconcile({
     "orgId": "<orgId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
+    "configId": "<configId>",
+    "reason": "<reason>",
+    "observedUsage": "<observedUsage>",
 })
 ```
 
@@ -2372,6 +2474,9 @@ let spec = client.build_request("control_plane", "usage_reservations_reconcile",
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+    ("configId", "<configId>".into()),
+    ("reason", "<reason>".into()),
+    ("observedUsage", "<observedUsage>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

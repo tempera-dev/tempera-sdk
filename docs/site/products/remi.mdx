@@ -269,7 +269,8 @@ Write one memory event into the tenant and project ledger.
 const result = await client.remi.remember({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
-  environmentId: "<environmentId>",
+  kind: "<kind>",
+  text: "<text>",
 });
 ```
 
@@ -277,7 +278,8 @@ const result = await client.remi.remember({
 result = client.remi.remember({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
-    "environmentId": "<environmentId>",
+    "kind": "<kind>",
+    "text": "<text>",
 })
 ```
 
@@ -285,7 +287,8 @@ result = client.remi.remember({
 let spec = client.build_request("remi", "remember", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
-    ("environmentId", "<environmentId>".into()),
+    ("kind", "<kind>".into()),
+    ("text", "<text>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

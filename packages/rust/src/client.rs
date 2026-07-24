@@ -1022,6 +1022,41 @@ mod tests {
         assert!(!body.contains("raw_measurement_base64"));
         assert!(!body.contains("identity_signature"));
 
+        let campaign_state = client
+            .build_request(
+                "tempera_bio",
+                "derive_campaign_state",
+                &[
+                    (
+                        "candidate_set",
+                        ParamValue::RawJson(r#"{"contentDigest":"sha256:candidates"}"#.to_string()),
+                    ),
+                    (
+                        "hypothesis",
+                        ParamValue::RawJson(r#"{"contentDigest":"sha256:hypothesis"}"#.to_string()),
+                    ),
+                    (
+                        "program",
+                        ParamValue::RawJson(r#"{"contentDigest":"sha256:program"}"#.to_string()),
+                    ),
+                    (
+                        "rounds",
+                        ParamValue::RawJson(
+                            r#"[{"decision":{"contentDigest":"sha256:decision"}}]"#.to_string(),
+                        ),
+                    ),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            campaign_state.url,
+            "https://tempera_bio.example.test/v1/campaignStates:derive"
+        );
+        let body = campaign_state.body_json.unwrap();
+        assert!(body.contains(r#""candidateSet":{"contentDigest":"sha256:candidates"}"#));
+        assert!(body.contains(r#""rounds":[{"decision":{"contentDigest":"sha256:decision"}}]"#));
+        assert!(!body.contains("candidate_set"));
+
         let qualification = client
             .build_request(
                 "human_data",
@@ -1046,7 +1081,12 @@ mod tests {
                 .query
                 .contains(&("releaseId".to_string(), "release-1".to_string()))
         );
-        assert!(!qualification.query.iter().any(|(name, _)| name.contains('_')));
+        assert!(
+            !qualification
+                .query
+                .iter()
+                .any(|(name, _)| name.contains('_'))
+        );
     }
 
     #[test]

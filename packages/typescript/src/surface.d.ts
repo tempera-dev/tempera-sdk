@@ -508,6 +508,8 @@ export interface TemperaGymClient extends TemperaProductClientBase {
 }
 
 export interface TemperaBioClient extends TemperaProductClientBase {
+  /** Derive campaign state. */
+  deriveCampaignState(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare candidate set. */
   prepareCandidateSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare dataset release manifest. */

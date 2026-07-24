@@ -26,6 +26,58 @@
         ],
         "type": "object"
       },
+      "CampaignRound": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "experimentProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "verifierReceipts": {
+            "items": {
+              "$ref": "#/components/schemas/SealedArtifact"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "experimentProposal",
+          "verifierReceipts",
+          "decision"
+        ],
+        "type": "object"
+      },
+      "DeriveCampaignStateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateSet": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "rounds": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignRound"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "program",
+          "hypothesis",
+          "candidateSet",
+          "rounds"
+        ],
+        "type": "object"
+      },
       "DeriveDecisionRequest": {
         "additionalProperties": false,
         "properties": {
@@ -332,6 +384,93 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/v1/campaignStates:derive": {
+      "post": {
+        "operationId": "deriveCampaignState",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeriveCampaignStateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Derive campaign state",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:decision:write"
+      }
+    },
     "/v1/candidateSets:prepare": {
       "post": {
         "operationId": "prepareCandidateSet",
