@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/data-engine-openapi.json",
-  "generated_sha256": "666468c81e05e7c89cac53830c4039e252524283455961657c81e00a1bb6ea3e",
+  "generated_sha256": "fb352edbe3f88fb8c3ed1a2b709419922accb77093a4a50394bc669ebc3db920",
   "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
   "schema_version": 1,
-  "source_blob_sha": "9024508ffc674afb5270a032fb19e5f19a524333",
+  "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
   "source_branch": "main",
-  "source_commit": "0602cd1bb6c7cc6f13adfd6f0aedf35fd24b6a61",
+  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
   "source_mode": "100644",
   "source_path": "api/openapi.yaml",
   "source_repo": "tempera-dev/data-engine",
-  "source_sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02"
+  "source_sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd"
 }

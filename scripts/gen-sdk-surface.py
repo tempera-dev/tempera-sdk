@@ -96,8 +96,24 @@ def validate(surface: dict) -> list[str]:
                 problems.append(
                     f"{label}: description must be a capitalized sentence ending with a period"
                 )
-            if op.get("auth") not in {"none", "account", "product", "introspectionSecret"}:
+            if op.get("auth") not in {
+                "none",
+                "account",
+                "product",
+                "oauthResource",
+                "introspectionSecret",
+            }:
                 problems.append(f"{label}: invalid auth {op.get('auth')!r}")
+            auth_audience = op.get("authAudience")
+            if op.get("auth") == "oauthResource":
+                if auth_audience not in surface["audiences"]:
+                    problems.append(
+                        f"{label}: oauthResource requires a registered authAudience"
+                    )
+            elif auth_audience is not None:
+                problems.append(
+                    f"{label}: authAudience is only valid with oauthResource auth"
+                )
             scope = op.get("scope")
             if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
                 problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
@@ -205,6 +221,7 @@ def render_typescript(surface: dict) -> str:
                 "method": op["method"],
                 "path": op["path"],
                 "auth": op["auth"],
+                "authAudience": op.get("authAudience"),
                 "pathParams": op.get("pathParams", []),
                 "pathParamTemplates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
@@ -283,7 +300,8 @@ def render_typescript_dts(surface: dict) -> str:
         "  upstreamOperationId: string;",
         "  method: \"GET\" | \"POST\" | \"PUT\" | \"PATCH\" | \"DELETE\";",
         "  path: string;",
-        "  auth: \"none\" | \"account\" | \"product\" | \"introspectionSecret\";",
+        "  auth: \"none\" | \"account\" | \"product\" | \"oauthResource\" | \"introspectionSecret\";",
+        "  authAudience: TemperaAudience | null;",
         "  pathParams: readonly string[];",
         "  pathParamTemplates: Readonly<Record<string, string>>;",
         "  query: readonly string[];",
@@ -387,6 +405,7 @@ def render_python(surface: dict) -> str:
                 "method": op["method"],
                 "path": op["path"],
                 "auth": op["auth"],
+                "auth_audience": op.get("authAudience"),
                 "path_params": op.get("pathParams", []),
                 "path_param_templates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
@@ -502,6 +521,7 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub method: &'static str,")
     lines.append("    pub path: &'static str,")
     lines.append("    pub auth: &'static str,")
+    lines.append("    pub auth_audience: Option<&'static str>,")
     lines.append("    pub path_params: &'static [&'static str],")
     lines.append(
         "    pub path_param_templates: &'static [(&'static str, &'static str)],"
@@ -527,6 +547,7 @@ def render_rust(surface: dict) -> str:
             lines.append(f"        method: {json.dumps(op['method'])},")
             lines.append(f"        path: {json.dumps(op['path'])},")
             lines.append(f"        auth: {json.dumps(op['auth'])},")
+            lines.append(f"        auth_audience: {rust_str(op.get('authAudience'))},")
             lines.append(f"        path_params: {rust_str_slice(op.get('pathParams', []))},")
             lines.append(
                 "        path_param_templates: "

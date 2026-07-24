@@ -35,9 +35,15 @@ def load_source_lock_module():
     return module
 
 
-def expected_files(repo: Path, requested_commit: str) -> tuple[bytes, bytes]:
+def expected_files(
+    repo: Path,
+    requested_commit: str,
+    source_branch: str = SOURCE_BRANCH,
+) -> tuple[bytes, bytes]:
     source_lock = load_source_lock_module()
-    commit = source_lock.validate_source(repo, SOURCE_REPO, SOURCE_BRANCH, requested_commit)
+    commit = source_lock.validate_source(
+        repo, SOURCE_REPO, source_branch, requested_commit
+    )
     blob, mode, content = source_lock.committed_file(repo, commit, SOURCE_PATH)
     document = json.loads(content)
     if document.get("openapi") != "3.1.0" or not isinstance(document.get("paths"), dict):
@@ -49,7 +55,7 @@ def expected_files(repo: Path, requested_commit: str) -> tuple[bytes, bytes]:
         "generated_with": GENERATOR,
         "schema_version": 1,
         "source_blob_sha": blob,
-        "source_branch": SOURCE_BRANCH,
+        "source_branch": source_branch,
         "source_commit": commit,
         "source_mode": mode,
         "source_path": SOURCE_PATH,
@@ -63,12 +69,17 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--source-repo-dir", type=Path, required=True)
+    parser.add_argument("--source-branch", default=SOURCE_BRANCH)
     parser.add_argument("--source-commit", required=True)
     args = parser.parse_args()
     if re.fullmatch(r"[0-9a-f]{40}", args.source_commit) is None:
         parser.error("--source-commit must be an exact 40-character SHA")
     try:
-        spec_bytes, lock_bytes = expected_files(args.source_repo_dir.resolve(), args.source_commit)
+        spec_bytes, lock_bytes = expected_files(
+            args.source_repo_dir.resolve(),
+            args.source_commit,
+            args.source_branch,
+        )
         expected = {DESTINATION: spec_bytes, LOCK: lock_bytes}
         if args.check:
             stale = [path for path, content in expected.items() if not path.is_file() or path.read_bytes() != content]

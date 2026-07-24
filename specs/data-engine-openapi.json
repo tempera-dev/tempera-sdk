@@ -124,6 +124,12 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -393,10 +399,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -422,7 +428,7 @@
         }
       }
     },
-    "/v1/{parent}/campaigns/{campaign_id}:transition": {
+    "/v1/{parent}/campaigns/{campaignId}:transition": {
       "post": {
         "operationId": "projects.campaigns.transition",
         "x-tempera-audience": "data-engine",
@@ -488,7 +494,7 @@
         }
       }
     },
-    "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification": {
+    "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification": {
       "get": {
         "operationId": "projects.reviewerQualifications.get",
         "x-tempera-audience": "data-engine",
@@ -532,7 +538,7 @@
         }
       }
     },
-    "/v1/{parent}/pipelines:run-use-case": {
+    "/v1/{parent}/pipelines:runUseCase": {
       "post": {
         "operationId": "projects.pipelines.runUseCase",
         "x-tempera-audience": "data-engine",
@@ -603,10 +609,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "status",
@@ -622,7 +628,7 @@
             "description": "Restrict the queue to actionable or completed tasks."
           },
           {
-            "name": "campaign_name",
+            "name": "campaignName",
             "in": "query",
             "required": false,
             "schema": {
@@ -714,7 +720,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:resolve": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:resolve": {
       "post": {
         "operationId": "projects.expertTasks.resolve",
         "x-tempera-audience": "data-engine",
@@ -777,7 +783,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:claim": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:claim": {
       "post": {
         "operationId": "projects.expertTaskAssignments.claim",
         "x-tempera-audience": "data-engine",
@@ -837,7 +843,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:renew": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:renew": {
       "post": {
         "operationId": "projects.expertTaskAssignments.renew",
         "x-tempera-audience": "data-engine",
@@ -897,7 +903,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:release": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:release": {
       "post": {
         "operationId": "projects.expertTaskAssignments.release",
         "x-tempera-audience": "data-engine",
@@ -957,7 +963,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft": {
       "post": {
         "operationId": "projects.expertTaskAssignments.saveDraft",
         "x-tempera-audience": "data-engine",
@@ -1029,7 +1035,7 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "window_seconds",
+            "name": "windowSeconds",
             "in": "query",
             "required": false,
             "schema": {
@@ -1041,7 +1047,7 @@
             "description": "Bounded lookback window for throughput counters."
           },
           {
-            "name": "sla_target_seconds",
+            "name": "slaTargetSeconds",
             "in": "query",
             "required": false,
             "schema": {
@@ -1184,10 +1190,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "$ref": "#/components/parameters/ViewQuery"
@@ -1283,10 +1289,10 @@
             "$ref": "#/components/parameters/ArtifactId"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -1466,6 +1472,12 @@
           },
           {
             "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -1480,7 +1492,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LabelListResponse"
+                  "$ref": "#/components/schemas/JobResultListResponse"
                 }
               }
             }
@@ -1569,7 +1581,7 @@
         }
       }
     },
-    "/v1/{parent}/products:check-leakage": {
+    "/v1/{parent}/products:checkLeakage": {
       "post": {
         "operationId": "projects.products.checkLeakage",
         "x-tempera-audience": "data-engine",
@@ -1835,7 +1847,7 @@
         }
       }
     },
-    "/v1/{parent}/products:emit-eval": {
+    "/v1/{parent}/products:emitEval": {
       "post": {
         "operationId": "projects.products.emitEval",
         "x-tempera-audience": "data-engine",
@@ -1958,10 +1970,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2043,6 +2055,12 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2201,6 +2219,123 @@
         }
       }
     },
+    "/v1/{parent}/discoveryReleases:commit": {
+      "post": {
+        "operationId": "projects.discoveryReleases.commit",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Atomically commit an immutable discovery release graph",
+        "description": "Admits an exact, same-project graph of already-ingested artifacts. Artifact type, raw SHA-256, release policy, lineage, eligibility, and integer budget invariants are validated in one transaction. Replaying the same requestId and semantic content returns the original release; reuse with different content fails with ALREADY_EXISTS. This operation records evidence and does not authorize or perform a physical experiment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoveryReleaseCommitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable discovery release",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryRelease"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/discoveryReleases/{discoveryReleaseId}": {
+      "get": {
+        "operationId": "projects.discoveryReleases.get",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Get one immutable discovery release",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "discoveryReleaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable discovery release",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryRelease"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
     "/v1/{parent}/evidenceRecords": {
       "post": {
         "operationId": "projects.evidenceRecords.create",
@@ -2268,22 +2403,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "maxLength": 4096
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "domain",
@@ -2443,22 +2566,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "maxLength": 4096
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "domain",
@@ -2662,21 +2773,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2869,7 +2969,7 @@
         }
       },
       "ExpertTaskId": {
-        "name": "expert_task_id",
+        "name": "expertTaskId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2879,7 +2979,7 @@
         }
       },
       "CampaignId": {
-        "name": "campaign_id",
+        "name": "campaignId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2913,7 +3013,7 @@
         "schema": {
           "type": "string"
         },
-        "description": "Campaign create/transition replay key. It must match a body idempotency_key when both are sent; transition requests still require the body field."
+        "description": "Campaign create/transition replay key. It must match a body idempotencyKey when both are sent; transition requests still require the body field."
       },
       "FilterQuery": {
         "name": "filter",
@@ -2924,8 +3024,8 @@
         },
         "description": "Key:value filter expression"
       },
-      "PageSizeParam": {
-        "name": "page_size",
+      "AipPageSizeParam": {
+        "name": "pageSize",
         "in": "query",
         "required": false,
         "schema": {
@@ -2933,24 +3033,26 @@
           "minimum": 1,
           "maximum": 1000,
           "default": 50
-        }
+        },
+        "description": "AIP-158 JSON wire page size."
       },
-      "PageTokenParam": {
-        "name": "page_token",
+      "AipPageTokenParam": {
+        "name": "pageToken",
         "in": "query",
         "required": false,
         "schema": {
           "type": "string",
           "maxLength": 4096
-        }
+        },
+        "description": "Opaque AIP-158 continuation token from nextPageToken."
       },
       "OrderByParam": {
-        "name": "order_by",
+        "name": "orderBy",
         "in": "query",
         "required": false,
         "schema": {
           "type": "string",
-          "default": "create_time desc"
+          "default": "createTime desc"
         }
       },
       "ViewQuery": {
@@ -3131,24 +3233,30 @@
       },
       "ErrorBody": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "code",
-          "message",
           "status",
-          "details",
-          "request_id",
-          "retryable"
+          "message",
+          "details"
         ],
         "properties": {
           "code": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP status code for the failed request."
+          },
+          "status": {
             "type": "string",
+            "description": "Canonical Google RPC status name.",
             "enum": [
               "INVALID_ARGUMENT",
               "FAILED_PRECONDITION",
               "NOT_FOUND",
               "ALREADY_EXISTS",
               "UNAUTHENTICATED",
-              "FORBIDDEN",
+              "PERMISSION_DENIED",
               "ABORTED",
               "OUT_OF_RANGE",
               "RESOURCE_EXHAUSTED",
@@ -3161,26 +3269,68 @@
           "message": {
             "type": "string"
           },
-          "status": {
-            "type": "integer"
-          },
-          "request_id": {
-            "type": "string"
-          },
-          "retryable": {
-            "type": "boolean"
-          },
-          "retry_info": {
-            "type": "object",
-            "properties": {
-              "retry_delay": {
-                "type": "string"
-              }
-            }
-          },
           "details": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                },
+                {
+                  "$ref": "#/components/schemas/DiagnosticInfo"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/google.rpc.ErrorInfo"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Stable Data Engine reason for the error."
+          },
+          "domain": {
+            "type": "string",
+            "const": "data-engine.tempera.dev"
+          },
+          "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Includes requestId and retryable correlation metadata."
+          }
+        }
+      },
+      "DiagnosticInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/tempera.dataengine.v1.DiagnosticInfo"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Bounded, non-secret structured diagnostics for this error."
           }
         }
       },
@@ -3199,20 +3349,451 @@
           "pattern": "^projects/[^/]+/artifacts/[^/]+$"
         }
       },
+      "DiscoveryEvidenceClass": {
+        "type": "string",
+        "enum": [
+          "synthetic_fixture",
+          "public_retrospective",
+          "partner_historical",
+          "prospective_experimental"
+        ]
+      },
+      "DiscoveryClaimClass": {
+        "type": "string",
+        "enum": [
+          "contract_conformance",
+          "offline_policy_evaluation",
+          "shadow_decision",
+          "prospective_discovery"
+        ]
+      },
+      "DiscoveryArtifactBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifactName",
+          "rawSha256",
+          "role",
+          "schemaVersion"
+        ],
+        "properties": {
+          "artifactName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "rawSha256": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "source_metadata",
+              "source_scores",
+              "source_mappings",
+              "normalized_records",
+              "snapshot_manifest",
+              "program",
+              "candidate_set",
+              "experiment_proposal",
+              "verifier_receipt",
+              "decision_receipt",
+              "release_manifest",
+              "physical_execution_receipt",
+              "human_approval_receipt"
+            ]
+          },
+          "schemaVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+          }
+        }
+      },
+      "DiscoveryLineageEdge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fromArtifact",
+          "toArtifact",
+          "relation"
+        ],
+        "properties": {
+          "fromArtifact": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "toArtifact": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "relation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+          }
+        }
+      },
+      "DiscoveryBudget": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maxRounds",
+          "roundsUsed",
+          "maxMeasurements",
+          "measurementsUsed",
+          "maxCostMicrounits",
+          "costUsedMicrounits"
+        ],
+        "properties": {
+          "maxRounds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "roundsUsed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "maxMeasurements": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "measurementsUsed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "maxCostMicrounits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "costUsedMicrounits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          }
+        }
+      },
+      "DiscoveryEligibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestedTraining",
+          "requestedEvaluation",
+          "licenseAdmitted",
+          "qualityGatePassed",
+          "leakageCheckPassed",
+          "groupSplitKeys",
+          "temporalHoldout",
+          "dataUseAuthorizationRef",
+          "admissionReason"
+        ],
+        "properties": {
+          "requestedTraining": {
+            "type": "boolean"
+          },
+          "requestedEvaluation": {
+            "type": "boolean"
+          },
+          "licenseAdmitted": {
+            "type": "boolean"
+          },
+          "qualityGatePassed": {
+            "type": "boolean"
+          },
+          "leakageCheckPassed": {
+            "type": "boolean"
+          },
+          "groupSplitKeys": {
+            "type": "array",
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+            }
+          },
+          "temporalHoldout": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "dataUseAuthorizationRef": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "admissionReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "DiscoveryProspectiveExecution": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "humanApprovalRef",
+          "physicalExecutionReceiptRef"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_applicable",
+              "prepared",
+              "proven"
+            ]
+          },
+          "humanApprovalRef": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "physicalExecutionReceiptRef": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          }
+        }
+      },
+      "DiscoveryAdmittedEligibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "trainingEligible",
+          "evaluationEligible"
+        ],
+        "properties": {
+          "trainingEligible": {
+            "type": "boolean"
+          },
+          "evaluationEligible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DiscoveryReleaseCommitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "requestId",
+          "releaseId",
+          "releaseKind",
+          "evidenceClass",
+          "claimClass",
+          "bindings",
+          "lineageEdges",
+          "budget",
+          "eligibility",
+          "prospectiveExecution"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "data-engine.discovery-release-commit.v1"
+          },
+          "requestId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "releaseId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "releaseKind": {
+            "type": "string",
+            "enum": [
+              "source_snapshot",
+              "campaign_round"
+            ]
+          },
+          "evidenceClass": {
+            "$ref": "#/components/schemas/DiscoveryEvidenceClass"
+          },
+          "claimClass": {
+            "$ref": "#/components/schemas/DiscoveryClaimClass"
+          },
+          "bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryArtifactBinding"
+            }
+          },
+          "lineageEdges": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1024,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryLineageEdge"
+            }
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DiscoveryBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/DiscoveryEligibility"
+          },
+          "prospectiveExecution": {
+            "$ref": "#/components/schemas/DiscoveryProspectiveExecution"
+          }
+        }
+      },
+      "DiscoveryRelease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "releaseId",
+          "releaseKind",
+          "evidenceClass",
+          "claimClass",
+          "bindings",
+          "lineageEdges",
+          "budget",
+          "eligibility",
+          "prospectiveExecution",
+          "name",
+          "project",
+          "requestId",
+          "requestHash",
+          "contentHash",
+          "admittedEligibility",
+          "createTime"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "data-engine.discovery-release.v1"
+          },
+          "releaseId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "releaseKind": {
+            "type": "string",
+            "enum": [
+              "source_snapshot",
+              "campaign_round"
+            ]
+          },
+          "evidenceClass": {
+            "$ref": "#/components/schemas/DiscoveryEvidenceClass"
+          },
+          "claimClass": {
+            "$ref": "#/components/schemas/DiscoveryClaimClass"
+          },
+          "bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryArtifactBinding"
+            }
+          },
+          "lineageEdges": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1024,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryLineageEdge"
+            }
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DiscoveryBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/DiscoveryEligibility"
+          },
+          "prospectiveExecution": {
+            "$ref": "#/components/schemas/DiscoveryProspectiveExecution"
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^projects/[^/]+/discoveryReleases/[a-z][a-z0-9._-]{0,127}$"
+          },
+          "project": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "requestId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "requestHash": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "contentHash": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "admittedEligibility": {
+            "$ref": "#/components/schemas/DiscoveryAdmittedEligibility"
+          },
+          "createTime": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
       "EvidenceRecordCreateRequest": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "evidence_type",
-          "payload_schema",
+          "evidenceType",
+          "payloadSchema",
           "payload",
-          "source_artifact_refs",
-          "verification_state"
+          "sourceArtifactRefs",
+          "verificationState"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "const": "data-engine.evidence-record.v1"
           },
@@ -3222,13 +3803,13 @@
             "maxLength": 128,
             "pattern": "^[a-z][a-z0-9.-]{1,127}$"
           },
-          "evidence_type": {
+          "evidenceType": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
           },
-          "payload_schema": {
+          "payloadSchema": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -3238,7 +3819,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "source_artifact_refs": {
+          "sourceArtifactRefs": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlatformArtifactRefs"
@@ -3246,10 +3827,10 @@
             ],
             "minItems": 1
           },
-          "artifact_refs": {
+          "artifactRefs": {
             "$ref": "#/components/schemas/PlatformArtifactRefs"
           },
-          "verification_state": {
+          "verificationState": {
             "type": "string",
             "enum": [
               "UNVERIFIED",
@@ -3257,7 +3838,7 @@
               "REJECTED"
             ]
           },
-          "verifier_receipt_artifact_refs": {
+          "verifierReceiptArtifactRefs": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlatformArtifactRefs"
@@ -3265,7 +3846,7 @@
             ],
             "description": "Required and non-empty for VERIFIED evidence; every item must also appear in artifact_refs."
           },
-          "quality_flags": {
+          "qualityFlags": {
             "type": "array",
             "maxItems": 64,
             "uniqueItems": true,
@@ -3285,19 +3866,19 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "evidence_type",
-          "payload_schema",
+          "evidenceType",
+          "payloadSchema",
           "payload",
-          "source_artifact_refs",
-          "verification_state",
+          "sourceArtifactRefs",
+          "verificationState",
           "name",
-          "content_hash",
-          "create_time"
+          "contentHash",
+          "createTime"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "const": "data-engine.evidence-record.v1"
           },
@@ -3306,12 +3887,12 @@
             "minLength": 2,
             "maxLength": 128
           },
-          "evidence_type": {
+          "evidenceType": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           },
-          "payload_schema": {
+          "payloadSchema": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
@@ -3320,7 +3901,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "source_artifact_refs": {
+          "sourceArtifactRefs": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlatformArtifactRefs"
@@ -3328,10 +3909,10 @@
             ],
             "minItems": 1
           },
-          "artifact_refs": {
+          "artifactRefs": {
             "$ref": "#/components/schemas/PlatformArtifactRefs"
           },
-          "verification_state": {
+          "verificationState": {
             "type": "string",
             "enum": [
               "UNVERIFIED",
@@ -3339,10 +3920,10 @@
               "REJECTED"
             ]
           },
-          "verifier_receipt_artifact_refs": {
+          "verifierReceiptArtifactRefs": {
             "$ref": "#/components/schemas/PlatformArtifactRefs"
           },
-          "quality_flags": {
+          "qualityFlags": {
             "type": "array",
             "maxItems": 64,
             "uniqueItems": true,
@@ -3360,10 +3941,10 @@
             "type": "string",
             "pattern": "^projects/[^/]+/evidenceRecords/[0-9a-f]{64}$"
           },
-          "content_hash": {
+          "contentHash": {
             "$ref": "#/components/schemas/PlatformDigest"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -3372,21 +3953,21 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "evidence_records",
-          "next_page_token",
-          "total_size"
+          "evidenceRecords",
+          "nextPageToken",
+          "totalSize"
         ],
         "properties": {
-          "evidence_records": {
+          "evidenceRecords": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EvidenceRecord"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer",
             "minimum": 0
           }
@@ -3396,11 +3977,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "verifier_ref",
+          "verifierRef",
           "status"
         ],
         "properties": {
-          "verifier_ref": {
+          "verifierRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -3418,7 +3999,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "receipt_artifact_ref": {
+          "receiptArtifactRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
@@ -3431,19 +4012,19 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "context_evidence_ref",
-          "environment_ref",
+          "contextEvidenceRef",
+          "environmentRef",
           "seed",
           "observations",
-          "measured_outcomes",
-          "verifier_results",
-          "reward_components",
-          "terminal_reason"
+          "measuredOutcomes",
+          "verifierResults",
+          "rewardComponents",
+          "terminalReason"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "const": "data-engine.episode.v1"
           },
@@ -3453,11 +4034,11 @@
             "maxLength": 128,
             "pattern": "^[a-z][a-z0-9.-]{1,127}$"
           },
-          "context_evidence_ref": {
+          "contextEvidenceRef": {
             "type": "string",
             "pattern": "^projects/[^/]+/evidenceRecords/[0-9a-f]{64}$"
           },
-          "environment_ref": {
+          "environmentRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -3472,16 +4053,16 @@
             "maxItems": 1024,
             "items": {}
           },
-          "tool_calls": {
+          "toolCalls": {
             "type": "array",
             "maxItems": 1024,
             "items": {}
           },
-          "measured_outcomes": {
+          "measuredOutcomes": {
             "type": "object",
             "additionalProperties": true
           },
-          "verifier_results": {
+          "verifierResults": {
             "type": "array",
             "minItems": 1,
             "maxItems": 64,
@@ -3489,7 +4070,7 @@
               "$ref": "#/components/schemas/PlatformVerifierResult"
             }
           },
-          "reward_components": {
+          "rewardComponents": {
             "type": "object",
             "minProperties": 1,
             "additionalProperties": {
@@ -3498,7 +4079,7 @@
               "maximum": 1000000
             }
           },
-          "terminal_reason": {
+          "terminalReason": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -3511,7 +4092,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "safety_events": {
+          "safetyEvents": {
             "type": "array",
             "maxItems": 128,
             "items": {}
@@ -3522,22 +4103,22 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "context_evidence_ref",
-          "environment_ref",
+          "contextEvidenceRef",
+          "environmentRef",
           "seed",
           "observations",
-          "measured_outcomes",
-          "verifier_results",
-          "reward_components",
-          "terminal_reason",
+          "measuredOutcomes",
+          "verifierResults",
+          "rewardComponents",
+          "terminalReason",
           "name",
-          "content_hash",
-          "create_time"
+          "contentHash",
+          "createTime"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "const": "data-engine.episode.v1"
           },
@@ -3546,11 +4127,11 @@
             "minLength": 2,
             "maxLength": 128
           },
-          "context_evidence_ref": {
+          "contextEvidenceRef": {
             "type": "string",
             "pattern": "^projects/[^/]+/evidenceRecords/[0-9a-f]{64}$"
           },
-          "environment_ref": {
+          "environmentRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -3565,16 +4146,16 @@
             "maxItems": 1024,
             "items": {}
           },
-          "tool_calls": {
+          "toolCalls": {
             "type": "array",
             "maxItems": 1024,
             "items": {}
           },
-          "measured_outcomes": {
+          "measuredOutcomes": {
             "type": "object",
             "additionalProperties": true
           },
-          "verifier_results": {
+          "verifierResults": {
             "type": "array",
             "minItems": 1,
             "maxItems": 64,
@@ -3582,7 +4163,7 @@
               "$ref": "#/components/schemas/PlatformVerifierResult"
             }
           },
-          "reward_components": {
+          "rewardComponents": {
             "type": "object",
             "minProperties": 1,
             "additionalProperties": {
@@ -3591,7 +4172,7 @@
               "maximum": 1000000
             }
           },
-          "terminal_reason": {
+          "terminalReason": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -3604,7 +4185,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "safety_events": {
+          "safetyEvents": {
             "type": "array",
             "maxItems": 128,
             "items": {}
@@ -3613,10 +4194,10 @@
             "type": "string",
             "pattern": "^projects/[^/]+/episodes/[0-9a-f]{64}$"
           },
-          "content_hash": {
+          "contentHash": {
             "$ref": "#/components/schemas/PlatformDigest"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -3626,8 +4207,8 @@
         "additionalProperties": false,
         "required": [
           "episodes",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "properties": {
           "episodes": {
@@ -3636,10 +4217,10 @@
               "$ref": "#/components/schemas/Episode"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer",
             "minimum": 0
           }
@@ -3846,21 +4427,21 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "research_catalog_entries",
-          "next_page_token",
-          "total_size"
+          "researchCatalogEntries",
+          "nextPageToken",
+          "totalSize"
         ],
         "properties": {
-          "research_catalog_entries": {
+          "researchCatalogEntries": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ResearchCatalogEntry"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer",
             "minimum": 0
           }
@@ -4290,10 +4871,10 @@
         "type": "object",
         "required": [
           "source",
-          "external_id"
+          "externalId"
         ],
         "properties": {
-          "artifact_type": {
+          "artifactType": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
@@ -4303,12 +4884,12 @@
             "minLength": 1,
             "maxLength": 1024
           },
-          "external_id": {
+          "externalId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
           },
-          "raw_body": {
+          "rawBody": {
             "type": "object"
           },
           "metadata": {
@@ -4316,7 +4897,7 @@
             "additionalProperties": true,
             "description": "Producer metadata is retained and participates in immutable content identity."
           },
-          "dry_run": {
+          "dryRun": {
             "type": "boolean",
             "default": false
           },
@@ -4329,23 +4910,23 @@
         "type": "object",
         "required": [
           "name",
-          "artifact_id",
+          "artifactId",
           "artifactType",
           "source",
-          "external_id",
-          "raw_body",
-          "raw_hash",
-          "raw_path",
+          "externalId",
+          "rawBody",
+          "rawHash",
+          "rawPath",
           "metadata",
           "status",
-          "create_time",
-          "update_time"
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "artifact_id": {
+          "artifactId": {
             "type": "string"
           },
           "artifactType": {
@@ -4354,17 +4935,17 @@
           "source": {
             "type": "string"
           },
-          "external_id": {
+          "externalId": {
             "type": "string"
           },
-          "raw_body": {
+          "rawBody": {
             "type": "object",
             "additionalProperties": true
           },
-          "raw_hash": {
+          "rawHash": {
             "type": "string"
           },
-          "raw_path": {
+          "rawPath": {
             "type": "string"
           },
           "metadata": {
@@ -4375,10 +4956,10 @@
           "status": {
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -4387,21 +4968,21 @@
         "type": "object",
         "required": [
           "name",
-          "artifact_id",
+          "artifactId",
           "artifactType",
           "source",
-          "external_id",
-          "raw_hash",
-          "raw_bytes",
+          "externalId",
+          "rawHash",
+          "rawBytes",
           "status",
-          "create_time",
-          "update_time"
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "artifact_id": {
+          "artifactId": {
             "type": "string"
           },
           "artifactType": {
@@ -4410,23 +4991,23 @@
           "source": {
             "type": "string"
           },
-          "external_id": {
+          "externalId": {
             "type": "string"
           },
-          "raw_hash": {
+          "rawHash": {
             "type": "string"
           },
-          "raw_bytes": {
+          "rawBytes": {
             "type": "integer",
             "minimum": 0
           },
           "status": {
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -4451,7 +5032,7 @@
             {
               "required": [
                 "source",
-                "external_id"
+                "externalId"
               ],
               "properties": {
                 "source": {
@@ -4459,17 +5040,17 @@
                     "remi"
                   ]
                 },
-                "external_id": {
+                "externalId": {
                   "pattern": "^remi_feedback_[0-9a-f]{32}$"
                 }
               }
             },
             {
               "required": [
-                "raw_body"
+                "rawBody"
               ],
               "properties": {
-                "raw_body": {
+                "rawBody": {
                   "type": "object",
                   "required": [
                     "schema"
@@ -4512,10 +5093,10 @@
                 "metadata": {
                   "type": "object",
                   "required": [
-                    "task_family"
+                    "taskFamily"
                   ],
                   "properties": {
-                    "task_family": {
+                    "taskFamily": {
                       "enum": [
                         "agent-memory-feedback"
                       ]
@@ -4532,7 +5113,7 @@
             "minLength": 1,
             "maxLength": 256,
             "default": "GENERIC",
-            "description": "Artifact type; snake_case alias artifact_type also accepted. An explicit blank is invalid."
+            "description": "Artifact type. An explicit blank is invalid."
           },
           "source": {
             "type": "string",
@@ -4540,16 +5121,16 @@
             "maxLength": 1024,
             "default": "manual"
           },
-          "external_id": {
+          "externalId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
-            "description": "Source-unique identity; camelCase alias externalId also accepted. Defaults to a random uuid. Reusing the same project, source, and external_id with identical content returns the existing artifact; different content returns ALREADY_EXISTS (409). An explicit blank is invalid."
+            "description": "Source-unique identity. Defaults to a random uuid. Reusing the same project, source, and externalId with identical content returns the existing artifact; different content returns ALREADY_EXISTS (409). An explicit blank is invalid."
           },
-          "raw_body": {
+          "rawBody": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Raw payload; camelCase alias rawBody also accepted. The full canonical artifact envelope must not exceed 16 MiB."
+            "description": "Raw payload. The full canonical artifact envelope must not exceed 16 MiB."
           },
           "metadata": {
             "type": "object",
@@ -4564,11 +5145,11 @@
         "required": [
           "artifactType",
           "source",
-          "external_id",
-          "raw_body",
+          "externalId",
+          "rawBody",
           "metadata"
         ],
-        "description": "Exact Remi v1 handoff. The receiver recomputes external_id from these fields and the target data-engine project, enforces disclosure consistency, and caps canonical content at 256 KiB.",
+        "description": "Exact Remi v1 handoff. The receiver recomputes externalId from these fields and the target data-engine project, enforces disclosure consistency, and caps canonical content at 256 KiB.",
         "properties": {
           "artifactType": {
             "type": "string",
@@ -4582,11 +5163,11 @@
               "remi"
             ]
           },
-          "external_id": {
+          "externalId": {
             "type": "string",
             "pattern": "^remi_feedback_[0-9a-f]{32}$"
           },
-          "raw_body": {
+          "rawBody": {
             "$ref": "#/components/schemas/RemiMemoryFeedbackV1"
           },
           "metadata": {
@@ -4599,7 +5180,7 @@
         "additionalProperties": false,
         "required": [
           "schema",
-          "feedback_export_id",
+          "feedbackExportId",
           "workspace",
           "memory",
           "feedback",
@@ -4612,10 +5193,10 @@
               "remi.memory_feedback.v1"
             ]
           },
-          "feedback_export_id": {
+          "feedbackExportId": {
             "type": "string",
             "pattern": "^remi_feedback_[0-9a-f]{32}$",
-            "description": "Must equal the top-level external_id."
+            "description": "Must equal the top-level externalId."
           },
           "workspace": {
             "$ref": "#/components/schemas/RemiWorkspaceV1"
@@ -4635,24 +5216,24 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "tenant_id",
-          "project_id",
-          "environment_id"
+          "tenantId",
+          "projectId",
+          "environmentId"
         ],
         "properties": {
-          "tenant_id": {
+          "tenantId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "description": "One to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound."
           },
-          "project_id": {
+          "projectId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "description": "One to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound."
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string",
             "nullable": true,
             "minLength": 1,
@@ -4665,16 +5246,16 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "node_id",
+          "nodeId",
           "kind",
-          "snapshot_sha256",
-          "citation_sha256",
-          "valid_from_unix_ms",
-          "valid_to_unix_ms",
-          "valid_to_event_id"
+          "snapshotSha256",
+          "citationSha256",
+          "validFromUnixMs",
+          "validToUnixMs",
+          "validToEventId"
         ],
         "properties": {
-          "node_id": {
+          "nodeId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -4694,11 +5275,11 @@
               "topic"
             ]
           },
-          "snapshot_sha256": {
+          "snapshotSha256": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$"
           },
-          "citation_sha256": {
+          "citationSha256": {
             "type": "array",
             "maxItems": 64,
             "items": {
@@ -4706,20 +5287,20 @@
               "pattern": "^sha256:[0-9a-f]{64}$"
             }
           },
-          "valid_from_unix_ms": {
+          "validFromUnixMs": {
             "type": "integer",
             "format": "int64",
             "minimum": -9223372036854775808,
             "maximum": 9223372036854775807
           },
-          "valid_to_unix_ms": {
+          "validToUnixMs": {
             "type": "integer",
             "format": "int64",
             "nullable": true,
             "minimum": -9223372036854775808,
             "maximum": 9223372036854775807
           },
-          "valid_to_event_id": {
+          "validToEventId": {
             "type": "integer",
             "format": "int64",
             "nullable": true,
@@ -4738,12 +5319,12 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "feedback_id",
+          "feedbackId",
           "helpful",
-          "created_at_unix_ms"
+          "createdAtUnixMs"
         ],
         "properties": {
-          "feedback_id": {
+          "feedbackId": {
             "type": "integer",
             "format": "int64",
             "minimum": 1,
@@ -4752,13 +5333,13 @@
           "helpful": {
             "type": "boolean"
           },
-          "created_at_unix_ms": {
+          "createdAtUnixMs": {
             "type": "integer",
             "format": "int64",
             "minimum": -9223372036854775808,
             "maximum": 9223372036854775807
           },
-          "note_sha256": {
+          "noteSha256": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$",
             "description": "Present together with note exactly when feedback_note_included is true."
@@ -4775,32 +5356,32 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "memory_text_included",
-          "feedback_note_included",
-          "label_authority",
-          "correction_authority",
-          "external_erasure_status"
+          "memoryTextIncluded",
+          "feedbackNoteIncluded",
+          "labelAuthority",
+          "correctionAuthority",
+          "externalErasureStatus"
         ],
         "properties": {
-          "memory_text_included": {
+          "memoryTextIncluded": {
             "type": "boolean"
           },
-          "feedback_note_included": {
+          "feedbackNoteIncluded": {
             "type": "boolean"
           },
-          "label_authority": {
+          "labelAuthority": {
             "type": "string",
             "enum": [
               "evaluation_signal_only"
             ]
           },
-          "correction_authority": {
+          "correctionAuthority": {
             "type": "boolean",
             "enum": [
               false
             ]
           },
-          "external_erasure_status": {
+          "externalErasureStatus": {
             "type": "string",
             "enum": [
               "partial_until_remote_deletion_receipt"
@@ -4814,9 +5395,9 @@
         "required": [
           "schema",
           "producer",
-          "producer_version",
-          "task_family",
-          "memory_snapshot_sha256"
+          "producerVersion",
+          "taskFamily",
+          "memorySnapshotSha256"
         ],
         "properties": {
           "schema": {
@@ -4831,28 +5412,28 @@
               "remi"
             ]
           },
-          "producer_version": {
+          "producerVersion": {
             "type": "string",
             "minLength": 1,
             "maxLength": 1024
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string",
             "enum": [
               "agent-memory-feedback"
             ]
           },
-          "memory_snapshot_sha256": {
+          "memorySnapshotSha256": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$",
-            "description": "Must equal raw_body.memory.snapshot_sha256."
+            "description": "Must equal rawBody.memory.snapshotSha256."
           }
         }
       },
       "PipelineArtifactIngestRequest": {
         "type": "object",
         "required": [
-          "external_id"
+          "externalId"
         ],
         "properties": {
           "artifactType": {
@@ -4865,13 +5446,13 @@
             "minLength": 1,
             "maxLength": 1024
           },
-          "external_id": {
+          "externalId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
             "description": "Required for deterministic pipeline replay."
           },
-          "raw_body": {
+          "rawBody": {
             "type": "object",
             "additionalProperties": true
           },
@@ -4885,11 +5466,11 @@
       "ArtifactPatchRequest": {
         "type": "object",
         "required": [
-          "update_mask",
+          "updateMask",
           "artifact"
         ],
         "properties": {
-          "update_mask": {
+          "updateMask": {
             "type": "array",
             "items": {
               "type": "string"
@@ -4928,10 +5509,10 @@
               ]
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -4967,7 +5548,7 @@
             "maximum": 16777216,
             "default": 2000000
           },
-          "producer_version": {
+          "producerVersion": {
             "type": "string",
             "minLength": 1,
             "maxLength": 1024,
@@ -5013,9 +5594,9 @@
           "type",
           "version",
           "labels",
-          "multi_label",
-          "max_selections",
-          "allow_other"
+          "multiLabel",
+          "maxSelections",
+          "allowOther"
         ],
         "properties": {
           "schema": {
@@ -5041,15 +5622,15 @@
               "maxLength": 256
             }
           },
-          "multi_label": {
+          "multiLabel": {
             "type": "boolean"
           },
-          "max_selections": {
+          "maxSelections": {
             "type": "integer",
             "minimum": 1,
             "maximum": 1000
           },
-          "allow_other": {
+          "allowOther": {
             "type": "boolean"
           }
         }
@@ -5062,7 +5643,7 @@
           "type",
           "version",
           "labels",
-          "max_items"
+          "maxItems"
         ],
         "properties": {
           "schema": {
@@ -5089,7 +5670,7 @@
               "maxLength": 256
             }
           },
-          "max_items": {
+          "maxItems": {
             "type": "integer",
             "minimum": 1,
             "maximum": 1000
@@ -5104,7 +5685,7 @@
           "type",
           "version",
           "labels",
-          "max_items"
+          "maxItems"
         ],
         "properties": {
           "schema": {
@@ -5131,7 +5712,7 @@
               "maxLength": 256
             }
           },
-          "max_items": {
+          "maxItems": {
             "type": "integer",
             "minimum": 1,
             "maximum": 1000
@@ -5145,8 +5726,8 @@
           "schema",
           "type",
           "version",
-          "max_items",
-          "allow_ties"
+          "maxItems",
+          "allowTies"
         ],
         "properties": {
           "schema": {
@@ -5162,12 +5743,12 @@
             "minLength": 1,
             "maxLength": 64
           },
-          "max_items": {
+          "maxItems": {
             "type": "integer",
             "minimum": 1,
             "maximum": 1000
           },
-          "allow_ties": {
+          "allowTies": {
             "type": "boolean"
           }
         }
@@ -5179,7 +5760,7 @@
           "schema",
           "type",
           "version",
-          "allow_tie"
+          "allowTie"
         ],
         "properties": {
           "schema": {
@@ -5195,7 +5776,7 @@
             "minLength": 1,
             "maxLength": 64
           },
-          "allow_tie": {
+          "allowTie": {
             "type": "boolean"
           }
         }
@@ -5208,7 +5789,7 @@
           "type",
           "version",
           "paths",
-          "max_selections"
+          "maxSelections"
         ],
         "properties": {
           "schema": {
@@ -5240,7 +5821,7 @@
               }
             }
           },
-          "max_selections": {
+          "maxSelections": {
             "type": "integer",
             "minimum": 1,
             "maximum": 1000
@@ -5481,7 +6062,7 @@
         "required": [
           "schema",
           "type",
-          "selected_paths"
+          "selectedPaths"
         ],
         "properties": {
           "schema": {
@@ -5492,7 +6073,7 @@
             "type": "string",
             "const": "taxonomy"
           },
-          "selected_paths": {
+          "selectedPaths": {
             "type": "array",
             "minItems": 1,
             "maxItems": 1000,
@@ -5514,35 +6095,35 @@
         "type": "object",
         "required": [
           "name",
-          "campaign_id",
-          "task_family",
-          "target_accuracy",
-          "budget_cents",
+          "campaignId",
+          "taskFamily",
+          "targetAccuracy",
+          "budgetCents",
           "rubric",
-          "skill_tags",
-          "required_reviews",
-          "qualification_policy",
-          "routing_policy",
+          "skillTags",
+          "requiredReviews",
+          "qualificationPolicy",
+          "routingPolicy",
           "status",
-          "create_time",
-          "update_time"
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "campaign_id": {
+          "campaignId": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
           },
-          "budget_cents": {
+          "budgetCents": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9223372036854775807,
@@ -5552,30 +6133,30 @@
             "type": "object",
             "additionalProperties": true
           },
-          "skill_tags": {
+          "skillTags": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "required_reviews": {
+          "requiredReviews": {
             "type": "integer",
             "minimum": 1,
             "maximum": 5,
             "description": "Independently authenticated review slots created for each residual label."
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "$ref": "#/components/schemas/ReviewQualificationPolicy"
           },
-          "routing_policy": {
+          "routingPolicy": {
             "$ref": "#/components/schemas/ReviewRoutingPolicy",
             "description": "Immutable queue routing policy snapshotted onto each created task."
           },
-          "annotation_schema": {
+          "annotationSchema": {
             "$ref": "#/components/schemas/ReviewAnnotationSchema",
             "description": "Additive structured-annotation metadata. Older producer revisions may omit this together with annotation_schema_version during a consumer-first rollout."
           },
-          "annotation_schema_version": {
+          "annotationSchemaVersion": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$"
           },
@@ -5587,10 +6168,10 @@
               "CLOSED"
             ]
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -5599,15 +6180,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
           },
-          "budget_cents": {
+          "budgetCents": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9223372036854775807,
@@ -5617,28 +6198,28 @@
             "type": "object",
             "additionalProperties": true
           },
-          "skill_tags": {
+          "skillTags": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "required_reviews": {
+          "requiredReviews": {
             "type": "integer",
             "minimum": 1,
             "maximum": 5,
             "default": 1
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "$ref": "#/components/schemas/ReviewQualificationPolicy"
           },
-          "routing_policy": {
+          "routingPolicy": {
             "$ref": "#/components/schemas/ReviewRoutingPolicyInput"
           },
-          "annotation_schema": {
+          "annotationSchema": {
             "$ref": "#/components/schemas/ReviewAnnotationSchema"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -5651,8 +6232,8 @@
         "additionalProperties": false,
         "required": [
           "mode",
-          "min_gold_reviews",
-          "min_accuracy"
+          "minGoldReviews",
+          "minAccuracy"
         ],
         "properties": {
           "mode": {
@@ -5664,12 +6245,12 @@
             ],
             "description": "Shadow measures explicit qualification without blocking claims; required enforces the thresholds; disabled uses zero thresholds."
           },
-          "min_gold_reviews": {
+          "minGoldReviews": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100
           },
-          "min_accuracy": {
+          "minAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -5687,20 +6268,20 @@
             "default": 50,
             "description": "Higher values are more urgent within a project queue."
           },
-          "task_sla_seconds": {
+          "taskSlaSeconds": {
             "type": "integer",
             "minimum": 300,
             "maximum": 2592000,
             "default": 86400,
             "description": "Task deadline offset snapshotted at task creation."
           },
-          "batch_key": {
+          "batchKey": {
             "type": "string",
             "maxLength": 256,
             "default": "",
             "description": "Opaque project-scoped batch grouping; never a reviewer identity."
           },
-          "max_open_tasks": {
+          "maxOpenTasks": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100000,
@@ -5714,9 +6295,9 @@
         "additionalProperties": false,
         "required": [
           "priority",
-          "task_sla_seconds",
-          "batch_key",
-          "max_open_tasks"
+          "taskSlaSeconds",
+          "batchKey",
+          "maxOpenTasks"
         ],
         "properties": {
           "priority": {
@@ -5724,16 +6305,16 @@
             "minimum": 0,
             "maximum": 100
           },
-          "task_sla_seconds": {
+          "taskSlaSeconds": {
             "type": "integer",
             "minimum": 300,
             "maximum": 2592000
           },
-          "batch_key": {
+          "batchKey": {
             "type": "string",
             "maxLength": 256
           },
-          "max_open_tasks": {
+          "maxOpenTasks": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100000
@@ -5744,11 +6325,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "target_status",
-          "idempotency_key"
+          "targetStatus",
+          "idempotencyKey"
         ],
         "properties": {
-          "target_status": {
+          "targetStatus": {
             "type": "string",
             "enum": [
               "ACTIVE",
@@ -5757,7 +6338,7 @@
             ],
             "description": "PAUSED blocks new jobs, ACTIVE resumes admission, and CLOSED is terminal."
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -5770,20 +6351,20 @@
         "additionalProperties": false,
         "required": [
           "name",
-          "campaign_name",
-          "from_status",
-          "to_status",
-          "state_version",
-          "create_time"
+          "campaignName",
+          "fromStatus",
+          "toStatus",
+          "stateVersion",
+          "createTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "campaign_name": {
+          "campaignName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "from_status": {
+          "fromStatus": {
             "type": "string",
             "enum": [
               "ACTIVE",
@@ -5791,7 +6372,7 @@
               "CLOSED"
             ]
           },
-          "to_status": {
+          "toStatus": {
             "type": "string",
             "enum": [
               "ACTIVE",
@@ -5799,12 +6380,12 @@
               "CLOSED"
             ]
           },
-          "state_version": {
+          "stateVersion": {
             "type": "integer",
             "minimum": 1,
             "maximum": 9223372036854775807
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -5818,10 +6399,10 @@
               "$ref": "#/components/schemas/Campaign"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -5831,8 +6412,8 @@
         "required": [
           "id",
           "name",
-          "task_family",
-          "artifact_type"
+          "taskFamily",
+          "artifactType"
         ],
         "properties": {
           "id": {
@@ -5844,10 +6425,10 @@
           "market": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "artifact_type": {
+          "artifactType": {
             "type": "string"
           },
           "modalities": {
@@ -5856,10 +6437,10 @@
               "type": "string"
             }
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number"
           },
-          "skill_tags": {
+          "skillTags": {
             "type": "array",
             "items": {
               "type": "string"
@@ -5873,24 +6454,34 @@
             "type": "object",
             "additionalProperties": true
           },
-          "sample_artifact_count": {
+          "sampleArtifactCount": {
             "type": "integer"
+          },
+          "requiresInputArtifacts": {
+            "type": "boolean",
+            "description": "When true, pipeline runs fail closed unless the caller supplies authorized source artifacts; the catalog does not provide examples as production inputs.\n"
           }
         }
       },
       "UseCaseListResponse": {
         "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "useCases",
+          "nextPageToken",
+          "totalSize"
+        ],
         "properties": {
-          "use_cases": {
+          "useCases": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UseCase"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -5993,10 +6584,10 @@
       "UseCaseRunRequest": {
         "type": "object",
         "required": [
-          "use_case"
+          "useCase"
         ],
         "properties": {
-          "use_case": {
+          "useCase": {
             "type": "string",
             "minLength": 1
           },
@@ -6010,13 +6601,13 @@
             ],
             "description": "Verifier backend for the pipeline. Defaults to nvidia; cradle runs the use-case's wasm verifier in the cradle sandbox; agent dispatches the configured coding agent (DATA_ENGINE_AGENT_CMD, fail-closed 412 when unset); ensemble majority-votes across the tempera-llm gateway models (TEMPERA_LLM_GATEWAY_URL / DATA_ENGINE_ENSEMBLE_MODELS, fail-closed 412 when unset)."
           },
-          "budget_cents": {
+          "budgetCents": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9223372036854775807,
             "description": "Planning metadata only in this release; the receiver does not yet meter or stop work against this value."
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -6025,7 +6616,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "skill_tags": {
+          "skillTags": {
             "type": "array",
             "minItems": 1,
             "maxItems": 64,
@@ -6035,7 +6626,7 @@
               "maxLength": 256
             }
           },
-          "required_reviews": {
+          "requiredReviews": {
             "type": "integer",
             "minimum": 1,
             "maximum": 5,
@@ -6065,7 +6656,7 @@
                       "minLength": 1,
                       "maxLength": 8192
                     },
-                    "producer_version": {
+                    "producerVersion": {
                       "type": "string",
                       "minLength": 1,
                       "maxLength": 1024
@@ -6098,7 +6689,7 @@
       "UseCaseRunResponse": {
         "type": "object",
         "properties": {
-          "use_case": {
+          "useCase": {
             "$ref": "#/components/schemas/UseCase"
           },
           "verifier": {
@@ -6126,7 +6717,7 @@
           "results": {
             "$ref": "#/components/schemas/LabelListResponse"
           },
-          "expert_tasks": {
+          "expertTasks": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExpertTask"
@@ -6144,38 +6735,38 @@
         "type": "object",
         "required": [
           "name",
-          "campaign_name",
-          "artifact_name",
-          "label_name",
-          "skill_tags",
+          "campaignName",
+          "artifactName",
+          "labelName",
+          "skillTags",
           "rubric",
-          "rubric_version",
+          "rubricVersion",
           "reason",
-          "review_role",
-          "qualification_task",
+          "reviewRole",
+          "qualificationTask",
           "status",
-          "resolution_label_name",
+          "resolutionLabelName",
           "priority",
-          "deadline_time",
-          "batch_key",
-          "create_time",
-          "update_time"
+          "deadlineTime",
+          "batchKey",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "campaign_name": {
+          "campaignName": {
             "type": "string",
             "nullable": true
           },
-          "artifact_name": {
+          "artifactName": {
             "type": "string"
           },
-          "label_name": {
+          "labelName": {
             "type": "string"
           },
-          "skill_tags": {
+          "skillTags": {
             "type": "array",
             "items": {
               "type": "string"
@@ -6186,16 +6777,16 @@
             "additionalProperties": true,
             "description": "Immutable rubric snapshot bound when the task is created."
           },
-          "rubric_version": {
+          "rubricVersion": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$",
             "description": "Content digest of the immutable rubric snapshot."
           },
-          "annotation_schema": {
+          "annotationSchema": {
             "$ref": "#/components/schemas/ReviewAnnotationSchema",
             "description": "Additive structured-annotation metadata. Older producer revisions may omit this together with annotation_schema_version during a consumer-first rollout."
           },
-          "annotation_schema_version": {
+          "annotationSchemaVersion": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$",
             "description": "Content digest of the immutable structured annotation schema."
@@ -6206,7 +6797,7 @@
             "maximum": 100,
             "description": "Immutable priority snapshot inherited from the campaign routing policy."
           },
-          "deadline_time": {
+          "deadlineTime": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/Timestamp"
@@ -6215,7 +6806,7 @@
             "nullable": true,
             "description": "Immutable SLA deadline snapshot; null only for legacy tasks created before routing policy support."
           },
-          "batch_key": {
+          "batchKey": {
             "type": "string",
             "maxLength": 256,
             "description": "Immutable opaque batch snapshot inherited from the campaign routing policy."
@@ -6223,7 +6814,7 @@
           "reason": {
             "type": "string"
           },
-          "review_role": {
+          "reviewRole": {
             "type": "string",
             "enum": [
               "review",
@@ -6231,7 +6822,7 @@
             ],
             "description": "Adjudication tasks are created when independent accepted reviews disagree."
           },
-          "qualification_task": {
+          "qualificationTask": {
             "type": "boolean",
             "description": "True only for disclosed onboarding tasks. Blind gold probes always return false and are otherwise indistinguishable from ordinary tasks."
           },
@@ -6242,14 +6833,14 @@
               "RESOLVED"
             ]
           },
-          "resolution_label_name": {
+          "resolutionLabelName": {
             "type": "string",
             "nullable": true
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -6257,16 +6848,16 @@
       "ExpertTaskListResponse": {
         "type": "object",
         "properties": {
-          "expert_tasks": {
+          "expertTasks": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExpertTask"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -6276,8 +6867,8 @@
         "additionalProperties": false,
         "required": [
           "label",
-          "idempotency_key",
-          "review_context"
+          "idempotencyKey",
+          "reviewContext"
         ],
         "properties": {
           "label": {
@@ -6320,25 +6911,25 @@
             ],
             "description": "Required for span, region, ranking, pairwise, and taxonomy decisions. Legacy and explicit classification tasks may derive the one selected label when omitted. The receiver validates the value against the immutable task annotation_schema and includes it in replay identity."
           },
-          "annotator_id": {
+          "annotatorId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "description": "Optional echo of the authenticated reviewer. REST binds identity from a central token subject or trusted act-as subject and rejects a mismatch; direct static-token review writes are forbidden. The value becomes a project-scoped keyed pseudonym before persistence, and one reviewer cannot satisfy multiple independent slots."
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "description": "Hashed before persistence and bound to the normalized resolution payload."
           },
-          "lease_token": {
+          "leaseToken": {
             "type": "string",
             "minLength": 1,
             "maxLength": 512,
             "description": "Opaque client-generated lease capability. Required once this task has entered the assignment lifecycle; only its SHA-256 digest is persisted."
           },
-          "review_context": {
+          "reviewContext": {
             "$ref": "#/components/schemas/HumanReviewContext"
           }
         }
@@ -6347,13 +6938,13 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "review_type",
-          "source_provenance",
-          "consent_boundary",
-          "reuse_targets"
+          "reviewType",
+          "sourceProvenance",
+          "consentBoundary",
+          "reuseTargets"
         ],
         "properties": {
-          "review_type": {
+          "reviewType": {
             "type": "string",
             "enum": [
               "browser_action",
@@ -6362,7 +6953,7 @@
               "other"
             ]
           },
-          "source_provenance": {
+          "sourceProvenance": {
             "type": "array",
             "minItems": 1,
             "maxItems": 32,
@@ -6370,10 +6961,10 @@
               "$ref": "#/components/schemas/HumanSourceProvenance"
             }
           },
-          "consent_boundary": {
+          "consentBoundary": {
             "$ref": "#/components/schemas/HumanConsentBoundary"
           },
-          "reuse_targets": {
+          "reuseTargets": {
             "type": "array",
             "minItems": 0,
             "maxItems": 4,
@@ -6396,11 +6987,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "source_kind",
-          "source_ref"
+          "sourceKind",
+          "sourceRef"
         ],
         "properties": {
-          "source_kind": {
+          "sourceKind": {
             "type": "string",
             "enum": [
               "palette_trace",
@@ -6410,12 +7001,12 @@
               "artifact"
             ]
           },
-          "source_ref": {
+          "sourceRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
           },
-          "content_sha256": {
+          "contentSha256": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$",
             "description": "Required for artifact provenance and verified against the retained raw object."
@@ -6466,17 +7057,17 @@
       "ExpertTaskResolution": {
         "type": "object",
         "required": [
-          "expert_task",
+          "expertTask",
           "label"
         ],
         "properties": {
-          "expert_task": {
+          "expertTask": {
             "$ref": "#/components/schemas/ExpertTask"
           },
           "label": {
             "$ref": "#/components/schemas/Label"
           },
-          "qualification_result": {
+          "qualificationResult": {
             "$ref": "#/components/schemas/ReviewQualificationResult"
           }
         }
@@ -6485,15 +7076,15 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "source_expert_task_name",
-          "expected_label",
-          "idempotency_key"
+          "sourceExpertTaskName",
+          "expectedLabel",
+          "idempotencyKey"
         ],
         "properties": {
-          "source_expert_task_name": {
+          "sourceExpertTaskName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "expected_label": {
+          "expectedLabel": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -6508,7 +7099,7 @@
             ],
             "default": "explicit"
           },
-          "feedback_policy": {
+          "feedbackPolicy": {
             "type": "string",
             "enum": [
               "none",
@@ -6517,7 +7108,7 @@
             "default": "none",
             "description": "Blind mode requires none; result_only never returns the expected label."
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
@@ -6529,25 +7120,25 @@
         "additionalProperties": false,
         "required": [
           "schema",
-          "expert_task_name",
-          "source_expert_task_name",
-          "task_family",
+          "expertTaskName",
+          "sourceExpertTaskName",
+          "taskFamily",
           "mode",
-          "feedback_policy",
-          "create_time"
+          "feedbackPolicy",
+          "createTime"
         ],
         "properties": {
           "schema": {
             "type": "string",
             "const": "data-engine.review-qualification-task.v1"
           },
-          "expert_task_name": {
+          "expertTaskName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "source_expert_task_name": {
+          "sourceExpertTaskName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "mode": {
@@ -6557,14 +7148,14 @@
               "blind"
             ]
           },
-          "feedback_policy": {
+          "feedbackPolicy": {
             "type": "string",
             "enum": [
               "none",
               "result_only"
             ]
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -6575,14 +7166,14 @@
         "required": [
           "schema",
           "project",
-          "campaign_name",
-          "task_family",
-          "reviewer_ref",
+          "campaignName",
+          "taskFamily",
+          "reviewerRef",
           "policy",
-          "evaluated_gold_tasks",
-          "correct_gold_tasks",
-          "gold_accuracy",
-          "confidence_interval_95",
+          "evaluatedGoldTasks",
+          "correctGoldTasks",
+          "goldAccuracy",
+          "confidenceInterval95",
           "eligible",
           "enforced"
         ],
@@ -6594,35 +7185,35 @@
           "project": {
             "type": "string"
           },
-          "campaign_name": {
+          "campaignName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "reviewer_ref": {
+          "reviewerRef": {
             "type": "string",
             "description": "The authenticated caller's project-scoped pseudonym."
           },
           "policy": {
             "$ref": "#/components/schemas/ReviewQualificationPolicy"
           },
-          "evaluated_gold_tasks": {
+          "evaluatedGoldTasks": {
             "type": "integer",
             "minimum": 0,
             "description": "Explicit qualification tasks only; blind probes are excluded."
           },
-          "correct_gold_tasks": {
+          "correctGoldTasks": {
             "type": "integer",
             "minimum": 0
           },
-          "gold_accuracy": {
+          "goldAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
             "nullable": true
           },
-          "confidence_interval_95": {
+          "confidenceInterval95": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/BinomialConfidenceInterval"
@@ -6644,7 +7235,7 @@
         "required": [
           "evaluated",
           "correct",
-          "reviewer_qualification"
+          "reviewerQualification"
         ],
         "description": "Present only for explicit tasks whose policy permits result-only feedback. Never present for blind probes and never contains the expected label.",
         "properties": {
@@ -6655,7 +7246,7 @@
           "correct": {
             "type": "boolean"
           },
-          "reviewer_qualification": {
+          "reviewerQualification": {
             "$ref": "#/components/schemas/ReviewerQualification"
           }
         }
@@ -6664,23 +7255,23 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "properties": {
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
             "description": "Hashed before persistence and binds an exact claim or renewal request."
           },
-          "lease_token": {
+          "leaseToken": {
             "type": "string",
             "minLength": 1,
             "maxLength": 512,
             "description": "Opaque client-generated capability; only its SHA-256 digest is persisted."
           },
-          "lease_duration_seconds": {
+          "leaseDurationSeconds": {
             "type": "integer",
             "minimum": 30,
             "maximum": 1800,
@@ -6692,16 +7283,16 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "properties": {
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           },
-          "lease_token": {
+          "leaseToken": {
             "type": "string",
             "minLength": 1,
             "maxLength": 512
@@ -6712,18 +7303,18 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "idempotency_key",
-          "lease_token",
+          "idempotencyKey",
+          "leaseToken",
           "draft",
-          "expected_version"
+          "expectedVersion"
         ],
         "properties": {
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           },
-          "lease_token": {
+          "leaseToken": {
             "type": "string",
             "minLength": 1,
             "maxLength": 512
@@ -6733,7 +7324,7 @@
             "additionalProperties": true,
             "description": "Bounded structured reviewer form state, persisted only in Data Engine."
           },
-          "expected_version": {
+          "expectedVersion": {
             "type": "integer",
             "minimum": 0,
             "description": "Optimistic concurrency version returned by the active assignment."
@@ -6744,24 +7335,24 @@
         "type": "object",
         "required": [
           "name",
-          "expert_task_name",
-          "assignee_ref",
+          "expertTaskName",
+          "assigneeRef",
           "state",
-          "lease_expires_at",
+          "leaseExpiresAt",
           "draft",
-          "draft_version",
-          "draft_update_time",
-          "create_time",
-          "update_time"
+          "draftVersion",
+          "draftUpdateTime",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "expert_task_name": {
+          "expertTaskName": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "assignee_ref": {
+          "assigneeRef": {
             "type": "string",
             "description": "Project-scoped keyed reviewer pseudonym; clear identity is never returned."
           },
@@ -6774,7 +7365,7 @@
               "COMPLETED"
             ]
           },
-          "lease_expires_at": {
+          "leaseExpiresAt": {
             "type": "number",
             "format": "double",
             "description": "Unix epoch seconds. It is meaningful only while state is ACTIVE."
@@ -6783,11 +7374,11 @@
             "type": "object",
             "additionalProperties": true
           },
-          "draft_version": {
+          "draftVersion": {
             "type": "integer",
             "minimum": 0
           },
-          "draft_update_time": {
+          "draftUpdateTime": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/Timestamp"
@@ -6795,10 +7386,10 @@
             ],
             "nullable": true
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -6820,31 +7411,31 @@
           "project": {
             "type": "string"
           },
-          "artifacts_ingested": {
+          "artifactsIngested": {
             "type": "integer"
           },
-          "labels_created": {
+          "labelsCreated": {
             "type": "integer"
           },
-          "verifier_runs": {
+          "verifierRuns": {
             "type": "integer"
           },
-          "accepted_verified_units": {
+          "acceptedVerifiedUnits": {
             "type": "integer"
           },
-          "human_residual_units": {
+          "humanResidualUnits": {
             "type": "integer"
           },
-          "open_expert_tasks": {
+          "openExpertTasks": {
             "type": "integer"
           },
-          "bundle_emits": {
+          "bundleEmits": {
             "type": "integer"
           },
-          "auto_resolution_rate": {
+          "autoResolutionRate": {
             "type": "number"
           },
-          "average_confidence": {
+          "averageConfidence": {
             "type": "number"
           }
         }
@@ -6854,15 +7445,15 @@
         "required": [
           "schema",
           "project",
-          "as_of",
-          "window_seconds",
-          "sla_target_seconds",
+          "asOf",
+          "windowSeconds",
+          "slaTargetSeconds",
           "queue",
           "throughput",
-          "agreement_by_task_family",
-          "reviewer_calibration",
-          "gold_by_task_family",
-          "rubric_versions",
+          "agreementByTaskFamily",
+          "reviewerCalibration",
+          "goldByTaskFamily",
+          "rubricVersions",
           "budget"
         ],
         "properties": {
@@ -6873,15 +7464,15 @@
           "project": {
             "type": "string"
           },
-          "as_of": {
+          "asOf": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "window_seconds": {
+          "windowSeconds": {
             "type": "integer",
             "minimum": 300,
             "maximum": 2592000
           },
-          "sla_target_seconds": {
+          "slaTargetSeconds": {
             "type": "integer",
             "minimum": 300,
             "maximum": 2592000
@@ -6892,14 +7483,14 @@
           "throughput": {
             "$ref": "#/components/schemas/ReviewOperationsThroughput"
           },
-          "agreement_by_task_family": {
+          "agreementByTaskFamily": {
             "type": "array",
             "maxItems": 256,
             "items": {
               "$ref": "#/components/schemas/ReviewTaskFamilyAgreement"
             }
           },
-          "reviewer_calibration": {
+          "reviewerCalibration": {
             "type": "array",
             "maxItems": 1024,
             "description": "Project-keyed pseudonymous rows suppressed until a reviewer has at least five resolved and five consensus-eligible reviews in the task family.",
@@ -6907,14 +7498,14 @@
               "$ref": "#/components/schemas/ReviewerCalibration"
             }
           },
-          "gold_by_task_family": {
+          "goldByTaskFamily": {
             "type": "array",
             "maxItems": 256,
             "items": {
               "$ref": "#/components/schemas/ReviewGoldHealth"
             }
           },
-          "rubric_versions": {
+          "rubricVersions": {
             "type": "array",
             "maxItems": 256,
             "items": {
@@ -6929,41 +7520,41 @@
       "ReviewOperationsQueue": {
         "type": "object",
         "required": [
-          "open_tasks",
-          "open_primary_reviews",
-          "open_adjudications",
-          "active_leases",
-          "stale_active_leases",
-          "unassigned_open_tasks",
-          "sla_at_risk_tasks",
-          "sla_breached_tasks"
+          "openTasks",
+          "openPrimaryReviews",
+          "openAdjudications",
+          "activeLeases",
+          "staleActiveLeases",
+          "unassignedOpenTasks",
+          "slaAtRiskTasks",
+          "slaBreachedTasks"
         ],
         "properties": {
-          "open_tasks": {
+          "openTasks": {
             "type": "integer"
           },
-          "open_primary_reviews": {
+          "openPrimaryReviews": {
             "type": "integer"
           },
-          "open_adjudications": {
+          "openAdjudications": {
             "type": "integer"
           },
-          "active_leases": {
+          "activeLeases": {
             "type": "integer"
           },
-          "stale_active_leases": {
+          "staleActiveLeases": {
             "type": "integer",
             "description": "ACTIVE rows whose lease timestamp is already past as_of."
           },
-          "unassigned_open_tasks": {
+          "unassignedOpenTasks": {
             "type": "integer",
             "description": "Open tasks without a non-expired ACTIVE lease."
           },
-          "sla_at_risk_tasks": {
+          "slaAtRiskTasks": {
             "type": "integer",
             "description": "Open tasks aged from 80% up to the supplied SLA threshold."
           },
-          "sla_breached_tasks": {
+          "slaBreachedTasks": {
             "type": "integer",
             "description": "Open tasks at or beyond the supplied SLA threshold."
           }
@@ -6972,26 +7563,26 @@
       "ReviewOperationsThroughput": {
         "type": "object",
         "required": [
-          "resolved_tasks",
-          "completed_assignments",
-          "released_assignments",
-          "expired_assignments",
-          "drafts_saved"
+          "resolvedTasks",
+          "completedAssignments",
+          "releasedAssignments",
+          "expiredAssignments",
+          "draftsSaved"
         ],
         "properties": {
-          "resolved_tasks": {
+          "resolvedTasks": {
             "type": "integer"
           },
-          "completed_assignments": {
+          "completedAssignments": {
             "type": "integer"
           },
-          "released_assignments": {
+          "releasedAssignments": {
             "type": "integer"
           },
-          "expired_assignments": {
+          "expiredAssignments": {
             "type": "integer"
           },
-          "drafts_saved": {
+          "draftsSaved": {
             "type": "integer"
           }
         }
@@ -7018,28 +7609,28 @@
       "ReviewTaskFamilyAgreement": {
         "type": "object",
         "required": [
-          "task_family",
-          "evaluated_items",
-          "exact_agreement_items",
-          "exact_agreement_rate",
-          "confidence_interval_95"
+          "taskFamily",
+          "evaluatedItems",
+          "exactAgreementItems",
+          "exactAgreementRate",
+          "confidenceInterval95"
         ],
         "properties": {
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "evaluated_items": {
+          "evaluatedItems": {
             "type": "integer"
           },
-          "exact_agreement_items": {
+          "exactAgreementItems": {
             "type": "integer"
           },
-          "exact_agreement_rate": {
+          "exactAgreementRate": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
           },
-          "confidence_interval_95": {
+          "confidenceInterval95": {
             "$ref": "#/components/schemas/BinomialConfidenceInterval"
           }
         }
@@ -7047,40 +7638,40 @@
       "ReviewerCalibration": {
         "type": "object",
         "required": [
-          "task_family",
-          "reviewer_ref",
-          "resolved_reviews",
-          "consensus_eligible_reviews",
-          "consensus_agreements",
-          "consensus_agreement_rate",
-          "confidence_interval_95",
-          "mean_confidence"
+          "taskFamily",
+          "reviewerRef",
+          "resolvedReviews",
+          "consensusEligibleReviews",
+          "consensusAgreements",
+          "consensusAgreementRate",
+          "confidenceInterval95",
+          "meanConfidence"
         ],
         "properties": {
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "reviewer_ref": {
+          "reviewerRef": {
             "type": "string",
             "description": "Project-scoped reviewer pseudonym; clear identity is never returned."
           },
-          "resolved_reviews": {
+          "resolvedReviews": {
             "type": "integer",
             "minimum": 5
           },
-          "consensus_eligible_reviews": {
+          "consensusEligibleReviews": {
             "type": "integer"
           },
-          "consensus_agreements": {
+          "consensusAgreements": {
             "type": "integer"
           },
-          "consensus_agreement_rate": {
+          "consensusAgreementRate": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
             "nullable": true
           },
-          "confidence_interval_95": {
+          "confidenceInterval95": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/BinomialConfidenceInterval"
@@ -7088,7 +7679,7 @@
             ],
             "nullable": true
           },
-          "mean_confidence": {
+          "meanConfidence": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -7099,51 +7690,51 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "task_family",
-          "configured_tasks",
-          "explicit_tasks",
-          "blind_tasks",
-          "explicit_evaluated_tasks",
-          "explicit_correct_tasks",
-          "explicit_gold_accuracy",
-          "confidence_interval_95"
+          "taskFamily",
+          "configuredTasks",
+          "explicitTasks",
+          "blindTasks",
+          "explicitEvaluatedTasks",
+          "explicitCorrectTasks",
+          "explicitGoldAccuracy",
+          "confidenceInterval95"
         ],
         "properties": {
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "configured_tasks": {
+          "configuredTasks": {
             "type": "integer",
             "minimum": 0
           },
-          "explicit_tasks": {
+          "explicitTasks": {
             "type": "integer",
             "minimum": 0
           },
-          "blind_tasks": {
+          "blindTasks": {
             "type": "integer",
             "minimum": 0,
             "description": "Count only; blind identities and outcomes are never projected."
           },
-          "explicit_evaluated_tasks": {
+          "explicitEvaluatedTasks": {
             "type": "integer",
             "minimum": 0,
             "description": "Completed explicit result_only tasks eligible for aggregate feedback."
           },
-          "explicit_correct_tasks": {
+          "explicitCorrectTasks": {
             "type": "integer",
             "minimum": 0,
             "nullable": true,
             "description": "Suppressed with accuracy and interval until at least five eligible result_only tasks exist; feedback_policy none never contributes."
           },
-          "explicit_gold_accuracy": {
+          "explicitGoldAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
             "nullable": true,
             "description": "Result-only aggregate suppressed below five eligible evaluations."
           },
-          "confidence_interval_95": {
+          "confidenceInterval95": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/BinomialConfidenceInterval"
@@ -7156,20 +7747,20 @@
       "ReviewRubricVersions": {
         "type": "object",
         "required": [
-          "task_family",
-          "campaign_count",
-          "task_count",
+          "taskFamily",
+          "campaignCount",
+          "taskCount",
           "versions",
           "drifted"
         ],
         "properties": {
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "campaign_count": {
+          "campaignCount": {
             "type": "integer"
           },
-          "task_count": {
+          "taskCount": {
             "type": "integer"
           },
           "versions": {
@@ -7188,19 +7779,19 @@
       "ReviewBudget": {
         "type": "object",
         "required": [
-          "declared_campaign_budget_cents",
-          "active_campaign_count",
-          "actual_cost_available"
+          "declaredCampaignBudgetCents",
+          "activeCampaignCount",
+          "actualCostAvailable"
         ],
         "properties": {
-          "declared_campaign_budget_cents": {
+          "declaredCampaignBudgetCents": {
             "type": "integer",
             "minimum": 0
           },
-          "active_campaign_count": {
+          "activeCampaignCount": {
             "type": "integer"
           },
-          "actual_cost_available": {
+          "actualCostAvailable": {
             "type": "boolean",
             "const": false,
             "description": "False until authoritative reviewer-cost receipts exist."
@@ -7210,7 +7801,7 @@
       "EcosystemReadiness": {
         "type": "object",
         "properties": {
-          "product_id": {
+          "productId": {
             "type": "string"
           },
           "project": {
@@ -7224,7 +7815,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "public_site_contract": {
+          "publicSiteContract": {
             "type": "object",
             "additionalProperties": true
           },
@@ -7254,25 +7845,25 @@
         "type": "object",
         "required": [
           "name",
-          "artifact_name",
-          "campaign_name",
+          "artifactName",
+          "campaignName",
           "label",
           "confidence",
           "rationale",
           "evidence",
           "provenance",
           "decision",
-          "create_time",
-          "update_time"
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "artifact_name": {
+          "artifactName": {
             "type": "string"
           },
-          "campaign_name": {
+          "campaignName": {
             "type": "string",
             "nullable": true
           },
@@ -7300,7 +7891,7 @@
               "model": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               },
               "determinism": {
@@ -7317,10 +7908,10 @@
           "decision": {
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -7335,7 +7926,7 @@
           "artifact": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "value": {
@@ -7356,10 +7947,10 @@
       "LabelPatchRequest": {
         "type": "object",
         "required": [
-          "update_mask"
+          "updateMask"
         ],
         "properties": {
-          "update_mask": {
+          "updateMask": {
             "type": "array",
             "items": {
               "type": "string"
@@ -7380,10 +7971,37 @@
               "$ref": "#/components/schemas/Label"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
+            "type": "integer"
+          }
+        }
+      },
+      "JobResultListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job",
+          "labels",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          },
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -7392,44 +8010,44 @@
         "type": "object",
         "required": [
           "name",
-          "task_family",
-          "campaign_name",
+          "taskFamily",
+          "campaignName",
           "status",
-          "artifact_names",
-          "label_names",
-          "create_time",
-          "update_time"
+          "artifactNames",
+          "labelNames",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "campaign_name": {
+          "campaignName": {
             "type": "string",
             "nullable": true
           },
           "status": {
             "type": "string"
           },
-          "artifact_names": {
+          "artifactNames": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "label_names": {
+          "labelNames": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -7437,11 +8055,11 @@
       "JobCreateRequest": {
         "type": "object",
         "required": [
-          "artifact_ids",
-          "task_family"
+          "artifactIds",
+          "taskFamily"
         ],
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "type": "array",
             "minItems": 1,
             "maxItems": 64,
@@ -7451,7 +8069,7 @@
               "maxLength": 4096
             }
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -7462,12 +8080,12 @@
             "minLength": 1,
             "maxLength": 4096
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
@@ -7494,10 +8112,10 @@
               "$ref": "#/components/schemas/Job"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -7518,7 +8136,7 @@
           "source": {
             "type": "string"
           },
-          "soundness_status": {
+          "soundnessStatus": {
             "type": "string",
             "enum": [
               "NOT_TESTED",
@@ -7551,7 +8169,7 @@
           "program": {
             "type": "object"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "tags": {
@@ -7565,10 +8183,10 @@
       "VerifierPatchRequest": {
         "type": "object",
         "required": [
-          "update_mask"
+          "updateMask"
         ],
         "properties": {
-          "update_mask": {
+          "updateMask": {
             "type": "array",
             "items": {
               "type": "string"
@@ -7583,10 +8201,10 @@
       "VerifierRunRequest": {
         "type": "object",
         "required": [
-          "artifact_ids"
+          "artifactIds"
         ],
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "type": "array",
             "items": {
               "type": "string"
@@ -7607,10 +8225,10 @@
               "$ref": "#/components/schemas/Verifier"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -7627,16 +8245,16 @@
           "status": {
             "type": "string"
           },
-          "eval_family": {
+          "evalFamily": {
             "type": "string"
           },
-          "item_count": {
+          "itemCount": {
             "type": "integer"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "contamination_score": {
+          "contaminationScore": {
             "type": "number"
           }
         }
@@ -7644,19 +8262,19 @@
       "EvalCreateRequest": {
         "type": "object",
         "required": [
-          "artifact_ids"
+          "artifactIds"
         ],
         "properties": {
           "name": {
             "type": "string"
           },
-          "artifact_ids": {
+          "artifactIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "rubric": {
@@ -7674,10 +8292,10 @@
               "$ref": "#/components/schemas/Eval"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -7685,13 +8303,13 @@
       "EvalRunRequest": {
         "type": "object",
         "properties": {
-          "model_ids": {
+          "modelIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "sample_size": {
+          "sampleSize": {
             "type": "integer"
           }
         }
@@ -7727,10 +8345,10 @@
               "$ref": "#/components/schemas/Run"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -7739,58 +8357,58 @@
         "type": "object",
         "required": [
           "name",
-          "product_id",
+          "productId",
           "mode",
-          "manifest_path",
-          "manifest_url",
-          "manifest_sha256",
-          "artifact_names",
-          "label_names",
-          "quality_status",
-          "pending_artifact_names",
-          "job_name",
-          "task_family",
-          "campaign_name",
-          "snapshot_hash",
-          "create_time",
-          "update_time"
+          "manifestPath",
+          "manifestUrl",
+          "manifestSha256",
+          "artifactNames",
+          "labelNames",
+          "qualityStatus",
+          "pendingArtifactNames",
+          "jobName",
+          "taskFamily",
+          "campaignName",
+          "snapshotHash",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "product_id": {
+          "productId": {
             "type": "string"
           },
           "mode": {
             "type": "string"
           },
-          "manifest_path": {
+          "manifestPath": {
             "type": "string",
             "description": "Internal compatibility field; remote callers should use manifest_url."
           },
-          "manifest_url": {
+          "manifestUrl": {
             "type": "string",
             "description": "Project-scoped API path for the integrity-checked manifest."
           },
-          "manifest_sha256": {
+          "manifestSha256": {
             "type": "string",
             "pattern": "^$|^[0-9a-f]{64}$",
             "description": "SHA-256 for new manifests; empty only on migrated legacy rows."
           },
-          "artifact_names": {
+          "artifactNames": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "label_names": {
+          "labelNames": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "quality_status": {
+          "qualityStatus": {
             "type": "string",
             "enum": [
               "PUBLISHING",
@@ -7800,32 +8418,32 @@
               "LEGACY"
             ]
           },
-          "pending_artifact_names": {
+          "pendingArtifactNames": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "job_name": {
+          "jobName": {
             "type": "string",
             "nullable": true
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string",
             "nullable": true
           },
-          "campaign_name": {
+          "campaignName": {
             "type": "string",
             "nullable": true
           },
-          "snapshot_hash": {
+          "snapshotHash": {
             "type": "string",
             "pattern": "^$|^[0-9a-f]{64}$"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -7834,22 +8452,22 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "training_product_id",
-          "heldout_product_id",
-          "idempotency_key"
+          "trainingProductId",
+          "heldoutProductId",
+          "idempotencyKey"
         ],
         "properties": {
-          "training_product_id": {
+          "trainingProductId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           },
-          "heldout_product_id": {
+          "heldoutProductId": {
             "type": "string",
             "minLength": 1,
             "maxLength": 256
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
@@ -7862,22 +8480,22 @@
         "required": [
           "schema",
           "name",
-          "release_id",
+          "releaseId",
           "project",
-          "reuse_target",
-          "training_product",
-          "training_snapshot_hash",
-          "training_manifest_sha256",
-          "heldout_product",
-          "heldout_snapshot_hash",
-          "heldout_manifest_sha256",
-          "raw_hash_overlap_count",
-          "policy_receipt",
-          "admission_hash",
+          "reuseTarget",
+          "trainingProduct",
+          "trainingSnapshotHash",
+          "trainingManifestSha256",
+          "heldoutProduct",
+          "heldoutSnapshotHash",
+          "heldoutManifestSha256",
+          "rawHashOverlapCount",
+          "policyReceipt",
+          "admissionHash",
           "status",
-          "stale_reason",
-          "create_time",
-          "update_time"
+          "staleReason",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "schema": {
@@ -7889,49 +8507,49 @@
           "name": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "release_id": {
+          "releaseId": {
             "type": "string"
           },
           "project": {
             "type": "string"
           },
-          "reuse_target": {
+          "reuseTarget": {
             "type": "string",
             "enum": [
               "model_training"
             ]
           },
-          "training_product": {
+          "trainingProduct": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "training_snapshot_hash": {
+          "trainingSnapshotHash": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "training_manifest_sha256": {
+          "trainingManifestSha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "heldout_product": {
+          "heldoutProduct": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "heldout_snapshot_hash": {
+          "heldoutSnapshotHash": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "heldout_manifest_sha256": {
+          "heldoutManifestSha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "raw_hash_overlap_count": {
+          "rawHashOverlapCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "policy_receipt": {
+          "policyReceipt": {
             "$ref": "#/components/schemas/TrainingReleasePolicyReceipt"
           },
-          "admission_hash": {
+          "admissionHash": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
@@ -7942,14 +8560,14 @@
               "STALE"
             ]
           },
-          "stale_reason": {
+          "staleReason": {
             "type": "string",
             "nullable": true
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -7960,20 +8578,20 @@
         "required": [
           "schema",
           "status",
-          "scanner_version",
-          "near_duplicate_algorithm",
-          "near_duplicate_threshold",
-          "training_unit_count",
-          "heldout_unit_count",
-          "secret_match_count",
-          "training_exact_duplicate_pair_count",
-          "heldout_exact_duplicate_pair_count",
-          "training_near_duplicate_pair_count",
-          "heldout_near_duplicate_pair_count",
-          "exact_overlap_count",
-          "near_duplicate_overlap_count",
-          "policy_digest",
-          "passed_checks"
+          "scannerVersion",
+          "nearDuplicateAlgorithm",
+          "nearDuplicateThreshold",
+          "trainingUnitCount",
+          "heldoutUnitCount",
+          "secretMatchCount",
+          "trainingExactDuplicatePairCount",
+          "heldoutExactDuplicatePairCount",
+          "trainingNearDuplicatePairCount",
+          "heldoutNearDuplicatePairCount",
+          "exactOverlapCount",
+          "nearDuplicateOverlapCount",
+          "policyDigest",
+          "passedChecks"
         ],
         "properties": {
           "schema": {
@@ -7989,74 +8607,74 @@
               "LEGACY_UNVERIFIED"
             ]
           },
-          "scanner_version": {
+          "scannerVersion": {
             "type": "string",
             "enum": [
               "data-engine.release-policy-scanner.v2"
             ]
           },
-          "near_duplicate_algorithm": {
+          "nearDuplicateAlgorithm": {
             "type": "string",
             "enum": [
               "bottom-1024-count-sketch-5-byte-multiset-jaccard.v3"
             ]
           },
-          "near_duplicate_threshold": {
+          "nearDuplicateThreshold": {
             "type": "number",
             "enum": [
               0.9
             ]
           },
-          "training_unit_count": {
+          "trainingUnitCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 64
           },
-          "heldout_unit_count": {
+          "heldoutUnitCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 64
           },
-          "secret_match_count": {
+          "secretMatchCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "training_exact_duplicate_pair_count": {
+          "trainingExactDuplicatePairCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "heldout_exact_duplicate_pair_count": {
+          "heldoutExactDuplicatePairCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "training_near_duplicate_pair_count": {
+          "trainingNearDuplicatePairCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "heldout_near_duplicate_pair_count": {
+          "heldoutNearDuplicatePairCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "exact_overlap_count": {
+          "exactOverlapCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "near_duplicate_overlap_count": {
+          "nearDuplicateOverlapCount": {
             "type": "integer",
             "minimum": 0,
             "maximum": 0
           },
-          "policy_digest": {
+          "policyDigest": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "passed_checks": {
+          "passedChecks": {
             "type": "array",
             "minItems": 0,
             "maxItems": 9,
@@ -8085,7 +8703,7 @@
                   "PASS"
                 ]
               },
-              "passed_checks": {
+              "passedChecks": {
                 "minItems": 9,
                 "maxItems": 9,
                 "uniqueItems": true
@@ -8099,7 +8717,7 @@
                   "LEGACY_UNVERIFIED"
                 ]
               },
-              "passed_checks": {
+              "passedChecks": {
                 "minItems": 0,
                 "maxItems": 0,
                 "uniqueItems": true
@@ -8115,10 +8733,10 @@
           "name",
           "project",
           "mode",
-          "artifact_names",
-          "label_names",
+          "artifactNames",
+          "labelNames",
           "metrics",
-          "create_time"
+          "createTime"
         ],
         "properties": {
           "name": {
@@ -8140,35 +8758,35 @@
             ],
             "description": "Present on job-scoped manifests; absent on migrated legacy manifests."
           },
-          "job_name": {
+          "jobName": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "campaign_name": {
+          "campaignName": {
             "type": "string",
             "nullable": true
           },
-          "snapshot_hash": {
+          "snapshotHash": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "artifact_names": {
+          "artifactNames": {
             "type": "array",
             "maxItems": 64,
             "items": {
               "type": "string"
             }
           },
-          "label_names": {
+          "labelNames": {
             "type": "array",
             "maxItems": 64,
             "items": {
               "type": "string"
             }
           },
-          "candidate_label_names": {
+          "candidateLabelNames": {
             "type": "array",
             "maxItems": 64,
             "items": {
@@ -8182,14 +8800,14 @@
               "$ref": "#/components/schemas/ProductSnapshotItem"
             }
           },
-          "pending_artifact_names": {
+          "pendingArtifactNames": {
             "type": "array",
             "maxItems": 64,
             "items": {
               "type": "string"
             }
           },
-          "quality_status": {
+          "qualityStatus": {
             "type": "string",
             "enum": [
               "READY",
@@ -8208,7 +8826,7 @@
             ],
             "description": "Product-scoped metrics on v1 manifests; project metrics on migrated legacy manifests."
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -8217,40 +8835,40 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "artifact_name",
-          "artifact_raw_sha256",
-          "source_label_name",
-          "source_label_sha256",
-          "candidate_label_name",
-          "candidate_label_sha256",
-          "candidate_reviewed_at",
-          "review_label_names",
-          "source_policy",
+          "artifactName",
+          "artifactRawSha256",
+          "sourceLabelName",
+          "sourceLabelSha256",
+          "candidateLabelName",
+          "candidateLabelSha256",
+          "candidateReviewedAt",
+          "reviewLabelNames",
+          "sourcePolicy",
           "tasks"
         ],
         "properties": {
-          "artifact_name": {
+          "artifactName": {
             "type": "string"
           },
-          "artifact_raw_sha256": {
+          "artifactRawSha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "source_label_name": {
+          "sourceLabelName": {
             "type": "string"
           },
-          "source_label_sha256": {
+          "sourceLabelSha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "candidate_label_name": {
+          "candidateLabelName": {
             "type": "string"
           },
-          "candidate_label_sha256": {
+          "candidateLabelSha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "candidate_reviewed_at": {
+          "candidateReviewedAt": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/Timestamp"
@@ -8259,7 +8877,7 @@
             "nullable": true,
             "description": "Immutable review time for a human authoritative label; null for automated labels."
           },
-          "review_label_names": {
+          "reviewLabelNames": {
             "type": "array",
             "maxItems": 32,
             "items": {
@@ -8267,7 +8885,7 @@
             },
             "description": "All unanimous human review labels bound into the selected candidate."
           },
-          "source_policy": {
+          "sourcePolicy": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/ProductSourcePolicy"
@@ -8283,17 +8901,17 @@
               "additionalProperties": false,
               "required": [
                 "name",
-                "review_role",
+                "reviewRole",
                 "status",
-                "resolution_label_name",
-                "resolution_hash",
-                "resolved_at"
+                "resolutionLabelName",
+                "resolutionHash",
+                "resolvedAt"
               ],
               "properties": {
                 "name": {
                   "type": "string"
                 },
-                "review_role": {
+                "reviewRole": {
                   "type": "string",
                   "enum": [
                     "review",
@@ -8307,15 +8925,15 @@
                     "RESOLVED"
                   ]
                 },
-                "resolution_label_name": {
+                "resolutionLabelName": {
                   "type": "string",
                   "nullable": true
                 },
-                "resolution_hash": {
+                "resolutionHash": {
                   "type": "string",
                   "nullable": true
                 },
-                "resolved_at": {
+                "resolvedAt": {
                   "allOf": [
                     {
                       "$ref": "#/components/schemas/Timestamp"
@@ -8344,13 +8962,13 @@
         "additionalProperties": false,
         "required": [
           "schema",
-          "artifact_schema",
-          "producer_origin_verification",
-          "label_authority",
-          "correction_authority",
-          "external_erasure_status",
-          "memory_text_included",
-          "feedback_note_included"
+          "artifactSchema",
+          "producerOriginVerification",
+          "labelAuthority",
+          "correctionAuthority",
+          "externalErasureStatus",
+          "memoryTextIncluded",
+          "feedbackNoteIncluded"
         ],
         "properties": {
           "schema": {
@@ -8359,41 +8977,41 @@
               "data-engine.source-policy.remi-memory-feedback.v1"
             ]
           },
-          "artifact_schema": {
+          "artifactSchema": {
             "type": "string",
             "enum": [
               "remi.memory_feedback.v1"
             ]
           },
-          "producer_origin_verification": {
+          "producerOriginVerification": {
             "type": "string",
             "enum": [
               "caller_asserted"
             ],
             "description": "Shape and retained bytes are receiver-verified, but this version has no producer-authentication proof."
           },
-          "label_authority": {
+          "labelAuthority": {
             "type": "string",
             "enum": [
               "evaluation_signal_only"
             ]
           },
-          "correction_authority": {
+          "correctionAuthority": {
             "type": "boolean",
             "enum": [
               false
             ]
           },
-          "external_erasure_status": {
+          "externalErasureStatus": {
             "type": "string",
             "enum": [
               "partial_until_remote_deletion_receipt"
             ]
           },
-          "memory_text_included": {
+          "memoryTextIncluded": {
             "type": "boolean"
           },
-          "feedback_note_included": {
+          "feedbackNoteIncluded": {
             "type": "boolean"
           }
         }
@@ -8405,10 +9023,10 @@
         "required": [
           "classification",
           "license",
-          "dataset_layer",
-          "evaluation_only",
-          "training_allowed",
-          "execution_required"
+          "datasetLayer",
+          "evaluationOnly",
+          "trainingAllowed",
+          "executionRequired"
         ],
         "properties": {
           "classification": {
@@ -8425,17 +9043,17 @@
             "minLength": 1,
             "maxLength": 256
           },
-          "dataset_layer": {
+          "datasetLayer": {
             "type": "string",
             "minLength": 1
           },
-          "evaluation_only": {
+          "evaluationOnly": {
             "type": "boolean"
           },
-          "training_allowed": {
+          "trainingAllowed": {
             "type": "boolean"
           },
-          "execution_required": {
+          "executionRequired": {
             "type": "boolean"
           }
         }
@@ -8445,9 +9063,9 @@
         "additionalProperties": false,
         "required": [
           "artifacts",
-          "accepted_labels",
-          "pending_artifacts",
-          "human_resolved"
+          "acceptedLabels",
+          "pendingArtifacts",
+          "humanResolved"
         ],
         "properties": {
           "artifacts": {
@@ -8455,17 +9073,17 @@
             "minimum": 1,
             "maximum": 64
           },
-          "accepted_labels": {
+          "acceptedLabels": {
             "type": "integer",
             "minimum": 0,
             "maximum": 64
           },
-          "pending_artifacts": {
+          "pendingArtifacts": {
             "type": "integer",
             "minimum": 0,
             "maximum": 64
           },
-          "human_resolved": {
+          "humanResolved": {
             "type": "integer",
             "minimum": 0,
             "maximum": 64
@@ -8481,10 +9099,10 @@
               "$ref": "#/components/schemas/Product"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -8493,11 +9111,11 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "artifact_ids",
+          "artifactIds",
           "job"
         ],
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "type": "array",
             "minItems": 1,
             "maxItems": 64,
@@ -8530,28 +9148,28 @@
             ],
             "description": "sft emits {completion, provenance} records per accepted item; preference emits chosen/rejected pairs from expert overrides and disagreeing ensemble minority votes; rlvr emits the executable reward \u2014 the task family's deterministic wasm verifier spec (program text, digest, input projection, pass/fail labels) \u2014 with the authoritative label demoted to reference metadata."
           },
-          "train_fraction": {
+          "trainFraction": {
             "type": "number",
             "minimum": 0.5,
             "maximum": 0.99,
             "description": "Deterministic content-addressed split threshold (default 0.9): a hash bucket of the artifact's raw bytes below the fraction lands in train, otherwise val. Identical content always splits identically."
           },
-          "include_raw": {
+          "includeRaw": {
             "type": "boolean",
-            "description": "Inline each artifact's {artifactType, raw_body} into records, per record capped at 256 KiB canonical JSON (oversized inputs are replaced by {raw_omitted, raw_sha256}); the page also observes an overall byte budget."
+            "description": "Inline each artifact's {artifactType, rawBody} into records, per record capped at 256 KiB canonical JSON (oversized inputs are replaced by {rawOmitted, rawSha256}); the page also observes an overall byte budget."
           },
-          "page_size": {
+          "pageSize": {
             "type": "integer",
             "minimum": 1,
             "maximum": 500,
             "description": "Items per page (default 100)."
           },
-          "page_token": {
+          "pageToken": {
             "type": "string",
             "maxLength": 4096,
-            "description": "Keyset token \u2014 the last processed artifact_name from the previous page."
+            "description": "Keyset token \u2014 the last processed artifactName from the previous page."
           },
-          "pair_sources": {
+          "pairSources": {
             "type": "array",
             "minItems": 1,
             "items": {
@@ -8571,16 +9189,16 @@
           "name",
           "product",
           "format",
-          "train_fraction",
-          "snapshot_hash",
+          "trainFraction",
+          "snapshotHash",
           "records",
           "counts",
-          "next_page_token"
+          "nextPageToken"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "projects/{project}/products/{product_id}/bundles/{format}"
+            "description": "projects/{project}/products/{productId}/bundles/{format}"
           },
           "product": {
             "type": "string"
@@ -8593,10 +9211,10 @@
               "rlvr"
             ]
           },
-          "train_fraction": {
+          "trainFraction": {
             "type": "number"
           },
-          "snapshot_hash": {
+          "snapshotHash": {
             "type": "string",
             "description": "The manifest snapshot the page was derived from."
           },
@@ -8605,7 +9223,7 @@
             "items": {
               "type": "object",
               "additionalProperties": true,
-              "description": "Every record carries artifact_name, artifact_raw_sha256, and split (train|val). sft records add completion {label, rationale} and provenance {verifier, determinism, human_resolved, label_name}. preference records add pair_source (expert_override | ensemble_minority) and chosen/rejected {label, rationale, verifier}. rlvr records add reward {kind: cradle_wasm, program_id, program_wat, program_sha256, input_projection, label_pass, label_fail} and reference {label, rationale, verifier, determinism, human_resolved}. include_raw adds input {artifactType, raw_body} or {artifactType, raw_omitted, raw_sha256}."
+              "description": "Every record carries artifactName, artifactRawSha256, and split (train|val). sft records add completion {label, rationale} and provenance {verifier, determinism, humanResolved, labelName}. preference records add pairSource (expert_override | ensemble_minority) and chosen/rejected {label, rationale, verifier}. rlvr records add reward {kind: cradle_wasm, programId, programWat, programSha256, inputProjection, labelPass, labelFail} and reference {label, rationale, verifier, determinism, humanResolved}. includeRaw adds input {artifactType, rawBody} or {artifactType, rawOmitted, rawSha256}."
             }
           },
           "counts": {
@@ -8614,7 +9232,7 @@
               "train",
               "val",
               "records",
-              "pending_artifacts_excluded"
+              "pendingArtifactsExcluded"
             ],
             "properties": {
               "train": {
@@ -8626,12 +9244,12 @@
               "records": {
                 "type": "integer"
               },
-              "pending_artifacts_excluded": {
+              "pendingArtifactsExcluded": {
                 "type": "integer"
               }
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           }
         }
@@ -8639,16 +9257,16 @@
       "DatasetProfileRequest": {
         "type": "object",
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Full artifact resource names to profile; defaults to every artifact in the project. camelCase alias artifactIds also accepted."
+            "description": "Full artifact resource names to profile; defaults to every artifact in the project."
           },
-          "artifact_type": {
+          "artifactType": {
             "type": "string",
-            "description": "Optional artifactType filter; camelCase alias artifactType also accepted."
+            "description": "Optional artifactType filter."
           }
         }
       },
@@ -8656,48 +9274,48 @@
         "type": "object",
         "required": [
           "project",
-          "total_artifacts",
-          "artifact_type_counts",
-          "source_counts",
-          "duplicate_groups",
-          "label_coverage",
+          "totalArtifacts",
+          "artifactTypeCounts",
+          "sourceCounts",
+          "duplicateGroups",
+          "labelCoverage",
           "confidence",
-          "decision_counts",
-          "label_value_counts"
+          "decisionCounts",
+          "labelValueCounts"
         ],
         "properties": {
           "project": {
             "type": "string"
           },
-          "total_artifacts": {
+          "totalArtifacts": {
             "type": "integer"
           },
-          "artifact_type_counts": {
+          "artifactTypeCounts": {
             "type": "object",
             "additionalProperties": {
               "type": "integer"
             }
           },
-          "source_counts": {
+          "sourceCounts": {
             "type": "object",
             "additionalProperties": {
               "type": "integer"
             }
           },
-          "duplicate_groups": {
+          "duplicateGroups": {
             "type": "array",
             "description": "Artifacts sharing an identical raw_hash, sorted by hash.",
             "items": {
               "type": "object",
               "required": [
-                "raw_hash",
-                "artifact_names"
+                "rawHash",
+                "artifactNames"
               ],
               "properties": {
-                "raw_hash": {
+                "rawHash": {
                   "type": "string"
                 },
-                "artifact_names": {
+                "artifactNames": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -8706,7 +9324,7 @@
               }
             }
           },
-          "label_coverage": {
+          "labelCoverage": {
             "type": "object",
             "properties": {
               "labeled": {
@@ -8739,13 +9357,13 @@
               }
             }
           },
-          "decision_counts": {
+          "decisionCounts": {
             "type": "object",
             "additionalProperties": {
               "type": "integer"
             }
           },
-          "label_value_counts": {
+          "labelValueCounts": {
             "type": "object",
             "description": "Class balance over the latest label per artifact.",
             "additionalProperties": {
@@ -8802,22 +9420,22 @@
           "stats": {
             "type": "object",
             "properties": {
-              "artifact_count": {
+              "artifactCount": {
                 "type": "integer"
               },
-              "label_count": {
+              "labelCount": {
                 "type": "integer"
               },
-              "duplicate_group_count": {
+              "duplicateGroupCount": {
                 "type": "integer"
               },
-              "needs_expert_labels": {
+              "needsExpertLabels": {
                 "type": "integer"
               },
-              "error_count": {
+              "errorCount": {
                 "type": "integer"
               },
-              "warning_count": {
+              "warningCount": {
                 "type": "integer"
               }
             }
@@ -8827,17 +9445,17 @@
       "ProductLeakageRequest": {
         "type": "object",
         "required": [
-          "product_ids"
+          "productIds"
         ],
         "properties": {
-          "product_ids": {
+          "productIds": {
             "type": "array",
             "minItems": 2,
             "maxItems": 2,
             "items": {
               "type": "string"
             },
-            "description": "Exactly two product ids to compare (e.g. a train and an eval bundle). camelCase alias productIds also accepted."
+            "description": "Exactly two product ids to compare (e.g. a train and an eval bundle)."
           }
         }
       },
@@ -8845,35 +9463,35 @@
         "type": "object",
         "required": [
           "project",
-          "product_a",
-          "product_b",
-          "overlap_count",
-          "overlap_ratio_a",
-          "overlap_ratio_b",
-          "overlapping_raw_hashes",
+          "productA",
+          "productB",
+          "overlapCount",
+          "overlapRatioA",
+          "overlapRatioB",
+          "overlappingRawHashes",
           "leaky"
         ],
         "properties": {
           "project": {
             "type": "string"
           },
-          "product_a": {
+          "productA": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "product_b": {
+          "productB": {
             "$ref": "#/components/schemas/ResourceRef"
           },
-          "overlap_count": {
+          "overlapCount": {
             "type": "integer"
           },
-          "overlap_ratio_a": {
+          "overlapRatioA": {
             "type": "number",
             "description": "Overlap divided by the count of distinct raw hashes in bundle A."
           },
-          "overlap_ratio_b": {
+          "overlapRatioB": {
             "type": "number"
           },
-          "overlapping_raw_hashes": {
+          "overlappingRawHashes": {
             "type": "array",
             "description": "Sorted overlapping raw hashes, capped at 50.",
             "items": {
@@ -8889,55 +9507,55 @@
         "type": "object",
         "required": [
           "project",
-          "labels_total",
-          "verifier_stats",
-          "determinism_counts",
-          "disagreement_count",
+          "labelsTotal",
+          "verifierStats",
+          "determinismCounts",
+          "disagreementCount",
           "disagreements",
-          "needs_expert_backlog",
-          "auto_resolution_rate"
+          "needsExpertBacklog",
+          "autoResolutionRate"
         ],
         "properties": {
           "project": {
             "type": "string"
           },
-          "labels_total": {
+          "labelsTotal": {
             "type": "integer"
           },
-          "determinism_counts": {
+          "determinismCounts": {
             "type": "object",
             "description": "Label counts per provenance determinism value (deterministic, heuristic, model).",
             "additionalProperties": {
               "type": "integer"
             }
           },
-          "verifier_stats": {
+          "verifierStats": {
             "type": "array",
             "items": {
               "type": "object",
               "required": [
                 "verifier",
-                "label_count",
-                "mean_confidence",
-                "accepted_rate"
+                "labelCount",
+                "meanConfidence",
+                "acceptedRate"
               ],
               "properties": {
                 "verifier": {
                   "type": "string"
                 },
-                "label_count": {
+                "labelCount": {
                   "type": "integer"
                 },
-                "mean_confidence": {
+                "meanConfidence": {
                   "type": "number"
                 },
-                "accepted_rate": {
+                "acceptedRate": {
                   "type": "number"
                 }
               }
             }
           },
-          "disagreement_count": {
+          "disagreementCount": {
             "type": "integer"
           },
           "disagreements": {
@@ -8946,11 +9564,11 @@
             "items": {
               "type": "object",
               "required": [
-                "artifact_name",
+                "artifactName",
                 "labels"
               ],
               "properties": {
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
                 "labels": {
@@ -8976,10 +9594,10 @@
               }
             }
           },
-          "needs_expert_backlog": {
+          "needsExpertBacklog": {
             "type": "integer"
           },
-          "auto_resolution_rate": {
+          "autoResolutionRate": {
             "type": "number"
           }
         }
@@ -8988,15 +9606,15 @@
         "type": "object",
         "required": [
           "name",
-          "connector_id",
+          "connectorId",
           "configured"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "Resource name, projects/{project}/connectors/{connector_id}"
+            "description": "Resource name, projects/{project}/connectors/{connectorId}"
           },
-          "connector_id": {
+          "connectorId": {
             "type": "string",
             "enum": [
               "s3",
@@ -9007,14 +9625,14 @@
           "configured": {
             "type": "boolean"
           },
-          "required_env": {
+          "requiredEnv": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "description": "Env var NAMES the connector reads (never their values)."
           },
-          "missing_env": {
+          "missingEnv": {
             "type": "array",
             "items": {
               "type": "string"
@@ -9023,7 +9641,7 @@
           },
           "config": {
             "type": "object",
-            "description": "Non-secret config (region, endpoint_host, account_host, instance_host, api_version).",
+            "description": "Non-secret config (region, endpointHost, accountHost, instanceHost, apiVersion).",
             "additionalProperties": true
           }
         }
@@ -9054,19 +9672,19 @@
             "type": "string",
             "description": "s3 only; extract exactly this object key instead of listing."
           },
-          "max_objects": {
+          "maxObjects": {
             "type": "integer",
             "minimum": 1,
             "maximum": 100,
             "default": 25,
-            "description": "s3 only; camelCase alias maxObjects also accepted."
+            "description": "s3 only."
           },
-          "max_bytes": {
+          "maxBytes": {
             "type": "integer",
             "minimum": 1,
             "maximum": 10000000,
             "default": 1000000,
-            "description": "s3 only, per-object byte cap; camelCase alias maxBytes also accepted."
+            "description": "s3 only, per-object byte cap."
           },
           "statement": {
             "type": "string",
@@ -9082,16 +9700,16 @@
             "type": "string",
             "description": "salesforce only, required for salesforce. Must start with SELECT."
           },
-          "max_pages": {
+          "maxPages": {
             "type": "integer",
             "minimum": 1,
             "maximum": 20,
             "default": 5,
-            "description": "salesforce only; nextRecordsUrl pagination bound. camelCase alias maxPages also accepted."
+            "description": "salesforce only; nextRecordsUrl pagination bound."
           },
-          "artifact_type": {
+          "artifactType": {
             "type": "string",
-            "description": "Artifact type for ingested records. Defaults per connector (S3_OBJECT, SNOWFLAKE_ROW_BATCH, SALESFORCE_ROW_BATCH). camelCase alias artifactType also accepted."
+            "description": "Artifact type for ingested records. Defaults per connector (S3_OBJECT, SNOWFLAKE_ROW_BATCH, SALESFORCE_ROW_BATCH)."
           },
           "source": {
             "type": "string",
@@ -9115,10 +9733,10 @@
           "connector",
           "source",
           "ingest",
-          "extracted_count",
-          "ingested_count",
-          "error_count",
-          "artifact_names",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
           "items"
         ],
         "properties": {
@@ -9134,17 +9752,17 @@
           "ingest": {
             "type": "boolean"
           },
-          "extracted_count": {
+          "extractedCount": {
             "type": "integer",
             "description": "Objects (s3) or rows (snowflake, salesforce) extracted."
           },
-          "ingested_count": {
+          "ingestedCount": {
             "type": "integer"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
-          "artifact_names": {
+          "artifactNames": {
             "type": "array",
             "items": {
               "type": "string"
@@ -9156,11 +9774,11 @@
             "items": {
               "type": "object",
               "required": [
-                "external_id",
+                "externalId",
                 "status"
               ],
               "properties": {
-                "external_id": {
+                "externalId": {
                   "type": "string"
                 },
                 "status": {
@@ -9171,7 +9789,7 @@
                     "error"
                   ]
                 },
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
                 "error": {
@@ -9190,13 +9808,13 @@
                     "base64"
                   ]
                 },
-                "batch_index": {
+                "batchIndex": {
                   "type": "integer"
                 },
-                "row_count": {
+                "rowCount": {
                   "type": "integer"
                 },
-                "raw_body": {
+                "rawBody": {
                   "type": "object",
                   "description": "Present only when ingest=false (dry extraction preview).",
                   "additionalProperties": true
@@ -9215,10 +9833,10 @@
               "$ref": "#/components/schemas/Connector"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -9242,7 +9860,7 @@
             "minLength": 1,
             "maxLength": 4096
           },
-          "input_schema": {
+          "inputSchema": {
             "type": "object",
             "additionalProperties": true,
             "description": "JSON Schema for the tool's arguments; defaults to an open object."
@@ -9261,7 +9879,7 @@
             "additionalProperties": true,
             "description": "deterministic_wasm: {wat: <WebAssembly text (module ...)>} executed in cradle. llm_prompt: {template: <prompt with {{arg}} placeholders>} rendered with the invocation arguments only (no secret interpolation). regex: {pattern, operation: match|extract|replace|split, replacement?, flags?} compiled stdlib re with catastrophic-backtracking shapes rejected at admission and execution wall-clock-bounded in a child process. chain: {steps: [2-8 existing non-chain tool names]} executed in order, the previous step's object output becoming the next step's arguments. The whole definition is capped at 64 KiB canonical JSON."
           },
-          "created_by": {
+          "createdBy": {
             "type": "string",
             "maxLength": 256
           }
@@ -9271,27 +9889,27 @@
         "type": "object",
         "required": [
           "name",
-          "tool_id",
+          "toolId",
           "project",
           "description",
-          "input_schema",
+          "inputSchema",
           "kind",
           "implementation",
-          "program_sha256",
+          "programSha256",
           "version",
-          "created_by",
-          "invocation_count",
-          "last_invoked_at",
-          "error_count",
-          "create_time",
-          "update_time"
+          "createdBy",
+          "invocationCount",
+          "lastInvokedAt",
+          "errorCount",
+          "createTime",
+          "updateTime"
         ],
         "properties": {
           "name": {
             "type": "string",
-            "description": "projects/{project}/tools/{tool_id}"
+            "description": "projects/{project}/tools/{toolId}"
           },
-          "tool_id": {
+          "toolId": {
             "type": "string"
           },
           "project": {
@@ -9300,7 +9918,7 @@
           "description": {
             "type": "string"
           },
-          "input_schema": {
+          "inputSchema": {
             "type": "object",
             "additionalProperties": true
           },
@@ -9317,7 +9935,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "program_sha256": {
+          "programSha256": {
             "type": "string",
             "description": "Content digest of the implementation: the WAT program (deterministic_wasm), the prompt template (llm_prompt), or the canonical implementation JSON (regex, chain)."
           },
@@ -9325,30 +9943,36 @@
             "type": "integer",
             "description": "Monotonic; updates create a new version row and previous versions are retained."
           },
-          "created_by": {
+          "createdBy": {
             "type": "string"
           },
-          "invocation_count": {
+          "invocationCount": {
             "type": "integer",
             "description": "Total invoke attempts (successes and failures)."
           },
-          "last_invoked_at": {
+          "lastInvokedAt": {
             "type": "string",
             "nullable": true
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
-          "create_time": {
+          "createTime": {
             "$ref": "#/components/schemas/Timestamp"
           },
-          "update_time": {
+          "updateTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
       },
       "CustomToolListResponse": {
         "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tools",
+          "nextPageToken",
+          "totalSize"
+        ],
         "properties": {
           "tools": {
             "type": "array",
@@ -9356,10 +9980,10 @@
               "$ref": "#/components/schemas/CustomTool"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         }
@@ -9370,7 +9994,7 @@
           "arguments": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Tool arguments per its stored input_schema, capped at 64 KiB canonical JSON. deterministic_wasm tools take one integer 'n' (the run(i64) -> i64 cradle entrypoint)."
+            "description": "Tool arguments per its stored inputSchema, capped at 64 KiB canonical JSON. deterministic_wasm tools take one integer 'n' (the run(i64) -> i64 cradle entrypoint)."
           }
         }
       },
@@ -9381,12 +10005,12 @@
           "kind",
           "version",
           "determinism",
-          "program_sha256",
-          "inputs_digest",
+          "programSha256",
+          "inputsDigest",
           "output",
-          "invocation_count",
-          "error_count",
-          "invoke_time"
+          "invocationCount",
+          "errorCount",
+          "invokeTime"
         ],
         "properties": {
           "name": {
@@ -9413,10 +10037,10 @@
             ],
             "description": "deterministic_wasm and regex -> deterministic; llm_prompt -> model (heuristic in offline dry-run); chain -> deterministic only when every step was deterministic."
           },
-          "program_sha256": {
+          "programSha256": {
             "type": "string"
           },
-          "inputs_digest": {
+          "inputsDigest": {
             "type": "string",
             "description": "deterministic_wasm: the cradle sandbox content-addressed inputs digest. llm_prompt: sha256 over the canonical {tool, version, arguments} projection."
           },
@@ -9425,13 +10049,13 @@
             "additionalProperties": true,
             "description": "deterministic_wasm: {status, value, passed}; llm_prompt: {label, confidence, rationale}; regex: operation-shaped ({matched, match, groups} | {matches} | {text, replacements} | {parts}); chain: {steps: [per-step provenance and output], output: <last step>}."
           },
-          "invocation_count": {
+          "invocationCount": {
             "type": "integer"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
-          "invoke_time": {
+          "invokeTime": {
             "$ref": "#/components/schemas/Timestamp"
           }
         }
@@ -9441,7 +10065,7 @@
         "required": [
           "name",
           "deleted",
-          "versions_deleted"
+          "versionsDeleted"
         ],
         "properties": {
           "name": {
@@ -9450,7 +10074,7 @@
           "deleted": {
             "type": "boolean"
           },
-          "versions_deleted": {
+          "versionsDeleted": {
             "type": "integer"
           }
         }
@@ -9478,16 +10102,16 @@
           "metadata": {
             "type": "object",
             "properties": {
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               },
-              "create_time": {
+              "createTime": {
                 "$ref": "#/components/schemas/Timestamp"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               }
             }

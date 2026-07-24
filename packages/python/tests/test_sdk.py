@@ -43,7 +43,17 @@ class TemperaSdkTest(unittest.TestCase):
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
             list(SCOPES),
-            ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"],
+            [
+                "mcp:invoke", "memory:read", "memory:write", "memory:manage",
+                "trace:read", "trace:write", "dataset:read", "dataset:write",
+                "eval:run", "training:publish", "review:gold:manage",
+                "review:resolve", "workflow:read", "workflow:write",
+                "workflow:run", "bio:source:read", "bio:proposal:write",
+                "bio:measurement:verify", "bio:decision:write",
+                "bio:experiment:approve", "bio:experiment:submit",
+                "bio:signer:manage", "model:read", "model:invoke",
+                "usage:reserve", "pii:unmask", "admin",
+            ],
         )
 
     def test_all_four_environments_carry_the_same_target_keys(self):

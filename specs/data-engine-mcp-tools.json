@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "fe7738dcdd63914ba4ea256fe24579e5d0ae8427",
+    "commit": "10c0c76c6f9c9af736ead6ce5b393ac0b23bbdcc",
     "files": [
       {
-        "git_blob": "9024508ffc674afb5270a032fb19e5f19a524333",
+        "git_blob": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
         "path": "api/openapi.yaml",
-        "sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02"
+        "sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "0849f58d623b9415b29b92eda8490a58e5960a5e",
+        "git_blob": "9dc0ad807024e9e402504dcb2d975b3ce27e4733",
         "path": "src/data_engine/app.py",
-        "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
+        "sha256": "a2c47052632d9b799120ebf877cea5565d91b098c0c631f32b3826f0b2053dfa"
       },
       {
-        "git_blob": "4876e6fea4515a0fa41d157c1a482fc882d63d65",
+        "git_blob": "ff1024ca4671f81b1acfbc80acc539bdca49daa3",
         "path": "src/data_engine/mcp.py",
-        "sha256": "7fb944df6bfd6713e6aa2134e13c9ee261ecb6ece5a1dfc57b7e86c70dd9de97"
+        "sha256": "792c0859efe2073cc0f4b06696aa9dc1a723fc348f5c06c6fd7dc0a653b766e6"
       },
       {
-        "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
+        "git_blob": "9c599001cb3de342adc679e88ddd0be38ef398bd",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "2bbc6369b74f3ed24ff475d212042b6259b55ec75b67a26099f792533eb2f950"
+        "sha256": "98a32246607b25f9ceeb77150a51bff91f01c8a656e8d631d19529d1e661b6a4"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -690,6 +690,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -706,17 +716,17 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           },
-          "use_cases": {
+          "useCases": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "artifact_type": {
+                "artifactType": {
                   "type": "string"
                 },
                 "id": {
@@ -743,16 +753,19 @@
                     "unit": {
                       "type": "string"
                     },
-                    "why_now": {
+                    "whyNow": {
                       "type": "string"
                     }
                   },
                   "required": [
                     "buyer",
                     "unit",
-                    "why_now"
+                    "whyNow"
                   ],
                   "type": "object"
+                },
+                "requiresInputArtifacts": {
+                  "type": "boolean"
                 },
                 "rubric": {
                   "additionalProperties": false,
@@ -770,22 +783,22 @@
                   ],
                   "type": "object"
                 },
-                "sample_artifact_count": {
+                "sampleArtifactCount": {
                   "type": "integer"
                 },
-                "skill_tags": {
+                "skillTags": {
                   "items": {
                     "type": "string"
                   },
                   "type": "array"
                 },
-                "target_accuracy": {
+                "targetAccuracy": {
                   "type": "number"
                 },
-                "task_family": {
+                "taskFamily": {
                   "type": "string"
                 },
-                "verifier_note": {
+                "verifierNote": {
                   "type": "string"
                 }
               },
@@ -793,14 +806,14 @@
                 "id",
                 "name",
                 "market",
-                "task_family",
-                "artifact_type",
+                "taskFamily",
+                "artifactType",
                 "modalities",
-                "target_accuracy",
-                "skill_tags",
+                "targetAccuracy",
+                "skillTags",
                 "rubric",
                 "product",
-                "sample_artifact_count"
+                "sampleArtifactCount"
               ],
               "type": "object"
             },
@@ -808,9 +821,9 @@
           }
         },
         "required": [
-          "use_cases",
-          "next_page_token",
-          "total_size"
+          "useCases",
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -832,7 +845,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "use_case_id": {
+          "useCaseId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -840,7 +853,7 @@
         },
         "required": [
           "project",
-          "use_case_id"
+          "useCaseId"
         ],
         "type": "object"
       },
@@ -848,7 +861,7 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_type": {
+          "artifactType": {
             "type": "string"
           },
           "id": {
@@ -875,16 +888,19 @@
               "unit": {
                 "type": "string"
               },
-              "why_now": {
+              "whyNow": {
                 "type": "string"
               }
             },
             "required": [
               "buyer",
               "unit",
-              "why_now"
+              "whyNow"
             ],
             "type": "object"
+          },
+          "requiresInputArtifacts": {
+            "type": "boolean"
           },
           "rubric": {
             "additionalProperties": false,
@@ -902,22 +918,22 @@
             ],
             "type": "object"
           },
-          "sample_artifact_count": {
+          "sampleArtifactCount": {
             "type": "integer"
           },
-          "skill_tags": {
+          "skillTags": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "verifier_note": {
+          "verifierNote": {
             "type": "string"
           }
         },
@@ -925,14 +941,14 @@
           "id",
           "name",
           "market",
-          "task_family",
-          "artifact_type",
+          "taskFamily",
+          "artifactType",
           "modalities",
-          "target_accuracy",
-          "skill_tags",
+          "targetAccuracy",
+          "skillTags",
           "rubric",
           "product",
-          "sample_artifact_count"
+          "sampleArtifactCount"
         ],
         "type": "object"
       }
@@ -963,7 +979,7 @@
                 },
                 {
                   "properties": {
-                    "external_id": {
+                    "externalId": {
                       "pattern": "^remi_feedback_[0-9a-f]{32}$",
                       "type": "string"
                     },
@@ -973,12 +989,12 @@
                   },
                   "required": [
                     "source",
-                    "external_id"
+                    "externalId"
                   ]
                 },
                 {
                   "properties": {
-                    "raw_body": {
+                    "rawBody": {
                       "properties": {
                         "schema": {
                           "const": "remi.memory_feedback.v1"
@@ -991,7 +1007,7 @@
                     }
                   },
                   "required": [
-                    "raw_body"
+                    "rawBody"
                   ]
                 },
                 {
@@ -1010,12 +1026,12 @@
                         },
                         {
                           "properties": {
-                            "task_family": {
+                            "taskFamily": {
                               "const": "agent-memory-feedback"
                             }
                           },
                           "required": [
-                            "task_family"
+                            "taskFamily"
                           ]
                         }
                       ],
@@ -1033,21 +1049,21 @@
                 "artifactType": {
                   "const": "AGENT_MEMORY_FEEDBACK"
                 },
-                "external_id": {
+                "externalId": {
                   "pattern": "^remi_feedback_[0-9a-f]{32}$",
                   "type": "string"
                 },
                 "metadata": {
                   "additionalProperties": false,
                   "properties": {
-                    "memory_snapshot_sha256": {
+                    "memorySnapshotSha256": {
                       "pattern": "^sha256:[0-9a-f]{64}$",
                       "type": "string"
                     },
                     "producer": {
                       "const": "remi"
                     },
-                    "producer_version": {
+                    "producerVersion": {
                       "maxLength": 1024,
                       "minLength": 1,
                       "type": "string"
@@ -1055,31 +1071,31 @@
                     "schema": {
                       "const": "remi.memory_feedback.v1"
                     },
-                    "task_family": {
+                    "taskFamily": {
                       "const": "agent-memory-feedback"
                     }
                   },
                   "required": [
                     "schema",
                     "producer",
-                    "producer_version",
-                    "task_family",
-                    "memory_snapshot_sha256"
+                    "producerVersion",
+                    "taskFamily",
+                    "memorySnapshotSha256"
                   ],
                   "type": "object"
                 },
-                "raw_body": {
+                "rawBody": {
                   "additionalProperties": false,
                   "properties": {
                     "feedback": {
                       "additionalProperties": false,
                       "properties": {
-                        "created_at_unix_ms": {
+                        "createdAtUnixMs": {
                           "maximum": 9223372036854775807,
                           "minimum": -9223372036854775808,
                           "type": "integer"
                         },
-                        "feedback_id": {
+                        "feedbackId": {
                           "maximum": 9223372036854775807,
                           "minimum": 1,
                           "type": "integer"
@@ -1093,26 +1109,26 @@
                           "minLength": 1,
                           "type": "string"
                         },
-                        "note_sha256": {
+                        "noteSha256": {
                           "pattern": "^sha256:[0-9a-f]{64}$",
                           "type": "string"
                         }
                       },
                       "required": [
-                        "feedback_id",
+                        "feedbackId",
                         "helpful",
-                        "created_at_unix_ms"
+                        "createdAtUnixMs"
                       ],
                       "type": "object"
                     },
-                    "feedback_export_id": {
+                    "feedbackExportId": {
                       "pattern": "^remi_feedback_[0-9a-f]{32}$",
                       "type": "string"
                     },
                     "memory": {
                       "additionalProperties": false,
                       "properties": {
-                        "citation_sha256": {
+                        "citationSha256": {
                           "items": {
                             "pattern": "^sha256:[0-9a-f]{64}$",
                             "type": "string"
@@ -1134,13 +1150,13 @@
                           ],
                           "type": "string"
                         },
-                        "node_id": {
+                        "nodeId": {
                           "description": "One to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound.",
                           "maxLength": 256,
                           "minLength": 1,
                           "type": "string"
                         },
-                        "snapshot_sha256": {
+                        "snapshotSha256": {
                           "pattern": "^sha256:[0-9a-f]{64}$",
                           "type": "string"
                         },
@@ -1150,12 +1166,12 @@
                           "minLength": 1,
                           "type": "string"
                         },
-                        "valid_from_unix_ms": {
+                        "validFromUnixMs": {
                           "maximum": 9223372036854775807,
                           "minimum": -9223372036854775808,
                           "type": "integer"
                         },
-                        "valid_to_event_id": {
+                        "validToEventId": {
                           "maximum": 9223372036854775807,
                           "minimum": -9223372036854775808,
                           "type": [
@@ -1163,7 +1179,7 @@
                             "null"
                           ]
                         },
-                        "valid_to_unix_ms": {
+                        "validToUnixMs": {
                           "maximum": 9223372036854775807,
                           "minimum": -9223372036854775808,
                           "type": [
@@ -1173,41 +1189,41 @@
                         }
                       },
                       "required": [
-                        "node_id",
+                        "nodeId",
                         "kind",
-                        "snapshot_sha256",
-                        "citation_sha256",
-                        "valid_from_unix_ms",
-                        "valid_to_unix_ms",
-                        "valid_to_event_id"
+                        "snapshotSha256",
+                        "citationSha256",
+                        "validFromUnixMs",
+                        "validToUnixMs",
+                        "validToEventId"
                       ],
                       "type": "object"
                     },
                     "policy": {
                       "additionalProperties": false,
                       "properties": {
-                        "correction_authority": {
+                        "correctionAuthority": {
                           "const": false
                         },
-                        "external_erasure_status": {
+                        "externalErasureStatus": {
                           "const": "partial_until_remote_deletion_receipt"
                         },
-                        "feedback_note_included": {
+                        "feedbackNoteIncluded": {
                           "type": "boolean"
                         },
-                        "label_authority": {
+                        "labelAuthority": {
                           "const": "evaluation_signal_only"
                         },
-                        "memory_text_included": {
+                        "memoryTextIncluded": {
                           "type": "boolean"
                         }
                       },
                       "required": [
-                        "memory_text_included",
-                        "feedback_note_included",
-                        "label_authority",
-                        "correction_authority",
-                        "external_erasure_status"
+                        "memoryTextIncluded",
+                        "feedbackNoteIncluded",
+                        "labelAuthority",
+                        "correctionAuthority",
+                        "externalErasureStatus"
                       ],
                       "type": "object"
                     },
@@ -1217,7 +1233,7 @@
                     "workspace": {
                       "additionalProperties": false,
                       "properties": {
-                        "environment_id": {
+                        "environmentId": {
                           "description": "Null or one to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound.",
                           "maxLength": 256,
                           "minLength": 1,
@@ -1226,13 +1242,13 @@
                             "null"
                           ]
                         },
-                        "project_id": {
+                        "projectId": {
                           "description": "One to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound.",
                           "maxLength": 256,
                           "minLength": 1,
                           "type": "string"
                         },
-                        "tenant_id": {
+                        "tenantId": {
                           "description": "One to 256 UTF-8 bytes; maxLength is the closest JSON Schema character bound.",
                           "maxLength": 256,
                           "minLength": 1,
@@ -1240,16 +1256,16 @@
                         }
                       },
                       "required": [
-                        "tenant_id",
-                        "project_id",
-                        "environment_id"
+                        "tenantId",
+                        "projectId",
+                        "environmentId"
                       ],
                       "type": "object"
                     }
                   },
                   "required": [
                     "schema",
-                    "feedback_export_id",
+                    "feedbackExportId",
                     "workspace",
                     "memory",
                     "feedback",
@@ -1264,8 +1280,8 @@
               "required": [
                 "artifactType",
                 "source",
-                "external_id",
-                "raw_body",
+                "externalId",
+                "rawBody",
                 "metadata"
               ]
             }
@@ -1285,7 +1301,7 @@
                 },
                 {
                   "properties": {
-                    "raw_body": {
+                    "rawBody": {
                       "properties": {
                         "schema": {
                           "const": "data-engine.agent-tool-trace.v1"
@@ -1298,7 +1314,7 @@
                     }
                   },
                   "required": [
-                    "raw_body"
+                    "rawBody"
                   ]
                 }
               ]
@@ -1308,7 +1324,7 @@
                 "artifactType": {
                   "const": "AGENT_TOOL_TRACE"
                 },
-                "raw_body": {
+                "rawBody": {
                   "additionalProperties": false,
                   "properties": {
                     "goal": {
@@ -1316,7 +1332,7 @@
                       "minLength": 1,
                       "type": "string"
                     },
-                    "goal_digest": {
+                    "goalDigest": {
                       "description": "sha256 of the UTF-8 goal so identical goals group into preference pairs without disclosing the goal downstream.",
                       "pattern": "^sha256:[0-9a-f]{64}$",
                       "type": "string"
@@ -1324,7 +1340,7 @@
                     "schema": {
                       "const": "data-engine.agent-tool-trace.v1"
                     },
-                    "session_digest": {
+                    "sessionDigest": {
                       "pattern": "^sha256:[0-9a-f]{64}$",
                       "type": "string"
                     },
@@ -1337,11 +1353,11 @@
                             "minLength": 1,
                             "type": "string"
                           },
-                          "args_digest": {
+                          "argsDigest": {
                             "pattern": "^sha256:[0-9a-f]{64}$",
                             "type": "string"
                           },
-                          "latency_ms": {
+                          "latencyMs": {
                             "maximum": 86400000,
                             "minimum": 0,
                             "type": "integer"
@@ -1349,17 +1365,17 @@
                           "ok": {
                             "type": "boolean"
                           },
-                          "outcome_digest": {
+                          "outcomeDigest": {
                             "pattern": "^sha256:[0-9a-f]{64}$",
                             "type": "string"
                           }
                         },
                         "required": [
                           "action",
-                          "args_digest",
-                          "outcome_digest",
+                          "argsDigest",
+                          "outcomeDigest",
                           "ok",
-                          "latency_ms"
+                          "latencyMs"
                         ],
                         "type": "object"
                       },
@@ -1401,7 +1417,7 @@
                     "schema",
                     "surface",
                     "goal",
-                    "goal_digest",
+                    "goalDigest",
                     "steps",
                     "success"
                   ],
@@ -1410,7 +1426,7 @@
               },
               "required": [
                 "artifactType",
-                "raw_body"
+                "rawBody"
               ]
             }
           }
@@ -1421,7 +1437,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "external_id": {
+          "externalId": {
             "maxLength": 4096,
             "minLength": 1,
             "type": "string"
@@ -1436,7 +1452,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "raw_body": {
+          "rawBody": {
             "additionalProperties": true,
             "type": "object"
           },
@@ -1461,24 +1477,24 @@
           "metadata": {
             "additionalProperties": false,
             "properties": {
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               }
             },
             "required": [
-              "target_resource",
-              "create_time",
-              "progress_ratio",
-              "current_stage"
+              "targetResource",
+              "createTime",
+              "progressRatio",
+              "currentStage"
             ],
             "type": "object"
           },
@@ -1488,25 +1504,25 @@
           "response": {
             "additionalProperties": false,
             "properties": {
+              "artifactId": {
+                "type": "string"
+              },
               "artifactType": {
                 "type": "string"
               },
-              "artifact_id": {
+              "createTime": {
                 "type": "string"
               },
-              "create_time": {
-                "type": "string"
-              },
-              "external_id": {
+              "externalId": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
               },
-              "raw_bytes": {
+              "rawBytes": {
                 "type": "integer"
               },
-              "raw_hash": {
+              "rawHash": {
                 "type": "string"
               },
               "source": {
@@ -1515,21 +1531,21 @@
               "status": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "artifact_id",
+              "artifactId",
               "artifactType",
               "source",
-              "external_id",
-              "raw_hash",
-              "raw_bytes",
+              "externalId",
+              "rawHash",
+              "rawBytes",
               "status",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           }
@@ -1568,7 +1584,7 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "producer_version": {
+          "producerVersion": {
             "maxLength": 1024,
             "minLength": 1,
             "type": "string"
@@ -1607,24 +1623,24 @@
           "metadata": {
             "additionalProperties": false,
             "properties": {
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               }
             },
             "required": [
-              "target_resource",
-              "create_time",
-              "progress_ratio",
-              "current_stage"
+              "targetResource",
+              "createTime",
+              "progressRatio",
+              "currentStage"
             ],
             "type": "object"
           },
@@ -1634,25 +1650,25 @@
           "response": {
             "additionalProperties": false,
             "properties": {
+              "artifactId": {
+                "type": "string"
+              },
               "artifactType": {
                 "type": "string"
               },
-              "artifact_id": {
+              "createTime": {
                 "type": "string"
               },
-              "create_time": {
-                "type": "string"
-              },
-              "external_id": {
+              "externalId": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
               },
-              "raw_bytes": {
+              "rawBytes": {
                 "type": "integer"
               },
-              "raw_hash": {
+              "rawHash": {
                 "type": "string"
               },
               "source": {
@@ -1661,21 +1677,21 @@
               "status": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "artifact_id",
+              "artifactId",
               "artifactType",
               "source",
-              "external_id",
-              "raw_hash",
-              "raw_bytes",
+              "externalId",
+              "rawHash",
+              "rawBytes",
               "status",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           }
@@ -1709,7 +1725,7 @@
                   "minLength": 1,
                   "type": "string"
                 },
-                "external_id": {
+                "externalId": {
                   "maxLength": 4096,
                   "minLength": 1,
                   "type": "string"
@@ -1718,7 +1734,7 @@
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "raw_body": {
+                "rawBody": {
                   "additionalProperties": true,
                   "type": "object"
                 },
@@ -1729,14 +1745,14 @@
                 }
               },
               "required": [
-                "external_id"
+                "externalId"
               ],
               "type": "object"
             },
             "maxItems": 64,
             "type": "array"
           },
-          "budget_cents": {
+          "budgetCents": {
             "description": "Planning metadata; not an enforced spend limit in this release.",
             "maximum": 9223372036854775807,
             "minimum": 0,
@@ -1748,7 +1764,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "required_reviews": {
+          "requiredReviews": {
             "default": 1,
             "description": "Independent primary review slots for each residual label.",
             "maximum": 5,
@@ -1759,7 +1775,7 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "skill_tags": {
+          "skillTags": {
             "items": {
               "maxLength": 256,
               "minLength": 1,
@@ -1769,7 +1785,7 @@
             "minItems": 1,
             "type": "array"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "maximum": 1,
             "minimum": 0,
             "type": "number"
@@ -1791,7 +1807,7 @@
                       "minimum": 1,
                       "type": "integer"
                     },
-                    "producer_version": {
+                    "producerVersion": {
                       "maxLength": 1024,
                       "minLength": 1,
                       "type": "string"
@@ -1818,7 +1834,7 @@
             "maxItems": 64,
             "type": "array"
           },
-          "use_case": {
+          "useCase": {
             "minLength": 1,
             "type": "string"
           },
@@ -1835,7 +1851,7 @@
         },
         "required": [
           "project",
-          "use_case"
+          "useCase"
         ],
         "type": "object"
       },
@@ -1847,25 +1863,25 @@
             "items": {
               "additionalProperties": false,
               "properties": {
+                "artifactId": {
+                  "type": "string"
+                },
                 "artifactType": {
                   "type": "string"
                 },
-                "artifact_id": {
+                "createTime": {
                   "type": "string"
                 },
-                "create_time": {
-                  "type": "string"
-                },
-                "external_id": {
+                "externalId": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
                 },
-                "raw_bytes": {
+                "rawBytes": {
                   "type": "integer"
                 },
-                "raw_hash": {
+                "rawHash": {
                   "type": "string"
                 },
                 "source": {
@@ -1874,21 +1890,21 @@
                 "status": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "artifact_id",
+                "artifactId",
                 "artifactType",
                 "source",
-                "external_id",
-                "raw_hash",
-                "raw_bytes",
+                "externalId",
+                "rawHash",
+                "rawBytes",
                 "status",
-                "create_time",
-                "update_time"
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
@@ -1897,13 +1913,13 @@
           "bundle": {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -1913,10 +1929,10 @@
                   }
                 ]
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "job_name": {
+              "jobName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -1926,19 +1942,19 @@
                   }
                 ]
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "manifest_path": {
+              "manifestPath": {
                 "type": "string"
               },
-              "manifest_sha256": {
+              "manifestSha256": {
                 "type": "string"
               },
-              "manifest_url": {
+              "manifestUrl": {
                 "type": "string"
               },
               "mode": {
@@ -1947,22 +1963,22 @@
               "name": {
                 "type": "string"
               },
-              "pending_artifact_names": {
+              "pendingArtifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "product_id": {
+              "productId": {
                 "type": "string"
               },
-              "quality_status": {
+              "qualityStatus": {
                 "type": "string"
               },
-              "snapshot_hash": {
+              "snapshotHash": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -1972,59 +1988,59 @@
                   }
                 ]
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "product_id",
+              "productId",
               "mode",
-              "manifest_path",
-              "manifest_url",
-              "manifest_sha256",
-              "artifact_names",
-              "label_names",
-              "quality_status",
-              "pending_artifact_names",
-              "job_name",
-              "task_family",
-              "campaign_name",
-              "snapshot_hash",
-              "create_time",
-              "update_time"
+              "manifestPath",
+              "manifestUrl",
+              "manifestSha256",
+              "artifactNames",
+              "labelNames",
+              "qualityStatus",
+              "pendingArtifactNames",
+              "jobName",
+              "taskFamily",
+              "campaignName",
+              "snapshotHash",
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
           "campaign": {
             "additionalProperties": false,
             "properties": {
-              "annotation_schema": {
+              "annotationSchema": {
                 "additionalProperties": true,
                 "type": "object"
               },
-              "annotation_schema_version": {
+              "annotationSchemaVersion": {
                 "type": "string"
               },
-              "budget_cents": {
+              "budgetCents": {
                 "type": "integer"
               },
-              "campaign_id": {
+              "campaignId": {
                 "type": "string"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
               },
-              "qualification_policy": {
+              "qualificationPolicy": {
                 "additionalProperties": false,
                 "properties": {
-                  "min_accuracy": {
+                  "minAccuracy": {
                     "type": "number"
                   },
-                  "min_gold_reviews": {
+                  "minGoldReviews": {
                     "type": "integer"
                   },
                   "mode": {
@@ -2038,21 +2054,21 @@
                 },
                 "required": [
                   "mode",
-                  "min_gold_reviews",
-                  "min_accuracy"
+                  "minGoldReviews",
+                  "minAccuracy"
                 ],
                 "type": "object"
               },
-              "required_reviews": {
+              "requiredReviews": {
                 "type": "integer"
               },
-              "routing_policy": {
+              "routingPolicy": {
                 "additionalProperties": false,
                 "properties": {
-                  "batch_key": {
+                  "batchKey": {
                     "type": "string"
                   },
-                  "max_open_tasks": {
+                  "maxOpenTasks": {
                     "maximum": 100000,
                     "minimum": 0,
                     "type": "integer"
@@ -2062,7 +2078,7 @@
                     "minimum": 0,
                     "type": "integer"
                   },
-                  "task_sla_seconds": {
+                  "taskSlaSeconds": {
                     "maximum": 2592000,
                     "minimum": 300,
                     "type": "integer"
@@ -2070,9 +2086,9 @@
                 },
                 "required": [
                   "priority",
-                  "task_sla_seconds",
-                  "batch_key",
-                  "max_open_tasks"
+                  "taskSlaSeconds",
+                  "batchKey",
+                  "maxOpenTasks"
                 ],
                 "type": "object"
               },
@@ -2080,7 +2096,7 @@
                 "additionalProperties": true,
                 "type": "object"
               },
-              "skill_tags": {
+              "skillTags": {
                 "items": {
                   "type": "string"
                 },
@@ -2094,51 +2110,51 @@
                 ],
                 "type": "string"
               },
-              "target_accuracy": {
+              "targetAccuracy": {
                 "type": "number"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "campaign_id",
-              "task_family",
-              "target_accuracy",
-              "budget_cents",
+              "campaignId",
+              "taskFamily",
+              "targetAccuracy",
+              "budgetCents",
               "rubric",
-              "skill_tags",
-              "required_reviews",
-              "qualification_policy",
-              "routing_policy",
+              "skillTags",
+              "requiredReviews",
+              "qualificationPolicy",
+              "routingPolicy",
               "status",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
-          "expert_tasks": {
+          "expertTasks": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "annotation_schema": {
+                "annotationSchema": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "annotation_schema_version": {
+                "annotationSchemaVersion": {
                   "type": "string"
                 },
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
-                "batch_key": {
+                "batchKey": {
                   "type": "string"
                 },
-                "campaign_name": {
+                "campaignName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -2148,10 +2164,10 @@
                     }
                   ]
                 },
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
-                "deadline_time": {
+                "deadlineTime": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -2161,7 +2177,7 @@
                     }
                   ]
                 },
-                "label_name": {
+                "labelName": {
                   "type": "string"
                 },
                 "name": {
@@ -2170,13 +2186,13 @@
                 "priority": {
                   "type": "integer"
                 },
-                "qualification_task": {
+                "qualificationTask": {
                   "type": "boolean"
                 },
                 "reason": {
                   "type": "string"
                 },
-                "resolution_label_name": {
+                "resolutionLabelName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -2186,17 +2202,17 @@
                     }
                   ]
                 },
-                "review_role": {
+                "reviewRole": {
                   "type": "string"
                 },
                 "rubric": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "rubric_version": {
+                "rubricVersion": {
                   "type": "string"
                 },
-                "skill_tags": {
+                "skillTags": {
                   "items": {
                     "type": "string"
                   },
@@ -2205,28 +2221,28 @@
                 "status": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "campaign_name",
-                "artifact_name",
-                "label_name",
-                "skill_tags",
+                "campaignName",
+                "artifactName",
+                "labelName",
+                "skillTags",
                 "rubric",
-                "rubric_version",
+                "rubricVersion",
                 "reason",
-                "review_role",
-                "qualification_task",
+                "reviewRole",
+                "qualificationTask",
                 "status",
-                "resolution_label_name",
+                "resolutionLabelName",
                 "priority",
-                "deadline_time",
-                "batch_key",
-                "create_time",
-                "update_time"
+                "deadlineTime",
+                "batchKey",
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
@@ -2235,13 +2251,13 @@
           "job": {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -2251,10 +2267,10 @@
                   }
                 ]
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
@@ -2266,70 +2282,70 @@
               "status": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "task_family",
-              "campaign_name",
+              "taskFamily",
+              "campaignName",
               "status",
-              "artifact_names",
-              "label_names",
-              "create_time",
-              "update_time"
+              "artifactNames",
+              "labelNames",
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
           "metrics": {
             "additionalProperties": false,
             "properties": {
-              "accepted_verified_units": {
+              "acceptedVerifiedUnits": {
                 "type": "integer"
               },
-              "artifacts_ingested": {
+              "artifactsIngested": {
                 "type": "integer"
               },
-              "auto_resolution_rate": {
+              "autoResolutionRate": {
                 "type": "number"
               },
-              "average_confidence": {
+              "averageConfidence": {
                 "type": "number"
               },
-              "bundle_emits": {
+              "bundleEmits": {
                 "type": "integer"
               },
-              "human_residual_units": {
+              "humanResidualUnits": {
                 "type": "integer"
               },
-              "labels_created": {
+              "labelsCreated": {
                 "type": "integer"
               },
-              "open_expert_tasks": {
+              "openExpertTasks": {
                 "type": "integer"
               },
               "project": {
                 "type": "string"
               },
-              "verifier_runs": {
+              "verifierRuns": {
                 "type": "integer"
               }
             },
             "required": [
               "project",
-              "artifacts_ingested",
-              "labels_created",
-              "verifier_runs",
-              "accepted_verified_units",
-              "human_residual_units",
-              "open_expert_tasks",
-              "bundle_emits",
-              "auto_resolution_rate",
-              "average_confidence"
+              "artifactsIngested",
+              "labelsCreated",
+              "verifierRuns",
+              "acceptedVerifiedUnits",
+              "humanResidualUnits",
+              "openExpertTasks",
+              "bundleEmits",
+              "autoResolutionRate",
+              "averageConfidence"
             ],
             "type": "object"
           },
@@ -2343,10 +2359,10 @@
                 "items": {
                   "additionalProperties": false,
                   "properties": {
-                    "artifact_name": {
+                    "artifactName": {
                       "type": "string"
                     },
-                    "campaign_name": {
+                    "campaignName": {
                       "oneOf": [
                         {
                           "type": "string"
@@ -2359,7 +2375,7 @@
                     "confidence": {
                       "type": "number"
                     },
-                    "create_time": {
+                    "createTime": {
                       "type": "string"
                     },
                     "decision": {
@@ -2384,7 +2400,7 @@
                         "model": {
                           "type": "string"
                         },
-                        "task_family": {
+                        "taskFamily": {
                           "type": "string"
                         },
                         "verifier": {
@@ -2394,7 +2410,7 @@
                       "required": [
                         "verifier",
                         "model",
-                        "task_family",
+                        "taskFamily",
                         "determinism"
                       ],
                       "type": "object"
@@ -2402,46 +2418,46 @@
                     "rationale": {
                       "type": "string"
                     },
-                    "update_time": {
+                    "updateTime": {
                       "type": "string"
                     }
                   },
                   "required": [
                     "name",
-                    "artifact_name",
-                    "campaign_name",
+                    "artifactName",
+                    "campaignName",
                     "label",
                     "confidence",
                     "rationale",
                     "evidence",
                     "provenance",
                     "decision",
-                    "create_time",
-                    "update_time"
+                    "createTime",
+                    "updateTime"
                   ],
                   "type": "object"
                 },
                 "type": "array"
               },
-              "next_page_token": {
+              "nextPageToken": {
                 "type": "string"
               },
-              "total_size": {
+              "totalSize": {
                 "type": "integer"
               }
             },
             "required": [
               "job",
               "labels",
-              "next_page_token",
-              "total_size"
+              "nextPageToken",
+              "totalSize"
             ],
             "type": "object"
           },
-          "use_case": {
+          "useCase": {
             "additionalProperties": false,
             "properties": {
-              "artifact_type": {
+              "artifactType": {
                 "type": "string"
               },
               "id": {
@@ -2468,16 +2484,19 @@
                   "unit": {
                     "type": "string"
                   },
-                  "why_now": {
+                  "whyNow": {
                     "type": "string"
                   }
                 },
                 "required": [
                   "buyer",
                   "unit",
-                  "why_now"
+                  "whyNow"
                 ],
                 "type": "object"
+              },
+              "requiresInputArtifacts": {
+                "type": "boolean"
               },
               "rubric": {
                 "additionalProperties": false,
@@ -2495,22 +2514,22 @@
                 ],
                 "type": "object"
               },
-              "sample_artifact_count": {
+              "sampleArtifactCount": {
                 "type": "integer"
               },
-              "skill_tags": {
+              "skillTags": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "target_accuracy": {
+              "targetAccuracy": {
                 "type": "number"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               },
-              "verifier_note": {
+              "verifierNote": {
                 "type": "string"
               }
             },
@@ -2518,14 +2537,14 @@
               "id",
               "name",
               "market",
-              "task_family",
-              "artifact_type",
+              "taskFamily",
+              "artifactType",
               "modalities",
-              "target_accuracy",
-              "skill_tags",
+              "targetAccuracy",
+              "skillTags",
               "rubric",
               "product",
-              "sample_artifact_count"
+              "sampleArtifactCount"
             ],
             "type": "object"
           },
@@ -2534,13 +2553,13 @@
           }
         },
         "required": [
-          "use_case",
+          "useCase",
           "campaign",
           "verifier",
           "artifacts",
           "job",
           "results",
-          "expert_tasks",
+          "expertTasks",
           "metrics",
           "bundle"
         ],
@@ -2558,17 +2577,17 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "annotation_schema": {
+          "annotationSchema": {
             "additionalProperties": true,
             "type": "object"
           },
-          "budget_cents": {
+          "budgetCents": {
             "description": "Planning metadata; not an enforced spend limit in this release.",
             "maximum": 9223372036854775807,
             "minimum": 0,
             "type": "integer"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -2579,15 +2598,15 @@
             "minLength": 1,
             "type": "string"
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "additionalProperties": false,
             "properties": {
-              "min_accuracy": {
+              "minAccuracy": {
                 "maximum": 1,
                 "minimum": 0,
                 "type": "number"
               },
-              "min_gold_reviews": {
+              "minGoldReviews": {
                 "maximum": 100,
                 "minimum": 0,
                 "type": "integer"
@@ -2603,26 +2622,26 @@
             },
             "required": [
               "mode",
-              "min_gold_reviews",
-              "min_accuracy"
+              "minGoldReviews",
+              "minAccuracy"
             ],
             "type": "object"
           },
-          "required_reviews": {
+          "requiredReviews": {
             "default": 1,
             "description": "Independent primary review slots for each residual label.",
             "maximum": 5,
             "minimum": 1,
             "type": "integer"
           },
-          "routing_policy": {
+          "routingPolicy": {
             "additionalProperties": false,
             "properties": {
-              "batch_key": {
+              "batchKey": {
                 "maxLength": 256,
                 "type": "string"
               },
-              "max_open_tasks": {
+              "maxOpenTasks": {
                 "maximum": 100000,
                 "minimum": 0,
                 "type": "integer"
@@ -2632,7 +2651,7 @@
                 "minimum": 0,
                 "type": "integer"
               },
-              "task_sla_seconds": {
+              "taskSlaSeconds": {
                 "maximum": 2592000,
                 "minimum": 300,
                 "type": "integer"
@@ -2645,7 +2664,7 @@
             "description": "Campaign-owned task-family rubric.",
             "type": "object"
           },
-          "skill_tags": {
+          "skillTags": {
             "items": {
               "maxLength": 256,
               "minLength": 1,
@@ -2655,12 +2674,12 @@
             "minItems": 1,
             "type": "array"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "maximum": 1,
             "minimum": 0,
             "type": "number"
           },
-          "task_family": {
+          "taskFamily": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -2675,32 +2694,32 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "annotation_schema": {
+          "annotationSchema": {
             "additionalProperties": true,
             "type": "object"
           },
-          "annotation_schema_version": {
+          "annotationSchemaVersion": {
             "type": "string"
           },
-          "budget_cents": {
+          "budgetCents": {
             "type": "integer"
           },
-          "campaign_id": {
+          "campaignId": {
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
           "name": {
             "type": "string"
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "additionalProperties": false,
             "properties": {
-              "min_accuracy": {
+              "minAccuracy": {
                 "type": "number"
               },
-              "min_gold_reviews": {
+              "minGoldReviews": {
                 "type": "integer"
               },
               "mode": {
@@ -2714,21 +2733,21 @@
             },
             "required": [
               "mode",
-              "min_gold_reviews",
-              "min_accuracy"
+              "minGoldReviews",
+              "minAccuracy"
             ],
             "type": "object"
           },
-          "required_reviews": {
+          "requiredReviews": {
             "type": "integer"
           },
-          "routing_policy": {
+          "routingPolicy": {
             "additionalProperties": false,
             "properties": {
-              "batch_key": {
+              "batchKey": {
                 "type": "string"
               },
-              "max_open_tasks": {
+              "maxOpenTasks": {
                 "maximum": 100000,
                 "minimum": 0,
                 "type": "integer"
@@ -2738,7 +2757,7 @@
                 "minimum": 0,
                 "type": "integer"
               },
-              "task_sla_seconds": {
+              "taskSlaSeconds": {
                 "maximum": 2592000,
                 "minimum": 300,
                 "type": "integer"
@@ -2746,9 +2765,9 @@
             },
             "required": [
               "priority",
-              "task_sla_seconds",
-              "batch_key",
-              "max_open_tasks"
+              "taskSlaSeconds",
+              "batchKey",
+              "maxOpenTasks"
             ],
             "type": "object"
           },
@@ -2756,7 +2775,7 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "skill_tags": {
+          "skillTags": {
             "items": {
               "type": "string"
             },
@@ -2770,30 +2789,30 @@
             ],
             "type": "string"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "type": "number"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           }
         },
         "required": [
           "name",
-          "campaign_id",
-          "task_family",
-          "target_accuracy",
-          "budget_cents",
+          "campaignId",
+          "taskFamily",
+          "targetAccuracy",
+          "budgetCents",
           "rubric",
-          "skill_tags",
-          "required_reviews",
-          "qualification_policy",
-          "routing_policy",
+          "skillTags",
+          "requiredReviews",
+          "qualificationPolicy",
+          "routingPolicy",
           "status",
-          "create_time",
-          "update_time"
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -2809,12 +2828,12 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "campaign_id": {
+          "campaignId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -2825,7 +2844,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "target_status": {
+          "targetStatus": {
             "description": "PAUSED blocks new jobs, ACTIVE resumes admission, and CLOSED is terminal.",
             "enum": [
               "ACTIVE",
@@ -2837,9 +2856,9 @@
         },
         "required": [
           "project",
-          "campaign_id",
-          "target_status",
-          "idempotency_key"
+          "campaignId",
+          "targetStatus",
+          "idempotencyKey"
         ],
         "type": "object"
       },
@@ -2847,13 +2866,13 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "campaign_name": {
+          "campaignName": {
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "from_status": {
+          "fromStatus": {
             "enum": [
               "ACTIVE",
               "PAUSED",
@@ -2864,10 +2883,10 @@
           "name": {
             "type": "string"
           },
-          "state_version": {
+          "stateVersion": {
             "type": "integer"
           },
-          "to_status": {
+          "toStatus": {
             "enum": [
               "ACTIVE",
               "PAUSED",
@@ -2878,11 +2897,11 @@
         },
         "required": [
           "name",
-          "campaign_name",
-          "from_status",
-          "to_status",
-          "state_version",
-          "create_time"
+          "campaignName",
+          "fromStatus",
+          "toStatus",
+          "stateVersion",
+          "createTime"
         ],
         "type": "object"
       }
@@ -2898,13 +2917,13 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -2928,32 +2947,32 @@
             "items": {
               "additionalProperties": false,
               "properties": {
-                "annotation_schema": {
+                "annotationSchema": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "annotation_schema_version": {
+                "annotationSchemaVersion": {
                   "type": "string"
                 },
-                "budget_cents": {
+                "budgetCents": {
                   "type": "integer"
                 },
-                "campaign_id": {
+                "campaignId": {
                   "type": "string"
                 },
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
                 },
-                "qualification_policy": {
+                "qualificationPolicy": {
                   "additionalProperties": false,
                   "properties": {
-                    "min_accuracy": {
+                    "minAccuracy": {
                       "type": "number"
                     },
-                    "min_gold_reviews": {
+                    "minGoldReviews": {
                       "type": "integer"
                     },
                     "mode": {
@@ -2967,21 +2986,21 @@
                   },
                   "required": [
                     "mode",
-                    "min_gold_reviews",
-                    "min_accuracy"
+                    "minGoldReviews",
+                    "minAccuracy"
                   ],
                   "type": "object"
                 },
-                "required_reviews": {
+                "requiredReviews": {
                   "type": "integer"
                 },
-                "routing_policy": {
+                "routingPolicy": {
                   "additionalProperties": false,
                   "properties": {
-                    "batch_key": {
+                    "batchKey": {
                       "type": "string"
                     },
-                    "max_open_tasks": {
+                    "maxOpenTasks": {
                       "maximum": 100000,
                       "minimum": 0,
                       "type": "integer"
@@ -2991,7 +3010,7 @@
                       "minimum": 0,
                       "type": "integer"
                     },
-                    "task_sla_seconds": {
+                    "taskSlaSeconds": {
                       "maximum": 2592000,
                       "minimum": 300,
                       "type": "integer"
@@ -2999,9 +3018,9 @@
                   },
                   "required": [
                     "priority",
-                    "task_sla_seconds",
-                    "batch_key",
-                    "max_open_tasks"
+                    "taskSlaSeconds",
+                    "batchKey",
+                    "maxOpenTasks"
                   ],
                   "type": "object"
                 },
@@ -3009,7 +3028,7 @@
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "skill_tags": {
+                "skillTags": {
                   "items": {
                     "type": "string"
                   },
@@ -3023,46 +3042,46 @@
                   ],
                   "type": "string"
                 },
-                "target_accuracy": {
+                "targetAccuracy": {
                   "type": "number"
                 },
-                "task_family": {
+                "taskFamily": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "campaign_id",
-                "task_family",
-                "target_accuracy",
-                "budget_cents",
+                "campaignId",
+                "taskFamily",
+                "targetAccuracy",
+                "budgetCents",
                 "rubric",
-                "skill_tags",
-                "required_reviews",
-                "qualification_policy",
-                "routing_policy",
+                "skillTags",
+                "requiredReviews",
+                "qualificationPolicy",
+                "routingPolicy",
                 "status",
-                "create_time",
-                "update_time"
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "campaigns",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -3078,13 +3097,13 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3108,25 +3127,25 @@
             "items": {
               "additionalProperties": false,
               "properties": {
+                "artifactId": {
+                  "type": "string"
+                },
                 "artifactType": {
                   "type": "string"
                 },
-                "artifact_id": {
+                "createTime": {
                   "type": "string"
                 },
-                "create_time": {
-                  "type": "string"
-                },
-                "external_id": {
+                "externalId": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
                 },
-                "raw_bytes": {
+                "rawBytes": {
                   "type": "integer"
                 },
-                "raw_hash": {
+                "rawHash": {
                   "type": "string"
                 },
                 "source": {
@@ -3135,37 +3154,37 @@
                 "status": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "artifact_id",
+                "artifactId",
                 "artifactType",
                 "source",
-                "external_id",
-                "raw_hash",
-                "raw_bytes",
+                "externalId",
+                "rawHash",
+                "rawBytes",
                 "status",
-                "create_time",
-                "update_time"
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "artifacts",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -3181,7 +3200,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_id": {
+          "artifactId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -3203,7 +3222,7 @@
         },
         "required": [
           "project",
-          "artifact_id"
+          "artifactId"
         ],
         "type": "object"
       },
@@ -3213,25 +3232,25 @@
           {
             "additionalProperties": false,
             "properties": {
+              "artifactId": {
+                "type": "string"
+              },
               "artifactType": {
                 "type": "string"
               },
-              "artifact_id": {
+              "createTime": {
                 "type": "string"
               },
-              "create_time": {
-                "type": "string"
-              },
-              "external_id": {
+              "externalId": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
               },
-              "raw_bytes": {
+              "rawBytes": {
                 "type": "integer"
               },
-              "raw_hash": {
+              "rawHash": {
                 "type": "string"
               },
               "source": {
@@ -3240,37 +3259,37 @@
               "status": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "artifact_id",
+              "artifactId",
               "artifactType",
               "source",
-              "external_id",
-              "raw_hash",
-              "raw_bytes",
+              "externalId",
+              "rawHash",
+              "rawBytes",
               "status",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
           {
             "additionalProperties": false,
             "properties": {
+              "artifactId": {
+                "type": "string"
+              },
               "artifactType": {
                 "type": "string"
               },
-              "artifact_id": {
+              "createTime": {
                 "type": "string"
               },
-              "create_time": {
-                "type": "string"
-              },
-              "external_id": {
+              "externalId": {
                 "type": "string"
               },
               "metadata": {
@@ -3280,14 +3299,14 @@
               "name": {
                 "type": "string"
               },
-              "raw_body": {
+              "rawBody": {
                 "additionalProperties": true,
                 "type": "object"
               },
-              "raw_hash": {
+              "rawHash": {
                 "type": "string"
               },
-              "raw_path": {
+              "rawPath": {
                 "type": "string"
               },
               "source": {
@@ -3296,23 +3315,23 @@
               "status": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "artifact_id",
+              "artifactId",
               "artifactType",
               "source",
-              "external_id",
-              "raw_body",
-              "raw_hash",
-              "raw_path",
+              "externalId",
+              "rawBody",
+              "rawHash",
+              "rawPath",
               "metadata",
               "status",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           }
@@ -3331,18 +3350,18 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_id": {
+          "artifactId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
           },
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3355,7 +3374,7 @@
         },
         "required": [
           "project",
-          "artifact_id"
+          "artifactId"
         ],
         "type": "object"
       },
@@ -3367,10 +3386,10 @@
             "items": {
               "additionalProperties": false,
               "properties": {
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
-                "campaign_name": {
+                "campaignName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -3383,7 +3402,7 @@
                 "confidence": {
                   "type": "number"
                 },
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
                 "decision": {
@@ -3408,7 +3427,7 @@
                     "model": {
                       "type": "string"
                     },
-                    "task_family": {
+                    "taskFamily": {
                       "type": "string"
                     },
                     "verifier": {
@@ -3418,7 +3437,7 @@
                   "required": [
                     "verifier",
                     "model",
-                    "task_family",
+                    "taskFamily",
                     "determinism"
                   ],
                   "type": "object"
@@ -3426,38 +3445,38 @@
                 "rationale": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "artifact_name",
-                "campaign_name",
+                "artifactName",
+                "campaignName",
                 "label",
                 "confidence",
                 "rationale",
                 "evidence",
                 "provenance",
                 "decision",
-                "create_time",
-                "update_time"
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "labels",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -3473,7 +3492,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "items": {
               "maxLength": 4096,
               "minLength": 1,
@@ -3488,7 +3507,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -3499,12 +3518,12 @@
             "minLength": 1,
             "type": "string"
           },
-          "target_accuracy": {
+          "targetAccuracy": {
             "maximum": 1,
             "minimum": 0,
             "type": "number"
           },
-          "task_family": {
+          "taskFamily": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -3522,8 +3541,8 @@
         },
         "required": [
           "project",
-          "artifact_ids",
-          "task_family"
+          "artifactIds",
+          "taskFamily"
         ],
         "type": "object"
       },
@@ -3537,24 +3556,24 @@
           "metadata": {
             "additionalProperties": false,
             "properties": {
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               }
             },
             "required": [
-              "target_resource",
-              "create_time",
-              "progress_ratio",
-              "current_stage"
+              "targetResource",
+              "createTime",
+              "progressRatio",
+              "currentStage"
             ],
             "type": "object"
           },
@@ -3564,13 +3583,13 @@
           "response": {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -3580,10 +3599,10 @@
                   }
                 ]
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
@@ -3595,22 +3614,22 @@
               "status": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "task_family",
-              "campaign_name",
+              "taskFamily",
+              "campaignName",
               "status",
-              "artifact_names",
-              "label_names",
-              "create_time",
-              "update_time"
+              "artifactNames",
+              "labelNames",
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           }
@@ -3635,7 +3654,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "job_id": {
+          "jobId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -3649,7 +3668,7 @@
         },
         "required": [
           "project",
-          "job_id"
+          "jobId"
         ],
         "type": "object"
       },
@@ -3657,13 +3676,13 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_names": {
+          "artifactNames": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "campaign_name": {
+          "campaignName": {
             "oneOf": [
               {
                 "type": "string"
@@ -3673,10 +3692,10 @@
               }
             ]
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "label_names": {
+          "labelNames": {
             "items": {
               "type": "string"
             },
@@ -3688,22 +3707,22 @@
           "status": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           }
         },
         "required": [
           "name",
-          "task_family",
-          "campaign_name",
+          "taskFamily",
+          "campaignName",
           "status",
-          "artifact_names",
-          "label_names",
-          "create_time",
-          "update_time"
+          "artifactNames",
+          "labelNames",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -3719,9 +3738,19 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "job_id": {
+          "jobId": {
             "maxLength": 256,
             "minLength": 1,
+            "type": "string"
+          },
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
             "type": "string"
           },
           "project": {
@@ -3733,7 +3762,7 @@
         },
         "required": [
           "project",
-          "job_id"
+          "jobId"
         ],
         "type": "object"
       },
@@ -3748,10 +3777,10 @@
             "items": {
               "additionalProperties": false,
               "properties": {
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
-                "campaign_name": {
+                "campaignName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -3764,7 +3793,7 @@
                 "confidence": {
                   "type": "number"
                 },
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
                 "decision": {
@@ -3789,7 +3818,7 @@
                     "model": {
                       "type": "string"
                     },
-                    "task_family": {
+                    "taskFamily": {
                       "type": "string"
                     },
                     "verifier": {
@@ -3799,7 +3828,7 @@
                   "required": [
                     "verifier",
                     "model",
-                    "task_family",
+                    "taskFamily",
                     "determinism"
                   ],
                   "type": "object"
@@ -3807,39 +3836,39 @@
                 "rationale": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "artifact_name",
-                "campaign_name",
+                "artifactName",
+                "campaignName",
                 "label",
                 "confidence",
                 "rationale",
                 "evidence",
                 "provenance",
                 "decision",
-                "create_time",
-                "update_time"
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "job",
           "labels",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -3855,18 +3884,18 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "campaign_name": {
+          "campaignName": {
             "maxLength": 4096,
             "minLength": 1,
             "type": "string"
           },
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3893,24 +3922,24 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "expert_tasks": {
+          "expertTasks": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "annotation_schema": {
+                "annotationSchema": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "annotation_schema_version": {
+                "annotationSchemaVersion": {
                   "type": "string"
                 },
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
-                "batch_key": {
+                "batchKey": {
                   "type": "string"
                 },
-                "campaign_name": {
+                "campaignName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -3920,10 +3949,10 @@
                     }
                   ]
                 },
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
-                "deadline_time": {
+                "deadlineTime": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -3933,7 +3962,7 @@
                     }
                   ]
                 },
-                "label_name": {
+                "labelName": {
                   "type": "string"
                 },
                 "name": {
@@ -3942,13 +3971,13 @@
                 "priority": {
                   "type": "integer"
                 },
-                "qualification_task": {
+                "qualificationTask": {
                   "type": "boolean"
                 },
                 "reason": {
                   "type": "string"
                 },
-                "resolution_label_name": {
+                "resolutionLabelName": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -3958,17 +3987,17 @@
                     }
                   ]
                 },
-                "review_role": {
+                "reviewRole": {
                   "type": "string"
                 },
                 "rubric": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "rubric_version": {
+                "rubricVersion": {
                   "type": "string"
                 },
-                "skill_tags": {
+                "skillTags": {
                   "items": {
                     "type": "string"
                   },
@@ -3977,44 +4006,44 @@
                 "status": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 }
               },
               "required": [
                 "name",
-                "campaign_name",
-                "artifact_name",
-                "label_name",
-                "skill_tags",
+                "campaignName",
+                "artifactName",
+                "labelName",
+                "skillTags",
                 "rubric",
-                "rubric_version",
+                "rubricVersion",
                 "reason",
-                "review_role",
-                "qualification_task",
+                "reviewRole",
+                "qualificationTask",
                 "status",
-                "resolution_label_name",
+                "resolutionLabelName",
                 "priority",
-                "deadline_time",
-                "batch_key",
-                "create_time",
-                "update_time"
+                "deadlineTime",
+                "batchKey",
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
-          "expert_tasks",
-          "next_page_token",
-          "total_size"
+          "expertTasks",
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -4043,12 +4072,12 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "expert_task_id": {
+          "expertTaskId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -4058,7 +4087,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "lease_token": {
+          "leaseToken": {
             "description": "Opaque active assignment capability; required after a task has been claimed.",
             "maxLength": 512,
             "minLength": 1,
@@ -4086,10 +4115,10 @@
             "minLength": 1,
             "type": "string"
           },
-          "review_context": {
+          "reviewContext": {
             "additionalProperties": false,
             "properties": {
-              "consent_boundary": {
+              "consentBoundary": {
                 "additionalProperties": false,
                 "properties": {
                   "authorized": {
@@ -4113,7 +4142,7 @@
                 ],
                 "type": "object"
               },
-              "reuse_targets": {
+              "reuseTargets": {
                 "description": "Must be nonempty when authorized is true and empty when authorized is false.",
                 "items": {
                   "enum": [
@@ -4130,7 +4159,7 @@
                 "type": "array",
                 "uniqueItems": true
               },
-              "review_type": {
+              "reviewType": {
                 "enum": [
                   "browser_action",
                   "outcome",
@@ -4139,15 +4168,15 @@
                 ],
                 "type": "string"
               },
-              "source_provenance": {
+              "sourceProvenance": {
                 "items": {
                   "additionalProperties": false,
                   "properties": {
-                    "content_sha256": {
+                    "contentSha256": {
                       "pattern": "^sha256:[0-9a-f]{64}$",
                       "type": "string"
                     },
-                    "source_kind": {
+                    "sourceKind": {
                       "enum": [
                         "palette_trace",
                         "tempo_session",
@@ -4157,15 +4186,15 @@
                       ],
                       "type": "string"
                     },
-                    "source_ref": {
+                    "sourceRef": {
                       "maxLength": 4096,
                       "minLength": 1,
                       "type": "string"
                     }
                   },
                   "required": [
-                    "source_kind",
-                    "source_ref"
+                    "sourceKind",
+                    "sourceRef"
                   ],
                   "type": "object"
                 },
@@ -4175,20 +4204,20 @@
               }
             },
             "required": [
-              "review_type",
-              "source_provenance",
-              "consent_boundary",
-              "reuse_targets"
+              "reviewType",
+              "sourceProvenance",
+              "consentBoundary",
+              "reuseTargets"
             ],
             "type": "object"
           }
         },
         "required": [
           "project",
-          "expert_task_id",
+          "expertTaskId",
           "label",
-          "idempotency_key",
-          "review_context"
+          "idempotencyKey",
+          "reviewContext"
         ],
         "type": "object"
       },
@@ -4196,23 +4225,23 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "expert_task": {
+          "expertTask": {
             "additionalProperties": false,
             "properties": {
-              "annotation_schema": {
+              "annotationSchema": {
                 "additionalProperties": true,
                 "type": "object"
               },
-              "annotation_schema_version": {
+              "annotationSchemaVersion": {
                 "type": "string"
               },
-              "artifact_name": {
+              "artifactName": {
                 "type": "string"
               },
-              "batch_key": {
+              "batchKey": {
                 "type": "string"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4222,10 +4251,10 @@
                   }
                 ]
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "deadline_time": {
+              "deadlineTime": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4235,7 +4264,7 @@
                   }
                 ]
               },
-              "label_name": {
+              "labelName": {
                 "type": "string"
               },
               "name": {
@@ -4244,13 +4273,13 @@
               "priority": {
                 "type": "integer"
               },
-              "qualification_task": {
+              "qualificationTask": {
                 "type": "boolean"
               },
               "reason": {
                 "type": "string"
               },
-              "resolution_label_name": {
+              "resolutionLabelName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4260,17 +4289,17 @@
                   }
                 ]
               },
-              "review_role": {
+              "reviewRole": {
                 "type": "string"
               },
               "rubric": {
                 "additionalProperties": true,
                 "type": "object"
               },
-              "rubric_version": {
+              "rubricVersion": {
                 "type": "string"
               },
-              "skill_tags": {
+              "skillTags": {
                 "items": {
                   "type": "string"
                 },
@@ -4279,38 +4308,38 @@
               "status": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "campaign_name",
-              "artifact_name",
-              "label_name",
-              "skill_tags",
+              "campaignName",
+              "artifactName",
+              "labelName",
+              "skillTags",
               "rubric",
-              "rubric_version",
+              "rubricVersion",
               "reason",
-              "review_role",
-              "qualification_task",
+              "reviewRole",
+              "qualificationTask",
               "status",
-              "resolution_label_name",
+              "resolutionLabelName",
               "priority",
-              "deadline_time",
-              "batch_key",
-              "create_time",
-              "update_time"
+              "deadlineTime",
+              "batchKey",
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
           "label": {
             "additionalProperties": false,
             "properties": {
-              "artifact_name": {
+              "artifactName": {
                 "type": "string"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4323,7 +4352,7 @@
               "confidence": {
                 "type": "number"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
               "decision": {
@@ -4348,7 +4377,7 @@
                   "model": {
                     "type": "string"
                   },
-                  "task_family": {
+                  "taskFamily": {
                     "type": "string"
                   },
                   "verifier": {
@@ -4358,7 +4387,7 @@
                 "required": [
                   "verifier",
                   "model",
-                  "task_family",
+                  "taskFamily",
                   "determinism"
                 ],
                 "type": "object"
@@ -4366,32 +4395,32 @@
               "rationale": {
                 "type": "string"
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "artifact_name",
-              "campaign_name",
+              "artifactName",
+              "campaignName",
               "label",
               "confidence",
               "rationale",
               "evidence",
               "provenance",
               "decision",
-              "create_time",
-              "update_time"
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           },
-          "qualification_result": {
+          "qualificationResult": {
             "additionalProperties": true,
             "type": "object"
           }
         },
         "required": [
-          "expert_task",
+          "expertTask",
           "label"
         ],
         "type": "object"
@@ -4424,48 +4453,48 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "accepted_verified_units": {
+          "acceptedVerifiedUnits": {
             "type": "integer"
           },
-          "artifacts_ingested": {
+          "artifactsIngested": {
             "type": "integer"
           },
-          "auto_resolution_rate": {
+          "autoResolutionRate": {
             "type": "number"
           },
-          "average_confidence": {
+          "averageConfidence": {
             "type": "number"
           },
-          "bundle_emits": {
+          "bundleEmits": {
             "type": "integer"
           },
-          "human_residual_units": {
+          "humanResidualUnits": {
             "type": "integer"
           },
-          "labels_created": {
+          "labelsCreated": {
             "type": "integer"
           },
-          "open_expert_tasks": {
+          "openExpertTasks": {
             "type": "integer"
           },
           "project": {
             "type": "string"
           },
-          "verifier_runs": {
+          "verifierRuns": {
             "type": "integer"
           }
         },
         "required": [
           "project",
-          "artifacts_ingested",
-          "labels_created",
-          "verifier_runs",
-          "accepted_verified_units",
-          "human_residual_units",
-          "open_expert_tasks",
-          "bundle_emits",
-          "auto_resolution_rate",
-          "average_confidence"
+          "artifactsIngested",
+          "labelsCreated",
+          "verifierRuns",
+          "acceptedVerifiedUnits",
+          "humanResidualUnits",
+          "openExpertTasks",
+          "bundleEmits",
+          "autoResolutionRate",
+          "averageConfidence"
         ],
         "type": "object"
       }
@@ -4500,7 +4529,7 @@
           "api": {
             "additionalProperties": false,
             "properties": {
-              "base_path": {
+              "basePath": {
                 "type": "string"
               },
               "health": {
@@ -4514,7 +4543,7 @@
               }
             },
             "required": [
-              "base_path",
+              "basePath",
               "health",
               "pipeline",
               "metrics"
@@ -4524,48 +4553,48 @@
           "metrics": {
             "additionalProperties": false,
             "properties": {
-              "accepted_verified_units": {
+              "acceptedVerifiedUnits": {
                 "type": "integer"
               },
-              "artifacts_ingested": {
+              "artifactsIngested": {
                 "type": "integer"
               },
-              "auto_resolution_rate": {
+              "autoResolutionRate": {
                 "type": "number"
               },
-              "average_confidence": {
+              "averageConfidence": {
                 "type": "number"
               },
-              "bundle_emits": {
+              "bundleEmits": {
                 "type": "integer"
               },
-              "human_residual_units": {
+              "humanResidualUnits": {
                 "type": "integer"
               },
-              "labels_created": {
+              "labelsCreated": {
                 "type": "integer"
               },
-              "open_expert_tasks": {
+              "openExpertTasks": {
                 "type": "integer"
               },
               "project": {
                 "type": "string"
               },
-              "verifier_runs": {
+              "verifierRuns": {
                 "type": "integer"
               }
             },
             "required": [
               "project",
-              "artifacts_ingested",
-              "labels_created",
-              "verifier_runs",
-              "accepted_verified_units",
-              "human_residual_units",
-              "open_expert_tasks",
-              "bundle_emits",
-              "auto_resolution_rate",
-              "average_confidence"
+              "artifactsIngested",
+              "labelsCreated",
+              "verifierRuns",
+              "acceptedVerifiedUnits",
+              "humanResidualUnits",
+              "openExpertTasks",
+              "bundleEmits",
+              "autoResolutionRate",
+              "averageConfidence"
             ],
             "type": "object"
           },
@@ -4575,30 +4604,30 @@
               "routing": {
                 "type": "string"
               },
-              "text_non_coding": {
+              "textNonCoding": {
                 "type": "string"
               },
-              "vision_non_coding": {
+              "visionNonCoding": {
                 "type": "string"
               }
             },
             "required": [
-              "text_non_coding",
-              "vision_non_coding",
+              "textNonCoding",
+              "visionNonCoding",
               "routing"
             ],
             "type": "object"
           },
-          "product_id": {
+          "productId": {
             "type": "string"
           },
           "project": {
             "type": "string"
           },
-          "public_site_contract": {
+          "publicSiteContract": {
             "additionalProperties": false,
             "properties": {
-              "customer_actions": {
+              "customerActions": {
                 "items": {
                   "type": "string"
                 },
@@ -4616,7 +4645,7 @@
                 },
                 "type": "array"
               },
-              "product_cards": {
+              "productCards": {
                 "items": {
                   "type": "string"
                 },
@@ -4625,33 +4654,33 @@
             },
             "required": [
               "env",
-              "product_cards",
+              "productCards",
               "meters",
-              "customer_actions"
+              "customerActions"
             ],
             "type": "object"
           },
           "signals": {
             "additionalProperties": false,
             "properties": {
-              "expert_residual_queue_active": {
+              "expertResidualQueueActive": {
                 "type": "boolean"
               },
-              "first_artifact_ingested": {
+              "firstArtifactIngested": {
                 "type": "boolean"
               },
-              "first_bundle_emitted": {
+              "firstBundleEmitted": {
                 "type": "boolean"
               },
-              "first_verifier_label_created": {
+              "firstVerifierLabelCreated": {
                 "type": "boolean"
               }
             },
             "required": [
-              "first_artifact_ingested",
-              "first_verifier_label_created",
-              "first_bundle_emitted",
-              "expert_residual_queue_active"
+              "firstArtifactIngested",
+              "firstVerifierLabelCreated",
+              "firstBundleEmitted",
+              "expertResidualQueueActive"
             ],
             "type": "object"
           },
@@ -4660,11 +4689,11 @@
           }
         },
         "required": [
-          "product_id",
+          "productId",
           "project",
           "status",
           "api",
-          "public_site_contract",
+          "publicSiteContract",
           "models",
           "metrics",
           "signals"
@@ -4683,7 +4712,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "items": {
               "maxLength": 4096,
               "minLength": 1,
@@ -4707,7 +4736,7 @@
         },
         "required": [
           "project",
-          "artifact_ids",
+          "artifactIds",
           "job"
         ],
         "type": "object"
@@ -4722,24 +4751,24 @@
           "metadata": {
             "additionalProperties": false,
             "properties": {
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               }
             },
             "required": [
-              "target_resource",
-              "create_time",
-              "progress_ratio",
-              "current_stage"
+              "targetResource",
+              "createTime",
+              "progressRatio",
+              "currentStage"
             ],
             "type": "object"
           },
@@ -4749,13 +4778,13 @@
           "response": {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4765,10 +4794,10 @@
                   }
                 ]
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "job_name": {
+              "jobName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4778,19 +4807,19 @@
                   }
                 ]
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "manifest_path": {
+              "manifestPath": {
                 "type": "string"
               },
-              "manifest_sha256": {
+              "manifestSha256": {
                 "type": "string"
               },
-              "manifest_url": {
+              "manifestUrl": {
                 "type": "string"
               },
               "mode": {
@@ -4799,22 +4828,22 @@
               "name": {
                 "type": "string"
               },
-              "pending_artifact_names": {
+              "pendingArtifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "product_id": {
+              "productId": {
                 "type": "string"
               },
-              "quality_status": {
+              "qualityStatus": {
                 "type": "string"
               },
-              "snapshot_hash": {
+              "snapshotHash": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -4824,27 +4853,27 @@
                   }
                 ]
               },
-              "update_time": {
+              "updateTime": {
                 "type": "string"
               }
             },
             "required": [
               "name",
-              "product_id",
+              "productId",
               "mode",
-              "manifest_path",
-              "manifest_url",
-              "manifest_sha256",
-              "artifact_names",
-              "label_names",
-              "quality_status",
-              "pending_artifact_names",
-              "job_name",
-              "task_family",
-              "campaign_name",
-              "snapshot_hash",
-              "create_time",
-              "update_time"
+              "manifestPath",
+              "manifestUrl",
+              "manifestSha256",
+              "artifactNames",
+              "labelNames",
+              "qualityStatus",
+              "pendingArtifactNames",
+              "jobName",
+              "taskFamily",
+              "campaignName",
+              "snapshotHash",
+              "createTime",
+              "updateTime"
             ],
             "type": "object"
           }
@@ -4869,7 +4898,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "product_id": {
+          "productId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -4883,7 +4912,7 @@
         },
         "required": [
           "project",
-          "product_id"
+          "productId"
         ],
         "type": "object"
       },
@@ -4891,13 +4920,13 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_names": {
+          "artifactNames": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "campaign_name": {
+          "campaignName": {
             "oneOf": [
               {
                 "type": "string"
@@ -4907,10 +4936,10 @@
               }
             ]
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "job_name": {
+          "jobName": {
             "oneOf": [
               {
                 "type": "string"
@@ -4920,19 +4949,19 @@
               }
             ]
           },
-          "label_names": {
+          "labelNames": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "manifest_path": {
+          "manifestPath": {
             "type": "string"
           },
-          "manifest_sha256": {
+          "manifestSha256": {
             "type": "string"
           },
-          "manifest_url": {
+          "manifestUrl": {
             "type": "string"
           },
           "mode": {
@@ -4941,22 +4970,22 @@
           "name": {
             "type": "string"
           },
-          "pending_artifact_names": {
+          "pendingArtifactNames": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "product_id": {
+          "productId": {
             "type": "string"
           },
-          "quality_status": {
+          "qualityStatus": {
             "type": "string"
           },
-          "snapshot_hash": {
+          "snapshotHash": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "oneOf": [
               {
                 "type": "string"
@@ -4966,27 +4995,27 @@
               }
             ]
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           }
         },
         "required": [
           "name",
-          "product_id",
+          "productId",
           "mode",
-          "manifest_path",
-          "manifest_url",
-          "manifest_sha256",
-          "artifact_names",
-          "label_names",
-          "quality_status",
-          "pending_artifact_names",
-          "job_name",
-          "task_family",
-          "campaign_name",
-          "snapshot_hash",
-          "create_time",
-          "update_time"
+          "manifestPath",
+          "manifestUrl",
+          "manifestSha256",
+          "artifactNames",
+          "labelNames",
+          "qualityStatus",
+          "pendingArtifactNames",
+          "jobName",
+          "taskFamily",
+          "campaignName",
+          "snapshotHash",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -5002,7 +5031,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "product_id": {
+          "productId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -5016,7 +5045,7 @@
         },
         "required": [
           "project",
-          "product_id"
+          "productId"
         ],
         "type": "object"
       },
@@ -5026,13 +5055,13 @@
           {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "campaign_name": {
+              "campaignName": {
                 "oneOf": [
                   {
                     "type": "string"
@@ -5042,32 +5071,32 @@
                   }
                 ]
               },
-              "candidate_label_names": {
+              "candidateLabelNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
               "items": {
                 "items": {
                   "additionalProperties": false,
                   "properties": {
-                    "artifact_name": {
+                    "artifactName": {
                       "type": "string"
                     },
-                    "artifact_raw_sha256": {
+                    "artifactRawSha256": {
                       "type": "string"
                     },
-                    "candidate_label_name": {
+                    "candidateLabelName": {
                       "type": "string"
                     },
-                    "candidate_label_sha256": {
+                    "candidateLabelSha256": {
                       "type": "string"
                     },
-                    "candidate_reviewed_at": {
+                    "candidateReviewedAt": {
                       "oneOf": [
                         {
                           "type": "string"
@@ -5077,42 +5106,42 @@
                         }
                       ]
                     },
-                    "review_label_names": {
+                    "reviewLabelNames": {
                       "items": {
                         "type": "string"
                       },
                       "type": "array"
                     },
-                    "source_label_name": {
+                    "sourceLabelName": {
                       "type": "string"
                     },
-                    "source_label_sha256": {
+                    "sourceLabelSha256": {
                       "type": "string"
                     },
-                    "source_policy": {
+                    "sourcePolicy": {
                       "oneOf": [
                         {
                           "additionalProperties": false,
                           "properties": {
-                            "artifact_schema": {
+                            "artifactSchema": {
                               "type": "string"
                             },
-                            "correction_authority": {
+                            "correctionAuthority": {
                               "type": "boolean"
                             },
-                            "external_erasure_status": {
+                            "externalErasureStatus": {
                               "type": "string"
                             },
-                            "feedback_note_included": {
+                            "feedbackNoteIncluded": {
                               "type": "boolean"
                             },
-                            "label_authority": {
+                            "labelAuthority": {
                               "type": "string"
                             },
-                            "memory_text_included": {
+                            "memoryTextIncluded": {
                               "type": "boolean"
                             },
-                            "producer_origin_verification": {
+                            "producerOriginVerification": {
                               "type": "string"
                             },
                             "schema": {
@@ -5121,13 +5150,13 @@
                           },
                           "required": [
                             "schema",
-                            "artifact_schema",
-                            "producer_origin_verification",
-                            "label_authority",
-                            "correction_authority",
-                            "external_erasure_status",
-                            "memory_text_included",
-                            "feedback_note_included"
+                            "artifactSchema",
+                            "producerOriginVerification",
+                            "labelAuthority",
+                            "correctionAuthority",
+                            "externalErasureStatus",
+                            "memoryTextIncluded",
+                            "feedbackNoteIncluded"
                           ],
                           "type": "object"
                         },
@@ -5143,7 +5172,7 @@
                           "name": {
                             "type": "string"
                           },
-                          "resolution_hash": {
+                          "resolutionHash": {
                             "oneOf": [
                               {
                                 "type": "string"
@@ -5153,7 +5182,7 @@
                               }
                             ]
                           },
-                          "resolution_label_name": {
+                          "resolutionLabelName": {
                             "oneOf": [
                               {
                                 "type": "string"
@@ -5163,7 +5192,7 @@
                               }
                             ]
                           },
-                          "resolved_at": {
+                          "resolvedAt": {
                             "oneOf": [
                               {
                                 "type": "string"
@@ -5173,7 +5202,7 @@
                               }
                             ]
                           },
-                          "review_role": {
+                          "reviewRole": {
                             "type": "string"
                           },
                           "status": {
@@ -5182,11 +5211,11 @@
                         },
                         "required": [
                           "name",
-                          "review_role",
+                          "reviewRole",
                           "status",
-                          "resolution_label_name",
-                          "resolution_hash",
-                          "resolved_at"
+                          "resolutionLabelName",
+                          "resolutionHash",
+                          "resolvedAt"
                         ],
                         "type": "object"
                       },
@@ -5194,25 +5223,25 @@
                     }
                   },
                   "required": [
-                    "artifact_name",
-                    "artifact_raw_sha256",
-                    "source_label_name",
-                    "source_label_sha256",
-                    "candidate_label_name",
-                    "candidate_label_sha256",
-                    "candidate_reviewed_at",
-                    "review_label_names",
-                    "source_policy",
+                    "artifactName",
+                    "artifactRawSha256",
+                    "sourceLabelName",
+                    "sourceLabelSha256",
+                    "candidateLabelName",
+                    "candidateLabelSha256",
+                    "candidateReviewedAt",
+                    "reviewLabelNames",
+                    "sourcePolicy",
                     "tasks"
                   ],
                   "type": "object"
                 },
                 "type": "array"
               },
-              "job_name": {
+              "jobName": {
                 "type": "string"
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
@@ -5221,24 +5250,24 @@
               "metrics": {
                 "additionalProperties": false,
                 "properties": {
-                  "accepted_labels": {
+                  "acceptedLabels": {
                     "type": "integer"
                   },
                   "artifacts": {
                     "type": "integer"
                   },
-                  "human_resolved": {
+                  "humanResolved": {
                     "type": "integer"
                   },
-                  "pending_artifacts": {
+                  "pendingArtifacts": {
                     "type": "integer"
                   }
                 },
                 "required": [
                   "artifacts",
-                  "accepted_labels",
-                  "pending_artifacts",
-                  "human_resolved"
+                  "acceptedLabels",
+                  "pendingArtifacts",
+                  "humanResolved"
                 ],
                 "type": "object"
               },
@@ -5248,7 +5277,7 @@
               "name": {
                 "type": "string"
               },
-              "pending_artifact_names": {
+              "pendingArtifactNames": {
                 "items": {
                   "type": "string"
                 },
@@ -5257,16 +5286,16 @@
               "project": {
                 "type": "string"
               },
-              "quality_status": {
+              "qualityStatus": {
                 "type": "string"
               },
               "schema": {
                 "type": "string"
               },
-              "snapshot_hash": {
+              "snapshotHash": {
                 "type": "string"
               },
-              "task_family": {
+              "taskFamily": {
                 "type": "string"
               }
             },
@@ -5275,34 +5304,34 @@
               "name",
               "project",
               "mode",
-              "job_name",
-              "task_family",
-              "campaign_name",
-              "artifact_names",
-              "label_names",
-              "candidate_label_names",
+              "jobName",
+              "taskFamily",
+              "campaignName",
+              "artifactNames",
+              "labelNames",
+              "candidateLabelNames",
               "items",
-              "pending_artifact_names",
-              "quality_status",
-              "snapshot_hash",
+              "pendingArtifactNames",
+              "qualityStatus",
+              "snapshotHash",
               "metrics",
-              "create_time"
+              "createTime"
             ],
             "type": "object"
           },
           {
             "additionalProperties": false,
             "properties": {
-              "artifact_names": {
+              "artifactNames": {
                 "items": {
                   "type": "string"
                 },
                 "type": "array"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "label_names": {
+              "labelNames": {
                 "items": {
                   "type": "string"
                 },
@@ -5311,48 +5340,48 @@
               "metrics": {
                 "additionalProperties": false,
                 "properties": {
-                  "accepted_verified_units": {
+                  "acceptedVerifiedUnits": {
                     "type": "integer"
                   },
-                  "artifacts_ingested": {
+                  "artifactsIngested": {
                     "type": "integer"
                   },
-                  "auto_resolution_rate": {
+                  "autoResolutionRate": {
                     "type": "number"
                   },
-                  "average_confidence": {
+                  "averageConfidence": {
                     "type": "number"
                   },
-                  "bundle_emits": {
+                  "bundleEmits": {
                     "type": "integer"
                   },
-                  "human_residual_units": {
+                  "humanResidualUnits": {
                     "type": "integer"
                   },
-                  "labels_created": {
+                  "labelsCreated": {
                     "type": "integer"
                   },
-                  "open_expert_tasks": {
+                  "openExpertTasks": {
                     "type": "integer"
                   },
                   "project": {
                     "type": "string"
                   },
-                  "verifier_runs": {
+                  "verifierRuns": {
                     "type": "integer"
                   }
                 },
                 "required": [
                   "project",
-                  "artifacts_ingested",
-                  "labels_created",
-                  "verifier_runs",
-                  "accepted_verified_units",
-                  "human_residual_units",
-                  "open_expert_tasks",
-                  "bundle_emits",
-                  "auto_resolution_rate",
-                  "average_confidence"
+                  "artifactsIngested",
+                  "labelsCreated",
+                  "verifierRuns",
+                  "acceptedVerifiedUnits",
+                  "humanResidualUnits",
+                  "openExpertTasks",
+                  "bundleEmits",
+                  "autoResolutionRate",
+                  "averageConfidence"
                 ],
                 "type": "object"
               },
@@ -5370,10 +5399,10 @@
               "name",
               "project",
               "mode",
-              "artifact_names",
-              "label_names",
+              "artifactNames",
+              "labelNames",
               "metrics",
-              "create_time"
+              "createTime"
             ],
             "type": "object"
           }
@@ -5401,22 +5430,22 @@
             ],
             "type": "string"
           },
-          "include_raw": {
+          "includeRaw": {
             "description": "Inline each artifact's {artifactType, raw_body} (per record capped at 256 KiB; oversized inputs become {raw_omitted, raw_sha256}).",
             "type": "boolean"
           },
-          "page_size": {
+          "pageSize": {
             "description": "Items per page (default 100).",
             "maximum": 500,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "description": "Keyset token: the last processed artifact_name from the previous page.",
             "maxLength": 4096,
             "type": "string"
           },
-          "pair_sources": {
+          "pairSources": {
             "description": "format=preference only: select the authority mix - expert_override is human feedback (RLHF-grade), ensemble_minority is AI feedback (RLAIF-grade). Defaults to both.",
             "items": {
               "enum": [
@@ -5428,7 +5457,7 @@
             "minItems": 1,
             "type": "array"
           },
-          "product_id": {
+          "productId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -5439,7 +5468,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "train_fraction": {
+          "trainFraction": {
             "description": "Deterministic content-addressed split threshold (default 0.9); identical raw content always lands in the same split.",
             "maximum": 0.99,
             "minimum": 0.5,
@@ -5448,7 +5477,7 @@
         },
         "required": [
           "project",
-          "product_id",
+          "productId",
           "format"
         ],
         "type": "object"
@@ -5460,7 +5489,7 @@
           "counts": {
             "additionalProperties": false,
             "properties": {
-              "pending_artifacts_excluded": {
+              "pendingArtifactsExcluded": {
                 "type": "integer"
               },
               "records": {
@@ -5477,7 +5506,7 @@
               "train",
               "val",
               "records",
-              "pending_artifacts_excluded"
+              "pendingArtifactsExcluded"
             ],
             "type": "object"
           },
@@ -5492,7 +5521,7 @@
           "name": {
             "type": "string"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "product": {
@@ -5505,10 +5534,10 @@
             },
             "type": "array"
           },
-          "snapshot_hash": {
+          "snapshotHash": {
             "type": "string"
           },
-          "train_fraction": {
+          "trainFraction": {
             "type": "number"
           }
         },
@@ -5516,11 +5545,11 @@
           "name",
           "product",
           "format",
-          "train_fraction",
-          "snapshot_hash",
+          "trainFraction",
+          "snapshotHash",
           "records",
           "counts",
-          "next_page_token"
+          "nextPageToken"
         ],
         "type": "object"
       }
@@ -5536,12 +5565,12 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "heldout_product_id": {
+          "heldoutProductId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "maxLength": 4096,
             "minLength": 1,
             "type": "string"
@@ -5552,7 +5581,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "training_product_id": {
+          "trainingProductId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -5560,9 +5589,9 @@
         },
         "required": [
           "project",
-          "training_product_id",
-          "heldout_product_id",
-          "idempotency_key"
+          "trainingProductId",
+          "heldoutProductId",
+          "idempotencyKey"
         ],
         "type": "object"
       },
@@ -5570,33 +5599,33 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "admission_hash": {
+          "admissionHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "heldout_manifest_sha256": {
+          "heldoutManifestSha256": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "heldout_product": {
+          "heldoutProduct": {
             "type": "string"
           },
-          "heldout_snapshot_hash": {
+          "heldoutSnapshotHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
           "name": {
             "type": "string"
           },
-          "policy_receipt": {
+          "policyReceipt": {
             "additionalProperties": false,
             "oneOf": [
               {
                 "properties": {
-                  "passed_checks": {
+                  "passedChecks": {
                     "items": {
                       "enum": [
                         "artifact_integrity",
@@ -5623,7 +5652,7 @@
               },
               {
                 "properties": {
-                  "passed_checks": {
+                  "passedChecks": {
                     "items": {
                       "enum": [
                         "artifact_integrity",
@@ -5650,38 +5679,38 @@
               }
             ],
             "properties": {
-              "exact_overlap_count": {
+              "exactOverlapCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_exact_duplicate_pair_count": {
+              "heldoutExactDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_near_duplicate_pair_count": {
+              "heldoutNearDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_unit_count": {
+              "heldoutUnitCount": {
                 "maximum": 64,
                 "minimum": 0,
                 "type": "integer"
               },
-              "near_duplicate_algorithm": {
+              "nearDuplicateAlgorithm": {
                 "const": "bottom-1024-count-sketch-5-byte-multiset-jaccard.v3"
               },
-              "near_duplicate_overlap_count": {
+              "nearDuplicateOverlapCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "near_duplicate_threshold": {
+              "nearDuplicateThreshold": {
                 "const": 0.9
               },
-              "passed_checks": {
+              "passedChecks": {
                 "items": {
                   "enum": [
                     "artifact_integrity",
@@ -5701,17 +5730,17 @@
                 "type": "array",
                 "uniqueItems": true
               },
-              "policy_digest": {
+              "policyDigest": {
                 "pattern": "^[0-9a-f]{64}$",
                 "type": "string"
               },
-              "scanner_version": {
+              "scannerVersion": {
                 "const": "data-engine.release-policy-scanner.v2"
               },
               "schema": {
                 "const": "data-engine.training-release-policy.v2"
               },
-              "secret_match_count": {
+              "secretMatchCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
@@ -5723,17 +5752,17 @@
                 ],
                 "type": "string"
               },
-              "training_exact_duplicate_pair_count": {
+              "trainingExactDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "training_near_duplicate_pair_count": {
+              "trainingNearDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "training_unit_count": {
+              "trainingUnitCount": {
                 "maximum": 64,
                 "minimum": 0,
                 "type": "integer"
@@ -5742,39 +5771,39 @@
             "required": [
               "schema",
               "status",
-              "scanner_version",
-              "near_duplicate_algorithm",
-              "near_duplicate_threshold",
-              "training_unit_count",
-              "heldout_unit_count",
-              "secret_match_count",
-              "training_exact_duplicate_pair_count",
-              "heldout_exact_duplicate_pair_count",
-              "training_near_duplicate_pair_count",
-              "heldout_near_duplicate_pair_count",
-              "exact_overlap_count",
-              "near_duplicate_overlap_count",
-              "policy_digest",
-              "passed_checks"
+              "scannerVersion",
+              "nearDuplicateAlgorithm",
+              "nearDuplicateThreshold",
+              "trainingUnitCount",
+              "heldoutUnitCount",
+              "secretMatchCount",
+              "trainingExactDuplicatePairCount",
+              "heldoutExactDuplicatePairCount",
+              "trainingNearDuplicatePairCount",
+              "heldoutNearDuplicatePairCount",
+              "exactOverlapCount",
+              "nearDuplicateOverlapCount",
+              "policyDigest",
+              "passedChecks"
             ],
             "type": "object"
           },
           "project": {
             "type": "string"
           },
-          "raw_hash_overlap_count": {
+          "rawHashOverlapCount": {
             "type": "integer"
           },
-          "release_id": {
+          "releaseId": {
             "type": "string"
           },
-          "reuse_target": {
+          "reuseTarget": {
             "const": "model_training"
           },
           "schema": {
             "const": "data-engine.training-release.v1"
           },
-          "stale_reason": {
+          "staleReason": {
             "oneOf": [
               {
                 "type": "string"
@@ -5791,40 +5820,40 @@
             ],
             "type": "string"
           },
-          "training_manifest_sha256": {
+          "trainingManifestSha256": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "training_product": {
+          "trainingProduct": {
             "type": "string"
           },
-          "training_snapshot_hash": {
+          "trainingSnapshotHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           }
         },
         "required": [
           "schema",
           "name",
-          "release_id",
+          "releaseId",
           "project",
-          "reuse_target",
-          "training_product",
-          "training_snapshot_hash",
-          "training_manifest_sha256",
-          "heldout_product",
-          "heldout_snapshot_hash",
-          "heldout_manifest_sha256",
-          "raw_hash_overlap_count",
-          "policy_receipt",
-          "admission_hash",
+          "reuseTarget",
+          "trainingProduct",
+          "trainingSnapshotHash",
+          "trainingManifestSha256",
+          "heldoutProduct",
+          "heldoutSnapshotHash",
+          "heldoutManifestSha256",
+          "rawHashOverlapCount",
+          "policyReceipt",
+          "admissionHash",
           "status",
-          "stale_reason",
-          "create_time",
-          "update_time"
+          "staleReason",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -5846,7 +5875,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "release_id": {
+          "releaseId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -5854,7 +5883,7 @@
         },
         "required": [
           "project",
-          "release_id"
+          "releaseId"
         ],
         "type": "object"
       },
@@ -5862,33 +5891,33 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "admission_hash": {
+          "admissionHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "heldout_manifest_sha256": {
+          "heldoutManifestSha256": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "heldout_product": {
+          "heldoutProduct": {
             "type": "string"
           },
-          "heldout_snapshot_hash": {
+          "heldoutSnapshotHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
           "name": {
             "type": "string"
           },
-          "policy_receipt": {
+          "policyReceipt": {
             "additionalProperties": false,
             "oneOf": [
               {
                 "properties": {
-                  "passed_checks": {
+                  "passedChecks": {
                     "items": {
                       "enum": [
                         "artifact_integrity",
@@ -5915,7 +5944,7 @@
               },
               {
                 "properties": {
-                  "passed_checks": {
+                  "passedChecks": {
                     "items": {
                       "enum": [
                         "artifact_integrity",
@@ -5942,38 +5971,38 @@
               }
             ],
             "properties": {
-              "exact_overlap_count": {
+              "exactOverlapCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_exact_duplicate_pair_count": {
+              "heldoutExactDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_near_duplicate_pair_count": {
+              "heldoutNearDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "heldout_unit_count": {
+              "heldoutUnitCount": {
                 "maximum": 64,
                 "minimum": 0,
                 "type": "integer"
               },
-              "near_duplicate_algorithm": {
+              "nearDuplicateAlgorithm": {
                 "const": "bottom-1024-count-sketch-5-byte-multiset-jaccard.v3"
               },
-              "near_duplicate_overlap_count": {
+              "nearDuplicateOverlapCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "near_duplicate_threshold": {
+              "nearDuplicateThreshold": {
                 "const": 0.9
               },
-              "passed_checks": {
+              "passedChecks": {
                 "items": {
                   "enum": [
                     "artifact_integrity",
@@ -5993,17 +6022,17 @@
                 "type": "array",
                 "uniqueItems": true
               },
-              "policy_digest": {
+              "policyDigest": {
                 "pattern": "^[0-9a-f]{64}$",
                 "type": "string"
               },
-              "scanner_version": {
+              "scannerVersion": {
                 "const": "data-engine.release-policy-scanner.v2"
               },
               "schema": {
                 "const": "data-engine.training-release-policy.v2"
               },
-              "secret_match_count": {
+              "secretMatchCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
@@ -6015,17 +6044,17 @@
                 ],
                 "type": "string"
               },
-              "training_exact_duplicate_pair_count": {
+              "trainingExactDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "training_near_duplicate_pair_count": {
+              "trainingNearDuplicatePairCount": {
                 "maximum": 0,
                 "minimum": 0,
                 "type": "integer"
               },
-              "training_unit_count": {
+              "trainingUnitCount": {
                 "maximum": 64,
                 "minimum": 0,
                 "type": "integer"
@@ -6034,39 +6063,39 @@
             "required": [
               "schema",
               "status",
-              "scanner_version",
-              "near_duplicate_algorithm",
-              "near_duplicate_threshold",
-              "training_unit_count",
-              "heldout_unit_count",
-              "secret_match_count",
-              "training_exact_duplicate_pair_count",
-              "heldout_exact_duplicate_pair_count",
-              "training_near_duplicate_pair_count",
-              "heldout_near_duplicate_pair_count",
-              "exact_overlap_count",
-              "near_duplicate_overlap_count",
-              "policy_digest",
-              "passed_checks"
+              "scannerVersion",
+              "nearDuplicateAlgorithm",
+              "nearDuplicateThreshold",
+              "trainingUnitCount",
+              "heldoutUnitCount",
+              "secretMatchCount",
+              "trainingExactDuplicatePairCount",
+              "heldoutExactDuplicatePairCount",
+              "trainingNearDuplicatePairCount",
+              "heldoutNearDuplicatePairCount",
+              "exactOverlapCount",
+              "nearDuplicateOverlapCount",
+              "policyDigest",
+              "passedChecks"
             ],
             "type": "object"
           },
           "project": {
             "type": "string"
           },
-          "raw_hash_overlap_count": {
+          "rawHashOverlapCount": {
             "type": "integer"
           },
-          "release_id": {
+          "releaseId": {
             "type": "string"
           },
-          "reuse_target": {
+          "reuseTarget": {
             "const": "model_training"
           },
           "schema": {
             "const": "data-engine.training-release.v1"
           },
-          "stale_reason": {
+          "staleReason": {
             "oneOf": [
               {
                 "type": "string"
@@ -6083,40 +6112,40 @@
             ],
             "type": "string"
           },
-          "training_manifest_sha256": {
+          "trainingManifestSha256": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "training_product": {
+          "trainingProduct": {
             "type": "string"
           },
-          "training_snapshot_hash": {
+          "trainingSnapshotHash": {
             "pattern": "^[0-9a-f]{64}$",
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           }
         },
         "required": [
           "schema",
           "name",
-          "release_id",
+          "releaseId",
           "project",
-          "reuse_target",
-          "training_product",
-          "training_snapshot_hash",
-          "training_manifest_sha256",
-          "heldout_product",
-          "heldout_snapshot_hash",
-          "heldout_manifest_sha256",
-          "raw_hash_overlap_count",
-          "policy_receipt",
-          "admission_hash",
+          "reuseTarget",
+          "trainingProduct",
+          "trainingSnapshotHash",
+          "trainingManifestSha256",
+          "heldoutProduct",
+          "heldoutSnapshotHash",
+          "heldoutManifestSha256",
+          "rawHashOverlapCount",
+          "policyReceipt",
+          "admissionHash",
           "status",
-          "stale_reason",
-          "create_time",
-          "update_time"
+          "staleReason",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -6132,14 +6161,14 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_ids": {
+          "artifactIds": {
             "description": "Full artifact resource names to profile; defaults to every artifact in the project.",
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "artifact_type": {
+          "artifactType": {
             "description": "Optional artifactType filter.",
             "type": "string"
           },
@@ -6159,7 +6188,7 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_type_counts": {
+          "artifactTypeCounts": {
             "additionalProperties": {
               "type": "integer"
             },
@@ -6192,35 +6221,35 @@
             ],
             "type": "object"
           },
-          "decision_counts": {
+          "decisionCounts": {
             "additionalProperties": {
               "type": "integer"
             },
             "type": "object"
           },
-          "duplicate_groups": {
+          "duplicateGroups": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "artifact_names": {
+                "artifactNames": {
                   "items": {
                     "type": "string"
                   },
                   "type": "array"
                 },
-                "raw_hash": {
+                "rawHash": {
                   "type": "string"
                 }
               },
               "required": [
-                "raw_hash",
-                "artifact_names"
+                "rawHash",
+                "artifactNames"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "label_coverage": {
+          "labelCoverage": {
             "additionalProperties": false,
             "properties": {
               "labeled": {
@@ -6236,7 +6265,7 @@
             ],
             "type": "object"
           },
-          "label_value_counts": {
+          "labelValueCounts": {
             "additionalProperties": {
               "type": "integer"
             },
@@ -6245,26 +6274,26 @@
           "project": {
             "type": "string"
           },
-          "source_counts": {
+          "sourceCounts": {
             "additionalProperties": {
               "type": "integer"
             },
             "type": "object"
           },
-          "total_artifacts": {
+          "totalArtifacts": {
             "type": "integer"
           }
         },
         "required": [
           "project",
-          "total_artifacts",
-          "artifact_type_counts",
-          "source_counts",
-          "duplicate_groups",
-          "label_coverage",
+          "totalArtifacts",
+          "artifactTypeCounts",
+          "sourceCounts",
+          "duplicateGroups",
+          "labelCoverage",
           "confidence",
-          "decision_counts",
-          "label_value_counts"
+          "decisionCounts",
+          "labelValueCounts"
         ],
         "type": "object"
       }
@@ -6280,7 +6309,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "product_id": {
+          "productId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -6294,7 +6323,7 @@
         },
         "required": [
           "project",
-          "product_id"
+          "productId"
         ],
         "type": "object"
       },
@@ -6331,32 +6360,32 @@
           "stats": {
             "additionalProperties": false,
             "properties": {
-              "artifact_count": {
+              "artifactCount": {
                 "type": "integer"
               },
-              "duplicate_group_count": {
+              "duplicateGroupCount": {
                 "type": "integer"
               },
-              "error_count": {
+              "errorCount": {
                 "type": "integer"
               },
-              "label_count": {
+              "labelCount": {
                 "type": "integer"
               },
-              "needs_expert_labels": {
+              "needsExpertLabels": {
                 "type": "integer"
               },
-              "warning_count": {
+              "warningCount": {
                 "type": "integer"
               }
             },
             "required": [
-              "artifact_count",
-              "label_count",
-              "duplicate_group_count",
-              "needs_expert_labels",
-              "error_count",
-              "warning_count"
+              "artifactCount",
+              "labelCount",
+              "duplicateGroupCount",
+              "needsExpertLabels",
+              "errorCount",
+              "warningCount"
             ],
             "type": "object"
           },
@@ -6384,7 +6413,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "product_ids": {
+          "productIds": {
             "description": "Exactly two product ids to compare (e.g. a train and an eval bundle).",
             "items": {
               "type": "string"
@@ -6402,7 +6431,7 @@
         },
         "required": [
           "project",
-          "product_ids"
+          "productIds"
         ],
         "type": "object"
       },
@@ -6413,25 +6442,25 @@
           "leaky": {
             "type": "boolean"
           },
-          "overlap_count": {
+          "overlapCount": {
             "type": "integer"
           },
-          "overlap_ratio_a": {
+          "overlapRatioA": {
             "type": "number"
           },
-          "overlap_ratio_b": {
+          "overlapRatioB": {
             "type": "number"
           },
-          "overlapping_raw_hashes": {
+          "overlappingRawHashes": {
             "items": {
               "type": "string"
             },
             "type": "array"
           },
-          "product_a": {
+          "productA": {
             "type": "string"
           },
-          "product_b": {
+          "productB": {
             "type": "string"
           },
           "project": {
@@ -6440,12 +6469,12 @@
         },
         "required": [
           "project",
-          "product_a",
-          "product_b",
-          "overlap_count",
-          "overlap_ratio_a",
-          "overlap_ratio_b",
-          "overlapping_raw_hashes",
+          "productA",
+          "productB",
+          "overlapCount",
+          "overlapRatioA",
+          "overlapRatioB",
+          "overlappingRawHashes",
           "leaky"
         ],
         "type": "object"
@@ -6478,23 +6507,23 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "auto_resolution_rate": {
+          "autoResolutionRate": {
             "type": "number"
           },
-          "determinism_counts": {
+          "determinismCounts": {
             "additionalProperties": {
               "type": "integer"
             },
             "type": "object"
           },
-          "disagreement_count": {
+          "disagreementCount": {
             "type": "integer"
           },
           "disagreements": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "artifact_name": {
+                "artifactName": {
                   "type": "string"
                 },
                 "labels": {
@@ -6526,33 +6555,33 @@
                 }
               },
               "required": [
-                "artifact_name",
+                "artifactName",
                 "labels"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "labels_total": {
+          "labelsTotal": {
             "type": "integer"
           },
-          "needs_expert_backlog": {
+          "needsExpertBacklog": {
             "type": "integer"
           },
           "project": {
             "type": "string"
           },
-          "verifier_stats": {
+          "verifierStats": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "accepted_rate": {
+                "acceptedRate": {
                   "type": "number"
                 },
-                "label_count": {
+                "labelCount": {
                   "type": "integer"
                 },
-                "mean_confidence": {
+                "meanConfidence": {
                   "type": "number"
                 },
                 "verifier": {
@@ -6561,9 +6590,9 @@
               },
               "required": [
                 "verifier",
-                "label_count",
-                "mean_confidence",
-                "accepted_rate"
+                "labelCount",
+                "meanConfidence",
+                "acceptedRate"
               ],
               "type": "object"
             },
@@ -6572,13 +6601,13 @@
         },
         "required": [
           "project",
-          "labels_total",
-          "verifier_stats",
-          "determinism_counts",
-          "disagreement_count",
+          "labelsTotal",
+          "verifierStats",
+          "determinismCounts",
+          "disagreementCount",
           "disagreements",
-          "needs_expert_backlog",
-          "auto_resolution_rate"
+          "needsExpertBacklog",
+          "autoResolutionRate"
         ],
         "type": "object"
       }
@@ -6594,6 +6623,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -6621,10 +6660,10 @@
                 "configured": {
                   "type": "boolean"
                 },
-                "connector_id": {
+                "connectorId": {
                   "type": "string"
                 },
-                "missing_env": {
+                "missingEnv": {
                   "items": {
                     "type": "string"
                   },
@@ -6633,7 +6672,7 @@
                 "name": {
                   "type": "string"
                 },
-                "required_env": {
+                "requiredEnv": {
                   "items": {
                     "type": "string"
                   },
@@ -6642,27 +6681,27 @@
               },
               "required": [
                 "name",
-                "connector_id",
+                "connectorId",
                 "configured",
-                "required_env",
-                "missing_env",
+                "requiredEnv",
+                "missingEnv",
                 "config"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "connectors",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -6678,7 +6717,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_type": {
+          "artifactType": {
             "description": "Artifact type for ingested records; defaults per connector.",
             "type": "string"
           },
@@ -6709,17 +6748,17 @@
             "maximum": 10000,
             "type": "integer"
           },
-          "max_bytes": {
+          "maxBytes": {
             "description": "s3: per-object byte cap (default 1000000).",
             "maximum": 10000000,
             "type": "integer"
           },
-          "max_objects": {
+          "maxObjects": {
             "description": "s3: max objects to extract (default 25, cap 100).",
             "maximum": 100,
             "type": "integer"
           },
-          "max_pages": {
+          "maxPages": {
             "description": "salesforce: nextRecordsUrl page bound (default 5, cap 20).",
             "maximum": 20,
             "type": "integer"
@@ -6761,7 +6800,7 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "artifact_names": {
+          "artifactNames": {
             "items": {
               "type": "string"
             },
@@ -6770,16 +6809,16 @@
           "connector": {
             "type": "string"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
-          "extracted_count": {
+          "extractedCount": {
             "type": "integer"
           },
           "ingest": {
             "type": "boolean"
           },
-          "ingested_count": {
+          "ingestedCount": {
             "type": "integer"
           },
           "items": {
@@ -6801,10 +6840,10 @@
           "connector",
           "source",
           "ingest",
-          "extracted_count",
-          "ingested_count",
-          "error_count",
-          "artifact_names",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
           "items"
         ],
         "type": "object"
@@ -6821,7 +6860,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "created_by": {
+          "createdBy": {
             "maxLength": 256,
             "type": "string"
           },
@@ -6835,7 +6874,7 @@
             "description": "deterministic_wasm: {wat: <WebAssembly text>}; llm_prompt: {template: <prompt with {{arg}} placeholders>}; regex: {pattern, operation: match|extract|replace|split, replacement?, flags?}; chain: {steps: [2-8 existing non-chain tool names]}.",
             "type": "object"
           },
-          "input_schema": {
+          "inputSchema": {
             "additionalProperties": true,
             "description": "JSON Schema for the tool's arguments; defaults to an open object.",
             "type": "object"
@@ -6874,27 +6913,27 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "created_by": {
+          "createdBy": {
             "type": "string"
           },
           "description": {
             "type": "string"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
           "implementation": {
             "additionalProperties": true,
             "type": "object"
           },
-          "input_schema": {
+          "inputSchema": {
             "additionalProperties": true,
             "type": "object"
           },
-          "invocation_count": {
+          "invocationCount": {
             "type": "integer"
           },
           "kind": {
@@ -6906,7 +6945,7 @@
             ],
             "type": "string"
           },
-          "last_invoked_at": {
+          "lastInvokedAt": {
             "oneOf": [
               {
                 "type": "string"
@@ -6919,16 +6958,16 @@
           "name": {
             "type": "string"
           },
-          "program_sha256": {
+          "programSha256": {
             "type": "string"
           },
           "project": {
             "type": "string"
           },
-          "tool_id": {
+          "toolId": {
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           },
           "version": {
@@ -6937,20 +6976,20 @@
         },
         "required": [
           "name",
-          "tool_id",
+          "toolId",
           "project",
           "description",
-          "input_schema",
+          "inputSchema",
           "kind",
           "implementation",
-          "program_sha256",
+          "programSha256",
           "version",
-          "created_by",
-          "invocation_count",
-          "last_invoked_at",
-          "error_count",
-          "create_time",
-          "update_time"
+          "createdBy",
+          "invocationCount",
+          "lastInvokedAt",
+          "errorCount",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -6966,6 +7005,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -6982,34 +7031,34 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "tools": {
             "items": {
               "additionalProperties": false,
               "properties": {
-                "create_time": {
+                "createTime": {
                   "type": "string"
                 },
-                "created_by": {
+                "createdBy": {
                   "type": "string"
                 },
                 "description": {
                   "type": "string"
                 },
-                "error_count": {
+                "errorCount": {
                   "type": "integer"
                 },
                 "implementation": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "input_schema": {
+                "inputSchema": {
                   "additionalProperties": true,
                   "type": "object"
                 },
-                "invocation_count": {
+                "invocationCount": {
                   "type": "integer"
                 },
                 "kind": {
@@ -7021,7 +7070,7 @@
                   ],
                   "type": "string"
                 },
-                "last_invoked_at": {
+                "lastInvokedAt": {
                   "oneOf": [
                     {
                       "type": "string"
@@ -7034,16 +7083,16 @@
                 "name": {
                   "type": "string"
                 },
-                "program_sha256": {
+                "programSha256": {
                   "type": "string"
                 },
                 "project": {
                   "type": "string"
                 },
-                "tool_id": {
+                "toolId": {
                   "type": "string"
                 },
-                "update_time": {
+                "updateTime": {
                   "type": "string"
                 },
                 "version": {
@@ -7052,33 +7101,33 @@
               },
               "required": [
                 "name",
-                "tool_id",
+                "toolId",
                 "project",
                 "description",
-                "input_schema",
+                "inputSchema",
                 "kind",
                 "implementation",
-                "program_sha256",
+                "programSha256",
                 "version",
-                "created_by",
-                "invocation_count",
-                "last_invoked_at",
-                "error_count",
-                "create_time",
-                "update_time"
+                "createdBy",
+                "invocationCount",
+                "lastInvokedAt",
+                "errorCount",
+                "createTime",
+                "updateTime"
               ],
               "type": "object"
             },
             "type": "array"
           },
-          "total_size": {
+          "totalSize": {
             "type": "integer"
           }
         },
         "required": [
           "tools",
-          "next_page_token",
-          "total_size"
+          "nextPageToken",
+          "totalSize"
         ],
         "type": "object"
       }
@@ -7100,7 +7149,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "tool_name": {
+          "toolName": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -7108,7 +7157,7 @@
         },
         "required": [
           "project",
-          "tool_name"
+          "toolName"
         ],
         "type": "object"
       },
@@ -7116,27 +7165,27 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "create_time": {
+          "createTime": {
             "type": "string"
           },
-          "created_by": {
+          "createdBy": {
             "type": "string"
           },
           "description": {
             "type": "string"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
           "implementation": {
             "additionalProperties": true,
             "type": "object"
           },
-          "input_schema": {
+          "inputSchema": {
             "additionalProperties": true,
             "type": "object"
           },
-          "invocation_count": {
+          "invocationCount": {
             "type": "integer"
           },
           "kind": {
@@ -7148,7 +7197,7 @@
             ],
             "type": "string"
           },
-          "last_invoked_at": {
+          "lastInvokedAt": {
             "oneOf": [
               {
                 "type": "string"
@@ -7161,16 +7210,16 @@
           "name": {
             "type": "string"
           },
-          "program_sha256": {
+          "programSha256": {
             "type": "string"
           },
           "project": {
             "type": "string"
           },
-          "tool_id": {
+          "toolId": {
             "type": "string"
           },
-          "update_time": {
+          "updateTime": {
             "type": "string"
           },
           "version": {
@@ -7179,20 +7228,20 @@
         },
         "required": [
           "name",
-          "tool_id",
+          "toolId",
           "project",
           "description",
-          "input_schema",
+          "inputSchema",
           "kind",
           "implementation",
-          "program_sha256",
+          "programSha256",
           "version",
-          "created_by",
-          "invocation_count",
-          "last_invoked_at",
-          "error_count",
-          "create_time",
-          "update_time"
+          "createdBy",
+          "invocationCount",
+          "lastInvokedAt",
+          "errorCount",
+          "createTime",
+          "updateTime"
         ],
         "type": "object"
       }
@@ -7219,7 +7268,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "tool_name": {
+          "toolName": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -7227,7 +7276,7 @@
         },
         "required": [
           "project",
-          "tool_name"
+          "toolName"
         ],
         "type": "object"
       },
@@ -7243,16 +7292,16 @@
             ],
             "type": "string"
           },
-          "error_count": {
+          "errorCount": {
             "type": "integer"
           },
-          "inputs_digest": {
+          "inputsDigest": {
             "type": "string"
           },
-          "invocation_count": {
+          "invocationCount": {
             "type": "integer"
           },
-          "invoke_time": {
+          "invokeTime": {
             "type": "string"
           },
           "kind": {
@@ -7265,7 +7314,7 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "program_sha256": {
+          "programSha256": {
             "type": "string"
           },
           "version": {
@@ -7277,12 +7326,12 @@
           "kind",
           "version",
           "determinism",
-          "program_sha256",
-          "inputs_digest",
+          "programSha256",
+          "inputsDigest",
           "output",
-          "invocation_count",
-          "error_count",
-          "invoke_time"
+          "invocationCount",
+          "errorCount",
+          "invokeTime"
         ],
         "type": "object"
       }
@@ -7304,7 +7353,7 @@
             "minLength": 1,
             "type": "string"
           },
-          "tool_name": {
+          "toolName": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -7312,7 +7361,7 @@
         },
         "required": [
           "project",
-          "tool_name"
+          "toolName"
         ],
         "type": "object"
       },
@@ -7326,14 +7375,14 @@
           "name": {
             "type": "string"
           },
-          "versions_deleted": {
+          "versionsDeleted": {
             "type": "integer"
           }
         },
         "required": [
           "name",
           "deleted",
-          "versions_deleted"
+          "versionsDeleted"
         ],
         "type": "object"
       }

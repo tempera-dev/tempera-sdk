@@ -37,6 +37,29 @@
         ],
         "summary": "The studio palette: every node type with config JSON Schema and outputs.",
         "operationId": "nodeTypes.list",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum entries to return (default 100, max 500).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Node type catalog (native + sdk.* nodes)",
@@ -90,7 +113,7 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "description": "Maximum entries to return (default 100, max 500).",
             "required": false,
@@ -98,6 +121,16 @@
               "type": "integer",
               "nullable": true,
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
             }
           }
         ],
@@ -363,7 +396,7 @@
         "operationId": "workflows.list",
         "parameters": [
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "description": "Maximum entries to return (default 100, max 500).",
             "required": false,
@@ -371,6 +404,16 @@
               "type": "integer",
               "nullable": true,
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
             }
           }
         ],
@@ -548,17 +591,79 @@
           }
         }
       },
-      "put": {
+      "delete": {
         "tags": [
           "workflows"
         ],
-        "summary": "Replace a workflow definition (full update; id in body must match path).",
+        "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
+        "operationId": "workflows.delete",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Replace a workflow definition through an AIP-style masked update.",
         "operationId": "workflows.update",
         "parameters": [
           {
             "name": "workflowId",
             "in": "path",
             "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "description": "Fields to replace. This full-definition endpoint accepts `definition` or `*`.",
             "required": true,
             "schema": {
               "type": "string"
@@ -628,59 +733,6 @@
           },
           "413": {
             "description": "Definition too large",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
-        "operationId": "workflows.delete",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Deleted"
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1178,30 +1230,63 @@
         "description": "The error payload inside [`ErrorResponse`].",
         "required": [
           "code",
-          "message",
           "status",
-          "retryable"
+          "message",
+          "details"
         ],
         "properties": {
           "code": {
-            "type": "string",
-            "description": "Stable SCREAMING_SNAKE code (AIP-aligned), e.g. `INVALID_ARGUMENT`.",
-            "example": "INVALID_ARGUMENT"
+            "type": "integer",
+            "format": "int32",
+            "description": "Numeric HTTP status code.",
+            "example": 400,
+            "minimum": 0
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorInfo"
+            },
+            "description": "Typed machine-readable error details."
           },
           "message": {
             "type": "string",
             "description": "Human-readable description safe to show to operators."
           },
-          "retryable": {
-            "type": "boolean",
-            "description": "Whether retrying the identical request may succeed."
-          },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "description": "HTTP status carried in the body for stream/proxy contexts.",
-            "example": 400,
-            "minimum": 0
+            "type": "string",
+            "description": "Canonical `google.rpc.Code` enum name, e.g. `INVALID_ARGUMENT`.",
+            "example": "INVALID_ARGUMENT"
+          }
+        }
+      },
+      "ErrorInfo": {
+        "type": "object",
+        "description": "A typed `google.rpc.ErrorInfo` detail preserving the service reason.",
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Service namespace for the reason."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "String metadata, including the retryability decision.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "description": "Stable Workflows reason, e.g. `PAYLOAD_TOO_LARGE`."
           }
         }
       },
@@ -1557,6 +1642,10 @@
               }
             }
           },
+          "nextPageToken": {
+            "type": "string",
+            "nullable": true
+          },
           "nodeTypes": {
             "type": "array",
             "items": {
@@ -1767,6 +1856,10 @@
           "runs"
         ],
         "properties": {
+          "nextPageToken": {
+            "type": "string",
+            "nullable": true
+          },
           "runs": {
             "type": "array",
             "items": {
@@ -2205,6 +2298,10 @@
           "workflows"
         ],
         "properties": {
+          "nextPageToken": {
+            "type": "string",
+            "nullable": true
+          },
           "workflows": {
             "type": "array",
             "items": {

@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
+OVERRIDES = ROOT / "contracts" / "sdk-operation-overrides.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 PRODUCT_SPECS = {
     "dataEngine": "data-engine-openapi.json",
@@ -193,14 +194,73 @@ def load_exclusions() -> dict[str, set[Route]]:
     return indexed
 
 
+def load_overrides() -> dict[str, dict[Route, dict[str, str]]]:
+    value = json.loads(OVERRIDES.read_text(encoding="utf-8"))
+    if value.get("schema_version") != 1 or not isinstance(
+        value.get("overrides"), list
+    ):
+        raise ValueError("SDK operation overrides contract is invalid")
+    indexed: dict[str, dict[Route, dict[str, str]]] = {}
+    required = {
+        "product",
+        "method",
+        "path",
+        "upstream_operation_id",
+        "id",
+    }
+    for entry in value["overrides"]:
+        if not isinstance(entry, dict) or set(entry) != required:
+            raise ValueError("SDK operation override fields drifted")
+        if not all(isinstance(entry[key], str) and entry[key] for key in required):
+            raise ValueError("SDK operation override values must be non-empty strings")
+        product = entry["product"]
+        identity = product_route(
+            product, entry["method"], entry["path"]
+        )
+        product_overrides = indexed.setdefault(product, {})
+        if identity in product_overrides:
+            raise ValueError(
+                f"duplicate SDK operation override for {product} {identity}"
+            )
+        product_overrides[identity] = {
+            "upstreamOperationId": entry["upstream_operation_id"],
+            "id": entry["id"],
+        }
+    return indexed
+
+
+def synchronize_control_plane_registries(
+    surface: dict[str, Any], spec: dict[str, Any]
+) -> None:
+    schemas = spec.get("components", {}).get("schemas", {})
+    audiences = schemas.get("ResourceAudience", {}).get("enum")
+    scopes = schemas.get("Scope", {}).get("enum")
+    if (
+        not isinstance(audiences, list)
+        or not audiences
+        or not all(isinstance(item, str) and item for item in audiences)
+    ):
+        raise ValueError("controlPlane ResourceAudience enum is invalid")
+    if (
+        not isinstance(scopes, list)
+        or not scopes
+        or not all(isinstance(item, str) and item for item in scopes)
+    ):
+        raise ValueError("controlPlane Scope enum is invalid")
+    surface["audiences"] = audiences
+    surface["scopes"] = scopes
+
+
 def synchronize_product(
     surface: dict[str, Any],
     product: str,
     spec: dict[str, Any],
     exclusions: set[Route],
+    overrides: dict[Route, dict[str, str]],
 ) -> None:
     existing = surface["operations"][product]
     by_route: dict[Route, dict[str, Any]] = {}
+    by_upstream_operation_id: dict[str, dict[str, Any]] = {}
     for item in existing:
         identity = product_route(product, item["method"], item["path"])
         if identity in by_route:
@@ -208,9 +268,19 @@ def synchronize_product(
                 f"{product} has duplicate route {identity}; resolve the alias before syncing"
             )
         by_route[identity] = item
+        upstream_operation_id = item.get("upstreamOperationId")
+        if isinstance(upstream_operation_id, str):
+            if upstream_operation_id in by_upstream_operation_id:
+                raise ValueError(
+                    f"{product} has duplicate upstream operationId "
+                    f"{upstream_operation_id!r}"
+                )
+            by_upstream_operation_id[upstream_operation_id] = item
 
     synchronized: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
+    matched_existing_routes: set[Route] = set()
+    matched_overrides: set[Route] = set()
     if spec.get("contract_kind") == "http-route-manifest":
         for endpoint in spec.get("endpoints") or []:
             if not isinstance(endpoint, dict):
@@ -226,7 +296,15 @@ def synchronize_product(
             identity = product_route(product, method, path)
             if identity in exclusions:
                 continue
-            observed = by_route.get(identity)
+            observed = by_route.get(identity) or by_upstream_operation_id.get(
+                operation_id
+            )
+            if observed is not None:
+                matched_existing_routes.add(
+                    product_route(
+                        product, observed["method"], observed["path"]
+                    )
+                )
             item = dict(observed) if observed is not None else {
                 "id": sdk_operation_id(operation_id),
                 "auth": (
@@ -239,6 +317,14 @@ def synchronize_product(
             item["method"] = method.upper()
             item["path"] = path
             item["upstreamOperationId"] = operation_id
+            override = overrides.get(identity)
+            if override is not None:
+                if override["upstreamOperationId"] != operation_id:
+                    raise ValueError(
+                        f"{product} override operationId drifted for {identity}"
+                    )
+                item["id"] = override["id"]
+                matched_overrides.add(identity)
             path_params = PARAM_RE.findall(path)
             if isinstance(endpoint.get("description"), str) and endpoint["description"]:
                 item["description"] = endpoint["description"]
@@ -268,15 +354,14 @@ def synchronize_product(
                 )
             seen_ids.add(item["id"])
             synchronized.append(item)
-        missing_existing = sorted(
-            set(by_route)
-            - {
-                product_route(product, item["method"], item["path"])
-                for item in synchronized
-            }
-        )
+        missing_existing = sorted(set(by_route) - matched_existing_routes)
         if missing_existing:
             raise ValueError(f"{product} has phantom surface routes: {missing_existing}")
+        if set(overrides) != matched_overrides:
+            raise ValueError(
+                f"{product} has unmatched SDK operation overrides: "
+                f"{sorted(set(overrides) - matched_overrides)}"
+            )
         surface["operations"][product] = synchronized
         return
 
@@ -292,7 +377,15 @@ def synchronize_product(
             operation_id = operation.get("operationId")
             if not isinstance(operation_id, str) or not operation_id:
                 raise ValueError(f"{product} {method.upper()} {path} has no operationId")
-            observed = by_route.get(identity)
+            observed = by_route.get(identity) or by_upstream_operation_id.get(
+                operation_id
+            )
+            if observed is not None:
+                matched_existing_routes.add(
+                    product_route(
+                        product, observed["method"], observed["path"]
+                    )
+                )
             item = dict(observed) if observed is not None else {
                 "id": sdk_operation_id(operation_id),
                 "method": method.upper(),
@@ -308,6 +401,14 @@ def synchronize_product(
             item["method"] = method.upper()
             item["path"] = path
             item["upstreamOperationId"] = operation_id
+            override = overrides.get(identity)
+            if override is not None:
+                if override["upstreamOperationId"] != operation_id:
+                    raise ValueError(
+                        f"{product} override operationId drifted for {identity}"
+                    )
+                item["id"] = override["id"]
+                matched_overrides.add(identity)
             path_params, path_param_templates, query = parameters(
                 spec, path_item, operation
             )
@@ -323,19 +424,63 @@ def synchronize_product(
                     item[key] = values
                 else:
                     item.pop(key, None)
+            if "x-tempera-auth-kind" in operation:
+                auth_kind = operation["x-tempera-auth-kind"]
+                if auth_kind not in {
+                    "none",
+                    "account",
+                    "product",
+                    "oauthResource",
+                    "introspectionSecret",
+                }:
+                    raise ValueError(
+                        f"{product} {operation_id} has invalid "
+                        "x-tempera-auth-kind"
+                    )
+                item["auth"] = auth_kind
+            if "x-tempera-auth-audience" in operation:
+                audience = operation["x-tempera-auth-audience"]
+                if audience is None and item.get("auth") == "none":
+                    item.pop("authAudience", None)
+                elif isinstance(audience, str) and audience:
+                    if "x-tempera-auth-kind" not in operation:
+                        item["auth"] = "oauthResource"
+                    elif item.get("auth") != "oauthResource":
+                        raise ValueError(
+                            f"{product} {operation_id} declares an auth audience "
+                            "for a non-oauthResource operation"
+                        )
+                    item["authAudience"] = audience
+                else:
+                    raise ValueError(
+                        f"{product} {operation_id} has invalid "
+                        "x-tempera-auth-audience"
+                    )
+            elif item.get("auth") != "oauthResource":
+                item.pop("authAudience", None)
+            if "x-tempera-required-scope" in operation:
+                scope = operation["x-tempera-required-scope"]
+                if scope is None:
+                    item.pop("scope", None)
+                elif isinstance(scope, str) and scope:
+                    item["scope"] = scope
+                else:
+                    raise ValueError(
+                        f"{product} {operation_id} has invalid "
+                        "x-tempera-required-scope"
+                    )
             if item["id"] in seen_ids:
                 raise ValueError(f"{product} generated duplicate operation id {item['id']!r}")
             seen_ids.add(item["id"])
             synchronized.append(item)
-    missing_existing = sorted(
-        set(by_route)
-        - {
-            product_route(product, item["method"], item["path"])
-            for item in synchronized
-        }
-    )
+    missing_existing = sorted(set(by_route) - matched_existing_routes)
     if missing_existing:
         raise ValueError(f"{product} has phantom surface routes: {missing_existing}")
+    if set(overrides) != matched_overrides:
+        raise ValueError(
+            f"{product} has unmatched SDK operation overrides: "
+            f"{sorted(set(overrides) - matched_overrides)}"
+        )
     surface["operations"][product] = synchronized
 
 
@@ -353,11 +498,20 @@ def main() -> int:
     try:
         surface = json.loads(SURFACE.read_text(encoding="utf-8"))
         exclusions = load_exclusions()
+        overrides = load_overrides()
         for product in products:
             spec = json.loads(
                 (ROOT / "specs" / PRODUCT_SPECS[product]).read_text(encoding="utf-8")
             )
-            synchronize_product(surface, product, spec, exclusions.get(product, set()))
+            if product == "controlPlane":
+                synchronize_control_plane_registries(surface, spec)
+            synchronize_product(
+                surface,
+                product,
+                spec,
+                exclusions.get(product, set()),
+                overrides.get(product, {}),
+            )
         expected = json.dumps(surface, indent=2, ensure_ascii=False) + "\n"
         if args.check:
             if SURFACE.read_text(encoding="utf-8") != expected:

@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "0602cd1bb6c7cc6f13adfd6f0aedf35fd24b6a61",
+  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "9024508ffc674afb5270a032fb19e5f19a524333",
-  "source_sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02",
+  "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
+  "source_sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "2df165623a68f03bb2029c034400a56f08102b4cf43245f42df120616fa0d8d7",
+  "generated_sha256": "fc3429a0a421a267ba15d09e6dbf5a940e70387eef044d6e4e94b5045af9580b",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -69,7 +69,7 @@
       "sdkOperationId": "transitionCampaign",
       "operationId": "projects.campaigns.transition",
       "method": "POST",
-      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "path": "/v1/{parent}/campaigns/{campaignId}:transition",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
     },
@@ -77,7 +77,7 @@
       "sdkOperationId": "getReviewerQualification",
       "operationId": "projects.reviewerQualifications.get",
       "method": "GET",
-      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+      "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -85,7 +85,7 @@
       "sdkOperationId": "runUseCase",
       "operationId": "projects.pipelines.runUseCase",
       "method": "POST",
-      "path": "/v1/{parent}/pipelines:run-use-case",
+      "path": "/v1/{parent}/pipelines:runUseCase",
       "audience": "data-engine",
       "requiredScope": "eval:run"
     },
@@ -109,7 +109,7 @@
       "sdkOperationId": "resolveExpertTask",
       "operationId": "projects.expertTasks.resolve",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -117,7 +117,7 @@
       "sdkOperationId": "claimExpertTask",
       "operationId": "projects.expertTaskAssignments.claim",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -125,7 +125,7 @@
       "sdkOperationId": "renewExpertTaskAssignment",
       "operationId": "projects.expertTaskAssignments.renew",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -133,7 +133,7 @@
       "sdkOperationId": "releaseExpertTaskAssignment",
       "operationId": "projects.expertTaskAssignments.release",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -141,7 +141,7 @@
       "sdkOperationId": "saveExpertTaskDraft",
       "operationId": "projects.expertTaskAssignments.saveDraft",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -253,7 +253,7 @@
       "sdkOperationId": "checkProductLeakage",
       "operationId": "projects.products.checkLeakage",
       "method": "POST",
-      "path": "/v1/{parent}/products:check-leakage",
+      "path": "/v1/{parent}/products:checkLeakage",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
     },
@@ -293,7 +293,7 @@
       "sdkOperationId": "emitEval",
       "operationId": "projects.products.emitEval",
       "method": "POST",
-      "path": "/v1/{parent}/products:emit-eval",
+      "path": "/v1/{parent}/products:emitEval",
       "audience": "data-engine",
       "requiredScope": "eval:run"
     },
@@ -352,6 +352,22 @@
       "path": "/v1/{parent}/tools/{toolName}:invoke",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "commitDiscoveryRelease",
+      "operationId": "projects.discoveryReleases.commit",
+      "method": "POST",
+      "path": "/v1/{parent}/discoveryReleases:commit",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "getDiscoveryRelease",
+      "operationId": "projects.discoveryReleases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
     },
     {
       "sdkOperationId": "createEvidenceRecord",

@@ -47,6 +47,7 @@ PROTOCOL_EXCEPTIONS = {
     ("controlPlane", "/billing/webhook"),
     ("controlPlane", "/billing/rails/coinbase/webhook"),
     ("controlPlane", "/billing/rails/paypal/webhook"),
+    ("controlPlane", "/github/callback"),
     ("controlPlane", "/github/webhook"),
     ("controlPlane", "/readyz"),
     ("cradle", "/v1/health"),
@@ -118,6 +119,21 @@ def is_protocol_exception(product: str, path: str) -> bool:
     )
 
 
+def resolve_local_reference(
+    value: dict[str, Any], document: dict[str, Any]
+) -> dict[str, Any]:
+    reference = value.get("$ref")
+    if not isinstance(reference, str) or not reference.startswith("#/"):
+        return value
+    resolved: Any = document
+    try:
+        for token in reference[2:].split("/"):
+            resolved = resolved[token.replace("~1", "/").replace("~0", "~")]
+    except (KeyError, TypeError):
+        return value
+    return resolved if isinstance(resolved, dict) else value
+
+
 def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     if spec.get("contract_kind") == "http-route-manifest":
         rows: list[dict[str, Any]] = []
@@ -144,7 +160,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
         if not isinstance(path, str) or not isinstance(path_item, dict):
             continue
         inherited_parameters = [
-            value
+            resolve_local_reference(value, spec)
             for value in path_item.get("parameters", [])
             if isinstance(value, dict)
         ]
@@ -152,7 +168,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
             if method.lower() not in HTTP_METHODS or not isinstance(operation, dict):
                 continue
             parameters = inherited_parameters + [
-                value
+                resolve_local_reference(value, spec)
                 for value in operation.get("parameters", [])
                 if isinstance(value, dict)
             ]

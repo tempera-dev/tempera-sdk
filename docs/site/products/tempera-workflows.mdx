@@ -68,18 +68,34 @@ List the typed node catalog: native orchestration nodes plus the sdk.\<product>.
 - **Scope:** `workflow:read`
 - **Call as:** TypeScript `client.temperaWorkflows.listNodeTypes()` · Python `client.tempera_workflows.list_node_types()` · Rust `build_request("tempera_workflows", "list_node_types", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaWorkflows.listNodeTypes();
+const result = await client.temperaWorkflows.listNodeTypes({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.tempera_workflows.list_node_types()
+result = client.tempera_workflows.list_node_types({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_workflows", "list_node_types", &[])?;
+let spec = client.build_request("tempera_workflows", "list_node_types", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -102,28 +118,29 @@ List workflow runs, optionally filtered to one workflow.
 | Parameter | Required | Notes |
 |---|---|---|
 | `workflowId` | no | — |
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaWorkflows.listRuns({
   workflowId: "<workflowId>",
-  limit: "<limit>",
+  pageSize: "<pageSize>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.list_runs({
     "workflowId": "<workflowId>",
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "list_runs", &[
     ("workflowId", "<workflowId>".into()),
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -228,25 +245,29 @@ List stored workflow definitions, newest first.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaWorkflows.listWorkflows({
-  limit: "<limit>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.list_workflows({
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "list_workflows", &[
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -348,9 +369,50 @@ let spec = client.build_request("tempera_workflows", "get_workflow", &[
 
 </CodeGroup>
 
+### deleteWorkflow
+
+`DELETE /v1/workflows/{workflowId}`
+
+Delete a stored workflow definition.
+
+- **Producer operationId:** `workflows.delete`
+- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Scope:** `workflow:write`
+- **Call as:** TypeScript `client.temperaWorkflows.deleteWorkflow()` · Python `client.tempera_workflows.delete_workflow()` · Rust `build_request("tempera_workflows", "delete_workflow", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workflowId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.deleteWorkflow({
+  workflowId: "<workflowId>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.delete_workflow({
+    "workflowId": "<workflowId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "delete_workflow", &[
+    ("workflowId", "<workflowId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### updateWorkflow
 
-`PUT /v1/workflows/{workflowId}`
+`PATCH /v1/workflows/{workflowId}`
 
 Replace a stored workflow definition with a new validated revision.
 
@@ -364,6 +426,12 @@ Replace a stored workflow definition with a new validated revision.
 | Parameter | Required | Notes |
 |---|---|---|
 | `workflowId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | no | — |
 
 **Body parameters**
 
@@ -403,47 +471,6 @@ let spec = client.build_request("tempera_workflows", "update_workflow", &[
     ("contractVersion", "<contractVersion>".into()),
     ("description", "<description>".into()),
     ("edges", "<edges>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### deleteWorkflow
-
-`DELETE /v1/workflows/{workflowId}`
-
-Delete a stored workflow definition.
-
-- **Producer operationId:** `workflows.delete`
-- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
-- **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.deleteWorkflow()` · Python `client.tempera_workflows.delete_workflow()` · Rust `build_request("tempera_workflows", "delete_workflow", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workflowId` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaWorkflows.deleteWorkflow({
-  workflowId: "<workflowId>",
-});
-```
-
-```python Python
-result = client.tempera_workflows.delete_workflow({
-    "workflowId": "<workflowId>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_workflows", "delete_workflow", &[
-    ("workflowId", "<workflowId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
