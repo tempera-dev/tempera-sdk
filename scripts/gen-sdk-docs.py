@@ -435,7 +435,7 @@ def render_index(surface: dict) -> str:
         "- [Authentication](/authentication) — the unified account model, OAuth2 + PKCE, and `tp_` API keys.",
         "- [Environments](/environments) — presets and base-URL resolution.",
         "- [Errors](/errors) — one `TemperaApiError` across six wire shapes.",
-        "- [MCP gateway](/mcp-gateway) — every product as namespaced MCP tools.",
+        "- [MCP gateway](/mcp-gateway) — fixed capability-fabric verbs and discovered product cards.",
         "- [Rollout](/rollout) — how an endpoint change propagates into the SDK.",
         "",
     ]
@@ -845,9 +845,11 @@ def render_mcp_gateway(surface: dict) -> str:
         "It requires a bearer minted for audience **`tempera-mcp`** with scope",
         "**`mcp:invoke`** — or a central `tp_` API key.",
         "",
-        "The gateway aggregates every product MCP server behind **namespaced tools**",
-        "(`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`), so one endpoint and one",
-        "credential expose the whole fleet. Product tool calls are metered as",
+        "The model-facing surface is a fixed **capability fabric**, so product",
+        "capabilities are not flat namespaced tools. Use `tempera_search` to discover",
+        "policy-filtered opaque cards, `tempera_describe` to inspect one, then",
+        "`tempera_invoke` or `tempera_prepare`/`tempera_commit` to execute it. Product",
+        "execution is metered as",
         "`mcp_invocations` against the workspace's plan.",
         "",
         "## JSON-RPC methods",
@@ -863,8 +865,8 @@ def render_mcp_gateway(surface: dict) -> str:
         "",
         "## Builtin tools",
         "",
-        "Alongside the namespaced product tools, the gateway serves its own builtins",
-        "(not metered as product invocations):",
+        "The fixed surface includes these gateway verbs (product-card discovery itself",
+        "is not a product invocation):",
         "",
     ]
     for method in builtin_tools:
@@ -894,7 +896,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "\n"
         "await mcp.initialize();\n"
         "const tools = await mcp.listTools();\n"
-        'const result = await mcp.callTool("cradle_get_capabilities");\n'
+        'const cards = await mcp.callTool("tempera_search", { query: "browser capability" });\n'
         "console.log(await mcp.whoami());\n"
         "console.log(await mcp.status());"
     )
@@ -907,7 +909,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "\n"
         "mcp.initialize()\n"
         "tools = mcp.list_tools()\n"
-        'result = mcp.call_tool("cradle_get_capabilities")\n'
+        'cards = mcp.call_tool("tempera_search", {"query": "browser capability"})\n'
         "print(mcp.whoami())\n"
         "print(mcp.status())"
     )
@@ -921,7 +923,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
         'let (id, body) = mcp.initialize_body("tempera-sdk", "0.9.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
-        'let (id, body) = mcp.call_tool_body("cradle_get_capabilities", None);\n'
+        'let (id, body) = mcp.call_tool_body("tempera_search", Some(serde_json::json!({"query": "browser capability"})));\n'
         "let (id, body) = mcp.whoami_body();\n"
         "\n"
         "// Feed error responses to the shared parser:\n"

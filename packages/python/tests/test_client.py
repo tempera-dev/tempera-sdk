@@ -126,11 +126,30 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
-        client.remi.remember({"tenant_id": "t1", "project_id": "p1", "kind": "fact", "text": "hello"})
+        client.remi.remember({"kind": "fact", "text": "hello"})
         self.assertEqual(
             transport.calls[1]["body"],
-            {"tenant_id": "t1", "project_id": "p1", "kind": "fact", "text": "hello"},
+            {"kind": "fact", "text": "hello"},
         )
+        context = {"question": "Which workflow evidence is current?", "max_tokens": 600, "require_fresh": True, "modes": ["procedural", "gotcha", "state"], "reconstruction_mode": "off"}
+        client.remi.context(context)
+        self.assertEqual(transport.calls[-1]["body"], context)
+        feedback = {"schema": "remi.memory_feedback.v2", "retrieval_receipt_id": "receipt_1", "evidence_node_id": "node_1", "helpful": True, "terminal_state": "succeeded", "outcome_artifact_id": "test://sdk/generated-wire", "idempotency_key": "feedback_1"}
+        client.remi.feedback(feedback)
+        self.assertEqual(transport.calls[-1]["body"], feedback)
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.remember({"tenant_id": "t1", "kind": "fact", "text": "nope"})
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.context({"tenant_id": "t1", "question": "what is current?"})
+        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
+            client.remi.feedback({"environment_id": "prod", **feedback})
+        before_calls = len(transport.calls)
+        for field in ("scope", "tenant_id", "project_id", "environment_id"):
+            with self.subTest(field=field), self.assertRaisesRegex(
+                TemperaSdkError, "derived from the authenticated principal"
+            ):
+                client.remi.context({"question": "what is current?", field: None})
+        self.assertEqual(len(transport.calls), before_calls)
 
     def test_json_request_bodies_use_the_compact_wire_shape(self):
         client, transport = make_client()

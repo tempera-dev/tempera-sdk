@@ -246,6 +246,11 @@ class TemperaClient:
         bearer: str | None = None,
         headers: Mapping[str, str] | None = None,
     ) -> Any:
+        for key in op.get("forbidden_body", []):
+            if key in params:
+                raise TemperaSdkError(
+                    f"{product_key}.{op['id']}: {key} is derived from the authenticated principal"
+                )
         path = self._substitute_path(op["path"], params, product_key, op["id"])
         consumed = set(op["path_params"])
         query: dict[str, Any] = {}

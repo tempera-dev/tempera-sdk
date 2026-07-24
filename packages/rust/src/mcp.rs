@@ -249,17 +249,26 @@ mod tests {
         // error; non-object shapes become code 0 with their string form.
         assert_eq!(
             parse_mcp_error(r#"{"error":"nope"}"#),
-            Some(McpError { code: 0, message: "nope".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "nope".to_string()
+            })
         );
         // An error object without an integer code keeps its message, code 0.
         assert_eq!(
             parse_mcp_error(r#"{"error":{"code":"x","message":"m"}}"#),
-            Some(McpError { code: 0, message: "m".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "m".to_string()
+            })
         );
         // An error object with neither code nor message gets the shared label.
         assert_eq!(
             parse_mcp_error(r#"{"error":{}}"#),
-            Some(McpError { code: 0, message: "MCP error".to_string() })
+            Some(McpError {
+                code: 0,
+                message: "MCP error".to_string()
+            })
         );
     }
 }

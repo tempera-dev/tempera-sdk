@@ -57,7 +57,7 @@ name = "remi"
 repository = "https://github.com/tempera-dev/remi"
 visibility = "private"
 default_env = "TEMPERA_REMI_URL"
-scopes = ["trace:read", "dataset:read", "dataset:write"]
+scopes = ["memory:read", "memory:write", "memory:manage"]
 
 [products.cradle]
 name = "cradle"

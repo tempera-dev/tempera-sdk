@@ -133,6 +133,16 @@ pub enum BuildError {
         /// Name of the missing path parameter.
         name: String,
     },
+    /// A caller supplied an identifier that Remi derives from the authenticated
+    /// principal rather than accepting from an SDK request.
+    PrincipalDerivedParameter {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Rejected parameter name.
+        name: String,
+    },
     /// The operation needs an account-session token and none is configured.
     MissingAccountToken {
         /// Product key of the operation.
@@ -173,6 +183,14 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: missing required path parameter \"{name}\""
+            ),
+            BuildError::PrincipalDerivedParameter {
+                product,
+                operation,
+                name,
+            } => write!(
+                f,
+                "{product}.{operation}: {name} is derived from the authenticated principal"
             ),
             BuildError::MissingAccountToken { product } => write!(
                 f,
@@ -283,6 +301,16 @@ impl TemperaClient {
             })?;
 
         let get_param = |name: &str| params.iter().find(|(key, _)| *key == name).map(|(_, v)| v);
+
+        for name in op.forbidden_body {
+            if get_param(name).is_some() {
+                return Err(BuildError::PrincipalDerivedParameter {
+                    product: product.to_string(),
+                    operation: operation.to_string(),
+                    name: name.to_string(),
+                });
+            }
+        }
 
         // Path substitution (percent-encoded); empty values count as missing.
         let mut path = op.path.to_string();
@@ -749,13 +777,20 @@ mod tests {
     fn action_suffix_paths_keep_the_literal_colon_unencoded() {
         let client = full_client();
         let spec = client
-            .build_request("data_engine", "ingest_artifact", &[("project_id", "p1".into())])
+            .build_request(
+                "data_engine",
+                "ingest_artifact",
+                &[("project_id", "p1".into())],
+            )
             .unwrap();
         assert_eq!(
             spec.url,
             "https://data_engine.example.test/v1/projects/p1/artifacts:ingest"
         );
-        assert!(!spec.full_url().contains("%3A"), "colon must not be percent-encoded");
+        assert!(
+            !spec.full_url().contains("%3A"),
+            "colon must not be percent-encoded"
+        );
 
         // Colons inside a substituted path *value* are still encoded.
         let spec = client
@@ -864,8 +899,6 @@ mod tests {
                 "remi",
                 "remember",
                 &[
-                    ("tenant_id", "tenant_1".into()),
-                    ("project_id", "proj_1".into()),
                     ("kind", "note".into()),
                     ("text", "line1\nline2 \"quoted\"".into()),
                 ],
@@ -875,5 +908,74 @@ mod tests {
         assert!(body.contains("\"text\":\"line1\\nline2 \\\"quoted\\\"\""));
         // The serialized body parses back with the crate's own scanner.
         assert!(crate::error::parse_json(&body).is_some());
+
+        let spec = client
+            .build_request(
+                "remi",
+                "context",
+                &[
+                    ("question", "Which workflow evidence is current?".into()),
+                    ("max_tokens", 600.into()),
+                    ("require_fresh", true.into()),
+                    (
+                        "modes",
+                        ParamValue::RawJson(r#"["procedural","gotcha","state"]"#.to_string()),
+                    ),
+                ],
+            )
+            .unwrap();
+        let body = spec.body_json.unwrap();
+        assert!(body.contains("\"question\":\"Which workflow evidence is current?\""));
+        assert!(body.contains("\"modes\":[\"procedural\",\"gotcha\",\"state\"]"));
+
+        let spec = client
+            .build_request(
+                "remi",
+                "feedback",
+                &[
+                    ("schema", "remi.memory_feedback.v2".into()),
+                    ("retrieval_receipt_id", "receipt_1".into()),
+                    ("evidence_node_id", "node_1".into()),
+                    ("helpful", true.into()),
+                    ("terminal_state", "succeeded".into()),
+                    ("outcome_artifact_id", "test://sdk/generated-wire".into()),
+                    ("idempotency_key", "feedback_1".into()),
+                ],
+            )
+            .unwrap();
+        let body = spec.body_json.unwrap();
+        assert!(body.contains("\"outcome_artifact_id\":\"test://sdk/generated-wire\""));
+
+        let error = client
+            .build_request(
+                "remi",
+                "remember",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("kind", "note".into()),
+                    ("text", "blocked".into()),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(
+            error,
+            BuildError::PrincipalDerivedParameter { .. }
+        ));
+
+        for field in ["scope", "tenant_id", "project_id", "environment_id"] {
+            let error = client
+                .build_request(
+                    "remi",
+                    "context",
+                    &[
+                        ("question", "what is current?".into()),
+                        (field, ParamValue::RawJson("null".to_string())),
+                    ],
+                )
+                .unwrap_err();
+            assert!(
+                matches!(error, BuildError::PrincipalDerivedParameter { name, .. } if name == field)
+            );
+        }
     }
 }

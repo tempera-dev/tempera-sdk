@@ -86,9 +86,15 @@ mod tests {
         assert_eq!(production.control_plane_url, "https://api.tempera.dev");
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
-        assert_eq!(production.tempera_code_api_url, "https://code-api.tempera.dev");
+        assert_eq!(
+            production.tempera_code_api_url,
+            "https://code-api.tempera.dev"
+        );
         assert_eq!(production.tempera_llm_api_url, "https://llm.tempera.dev");
-        assert_eq!(production.tempera_workflows_api_url, "https://workflows.tempera.dev");
+        assert_eq!(
+            production.tempera_workflows_api_url,
+            "https://workflows.tempera.dev"
+        );
         assert_eq!(production.tempera_gym_url, "https://gym.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
@@ -109,7 +115,11 @@ mod tests {
         assert_eq!(spec.method, "GET");
         assert_eq!(spec.full_url(), "https://mcp.tempera.dev/v1/traces/t1/tr1");
 
-        let error = normalize_error_body(429, "Too Many Requests", "{\"error\":\"quota\",\"message\":\"limit\"}");
+        let error = normalize_error_body(
+            429,
+            "Too Many Requests",
+            "{\"error\":\"quota\",\"message\":\"limit\"}",
+        );
         assert_eq!(error.code.as_deref(), Some("quota"));
 
         let (id, body) = McpRequestBuilder::new().ping_body();

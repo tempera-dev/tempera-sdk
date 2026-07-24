@@ -4,6 +4,7 @@ version = "0.9.0"
 edition = "2024"
 license = "UNLICENSED"
 repository = "https://github.com/tempera-dev/tempera-sdk"
+description = "Generated contract client for authenticated Tempera product APIs"
 
 [lib]
 path = "src/lib.rs"
