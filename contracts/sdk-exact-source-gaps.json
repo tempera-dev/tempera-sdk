@@ -2,6 +2,15 @@
   "schema_version": 1,
   "gaps": [
     {
+      "repository": "tempera-dev/tempera-bio",
+      "source_commit": "af29cf6a487bc5e30795d8228031c0e42085c495",
+      "blocker": "TEMPERA_CONTRACT_READER is not installed on this private repository.",
+      "owner": "tempera-dev organization administrator",
+      "remediation": "Install the existing least-privilege Tempera Contract Reader GitHub App on tempera-bio, enable its exact-source checkout job, and remove this gap.",
+      "producer_ci_url": "https://github.com/tempera-dev/tempera-bio/actions/runs/30110676439",
+      "review_after": "2026-08-15"
+    },
+    {
       "repository": "tempera-dev/remi",
       "source_commit": "29fa2b8ac04f6c0a3b5e04a40c70bb58f6fc7ea1",
       "blocker": "TEMPERA_CONTRACT_READER is not installed on this private repository.",
