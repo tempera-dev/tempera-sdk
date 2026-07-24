@@ -43,7 +43,7 @@ a live hosted service, or an undocumented endpoint.
 |---|---|---|---|
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 18 | `cradle` |
 | `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 5 | `tempera-llm` |
-| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
+| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 16 | `tempera-workflows` |
 | `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 20 | `tempera-gym` |
 | `temperaBio` / `tempera_bio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) — fail-closed computational-biology artifact preparation and verification | 8 | `tempera-bio` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |

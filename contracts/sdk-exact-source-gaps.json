@@ -12,11 +12,11 @@
     },
     {
       "repository": "tempera-dev/tempo",
-      "source_commit": "cc9629102c48d4a2939170ad1be9f1cf1d1e0c12",
+      "source_commit": "19bc0d1c19da5240336d9f04bb139ec94e1f8e28",
       "blocker": "TEMPERA_CONTRACT_READER is not installed on this private repository.",
       "owner": "tempera-dev organization administrator",
       "remediation": "Install the existing least-privilege Tempera Contract Reader GitHub App on tempo, enable its exact-source checkout job, and remove this gap.",
-      "producer_ci_url": "https://github.com/tempera-dev/tempo/actions/runs/30096670116",
+      "producer_ci_url": "https://github.com/tempera-dev/tempo/actions/runs/30108182216",
       "review_after": "2026-08-15"
     }
   ]
