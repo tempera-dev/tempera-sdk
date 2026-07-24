@@ -3482,7 +3482,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3881,7 +3884,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3898,8 +3904,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "environment_id",
-        "limit"
+        "environmentId",
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -3936,7 +3943,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "environment_id",
+        "environmentId",
         "policy",
         "seed",
         "max_steps",
@@ -3946,7 +3953,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "environment_id",
+        "environmentId",
         "seed"
       ],
       "bodyDefaults": {},
@@ -4469,7 +4476,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -4604,7 +4612,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {
         "parent": "projects/*"
       },
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4732,8 +4743,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -4746,11 +4757,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "transitionCampaign",
       "upstreamOperationId": "projects.campaigns.transition",
       "method": "POST",
-      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "path": "/v1/{parent}/campaigns/{campaignId}:transition",
       "auth": "product",
       "pathParams": [
         "parent",
-        "campaign_id"
+        "campaignId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -4773,11 +4784,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getReviewerQualification",
       "upstreamOperationId": "projects.reviewerQualifications.get",
       "method": "GET",
-      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+      "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
       "auth": "product",
       "pathParams": [
         "parent",
-        "campaign_id"
+        "campaignId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -4794,7 +4805,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "runUseCase",
       "upstreamOperationId": "projects.pipelines.runUseCase",
       "method": "POST",
-      "path": "/v1/{parent}/pipelines:run-use-case",
+      "path": "/v1/{parent}/pipelines:runUseCase",
       "auth": "product",
       "pathParams": [
         "parent"
@@ -4835,10 +4846,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token",
+        "pageSize",
+        "pageToken",
         "status",
-        "campaign_name"
+        "campaignName"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -4881,11 +4892,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "resolveExpertTask",
       "upstreamOperationId": "projects.expertTasks.resolve",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
       "auth": "product",
       "pathParams": [
         "parent",
-        "expert_task_id"
+        "expertTaskId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -4917,11 +4928,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "claimExpertTask",
       "upstreamOperationId": "projects.expertTaskAssignments.claim",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
       "auth": "product",
       "pathParams": [
         "parent",
-        "expert_task_id"
+        "expertTaskId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -4945,11 +4956,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "renewExpertTaskAssignment",
       "upstreamOperationId": "projects.expertTaskAssignments.renew",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
       "auth": "product",
       "pathParams": [
         "parent",
-        "expert_task_id"
+        "expertTaskId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -4973,11 +4984,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "releaseExpertTaskAssignment",
       "upstreamOperationId": "projects.expertTaskAssignments.release",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
       "auth": "product",
       "pathParams": [
         "parent",
-        "expert_task_id"
+        "expertTaskId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -5000,11 +5011,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "saveExpertTaskDraft",
       "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
       "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
       "auth": "product",
       "pathParams": [
         "parent",
-        "expert_task_id"
+        "expertTaskId"
       ],
       "pathParamTemplates": {
         "parent": "projects/*"
@@ -5040,8 +5051,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "window_seconds",
-        "sla_target_seconds"
+        "windowSeconds",
+        "slaTargetSeconds"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -5123,8 +5134,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token",
+        "pageSize",
+        "pageToken",
         "view"
       ],
       "body": [],
@@ -5171,8 +5182,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -5268,7 +5279,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {
         "parent": "projects/*"
       },
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5322,7 +5336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "checkProductLeakage",
       "upstreamOperationId": "projects.products.checkLeakage",
       "method": "POST",
-      "path": "/v1/{parent}/products:check-leakage",
+      "path": "/v1/{parent}/products:checkLeakage",
       "auth": "product",
       "pathParams": [
         "parent"
@@ -5446,7 +5460,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "emitEval",
       "upstreamOperationId": "projects.products.emitEval",
       "method": "POST",
-      "path": "/v1/{parent}/products:emit-eval",
+      "path": "/v1/{parent}/products:emitEval",
       "auth": "product",
       "pathParams": [
         "parent"
@@ -5518,8 +5532,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -5572,7 +5586,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {
         "parent": "projects/*"
       },
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5698,8 +5715,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token",
+        "pageSize",
+        "pageToken",
         "domain"
       ],
       "body": [],
@@ -5789,8 +5806,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token",
+        "pageSize",
+        "pageToken",
         "domain"
       ],
       "body": [],
@@ -5904,8 +5921,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [
-        "page_size",
-        "page_token"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],

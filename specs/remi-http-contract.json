@@ -95,7 +95,8 @@
       "auth": "bearer",
       "query_schema": "AuditHttpQuery",
       "query_fields": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "response_schema": "AuditHttpResponse"
     },

@@ -70,7 +70,11 @@ class AipConformanceTest(unittest.TestCase):
 
     def test_protocol_routes_are_explicitly_exempt(self) -> None:
         self.assertTrue(MODULE.is_protocol_exception("tempo", "/mcp"))
+        self.assertTrue(
+            MODULE.is_protocol_exception("tempo", "/.well-known/agent-card.json")
+        )
         self.assertTrue(MODULE.is_protocol_exception("remi", "/readyz"))
+        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/readyz"))
         self.assertTrue(
             MODULE.is_protocol_exception("palette", "/v1/otlp/t/p/e/v1/traces")
         )
@@ -81,6 +85,51 @@ class AipConformanceTest(unittest.TestCase):
             with self.subTest(operation_id=operation_id):
                 self.assertTrue(MODULE.is_list_operation(operation_id))
         self.assertFalse(MODULE.is_list_operation("getWidget"))
+
+    def test_resolves_referenced_pagination_parameters(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "components": {
+                "parameters": {
+                    "PageSize": {"name": "pageSize", "in": "query"},
+                    "PageToken": {"name": "pageToken", "in": "query"},
+                }
+            },
+            "paths": {
+                "/v1/widgets": {
+                    "get": {
+                        "operationId": "widgets.list",
+                        "parameters": [
+                            {"$ref": "#/components/parameters/PageSize"},
+                            {"$ref": "#/components/parameters/PageToken"},
+                        ],
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        self.assertNotIn(
+            "test|GET|/v1/widgets|aip-158-list-pagination",
+            violations,
+        )
+
+    def test_route_manifest_query_fields_are_inspected(self) -> None:
+        manifest = {
+            "contract_kind": "http-route-manifest",
+            "endpoints": [
+                {
+                    "operation": "widgets.list",
+                    "method": "GET",
+                    "path": "/v1/widgets",
+                    "query_fields": ["pageSize", "pageToken"],
+                }
+            ],
+        }
+        violations = MODULE.discover_violations({"test": manifest})
+        self.assertNotIn(
+            "test|GET|/v1/widgets|aip-158-list-pagination",
+            violations,
+        )
 
     def test_stale_protocol_exceptions_are_rejected(self) -> None:
         failures = MODULE.validate_protocol_exceptions(

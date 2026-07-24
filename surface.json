@@ -2572,7 +2572,11 @@
         "auth": "product",
         "scope": "model:read",
         "description": "List the configured model catalog the gateway can route to.",
-        "upstreamOperationId": "models.list"
+        "upstreamOperationId": "models.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createResponse",
@@ -2867,7 +2871,11 @@
         "auth": "product",
         "scope": "dataset:read",
         "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
-        "upstreamOperationId": "environments.list"
+        "upstreamOperationId": "environments.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "listRuns",
@@ -2875,8 +2883,9 @@
         "path": "/v1/runs",
         "auth": "product",
         "query": [
-          "environment_id",
-          "limit"
+          "environmentId",
+          "pageSize",
+          "pageToken"
         ],
         "scope": "dataset:read",
         "description": "List persisted rollout run index records, newest first.",
@@ -2900,7 +2909,7 @@
         "path": "/v1/rollouts",
         "auth": "product",
         "body": [
-          "environment_id",
+          "environmentId",
           "policy",
           "seed",
           "max_steps",
@@ -2909,7 +2918,7 @@
           "data_engine_max_records"
         ],
         "requiredBody": [
-          "environment_id",
+          "environmentId",
           "seed"
         ],
         "scope": "eval:run",
@@ -3261,7 +3270,8 @@
         "path": "/v1/audit",
         "auth": "product",
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "description": "List recent service audit events (default 100, maximum 500).",
         "upstreamOperationId": "listAudit"
@@ -3359,7 +3369,11 @@
         "upstreamOperationId": "projects.useCases.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "getUseCase",
@@ -3461,8 +3475,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "dataset:read",
         "description": "List a project's data campaigns with pagination.",
@@ -3474,11 +3488,11 @@
       {
         "id": "transitionCampaign",
         "method": "POST",
-        "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+        "path": "/v1/{parent}/campaigns/{campaignId}:transition",
         "auth": "product",
         "pathParams": [
           "parent",
-          "campaign_id"
+          "campaignId"
         ],
         "body": [
           "target_status",
@@ -3498,11 +3512,11 @@
       {
         "id": "getReviewerQualification",
         "method": "GET",
-        "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+        "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
         "auth": "product",
         "pathParams": [
           "parent",
-          "campaign_id"
+          "campaignId"
         ],
         "scope": "review:resolve",
         "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
@@ -3514,7 +3528,7 @@
       {
         "id": "runUseCase",
         "method": "POST",
-        "path": "/v1/{parent}/pipelines:run-use-case",
+        "path": "/v1/{parent}/pipelines:runUseCase",
         "auth": "product",
         "pathParams": [
           "parent"
@@ -3549,10 +3563,10 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token",
+          "pageSize",
+          "pageToken",
           "status",
-          "campaign_name"
+          "campaignName"
         ],
         "scope": "dataset:read",
         "description": "List human residual review tasks, optionally filtered by status and campaign.",
@@ -3591,11 +3605,11 @@
       {
         "id": "resolveExpertTask",
         "method": "POST",
-        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
         "auth": "product",
         "pathParams": [
           "parent",
-          "expert_task_id"
+          "expertTaskId"
         ],
         "body": [
           "label",
@@ -3624,11 +3638,11 @@
       {
         "id": "claimExpertTask",
         "method": "POST",
-        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
         "auth": "product",
         "pathParams": [
           "parent",
-          "expert_task_id"
+          "expertTaskId"
         ],
         "body": [
           "idempotency_key",
@@ -3649,11 +3663,11 @@
       {
         "id": "renewExpertTaskAssignment",
         "method": "POST",
-        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
         "auth": "product",
         "pathParams": [
           "parent",
-          "expert_task_id"
+          "expertTaskId"
         ],
         "body": [
           "idempotency_key",
@@ -3674,11 +3688,11 @@
       {
         "id": "releaseExpertTaskAssignment",
         "method": "POST",
-        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
         "auth": "product",
         "pathParams": [
           "parent",
-          "expert_task_id"
+          "expertTaskId"
         ],
         "body": [
           "idempotency_key",
@@ -3698,11 +3712,11 @@
       {
         "id": "saveExpertTaskDraft",
         "method": "POST",
-        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
         "auth": "product",
         "pathParams": [
           "parent",
-          "expert_task_id"
+          "expertTaskId"
         ],
         "body": [
           "idempotency_key",
@@ -3732,8 +3746,8 @@
           "parent"
         ],
         "query": [
-          "window_seconds",
-          "sla_target_seconds"
+          "windowSeconds",
+          "slaTargetSeconds"
         ],
         "scope": "review:resolve",
         "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
@@ -3796,8 +3810,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token",
+          "pageSize",
+          "pageToken",
           "view"
         ],
         "scope": "dataset:read",
@@ -3836,8 +3850,8 @@
           "artifactId"
         ],
         "query": [
-          "page_size",
-          "page_token"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "dataset:read",
         "description": "List the labels attached to one artifact.",
@@ -3922,7 +3936,11 @@
         "upstreamOperationId": "projects.jobs.results.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "getProduct",
@@ -3959,7 +3977,7 @@
       {
         "id": "checkProductLeakage",
         "method": "POST",
-        "path": "/v1/{parent}/products:check-leakage",
+        "path": "/v1/{parent}/products:checkLeakage",
         "auth": "product",
         "pathParams": [
           "parent"
@@ -4064,7 +4082,7 @@
       {
         "id": "emitEval",
         "method": "POST",
-        "path": "/v1/{parent}/products:emit-eval",
+        "path": "/v1/{parent}/products:emitEval",
         "auth": "product",
         "pathParams": [
           "parent"
@@ -4127,8 +4145,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "dataset:read",
         "description": "List registered source connectors for a project.",
@@ -4179,7 +4197,11 @@
         "upstreamOperationId": "projects.tools.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "getTool",
@@ -4278,8 +4300,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token",
+          "pageSize",
+          "pageToken",
           "domain"
         ],
         "scope": "dataset:read",
@@ -4357,8 +4379,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token",
+          "pageSize",
+          "pageToken",
           "domain"
         ],
         "scope": "dataset:read",
@@ -4457,8 +4479,8 @@
           "parent"
         ],
         "query": [
-          "page_size",
-          "page_token"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "dataset:read",
         "description": "List immutable executable research catalog entries with bounded pagination.",

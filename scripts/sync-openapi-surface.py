@@ -201,6 +201,7 @@ def synchronize_product(
 ) -> None:
     existing = surface["operations"][product]
     by_route: dict[Route, dict[str, Any]] = {}
+    by_operation_id: dict[str, dict[str, Any]] = {}
     for item in existing:
         identity = product_route(product, item["method"], item["path"])
         if identity in by_route:
@@ -208,9 +209,18 @@ def synchronize_product(
                 f"{product} has duplicate route {identity}; resolve the alias before syncing"
             )
         by_route[identity] = item
+        operation_id = item.get("upstreamOperationId")
+        if isinstance(operation_id, str) and operation_id:
+            if operation_id in by_operation_id:
+                raise ValueError(
+                    f"{product} has duplicate upstream operation id "
+                    f"{operation_id!r}; resolve the alias before syncing"
+                )
+            by_operation_id[operation_id] = item
 
     synchronized: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
+    consumed_routes: set[Route] = set()
     if spec.get("contract_kind") == "http-route-manifest":
         for endpoint in spec.get("endpoints") or []:
             if not isinstance(endpoint, dict):
@@ -226,7 +236,11 @@ def synchronize_product(
             identity = product_route(product, method, path)
             if identity in exclusions:
                 continue
-            observed = by_route.get(identity)
+            observed = by_route.get(identity) or by_operation_id.get(operation_id)
+            if observed is not None:
+                consumed_routes.add(
+                    product_route(product, observed["method"], observed["path"])
+                )
             item = dict(observed) if observed is not None else {
                 "id": sdk_operation_id(operation_id),
                 "auth": (
@@ -268,13 +282,7 @@ def synchronize_product(
                 )
             seen_ids.add(item["id"])
             synchronized.append(item)
-        missing_existing = sorted(
-            set(by_route)
-            - {
-                product_route(product, item["method"], item["path"])
-                for item in synchronized
-            }
-        )
+        missing_existing = sorted(set(by_route) - consumed_routes)
         if missing_existing:
             raise ValueError(f"{product} has phantom surface routes: {missing_existing}")
         surface["operations"][product] = synchronized
@@ -292,7 +300,11 @@ def synchronize_product(
             operation_id = operation.get("operationId")
             if not isinstance(operation_id, str) or not operation_id:
                 raise ValueError(f"{product} {method.upper()} {path} has no operationId")
-            observed = by_route.get(identity)
+            observed = by_route.get(identity) or by_operation_id.get(operation_id)
+            if observed is not None:
+                consumed_routes.add(
+                    product_route(product, observed["method"], observed["path"])
+                )
             item = dict(observed) if observed is not None else {
                 "id": sdk_operation_id(operation_id),
                 "method": method.upper(),
@@ -327,13 +339,7 @@ def synchronize_product(
                 raise ValueError(f"{product} generated duplicate operation id {item['id']!r}")
             seen_ids.add(item["id"])
             synchronized.append(item)
-    missing_existing = sorted(
-        set(by_route)
-        - {
-            product_route(product, item["method"], item["path"])
-            for item in synchronized
-        }
-    )
+    missing_existing = sorted(set(by_route) - consumed_routes)
     if missing_existing:
         raise ValueError(f"{product} has phantom surface routes: {missing_existing}")
     surface["operations"][product] = synchronized

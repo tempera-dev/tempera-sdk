@@ -3473,7 +3473,10 @@ OPERATIONS = {
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3872,7 +3875,10 @@ OPERATIONS = {
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3889,8 +3895,9 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "environment_id",
-                "limit"
+                "environmentId",
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3927,7 +3934,7 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "environment_id",
+                "environmentId",
                 "policy",
                 "seed",
                 "max_steps",
@@ -3937,7 +3944,7 @@ OPERATIONS = {
             ],
             "forbidden_body": [],
             "required_body": [
-                "environment_id",
+                "environmentId",
                 "seed"
             ],
             "body_defaults": {},
@@ -4460,7 +4467,8 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -4595,7 +4603,10 @@ OPERATIONS = {
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4723,8 +4734,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -4737,11 +4748,11 @@ OPERATIONS = {
             "id": "transition_campaign",
             "upstream_operation_id": "projects.campaigns.transition",
             "method": "POST",
-            "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+            "path": "/v1/{parent}/campaigns/{campaignId}:transition",
             "auth": "product",
             "path_params": [
                 "parent",
-                "campaign_id"
+                "campaignId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4764,11 +4775,11 @@ OPERATIONS = {
             "id": "get_reviewer_qualification",
             "upstream_operation_id": "projects.reviewerQualifications.get",
             "method": "GET",
-            "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+            "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
             "auth": "product",
             "path_params": [
                 "parent",
-                "campaign_id"
+                "campaignId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4785,7 +4796,7 @@ OPERATIONS = {
             "id": "run_use_case",
             "upstream_operation_id": "projects.pipelines.runUseCase",
             "method": "POST",
-            "path": "/v1/{parent}/pipelines:run-use-case",
+            "path": "/v1/{parent}/pipelines:runUseCase",
             "auth": "product",
             "path_params": [
                 "parent"
@@ -4826,10 +4837,10 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "status",
-                "campaign_name"
+                "campaignName"
             ],
             "body": [],
             "forbidden_body": [],
@@ -4872,11 +4883,11 @@ OPERATIONS = {
             "id": "resolve_expert_task",
             "upstream_operation_id": "projects.expertTasks.resolve",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
             "auth": "product",
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4908,11 +4919,11 @@ OPERATIONS = {
             "id": "claim_expert_task",
             "upstream_operation_id": "projects.expertTaskAssignments.claim",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
             "auth": "product",
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4936,11 +4947,11 @@ OPERATIONS = {
             "id": "renew_expert_task_assignment",
             "upstream_operation_id": "projects.expertTaskAssignments.renew",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
             "auth": "product",
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4964,11 +4975,11 @@ OPERATIONS = {
             "id": "release_expert_task_assignment",
             "upstream_operation_id": "projects.expertTaskAssignments.release",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
             "auth": "product",
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4991,11 +5002,11 @@ OPERATIONS = {
             "id": "save_expert_task_draft",
             "upstream_operation_id": "projects.expertTaskAssignments.saveDraft",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
             "auth": "product",
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -5031,8 +5042,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "window_seconds",
-                "sla_target_seconds"
+                "windowSeconds",
+                "slaTargetSeconds"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5114,8 +5125,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "view"
             ],
             "body": [],
@@ -5162,8 +5173,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5259,7 +5270,10 @@ OPERATIONS = {
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5313,7 +5327,7 @@ OPERATIONS = {
             "id": "check_product_leakage",
             "upstream_operation_id": "projects.products.checkLeakage",
             "method": "POST",
-            "path": "/v1/{parent}/products:check-leakage",
+            "path": "/v1/{parent}/products:checkLeakage",
             "auth": "product",
             "path_params": [
                 "parent"
@@ -5437,7 +5451,7 @@ OPERATIONS = {
             "id": "emit_eval",
             "upstream_operation_id": "projects.products.emitEval",
             "method": "POST",
-            "path": "/v1/{parent}/products:emit-eval",
+            "path": "/v1/{parent}/products:emitEval",
             "auth": "product",
             "path_params": [
                 "parent"
@@ -5509,8 +5523,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5563,7 +5577,10 @@ OPERATIONS = {
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5689,8 +5706,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "domain"
             ],
             "body": [],
@@ -5780,8 +5797,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "domain"
             ],
             "body": [],
@@ -5895,8 +5912,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],

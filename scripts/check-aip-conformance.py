@@ -59,6 +59,7 @@ PROTOCOL_EXCEPTIONS = {
     ("remi", "/readyz"),
     ("temperaGym", "/healthz"),
     ("temperaLlm", "/healthz"),
+    ("temperaLlm", "/readyz"),
     ("temperaWorkflows", "/healthz"),
     ("tempo", "/health"),
     ("tempo", "/ready"),
@@ -70,6 +71,7 @@ PROTOCOL_EXCEPTIONS = {
 PROTOCOL_PREFIX_EXCEPTIONS = {
     ("controlPlane", "/.well-known/"),
     ("palette", "/v1/otlp/"),
+    ("tempo", "/.well-known/"),
 }
 PROTOCOL_SUFFIX_EXCEPTIONS = {
     ("temperaWorkflows", "/events"),
@@ -118,6 +120,21 @@ def is_protocol_exception(product: str, path: str) -> bool:
     )
 
 
+def resolve_parameter(
+    parameter: dict[str, Any], spec: dict[str, Any]
+) -> dict[str, Any]:
+    """Resolve local OpenAPI component parameter references for inspection."""
+    reference = parameter.get("$ref")
+    if not isinstance(reference, str):
+        return parameter
+    prefix = "#/components/parameters/"
+    if not reference.startswith(prefix):
+        return parameter
+    name = reference.removeprefix(prefix).replace("~1", "/").replace("~0", "~")
+    resolved = ((spec.get("components") or {}).get("parameters") or {}).get(name)
+    return resolved if isinstance(resolved, dict) else parameter
+
+
 def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     if spec.get("contract_kind") == "http-route-manifest":
         rows: list[dict[str, Any]] = []
@@ -128,13 +145,18 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
             path = endpoint.get("path")
             operation_id = endpoint.get("operation")
             if all(isinstance(value, str) and value for value in (method, path, operation_id)):
+                parameters = [
+                    {"name": name, "in": "query"}
+                    for name in endpoint.get("query_fields") or []
+                    if isinstance(name, str)
+                ]
                 rows.append(
                     {
                         "product": product,
                         "method": method.upper(),
                         "path": path,
                         "operation_id": operation_id,
-                        "parameters": [],
+                        "parameters": parameters,
                     }
                 )
         return rows
@@ -144,7 +166,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
         if not isinstance(path, str) or not isinstance(path_item, dict):
             continue
         inherited_parameters = [
-            value
+            resolve_parameter(value, spec)
             for value in path_item.get("parameters", [])
             if isinstance(value, dict)
         ]
@@ -152,7 +174,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
             if method.lower() not in HTTP_METHODS or not isinstance(operation, dict):
                 continue
             parameters = inherited_parameters + [
-                value
+                resolve_parameter(value, spec)
                 for value in operation.get("parameters", [])
                 if isinstance(value, dict)
             ]

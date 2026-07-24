@@ -68,18 +68,34 @@ List the gym pack's environment catalog, including implementation status and per
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.listEnvironments()` · Python `client.tempera_gym.list_environments()` · Rust `build_request("tempera_gym", "list_environments", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaGym.listEnvironments();
+const result = await client.temperaGym.listEnvironments({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.tempera_gym.list_environments()
+result = client.tempera_gym.list_environments({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_gym", "list_environments", &[])?;
+let spec = client.build_request("tempera_gym", "list_environments", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -101,29 +117,30 @@ List persisted rollout run index records, newest first.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `environment_id` | no | — |
-| `limit` | no | — |
+| `environmentId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaGym.listRuns({
-  environment_id: "<environment_id>",
-  limit: "<limit>",
+  environmentId: "<environmentId>",
+  pageSize: "<pageSize>",
 });
 ```
 
 ```python Python
 result = client.tempera_gym.list_runs({
-    "environment_id": "<environment_id>",
-    "limit": "<limit>",
+    "environmentId": "<environmentId>",
+    "pageSize": "<pageSize>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_gym", "list_runs", &[
-    ("environment_id", "<environment_id>".into()),
-    ("limit", "<limit>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -187,7 +204,7 @@ Execute one rollout synchronously, persist the trajectory, and return the comple
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `environment_id` | yes | — |
+| `environmentId` | yes | — |
 | `policy` | no | — |
 | `seed` | yes | — |
 | `max_steps` | no | — |
@@ -199,7 +216,7 @@ Execute one rollout synchronously, persist the trajectory, and return the comple
 
 ```typescript TypeScript
 const result = await client.temperaGym.createRollout({
-  environment_id: "<environment_id>",
+  environmentId: "<environmentId>",
   policy: "<policy>",
   seed: "<seed>",
 });
@@ -207,7 +224,7 @@ const result = await client.temperaGym.createRollout({
 
 ```python Python
 result = client.tempera_gym.create_rollout({
-    "environment_id": "<environment_id>",
+    "environmentId": "<environmentId>",
     "policy": "<policy>",
     "seed": "<seed>",
 })
@@ -215,7 +232,7 @@ result = client.tempera_gym.create_rollout({
 
 ```rust Rust
 let spec = client.build_request("tempera_gym", "create_rollout", &[
-    ("environment_id", "<environment_id>".into()),
+    ("environmentId", "<environmentId>".into()),
     ("policy", "<policy>".into()),
     ("seed", "<seed>".into()),
 ])?;

@@ -683,6 +683,215 @@ mod tests {
     }
 
     #[test]
+    fn data_engine_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        for (operation, params) in [
+            (
+                "list_use_cases",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("pageSize", ParamValue::Int(2)),
+                    ("pageToken", "use-cases-token".into()),
+                ],
+            ),
+            (
+                "get_job_results",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("jobId", "job_1".into()),
+                    ("pageSize", ParamValue::Int(3)),
+                    ("pageToken", "results-token".into()),
+                ],
+            ),
+            (
+                "list_tools",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("pageSize", ParamValue::Int(4)),
+                    ("pageToken", "tools-token".into()),
+                ],
+            ),
+        ] {
+            let spec = client
+                .build_request("data_engine", operation, &params)
+                .unwrap();
+            assert!(spec.query.iter().any(|(name, _)| name == "pageSize"));
+            assert!(spec.query.iter().any(|(name, _)| name == "pageToken"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "page_size"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "page_token"));
+        }
+    }
+
+    #[test]
+    fn remi_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "remi",
+                "list_audit",
+                &[
+                    ("pageSize", ParamValue::Int(5)),
+                    ("pageToken", "audit-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "5".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "audit-token".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+    }
+
+    #[test]
+    fn llm_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "tempera_llm",
+                "list_models",
+                &[
+                    ("pageSize", ParamValue::Int(6)),
+                    ("pageToken", "models-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "6".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "models-token".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+    }
+
+    #[test]
+    fn gym_aip_wire_names_cover_lists_and_rollouts() {
+        let client = full_client();
+        let environments = client
+            .build_request(
+                "tempera_gym",
+                "list_environments",
+                &[
+                    ("pageSize", ParamValue::Int(7)),
+                    ("pageToken", "environments-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            environments
+                .query
+                .contains(&("pageSize".to_string(), "7".to_string()))
+        );
+        assert!(
+            environments.query.contains(&(
+                "pageToken".to_string(),
+                "environments-token".to_string()
+            ))
+        );
+        assert!(!environments.query.iter().any(|(name, _)| name == "limit"));
+
+        let runs = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environmentId", "env-1".into()),
+                    ("pageSize", ParamValue::Int(8)),
+                    ("pageToken", "runs-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            runs.query
+                .contains(&("environmentId".to_string(), "env-1".to_string()))
+        );
+        assert!(runs.query.iter().any(|(name, _)| name == "pageSize"));
+        assert!(runs.query.iter().any(|(name, _)| name == "pageToken"));
+        assert!(!runs.query.iter().any(|(name, _)| name == "environment_id"));
+
+        let rollout = client
+            .build_request(
+                "tempera_gym",
+                "create_rollout",
+                &[
+                    ("environmentId", "env-1".into()),
+                    ("seed", ParamValue::Int(42)),
+                ],
+            )
+            .unwrap();
+        let body = rollout.body_json.unwrap();
+        assert!(body.contains("\"environmentId\":\"env-1\""));
+        assert!(body.contains("\"seed\":42"));
+        assert!(!body.contains("\"environment_id\""));
+    }
+
+    #[test]
+    fn data_engine_aip_custom_verbs_use_lower_camel_paths() {
+        let client = full_client();
+        for (operation, params, expected_path) in [
+            (
+                "run_use_case",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("use_case", "smoke".into()),
+                ],
+                "/v1/projects/project_1/pipelines:runUseCase",
+            ),
+            (
+                "save_expert_task_draft",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("expertTaskId", "task_1".into()),
+                    ("idempotency_key", "idem_1".into()),
+                    ("lease_token", "lease_1".into()),
+                    ("draft", ParamValue::RawJson("{}".to_string())),
+                    ("expected_version", ParamValue::Int(1)),
+                ],
+                "/v1/projects/project_1/expert-tasks/task_1:saveDraft",
+            ),
+            (
+                "check_product_leakage",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    (
+                        "product_ids",
+                        ParamValue::RawJson(
+                            "[\"products/a\",\"products/b\"]".to_string(),
+                        ),
+                    ),
+                ],
+                "/v1/projects/project_1/products:checkLeakage",
+            ),
+            (
+                "emit_eval",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    (
+                        "artifact_ids",
+                        ParamValue::RawJson("[\"artifacts/a\"]".to_string()),
+                    ),
+                    ("job", ParamValue::RawJson("{}".to_string())),
+                ],
+                "/v1/projects/project_1/products:emitEval",
+            ),
+        ] {
+            let spec = client
+                .build_request("data_engine", operation, &params)
+                .unwrap();
+            assert_eq!(
+                spec.url,
+                format!("https://data_engine.example.test{expected_path}")
+            );
+        }
+    }
+
+    #[test]
     fn forward_compat_extras_go_to_query_on_get_and_body_on_post() {
         let client = full_client();
 

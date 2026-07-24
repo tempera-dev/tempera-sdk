@@ -149,18 +149,34 @@ List the configured model catalog the gateway can route to.
 - **Scope:** `model:read`
 - **Call as:** TypeScript `client.temperaLlm.listModels()` · Python `client.tempera_llm.list_models()` · Rust `build_request("tempera_llm", "list_models", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaLlm.listModels();
+const result = await client.temperaLlm.listModels({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.tempera_llm.list_models()
+result = client.tempera_llm.list_models({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_llm", "list_models", &[])?;
+let spec = client.build_request("tempera_llm", "list_models", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

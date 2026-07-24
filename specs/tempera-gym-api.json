@@ -61,6 +61,14 @@
       "get": {
         "operationId": "environments.list",
         "summary": "Pack catalog including implementation status",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Every environment in pack.json, implemented or planned",
@@ -70,7 +78,8 @@
                   "type": "object",
                   "required": [
                     "pack",
-                    "environments"
+                    "environments",
+                    "nextPageToken"
                   ],
                   "properties": {
                     "pack": {
@@ -100,11 +109,17 @@
                       "items": {
                         "$ref": "#/components/schemas/Environment"
                       }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
                     }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
@@ -121,7 +136,7 @@
         "summary": "Persisted-run index, newest first",
         "parameters": [
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "query",
             "required": false,
             "schema": {
@@ -129,14 +144,10 @@
             }
           },
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000
-            }
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -147,7 +158,8 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "runs"
+                    "runs",
+                    "nextPageToken"
                   ],
                   "properties": {
                     "runs": {
@@ -155,6 +167,9 @@
                       "items": {
                         "$ref": "#/components/schemas/RunRecord"
                       }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
                     }
                   }
                 }
@@ -243,12 +258,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "environment_id",
+                  "environmentId",
                   "seed"
                 ],
                 "additionalProperties": false,
                 "properties": {
-                  "environment_id": {
+                  "environmentId": {
                     "type": "string"
                   },
                   "policy": {
@@ -325,6 +340,28 @@
     }
   },
   "components": {
+    "parameters": {
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -396,7 +433,7 @@
         "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, total_reward, terminal_reason, duration_ms) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
         "required": [
           "run_id",
-          "environment_id",
+          "environmentId",
           "seed",
           "created_at",
           "content_hash",
@@ -407,7 +444,7 @@
           "run_id": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "seed": {

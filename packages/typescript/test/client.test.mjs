@@ -97,8 +97,78 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
+  for (const [operation, params] of [
+    ["listUseCases", { parent: "projects/p1", pageSize: 2, pageToken: "use-cases-token" }],
+    ["getJobResults", { parent: "projects/p1", jobId: "job-1", pageSize: 3, pageToken: "results-token" }],
+    ["listTools", { parent: "projects/p1", pageSize: 4, pageToken: "tools-token" }],
+  ]) {
+    await client.dataEngine[operation](params);
+    const url = calls.at(-1).url;
+    assert.equal(url.searchParams.get("pageSize"), String(params.pageSize), operation);
+    assert.equal(url.searchParams.get("pageToken"), params.pageToken, operation);
+    assert.equal(url.searchParams.get("page_size"), null, operation);
+    assert.equal(url.searchParams.get("page_token"), null, operation);
+  }
+  await client.remi.listAudit({ pageSize: 5, pageToken: "audit-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "5");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "audit-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+
+  await client.temperaLlm.listModels({ pageSize: 6, pageToken: "models-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "6");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "models-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+
+  await client.temperaGym.listEnvironments({ pageSize: 7, pageToken: "environments-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "7");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "environments-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+  await client.temperaGym.listRuns({
+    environmentId: "env-1",
+    pageSize: 8,
+    pageToken: "runs-token",
+  });
+  assert.equal(calls.at(-1).url.searchParams.get("environmentId"), "env-1");
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "8");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "runs-token");
+  assert.equal(calls.at(-1).url.searchParams.get("environment_id"), null);
+  await client.temperaGym.createRollout({ environmentId: "env-1", seed: 42 });
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    environmentId: "env-1",
+    seed: 42,
+  });
+
+  for (const [operation, params, expectedPath] of [
+    ["runUseCase", { parent: "projects/p1", use_case: "smoke" }, "/v1/projects/p1/pipelines:runUseCase"],
+    [
+      "saveExpertTaskDraft",
+      {
+        parent: "projects/p1",
+        expertTaskId: "task-1",
+        idempotency_key: "idem-1",
+        lease_token: "lease-1",
+        draft: {},
+        expected_version: 1,
+      },
+      "/v1/projects/p1/expert-tasks/task-1:saveDraft",
+    ],
+    [
+      "checkProductLeakage",
+      { parent: "projects/p1", product_ids: ["products/a", "products/b"] },
+      "/v1/projects/p1/products:checkLeakage",
+    ],
+    [
+      "emitEval",
+      { parent: "projects/p1", artifact_ids: ["artifacts/a"], job: {} },
+      "/v1/projects/p1/products:emitEval",
+    ],
+  ]) {
+    await client.dataEngine[operation](params);
+    assert.equal(calls.at(-1).url.pathname, expectedPath, operation);
+  }
+
   await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
-  const body = JSON.parse(calls[1].options.body);
+  const body = JSON.parse(calls.at(-1).options.body);
   assert.deepEqual(body, {
     tenant_id: "t1",
     project_id: "p1",

@@ -136,6 +136,121 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
+        pagination_calls = (
+            (
+                client.data_engine.list_use_cases,
+                {
+                    "parent": "projects/p1",
+                    "pageSize": 2,
+                    "pageToken": "use-cases-token",
+                },
+            ),
+            (
+                client.data_engine.get_job_results,
+                {
+                    "parent": "projects/p1",
+                    "jobId": "job-1",
+                    "pageSize": 3,
+                    "pageToken": "results-token",
+                },
+            ),
+            (
+                client.data_engine.list_tools,
+                {
+                    "parent": "projects/p1",
+                    "pageSize": 4,
+                    "pageToken": "tools-token",
+                },
+            ),
+        )
+        for operation, params in pagination_calls:
+            operation(params)
+            query = transport.calls[-1]["query"]
+            self.assertEqual(query["pageSize"], str(params["pageSize"]))
+            self.assertEqual(query["pageToken"], params["pageToken"])
+            self.assertNotIn("page_size", query)
+            self.assertNotIn("page_token", query)
+        client.remi.list_audit({"pageSize": 5, "pageToken": "audit-token"})
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "5")
+        self.assertEqual(query["pageToken"], "audit-token")
+        self.assertNotIn("limit", query)
+
+        client.tempera_llm.list_models(
+            {"pageSize": 6, "pageToken": "models-token"}
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "6")
+        self.assertEqual(query["pageToken"], "models-token")
+        self.assertNotIn("limit", query)
+
+        client.tempera_gym.list_environments(
+            {"pageSize": 7, "pageToken": "environments-token"}
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "7")
+        self.assertEqual(query["pageToken"], "environments-token")
+        self.assertNotIn("limit", query)
+        client.tempera_gym.list_runs(
+            {
+                "environmentId": "env-1",
+                "pageSize": 8,
+                "pageToken": "runs-token",
+            }
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["environmentId"], "env-1")
+        self.assertEqual(query["pageSize"], "8")
+        self.assertEqual(query["pageToken"], "runs-token")
+        self.assertNotIn("environment_id", query)
+        client.tempera_gym.create_rollout(
+            {"environmentId": "env-1", "seed": 42}
+        )
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {"environmentId": "env-1", "seed": 42},
+        )
+
+        custom_verb_calls = (
+            (
+                client.data_engine.run_use_case,
+                {"parent": "projects/p1", "use_case": "smoke"},
+                "/v1/projects/p1/pipelines:runUseCase",
+            ),
+            (
+                client.data_engine.save_expert_task_draft,
+                {
+                    "parent": "projects/p1",
+                    "expertTaskId": "task-1",
+                    "idempotency_key": "idem-1",
+                    "lease_token": "lease-1",
+                    "draft": {},
+                    "expected_version": 1,
+                },
+                "/v1/projects/p1/expert-tasks/task-1:saveDraft",
+            ),
+            (
+                client.data_engine.check_product_leakage,
+                {
+                    "parent": "projects/p1",
+                    "product_ids": ["products/a", "products/b"],
+                },
+                "/v1/projects/p1/products:checkLeakage",
+            ),
+            (
+                client.data_engine.emit_eval,
+                {
+                    "parent": "projects/p1",
+                    "artifact_ids": ["artifacts/a"],
+                    "job": {},
+                },
+                "/v1/projects/p1/products:emitEval",
+            ),
+        )
+        for operation, params, expected_path in custom_verb_calls:
+            operation(params)
+            self.assertEqual(transport.calls[-1]["path"], expected_path)
+
         client.remi.remember(
             {
                 "tenant_id": "t1",
@@ -145,7 +260,7 @@ class DispatchTest(unittest.TestCase):
             }
         )
         self.assertEqual(
-            transport.calls[1]["body"],
+            transport.calls[-1]["body"],
             {
                 "tenant_id": "t1",
                 "project_id": "p1",

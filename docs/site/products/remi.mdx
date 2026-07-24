@@ -211,25 +211,29 @@ List recent service audit events (default 100, maximum 500).
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.remi.listAudit({
-  limit: "<limit>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.remi.list_audit({
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "list_audit", &[
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
