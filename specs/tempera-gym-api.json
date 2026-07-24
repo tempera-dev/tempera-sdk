@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "tempera-gym API",
-    "version": "0.5.0",
-    "description": "Minimal read/execute surface over the tempera-gym pack: environment catalog, persisted rollout runs, and synchronous rollout execution. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "version": "0.6.0",
+    "description": "Authenticated task, verifier, episode, environment, trajectory, and synchronous rollout surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -60,10 +60,10 @@
     "/v1/environments": {
       "get": {
         "operationId": "environments.list",
-        "summary": "Pack catalog including implementation status",
+        "summary": "Built-in and boot-trusted versioned environment catalog",
         "responses": {
           "200": {
-            "description": "Every environment in pack.json, implemented or planned",
+            "description": "Built-in pack environments plus trusted external definitions; unavailable exact adapter identities remain discoverable but fail closed at execution.",
             "content": {
               "application/json": {
                 "schema": {
@@ -78,7 +78,8 @@
                       "required": [
                         "id",
                         "version",
-                        "contract_version"
+                        "contract_version",
+                        "external_catalog_digest"
                       ],
                       "properties": {
                         "id": {
@@ -92,6 +93,9 @@
                           "enum": [
                             "tempera.gym-pack/v1"
                           ]
+                        },
+                        "external_catalog_digest": {
+                          "$ref": "#/components/schemas/Digest"
                         }
                       }
                     },
@@ -884,7 +888,8 @@
                 "additionalProperties": false,
                 "properties": {
                   "environment_id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Built-in id or trusted external id, optionally pinned as id@semantic-version."
                   },
                   "policy": {
                     "type": "string",
@@ -1411,18 +1416,54 @@
       },
       "Environment": {
         "type": "object",
+        "description": "One built-in pack entry or one resolved tempera.gym.environment/v1 definition. External definitions carry an immutable environment_digest and exact adapter identity.",
         "required": [
           "id",
-          "library",
-          "task_family",
-          "license",
+          "version",
+          "source",
+          "available",
           "deterministic",
-          "network",
-          "max_steps",
-          "status"
+          "max_steps"
         ],
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "builtin",
+              "trusted_catalog"
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.environment/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "instructions": {
             "type": "string"
           },
           "library": {
@@ -1450,6 +1491,14 @@
               "planned"
             ]
           },
+          "environment_digest": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              }
+            ],
+            "nullable": true
+          },
           "image_digest": {
             "type": "string",
             "nullable": true
@@ -1463,6 +1512,26 @@
             "nullable": true
           },
           "action_schema": {
+            "type": "object",
+            "nullable": true
+          },
+          "info_schema": {
+            "type": "object",
+            "nullable": true
+          },
+          "action_space": {
+            "type": "object",
+            "nullable": true
+          },
+          "safety": {
+            "type": "object",
+            "nullable": true
+          },
+          "adapter": {
+            "type": "object",
+            "nullable": true
+          },
+          "provenance": {
             "type": "object",
             "nullable": true
           }

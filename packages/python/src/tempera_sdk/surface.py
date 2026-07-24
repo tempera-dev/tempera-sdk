@@ -1959,7 +1959,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
+            "description": "List built-in and boot-trusted versioned environments, exact adapter availability, safety bounds, schemas, and catalog identity."
         },
         {
             "id": "list_domains",
@@ -2201,7 +2201,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Execute one legacy rollout synchronously, optionally hydrate Data Engine records, persist the trajectory, and return the completed operation envelope."
+            "description": "Execute one built-in or trusted multi-step environment synchronously by id or id@version, persist trajectory-v1, and return its completed operation envelope."
         }
     ],
     "cradle": [

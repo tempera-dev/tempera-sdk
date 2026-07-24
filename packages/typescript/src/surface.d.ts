@@ -302,7 +302,7 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
 export interface TemperaGymClient extends TemperaProductClientBase {
   /** Check tempera-gym service liveness. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
+  /** List built-in and boot-trusted versioned environments, exact adapter availability, safety bounds, schemas, and catalog identity. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List trusted task domains with task-family and risk-tier summaries. */
   listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -328,7 +328,7 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Execute one legacy rollout synchronously, optionally hydrate Data Engine records, persist the trajectory, and return the completed operation envelope. */
+  /** Execute one built-in or trusted multi-step environment synchronously by id or id@version, persist trajectory-v1, and return its completed operation envelope. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 

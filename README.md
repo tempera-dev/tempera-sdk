@@ -43,7 +43,7 @@ a live hosted service, or an undocumented endpoint.
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 10 | `cradle` |
 | `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 4 | `tempera-llm` |
 | `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
-| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
+| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — shared RL task, verifier, episode, environment, and trajectory substrate | 15 | `tempera-gym` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
 | `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 53 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |

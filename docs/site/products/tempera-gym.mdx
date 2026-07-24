@@ -60,7 +60,7 @@ let spec = client.build_request("tempera_gym", "health", &[])?;
 
 `GET /v1/environments`
 
-List the gym pack's environment catalog, including implementation status and per-environment manifests.
+List built-in and boot-trusted versioned environments, exact adapter availability, safety bounds, schemas, and catalog identity.
 
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `dataset:read`
@@ -623,7 +623,7 @@ let spec = client.build_request("tempera_gym", "get_run", &[
 
 `POST /v1/rollouts`
 
-Execute one legacy rollout synchronously, optionally hydrate Data Engine records, persist the trajectory, and return the completed operation envelope.
+Execute one built-in or trusted multi-step environment synchronously by id or id@version, persist trajectory-v1, and return its completed operation envelope.
 
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `eval:run`
