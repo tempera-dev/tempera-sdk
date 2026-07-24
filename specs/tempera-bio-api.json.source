@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "2f2217bbdf42a115184a4d1b1af923fe84136491",
   "source_branch": "main",
-  "source_commit": "9eb36c8cf260d79b5d70839d21788bab5c82228f",
+  "source_commit": "ae5d7a754eab5322442764242d74ca7992cd7239",
   "source_mode": "100644",
   "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
   "source_repo": "tempera-dev/tempera-bio",

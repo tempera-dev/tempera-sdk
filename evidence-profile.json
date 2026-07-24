@@ -28,7 +28,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients implement exact Data Engine discovery-release commit and get operations. Canonical source locks bind merged Data Engine main head 6c889513d550e2c8fab1c35ac9f8cd667f90703e."
+      "notes": "All three generated clients implement exact Data Engine discovery-release commit and get operations. Canonical source locks bind merged Data Engine main head 6fae78e21ac03ee3e466d47c9dd517b07a5c46ae."
     },
     {
       "integration_id": "prospective-experiment-authorization-client",
@@ -70,7 +70,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose deriveCampaignState and prepareExperimentProposalFromGymBatch with exact lowerCamel wire bodies, literal custom-method colons, and their producer-declared Bio scopes. Canonical provenance binds merged Bio main head 9eb36c8cf260d79b5d70839d21788bab5c82228f; the SDK transports sealed Gym and Bio artifacts but does not derive biology, run a campaign, or claim physical evidence."
+      "notes": "All three generated clients expose deriveCampaignState, prepareExperimentProposalFromGymBatch, and verifyMeasurement with exact lowerCamel wire bodies, literal custom-method colons, and their producer-declared Bio scopes. Canonical provenance binds merged Bio main head ae5d7a754eab5322442764242d74ca7992cd7239. Bio's published-summary verifier support did not change the public OpenAPI bytes because measurement evidence remains bounded base64 input to verifyMeasurement, so the refreshed lock intentionally produces no generated-client diff. The SDK transports sealed Gym and Bio artifacts but does not derive biology, run a campaign, or claim physical evidence."
     },
     {
       "integration_id": "workflows-durable-signal-client",
