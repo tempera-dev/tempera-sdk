@@ -1519,6 +1519,43 @@ mod tests {
     }
 
     #[test]
+    fn bio_campaign_compiler_preserves_exact_workflows_contract() {
+        let operation =
+            crate::surface::find_operation("tempera_workflows", "compile_bio_campaign").unwrap();
+        assert_eq!(
+            operation.upstream_operation_id,
+            "workflows.compileBioCampaign"
+        );
+        assert_eq!(operation.auth, "oauthResource");
+        assert_eq!(operation.auth_audience, Some("tempera-workflows"));
+        assert_eq!(operation.scope, Some("workflow:write"));
+
+        let spec = full_client()
+            .build_request(
+                "tempera_workflows",
+                "compile_bio_campaign",
+                &[
+                    ("workflowId", "campaign/alpha".into()),
+                    ("name", "Prospective round train".into()),
+                    ("max_rounds", ParamValue::Int(3)),
+                    ("signal_prefix", "bio.provider".into()),
+                    ("signal_expires_after_seconds", ParamValue::Int(86_400)),
+                    ("deadline_ms", ParamValue::Int(30_000)),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://tempera_workflows.example.test/v1/workflows/campaign%2Falpha:compileBioCampaign"
+        );
+        assert!(!spec.full_url().contains("%3A"));
+        assert_eq!(
+            spec.body_json.unwrap(),
+            r#"{"deadlineMs":30000,"maxRounds":3,"name":"Prospective round train","signalExpiresAfterSeconds":86400,"signalPrefix":"bio.provider"}"#
+        );
+    }
+
+    #[test]
     fn path_params_are_percent_encoded() {
         let client = full_client();
         let spec = client
