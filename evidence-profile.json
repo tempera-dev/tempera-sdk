@@ -66,7 +66,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds merged Workflows main head 3c067298906b69de5a3481c897282b745a277d18; no hosted callback or external experiment result is claimed."
+      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds current Workflows main head a581e2ca71048f654d49cb0aeb0fe9309ccdf4b2, whose committed OpenAPI blob is unchanged; no hosted callback or external experiment result is claimed."
     }
   ],
   "physical_execution": {
