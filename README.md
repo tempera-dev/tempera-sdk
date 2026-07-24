@@ -129,6 +129,58 @@ client (`client.build_request("palette", "list_traces", &params)`) since the
 crate ships no HTTP stack. Parameters use wire names (snake_case) in every
 language.
 
+## Code-validation evidence
+
+The Data Engine client is the full-stack API for repository-validation data.
+GitHub capture workers retain source artifacts, then publish typed policies,
+assessments, and evaluation trials through the existing immutable evidence and
+episode resources. The SDK operation lock is generated from Data Engine commit
+`6c889513d550e2c8fab1c35ac9f8cd667f90703e`; this is contract provenance, not a
+claim that a hosted GitHub App or validation service is generally available.
+
+```js
+const policy = await client.dataEngine.createEvidenceRecord({
+  parent: `projects/${projectId}`,
+  schemaVersion: "data-engine.evidence-record.v1",
+  domain: "tempera.code-validation",
+  evidenceType: "validation-policy",
+  payloadSchema: "gray.validation-policy.v1",
+  payload: approvedPolicy,
+  sourceArtifactRefs: [policySourceArtifactName],
+  verificationState: "UNVERIFIED",
+});
+
+const assessment = await client.dataEngine.createEvidenceRecord({
+  parent: `projects/${projectId}`,
+  schemaVersion: "data-engine.evidence-record.v1",
+  domain: "tempera.code-validation",
+  evidenceType: "validation-assessment",
+  payloadSchema: "gray.validation-assessment.v1",
+  payload: exactRevisionAssessment,
+  sourceArtifactRefs: [repositoryCaptureArtifactName],
+  verificationState: "UNVERIFIED",
+});
+
+const trial = await client.dataEngine.createEpisode({
+  parent: `projects/${projectId}`,
+  schemaVersion: "data-engine.episode.v1",
+  domain: "tempera.code-validation",
+  contextEvidenceRef: assessment.name,
+  environmentRef: exactRepositorySnapshot,
+  seed: 7,
+  observations: [{ policyRef: policy.name }],
+  measuredOutcomes: { decision: "NEEDS_EVIDENCE" },
+  verifierResults: [{ verifierRef: "gray.validation-assessment", status: "ABSTAIN" }],
+  rewardComponents: { validationDecision: 0 },
+  terminalReason: "validation-needs-evidence",
+});
+```
+
+Python uses `client.data_engine.create_evidence_record(...)` and
+`client.data_engine.create_episode(...)` with the same lowerCamel wire keys. A
+`PASS` record must carry the retained verifier receipt required by Data Engine;
+review text or a model assertion alone is not sufficient.
+
 ## Signed evaluation evidence
 
 The Palette client includes three generated, `eval:run`-scoped operations from
