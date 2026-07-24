@@ -28,21 +28,39 @@
     "schema": "ErrorBody",
     "fields": [
       "error.code",
-      "error.message"
+      "error.status",
+      "error.message",
+      "error.details"
     ],
+    "field_types": {
+      "error.code": "integer",
+      "error.status": "string",
+      "error.message": "string",
+      "error.details": "array"
+    },
+    "detail_type": "google.rpc.ErrorInfo",
+    "detail_domain": "remi.tempera.dev",
     "status_header_semantics": {
       "401": "WWW-Authenticate: Bearer",
       "429": "Retry-After",
       "503": "Retry-After",
       "504": "Retry-After"
     },
-    "codes": [
+    "reasons": [
       "unauthorized",
       "rate_limited",
       "service_busy",
       "service_timeout",
       "bad_request",
       "internal_error"
+    ],
+    "statuses": [
+      "INVALID_ARGUMENT",
+      "UNAUTHENTICATED",
+      "RESOURCE_EXHAUSTED",
+      "INTERNAL",
+      "UNAVAILABLE",
+      "DEADLINE_EXCEEDED"
     ]
   },
   "endpoints": [
