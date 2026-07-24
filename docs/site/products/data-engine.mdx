@@ -664,7 +664,7 @@ const result = await client.dataEngine.createReviewQualificationTask({
   parent: "<parent>",
   sourceExpertTaskName: "<sourceExpertTaskName>",
   expectedLabel: "<expectedLabel>",
-  mode: "<mode>",
+  idempotencyKey: "<idempotencyKey>",
 });
 ```
 
@@ -673,7 +673,7 @@ result = client.data_engine.create_review_qualification_task({
     "parent": "<parent>",
     "sourceExpertTaskName": "<sourceExpertTaskName>",
     "expectedLabel": "<expectedLabel>",
-    "mode": "<mode>",
+    "idempotencyKey": "<idempotencyKey>",
 })
 ```
 
@@ -682,7 +682,7 @@ let spec = client.build_request("data_engine", "create_review_qualification_task
     ("parent", "<parent>".into()),
     ("sourceExpertTaskName", "<sourceExpertTaskName>".into()),
     ("expectedLabel", "<expectedLabel>".into()),
-    ("mode", "<mode>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -731,8 +731,8 @@ const result = await client.dataEngine.resolveExpertTask({
   parent: "<parent>",
   expertTaskId: "<expertTaskId>",
   label: "<label>",
-  outcome: "<outcome>",
-  confidence: "<confidence>",
+  idempotencyKey: "<idempotencyKey>",
+  reviewContext: "<reviewContext>",
 });
 ```
 
@@ -741,8 +741,8 @@ result = client.data_engine.resolve_expert_task({
     "parent": "<parent>",
     "expertTaskId": "<expertTaskId>",
     "label": "<label>",
-    "outcome": "<outcome>",
-    "confidence": "<confidence>",
+    "idempotencyKey": "<idempotencyKey>",
+    "reviewContext": "<reviewContext>",
 })
 ```
 
@@ -751,8 +751,8 @@ let spec = client.build_request("data_engine", "resolve_expert_task", &[
     ("parent", "<parent>".into()),
     ("expertTaskId", "<expertTaskId>".into()),
     ("label", "<label>".into()),
-    ("outcome", "<outcome>".into()),
-    ("confidence", "<confidence>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("reviewContext", "<reviewContext>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -982,6 +982,7 @@ const result = await client.dataEngine.saveExpertTaskDraft({
   idempotencyKey: "<idempotencyKey>",
   leaseToken: "<leaseToken>",
   draft: "<draft>",
+  expectedVersion: "<expectedVersion>",
 });
 ```
 
@@ -992,6 +993,7 @@ result = client.data_engine.save_expert_task_draft({
     "idempotencyKey": "<idempotencyKey>",
     "leaseToken": "<leaseToken>",
     "draft": "<draft>",
+    "expectedVersion": "<expectedVersion>",
 })
 ```
 
@@ -1002,6 +1004,7 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
     ("idempotencyKey", "<idempotencyKey>".into()),
     ("leaseToken", "<leaseToken>".into()),
     ("draft", "<draft>".into()),
+    ("expectedVersion", "<expectedVersion>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2158,7 +2161,8 @@ const result = await client.dataEngine.createTool({
   parent: "<parent>",
   name: "<name>",
   description: "<description>",
-  inputSchema: "<inputSchema>",
+  kind: "<kind>",
+  implementation: "<implementation>",
 });
 ```
 
@@ -2167,7 +2171,8 @@ result = client.data_engine.create_tool({
     "parent": "<parent>",
     "name": "<name>",
     "description": "<description>",
-    "inputSchema": "<inputSchema>",
+    "kind": "<kind>",
+    "implementation": "<implementation>",
 })
 ```
 
@@ -2176,7 +2181,8 @@ let spec = client.build_request("data_engine", "create_tool", &[
     ("parent", "<parent>".into()),
     ("name", "<name>".into()),
     ("description", "<description>".into()),
-    ("inputSchema", "<inputSchema>".into()),
+    ("kind", "<kind>".into()),
+    ("implementation", "<implementation>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2428,6 +2434,14 @@ const result = await client.dataEngine.commitDiscoveryRelease({
   schemaVersion: "<schemaVersion>",
   requestId: "<requestId>",
   releaseId: "<releaseId>",
+  releaseKind: "<releaseKind>",
+  evidenceClass: "<evidenceClass>",
+  claimClass: "<claimClass>",
+  bindings: "<bindings>",
+  lineageEdges: "<lineageEdges>",
+  budget: "<budget>",
+  eligibility: "<eligibility>",
+  prospectiveExecution: "<prospectiveExecution>",
 });
 ```
 
@@ -2437,6 +2451,14 @@ result = client.data_engine.commit_discovery_release({
     "schemaVersion": "<schemaVersion>",
     "requestId": "<requestId>",
     "releaseId": "<releaseId>",
+    "releaseKind": "<releaseKind>",
+    "evidenceClass": "<evidenceClass>",
+    "claimClass": "<claimClass>",
+    "bindings": "<bindings>",
+    "lineageEdges": "<lineageEdges>",
+    "budget": "<budget>",
+    "eligibility": "<eligibility>",
+    "prospectiveExecution": "<prospectiveExecution>",
 })
 ```
 
@@ -2446,6 +2468,14 @@ let spec = client.build_request("data_engine", "commit_discovery_release", &[
     ("schemaVersion", "<schemaVersion>".into()),
     ("requestId", "<requestId>".into()),
     ("releaseId", "<releaseId>".into()),
+    ("releaseKind", "<releaseKind>".into()),
+    ("evidenceClass", "<evidenceClass>".into()),
+    ("claimClass", "<claimClass>".into()),
+    ("bindings", "<bindings>".into()),
+    ("lineageEdges", "<lineageEdges>".into()),
+    ("budget", "<budget>".into()),
+    ("eligibility", "<eligibility>".into()),
+    ("prospectiveExecution", "<prospectiveExecution>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2541,6 +2571,10 @@ const result = await client.dataEngine.createEvidenceRecord({
   schemaVersion: "<schemaVersion>",
   domain: "<domain>",
   evidenceType: "<evidenceType>",
+  payloadSchema: "<payloadSchema>",
+  payload: "<payload>",
+  sourceArtifactRefs: "<sourceArtifactRefs>",
+  verificationState: "<verificationState>",
 });
 ```
 
@@ -2550,6 +2584,10 @@ result = client.data_engine.create_evidence_record({
     "schemaVersion": "<schemaVersion>",
     "domain": "<domain>",
     "evidenceType": "<evidenceType>",
+    "payloadSchema": "<payloadSchema>",
+    "payload": "<payload>",
+    "sourceArtifactRefs": "<sourceArtifactRefs>",
+    "verificationState": "<verificationState>",
 })
 ```
 
@@ -2559,6 +2597,10 @@ let spec = client.build_request("data_engine", "create_evidence_record", &[
     ("schemaVersion", "<schemaVersion>".into()),
     ("domain", "<domain>".into()),
     ("evidenceType", "<evidenceType>".into()),
+    ("payloadSchema", "<payloadSchema>".into()),
+    ("payload", "<payload>".into()),
+    ("sourceArtifactRefs", "<sourceArtifactRefs>".into()),
+    ("verificationState", "<verificationState>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2713,6 +2755,13 @@ const result = await client.dataEngine.createEpisode({
   schemaVersion: "<schemaVersion>",
   domain: "<domain>",
   contextEvidenceRef: "<contextEvidenceRef>",
+  environmentRef: "<environmentRef>",
+  seed: "<seed>",
+  observations: "<observations>",
+  measuredOutcomes: "<measuredOutcomes>",
+  verifierResults: "<verifierResults>",
+  rewardComponents: "<rewardComponents>",
+  terminalReason: "<terminalReason>",
 });
 ```
 
@@ -2722,6 +2771,13 @@ result = client.data_engine.create_episode({
     "schemaVersion": "<schemaVersion>",
     "domain": "<domain>",
     "contextEvidenceRef": "<contextEvidenceRef>",
+    "environmentRef": "<environmentRef>",
+    "seed": "<seed>",
+    "observations": "<observations>",
+    "measuredOutcomes": "<measuredOutcomes>",
+    "verifierResults": "<verifierResults>",
+    "rewardComponents": "<rewardComponents>",
+    "terminalReason": "<terminalReason>",
 })
 ```
 
@@ -2731,6 +2787,13 @@ let spec = client.build_request("data_engine", "create_episode", &[
     ("schemaVersion", "<schemaVersion>".into()),
     ("domain", "<domain>".into()),
     ("contextEvidenceRef", "<contextEvidenceRef>".into()),
+    ("environmentRef", "<environmentRef>".into()),
+    ("seed", "<seed>".into()),
+    ("observations", "<observations>".into()),
+    ("measuredOutcomes", "<measuredOutcomes>".into()),
+    ("verifierResults", "<verifierResults>".into()),
+    ("rewardComponents", "<rewardComponents>".into()),
+    ("terminalReason", "<terminalReason>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2881,6 +2944,7 @@ const result = await client.dataEngine.queryResearchRetrieval({
   contractVersion: "<contractVersion>",
   requestId: "<requestId>",
   obligation: "<obligation>",
+  limit: "<limit>",
 });
 ```
 
@@ -2890,6 +2954,7 @@ result = client.data_engine.query_research_retrieval({
     "contractVersion": "<contractVersion>",
     "requestId": "<requestId>",
     "obligation": "<obligation>",
+    "limit": "<limit>",
 })
 ```
 
@@ -2899,6 +2964,7 @@ let spec = client.build_request("data_engine", "query_research_retrieval", &[
     ("contractVersion", "<contractVersion>".into()),
     ("requestId", "<requestId>".into()),
     ("obligation", "<obligation>".into()),
+    ("limit", "<limit>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2944,6 +3010,8 @@ const result = await client.dataEngine.createResearchCatalogEntry({
   kind: "<kind>",
   version: "<version>",
   obligationHash: "<obligationHash>",
+  capabilityRoute: "<capabilityRoute>",
+  provenance: "<provenance>",
 });
 ```
 
@@ -2953,6 +3021,8 @@ result = client.data_engine.create_research_catalog_entry({
     "kind": "<kind>",
     "version": "<version>",
     "obligationHash": "<obligationHash>",
+    "capabilityRoute": "<capabilityRoute>",
+    "provenance": "<provenance>",
 })
 ```
 
@@ -2962,6 +3032,8 @@ let spec = client.build_request("data_engine", "create_research_catalog_entry", 
     ("kind", "<kind>".into()),
     ("version", "<version>".into()),
     ("obligationHash", "<obligationHash>".into()),
+    ("capabilityRoute", "<capabilityRoute>".into()),
+    ("provenance", "<provenance>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

@@ -52,7 +52,21 @@
         "packages/python/src/tempera_sdk/surface.py",
         "packages/rust/src/surface.rs"
       ],
-      "notes": "The canonical source lock and generated methods bind merged Gym main head e14c198811943c414e7a9b6de64b8e79af013dfa for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+      "notes": "The canonical source lock and generated methods bind merged Gym main head b5d8369824cfdeae1a0cbbeb882af6fa19258cb2 for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+    },
+    {
+      "integration_id": "bio-verifiable-campaign-state-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/tempera-bio-api.json.source",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "All three generated clients expose deriveCampaignState with the exact lowerCamel wire body and bio:decision:write scope. Canonical provenance binds merged Bio main head 35f3d5d2c1cf7025e5b7795a7a4a2728a6743cd8; the SDK transports replay inputs but does not derive biology, run a campaign, or claim physical evidence."
     },
     {
       "integration_id": "workflows-durable-signal-client",
@@ -66,7 +80,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds current Workflows main head a581e2ca71048f654d49cb0aeb0fe9309ccdf4b2, whose committed OpenAPI blob is unchanged; no hosted callback or external experiment result is claimed."
+      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds current Workflows main head f83acfd0653cd11c4ead536ddc315bd586b7e2fc, whose committed OpenAPI blob is unchanged; no hosted callback or external experiment result is claimed."
     }
   ],
   "physical_execution": {

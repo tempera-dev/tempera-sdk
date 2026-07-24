@@ -501,22 +501,22 @@ Open a browser session at a URL; driverless sessions skip engine attachment.
 
 ```typescript TypeScript
 const result = await client.tempo.createSession({
-  driverless: "<driverless>",
   url: "<url>",
+  driverless: "<driverless>",
 });
 ```
 
 ```python Python
 result = client.tempo.create_session({
-    "driverless": "<driverless>",
     "url": "<url>",
+    "driverless": "<driverless>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "create_session", &[
-    ("driverless", "<driverless>".into()),
     ("url", "<url>".into()),
+    ("driverless", "<driverless>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1140,27 +1140,27 @@ Call POST /sessions/\{session_id\}/transform.
 ```typescript TypeScript
 const result = await client.tempo.transformSession({
   sessionId: "<sessionId>",
+  lane: "<lane>",
+  source: "<source>",
   determinism: "<determinism>",
-  idempotencyKey: "<idempotencyKey>",
-  input: "<input>",
 });
 ```
 
 ```python Python
 result = client.tempo.transform_session({
     "sessionId": "<sessionId>",
+    "lane": "<lane>",
+    "source": "<source>",
     "determinism": "<determinism>",
-    "idempotencyKey": "<idempotencyKey>",
-    "input": "<input>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "transform_session", &[
     ("sessionId", "<sessionId>".into()),
+    ("lane", "<lane>".into()),
+    ("source", "<source>".into()),
     ("determinism", "<determinism>".into()),
-    ("idempotencyKey", "<idempotencyKey>".into()),
-    ("input", "<input>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

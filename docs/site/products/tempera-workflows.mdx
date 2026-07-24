@@ -263,6 +263,7 @@ const result = await client.temperaWorkflows.runsSignal({
   idempotencyKey: "<idempotencyKey>",
   payload: "<payload>",
   payloadDigest: "<payloadDigest>",
+  signalName: "<signalName>",
 });
 ```
 
@@ -272,6 +273,7 @@ result = client.tempera_workflows.runs_signal({
     "idempotencyKey": "<idempotencyKey>",
     "payload": "<payload>",
     "payloadDigest": "<payloadDigest>",
+    "signalName": "<signalName>",
 })
 ```
 
@@ -281,6 +283,7 @@ let spec = client.build_request("tempera_workflows", "runs_signal", &[
     ("idempotencyKey", "<idempotencyKey>".into()),
     ("payload", "<payload>".into()),
     ("payloadDigest", "<payloadDigest>".into()),
+    ("signalName", "<signalName>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -361,24 +364,30 @@ Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); t
 ```typescript TypeScript
 const result = await client.temperaWorkflows.createWorkflow({
   contractVersion: "<contractVersion>",
-  description: "<description>",
   edges: "<edges>",
+  id: "<id>",
+  name: "<name>",
+  nodes: "<nodes>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.create_workflow({
     "contractVersion": "<contractVersion>",
-    "description": "<description>",
     "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "create_workflow", &[
     ("contractVersion", "<contractVersion>".into()),
-    ("description", "<description>".into()),
     ("edges", "<edges>".into()),
+    ("id", "<id>".into()),
+    ("name", "<name>".into()),
+    ("nodes", "<nodes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -509,8 +518,10 @@ Replace a stored workflow definition with a new validated revision.
 const result = await client.temperaWorkflows.updateWorkflow({
   workflowId: "<workflowId>",
   contractVersion: "<contractVersion>",
-  description: "<description>",
   edges: "<edges>",
+  id: "<id>",
+  name: "<name>",
+  nodes: "<nodes>",
 });
 ```
 
@@ -518,8 +529,10 @@ const result = await client.temperaWorkflows.updateWorkflow({
 result = client.tempera_workflows.update_workflow({
     "workflowId": "<workflowId>",
     "contractVersion": "<contractVersion>",
-    "description": "<description>",
     "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
 })
 ```
 
@@ -527,8 +540,10 @@ result = client.tempera_workflows.update_workflow({
 let spec = client.build_request("tempera_workflows", "update_workflow", &[
     ("workflowId", "<workflowId>".into()),
     ("contractVersion", "<contractVersion>".into()),
-    ("description", "<description>".into()),
     ("edges", "<edges>".into()),
+    ("id", "<id>".into()),
+    ("name", "<name>".into()),
+    ("nodes", "<nodes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -691,27 +706,27 @@ Search the full SDK-backed node catalog or ask Tempera Code to propose a validat
 ```typescript TypeScript
 const result = await client.temperaWorkflows.composeWorkflow({
   workflowId: "<workflowId>",
+  prompt: "<prompt>",
   attachments: "<attachments>",
   draft: "<draft>",
-  history: "<history>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.compose_workflow({
     "workflowId": "<workflowId>",
+    "prompt": "<prompt>",
     "attachments": "<attachments>",
     "draft": "<draft>",
-    "history": "<history>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "compose_workflow", &[
     ("workflowId", "<workflowId>".into()),
+    ("prompt", "<prompt>".into()),
     ("attachments", "<attachments>".into()),
     ("draft", "<draft>".into()),
-    ("history", "<history>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -745,25 +760,25 @@ Generate or repair one JSON editor value and validate its requested root and pur
 
 ```typescript TypeScript
 const result = await client.temperaWorkflows.assistJson({
-  context: "<context>",
-  current: "<current>",
   expectedRoot: "<expectedRoot>",
+  mode: "<mode>",
+  purpose: "<purpose>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.assist_json({
-    "context": "<context>",
-    "current": "<current>",
     "expectedRoot": "<expectedRoot>",
+    "mode": "<mode>",
+    "purpose": "<purpose>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "assist_json", &[
-    ("context", "<context>".into()),
-    ("current", "<current>".into()),
     ("expectedRoot", "<expectedRoot>".into()),
+    ("mode", "<mode>".into()),
+    ("purpose", "<purpose>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -799,24 +814,30 @@ Validate a workflow definition without storing it; returns the full diagnostic l
 ```typescript TypeScript
 const result = await client.temperaWorkflows.validateWorkflow({
   contractVersion: "<contractVersion>",
-  description: "<description>",
   edges: "<edges>",
+  id: "<id>",
+  name: "<name>",
+  nodes: "<nodes>",
 });
 ```
 
 ```python Python
 result = client.tempera_workflows.validate_workflow({
     "contractVersion": "<contractVersion>",
-    "description": "<description>",
     "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "validate_workflow", &[
     ("contractVersion", "<contractVersion>".into()),
-    ("description", "<description>".into()),
     ("edges", "<edges>".into()),
+    ("id", "<id>".into()),
+    ("name", "<name>".into()),
+    ("nodes", "<nodes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

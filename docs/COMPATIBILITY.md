@@ -12,6 +12,11 @@
   transport can represent is generated in TypeScript, Python, and Rust. OTLP, OAuth
   form/redirect, inbound webhook, MCP JSON-RPC, private Fabric, BiDi/WebSocket,
   and SSE routes remain explicit reviewed transport exclusions.
+- Bio campaign state: `deriveCampaignState` is generated from
+  `tempera-dev/tempera-bio@35f3d5d2c1cf7025e5b7795a7a4a2728a6743cd8`.
+  It transports the complete bounded round history to Bio for independent
+  decision replay and stopping-rule derivation; the SDK neither invents
+  cumulative counters nor claims that any physical campaign ran.
 - Breaking corrections: Auth Hub's duplicate `signup`/`login` aliases become
   the canonical `createHostedSession` operation; Data Engine adopts its
   canonical `/v1/{parent}` paths and current request fields. Its

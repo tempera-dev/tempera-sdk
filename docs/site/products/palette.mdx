@@ -647,8 +647,8 @@ Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
 const result = await client.palette.connectorsInvokeTool({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
-  arguments: "<arguments>",
   tool: "<tool>",
+  arguments: "<arguments>",
 });
 ```
 
@@ -656,8 +656,8 @@ const result = await client.palette.connectorsInvokeTool({
 result = client.palette.connectors_invoke_tool({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
-    "arguments": "<arguments>",
     "tool": "<tool>",
+    "arguments": "<arguments>",
 })
 ```
 
@@ -665,8 +665,8 @@ result = client.palette.connectors_invoke_tool({
 let spec = client.build_request("palette", "connectors_invoke_tool", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
-    ("arguments", "<arguments>".into()),
     ("tool", "<tool>".into()),
+    ("arguments", "<arguments>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -926,9 +926,9 @@ const result = await client.palette.promoteTraceToCase({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
   datasetId: "<datasetId>",
+  traceId: "<traceId>",
   reference: "<reference>",
   spanId: "<spanId>",
-  traceId: "<traceId>",
 });
 ```
 
@@ -937,9 +937,9 @@ result = client.palette.promote_trace_to_case({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
     "datasetId": "<datasetId>",
+    "traceId": "<traceId>",
     "reference": "<reference>",
     "spanId": "<spanId>",
-    "traceId": "<traceId>",
 })
 ```
 
@@ -948,9 +948,9 @@ let spec = client.build_request("palette", "promote_trace_to_case", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
     ("datasetId", "<datasetId>".into()),
+    ("traceId", "<traceId>".into()),
     ("reference", "<reference>".into()),
     ("spanId", "<spanId>".into()),
-    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1056,8 +1056,9 @@ const result = await client.palette.evalsRunDeterministic({
   datasetId: "<datasetId>",
   versionId: "<versionId>",
   agentReleaseId: "<agentReleaseId>",
-  codeHash: "<codeHash>",
   evaluatorId: "<evaluatorId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  kind: "<kind>",
 });
 ```
 
@@ -1068,8 +1069,9 @@ result = client.palette.evals_run_deterministic({
     "datasetId": "<datasetId>",
     "versionId": "<versionId>",
     "agentReleaseId": "<agentReleaseId>",
-    "codeHash": "<codeHash>",
     "evaluatorId": "<evaluatorId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "kind": "<kind>",
 })
 ```
 
@@ -1080,8 +1082,9 @@ let spec = client.build_request("palette", "evals_run_deterministic", &[
     ("datasetId", "<datasetId>".into()),
     ("versionId", "<versionId>".into()),
     ("agentReleaseId", "<agentReleaseId>".into()),
-    ("codeHash", "<codeHash>".into()),
     ("evaluatorId", "<evaluatorId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("kind", "<kind>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1129,8 +1132,10 @@ const result = await client.palette.evalsRunJudge({
   datasetId: "<datasetId>",
   versionId: "<versionId>",
   agentReleaseId: "<agentReleaseId>",
-  codeHash: "<codeHash>",
   evaluatorId: "<evaluatorId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  kind: "<kind>",
+  providerSecretId: "<providerSecretId>",
 });
 ```
 
@@ -1141,8 +1146,10 @@ result = client.palette.evals_run_judge({
     "datasetId": "<datasetId>",
     "versionId": "<versionId>",
     "agentReleaseId": "<agentReleaseId>",
-    "codeHash": "<codeHash>",
     "evaluatorId": "<evaluatorId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "kind": "<kind>",
+    "providerSecretId": "<providerSecretId>",
 })
 ```
 
@@ -1153,8 +1160,10 @@ let spec = client.build_request("palette", "evals_run_judge", &[
     ("datasetId", "<datasetId>".into()),
     ("versionId", "<versionId>".into()),
     ("agentReleaseId", "<agentReleaseId>".into()),
-    ("codeHash", "<codeHash>".into()),
     ("evaluatorId", "<evaluatorId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("kind", "<kind>".into()),
+    ("providerSecretId", "<providerSecretId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1382,6 +1391,10 @@ const result = await client.palette.experimentsRunDeterministic({
   baselineOutputs: "<baselineOutputs>",
   baselineReleaseId: "<baselineReleaseId>",
   candidateOutputs: "<candidateOutputs>",
+  candidateReleaseId: "<candidateReleaseId>",
+  evaluatorId: "<evaluatorId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  kind: "<kind>",
 });
 ```
 
@@ -1394,6 +1407,10 @@ result = client.palette.experiments_run_deterministic({
     "baselineOutputs": "<baselineOutputs>",
     "baselineReleaseId": "<baselineReleaseId>",
     "candidateOutputs": "<candidateOutputs>",
+    "candidateReleaseId": "<candidateReleaseId>",
+    "evaluatorId": "<evaluatorId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "kind": "<kind>",
 })
 ```
 
@@ -1406,6 +1423,10 @@ let spec = client.build_request("palette", "experiments_run_deterministic", &[
     ("baselineOutputs", "<baselineOutputs>".into()),
     ("baselineReleaseId", "<baselineReleaseId>".into()),
     ("candidateOutputs", "<candidateOutputs>".into()),
+    ("candidateReleaseId", "<candidateReleaseId>".into()),
+    ("evaluatorId", "<evaluatorId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("kind", "<kind>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1457,6 +1478,11 @@ const result = await client.palette.experimentsRunJudge({
   baselineOutputs: "<baselineOutputs>",
   baselineReleaseId: "<baselineReleaseId>",
   candidateOutputs: "<candidateOutputs>",
+  candidateReleaseId: "<candidateReleaseId>",
+  evaluatorId: "<evaluatorId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  kind: "<kind>",
+  providerSecretId: "<providerSecretId>",
 });
 ```
 
@@ -1469,6 +1495,11 @@ result = client.palette.experiments_run_judge({
     "baselineOutputs": "<baselineOutputs>",
     "baselineReleaseId": "<baselineReleaseId>",
     "candidateOutputs": "<candidateOutputs>",
+    "candidateReleaseId": "<candidateReleaseId>",
+    "evaluatorId": "<evaluatorId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "kind": "<kind>",
+    "providerSecretId": "<providerSecretId>",
 })
 ```
 
@@ -1481,6 +1512,11 @@ let spec = client.build_request("palette", "experiments_run_judge", &[
     ("baselineOutputs", "<baselineOutputs>".into()),
     ("baselineReleaseId", "<baselineReleaseId>".into()),
     ("candidateOutputs", "<candidateOutputs>".into()),
+    ("candidateReleaseId", "<candidateReleaseId>".into()),
+    ("evaluatorId", "<evaluatorId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("kind", "<kind>".into()),
+    ("providerSecretId", "<providerSecretId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1521,9 +1557,9 @@ Call POST /v1/gates/\{tenant_id\}/\{project_id\}.
 const result = await client.palette.gatesCreate({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
-  datasetId: "<datasetId>",
-  evaluatorVersionId: "<evaluatorVersionId>",
   gateId: "<gateId>",
+  name: "<name>",
+  datasetId: "<datasetId>",
 });
 ```
 
@@ -1531,9 +1567,9 @@ const result = await client.palette.gatesCreate({
 result = client.palette.gates_create({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
-    "datasetId": "<datasetId>",
-    "evaluatorVersionId": "<evaluatorVersionId>",
     "gateId": "<gateId>",
+    "name": "<name>",
+    "datasetId": "<datasetId>",
 })
 ```
 
@@ -1541,9 +1577,9 @@ result = client.palette.gates_create({
 let spec = client.build_request("palette", "gates_create", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
-    ("datasetId", "<datasetId>".into()),
-    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
     ("gateId", "<gateId>".into()),
+    ("name", "<name>".into()),
+    ("datasetId", "<datasetId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1647,8 +1683,8 @@ const result = await client.palette.importSource({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
   environmentId: "<environmentId>",
-  payload: "<payload>",
   source: "<source>",
+  payload: "<payload>",
 });
 ```
 
@@ -1657,8 +1693,8 @@ result = client.palette.import_source({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
     "environmentId": "<environmentId>",
-    "payload": "<payload>",
     "source": "<source>",
+    "payload": "<payload>",
 })
 ```
 
@@ -1667,8 +1703,8 @@ let spec = client.build_request("palette", "import_source", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
-    ("payload", "<payload>".into()),
     ("source", "<source>".into()),
+    ("payload", "<payload>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1954,9 +1990,9 @@ Call POST /v1/judge/\{tenant_id\}/\{project_id\}/evaluate.
 const result = await client.palette.judgeEvaluate({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
-  cacheNamespace: "<cacheNamespace>",
   case: "<case>",
   evaluator: "<evaluator>",
+  providerSecretId: "<providerSecretId>",
 });
 ```
 
@@ -1964,9 +2000,9 @@ const result = await client.palette.judgeEvaluate({
 result = client.palette.judge_evaluate({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
-    "cacheNamespace": "<cacheNamespace>",
     "case": "<case>",
     "evaluator": "<evaluator>",
+    "providerSecretId": "<providerSecretId>",
 })
 ```
 
@@ -1974,9 +2010,9 @@ result = client.palette.judge_evaluate({
 let spec = client.build_request("palette", "judge_evaluate", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
-    ("cacheNamespace", "<cacheNamespace>".into()),
     ("case", "<case>".into()),
     ("evaluator", "<evaluator>".into()),
+    ("providerSecretId", "<providerSecretId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2075,9 +2111,9 @@ const result = await client.palette.onlineDecideSampling({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
   traceId: "<traceId>",
-  highCostMicrosThreshold: "<highCostMicrosThreshold>",
   keepErrors: "<keepErrors>",
   sampleRatePerMille: "<sampleRatePerMille>",
+  highCostMicrosThreshold: "<highCostMicrosThreshold>",
 });
 ```
 
@@ -2086,9 +2122,9 @@ result = client.palette.online_decide_sampling({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
     "traceId": "<traceId>",
-    "highCostMicrosThreshold": "<highCostMicrosThreshold>",
     "keepErrors": "<keepErrors>",
     "sampleRatePerMille": "<sampleRatePerMille>",
+    "highCostMicrosThreshold": "<highCostMicrosThreshold>",
 })
 ```
 
@@ -2097,9 +2133,9 @@ let spec = client.build_request("palette", "online_decide_sampling", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
     ("traceId", "<traceId>".into()),
-    ("highCostMicrosThreshold", "<highCostMicrosThreshold>".into()),
     ("keepErrors", "<keepErrors>".into()),
     ("sampleRatePerMille", "<sampleRatePerMille>".into()),
+    ("highCostMicrosThreshold", "<highCostMicrosThreshold>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2197,9 +2233,9 @@ Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
 const result = await client.palette.promptsCreate({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
+  name: "<name>",
+  template: "<template>",
   createdBy: "<createdBy>",
-  description: "<description>",
-  message: "<message>",
 });
 ```
 
@@ -2207,9 +2243,9 @@ const result = await client.palette.promptsCreate({
 result = client.palette.prompts_create({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
+    "name": "<name>",
+    "template": "<template>",
     "createdBy": "<createdBy>",
-    "description": "<description>",
-    "message": "<message>",
 })
 ```
 
@@ -2217,9 +2253,9 @@ result = client.palette.prompts_create({
 let spec = client.build_request("palette", "prompts_create", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
+    ("name", "<name>".into()),
+    ("template", "<template>".into()),
     ("createdBy", "<createdBy>".into()),
-    ("description", "<description>".into()),
-    ("message", "<message>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2430,9 +2466,9 @@ const result = await client.palette.promptsAddVersion({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
   promptId: "<promptId>",
+  template: "<template>",
   createdBy: "<createdBy>",
   message: "<message>",
-  template: "<template>",
 });
 ```
 
@@ -2441,9 +2477,9 @@ result = client.palette.prompts_add_version({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
     "promptId": "<promptId>",
+    "template": "<template>",
     "createdBy": "<createdBy>",
     "message": "<message>",
-    "template": "<template>",
 })
 ```
 
@@ -2452,9 +2488,9 @@ let spec = client.build_request("palette", "prompts_add_version", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
     ("promptId", "<promptId>".into()),
+    ("template", "<template>".into()),
     ("createdBy", "<createdBy>".into()),
     ("message", "<message>".into()),
-    ("template", "<template>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2787,9 +2823,9 @@ const result = await client.palette.reviewsEnqueueTaskFromTrace({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
   queueId: "<queueId>",
+  traceId: "<traceId>",
   datasetCaseId: "<datasetCaseId>",
   datasetId: "<datasetId>",
-  priority: "<priority>",
 });
 ```
 
@@ -2798,9 +2834,9 @@ result = client.palette.reviews_enqueue_task_from_trace({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
     "queueId": "<queueId>",
+    "traceId": "<traceId>",
     "datasetCaseId": "<datasetCaseId>",
     "datasetId": "<datasetId>",
-    "priority": "<priority>",
 })
 ```
 
@@ -2809,9 +2845,9 @@ let spec = client.build_request("palette", "reviews_enqueue_task_from_trace", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
     ("queueId", "<queueId>".into()),
+    ("traceId", "<traceId>".into()),
     ("datasetCaseId", "<datasetCaseId>".into()),
     ("datasetId", "<datasetId>".into()),
-    ("priority", "<priority>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2855,9 +2891,9 @@ const result = await client.palette.reviewsSubmitAnnotation({
   projectId: "<projectId>",
   queueId: "<queueId>",
   taskId: "<taskId>",
-  annotationId: "<annotationId>",
   payload: "<payload>",
   reviewerId: "<reviewerId>",
+  verdict: "<verdict>",
 });
 ```
 
@@ -2867,9 +2903,9 @@ result = client.palette.reviews_submit_annotation({
     "projectId": "<projectId>",
     "queueId": "<queueId>",
     "taskId": "<taskId>",
-    "annotationId": "<annotationId>",
     "payload": "<payload>",
     "reviewerId": "<reviewerId>",
+    "verdict": "<verdict>",
 })
 ```
 
@@ -2879,9 +2915,9 @@ let spec = client.build_request("palette", "reviews_submit_annotation", &[
     ("projectId", "<projectId>".into()),
     ("queueId", "<queueId>".into()),
     ("taskId", "<taskId>".into()),
-    ("annotationId", "<annotationId>".into()),
     ("payload", "<payload>".into()),
     ("reviewerId", "<reviewerId>".into()),
+    ("verdict", "<verdict>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3048,9 +3084,9 @@ Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}.
 const result = await client.palette.scenariosCreate({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
+  sourceTraceIds: "<sourceTraceIds>",
+  title: "<title>",
   exemplarTraceId: "<exemplarTraceId>",
-  expectedOutcome: "<expectedOutcome>",
-  failureMode: "<failureMode>",
 });
 ```
 
@@ -3058,9 +3094,9 @@ const result = await client.palette.scenariosCreate({
 result = client.palette.scenarios_create({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
+    "sourceTraceIds": "<sourceTraceIds>",
+    "title": "<title>",
     "exemplarTraceId": "<exemplarTraceId>",
-    "expectedOutcome": "<expectedOutcome>",
-    "failureMode": "<failureMode>",
 })
 ```
 
@@ -3068,9 +3104,9 @@ result = client.palette.scenarios_create({
 let spec = client.build_request("palette", "scenarios_create", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
+    ("sourceTraceIds", "<sourceTraceIds>".into()),
+    ("title", "<title>".into()),
     ("exemplarTraceId", "<exemplarTraceId>".into()),
-    ("expectedOutcome", "<expectedOutcome>".into()),
-    ("failureMode", "<failureMode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3108,8 +3144,8 @@ Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}/mine.
 const result = await client.palette.scenariosMine({
   tenantId: "<tenantId>",
   projectId: "<projectId>",
-  jaccardThreshold: "<jaccardThreshold>",
   traceIds: "<traceIds>",
+  jaccardThreshold: "<jaccardThreshold>",
 });
 ```
 
@@ -3117,8 +3153,8 @@ const result = await client.palette.scenariosMine({
 result = client.palette.scenarios_mine({
     "tenantId": "<tenantId>",
     "projectId": "<projectId>",
-    "jaccardThreshold": "<jaccardThreshold>",
     "traceIds": "<traceIds>",
+    "jaccardThreshold": "<jaccardThreshold>",
 })
 ```
 
@@ -3126,8 +3162,8 @@ result = client.palette.scenarios_mine({
 let spec = client.build_request("palette", "scenarios_mine", &[
     ("tenantId", "<tenantId>".into()),
     ("projectId", "<projectId>".into()),
-    ("jaccardThreshold", "<jaccardThreshold>".into()),
     ("traceIds", "<traceIds>".into()),
+    ("jaccardThreshold", "<jaccardThreshold>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3416,24 +3452,42 @@ Ingest one native span; idempotent when an idempotency key is supplied.
 ```typescript TypeScript
 const result = await client.palette.ingestSpan({
   attributes: "<attributes>",
-  authContext: "<authContext>",
-  cost: "<cost>",
+  kind: "<kind>",
+  name: "<name>",
+  redactionClass: "<redactionClass>",
+  scope: "<scope>",
+  seq: "<seq>",
+  spanId: "<spanId>",
+  status: "<status>",
+  traceId: "<traceId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_span({
     "attributes": "<attributes>",
-    "authContext": "<authContext>",
-    "cost": "<cost>",
+    "kind": "<kind>",
+    "name": "<name>",
+    "redactionClass": "<redactionClass>",
+    "scope": "<scope>",
+    "seq": "<seq>",
+    "spanId": "<spanId>",
+    "status": "<status>",
+    "traceId": "<traceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_span", &[
     ("attributes", "<attributes>".into()),
-    ("authContext", "<authContext>".into()),
-    ("cost", "<cost>".into()),
+    ("kind", "<kind>".into()),
+    ("name", "<name>".into()),
+    ("redactionClass", "<redactionClass>".into()),
+    ("scope", "<scope>".into()),
+    ("seq", "<seq>".into()),
+    ("spanId", "<spanId>".into()),
+    ("status", "<status>".into()),
+    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

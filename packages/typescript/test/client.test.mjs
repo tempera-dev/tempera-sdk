@@ -275,6 +275,20 @@ test("snake_case parameter aliases emit only canonical lowerCamel wire names", a
   });
   assert.equal(calls.at(-1).url.pathname, "/v1/measurements:verify");
 
+  await client.temperaBio.deriveCampaignState({
+    candidate_set: { contentDigest: "sha256:candidates" },
+    hypothesis: { contentDigest: "sha256:hypothesis" },
+    program: { contentDigest: "sha256:program" },
+    rounds: [{ decision: { contentDigest: "sha256:decision" } }],
+  });
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    candidateSet: { contentDigest: "sha256:candidates" },
+    hypothesis: { contentDigest: "sha256:hypothesis" },
+    program: { contentDigest: "sha256:program" },
+    rounds: [{ decision: { contentDigest: "sha256:decision" } }],
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/campaignStates:derive");
+
   await client.humanData.computeQualification({
     product_id: "product-1",
     release_id: "release-1",

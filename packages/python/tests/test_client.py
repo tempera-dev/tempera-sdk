@@ -243,6 +243,31 @@ class DispatchTest(unittest.TestCase):
         )
         self.assertEqual(transport.calls[-1]["path"], "/v1/measurements:verify")
 
+        client.tempera_bio.derive_campaign_state(
+            {
+                "candidate_set": {"contentDigest": "sha256:candidates"},
+                "hypothesis": {"contentDigest": "sha256:hypothesis"},
+                "program": {"contentDigest": "sha256:program"},
+                "rounds": [
+                    {"decision": {"contentDigest": "sha256:decision"}}
+                ],
+            }
+        )
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {
+                "candidateSet": {"contentDigest": "sha256:candidates"},
+                "hypothesis": {"contentDigest": "sha256:hypothesis"},
+                "program": {"contentDigest": "sha256:program"},
+                "rounds": [
+                    {"decision": {"contentDigest": "sha256:decision"}}
+                ],
+            },
+        )
+        self.assertEqual(
+            transport.calls[-1]["path"], "/v1/campaignStates:derive"
+        )
+
         client.human_data.compute_qualification(
             {
                 "product_id": "product-1",

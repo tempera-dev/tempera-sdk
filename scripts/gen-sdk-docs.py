@@ -156,12 +156,17 @@ def auth_label(surface: dict, product_key: str, op: dict) -> str:
 
 def example_param_names(op: dict) -> list[str]:
     """Parameters shown in the per-operation example: every path parameter,
-    plus a readable sample of the declared query/body parameters."""
+    every required body parameter, plus a readable optional sample."""
     names = list(op.get("pathParams", []))
     if op["method"] in ("GET", "DELETE"):
         names += op.get("query", [])[:2]
     else:
-        names += op.get("body", [])[:3]
+        body = op.get("body", [])
+        required = set(op.get("requiredBody", []))
+        required_names = [name for name in body if name in required]
+        optional_names = [name for name in body if name not in required]
+        names += required_names
+        names += optional_names[: max(0, 3 - len(required_names))]
     return names
 
 

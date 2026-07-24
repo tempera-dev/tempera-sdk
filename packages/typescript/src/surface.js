@@ -4840,6 +4840,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "temperaBio": [
     {
+      "id": "deriveCampaignState",
+      "upstreamOperationId": "deriveCampaignState",
+      "method": "POST",
+      "path": "/v1/campaignStates:derive",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "candidateSet",
+        "hypothesis",
+        "program",
+        "rounds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "program",
+        "hypothesis",
+        "candidateSet",
+        "rounds"
+      ],
+      "bodyDefaults": {},
+      "scope": "bio:decision:write",
+      "description": "Derive campaign state."
+    },
+    {
       "id": "prepareCandidateSet",
       "upstreamOperationId": "prepareCandidateSet",
       "method": "POST",
