@@ -43,6 +43,8 @@ mod tests {
 
     #[test]
     fn surface_tables_replace_the_legacy_hand_written_consts() {
+        assert_eq!(INTROSPECT_PATH, "/v1/oauth/introspect");
+
         // Every legacy product is present in the generated table, by key.
         for key in [
             "control_plane",

@@ -53,7 +53,7 @@ pub const SCOPES: &[&str] = &[
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";
 pub const TOKEN_PATH: &str = "/oauth/token";
 pub const REVOKE_PATH: &str = "/oauth/revoke";
-pub const INTROSPECT_PATH: &str = "/oauth/introspect";
+pub const INTROSPECT_PATH: &str = "/v1/oauth/introspect";
 pub const MCP_PATH: &str = "/mcp";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -13,7 +13,7 @@ export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
   "token": "/oauth/token",
   "revoke": "/oauth/revoke",
-  "introspect": "/oauth/introspect",
+  "introspect": "/v1/oauth/introspect",
   "mcp": "/mcp"
 });
 

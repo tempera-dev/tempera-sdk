@@ -6,7 +6,7 @@
     "authorizePath": "/oauth/authorize",
     "tokenPath": "/oauth/token",
     "revokePath": "/oauth/revoke",
-    "introspectPath": "/oauth/introspect",
+    "introspectPath": "/v1/oauth/introspect",
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
