@@ -1,3 +1,13 @@
-Vendored from palette repo: sdks/openapi/palette-api.json
-Origin path: /home/user/palette/sdks/openapi/palette-api.json
-Generated upstream from the palette Rust handlers (cargo xtask regen-spec). Do not hand-edit; refresh by re-copying the upstream committed spec.
+{
+  "generated_path": "specs/palette-api.json",
+  "generated_sha256": "26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0",
+  "generated_with": "source_lock.py@1+palette-api-dump-openapi",
+  "schema_version": 1,
+  "source_blob_sha": "c9b1e11d3096adb5ae1af287c5b87e223787b451",
+  "source_branch": "main",
+  "source_commit": "fe9227c4a1162fd079a3ee9ac0355666eae5d856",
+  "source_mode": "100644",
+  "source_path": "sdks/openapi/palette-api.json",
+  "source_repo": "tempera-dev/palette",
+  "source_sha256": "26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0"
+}

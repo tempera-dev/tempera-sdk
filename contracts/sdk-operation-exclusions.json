@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "exclusions": [
+    {
+      "compatibility": "ineligible_until_streaming_support",
+      "method": "GET",
+      "migration": "Add one reviewed SSE streaming primitive with cancellation and reconnect semantics in TypeScript, Python, and Rust before generating this operation.",
+      "operation_id": "runs.events",
+      "owner": "tempera-sdk",
+      "path": "/v1/runs/{runId}/events",
+      "product": "temperaWorkflows",
+      "rationale": "The aggregate SDK request surface returns buffered JSON; this operation is an unbounded text/event-stream and cannot truthfully use that transport.",
+      "review_after": "2026-10-01"
+    }
+  ]
+}

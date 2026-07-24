@@ -6,6 +6,313 @@ on:
     branches: [main]
 
 jobs:
+  data-engine-exact-source:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Data Engine source lock
+        id: data-engine-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("contracts/data-engine-openapi-operations.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          expected = {
+              "source_repo": "tempera-dev/data-engine",
+              "source_branch": "main",
+              "source_path": "api/openapi.yaml",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                  f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+              )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: data-engine
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/data-engine
+          ref: ${{ steps.data-engine-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .data-engine-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - name: Verify exact committed Data Engine source
+        run: |
+          git -C .data-engine-source fetch --no-tags origin main:refs/remotes/origin/main
+          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+          python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+
+  auth-hub-exact-source:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Auth Hub source lock
+        id: auth-hub-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("specs/control-plane.openapi.json.source").read_text(
+                  encoding="utf-8"
+              )
+          )
+          expected = {
+              "source_repo": "tempera-dev/auth-hub",
+              "source_branch": "main",
+              "source_path": "contracts/control-plane.openapi.json",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+                  )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: ${{ steps.auth-hub-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .auth-hub-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Verify exact committed Auth Hub source
+        run: |
+          git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit "${{ steps.auth-hub-lock.outputs.commit }}"
+
+  palette-exact-source:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Palette source lock
+        id: palette-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("specs/palette-api.json.source").read_text(encoding="utf-8")
+          )
+          expected = {
+              "source_repo": "tempera-dev/palette",
+              "source_branch": "main",
+              "source_path": "sdks/openapi/palette-api.json",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+                  )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: palette
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/palette
+          ref: ${{ steps.palette-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .palette-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Verify exact committed Palette source
+        run: |
+          git -C .palette-source fetch --no-tags origin main:refs/remotes/origin/main
+          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .palette-source --source-repo tempera-dev/palette --source-branch main --commit "${{ steps.palette-lock.outputs.commit }}" --source-path sdks/openapi/palette-api.json --generated-with source_lock.py@1+palette-api-dump-openapi --generated-file specs/palette-api.json --generated-path specs/palette-api.json --lock specs/palette-api.json.source
+
+  upstream-exact-source:
+    name: ${{ matrix.name }} exact source
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Cradle
+            repository: cradle
+            source_branch: main
+            source_path: sdks/openapi.json
+            lock: specs/cradle-openapi.json.source
+            generated_path: specs/cradle-openapi.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
+          - name: Tempera Gym
+            repository: tempera-gym
+            source_branch: main
+            source_path: contracts/gym-api.openapi.yaml
+            lock: specs/tempera-gym-api.json.source
+            generated_path: specs/tempera-gym-api.json
+            generated_with: source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2
+            transform: yaml-json
+          - name: Tempera LLM
+            repository: tempera-llm
+            source_branch: claude/billing-api-consistency-cbp8cy
+            source_path: sdks/openapi/tempera-llm-api.json
+            lock: specs/tempera-llm-api.json.source
+            generated_path: specs/tempera-llm-api.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
+          - name: Tempera Workflows
+            repository: tempera-workflows
+            source_branch: main
+            source_path: sdks/openapi/tempera-workflows-api.json
+            lock: specs/tempera-workflows-api.json.source
+            generated_path: specs/tempera-workflows-api.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted source lock
+        id: source-lock
+        env:
+          LOCK_PATH: ${{ matrix.lock }}
+          EXPECTED_REPO: tempera-dev/${{ matrix.repository }}
+          EXPECTED_BRANCH: ${{ matrix.source_branch }}
+          EXPECTED_PATH: ${{ matrix.source_path }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(Path(os.environ["LOCK_PATH"]).read_text(encoding="utf-8"))
+          expected = {
+              "source_repo": os.environ["EXPECTED_REPO"],
+              "source_branch": os.environ["EXPECTED_BRANCH"],
+              "source_path": os.environ["EXPECTED_PATH"],
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(f"refusing non-allowlisted {field}: {lock.get(field)!r}")
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: ${{ matrix.repository }}
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/${{ matrix.repository }}
+          ref: ${{ steps.source-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .upstream-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Reproduce and verify exact committed source
+        env:
+          SOURCE_REPO: tempera-dev/${{ matrix.repository }}
+          SOURCE_BRANCH: ${{ matrix.source_branch }}
+          SOURCE_PATH: ${{ matrix.source_path }}
+          GENERATED_PATH: ${{ matrix.generated_path }}
+          GENERATED_WITH: ${{ matrix.generated_with }}
+          LOCK_PATH: ${{ matrix.lock }}
+          TRANSFORM: ${{ matrix.transform }}
+          COMMIT: ${{ steps.source-lock.outputs.commit }}
+        run: |
+          git -C .upstream-source fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
+          if [ "$TRANSFORM" = verbatim ]; then
+            cmp ".upstream-source/$SOURCE_PATH" "$GENERATED_PATH"
+          else
+            python3 -m pip install PyYAML==6.0.3
+            python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import yaml
+
+          source = Path(".upstream-source") / os.environ["SOURCE_PATH"]
+          rendered = json.dumps(yaml.safe_load(source.read_bytes()), indent=2) + "\n"
+          if rendered.encode() != Path(os.environ["GENERATED_PATH"]).read_bytes():
+              raise SystemExit("generated JSON does not reproduce from committed YAML")
+          PY
+          fi
+          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check \
+            --repo-dir .upstream-source \
+            --source-repo "$SOURCE_REPO" \
+            --source-branch "$SOURCE_BRANCH" \
+            --commit "$COMMIT" \
+            --source-path "$SOURCE_PATH" \
+            --generated-with "$GENERATED_WITH" \
+            --generated-file "$GENERATED_PATH" \
+            --generated-path "$GENERATED_PATH" \
+            --lock "$LOCK_PATH"
+
   sdk:
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +326,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 scripts/test-sync-data-engine-openapi.py
+      - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py
       - run: npm --prefix packages/typescript test
       - run: python3 -m unittest discover -s packages/python/tests

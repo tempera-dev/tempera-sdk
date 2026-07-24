@@ -80,6 +80,9 @@ def validate(surface: dict) -> list[str]:
                         f"{label}: must reject principal-derived fields "
                         f"{sorted(missing_principal_fields)}"
                     )
+            scope = op.get("scope")
+            if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
+                problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
             required_body = set(op.get("requiredBody", []))
             body = set(op.get("body", []))
             if not required_body.issubset(body):
@@ -101,6 +104,12 @@ def validate(surface: dict) -> list[str]:
             problems.append(f"mcp {method.get('id')}: description must end with a period")
     if surface["defaultAudience"] not in surface["audiences"]:
         problems.append("defaultAudience is not a registered audience")
+    for scope, gap in surface.get("scopeGaps", {}).items():
+        if scope in surface["scopes"]:
+            problems.append(f"scope gap {scope!r} is already registered")
+        for field in ("owner", "reportedDate", "status", "migration"):
+            if not gap.get(field):
+                problems.append(f"scope gap {scope!r} lacks {field}")
     env_keys = None
     for env_name, target in surface["environments"].items():
         keys = sorted(target)

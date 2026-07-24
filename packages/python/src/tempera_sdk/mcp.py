@@ -9,10 +9,9 @@ package; the Rust crate exposes JSON-RPC body builders instead.
 
 from __future__ import annotations
 
-import json
 from typing import Any, Mapping
 
-from .auth import TemperaAuth, Transport, _default_transport
+from .auth import TemperaAuth, Transport, _default_transport, _encode_json
 from .errors import TemperaApiError, TemperaMcpError, TemperaSdkError, _with_context
 from .surface import MCP_GATEWAY
 
@@ -59,7 +58,7 @@ class TemperaMcpClient:
             "authorization": f"Bearer {self._resolve_bearer()}",
         }
         try:
-            parsed = self.transport("POST", self.url, headers, json.dumps(payload).encode("utf-8"))
+            parsed = self.transport("POST", self.url, headers, _encode_json(payload))
         except TemperaApiError as error:
             raise _with_context(error, "mcpGateway", method) from None
         if isinstance(parsed, Mapping) and parsed.get("error"):
@@ -79,7 +78,7 @@ class TemperaMcpClient:
             raise TemperaMcpError(str(error), code=0, data=None)
         return parsed.get("result") if isinstance(parsed, Mapping) else None
 
-    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.5.0") -> Any:
+    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.9.0") -> Any:
         """Open an MCP session and fetch server capabilities and instructions."""
         return self.rpc(
             "initialize",

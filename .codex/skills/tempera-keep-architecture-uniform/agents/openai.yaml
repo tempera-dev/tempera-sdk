@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tempera Architecture Guard"
+  short_description: "Preserve ownership and architecture uniformity"
+  default_prompt: "Use $tempera-keep-architecture-uniform to verify a Tempera change respects service ownership and shared architecture."

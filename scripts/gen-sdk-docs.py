@@ -208,6 +208,8 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     lines.append(f"- **Auth:** {auth_label(surface, product_key, op)}")
     if op.get("scope"):
         lines.append(f"- **Scope:** `{op['scope']}`")
+        if op["scope"] in surface.get("scopeGaps", {}):
+            lines.append("- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).")
     lines.append(
         f"- **Call as:** TypeScript `client.{product_key}.{op['id']}()` · "
         f"Python `client.{snake_attr(product_key)}.{op_snake}()` · "
@@ -659,6 +661,19 @@ def render_authentication(surface: dict) -> str:
         else:
             used_by = "No typed SDK operation declares it yet; enforced server-side."
         lines.append(f"| `{scope}` | {used_by} |")
+    gaps = surface.get("scopeGaps", {})
+    if gaps:
+        lines += ["", "## Known scope gaps", ""]
+        for scope, gap in sorted(gaps.items()):
+            lines += [
+                f"### `{scope}`",
+                "",
+                f"- **Status:** {gap['status']}.",
+                f"- **Owner:** {gap['owner']}.",
+                f"- **Reported:** {gap['reportedDate']}.",
+                f"- **Migration:** {gap['migration']}",
+                "",
+            ]
     lines += [
         "",
         "## Issuer endpoints",
@@ -906,7 +921,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.5.0");\n'
+        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.9.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
         'let (id, body) = mcp.call_tool_body("tempera_search", Some(serde_json::json!({"query": "browser capability"})));\n'
         "let (id, body) = mcp.whoami_body();\n"

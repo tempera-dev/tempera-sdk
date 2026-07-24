@@ -17,12 +17,11 @@ operation names, the same descriptions, and the same error shape.
 
 from __future__ import annotations
 
-import json
 import os
 import re
 from typing import Any, Mapping
 
-from .auth import TemperaAuth, Transport, _default_transport
+from .auth import TemperaAuth, Transport, _default_transport, _encode_json
 from .errors import TemperaApiError, TemperaSdkError, _with_context
 from .surface import DEFAULT_AUDIENCE, ENVIRONMENTS, OPERATIONS, PRODUCTS
 from urllib import parse as urllib_parse
@@ -220,7 +219,7 @@ class TemperaClient:
             request_headers["authorization"] = f"Bearer {bearer}"
         if headers:
             request_headers.update(headers)
-        data = json.dumps(body).encode("utf-8") if body is not None else None
+        data = _encode_json(body) if body is not None else None
         try:
             return self._transport(method, url, request_headers, data)
         except TemperaApiError as error:

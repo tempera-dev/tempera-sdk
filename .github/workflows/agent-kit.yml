@@ -1,0 +1,60 @@
+name: agent-kit
+
+on:
+  pull_request:
+    paths:
+      - ".codex/skills/tempera-*/**"
+      - ".tempera/agent-kit/**"
+      - ".tempera/agent-kit.lock.json"
+      - "AGENTS.md"
+      - "scripts/sync-agent-kit.py"
+      - ".github/workflows/agent-kit.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".codex/skills/tempera-*/**"
+      - ".tempera/agent-kit/**"
+      - ".tempera/agent-kit.lock.json"
+      - "AGENTS.md"
+      - "scripts/sync-agent-kit.py"
+      - ".github/workflows/agent-kit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  exact-source-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: main
+          fetch-depth: 0
+          path: .agent-kit-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - name: Verify exact committed agent-kit source
+        shell: bash
+        run: |
+          kit_source_commit="$(python3 -c 'import json; print(json.load(open(".tempera/agent-kit.lock.json"))["source"]["commit"])')"
+          python3 scripts/sync-agent-kit.py \
+            --mode check \
+            --source-dir .agent-kit-source/agent-kit \
+            --repo-root . \
+            --source-repo tempera-dev/auth-hub \
+            --source-branch main \
+            --source-commit "$kit_source_commit"

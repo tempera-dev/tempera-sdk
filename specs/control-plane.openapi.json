@@ -10,7 +10,7 @@
       "url": "{TEMPERA_CONTROL_PLANE_URL}",
       "variables": {
         "TEMPERA_CONTROL_PLANE_URL": {
-          "default": "http://localhost:8787"
+          "default": "http://localhost:4400"
         }
       }
     }
@@ -36,7 +36,9 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["ok"],
+                  "required": [
+                    "ok"
+                  ],
                   "properties": {
                     "ok": {
                       "type": "boolean",
@@ -57,13 +59,82 @@
         }
       }
     },
+    "/readyz": {
+      "get": {
+        "operationId": "getReadiness",
+        "summary": "Readiness probe for durable control-plane storage.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Configured durable storage is reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["ok", "storage"],
+                  "properties": {
+                    "ok": { "type": "boolean", "const": true },
+                    "storage": {
+                      "type": "string",
+                      "enum": ["reachable", "ephemeral"]
+                    },
+                    "deployment_mode": {
+                      "$ref": "#/components/schemas/DeploymentMode"
+                    },
+                    "deployment_organization_id": {
+                      "type": "string",
+                      "description": "Pinned organization id, present only in single_tenant / pinned vpc deployments."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Durable storage is unavailable",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me": {
       "get": {
         "operationId": "getMe",
         "summary": "Return the current authenticated principal and active workspace context.",
+        "parameters": [
+          {
+            "name": "X-Tempera-Reference-Request-Id",
+            "in": "header",
+            "required": false,
+            "description": "Platform-staff-only reference-load marker. When a platform staff principal supplies this header, it must be a UUID and the serving runtime must have complete source, machine, and image provenance.",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Current principal",
+            "headers": {
+              "X-Tempera-Reference-Request-Id": {
+                "description": "Staff-only reference-load echo when the request supplies a reference request identity.",
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "X-Tempera-Source-Commit": {
+                "description": "Staff-only serving source SHA for a reference-load request.",
+                "schema": { "type": "string", "pattern": "^[a-f0-9]{40}$" }
+              },
+              "X-Tempera-Machine-Id": {
+                "description": "Staff-only serving machine identity for a reference-load request.",
+                "schema": { "type": "string" }
+              },
+              "X-Tempera-Image-Ref-Sha256": {
+                "description": "Staff-only SHA-256 of the serving immutable image reference.",
+                "schema": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -74,6 +145,22 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
+          },
+          "400": {
+            "description": "A platform staff principal supplied an invalid X-Tempera-Reference-Request-Id header.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "503": {
+            "description": "A platform staff reference-load request cannot be served because runtime source, machine, or image provenance is incomplete.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
           }
         }
       }
@@ -564,6 +651,176 @@
         }
       }
     },
+    "/provider-connections": {
+      "get": {
+        "operationId": "providerConnections.list",
+        "summary": "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
+        "responses": {
+          "200": {
+            "description": "Provider connection metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderConnection"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      },
+      "post": {
+        "operationId": "providerConnections.create",
+        "summary": "Create a tenant-scoped provider connection using only an external secret reference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProviderConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Provider connection created without exposing its secret reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderConnection"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "409": {
+            "description": "A connection already uses the requested name in this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/provider-connections/{id}": {
+      "delete": {
+        "operationId": "providerConnections.revoke",
+        "summary": "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Provider connection revoked or already absent"
+          }
+        }
+      }
+    },
+    "/provider-connections/{id}:rotate": {
+      "post": {
+        "operationId": "providerConnections.rotate",
+        "summary": "Replace a connection secret reference and increment its revision without exposing the reference.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RotateProviderConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider connection rotated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderConnection"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/provider-connections/{id}:resolve": {
+      "post": {
+        "operationId": "providerConnections.resolve",
+        "summary": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveProviderConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Runtime-only connection metadata including the external secret reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolvedProviderConnection"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "410": {
+            "description": "Provider connection is revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/audit-log": {
       "get": {
         "operationId": "listAuditLog",
@@ -708,7 +965,21 @@
             "description": "Payment rail or accepted alias. Defaults to stripe.",
             "schema": {
               "type": "string",
-              "enum": ["stripe", "card", "cards", "fiat", "invoice", "invoicing", "currency", "wire", "wire_transfer", "crypto", "blockchain", "onchain", "on_chain"],
+              "enum": [
+                "stripe",
+                "card",
+                "cards",
+                "fiat",
+                "invoice",
+                "invoicing",
+                "currency",
+                "wire",
+                "wire_transfer",
+                "crypto",
+                "blockchain",
+                "onchain",
+                "on_chain"
+              ],
               "default": "stripe"
             }
           },
@@ -718,7 +989,12 @@
             "description": "Billing plan identifier. plan_id is also accepted by the server and SDK.",
             "schema": {
               "type": "string",
-              "enum": ["starter_trial", "platform", "business", "enterprise"],
+              "enum": [
+                "starter_trial",
+                "platform",
+                "business",
+                "enterprise"
+              ],
               "default": "platform"
             }
           },
@@ -728,7 +1004,12 @@
             "description": "Billing plan identifier alias used by SDK clients.",
             "schema": {
               "type": "string",
-              "enum": ["starter_trial", "platform", "business", "enterprise"]
+              "enum": [
+                "starter_trial",
+                "platform",
+                "business",
+                "enterprise"
+              ]
             }
           },
           {
@@ -737,7 +1018,16 @@
             "description": "Settlement currency for the selected rail.",
             "schema": {
               "type": "string",
-              "enum": ["usd", "eur", "gbp", "usdc", "usdt", "eth", "btc", "sol"]
+              "enum": [
+                "usd",
+                "eur",
+                "gbp",
+                "usdc",
+                "usdt",
+                "eth",
+                "btc",
+                "sol"
+              ]
             }
           },
           {
@@ -746,7 +1036,12 @@
             "description": "Blockchain network for crypto settlement rails.",
             "schema": {
               "type": "string",
-              "enum": ["base", "ethereum", "solana", "bitcoin"]
+              "enum": [
+                "base",
+                "ethereum",
+                "solana",
+                "bitcoin"
+              ]
             }
           }
         ],
@@ -804,7 +1099,7 @@
     "/billing/credits": {
       "get": {
         "operationId": "getBillingCredits",
-        "summary": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users.",
+        "summary": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
         "responses": {
           "200": {
             "description": "Credit wallet",
@@ -944,6 +1239,200 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage/reservations": {
+      "post": {
+        "operationId": "usageReservations.create",
+        "summary": "Atomically reserve the maximum model cost before starting a provider request.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageReservationCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Maximum model cost admitted and reserved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageReservationResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Entitlement, plan, or credit budget rejected admission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "409": {
+            "description": "Idempotency key was already used for different admission parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage/reservations/{reservation_id}:commit": {
+      "post": {
+        "operationId": "usageReservations.commit",
+        "summary": "Commit exact provider usage against an admitted reservation and release unused capacity.",
+        "parameters": [
+          {
+            "name": "reservation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageReservationCommitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation committed idempotently",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageReservationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "409": {
+            "description": "Reservation state or exact usage conflicts with a prior commit or release",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage/reservations/{reservation_id}:release": {
+      "post": {
+        "operationId": "usageReservations.release",
+        "summary": "Release unused capacity after provider failure or cancellation.",
+        "parameters": [
+          {
+            "name": "reservation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceBinding"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation released idempotently",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageReservationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          },
+          "409": {
+            "description": "Committed reservation cannot be released",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage/reservations/{reservation_id}:reconcile": {
+      "post": {
+        "operationId": "usageReservations.reconcile",
+        "summary": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
+        "parameters": [
+          {
+            "name": "reservation_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UsageReservationReconcileRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation marked reconciliation-pending idempotently",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UsageReservationResponse" }
+              }
+            }
+          },
+          "403": { "$ref": "#/components/responses/MissingScope" },
+          "409": {
+            "description": "Reservation state, config identity, or prior reconciliation evidence conflicts",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
@@ -1199,7 +1688,7 @@
       "post": {
         "operationId": "invokeMcpGateway",
         "summary": "Unified Tempera MCP gateway. Accepts one stateless JSON-RPC 2.0 message per request.",
-        "description": "Requires a bearer token minted for the tempera-mcp audience with the mcp:invoke scope. Product tools are namespaced (palette_*, tempo_*, cradle_*, remi_*) and metered against the organization's plan. Notifications return 202 with no body. Non-POST requests are rejected with 405.",
+        "description": "Requires a bearer token minted for the tempera-mcp audience with the mcp:invoke scope. Auth Hub validates the caller and transparently proxies the request to the private Rust capability fabric; discovery and execution use the fabric's fixed tempera_* tools rather than product-namespaced tools. Notifications and protocol responses are produced by the fabric. Non-POST requests are rejected with 405.",
         "security": [
           {
             "bearerAuth": []
@@ -1374,6 +1863,331 @@
           }
         }
       }
+    },
+    "/admin/operations/provenance": {
+      "get": {
+        "operationId": "adminOperationalProvenance",
+        "summary": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
+        "responses": {
+          "200": {
+            "description": "Serving runtime provenance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["source_commit", "machine_id", "image_ref_sha256"],
+                  "properties": {
+                    "source_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+                    "machine_id": { "type": "string" },
+                    "image_ref_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/MissingScope" },
+          "503": {
+            "description": "Serving runtime provenance is incomplete",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/step-up": {
+      "post": {
+        "operationId": "adminStepUp",
+        "summary": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminStepUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Elevated step-up token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStepUpResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/admin/billing/credits/adjust": {
+      "post": {
+        "operationId": "adminAdjustCredits",
+        "summary": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreditAdjustRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Adjustment applied (or deduplicated)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreditAdjustResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credit_micros or request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "description": "Platform staff or a fresh step-up is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/billing/orgs": {
+      "get": {
+        "operationId": "adminBillingOrgs",
+        "summary": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
+        "responses": {
+          "200": {
+            "description": "Per-org internal billing rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBillingOrgs"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/MissingScope"
+          }
+        }
+      }
+    },
+    "/billing/rails/coinbase/webhook": {
+      "post": {
+        "operationId": "receiveCoinbaseCommerceWebhook",
+        "summary": "Receive a Coinbase Commerce webhook and, on a signed confirmed/resolved charge, fund the org credit wallet. Replays are deduplicated by charge id.",
+        "parameters": [
+          {
+            "name": "x-cc-webhook-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "HMAC-SHA256 signature of the raw body using the shared webhook secret."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RailWebhookReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Webhook payload is not valid JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Webhook signature verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Coinbase Commerce is not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/rails/paypal/webhook": {
+      "post": {
+        "operationId": "receivePaypalWebhook",
+        "summary": "Receive a PayPal webhook and, on a signature-verified PAYMENT.CAPTURE.COMPLETED, fund the org credit wallet.",
+        "parameters": [
+          {
+            "name": "paypal-auth-algo",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paypal-cert-url",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paypal-transmission-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paypal-transmission-sig",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paypal-transmission-time",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RailWebhookReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Webhook payload is not valid JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Webhook signature verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PayPal is not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1464,7 +2278,14 @@
     "schemas": {
       "Me": {
         "type": "object",
-        "required": ["sub", "email", "org_id", "project_id", "environment_id", "roles"],
+        "required": [
+          "sub",
+          "email",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "roles"
+        ],
         "properties": {
           "sub": {
             "type": "string"
@@ -1492,7 +2313,10 @@
       },
       "Organization": {
         "type": "object",
-        "required": ["org_id", "name"],
+        "required": [
+          "org_id",
+          "name"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -1504,7 +2328,11 @@
       },
       "Project": {
         "type": "object",
-        "required": ["org_id", "project_id", "name"],
+        "required": [
+          "org_id",
+          "project_id",
+          "name"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -1519,7 +2347,11 @@
       },
       "Environment": {
         "type": "object",
-        "required": ["project_id", "environment_id", "name"],
+        "required": [
+          "project_id",
+          "environment_id",
+          "name"
+        ],
         "properties": {
           "project_id": {
             "type": "string"
@@ -1534,16 +2366,32 @@
       },
       "Scope": {
         "type": "string",
-        "enum": ["mcp:invoke", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "model:read", "model:invoke", "pii:unmask", "admin"]
+        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
+      },
+      "ApiKeyScope": {
+        "type": "string",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, and training:publish are intentionally excluded.",
+        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
       },
       "ResourceAudience": {
         "type": "string",
         "description": "Registered Tempera resource audience.",
-        "enum": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm"]
+        "enum": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]
       },
       "TokenClaims": {
         "type": "object",
-        "required": ["iss", "aud", "sub", "org_id", "project_id", "environment_id", "scope", "exp", "iat", "jti"],
+        "required": [
+          "iss",
+          "aud",
+          "sub",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scope",
+          "exp",
+          "iat",
+          "jti"
+        ],
         "properties": {
           "iss": {
             "type": "string",
@@ -1596,7 +2444,9 @@
       },
       "CreateOrganizationRequest": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -1606,11 +2456,17 @@
       },
       "SessionRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "properties": {
           "mode": {
             "type": "string",
-            "enum": ["login", "signup"],
+            "enum": [
+              "login",
+              "signup"
+            ],
             "default": "login",
             "description": "Any value other than signup is treated as login."
           },
@@ -1635,7 +2491,11 @@
       },
       "WorkspaceSelectionRequest": {
         "type": "object",
-        "required": ["org_id", "project_id", "environment_id"],
+        "required": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -1650,28 +2510,58 @@
       },
       "AccountSession": {
         "type": "object",
-        "required": ["session_id", "org_id", "project_id", "environment_id", "organization_name", "project_name", "environment_name", "created_at", "updated_at", "expires_at", "revoked_at"],
+        "required": [
+          "session_id",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "organization_name",
+          "project_name",
+          "environment_name",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "revoked_at"
+        ],
         "properties": {
           "session_id": {
             "type": "string"
           },
           "org_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "project_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "environment_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "organization_name": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "project_name": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "environment_name": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "created_at": {
             "type": "string",
@@ -1686,18 +2576,36 @@
             "format": "date-time"
           },
           "revoked_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
       },
       "TeamRole": {
         "type": "string",
-        "enum": ["owner", "admin", "member", "developer", "reviewer", "billing", "viewer"]
+        "enum": [
+          "owner",
+          "admin",
+          "member",
+          "developer",
+          "reviewer",
+          "billing",
+          "viewer"
+        ]
       },
       "TeamMember": {
         "type": "object",
-        "required": ["member_id", "org_id", "email", "role", "status", "joined_at"],
+        "required": [
+          "member_id",
+          "org_id",
+          "email",
+          "role",
+          "status",
+          "joined_at"
+        ],
         "properties": {
           "member_id": {
             "type": "string"
@@ -1706,7 +2614,10 @@
             "type": "string"
           },
           "user_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "email": {
             "type": "string",
@@ -1717,7 +2628,9 @@
           },
           "status": {
             "type": "string",
-            "enum": ["active"]
+            "enum": [
+              "active"
+            ]
           },
           "joined_at": {
             "type": "string",
@@ -1731,7 +2644,9 @@
       },
       "UpdateTeamMemberRequest": {
         "type": "object",
-        "required": ["role"],
+        "required": [
+          "role"
+        ],
         "properties": {
           "role": {
             "$ref": "#/components/schemas/TeamRole"
@@ -1740,7 +2655,10 @@
       },
       "CreateInviteRequest": {
         "type": "object",
-        "required": ["email", "role"],
+        "required": [
+          "email",
+          "role"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -1753,7 +2671,16 @@
       },
       "Invite": {
         "type": "object",
-        "required": ["invite_id", "org_id", "email", "role", "status", "invited_by", "created_at", "expires_at"],
+        "required": [
+          "invite_id",
+          "org_id",
+          "email",
+          "role",
+          "status",
+          "invited_by",
+          "created_at",
+          "expires_at"
+        ],
         "properties": {
           "invite_id": {
             "type": "string"
@@ -1770,13 +2697,21 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "cancelled", "accepted", "expired"]
+            "enum": [
+              "pending",
+              "cancelled",
+              "accepted",
+              "expired"
+            ]
           },
           "invited_by": {
             "type": "string"
           },
           "accepted_by": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "created_at": {
             "type": "string",
@@ -1787,7 +2722,10 @@
             "format": "date-time"
           },
           "accepted_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "cancelled_at": {
@@ -1803,7 +2741,10 @@
       },
       "CreateProjectRequest": {
         "type": "object",
-        "required": ["org_id", "name"],
+        "required": [
+          "org_id",
+          "name"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -1816,7 +2757,10 @@
       },
       "CreateEnvironmentRequest": {
         "type": "object",
-        "required": ["project_id", "name"],
+        "required": [
+          "project_id",
+          "name"
+        ],
         "properties": {
           "project_id": {
             "type": "string"
@@ -1829,7 +2773,12 @@
       },
       "CreateApiKeyRequest": {
         "type": "object",
-        "required": ["org_id", "project_id", "environment_id", "scopes"],
+        "required": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scopes"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -1847,7 +2796,7 @@
           "scopes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Scope"
+              "$ref": "#/components/schemas/ApiKeyScope"
             },
             "minItems": 1
           },
@@ -1865,7 +2814,14 @@
       },
       "ApiKey": {
         "type": "object",
-        "required": ["api_key_id", "org_id", "project_id", "environment_id", "scopes", "created_at"],
+        "required": [
+          "api_key_id",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scopes",
+          "created_at"
+        ],
         "properties": {
           "api_key_id": {
             "type": "string"
@@ -1894,7 +2850,7 @@
           "scopes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Scope"
+              "$ref": "#/components/schemas/ApiKeyScope"
             }
           },
           "created_at": {
@@ -1902,7 +2858,10 @@
             "format": "date-time"
           },
           "expires_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "rotated_at": {
@@ -1910,14 +2869,25 @@
             "format": "date-time"
           },
           "revoked_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
       },
       "CreatedApiKey": {
         "type": "object",
-        "required": ["api_key_id", "secret", "org_id", "project_id", "environment_id", "scopes", "created_at"],
+        "required": [
+          "api_key_id",
+          "secret",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scopes",
+          "created_at"
+        ],
         "properties": {
           "api_key_id": {
             "type": "string"
@@ -1949,7 +2919,7 @@
           "scopes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Scope"
+              "$ref": "#/components/schemas/ApiKeyScope"
             }
           },
           "created_at": {
@@ -1957,7 +2927,10 @@
             "format": "date-time"
           },
           "expires_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "rotated_at": {
@@ -1965,14 +2938,133 @@
             "format": "date-time"
           },
           "revoked_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
       },
+      "ProviderConnectionProvider": {
+        "type": "string",
+        "enum": ["openai", "anthropic", "nvidia", "glm", "kimi", "codex"]
+      },
+      "ProviderConnectionSecretBackend": {
+        "type": "string",
+        "enum": ["env", "vault", "aws-secretsmanager", "gcp-secretmanager", "azure-keyvault"]
+      },
+      "ProviderConnectionSecretRef": {
+        "type": "string",
+        "minLength": 7,
+        "maxLength": 512,
+        "pattern": "^(env|vault|aws-secretsmanager|gcp-secretmanager|azure-keyvault)://[^?#@\\u0000-\\u001F\\u007F]+$",
+        "description": "Reference to externally managed secret material. This is not a provider credential value."
+      },
+      "ProviderConnectionAllowedModels": {
+        "type": "array",
+        "maxItems": 128,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "CreateProviderConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["org_id", "project_id", "environment_id", "provider", "name", "secret_ref"],
+        "properties": {
+          "org_id": { "type": "string" },
+          "project_id": { "type": "string" },
+          "environment_id": { "type": "string" },
+          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
+          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" }
+        }
+      },
+      "RotateProviderConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["secret_ref"],
+        "properties": {
+          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
+          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" }
+        }
+      },
+      "ResolveProviderConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["org_id", "project_id", "environment_id", "usage_delegation"],
+        "properties": {
+          "org_id": { "type": "string" },
+          "project_id": { "type": "string" },
+          "environment_id": { "type": "string" },
+          "usage_delegation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192,
+            "description": "Short-lived Auth-signed caller delegation returned by token introspection and bound to this workspace."
+          }
+        }
+      },
+      "ProviderConnection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connection_id", "org_id", "project_id", "environment_id", "provider", "name",
+          "secret_backend", "secret_configured", "allowed_models", "revision", "state",
+          "created_at", "updated_at", "last_resolved_at", "revoked_at"
+        ],
+        "properties": {
+          "connection_id": { "type": "string" },
+          "org_id": { "type": "string" },
+          "project_id": { "type": "string" },
+          "environment_id": { "type": "string" },
+          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
+          "name": { "type": "string" },
+          "secret_backend": { "$ref": "#/components/schemas/ProviderConnectionSecretBackend" },
+          "secret_configured": { "type": "boolean", "const": true },
+          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" },
+          "revision": { "type": "integer", "minimum": 1 },
+          "state": { "type": "string", "enum": ["active", "revoked"] },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "last_resolved_at": { "type": ["string", "null"], "format": "date-time" },
+          "revoked_at": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
+      "ResolvedProviderConnection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connection_id", "org_id", "project_id", "environment_id", "provider",
+          "secret_ref", "secret_backend", "allowed_models", "revision"
+        ],
+        "properties": {
+          "connection_id": { "type": "string" },
+          "org_id": { "type": "string" },
+          "project_id": { "type": "string" },
+          "environment_id": { "type": "string" },
+          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
+          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
+          "secret_backend": { "$ref": "#/components/schemas/ProviderConnectionSecretBackend" },
+          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" },
+          "revision": { "type": "integer", "minimum": 1 }
+        }
+      },
       "AuditEvent": {
         "type": "object",
-        "required": ["id", "actor", "action", "at", "summary", "metadata"],
+        "required": [
+          "id",
+          "actor",
+          "action",
+          "at",
+          "summary",
+          "metadata"
+        ],
         "properties": {
           "id": {
             "type": "string"
@@ -1999,7 +3091,12 @@
       },
       "Connector": {
         "type": "object",
-        "required": ["id", "name", "kind", "default_scopes"],
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "default_scopes"
+        ],
         "properties": {
           "id": {
             "type": "string"
@@ -2009,7 +3106,14 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["remote_mcp", "cli_mcp", "editor_mcp", "cli_api", "browser", "api"]
+            "enum": [
+              "remote_mcp",
+              "cli_mcp",
+              "editor_mcp",
+              "cli_api",
+              "browser",
+              "api"
+            ]
           },
           "default_scopes": {
             "type": "array",
@@ -2021,14 +3125,23 @@
       },
       "ConnectorStatus": {
         "type": "object",
-        "required": ["id", "status"],
+        "required": [
+          "id",
+          "status"
+        ],
         "properties": {
           "id": {
             "type": "string"
           },
           "status": {
             "type": "string",
-            "enum": ["connected", "expired", "missing_permission", "revoked", "misconfigured"]
+            "enum": [
+              "connected",
+              "expired",
+              "missing_permission",
+              "revoked",
+              "misconfigured"
+            ]
           },
           "missing_scopes": {
             "type": "array",
@@ -2040,18 +3153,34 @@
       },
       "Product": {
         "type": "object",
-        "required": ["id", "name", "kind", "default_scopes", "setup_path"],
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "default_scopes",
+          "setup_path"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "enum": ["palette", "tempo", "human-data", "tempera-code"]
+            "enum": [
+              "palette",
+              "tempo",
+              "human-data",
+              "tempera-code"
+            ]
           },
           "name": {
             "type": "string"
           },
           "kind": {
             "type": "string",
-            "enum": ["observability", "browser", "labeling", "agent_orchestration"]
+            "enum": [
+              "observability",
+              "browser",
+              "labeling",
+              "agent_orchestration"
+            ]
           },
           "default_scopes": {
             "type": "array",
@@ -2066,14 +3195,31 @@
       },
       "ProductStatus": {
         "type": "object",
-        "required": ["id", "status", "action", "entitlement", "entitlements", "signals", "usage"],
+        "required": [
+          "id",
+          "status",
+          "action",
+          "entitlement",
+          "entitlements",
+          "signals",
+          "usage"
+        ],
         "properties": {
           "id": {
             "type": "string"
           },
           "status": {
             "type": "string",
-            "enum": ["connected", "waiting_for_trace", "waiting_for_eval", "waiting_for_session", "waiting_for_model_request", "missing_permission", "limited", "misconfigured"]
+            "enum": [
+              "connected",
+              "waiting_for_trace",
+              "waiting_for_eval",
+              "waiting_for_session",
+              "waiting_for_model_request",
+              "missing_permission",
+              "limited",
+              "misconfigured"
+            ]
           },
           "action": {
             "type": "string"
@@ -2087,7 +3233,12 @@
           },
           "signals": {
             "type": "object",
-            "required": ["first_trace_received", "first_eval_run", "first_browser_session", "first_model_request"],
+            "required": [
+              "first_trace_received",
+              "first_eval_run",
+              "first_browser_session",
+              "first_model_request"
+            ],
             "properties": {
               "first_trace_received": {
                 "type": "boolean"
@@ -2114,28 +3265,52 @@
       },
       "BillingPlanPrice": {
         "type": "object",
-        "required": ["interval", "currency", "unit_amount"],
+        "required": [
+          "interval",
+          "currency",
+          "unit_amount"
+        ],
         "properties": {
           "interval": {
             "type": "string",
-            "enum": ["trial", "monthly", "annual", "custom"]
+            "enum": [
+              "trial",
+              "monthly",
+              "annual",
+              "custom"
+            ]
           },
           "currency": {
             "type": "string"
           },
           "unit_amount": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0
           }
         }
       },
       "BillingPlan": {
         "type": "object",
-        "required": ["plan_id", "name", "description", "prices", "included_usage", "entitlements"],
+        "required": [
+          "plan_id",
+          "name",
+          "description",
+          "prices",
+          "included_usage",
+          "entitlements"
+        ],
         "properties": {
           "plan_id": {
             "type": "string",
-            "enum": ["starter_trial", "platform", "business", "enterprise"]
+            "enum": [
+              "starter_trial",
+              "platform",
+              "business",
+              "enterprise"
+            ]
           },
           "name": {
             "type": "string"
@@ -2152,7 +3327,10 @@
           "included_usage": {
             "type": "object",
             "additionalProperties": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "minimum": 0
             }
           },
@@ -2164,15 +3342,32 @@
       },
       "BillingPaymentRail": {
         "type": "object",
-        "required": ["rail", "provider", "display_name", "methods", "currencies", "supports_checkout", "supports_portal", "status"],
+        "required": [
+          "rail",
+          "provider",
+          "display_name",
+          "methods",
+          "currencies",
+          "supports_checkout",
+          "supports_portal",
+          "status"
+        ],
         "properties": {
           "rail": {
             "type": "string",
-            "enum": ["stripe", "fiat", "crypto"]
+            "enum": [
+              "stripe",
+              "fiat",
+              "crypto"
+            ]
           },
           "provider": {
             "type": "string",
-            "enum": ["stripe", "control_plane_invoice", "blockchain_settlement"]
+            "enum": [
+              "stripe",
+              "control_plane_invoice",
+              "blockchain_settlement"
+            ]
           },
           "display_name": {
             "type": "string"
@@ -2193,7 +3388,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["base", "ethereum", "solana", "bitcoin"]
+              "enum": [
+                "base",
+                "ethereum",
+                "solana",
+                "bitcoin"
+              ]
             }
           },
           "supports_checkout": {
@@ -2204,13 +3404,19 @@
           },
           "status": {
             "type": "string",
-            "enum": ["configured", "manual_handoff"]
+            "enum": [
+              "configured",
+              "manual_handoff"
+            ]
           }
         }
       },
       "BillingPricing": {
         "type": "object",
-        "required": ["plans", "payment_rails"],
+        "required": [
+          "plans",
+          "payment_rails"
+        ],
         "properties": {
           "plans": {
             "type": "array",
@@ -2228,13 +3434,25 @@
       },
       "BillingStatus": {
         "type": "object",
-        "required": ["org_id", "customer", "plan", "subscription", "usage", "entitlements", "invoices", "pricing"],
+        "required": [
+          "org_id",
+          "customer",
+          "plan",
+          "subscription",
+          "usage",
+          "entitlements",
+          "invoices",
+          "pricing"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
           },
           "customer": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "stripe_customer_id": {
                 "type": "string"
@@ -2247,7 +3465,12 @@
           },
           "plan": {
             "type": "object",
-            "required": ["plan_id", "name", "status", "billing_interval"],
+            "required": [
+              "plan_id",
+              "name",
+              "status",
+              "billing_interval"
+            ],
             "properties": {
               "plan_id": {
                 "type": "string"
@@ -2257,11 +3480,21 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["trialing", "active", "past_due", "canceled", "cancelled", "incomplete"]
+                "enum": [
+                  "trialing",
+                  "active",
+                  "past_due",
+                  "canceled",
+                  "cancelled",
+                  "incomplete"
+                ]
               },
               "billing_interval": {
                 "type": "string",
-                "enum": ["monthly", "annual"]
+                "enum": [
+                  "monthly",
+                  "annual"
+                ]
               },
               "trial_ends_at": {
                 "type": "string",
@@ -2271,13 +3504,20 @@
           },
           "subscription": {
             "type": "object",
-            "required": ["status", "stripe_subscription_id", "current_period_end"],
+            "required": [
+              "status",
+              "stripe_subscription_id",
+              "current_period_end"
+            ],
             "properties": {
               "status": {
                 "type": "string"
               },
               "stripe_subscription_id": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "current_period_end": {
                 "type": "string",
@@ -2289,7 +3529,13 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["metric", "label", "used", "limit", "reset_at"],
+              "required": [
+                "metric",
+                "label",
+                "used",
+                "limit",
+                "reset_at"
+              ],
               "properties": {
                 "metric": {
                   "type": "string"
@@ -2302,7 +3548,10 @@
                   "minimum": 0
                 },
                 "limit": {
-                  "type": ["integer", "null"],
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
                   "minimum": 0
                 },
                 "reset_at": {
@@ -2318,11 +3567,23 @@
           },
           "entitlements": {
             "type": "object",
-            "required": ["status", "mcp", "tempo_browser", "evals", "model_gateway", "api_keys", "pii_unmask", "seats"],
+            "required": [
+              "status",
+              "mcp",
+              "tempo_browser",
+              "evals",
+              "model_gateway",
+              "api_keys",
+              "pii_unmask",
+              "seats"
+            ],
             "properties": {
               "status": {
                 "type": "string",
-                "enum": ["enabled", "limited"]
+                "enum": [
+                  "enabled",
+                  "limited"
+                ]
               },
               "mcp": {
                 "type": "boolean"
@@ -2343,7 +3604,10 @@
                 "type": "boolean"
               },
               "seats": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 1
               }
             }
@@ -2352,7 +3616,14 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["invoice_id", "status", "amount_due", "currency", "hosted_invoice_url", "created_at"],
+              "required": [
+                "invoice_id",
+                "status",
+                "amount_due",
+                "currency",
+                "hosted_invoice_url",
+                "created_at"
+              ],
               "properties": {
                 "invoice_id": {
                   "type": "string"
@@ -2367,7 +3638,10 @@
                   "type": "string"
                 },
                 "hosted_invoice_url": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "format": "uri"
                 },
                 "created_at": {
@@ -2384,7 +3658,18 @@
       },
       "ModelCatalogEntry": {
         "type": "object",
-        "required": ["id", "display_name", "kind", "routing_key", "status", "roles", "capabilities", "reasoning_efforts", "input_modalities", "output_modalities"],
+        "required": [
+          "id",
+          "display_name",
+          "kind",
+          "routing_key",
+          "status",
+          "roles",
+          "capabilities",
+          "reasoning_efforts",
+          "input_modalities",
+          "output_modalities"
+        ],
         "properties": {
           "id": {
             "type": "string"
@@ -2394,7 +3679,10 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["alias", "model"]
+            "enum": [
+              "alias",
+              "model"
+            ]
           },
           "provider": {
             "type": "string"
@@ -2413,27 +3701,42 @@
           },
           "status": {
             "type": "string",
-            "enum": ["available", "preview", "retiring", "unavailable"]
+            "enum": [
+              "available",
+              "preview",
+              "retiring",
+              "unavailable"
+            ]
           },
           "roles": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "capabilities": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "reasoning_efforts": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "input_modalities": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "output_modalities": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "context_window": {
             "type": "integer",
@@ -2443,7 +3746,11 @@
       },
       "ModelCatalog": {
         "type": "object",
-        "required": ["object", "audience", "models"],
+        "required": [
+          "object",
+          "audience",
+          "models"
+        ],
         "properties": {
           "object": {
             "type": "string",
@@ -2461,9 +3768,370 @@
           }
         }
       },
+      "WorkspaceBinding": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ModelCost": {
+        "type": "object",
+        "required": [
+          "provider_cost_micros",
+          "byok",
+          "provider",
+          "model"
+        ],
+        "properties": {
+          "provider_cost_micros": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Exact micro-USD charged by the provider for this request."
+          },
+          "byok": {
+            "type": "boolean"
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "model": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "input_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cache_read_tokens": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "UsageSubjectIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subject_id",
+          "credential_type",
+          "credential_id",
+          "client_id",
+          "audience",
+          "scopes",
+          "expires_at"
+        ],
+        "properties": {
+          "subject_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "credential_type": {
+            "type": "string",
+            "enum": ["access_token", "api_key", "static_token", "anonymous"]
+          },
+          "credential_id": {
+            "type": ["string", "null"],
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Introspected access-token jti or API-key id; null only for explicit static/anonymous development modes."
+          },
+          "client_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "audience": { "type": "string", "enum": ["tempera-llm", "tempera-code"] },
+          "scopes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+          },
+          "expires_at": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "Unix expiry checked by the gateway; required for access-token subjects."
+          },
+          "delegation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192,
+            "description": "Short-lived Auth-signed usage delegation. Required whenever subject is supplied; validated and never persisted."
+          }
+        },
+        "description": "Original caller identity cryptographically delegated by Auth token introspection. The reservation's internal actor_id/api_key_id independently preserve the reporting credential."
+      },
+      "UsageReservationCreateRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WorkspaceBinding"
+          },
+          {
+            "type": "object",
+            "required": [
+              "idempotency_key",
+              "provider",
+              "model",
+              "config_id",
+              "byok",
+              "maximum_provider_cost_micros"
+            ],
+            "properties": {
+              "subject": {
+                "$ref": "#/components/schemas/UsageSubjectIdentity",
+                "description": "Signed original-caller identity. Omission records the authenticated reporting credential itself and cannot assert a different actor."
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "config_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "description": "Immutable provider adapter/config identity; never a secret value."
+              },
+              "byok": {
+                "type": "boolean"
+              },
+              "maximum_provider_cost_micros": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum provider cost calculated by tempera-llm for the admitted request."
+              },
+              "ttl_seconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 300,
+                "default": 180
+              }
+            }
+          }
+        ]
+      },
+      "UsageReservationCommitRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WorkspaceBinding"
+          },
+          {
+            "type": "object",
+            "required": [
+              "config_id",
+              "cost"
+            ],
+            "properties": {
+              "config_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "cost": {
+                "$ref": "#/components/schemas/ModelCost"
+              }
+            }
+          }
+        ]
+      },
+      "UsageReservationReconcileRequest": {
+        "allOf": [
+          { "$ref": "#/components/schemas/WorkspaceBinding" },
+          {
+            "type": "object",
+            "required": ["config_id", "reason", "observed_usage"],
+            "properties": {
+              "config_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+              "reason": {
+                "type": "string",
+                "enum": ["execution_started", "missing_terminal_usage", "stream_interrupted", "settlement_pending", "settlement_unavailable"]
+              },
+              "trace_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+              "observed_usage": { "$ref": "#/components/schemas/ObservedProviderUsage" },
+              "expected_cost": {
+                "$ref": "#/components/schemas/ModelCost",
+                "description": "Required only for settlement_pending; binds the later commit to these exact counters and provider cost."
+              }
+            }
+          }
+        ]
+      },
+      "ObservedProviderUsage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["input_tokens", "output_tokens", "cache_read_tokens"],
+        "properties": {
+          "input_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+          "output_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+          "cache_read_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 }
+        }
+      },
+      "UsageReconciliationEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reason", "observed_usage", "trace_id"],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": ["execution_started", "missing_terminal_usage", "stream_interrupted", "settlement_pending", "settlement_unavailable", "budget_overshoot_insufficient_credits"]
+          },
+          "observed_usage": { "$ref": "#/components/schemas/ObservedProviderUsage" },
+          "trace_id": { "type": "string" },
+          "expected_commit_digest": { "type": "string" }
+        }
+      },
+      "UsageReservationResponse": {
+        "type": "object",
+        "required": [
+          "reservation_id",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "subject",
+          "provider",
+          "model",
+          "config_id",
+          "byok",
+          "maximum_provider_cost_micros",
+          "maximum_billable_micros",
+          "state",
+          "policy_version",
+          "created_at",
+          "expires_at",
+          "deduplicated",
+          "budget_overshot",
+          "reconciliation_required_at"
+        ],
+        "properties": {
+          "reservation_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/UsageSubjectIdentity"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "config_id": {
+            "type": "string"
+          },
+          "byok": {
+            "type": "boolean"
+          },
+          "maximum_provider_cost_micros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maximum_billable_micros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "reconciliation_pending",
+              "committed",
+              "released",
+              "expired"
+            ]
+          },
+          "policy_version": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "committed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "released_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "event_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deduplicated": {
+            "type": "boolean"
+          },
+          "budget_overshot": {
+            "type": "boolean"
+          },
+          "reconciliation_required_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "reconciliation": {
+            "$ref": "#/components/schemas/UsageReconciliationEvidence"
+          },
+          "credit": {
+            "$ref": "#/components/schemas/Credit"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/CreditWallet"
+          }
+        }
+      },
       "UsageEventRequest": {
         "type": "object",
-        "required": ["org_id", "project_id", "environment_id", "metric"],
+        "required": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "metric"
+        ],
         "properties": {
           "org_id": {
             "type": "string"
@@ -2476,7 +4144,18 @@
           },
           "metric": {
             "type": "string",
-            "enum": ["mcp_invocations", "trace_events", "eval_runs", "browser_sessions", "pipeline_runs", "model_requests", "model_input_tokens", "model_output_tokens", "workflow_runs", "model_cost"]
+            "enum": [
+              "mcp_invocations",
+              "trace_events",
+              "eval_runs",
+              "browser_sessions",
+              "pipeline_runs",
+              "model_requests",
+              "model_input_tokens",
+              "model_output_tokens",
+              "workflow_runs",
+              "model_cost"
+            ]
           },
           "quantity": {
             "type": "integer",
@@ -2487,27 +4166,26 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 255,
-            "description": "Stable caller-provided event identity. Required for Tempera Code model and workflow usage and for all cost-bearing events; retries with the same payload are deduplicated durably."
+            "description": "Stable caller-provided event identity. Required for workflow_runs reports (from the tempera-workflows engine and the legacy Tempera Code path), for Tempera Code model usage, and for all cost-bearing events; retries with the same payload are deduplicated durably."
           },
           "cost": {
-            "type": "object",
-            "description": "Present on cost-bearing events (metric model_cost) reported by the tempera-llm gateway. The client sends provider cost; the control plane owns the multiplier. See docs/billing-credits-contract.md.",
-            "required": ["provider_cost_micros"],
-            "properties": {
-              "provider_cost_micros": { "type": "integer", "minimum": 0, "description": "Micro-USD the provider charges Tempera for this call." },
-              "byok": { "type": "boolean", "default": false, "description": "True when the customer supplied their own provider key; only the surcharge (cost*(multiplier-1)) is debited." },
-              "provider": { "type": "string" },
-              "model": { "type": "string" },
-              "input_tokens": { "type": "integer", "minimum": 0 },
-              "output_tokens": { "type": "integer", "minimum": 0 },
-              "cache_read_tokens": { "type": "integer", "minimum": 0 }
-            }
+            "description": "Present on cost-bearing legacy events during the reservation migration window.",
+            "$ref": "#/components/schemas/ModelCost"
           }
         }
       },
       "UsageEventResponse": {
         "type": "object",
-        "required": ["accepted", "event_id", "idempotency_key", "deduplicated", "metric", "quantity", "meter", "entitlements"],
+        "required": [
+          "accepted",
+          "event_id",
+          "idempotency_key",
+          "deduplicated",
+          "metric",
+          "quantity",
+          "meter",
+          "entitlements"
+        ],
         "properties": {
           "accepted": {
             "type": "boolean",
@@ -2517,7 +4195,10 @@
             "type": "string"
           },
           "idempotency_key": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "deduplicated": {
             "type": "boolean"
@@ -2531,7 +4212,13 @@
           },
           "meter": {
             "type": "object",
-            "required": ["metric", "label", "used", "limit", "reset_at"],
+            "required": [
+              "metric",
+              "label",
+              "used",
+              "limit",
+              "reset_at"
+            ],
             "properties": {
               "metric": {
                 "type": "string"
@@ -2544,7 +4231,10 @@
                 "minimum": 0
               },
               "limit": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0
               },
               "reset_at": {
@@ -2559,11 +4249,23 @@
           },
           "entitlements": {
             "type": "object",
-            "required": ["status", "mcp", "tempo_browser", "evals", "model_gateway", "api_keys", "pii_unmask", "seats"],
+            "required": [
+              "status",
+              "mcp",
+              "tempo_browser",
+              "evals",
+              "model_gateway",
+              "api_keys",
+              "pii_unmask",
+              "seats"
+            ],
             "properties": {
               "status": {
                 "type": "string",
-                "enum": ["enabled", "limited"]
+                "enum": [
+                  "enabled",
+                  "limited"
+                ]
               },
               "mcp": {
                 "type": "boolean"
@@ -2584,14 +4286,24 @@
                 "type": "boolean"
               },
               "seats": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 1
               }
             }
           },
           "credit": {
             "description": "Present when the event debited credits.",
-            "oneOf": [{ "$ref": "#/components/schemas/Credit" }, { "type": "null" }]
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Credit"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "wallet": {
             "description": "Wallet state after a cost-bearing event.",
@@ -2601,56 +4313,171 @@
       },
       "Credit": {
         "type": "object",
-        "required": ["billable_micros", "multiplier_millis", "byok"],
+        "required": [
+          "billable_micros",
+          "multiplier_millis",
+          "byok"
+        ],
         "properties": {
-          "billable_micros": { "type": "integer", "description": "Credit micro-USD debited from the wallet for this event." },
-          "multiplier_millis": { "type": "integer", "description": "Applied margin in milli-units (1200 metered, 200 BYOK surcharge)." },
-          "byok": { "type": "boolean" }
+          "billable_micros": {
+            "type": "integer",
+            "description": "Credit micro-USD debited from the wallet for this event."
+          },
+          "multiplier_millis": {
+            "type": "integer",
+            "description": "Applied margin in milli-units (1200 metered, 200 BYOK surcharge)."
+          },
+          "byok": {
+            "type": "boolean"
+          }
         }
       },
       "CreditWallet": {
         "type": "object",
-        "required": ["plan_id", "granted_micros", "used_micros", "balance_micros", "overage_micros", "overage_allowed"],
+        "required": [
+          "plan_id",
+          "granted_micros",
+          "used_micros",
+          "balance_micros",
+          "overage_micros",
+          "overage_allowed"
+        ],
         "properties": {
-          "plan_id": { "type": "string" },
-          "granted_micros": { "type": ["integer", "null"], "description": "Credits granted this period; null for unlimited (enterprise)." },
-          "used_micros": { "type": "integer" },
-          "balance_micros": { "type": ["integer", "null"], "description": "Remaining credits; null for unlimited plans." },
-          "overage_micros": { "type": "integer", "description": "Credits consumed past zero on overage-enabled plans, invoiced via Stripe." },
-          "overage_allowed": { "type": "boolean" },
-          "period_end": { "type": ["string", "null"], "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" }
+          "plan_id": {
+            "type": "string"
+          },
+          "granted_micros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Credits granted this period; null for unlimited (enterprise)."
+          },
+          "used_micros": {
+            "type": "integer"
+          },
+          "balance_micros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Remaining credits; null for unlimited plans."
+          },
+          "overage_micros": {
+            "type": "integer",
+            "description": "Credits consumed past zero on overage-enabled plans, invoiced via Stripe."
+          },
+          "overage_allowed": {
+            "type": "boolean"
+          },
+          "period_end": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreditLedgerEntry": {
         "type": "object",
-        "required": ["entry_id", "kind", "credit_micros"],
+        "required": [
+          "entry_id",
+          "kind",
+          "credit_micros"
+        ],
         "properties": {
-          "entry_id": { "type": "string" },
-          "kind": { "type": "string", "enum": ["grant", "debit", "overage", "adjustment"] },
-          "credit_micros": { "type": "integer", "description": "Signed: grants positive, debits negative." },
-          "metric": { "type": ["string", "null"] },
-          "provider_cost_micros": { "type": ["integer", "null"] },
-          "multiplier_millis": { "type": ["integer", "null"] },
-          "byok": { "type": ["boolean", "null"] },
-          "idempotency_key": { "type": ["string", "null"] },
-          "metadata": { "type": "object", "additionalProperties": true },
-          "recorded_at": { "type": "string", "format": "date-time" }
+          "entry_id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "grant",
+              "debit",
+              "overage",
+              "adjustment"
+            ]
+          },
+          "credit_micros": {
+            "type": "integer",
+            "description": "Signed: grants positive, debits negative."
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider_cost_micros": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "multiplier_millis": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "byok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "idempotency_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreditBalance": {
         "type": "object",
-        "required": ["org_id", "wallet", "multiplier_millis"],
+        "required": [
+          "org_id",
+          "wallet"
+        ],
         "properties": {
-          "org_id": { "type": "string" },
-          "wallet": { "$ref": "#/components/schemas/CreditWallet" },
-          "ledger": { "type": "array", "items": { "$ref": "#/components/schemas/CreditLedgerEntry" } },
-          "multiplier_millis": { "type": "integer" }
-        }
+          "org_id": {
+            "type": "string"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/CreditWallet"
+          },
+          "ledger": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLedgerEntry"
+            }
+          },
+          "multiplier_millis": {
+            "type": "integer",
+            "description": "Staff-only. Present only for platform-staff callers."
+          }
+        },
+        "description": "Org credit wallet. Redacted for non-staff callers (owner/admin/billing): the ledger entries omit provider_cost_micros/multiplier_millis/byok and the top-level multiplier_millis is absent. Platform staff receive the unredacted ledger rows and the top-level multiplier_millis."
       },
       "UrlHandoff": {
         "type": "object",
-        "required": ["url"],
+        "required": [
+          "url"
+        ],
         "properties": {
           "url": {
             "type": "string",
@@ -2658,7 +4485,11 @@
           },
           "rail": {
             "type": "string",
-            "enum": ["stripe", "fiat", "crypto"]
+            "enum": [
+              "stripe",
+              "fiat",
+              "crypto"
+            ]
           },
           "currency": {
             "type": "string"
@@ -2668,13 +4499,23 @@
           },
           "plan_id": {
             "type": "string",
-            "enum": ["starter_trial", "developer", "platform", "business", "enterprise"]
+            "enum": [
+              "starter_trial",
+              "developer",
+              "platform",
+              "business",
+              "enterprise"
+            ]
           }
         }
       },
       "StripeWebhookReceipt": {
         "type": "object",
-        "required": ["received", "type", "handled"],
+        "required": [
+          "received",
+          "type",
+          "handled"
+        ],
         "properties": {
           "received": {
             "type": "boolean",
@@ -2690,7 +4531,14 @@
       },
       "OAuthAuthorizeRequest": {
         "type": "object",
-        "required": ["response_type", "client_id", "redirect_uri", "code_challenge", "code_challenge_method", "scope"],
+        "required": [
+          "response_type",
+          "client_id",
+          "redirect_uri",
+          "code_challenge",
+          "code_challenge_method",
+          "scope"
+        ],
         "properties": {
           "response_type": {
             "type": "string",
@@ -2720,7 +4568,19 @@
       },
       "OAuthGrant": {
         "type": "object",
-        "required": ["grant_id", "client_id", "client_name", "aud", "org_id", "project_id", "environment_id", "scopes", "created_at", "updated_at", "last_used_at"],
+        "required": [
+          "grant_id",
+          "client_id",
+          "client_name",
+          "aud",
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scopes",
+          "created_at",
+          "updated_at",
+          "last_used_at"
+        ],
         "properties": {
           "grant_id": {
             "type": "string"
@@ -2762,18 +4622,26 @@
             "format": "date-time"
           },
           "revoked_at": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
       },
       "OAuthTokenRequest": {
         "type": "object",
-        "required": ["grant_type"],
+        "required": [
+          "grant_type"
+        ],
         "properties": {
           "grant_type": {
             "type": "string",
-            "enum": ["authorization_code", "refresh_token"]
+            "enum": [
+              "authorization_code",
+              "refresh_token"
+            ]
           },
           "code": {
             "type": "string"
@@ -2804,7 +4672,12 @@
       },
       "OAuthTokenResponse": {
         "type": "object",
-        "required": ["access_token", "token_type", "expires_in", "scope"],
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in",
+          "scope"
+        ],
         "properties": {
           "access_token": {
             "type": "string"
@@ -2827,33 +4700,45 @@
       },
       "OAuthRevokeRequest": {
         "type": "object",
-        "required": ["token"],
+        "required": [
+          "token"
+        ],
         "properties": {
           "token": {
             "type": "string"
           },
           "token_type_hint": {
             "type": "string",
-            "enum": ["access_token", "refresh_token"]
+            "enum": [
+              "access_token",
+              "refresh_token"
+            ]
           }
         }
       },
       "OAuthIntrospectionRequest": {
         "type": "object",
-        "required": ["token"],
+        "required": [
+          "token"
+        ],
         "properties": {
           "token": {
             "type": "string"
           },
           "token_type_hint": {
             "type": "string",
-            "enum": ["access_token", "api_key"]
+            "enum": [
+              "access_token",
+              "api_key"
+            ]
           }
         }
       },
       "OAuthIntrospectionResponse": {
         "type": "object",
-        "required": ["active"],
+        "required": [
+          "active"
+        ],
         "properties": {
           "active": {
             "type": "boolean"
@@ -2873,7 +4758,10 @@
           },
           "token_type": {
             "type": "string",
-            "enum": ["access_token", "api_key"]
+            "enum": [
+              "access_token",
+              "api_key"
+            ]
           },
           "api_key_id": {
             "type": "string"
@@ -2904,12 +4792,26 @@
           },
           "grant_id": {
             "type": "string"
+          },
+          "usage_delegation": {
+            "type": "string",
+            "description": "For complete model-gateway identities only: an Auth-signed, workspace-bound delegation valid for at most 60 seconds."
           }
         }
       },
       "OAuthAuthorizationServerMetadata": {
         "type": "object",
-        "required": ["issuer", "authorization_endpoint", "token_endpoint", "revocation_endpoint", "introspection_endpoint", "code_challenge_methods_supported", "scopes_supported", "deployment_environment", "tempera_code_gateway_endpoint"],
+        "required": [
+          "issuer",
+          "authorization_endpoint",
+          "token_endpoint",
+          "revocation_endpoint",
+          "introspection_endpoint",
+          "code_challenge_methods_supported",
+          "scopes_supported",
+          "deployment_environment",
+          "tempera_code_gateway_endpoint"
+        ],
         "properties": {
           "issuer": {
             "type": "string",
@@ -2968,17 +4870,31 @@
       },
       "DeploymentMode": {
         "type": "string",
-        "enum": ["multi_tenant", "single_tenant", "vpc"],
+        "enum": [
+          "multi_tenant",
+          "single_tenant",
+          "vpc"
+        ],
         "description": "Deployment topology the control plane is running as."
       },
       "DeploymentEnvironment": {
         "type": "string",
-        "enum": ["local", "preview", "staging", "production"],
+        "enum": [
+          "local",
+          "preview",
+          "staging",
+          "production"
+        ],
         "description": "Named deployment environment used to select public product endpoints."
       },
       "OAuthProtectedResourceMetadata": {
         "type": "object",
-        "required": ["resource", "authorization_servers", "introspection_endpoint", "scopes_supported"],
+        "required": [
+          "resource",
+          "authorization_servers",
+          "introspection_endpoint",
+          "scopes_supported"
+        ],
         "properties": {
           "resource": {
             "$ref": "#/components/schemas/ResourceAudience"
@@ -3004,7 +4920,10 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["access_token", "api_key"]
+              "enum": [
+                "access_token",
+                "api_key"
+              ]
             }
           },
           "oauth_client_id": {
@@ -3030,17 +4949,215 @@
       },
       "ErrorCode": {
         "type": "string",
-        "enum": ["unauthenticated", "token_expired", "token_revoked", "missing_scope", "wrong_organization", "wrong_project", "wrong_environment", "plan_limit_exceeded", "insufficient_credits", "rate_limited", "idempotency_conflict", "connector_misconfigured", "not_found", "method_not_allowed", "deployment_forbidden", "not_configured"]
+        "enum": [
+          "unauthenticated",
+          "token_expired",
+          "token_revoked",
+          "missing_scope",
+          "wrong_organization",
+          "wrong_project",
+          "wrong_environment",
+          "plan_limit_exceeded",
+          "insufficient_credits",
+          "rate_limited",
+          "idempotency_conflict",
+          "connector_misconfigured",
+          "not_found",
+          "method_not_allowed",
+          "deployment_forbidden",
+          "not_configured"
+        ]
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["error", "message"],
+        "required": [
+          "error",
+          "message"
+        ],
         "properties": {
           "error": {
             "$ref": "#/components/schemas/ErrorCode"
           },
           "message": {
             "type": "string"
+          }
+        }
+      },
+      "AdminStepUpRequest": {
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "The platform-staff user's account password, re-entered to prove a fresh presence."
+          }
+        }
+      },
+      "AdminStepUpResponse": {
+        "type": "object",
+        "required": [
+          "token_type",
+          "access_token",
+          "expires_in",
+          "platform_step_up_exp"
+        ],
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "access_token": {
+            "type": "string",
+            "description": "An elevated first-party account-session token carrying a short-lived step-up claim."
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Seconds until the step-up elevation expires (60-900)."
+          },
+          "platform_step_up_exp": {
+            "type": "integer",
+            "description": "Unix expiry of the step-up elevation."
+          }
+        }
+      },
+      "AdminCreditAdjustRequest": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "credit_micros"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "credit_micros": {
+            "type": "integer",
+            "description": "Positive integer number of credit micros to grant."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Idempotency reference; replaying the same reference does not double-credit."
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional human-readable justification recorded on the ledger entry."
+          }
+        }
+      },
+      "AdminCreditAdjustResponse": {
+        "type": "object",
+        "required": [
+          "org_id",
+          "deduplicated",
+          "wallet",
+          "entry"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "deduplicated": {
+            "type": "boolean",
+            "description": "True when the reference matched a prior adjustment and no new credit was applied."
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/CreditWallet"
+          },
+          "entry": {
+            "$ref": "#/components/schemas/CreditLedgerEntry"
+          }
+        }
+      },
+      "AdminBillingOrgRow": {
+        "type": "object",
+        "required": [
+          "org_id"
+        ],
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "plan_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "balance_micros": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "granted_micros": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "used_micros": {
+            "type": "integer"
+          },
+          "overage_micros": {
+            "type": "integer"
+          },
+          "provider_cost_micros": {
+            "type": "integer",
+            "description": "Staff-only: aggregate upstream provider cost across debits."
+          },
+          "customer_charged_micros": {
+            "type": "integer",
+            "description": "Staff-only: aggregate credits debited from the customer."
+          },
+          "margin_micros": {
+            "type": "integer",
+            "description": "Staff-only: customer_charged_micros - provider_cost_micros."
+          },
+          "debit_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "AdminBillingOrgs": {
+        "type": "object",
+        "required": [
+          "orgs",
+          "multiplier_millis"
+        ],
+        "properties": {
+          "orgs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminBillingOrgRow"
+            }
+          },
+          "multiplier_millis": {
+            "type": "integer",
+            "description": "Ecosystem-wide model-spend multiplier in milli-units (1200 = 1.2x)."
+          }
+        }
+      },
+      "RailWebhookReceipt": {
+        "type": "object",
+        "required": [
+          "received"
+        ],
+        "properties": {
+          "received": {
+            "type": "boolean"
           }
         }
       }

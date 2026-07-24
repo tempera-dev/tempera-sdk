@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "migrations": [
+    {
+      "compatibility": "additive_consumer_catchup",
+      "depends_on": "https://github.com/tempera-dev/palette/pull/10 and https://github.com/tempera-dev/tempera-sdk/pull/24",
+      "duplicate_routes": 0,
+      "migration": "Generate reviewed Palette operations in bounded source-pinned slices, beginning with the signed evaluation evidence train, then promote Palette to strict parity.",
+      "owner": "contract-spine",
+      "phantom_routes": 0,
+      "product": "palette",
+      "review_after": "2026-08-01",
+      "rollback": "Revert each additive generated slice and its exact source lock together.",
+      "upstream_only_routes": 45
+    },
+    {
+      "compatibility": "corrective_breaking_and_additive",
+      "depends_on": "https://github.com/tempera-dev/auth-hub/issues/43",
+      "duplicate_routes": 1,
+      "migration": "Classify dedicated OAuth, webhook, and MCP transports; remove the five phantom model-profile methods; generate remaining eligible operations from the exact Auth Hub contract.",
+      "owner": "contract-spine with hosted-platform contract handoff",
+      "phantom_routes": 0,
+      "product": "controlPlane",
+      "review_after": "2026-08-01",
+      "rollback": "Keep compatibility aliases only through an announced deprecation; revert additive generated methods independently.",
+      "upstream_only_routes": 24
+    },
+    {
+      "compatibility": "additive_consumer_catchup",
+      "depends_on": "https://github.com/tempera-dev/cradle/pull/18",
+      "duplicate_routes": 0,
+      "migration": "Classify MCP and browser-adapter transport eligibility with Lane 4, then generate every accepted aggregate operation and promote Cradle to strict parity.",
+      "owner": "contract-spine with hosted-platform contract handoff",
+      "phantom_routes": 0,
+      "product": "cradle",
+      "review_after": "2026-08-01",
+      "rollback": "Revert additive generated methods and their source lock as one consumer-only change.",
+      "upstream_only_routes": 7
+    }
+  ]
+}

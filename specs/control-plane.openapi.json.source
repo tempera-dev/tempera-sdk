@@ -1,3 +1,13 @@
-Vendored from auth-hub (control-plane) repo: contracts/control-plane.openapi.json
-Origin path: /home/user/auth-hub/contracts/control-plane.openapi.json
-Emitted upstream from the Node/JS control-plane implementation and drift-gated there. Do not hand-edit; refresh by re-copying the upstream committed spec.
+{
+  "generated_path": "specs/control-plane.openapi.json",
+  "generated_sha256": "6c0893b4ff65336871d0cf17e243807c64ea72e6385ce77193baee0fd530b1f4",
+  "generated_with": "sync-control-plane-openapi.py@1+verbatim",
+  "schema_version": 1,
+  "source_blob_sha": "34c6a5716409c294e619faf8e4822e6dc908e6b7",
+  "source_branch": "main",
+  "source_commit": "f7c2815bc02d642e14f31295242964eb2e3a5c07",
+  "source_mode": "100644",
+  "source_path": "contracts/control-plane.openapi.json",
+  "source_repo": "tempera-dev/auth-hub",
+  "source_sha256": "6c0893b4ff65336871d0cf17e243807c64ea72e6385ce77193baee0fd530b1f4"
+}

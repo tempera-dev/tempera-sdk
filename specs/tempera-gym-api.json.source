@@ -1,3 +1,13 @@
-Vendored from tempera-gym repo: contracts/gym-api.openapi.yaml
-Origin path: /home/user/tempera-gym/contracts/gym-api.openapi.yaml
-Deterministic JSON rendering of the upstream YAML contract (json.dumps(yaml.safe_load(...), indent=2)) because this gate reads JSON specs; the upstream repo's tests/test_service.py drift-gates the YAML against its ROUTES. Do not hand-edit; refresh by re-converting the upstream committed spec.
+{
+  "generated_path": "specs/tempera-gym-api.json",
+  "generated_sha256": "473a4dfdf96739f3fb185e2b582cafd84935c04d9cefcfd21c05a1357381797c",
+  "generated_with": "source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2",
+  "schema_version": 1,
+  "source_blob_sha": "5ee8f3f76b73f4071d594e5e810bdeb9564e5564",
+  "source_branch": "main",
+  "source_commit": "7bac3b36085c6ba3a1f34ad793259fa54b9558de",
+  "source_mode": "100644",
+  "source_path": "contracts/gym-api.openapi.yaml",
+  "source_repo": "tempera-dev/tempera-gym",
+  "source_sha256": "19986f2a334c50912a9f14be56fd10f4cf392ec8c6b5a1fc4b437f3de47b5ce2"
+}

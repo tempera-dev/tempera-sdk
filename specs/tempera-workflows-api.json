@@ -791,7 +791,7 @@
           "runs"
         ],
         "summary": "Create a run AND wait for it to finish, returning the run + output in one",
-        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)`. If the run has not\nfinished by then it returns 200 with the still-running run and a poll hint;\nthe run is never orphaned — it keeps executing in the background.",
+        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)` (default `waitMs` = 30s,\nwell under proxy idle limits). If the run has not\nfinished by then it returns 200 with the still-running run and a poll hint;\nthe run is never orphaned — it keeps executing in the background.",
         "operationId": "workflows.call",
         "parameters": [
           {
@@ -868,6 +868,181 @@
         }
       }
     },
+    "/v1/workflows/{workflowId}:compose": {
+      "post": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Ask Tempera Code to propose a validated workflow draft, or search the full",
+        "description": "node catalog when the agent is not connected. This method never saves or\nruns the returned definition. A supplied draft may use a fresh id that is\nnot stored yet, which powers the Studio's prompt-first creation flow;\napplying it still requires an explicit create/update action.",
+        "operationId": "workflows.compose",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "description": "Workflow id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowComposeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Validated draft proposal or full-catalog node matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowComposeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid prompt or draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workflow not found and no draft supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows:assistJson": {
+      "post": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Generate or repair one JSON configuration value with the configured",
+        "description": "server-side workflow model. The result is parsed and shape-validated before\nit is returned; this method never saves a workflow or executes a node.",
+        "operationId": "workflows.assistJson",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonAssistRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Validated JSON editor value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonAssistResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid prompt, mode, or editor value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Editor value is too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow model unavailable or returned the wrong shape",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/workflows:validate": {
       "post": {
         "tags": [
@@ -933,6 +1108,16 @@
   },
   "components": {
     "schemas": {
+      "ComposeMode": {
+        "type": "string",
+        "description": "How `workflows.compose` produced its response.",
+        "enum": [
+          "agent",
+          "guided",
+          "catalog",
+          "clarify"
+        ]
+      },
       "EdgeDef": {
         "type": "object",
         "description": "A directed data edge.",
@@ -1049,6 +1234,89 @@
           }
         }
       },
+      "JsonAssistMode": {
+        "type": "string",
+        "description": "Whether JSON assist creates a value from a description or repairs the\ncurrent editor text.",
+        "enum": [
+          "generate",
+          "repair"
+        ]
+      },
+      "JsonAssistPurpose": {
+        "type": "string",
+        "description": "Semantic rules applied after the model returns JSON.",
+        "enum": [
+          "value",
+          "jsonSchema",
+          "templateMap"
+        ]
+      },
+      "JsonAssistRequest": {
+        "type": "object",
+        "description": "Generate or repair one JSON editor value. This authoring helper never\nsaves a workflow or executes a node.",
+        "required": [
+          "mode",
+          "purpose",
+          "expectedRoot"
+        ],
+        "properties": {
+          "context": {
+            "type": "string",
+            "description": "Human-readable field context such as \"Templates\" or \"JSON schema\".",
+            "nullable": true
+          },
+          "current": {
+            "type": "string",
+            "description": "Raw editor text. Required in repair mode so malformed JSON can be fixed.",
+            "nullable": true
+          },
+          "expectedRoot": {
+            "$ref": "#/components/schemas/JsonRootKind"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/JsonAssistMode"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Natural-language description, for example \"a nested customer object\nwith a required string id and an optional array of labels\"."
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/JsonAssistPurpose"
+          }
+        },
+        "additionalProperties": false
+      },
+      "JsonAssistResponse": {
+        "type": "object",
+        "description": "Strictly parsed and server-validated JSON returned to an editor.",
+        "required": [
+          "value",
+          "formatted",
+          "message",
+          "model"
+        ],
+        "properties": {
+          "formatted": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "value": {}
+        }
+      },
+      "JsonRootKind": {
+        "type": "string",
+        "description": "Required root shape for the generated JSON value.",
+        "enum": [
+          "any",
+          "object",
+          "array"
+        ]
+      },
       "NodeDef": {
         "type": "object",
         "description": "One typed node.",
@@ -1096,6 +1364,17 @@
           }
         },
         "additionalProperties": false
+      },
+      "NodeRole": {
+        "type": "string",
+        "description": "Semantic role rendered for a node in the workflow graph.",
+        "enum": [
+          "trigger",
+          "agent",
+          "action",
+          "control",
+          "output"
+        ]
       },
       "NodeState": {
         "type": "object",
@@ -1151,6 +1430,40 @@
           "skipped"
         ]
       },
+      "NodeSuggestion": {
+        "type": "object",
+        "description": "One relevant node from the complete native + SDK catalog.",
+        "required": [
+          "type",
+          "displayName",
+          "description",
+          "role"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredInputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "role": {
+            "$ref": "#/components/schemas/NodeRole"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
       "NodeTypeInfo": {
         "type": "object",
         "description": "One node type in the studio palette catalog.",
@@ -1158,10 +1471,16 @@
           "type",
           "description",
           "category",
+          "role",
           "outputs",
           "configSchema"
         ],
         "properties": {
+          "apiPath": {
+            "type": "string",
+            "description": "Upstream resource or custom-method path for an SDK action.",
+            "nullable": true
+          },
           "category": {
             "type": "string",
             "description": "trigger | compute | control | llm | output | sdk."
@@ -1177,6 +1496,16 @@
             "description": "Friendly studio alias (e.g. \"S3 Ingest\").",
             "nullable": true
           },
+          "httpMethod": {
+            "type": "string",
+            "description": "Upstream HTTP method for an SDK action.",
+            "nullable": true
+          },
+          "operationId": {
+            "type": "string",
+            "description": "SDK operation id without the `sdk.<product>.` prefix.",
+            "nullable": true
+          },
           "outputs": {
             "type": "array",
             "items": {
@@ -1187,6 +1516,16 @@
             "type": "string",
             "description": "SDK product key for `sdk.*` nodes.",
             "nullable": true
+          },
+          "requiredInputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Inputs that must be supplied by configuration or incoming node data."
+          },
+          "role": {
+            "$ref": "#/components/schemas/NodeRole"
           },
           "type": {
             "type": "string",
@@ -1531,6 +1870,40 @@
           }
         }
       },
+      "WorkflowAttachment": {
+        "type": "object",
+        "description": "A small, ephemeral attachment used while composing. Attachments are never\npersisted in the workflow definition or returned to the browser.",
+        "required": [
+          "name",
+          "mediaType",
+          "kind"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "$ref": "#/components/schemas/WorkflowAttachmentKind"
+          },
+          "mediaType": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowAttachmentKind": {
+        "type": "string",
+        "description": "How an attachment is supplied to the workflow copilot.",
+        "enum": [
+          "text",
+          "image",
+          "reference"
+        ]
+      },
       "WorkflowCallRequest": {
         "type": "object",
         "description": "`POST /v1/workflows/{workflowId}:call` request. The same body as\n`runs.create` plus an optional `waitMs` wait bound: this custom method both\ncreates a run and waits for it to finish, returning the run and its output\nin a single response.",
@@ -1571,7 +1944,7 @@
           "waitMs": {
             "type": "integer",
             "format": "int64",
-            "description": "Max milliseconds to wait for the run to finish before returning it still\nrunning. Bounded by the workflow's `settings.deadlineMs`; when omitted,\nthe wait bound is the deadline itself. The run keeps executing either way.",
+            "description": "Max milliseconds to wait for the run to finish before returning it still\nrunning. Bounded by the workflow's `settings.deadlineMs`; when omitted,\na proxy-safe default (30s) is used so the call returns promptly. The run\nkeeps executing in the background either way — poll `runs.get` to finish.",
             "nullable": true,
             "minimum": 0
           }
@@ -1602,6 +1975,174 @@
             "$ref": "#/components/schemas/RunStatus"
           }
         }
+      },
+      "WorkflowComposeChoice": {
+        "type": "object",
+        "description": "One safe, user-facing answer to a workflow setup question. Selecting a\nchoice sends its bounded follow-up prompt through the same non-mutating\ncomposition path; the browser never writes configuration directly.",
+        "required": [
+          "label",
+          "description",
+          "prompt"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowComposeMessage": {
+        "type": "object",
+        "description": "One bounded turn of workflow-authoring context. The draft remains the\nsource of truth; history only helps the copilot interpret follow-up edits.",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/WorkflowComposeRole"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowComposeQuestion": {
+        "type": "object",
+        "description": "A setup question Architect must resolve before proposing a workflow.",
+        "required": [
+          "id",
+          "question",
+          "choices"
+        ],
+        "properties": {
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowComposeChoice"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowComposeRequest": {
+        "type": "object",
+        "description": "Ask the workflow copilot to search the SDK or propose a complete draft.\nThe request never saves or executes the workflow.",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowAttachment"
+            },
+            "description": "Ephemeral text, image, or file-reference context. Never persisted."
+          },
+          "draft": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            ],
+            "nullable": true
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowComposeMessage"
+            },
+            "description": "Recent bounded turns for follow-up requests such as “send that weekly”."
+          },
+          "model": {
+            "type": "string",
+            "description": "Optional entitled model id. The server-side provider default is used when omitted.",
+            "nullable": true
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Natural-language outcome or edit request."
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowComposeResponse": {
+        "type": "object",
+        "description": "A non-mutating workflow proposal or full-catalog search result.",
+        "required": [
+          "mode",
+          "message"
+        ],
+        "properties": {
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "definition": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            ],
+            "nullable": true
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ComposeMode"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowComposeQuestion"
+            },
+            "description": "Setup choices that must be answered before a safe proposal can be made."
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeSuggestion"
+            }
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the proposal passed validation. Absent for catalog-only results.",
+            "nullable": true
+          }
+        }
+      },
+      "WorkflowComposeRole": {
+        "type": "string",
+        "enum": [
+          "user",
+          "assistant"
+        ]
       },
       "WorkflowDefinition": {
         "type": "object",
