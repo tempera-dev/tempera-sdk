@@ -64,8 +64,11 @@ This order avoids cosmetic renames that leave runtime behavior non-conformant.
 
 MCP/JSON-RPC, OAuth form and redirect routes, OTLP collectors, inbound
 webhooks, WebSocket/BiDi, SSE, well-known metadata, health, readiness, and
-metrics endpoints retain their native protocol semantics. Their exact paths
-are recorded in the baseline and do not authorize new resource-API exceptions.
+metrics endpoints retain their native protocol semantics. Tempera LLM's
+`/v1/chat/completions`, `/v1/responses`, and `/v1/models` routes likewise
+retain the OpenAI-compatible JSON field names required by existing clients.
+Their exact paths are recorded in the baseline and do not authorize new
+resource-API exceptions.
 
 Reference policy:
 

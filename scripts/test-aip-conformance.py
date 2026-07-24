@@ -267,6 +267,13 @@ class AipConformanceTest(unittest.TestCase):
         self.assertTrue(MODULE.is_protocol_exception("remi", "/readyz"))
         self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/readyz"))
         self.assertTrue(
+            MODULE.is_protocol_exception("temperaLlm", "/v1/chat/completions")
+        )
+        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/v1/models"))
+        self.assertTrue(
+            MODULE.is_protocol_exception("temperaLlm", "/v1/responses")
+        )
+        self.assertTrue(
             MODULE.is_protocol_exception("palette", "/v1/otlp/t/p/e/v1/traces")
         )
         self.assertFalse(MODULE.is_protocol_exception("tempo", "/v1/sessions"))

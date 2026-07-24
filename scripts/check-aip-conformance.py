@@ -59,6 +59,11 @@ PROTOCOL_EXCEPTIONS = {
     ("remi", "/livez"),
     ("remi", "/readyz"),
     ("temperaGym", "/healthz"),
+    # These routes intentionally implement OpenAI's public wire contract so
+    # existing OpenAI-compatible clients can use Tempera LLM unchanged.
+    ("temperaLlm", "/v1/chat/completions"),
+    ("temperaLlm", "/v1/models"),
+    ("temperaLlm", "/v1/responses"),
     ("temperaLlm", "/healthz"),
     ("temperaLlm", "/readyz"),
     ("temperaWorkflows", "/healthz"),
