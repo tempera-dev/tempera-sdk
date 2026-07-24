@@ -7,7 +7,8 @@
  *
  * - Typed operations: `client.palette.getTrace({ tenant_id, trace_id })` —
  *   every operation in surface.json becomes a method on its product client.
- *   Parameters use wire names (snake_case) in every language.
+ *   Parameters accept canonical wire names and snake_case aliases; requests
+ *   always emit the producer's canonical wire names.
  * - Passthrough: `client.tempo.request("/custom", { method: "POST", body })`
  *   for endpoints the surface tables don't cover yet.
  * - Auth: audience products resolve their bearer through TemperaAuth (per-
@@ -26,6 +27,37 @@ import { TemperaSdkError, apiErrorFromResponse } from "./errors.js";
 
 function trimTrailingSlash(url) {
   return url.replace(/\/+$/, "");
+}
+
+function snakeCase(value) {
+  return value.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
+}
+
+function normalizeDeclaredParams(productKey, op, params) {
+  const normalized = { ...params };
+  const consumedAliases = new Set();
+  const declared = new Set([
+    ...(op.pathParams ?? []),
+    ...(op.query ?? []),
+    ...(op.body ?? []),
+    ...(op.forbiddenBody ?? []),
+  ]);
+  for (const wireName of declared) {
+    const alias = snakeCase(wireName);
+    if (alias === wireName) continue;
+    const hasWireName = Object.hasOwn(params, wireName);
+    const hasAlias = Object.hasOwn(params, alias);
+    if (hasWireName && hasAlias) {
+      throw new TemperaSdkError(
+        `${productKey}.${op.id}: pass either "${wireName}" or its snake_case alias "${alias}", not both`,
+      );
+    }
+    if (hasAlias) {
+      normalized[wireName] = params[alias];
+      consumedAliases.add(alias);
+    }
+  }
+  return { normalized, consumedAliases };
 }
 
 function expandPathParam(value, resourcePattern, { product, operation, key }) {
@@ -175,21 +207,22 @@ export function createTemperaClient({
   }
 
   function dispatch(productKey, op, params = {}, options = {}) {
+    const { normalized, consumedAliases } = normalizeDeclaredParams(productKey, op, params);
     for (const key of op.forbiddenBody ?? []) {
-      if (params[key] !== undefined) {
+      if (normalized[key] !== undefined) {
         throw new TemperaSdkError(`${productKey}.${op.id}: ${key} is derived from the authenticated principal`);
       }
     }
-    const path = substitutePath(op.path, params, {
+    const path = substitutePath(op.path, normalized, {
       product: productKey,
       operation: op.id,
       pathParamTemplates: op.pathParamTemplates,
     });
-    const consumed = new Set(op.pathParams);
+    const consumed = new Set([...(op.pathParams ?? []), ...consumedAliases]);
     const query = {};
     for (const key of op.query) {
-      if (params[key] !== undefined) {
-        query[key] = params[key];
+      if (normalized[key] !== undefined) {
+        query[key] = normalized[key];
         consumed.add(key);
       }
     }
@@ -197,8 +230,8 @@ export function createTemperaClient({
     if (op.body.length > 0 || Object.keys(op.bodyDefaults).length > 0) {
       body = { ...op.bodyDefaults };
       for (const key of op.body) {
-        if (params[key] !== undefined) {
-          body[key] = params[key];
+        if (normalized[key] !== undefined) {
+          body[key] = normalized[key];
           consumed.add(key);
         }
       }

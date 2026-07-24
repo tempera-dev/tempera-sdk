@@ -4,8 +4,9 @@
 //! own HTTP client to send.
 //!
 //! Mirrors the TypeScript `createTemperaClient` dispatch semantics:
-//! - Typed operations by product key + snake_case operation id, with wire
-//!   (snake_case) parameter names.
+//! - Typed operations by product key + snake_case operation id. Parameters
+//!   accept canonical wire names and snake_case aliases; requests always emit
+//!   the producer's canonical wire names.
 //! - Declared query keys route to the query string; declared body keys plus
 //!   `body_defaults` form the JSON body.
 //! - Forward compatibility: undeclared parameters flow to the query string on
@@ -155,6 +156,18 @@ pub enum BuildError {
         /// Rejected parameter name.
         name: String,
     },
+    /// Both a canonical lowerCamel wire name and its snake_case alias were
+    /// supplied for the same declared parameter.
+    DuplicateParameterAlias {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Canonical producer wire name.
+        wire_name: String,
+        /// Language-idiomatic alias.
+        alias: String,
+    },
     /// The operation needs an account-session token and none is configured.
     MissingAccountToken {
         /// Product key of the operation.
@@ -219,6 +232,15 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: {name} is derived from the authenticated principal"
+            ),
+            BuildError::DuplicateParameterAlias {
+                product,
+                operation,
+                wire_name,
+                alias,
+            } => write!(
+                f,
+                "{product}.{operation}: pass either \"{wire_name}\" or its snake_case alias \"{alias}\", not both"
             ),
             BuildError::MissingAccountToken { product } => write!(
                 f,
@@ -308,11 +330,12 @@ impl TemperaClient {
     ///
     /// `product` is a snake_case product key and `operation` a snake_case
     /// operation id from the surface tables (e.g. `("palette", "get_trace")`).
-    /// Parameters use wire names (snake_case): path parameters substitute into
-    /// the URL (percent-encoded), declared query keys go to the query string,
-    /// declared body keys (plus the operation's `body_defaults`) form the JSON
-    /// body, and undeclared extras go to the query on GET/DELETE and to the
-    /// body otherwise.
+    /// Parameters accept canonical wire names or snake_case aliases. Path
+    /// parameters substitute into the URL (percent-encoded), declared query
+    /// keys go to the query string, declared body keys (plus the operation's
+    /// `body_defaults`) form the JSON body, and undeclared extras go to the
+    /// query on GET/DELETE and to the body otherwise. Emitted names are always
+    /// canonical producer wire names.
     pub fn build_request(
         &self,
         product: &str,
@@ -332,10 +355,8 @@ impl TemperaClient {
                 operation: operation.to_string(),
             })?;
 
-        let get_param = |name: &str| params.iter().find(|(key, _)| *key == name).map(|(_, v)| v);
-
         for name in op.forbidden_body {
-            if get_param(name).is_some() {
+            if declared_param(params, name, product, operation)?.is_some() {
                 return Err(BuildError::PrincipalDerivedParameter {
                     product: product.to_string(),
                     operation: operation.to_string(),
@@ -348,15 +369,23 @@ impl TemperaClient {
         // may declare an AIP resource pattern such as `projects/*`; its
         // structural slash is preserved only after exact template validation.
         let mut path = op.path.to_string();
+        let mut consumed: Vec<&str> = Vec::new();
         for name in op.path_params {
-            let value = get_param(name)
-                .map(ParamValue::as_plain_string)
-                .filter(|value| !value.is_empty())
+            let (input_name, value) = declared_param(params, name, product, operation)?
                 .ok_or_else(|| BuildError::MissingPathParam {
                     product: product.to_string(),
                     operation: operation.to_string(),
                     name: name.to_string(),
                 })?;
+            let value = value.as_plain_string();
+            if value.is_empty() {
+                return Err(BuildError::MissingPathParam {
+                    product: product.to_string(),
+                    operation: operation.to_string(),
+                    name: name.to_string(),
+                });
+            }
+            consumed.push(input_name);
             let resource_pattern = op
                 .path_param_templates
                 .iter()
@@ -377,14 +406,12 @@ impl TemperaClient {
             path = path.replace(&format!("{{{name}}}"), &replacement);
         }
 
-        let mut consumed: Vec<&str> = op.path_params.to_vec();
-
         // Declared query keys.
         let mut query: Vec<(String, String)> = Vec::new();
         for key in op.query {
-            if let Some(value) = get_param(key) {
+            if let Some((input_name, value)) = declared_param(params, key, product, operation)? {
                 query.push((key.to_string(), value.as_plain_string()));
-                consumed.push(key);
+                consumed.push(input_name);
             }
         }
 
@@ -396,9 +423,10 @@ impl TemperaClient {
                 members.push((key.to_string(), format!("\"{}\"", json_escape(value))));
             }
             for key in op.body {
-                if let Some(value) = get_param(key) {
+                if let Some((input_name, value)) = declared_param(params, key, product, operation)?
+                {
                     set_body_member(&mut members, key, value.to_json_fragment());
-                    consumed.push(key);
+                    consumed.push(input_name);
                 }
             }
             body = Some(members);
@@ -438,12 +466,12 @@ impl TemperaClient {
                     })?)
                 }
                 "oauthResource" => {
-                    let audience = op.auth_audience.ok_or_else(|| {
-                        BuildError::InvalidOperationContract {
-                            product: product.to_string(),
-                            operation: operation.to_string(),
-                        }
-                    })?;
+                    let audience =
+                        op.auth_audience
+                            .ok_or_else(|| BuildError::InvalidOperationContract {
+                                product: product.to_string(),
+                                operation: operation.to_string(),
+                            })?;
                     let missing = || BuildError::MissingCredential {
                         product: product.to_string(),
                         audience: audience.to_string(),
@@ -507,6 +535,50 @@ impl TemperaClient {
             body_json,
         })
     }
+}
+
+fn declared_param<'params, 'key>(
+    params: &'params [(&'key str, ParamValue)],
+    wire_name: &str,
+    product: &str,
+    operation: &str,
+) -> Result<Option<(&'key str, &'params ParamValue)>, BuildError> {
+    let alias = snake_case(wire_name);
+    let wire_value = params
+        .iter()
+        .find(|(key, _)| *key == wire_name)
+        .map(|(key, value)| (*key, value));
+    if alias == wire_name {
+        return Ok(wire_value);
+    }
+    let alias_value = params
+        .iter()
+        .find(|(key, _)| *key == alias)
+        .map(|(key, value)| (*key, value));
+    if wire_value.is_some() && alias_value.is_some() {
+        return Err(BuildError::DuplicateParameterAlias {
+            product: product.to_string(),
+            operation: operation.to_string(),
+            wire_name: wire_name.to_string(),
+            alias,
+        });
+    }
+    Ok(wire_value.or(alias_value))
+}
+
+fn snake_case(value: &str) -> String {
+    let mut output = String::with_capacity(value.len());
+    for character in value.chars() {
+        if character.is_ascii_uppercase() {
+            if !output.is_empty() {
+                output.push('_');
+            }
+            output.push(character.to_ascii_lowercase());
+        } else {
+            output.push(character);
+        }
+    }
+    output
 }
 
 fn expand_aip_path_param(value: &str, resource_pattern: &str) -> Option<String> {
@@ -772,10 +844,10 @@ mod tests {
             spec.query
                 .contains(&("pageSize".to_string(), "12".to_string()))
         );
-        assert!(spec.query.contains(&(
-            "pageToken".to_string(),
-            "scenarios-token".to_string()
-        )));
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "scenarios-token".to_string()))
+        );
         assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
         assert!(!spec.query.iter().any(|(name, _)| name == "cursor"));
     }
@@ -847,10 +919,9 @@ mod tests {
                 .contains(&("pageSize".to_string(), "7".to_string()))
         );
         assert!(
-            environments.query.contains(&(
-                "pageToken".to_string(),
-                "environments-token".to_string()
-            ))
+            environments
+                .query
+                .contains(&("pageToken".to_string(), "environments-token".to_string()))
         );
         assert!(!environments.query.iter().any(|(name, _)| name == "limit"));
 
@@ -887,6 +958,70 @@ mod tests {
         assert!(body.contains("\"environmentId\":\"env-1\""));
         assert!(body.contains("\"seed\":42"));
         assert!(!body.contains("\"environment_id\""));
+    }
+
+    #[test]
+    fn snake_case_parameter_aliases_emit_only_lower_camel_wire_names() {
+        let client = full_client();
+        let runs = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("page_size", ParamValue::Int(8)),
+                    ("page_token", "runs-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            runs.query
+                .contains(&("environmentId".to_string(), "env-1".to_string()))
+        );
+        assert!(
+            runs.query
+                .contains(&("pageSize".to_string(), "8".to_string()))
+        );
+        assert!(
+            runs.query
+                .contains(&("pageToken".to_string(), "runs-token".to_string()))
+        );
+        assert!(!runs.query.iter().any(|(name, _)| name.contains('_')));
+
+        let rollout = client
+            .build_request(
+                "tempera_gym",
+                "create_rollout",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("seed", ParamValue::Int(42)),
+                ],
+            )
+            .unwrap();
+        let body = rollout.body_json.unwrap();
+        assert!(body.contains("\"environmentId\":\"env-1\""));
+        assert!(!body.contains("\"environment_id\""));
+    }
+
+    #[test]
+    fn canonical_and_snake_case_spellings_cannot_both_be_supplied() {
+        let client = full_client();
+        let error = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("pageSize", ParamValue::Int(8)),
+                    ("page_size", ParamValue::Int(9)),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(error, BuildError::DuplicateParameterAlias { .. }));
+        assert!(
+            error.to_string().contains(
+                "pass either \"pageSize\" or its snake_case alias \"page_size\", not both"
+            )
+        );
     }
 
     #[test]
@@ -978,9 +1113,7 @@ mod tests {
                     ("parent", "projects/project_1".into()),
                     (
                         "product_ids",
-                        ParamValue::RawJson(
-                            "[\"products/a\",\"products/b\"]".to_string(),
-                        ),
+                        ParamValue::RawJson("[\"products/a\",\"products/b\"]".to_string()),
                     ),
                 ],
                 "/v1/projects/project_1/products:checkLeakage",

@@ -319,8 +319,8 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(
             transport.calls[-1]["body"],
             {
-                "tenant_id": "t1",
-                "project_id": "p1",
+                "tenantId": "t1",
+                "projectId": "p1",
                 "kind": "fact",
                 "text": "hello",
             },
@@ -339,7 +339,48 @@ class DispatchTest(unittest.TestCase):
             "reconstruction_mode": "off",
         }
         client.remi.query(query)
-        self.assertEqual(transport.calls[-1]["body"], query)
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {
+                "question": query["question"],
+                "scope": query["scope"],
+                "maxTokens": 600,
+                "requireFresh": True,
+                "modes": query["modes"],
+                "reconstructionMode": "off",
+            },
+        )
+
+    def test_snake_case_parameter_aliases_emit_only_lower_camel_wire_names(self):
+        client, transport = make_client()
+        client.tempera_gym.list_runs(
+            {
+                "environment_id": "env-1",
+                "page_size": 8,
+                "page_token": "runs-token",
+            }
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["environmentId"], "env-1")
+        self.assertEqual(query["pageSize"], "8")
+        self.assertEqual(query["pageToken"], "runs-token")
+        self.assertNotIn("environment_id", query)
+        self.assertNotIn("page_size", query)
+        self.assertNotIn("page_token", query)
+
+        client.tempera_gym.create_rollout({"environment_id": "env-1", "seed": 42})
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {"environmentId": "env-1", "seed": 42},
+        )
+
+    def test_canonical_and_snake_case_spellings_cannot_both_be_supplied(self):
+        client, _ = make_client()
+        with self.assertRaisesRegex(
+            TemperaSdkError,
+            r"pass either 'pageSize' or its snake_case alias 'page_size', not both",
+        ):
+            client.tempera_gym.list_runs({"pageSize": 8, "page_size": 9})
 
     def test_json_request_bodies_use_the_compact_wire_shape(self):
         client, transport = make_client()
