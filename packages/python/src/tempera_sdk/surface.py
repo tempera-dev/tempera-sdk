@@ -4969,8 +4969,8 @@ OPERATIONS = {
             "body": [
                 "artifactType",
                 "source",
-                "external_id",
-                "raw_body",
+                "externalId",
+                "rawBody",
                 "metadata"
             ],
             "forbidden_body": [],
@@ -4997,7 +4997,7 @@ OPERATIONS = {
                 "artifactType",
                 "timeoutSeconds",
                 "maxBytes",
-                "producer_version",
+                "producerVersion",
                 "metadata"
             ],
             "forbidden_body": [],
@@ -5022,16 +5022,16 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "task_family",
-                "target_accuracy",
-                "budget_cents",
+                "taskFamily",
+                "targetAccuracy",
+                "budgetCents",
                 "rubric",
-                "skill_tags",
-                "required_reviews",
-                "qualification_policy",
-                "routing_policy",
-                "annotation_schema",
-                "idempotency_key"
+                "skillTags",
+                "requiredReviews",
+                "qualificationPolicy",
+                "routingPolicy",
+                "annotationSchema",
+                "idempotencyKey"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -5077,13 +5077,13 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "target_status",
-                "idempotency_key"
+                "targetStatus",
+                "idempotencyKey"
             ],
             "forbidden_body": [],
             "required_body": [
-                "target_status",
-                "idempotency_key"
+                "targetStatus",
+                "idempotencyKey"
             ],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -5124,19 +5124,19 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "use_case",
+                "useCase",
                 "verifier",
-                "budget_cents",
-                "target_accuracy",
+                "budgetCents",
+                "targetAccuracy",
                 "rubric",
-                "skill_tags",
-                "required_reviews",
+                "skillTags",
+                "requiredReviews",
                 "urls",
                 "artifacts"
             ],
             "forbidden_body": [],
             "required_body": [
-                "use_case"
+                "useCase"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -5181,17 +5181,17 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "source_expert_task_name",
-                "expected_label",
+                "sourceExpertTaskName",
+                "expectedLabel",
                 "mode",
-                "feedback_policy",
-                "idempotency_key"
+                "feedbackPolicy",
+                "idempotencyKey"
             ],
             "forbidden_body": [],
             "required_body": [
-                "source_expert_task_name",
-                "expected_label",
-                "idempotency_key"
+                "sourceExpertTaskName",
+                "expectedLabel",
+                "idempotencyKey"
             ],
             "body_defaults": {},
             "scope": "review:gold:manage",
@@ -5218,16 +5218,16 @@ OPERATIONS = {
                 "rationale",
                 "evidence",
                 "annotation",
-                "annotator_id",
-                "idempotency_key",
-                "lease_token",
-                "review_context"
+                "annotatorId",
+                "idempotencyKey",
+                "leaseToken",
+                "reviewContext"
             ],
             "forbidden_body": [],
             "required_body": [
                 "label",
-                "idempotency_key",
-                "review_context"
+                "idempotencyKey",
+                "reviewContext"
             ],
             "body_defaults": {},
             "scope": "review:resolve",
@@ -5248,14 +5248,14 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "idempotency_key",
-                "lease_token",
-                "lease_duration_seconds"
+                "idempotencyKey",
+                "leaseToken",
+                "leaseDurationSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "idempotency_key",
-                "lease_token"
+                "idempotencyKey",
+                "leaseToken"
             ],
             "body_defaults": {},
             "scope": "review:resolve",
@@ -5276,14 +5276,14 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "idempotency_key",
-                "lease_token",
-                "lease_duration_seconds"
+                "idempotencyKey",
+                "leaseToken",
+                "leaseDurationSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "idempotency_key",
-                "lease_token"
+                "idempotencyKey",
+                "leaseToken"
             ],
             "body_defaults": {},
             "scope": "review:resolve",
@@ -5304,13 +5304,13 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "idempotency_key",
-                "lease_token"
+                "idempotencyKey",
+                "leaseToken"
             ],
             "forbidden_body": [],
             "required_body": [
-                "idempotency_key",
-                "lease_token"
+                "idempotencyKey",
+                "leaseToken"
             ],
             "body_defaults": {},
             "scope": "review:resolve",
@@ -5331,17 +5331,17 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "idempotency_key",
-                "lease_token",
+                "idempotencyKey",
+                "leaseToken",
                 "draft",
-                "expected_version"
+                "expectedVersion"
             ],
             "forbidden_body": [],
             "required_body": [
-                "idempotency_key",
-                "lease_token",
+                "idempotencyKey",
+                "leaseToken",
                 "draft",
-                "expected_version"
+                "expectedVersion"
             ],
             "body_defaults": {},
             "scope": "review:resolve",
@@ -5515,8 +5515,8 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "artifact_ids",
-                "artifact_type"
+                "artifactIds",
+                "artifactType"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -5538,17 +5538,17 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "artifact_ids",
-                "task_family",
+                "artifactIds",
+                "taskFamily",
                 "campaign",
-                "target_accuracy",
-                "idempotency_key",
+                "targetAccuracy",
+                "idempotencyKey",
                 "verifier"
             ],
             "forbidden_body": [],
             "required_body": [
-                "artifact_ids",
-                "task_family"
+                "artifactIds",
+                "taskFamily"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -5655,11 +5655,11 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "product_ids"
+                "productIds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "product_ids"
+                "productIds"
             ],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -5700,15 +5700,15 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "training_product_id",
-                "heldout_product_id",
-                "idempotency_key"
+                "trainingProductId",
+                "heldoutProductId",
+                "idempotencyKey"
             ],
             "forbidden_body": [],
             "required_body": [
-                "training_product_id",
-                "heldout_product_id",
-                "idempotency_key"
+                "trainingProductId",
+                "heldoutProductId",
+                "idempotencyKey"
             ],
             "body_defaults": {},
             "scope": "training:publish",
@@ -5751,11 +5751,11 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "format",
-                "train_fraction",
-                "include_raw",
-                "page_size",
-                "page_token",
-                "pair_sources"
+                "trainFraction",
+                "includeRaw",
+                "pageSize",
+                "pageToken",
+                "pairSources"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -5779,12 +5779,12 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "artifact_ids",
+                "artifactIds",
                 "job"
             ],
             "forbidden_body": [],
             "required_body": [
-                "artifact_ids",
+                "artifactIds",
                 "job"
             ],
             "body_defaults": {},
@@ -5809,13 +5809,13 @@ OPERATIONS = {
                 "bucket",
                 "prefix",
                 "key",
-                "max_objects",
-                "max_bytes",
+                "maxObjects",
+                "maxBytes",
                 "statement",
                 "limit",
                 "soql",
-                "max_pages",
-                "artifact_type",
+                "maxPages",
+                "artifactType",
                 "source",
                 "ingest",
                 "metadata"
@@ -5867,10 +5867,10 @@ OPERATIONS = {
             "body": [
                 "name",
                 "description",
-                "input_schema",
+                "inputSchema",
                 "kind",
                 "implementation",
-                "created_by"
+                "createdBy"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -5985,31 +5985,31 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "schema_version",
-                "request_id",
-                "release_id",
-                "release_kind",
-                "evidence_class",
-                "claim_class",
+                "schemaVersion",
+                "requestId",
+                "releaseId",
+                "releaseKind",
+                "evidenceClass",
+                "claimClass",
                 "bindings",
-                "lineage_edges",
+                "lineageEdges",
                 "budget",
                 "eligibility",
-                "prospective_execution"
+                "prospectiveExecution"
             ],
             "forbidden_body": [],
             "required_body": [
-                "schema_version",
-                "request_id",
-                "release_id",
-                "release_kind",
-                "evidence_class",
-                "claim_class",
+                "schemaVersion",
+                "requestId",
+                "releaseId",
+                "releaseKind",
+                "evidenceClass",
+                "claimClass",
                 "bindings",
-                "lineage_edges",
+                "lineageEdges",
                 "budget",
                 "eligibility",
-                "prospective_execution"
+                "prospectiveExecution"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -6050,27 +6050,27 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "schema_version",
+                "schemaVersion",
                 "domain",
-                "evidence_type",
-                "payload_schema",
+                "evidenceType",
+                "payloadSchema",
                 "payload",
-                "source_artifact_refs",
-                "artifact_refs",
-                "verification_state",
-                "verifier_receipt_artifact_refs",
-                "quality_flags",
+                "sourceArtifactRefs",
+                "artifactRefs",
+                "verificationState",
+                "verifierReceiptArtifactRefs",
+                "qualityFlags",
                 "provenance"
             ],
             "forbidden_body": [],
             "required_body": [
-                "schema_version",
+                "schemaVersion",
                 "domain",
-                "evidence_type",
-                "payload_schema",
+                "evidenceType",
+                "payloadSchema",
                 "payload",
-                "source_artifact_refs",
-                "verification_state"
+                "sourceArtifactRefs",
+                "verificationState"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -6135,33 +6135,33 @@ OPERATIONS = {
             },
             "query": [],
             "body": [
-                "schema_version",
+                "schemaVersion",
                 "domain",
-                "context_evidence_ref",
-                "environment_ref",
+                "contextEvidenceRef",
+                "environmentRef",
                 "seed",
                 "observations",
-                "tool_calls",
-                "measured_outcomes",
-                "verifier_results",
-                "reward_components",
-                "terminal_reason",
+                "toolCalls",
+                "measuredOutcomes",
+                "verifierResults",
+                "rewardComponents",
+                "terminalReason",
                 "uncertainty",
                 "provenance",
-                "safety_events"
+                "safetyEvents"
             ],
             "forbidden_body": [],
             "required_body": [
-                "schema_version",
+                "schemaVersion",
                 "domain",
-                "context_evidence_ref",
-                "environment_ref",
+                "contextEvidenceRef",
+                "environmentRef",
                 "seed",
                 "observations",
-                "measured_outcomes",
-                "verifier_results",
-                "reward_components",
-                "terminal_reason"
+                "measuredOutcomes",
+                "verifierResults",
+                "rewardComponents",
+                "terminalReason"
             ],
             "body_defaults": {},
             "scope": "eval:run",

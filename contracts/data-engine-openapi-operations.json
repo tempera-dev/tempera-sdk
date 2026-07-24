@@ -2,10 +2,10 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "67e1c88d21961586d5efc39d5db50e0f2cd34906",
+  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "397272bb080b5e3916d8ed08ab7ed02c5582f308",
-  "source_sha256": "b57401d80bec953ee9cadcbcafd9345d6ae7eefd215f38b89c0e5f12959163f4",
+  "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
+  "source_sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd",
   "generated_with": "sync-data-engine-openapi.py@4",
   "generated_sha256": "429fbd35ba3d411ce4618b6c14768f3f83b0be394b3fbf3968475613822f5340",
   "operations": [
