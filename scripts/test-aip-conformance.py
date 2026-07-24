@@ -68,6 +68,91 @@ class AipConformanceTest(unittest.TestCase):
             },
         )
 
+    def test_discovers_lower_camel_json_fields_through_local_refs(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "components": {
+                "schemas": {
+                    "Widget": {
+                        "type": "object",
+                        "properties": {
+                            "display_name": {"type": "string"},
+                            "nestedValue": {
+                                "type": "object",
+                                "properties": {
+                                    "created_at": {"type": "string"},
+                                },
+                            },
+                        },
+                    }
+                }
+            },
+            "paths": {
+                "/v1/widgets": {
+                    "post": {
+                        "operationId": "createWidget",
+                        "requestBody": {
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Widget"
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/Widget"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        key = "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
+        self.assertEqual(
+            violations[key]["observed"],
+            ["created_at", "display_name"],
+        )
+
+    def test_protocol_routes_exempt_json_field_names(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/oauth/token": {
+                    "post": {
+                        "operationId": "oauthToken",
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"controlPlane": spec})
+        self.assertNotIn(
+            "controlPlane|POST|/oauth/token|aip-127-lower-camel-json-fields",
+            violations,
+        )
+
     def test_protocol_routes_are_explicitly_exempt(self) -> None:
         self.assertTrue(MODULE.is_protocol_exception("tempo", "/mcp"))
         self.assertTrue(

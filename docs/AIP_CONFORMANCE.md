@@ -12,6 +12,8 @@ producer contract and fails when:
 - an unreviewed resource route lives outside `/v1`;
 - an ordinary resource method uses `PUT`;
 - path or query parameters are not lowerCamelCase;
+- JSON request or response fields reachable from an ordinary resource method
+  are not lowerCamelCase;
 - a colon custom verb is not lowerCamelCase;
 - a List method omits `pageSize` or `pageToken`;
 - a PATCH method omits `updateMask`;

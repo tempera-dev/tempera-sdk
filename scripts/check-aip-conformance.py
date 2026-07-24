@@ -91,6 +91,10 @@ RULES = {
         "aip": "https://google.aip.dev/127",
         "summary": "Public path and query parameter names use lowerCamelCase.",
     },
+    "aip-127-lower-camel-json-fields": {
+        "aip": "https://google.aip.dev/127",
+        "summary": "Public request and response JSON field names use lowerCamelCase.",
+    },
     "aip-136-lower-camel-custom-verb": {
         "aip": "https://google.aip.dev/136",
         "summary": "Colon custom verbs use lowerCamelCase.",
@@ -135,6 +139,81 @@ def resolve_parameter(
     return resolved if isinstance(resolved, dict) else parameter
 
 
+def resolve_local_reference(
+    value: dict[str, Any], spec: dict[str, Any]
+) -> tuple[dict[str, Any], str | None]:
+    """Resolve a local JSON Pointer reference and return its stable identity."""
+    reference = value.get("$ref")
+    if not isinstance(reference, str) or not reference.startswith("#/"):
+        return value, None
+    resolved: Any = spec
+    try:
+        for token in reference[2:].split("/"):
+            resolved = resolved[token.replace("~1", "/").replace("~0", "~")]
+    except (KeyError, TypeError):
+        return value, None
+    return (resolved, reference) if isinstance(resolved, dict) else (value, None)
+
+
+def schema_property_names(
+    schema: dict[str, Any],
+    spec: dict[str, Any],
+    seen_references: set[str] | None = None,
+) -> set[str]:
+    """Collect JSON property names recursively from an OpenAPI schema."""
+    seen = set() if seen_references is None else seen_references
+    resolved, reference = resolve_local_reference(schema, spec)
+    if reference is not None:
+        if reference in seen:
+            return set()
+        seen.add(reference)
+
+    names = {
+        name
+        for name in (resolved.get("properties") or {})
+        if isinstance(name, str)
+    }
+    for child in (resolved.get("properties") or {}).values():
+        if isinstance(child, dict):
+            names.update(schema_property_names(child, spec, seen))
+    items = resolved.get("items")
+    if isinstance(items, dict):
+        names.update(schema_property_names(items, spec, seen))
+    additional = resolved.get("additionalProperties")
+    if isinstance(additional, dict):
+        names.update(schema_property_names(additional, spec, seen))
+    for keyword in ("allOf", "anyOf", "oneOf"):
+        for child in resolved.get(keyword) or []:
+            if isinstance(child, dict):
+                names.update(schema_property_names(child, spec, seen))
+    return names
+
+
+def operation_json_property_names(
+    operation: dict[str, Any], spec: dict[str, Any]
+) -> set[str]:
+    """Collect wire JSON fields reachable from request and response bodies."""
+    names: set[str] = set()
+    body_containers: list[dict[str, Any]] = []
+    request_body = operation.get("requestBody")
+    if isinstance(request_body, dict):
+        resolved, _ = resolve_local_reference(request_body, spec)
+        body_containers.append(resolved)
+    for response in (operation.get("responses") or {}).values():
+        if isinstance(response, dict):
+            resolved, _ = resolve_local_reference(response, spec)
+            body_containers.append(resolved)
+
+    for container in body_containers:
+        for media_type in (container.get("content") or {}).values():
+            if not isinstance(media_type, dict):
+                continue
+            schema = media_type.get("schema")
+            if isinstance(schema, dict):
+                names.update(schema_property_names(schema, spec))
+    return names
+
+
 def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     if spec.get("contract_kind") == "http-route-manifest":
         rows: list[dict[str, Any]] = []
@@ -157,6 +236,12 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                         "path": path,
                         "operation_id": operation_id,
                         "parameters": parameters,
+                        "json_fields": [
+                            name
+                            for field in ("body_fields", "response_fields")
+                            for name in endpoint.get(field) or []
+                            if isinstance(name, str)
+                        ],
                     }
                 )
         return rows
@@ -185,6 +270,9 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                     "path": path,
                     "operation_id": operation.get("operationId", ""),
                     "parameters": parameters,
+                    "json_fields": sorted(
+                        operation_json_property_names(operation, spec)
+                    ),
                 }
             )
     return rows
@@ -245,6 +333,18 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
             )
             if non_camel:
                 add(row, "aip-127-lower-camel-parameters", non_camel)
+
+            non_camel_json_fields = sorted(
+                name
+                for name in row.get("json_fields") or []
+                if name != "@type" and not is_lower_camel(name)
+            )
+            if non_camel_json_fields:
+                add(
+                    row,
+                    "aip-127-lower-camel-json-fields",
+                    non_camel_json_fields,
+                )
 
             for custom_verb in re.findall(r":([^/{}]+)", path):
                 if not is_lower_camel(custom_verb):
