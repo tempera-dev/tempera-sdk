@@ -87,11 +87,7 @@
     "controlPlane|POST|/v1/sessions",
     "controlPlane|POST|/v1/workspace/select"
   ],
-  "accepted_violations": [
-    "tempo|GET|/v1/runs/{runId}/events|aip-127-lower-camel-json-fields",
-    "tempo|GET|/v1/sessions/{sessionId}/events|aip-127-lower-camel-json-fields",
-    "tempo|POST|/v1/sessions/{sessionId}/runs|aip-127-lower-camel-json-fields"
-  ],
+  "accepted_violations": [],
   "design_migrations": [
     {
       "products": [
@@ -116,24 +112,6 @@
       ],
       "owner": "producer repositories",
       "migration": "Adopt canonical resource names, parent/name request shapes, standard methods, and colon custom methods one resource family at a time; regenerate the SDK from exact producer SHAs."
-    },
-    {
-      "products": [
-        "controlPlane",
-        "cradle",
-        "dataEngine",
-        "palette",
-        "remi",
-        "temperaGym",
-        "temperaLlm",
-        "temperaWorkflows",
-        "tempo"
-      ],
-      "aips": [
-        193
-      ],
-      "owner": "producer repositories",
-      "migration": "Converge HTTP failures on google.rpc.Status JSON semantics with numeric code, enum-string status, message, and repeated typed details."
     },
     {
       "products": [

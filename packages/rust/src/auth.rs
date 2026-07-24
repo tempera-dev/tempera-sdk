@@ -27,6 +27,7 @@ pub const PRODUCT_AUDIENCES: &[(&str, &str, &str)] = &[
         "TEMPERA_WORKFLOWS_URL",
     ),
     ("tempera_gym", "tempera-gym", "TEMPERA_GYM_URL"),
+    ("tempera_bio", "tempera-bio", "TEMPERA_BIO_URL"),
     ("cradle", "cradle", "TEMPERA_CRADLE_URL"),
     ("remi", "remi", "TEMPERA_REMI_URL"),
 ];

@@ -5,7 +5,7 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 4
+SURFACE_VERSION = 5
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio')
 DEFAULT_AUDIENCE = 'palette'
@@ -118,6 +118,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_GYM_URL",
         "audience": "tempera-gym",
         "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
+    },
+    "temperaBio": {
+        "name": "tempera-bio",
+        "repository": "https://github.com/tempera-dev/tempera-bio",
+        "env_var": "TEMPERA_BIO_URL",
+        "audience": "tempera-bio",
+        "description": "Fail-closed computational-biology artifact pipeline for source ingestion, proposal preparation, measurement verification, and decision derivation."
     },
     "cradle": {
         "name": "cradle",
@@ -4822,6 +4829,206 @@ OPERATIONS = {
             "description": "Evaluate one frozen policy through its exact sealed adapter."
         }
     ],
+    "temperaBio": [
+        {
+            "id": "prepare_candidate_set",
+            "upstream_operation_id": "prepareCandidateSet",
+            "method": "POST",
+            "path": "/v1/candidateSets:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidates"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidates"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare candidate set."
+        },
+        {
+            "id": "prepare_dataset_release_manifest",
+            "upstream_operation_id": "prepareDatasetReleaseManifest",
+            "method": "POST",
+            "path": "/v1/datasetReleaseManifests:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "decision",
+                "program",
+                "verifierReceipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "program",
+                "decision",
+                "verifierReceipts"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare dataset release manifest."
+        },
+        {
+            "id": "derive_decision",
+            "upstream_operation_id": "deriveDecision",
+            "method": "POST",
+            "path": "/v1/decisions:derive",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidateSet",
+                "experimentProposal",
+                "hypothesis",
+                "program",
+                "verifierReceipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "program",
+                "hypothesis",
+                "candidateSet",
+                "experimentProposal",
+                "verifierReceipts"
+            ],
+            "body_defaults": {},
+            "scope": "bio:decision:write",
+            "description": "Derive decision."
+        },
+        {
+            "id": "prepare_experiment_proposal",
+            "upstream_operation_id": "prepareExperimentProposal",
+            "method": "POST",
+            "path": "/v1/experimentProposals:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidateSet",
+                "program",
+                "selectedCandidates"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "program",
+                "candidateSet",
+                "selectedCandidates"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare experiment proposal."
+        },
+        {
+            "id": "prepare_hypothesis",
+            "upstream_operation_id": "prepareHypothesis",
+            "method": "POST",
+            "path": "/v1/hypotheses:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "hypothesis"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "hypothesis"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare hypothesis."
+        },
+        {
+            "id": "verify_measurement",
+            "upstream_operation_id": "verifyMeasurement",
+            "method": "POST",
+            "path": "/v1/measurements:verify",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidate",
+                "experimentProposal",
+                "hypothesis",
+                "identitySignature",
+                "program",
+                "rawMeasurementBase64"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidate",
+                "program",
+                "hypothesis",
+                "experimentProposal",
+                "rawMeasurementBase64",
+                "identitySignature"
+            ],
+            "body_defaults": {},
+            "scope": "bio:measurement:verify",
+            "description": "Verify measurement."
+        },
+        {
+            "id": "prepare_program",
+            "upstream_operation_id": "prepareProgram",
+            "method": "POST",
+            "path": "/v1/programs:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "candidateSet",
+                "configuration",
+                "hypothesis"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "configuration",
+                "hypothesis",
+                "candidateSet"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare program."
+        },
+        {
+            "id": "ingest_mave_d_b_score_set",
+            "upstream_operation_id": "ingestMaveDBScoreSet",
+            "method": "POST",
+            "path": "/v1/sources/maveDbScoreSets:ingest",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "scoreSetUrn"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "scoreSetUrn"
+            ],
+            "body_defaults": {},
+            "scope": "bio:source:read",
+            "description": "Ingest mave d b score set."
+        }
+    ],
     "cradle": [
         {
             "id": "projects_browser_adapters_issue_capability",
@@ -6961,6 +7168,28 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": "dataset:read",
             "description": "Fetch one immutable executable research catalog entry by content hash."
+        }
+    ],
+    "humanData": [
+        {
+            "id": "compute_qualification",
+            "upstream_operation_id": "computeQualification",
+            "method": "GET",
+            "path": "/v1/qualifications:compute",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "productId",
+                "releaseId"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Compute live qualification evidence."
         }
     ]
 }

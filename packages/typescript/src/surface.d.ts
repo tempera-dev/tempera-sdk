@@ -5,7 +5,7 @@
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio";
 export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -507,6 +507,25 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   runSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
+export interface TemperaBioClient extends TemperaProductClientBase {
+  /** Prepare candidate set. */
+  prepareCandidateSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare dataset release manifest. */
+  prepareDatasetReleaseManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Derive decision. */
+  deriveDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare experiment proposal. */
+  prepareExperimentProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare hypothesis. */
+  prepareHypothesis(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify measurement. */
+  verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare program. */
+  prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ingest mave d b score set. */
+  ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
 export interface CradleClient extends TemperaProductClientBase {
   /** Call POST /v1/browser/adapter/capability. */
   projectsBrowserAdaptersIssueCapability(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -682,6 +701,11 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listResearchCatalogEntries(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one immutable executable research catalog entry by content hash. */
   getResearchCatalogEntry(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface HumanDataClient extends TemperaProductClientBase {
+  /** Compute live qualification evidence. */
+  computeQualification(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

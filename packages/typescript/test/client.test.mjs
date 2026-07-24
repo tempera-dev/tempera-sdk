@@ -30,6 +30,7 @@ function testClient(overrides = {}) {
       temperaLlm: "https://llm.example.test",
       temperaWorkflows: "https://workflows.example.test",
       temperaGym: "https://gym.example.test",
+      temperaBio: "https://bio.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
@@ -263,6 +264,26 @@ test("snake_case parameter aliases emit only canonical lowerCamel wire names", a
     environmentId: "env-1",
     seed: 42,
   });
+
+  await client.temperaBio.verifyMeasurement({
+    raw_measurement_base64: "Zml4dHVyZQ==",
+    identity_signature: "sig-1",
+  });
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    rawMeasurementBase64: "Zml4dHVyZQ==",
+    identitySignature: "sig-1",
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/measurements:verify");
+
+  await client.humanData.computeQualification({
+    product_id: "product-1",
+    release_id: "release-1",
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/qualifications:compute");
+  assert.equal(calls.at(-1).url.searchParams.get("productId"), "product-1");
+  assert.equal(calls.at(-1).url.searchParams.get("releaseId"), "release-1");
+  assert.equal(calls.at(-1).url.searchParams.get("product_id"), null);
+  assert.equal(calls.at(-1).url.searchParams.get("release_id"), null);
 });
 
 test("canonical and snake_case spellings cannot both be supplied", async () => {

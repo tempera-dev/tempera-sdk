@@ -2,9 +2,9 @@
 //! packages (see `surface.json` `errorContract`).
 //!
 //! The crate is dependency-free, so this module carries a small private JSON
-//! scanner ([`parse_json`]) sufficient for the five wire error shapes in the
-//! Tempera fleet, plus [`normalize_error_body`], which folds any of them into
-//! one [`TemperaApiError`].
+//! scanner ([`parse_json`]) sufficient for the canonical AIP-193 envelope and
+//! supported compatibility shapes, plus [`normalize_error_body`], which folds
+//! any of them into one [`TemperaApiError`].
 
 use std::fmt;
 
@@ -278,9 +278,9 @@ impl Parser<'_> {
     }
 }
 
-/// An HTTP error response from any Tempera product, normalized from the five
-/// wire error shapes in the fleet (see `surface.json` `errorContract`) so
-/// callers always read the same fields.
+/// An HTTP error response from any Tempera product, normalized from the
+/// canonical AIP-193 envelope and supported compatibility shapes (see
+/// `surface.json` `errorContract`) so callers always read the same fields.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TemperaApiError {
     /// HTTP status code of the failed response.
@@ -315,12 +315,11 @@ impl std::error::Error for TemperaApiError {}
 /// Normalize any Tempera product error body into a [`TemperaApiError`].
 ///
 /// Wire shapes handled (see `surface.json` `errorContract.wireShapes`):
-/// - control plane / palette: `{"error": "<code>", "message": "<text>"}`
-/// - tempo:                   `{"error": "<human message>"}`
-/// - canonical REST status: `{"error": {"code": 400, "status":
+/// - canonical resource API: `{"error": {"code": 400, "status":
 ///   "INVALID_ARGUMENT", "message": "...", "details": []}}`
-/// - legacy cradle / remi / data-engine: `{"error": {"code", "message",
-///   "request_id"?, ...}}`
+/// - legacy flat: `{"error": "<code>", "message": "<text>"}`
+/// - legacy message-only: `{"error": "<human message>"}`
+/// - legacy nested: `{"error": {"code", "message", "request_id"?, ...}}`
 /// - anything unparseable:    `message` is `status_text`, or `"request failed"`
 ///   when the status text is empty — the same fallback rule as the TypeScript
 ///   and Python packages, so one wire response yields one message everywhere.

@@ -170,6 +170,7 @@ class TemperaClient:
         self.tempera_llm: _ProductClient
         self.tempera_workflows: _ProductClient
         self.tempera_gym: _ProductClient
+        self.tempera_bio: _ProductClient
         self.cradle: _ProductClient
         self.remi: _ProductClient
         self.data_engine: _ProductClient

@@ -22,6 +22,7 @@ PRODUCT_ATTRS = {
     "temperaLlm": "tempera_llm",
     "temperaWorkflows": "tempera_workflows",
     "temperaGym": "tempera_gym",
+    "temperaBio": "tempera_bio",
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
@@ -76,6 +77,7 @@ def make_client(**overrides):
             "tempera_llm": "https://llm.example.test",
             "tempera_workflows": "https://workflows.example.test",
             "tempera_gym": "https://gym.example.test",
+            "tempera_bio": "https://bio.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
@@ -224,6 +226,38 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(
             transport.calls[-1]["body"],
             {"environmentId": "env-1", "seed": 42},
+        )
+
+        client.tempera_bio.verify_measurement(
+            {
+                "raw_measurement_base64": "Zml4dHVyZQ==",
+                "identity_signature": "sig-1",
+            }
+        )
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {
+                "rawMeasurementBase64": "Zml4dHVyZQ==",
+                "identitySignature": "sig-1",
+            },
+        )
+        self.assertEqual(transport.calls[-1]["path"], "/v1/measurements:verify")
+
+        client.human_data.compute_qualification(
+            {
+                "product_id": "product-1",
+                "release_id": "release-1",
+            }
+        )
+        self.assertEqual(
+            transport.calls[-1]["path"], "/v1/qualifications:compute"
+        )
+        self.assertEqual(
+            transport.calls[-1]["query"],
+            {
+                "productId": "product-1",
+                "releaseId": "release-1",
+            },
         )
 
         workflow_list_calls = (

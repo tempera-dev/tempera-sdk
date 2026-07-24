@@ -27,6 +27,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
         "transform": "yaml-json",
     },
+    "humanData": {
+        "source_repo": "tempera-dev/human-data",
+        "source_branch": "main",
+        "source_path": "api/openapi.json",
+        "generated_path": "specs/human-data-openapi.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "palette": {
         "source_repo": "tempera-dev/palette",
         "source_branch": "main",
@@ -50,6 +58,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_path": "specs/tempera-gym-api.json",
         "generated_with": "source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2",
         "transform": "yaml-json",
+    },
+    "temperaBio": {
+        "source_repo": "tempera-dev/tempera-bio",
+        "source_branch": "main",
+        "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
+        "generated_path": "specs/tempera-bio-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "temperaLlm": {
         "source_repo": "tempera-dev/tempera-llm",

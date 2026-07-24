@@ -187,7 +187,7 @@ is the default when none is specified.
 | `tempera-llm` | tempera-llm |
 | `tempera-workflows` | tempera-workflows |
 | `tempera-gym` | tempera-gym |
-| `tempera-bio` | — |
+| `tempera-bio` | tempera-bio |
 
 ## Scopes
 
@@ -208,10 +208,10 @@ is the default when none is specified.
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |
-| `bio:source:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `bio:proposal:write` | No typed SDK operation declares it yet; enforced server-side. |
-| `bio:measurement:verify` | No typed SDK operation declares it yet; enforced server-side. |
-| `bio:decision:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `bio:source:read` | tempera-bio: `ingestMaveDBScoreSet` |
+| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareHypothesis`, `prepareProgram` |
+| `bio:measurement:verify` | tempera-bio: `verifyMeasurement` |
+| `bio:decision:write` | tempera-bio: `deriveDecision` |
 | `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
 | `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection` |
 | `bio:signer:manage` | auth-hub: `createBioSignerKey`, `listBioSignerKeys`, `revokeBioSignerKey` |

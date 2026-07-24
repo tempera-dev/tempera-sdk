@@ -4,6 +4,12 @@ The aggregate SDK treats committed producer contracts as authoritative and
 applies the Google Cloud API Improvement Proposals to ordinary HTTP resource
 APIs. This is a migration ratchet, not a blanket compliance claim.
 
+The distinction is intentional: a zero count in the executable checks below
+means the versioning, wire casing, custom-verb casing, pagination, update-mask,
+and error-envelope rules are clean. It does not by itself prove that every
+domain has completed the breaking AIP-122 and AIP-131–135 resource-model
+migration.
+
 ## Enforced now
 
 `python3 scripts/check-aip-conformance.py` examines every exact-vendored
@@ -60,6 +66,29 @@ the producer's immutable merge SHA:
 
 This order avoids cosmetic renames that leave runtime behavior non-conformant.
 
+### Current structural inventory
+
+The following producer-owned work remains after the mechanical gate. It is
+recorded here so a green aggregate build cannot be presented as blanket Google
+API compliance.
+
+| Producer | AIP-122 and standard-method migration |
+|---|---|
+| Auth Hub | Replace ID tuples with canonical resource names, remove kebab-case collections, and give management-plane Create/Update/Delete families standard resource shapes. |
+| Cradle | Make Module and Job routes use canonical `name`/`parent`; add missing List methods or classify command execution as a custom method rather than Job creation. |
+| Data Engine | Finish canonical names beyond its Discovery Release, Evidence Record, and Episode families; replace split parent-plus-ID item routes and standardize Create/Delete bodies. |
+| Palette | Replace tenant/project/resource ID tuples with canonical names and complete the currently create/list/get-only resource families. |
+| Tempera Gym | Document canonical names, use them in Gets, return created resources directly, and model rollout execution as an explicit custom or long-running method. |
+| Tempera Workflows | Separate display names from canonical names, use `name`/`parent`, make `updateMask` optional, and replace `/node-types` with a lower-camel collection. |
+| Tempo | Give Session and Run canonical names, use `name`/`parent`, and return the created Session resource. |
+| Remi | Model remember/project/query/maintenance as explicit colon custom methods or introduce standard resource families. |
+
+Tempera LLM remains an exact OpenAI-compatible protocol surface. Bio's sealed
+artifact pipeline uses explicit colon custom methods rather than pretending its
+derivations are CRUD resources. Human Data's qualification receipt is governed
+by its committed producer contract. These decisions do not waive the mechanical
+wire and error rules.
+
 ## Protocol boundaries
 
 MCP/JSON-RPC, OAuth form and redirect routes, OTLP collectors, inbound
@@ -81,6 +110,12 @@ Reference policy:
 
 - <https://google.aip.dev/122>
 - <https://google.aip.dev/127>
+- <https://google.aip.dev/131>
+- <https://google.aip.dev/132>
+- <https://google.aip.dev/133>
+- <https://google.aip.dev/134>
+- <https://google.aip.dev/135>
+- <https://google.aip.dev/136>
 - <https://google.aip.dev/151>
 - <https://google.aip.dev/155>
 - <https://google.aip.dev/158>

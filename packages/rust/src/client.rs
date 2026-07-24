@@ -1001,6 +1001,52 @@ mod tests {
         let body = rollout.body_json.unwrap();
         assert!(body.contains("\"environmentId\":\"env-1\""));
         assert!(!body.contains("\"environment_id\""));
+
+        let measurement = client
+            .build_request(
+                "tempera_bio",
+                "verify_measurement",
+                &[
+                    ("raw_measurement_base64", "Zml4dHVyZQ==".into()),
+                    ("identity_signature", "sig-1".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            measurement.url,
+            "https://tempera_bio.example.test/v1/measurements:verify"
+        );
+        let body = measurement.body_json.unwrap();
+        assert!(body.contains("\"rawMeasurementBase64\":\"Zml4dHVyZQ==\""));
+        assert!(body.contains("\"identitySignature\":\"sig-1\""));
+        assert!(!body.contains("raw_measurement_base64"));
+        assert!(!body.contains("identity_signature"));
+
+        let qualification = client
+            .build_request(
+                "human_data",
+                "compute_qualification",
+                &[
+                    ("product_id", "product-1".into()),
+                    ("release_id", "release-1".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            qualification.url,
+            "https://human_data.example.test/v1/qualifications:compute"
+        );
+        assert!(
+            qualification
+                .query
+                .contains(&("productId".to_string(), "product-1".to_string()))
+        );
+        assert!(
+            qualification
+                .query
+                .contains(&("releaseId".to_string(), "release-1".to_string()))
+        );
+        assert!(!qualification.query.iter().any(|(name, _)| name.contains('_')));
     }
 
     #[test]

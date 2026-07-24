@@ -3,8 +3,9 @@ packages (see surface.json ``errorContract``).
 
 - ``TemperaSdkError``: base class for every error the SDK raises, including
   configuration and usage mistakes (missing credential, unknown product).
-- ``TemperaApiError``: an HTTP response error, normalized from the five wire
-  error shapes in the Tempera fleet so callers always read the same fields.
+- ``TemperaApiError``: an HTTP response error, normalized from the canonical
+  AIP-193 envelope and supported compatibility shapes so callers always read
+  the same fields.
 - ``TemperaMcpError``: a JSON-RPC error from an MCP endpoint.
 """
 
@@ -59,12 +60,11 @@ def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
     """Normalize any Tempera product error body into {code, message, request_id}.
 
     Wire shapes handled (see surface.json errorContract.wireShapes):
-    - control plane / palette: ``{"error": "<code>", "message": "<text>"}``
-    - tempo:                   ``{"error": "<human message>"}``
-    - canonical REST status: ``{"error": {"code": 400, "status":
+    - canonical resource API: ``{"error": {"code": 400, "status":
       "INVALID_ARGUMENT", "message": "...", "details": []}}``
-    - legacy cradle / remi / data-engine: ``{"error": {"code", "message",
-      "request_id"?, ...}}``
+    - legacy flat: ``{"error": "<code>", "message": "<text>"}``
+    - legacy message-only: ``{"error": "<human message>"}``
+    - legacy nested: ``{"error": {"code", "message", "request_id"?, ...}}``
     """
     if isinstance(body, Mapping):
         error = body.get("error")
