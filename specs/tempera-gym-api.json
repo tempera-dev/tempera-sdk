@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "tempera-gym API",
-    "version": "0.6.0",
-    "description": "Authenticated task, verifier, episode, environment, trajectory, and synchronous rollout surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "version": "0.7.0",
+    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -962,6 +962,287 @@
           }
         }
       }
+    },
+    "/v1/sealed-evaluators": {
+      "get": {
+        "operationId": "sealedEvaluators.list",
+        "summary": "Discover boot-trusted exact sealed-evaluator identities",
+        "description": "Returns only evaluator and immutable qualification-policy identities. Executable adapters remain process-local and cannot be registered over HTTP.",
+        "responses": {
+          "200": {
+            "description": "Boot-frozen evaluator registry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sealed_evaluators"
+                  ],
+                  "properties": {
+                    "sealed_evaluators": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SealedEvaluator"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations": {
+      "get": {
+        "operationId": "sealedEvaluations.list",
+        "summary": "List persisted sealed-evaluation precommits and results",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Newest persisted records first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sealed_evaluations"
+                  ],
+                  "properties": {
+                    "sealed_evaluations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SealedEvaluationRecord"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations:precommit": {
+      "post": {
+        "operationId": "sealedEvaluations.precommit",
+        "summary": "Persist an opaque sealed-suite commitment before policy freeze",
+        "description": "Binds exact evaluator, qualification policy, suite commitment, and trainer identities. The request contains no policy, cases, seeds, rows, or labels. A missing exact boot-trusted evaluator fails with 412.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "evaluator",
+                  "qualification_policy",
+                  "suite",
+                  "trainer"
+                ],
+                "properties": {
+                  "evaluator": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "qualification_policy": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "suite": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "trainer": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable precommit in PRECOMMITTED state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "evaluation"
+                  ],
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/SealedEvaluationRecord"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations/{evaluation}": {
+      "get": {
+        "operationId": "sealedEvaluations.get",
+        "summary": "Read one verified precommit and aggregate sealed result",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SealedEvaluationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persisted state and content-addressed result, if complete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "evaluation"
+                  ],
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/SealedEvaluationRecord"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations/{evaluation}:run": {
+      "post": {
+        "operationId": "sealedEvaluations.run",
+        "summary": "Evaluate one frozen policy through its exact sealed adapter",
+        "description": "Accepts only opaque frozen-policy and training-report identities. Gym verifies precommit-before-freeze ordering, invokes the boot-trusted adapter, validates aggregate-only output and required receipts, derives distinct official, production-qualification, and improvement claims, then hashes and persists the result. Exact replay is idempotent.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SealedEvaluationId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "policy_submission",
+                  "training_report"
+                ],
+                "properties": {
+                  "policy_submission": {
+                    "$ref": "#/components/schemas/FrozenPolicySubmission"
+                  },
+                  "training_report": {
+                    "$ref": "#/components/schemas/TrainingReportSubmission"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gym-owned content-addressed sealed evaluation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "result"
+                  ],
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/SealedEvaluationResult"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -992,6 +1273,15 @@
           "type": "string",
           "format": "uuid"
         }
+      },
+      "SealedEvaluationId": {
+        "name": "evaluation",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
       }
     },
     "securitySchemes": {
@@ -1004,6 +1294,383 @@
       "Digest": {
         "type": "string",
         "pattern": "^[a-f0-9]{64}$"
+      },
+      "ExactIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "QualificationPolicySummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest",
+          "domain",
+          "lane",
+          "evaluation_classification",
+          "minimum_replays",
+          "required_receipt_kinds",
+          "required_domain_gates"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "pattern": "^tempera\\.[a-z0-9][a-z0-9.-]*\\.qualification-policy/v[0-9]+$"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "lane": {
+            "type": "string"
+          },
+          "evaluation_classification": {
+            "type": "string",
+            "enum": [
+              "sealed-external"
+            ]
+          },
+          "minimum_replays": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 128
+          },
+          "required_receipt_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_domain_gates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SealedEvaluator": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest",
+          "qualification_policy"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "qualification_policy": {
+            "$ref": "#/components/schemas/QualificationPolicySummary"
+          }
+        }
+      },
+      "SealedEvaluationPrecommit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "name",
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "trainer",
+          "created_at",
+          "precommit_digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.sealed-evaluation-precommit/v1"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^sealedEvaluations/[0-9a-f-]{36}$"
+          },
+          "evaluator": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "qualification_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "ref",
+              "digest"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "digest": {
+                "$ref": "#/components/schemas/Digest"
+              }
+            }
+          },
+          "suite": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "trainer": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "precommit_digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "FrozenPolicySubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest",
+          "artifact_ref",
+          "artifact_digest",
+          "media_type",
+          "frozen_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.frozen-policy-submission/v1"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "artifact_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "frozen_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TrainingReportSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.training-report-submission/v1"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "SealedEvaluationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Gym-owned tempera.gym.sealed-evaluation/v1 aggregate. The closed JSON Schema in contracts/sealed-evaluation-v1.schema.json is canonical.",
+        "required": [
+          "schema_version",
+          "name",
+          "precommit_digest",
+          "evaluation_classification",
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "policy",
+          "training",
+          "timing",
+          "aggregate",
+          "comparison",
+          "domain_gates",
+          "integrity",
+          "evidence_receipts",
+          "claim",
+          "content_hash"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.sealed-evaluation/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "precommit_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "evaluation_classification": {
+            "type": "string",
+            "enum": [
+              "sealed-external"
+            ]
+          },
+          "evaluator": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "qualification_policy": {
+            "type": "object"
+          },
+          "suite": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "policy": {
+            "type": "object"
+          },
+          "training": {
+            "type": "object"
+          },
+          "timing": {
+            "type": "object"
+          },
+          "aggregate": {
+            "type": "object"
+          },
+          "comparison": {
+            "type": "object"
+          },
+          "domain_gates": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "integrity": {
+            "type": "object"
+          },
+          "evidence_receipts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReceipt"
+            }
+          },
+          "claim": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "official_result_eligible",
+              "independent_evaluation_claimed",
+              "production_qualification_passed",
+              "learned_improvement_claimed",
+              "reason"
+            ],
+            "properties": {
+              "official_result_eligible": {
+                "type": "boolean"
+              },
+              "independent_evaluation_claimed": {
+                "type": "boolean"
+              },
+              "production_qualification_passed": {
+                "type": "boolean"
+              },
+              "learned_improvement_claimed": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "content_hash": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "SealedEvaluationRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "precommit",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PRECOMMITTED",
+              "EVALUATING",
+              "COMPLETED"
+            ]
+          },
+          "precommit": {
+            "$ref": "#/components/schemas/SealedEvaluationPrecommit"
+          },
+          "result": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SealedEvaluationResult"
+              }
+            ],
+            "nullable": true
+          }
+        }
       },
       "EvidenceReceipt": {
         "type": "object",

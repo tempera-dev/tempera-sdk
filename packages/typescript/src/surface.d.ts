@@ -330,6 +330,16 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Execute one built-in or trusted multi-step environment synchronously by id or id@version, persist trajectory-v1, and return its completed operation envelope. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Discover boot-trusted exact sealed-evaluator and immutable qualification-policy identities without exposing executable adapters. */
+  listSealedEvaluators(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List persisted sealed-evaluation precommits and aggregate results, newest first. */
+  listSealedEvaluations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Persist exact evaluator, qualification-policy, opaque suite, and trainer identities before policy freeze. */
+  precommitSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one verified sealed-evaluation precommit and its aggregate content-addressed result when complete. */
+  getSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Submit only frozen-policy and training-report identities to the exact boot-trusted sealed evaluator; Gym derives and persists all claims. */
+  runSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {

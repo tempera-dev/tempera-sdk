@@ -21,7 +21,7 @@ Shared RL task substrate for trusted domain catalogs, deterministic durable epis
 | Audience | `tempera-gym` |
 | Auth | bearer minted for audience tempera-gym with dataset:read/eval:run and dataset:write for Data Engine export, central tp_ API key, or the gym static token |
 | Client | TypeScript `client.temperaGym` · Python `client.tempera_gym` · Rust `build_request("tempera_gym", ...)` |
-| Typed operations | 15 |
+| Typed operations | 20 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaGym.request(path, options)` (TypeScript) /
@@ -664,6 +664,216 @@ let spec = client.build_request("tempera_gym", "create_rollout", &[
     ("environment_id", "<environment_id>".into()),
     ("policy", "<policy>".into()),
     ("seed", "<seed>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listSealedEvaluators
+
+`GET /v1/sealed-evaluators`
+
+Discover boot-trusted exact sealed-evaluator and immutable qualification-policy identities without exposing executable adapters.
+
+- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluators()` · Python `client.tempera_gym.list_sealed_evaluators()` · Rust `build_request("tempera_gym", "list_sealed_evaluators", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaGym.listSealedEvaluators();
+```
+
+```python Python
+result = client.tempera_gym.list_sealed_evaluators()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_gym", "list_sealed_evaluators", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listSealedEvaluations
+
+`GET /v1/sealed-evaluations`
+
+List persisted sealed-evaluation precommits and aggregate results, newest first.
+
+- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluations()` · Python `client.tempera_gym.list_sealed_evaluations()` · Rust `build_request("tempera_gym", "list_sealed_evaluations", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `limit` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaGym.listSealedEvaluations({
+  limit: "<limit>",
+});
+```
+
+```python Python
+result = client.tempera_gym.list_sealed_evaluations({
+    "limit": "<limit>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_gym", "list_sealed_evaluations", &[
+    ("limit", "<limit>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### precommitSealedEvaluation
+
+`POST /v1/sealed-evaluations:precommit`
+
+Persist exact evaluator, qualification-policy, opaque suite, and trainer identities before policy freeze.
+
+- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.precommitSealedEvaluation()` · Python `client.tempera_gym.precommit_sealed_evaluation()` · Rust `build_request("tempera_gym", "precommit_sealed_evaluation", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `evaluator` | yes | — |
+| `qualification_policy` | yes | — |
+| `suite` | yes | — |
+| `trainer` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaGym.precommitSealedEvaluation({
+  evaluator: "<evaluator>",
+  qualification_policy: "<qualification_policy>",
+  suite: "<suite>",
+});
+```
+
+```python Python
+result = client.tempera_gym.precommit_sealed_evaluation({
+    "evaluator": "<evaluator>",
+    "qualification_policy": "<qualification_policy>",
+    "suite": "<suite>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_gym", "precommit_sealed_evaluation", &[
+    ("evaluator", "<evaluator>".into()),
+    ("qualification_policy", "<qualification_policy>".into()),
+    ("suite", "<suite>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getSealedEvaluation
+
+`GET /v1/sealed-evaluations/{evaluation}`
+
+Read one verified sealed-evaluation precommit and its aggregate content-addressed result when complete.
+
+- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.temperaGym.getSealedEvaluation()` · Python `client.tempera_gym.get_sealed_evaluation()` · Rust `build_request("tempera_gym", "get_sealed_evaluation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `evaluation` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaGym.getSealedEvaluation({
+  evaluation: "<evaluation>",
+});
+```
+
+```python Python
+result = client.tempera_gym.get_sealed_evaluation({
+    "evaluation": "<evaluation>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_gym", "get_sealed_evaluation", &[
+    ("evaluation", "<evaluation>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### runSealedEvaluation
+
+`POST /v1/sealed-evaluations/{evaluation}:run`
+
+Submit only frozen-policy and training-report identities to the exact boot-trusted sealed evaluator; Gym derives and persists all claims.
+
+- **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaGym.runSealedEvaluation()` · Python `client.tempera_gym.run_sealed_evaluation()` · Rust `build_request("tempera_gym", "run_sealed_evaluation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `evaluation` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `policy_submission` | yes | — |
+| `training_report` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaGym.runSealedEvaluation({
+  evaluation: "<evaluation>",
+  policy_submission: "<policy_submission>",
+  training_report: "<training_report>",
+});
+```
+
+```python Python
+result = client.tempera_gym.run_sealed_evaluation({
+    "evaluation": "<evaluation>",
+    "policy_submission": "<policy_submission>",
+    "training_report": "<training_report>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_gym", "run_sealed_evaluation", &[
+    ("evaluation", "<evaluation>".into()),
+    ("policy_submission", "<policy_submission>".into()),
+    ("training_report", "<training_report>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

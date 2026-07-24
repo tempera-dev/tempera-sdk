@@ -2211,6 +2211,98 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "eval:run",
       "description": "Execute one built-in or trusted multi-step environment synchronously by id or id@version, persist trajectory-v1, and return its completed operation envelope."
+    },
+    {
+      "id": "listSealedEvaluators",
+      "method": "GET",
+      "path": "/v1/sealed-evaluators",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Discover boot-trusted exact sealed-evaluator and immutable qualification-policy identities without exposing executable adapters."
+    },
+    {
+      "id": "listSealedEvaluations",
+      "method": "GET",
+      "path": "/v1/sealed-evaluations",
+      "auth": "product",
+      "pathParams": [],
+      "query": [
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List persisted sealed-evaluation precommits and aggregate results, newest first."
+    },
+    {
+      "id": "precommitSealedEvaluation",
+      "method": "POST",
+      "path": "/v1/sealed-evaluations:precommit",
+      "auth": "product",
+      "pathParams": [],
+      "query": [],
+      "body": [
+        "evaluator",
+        "qualification_policy",
+        "suite",
+        "trainer"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evaluator",
+        "qualification_policy",
+        "suite",
+        "trainer"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Persist exact evaluator, qualification-policy, opaque suite, and trainer identities before policy freeze."
+    },
+    {
+      "id": "getSealedEvaluation",
+      "method": "GET",
+      "path": "/v1/sealed-evaluations/{evaluation}",
+      "auth": "product",
+      "pathParams": [
+        "evaluation"
+      ],
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Read one verified sealed-evaluation precommit and its aggregate content-addressed result when complete."
+    },
+    {
+      "id": "runSealedEvaluation",
+      "method": "POST",
+      "path": "/v1/sealed-evaluations/{evaluation}:run",
+      "auth": "product",
+      "pathParams": [
+        "evaluation"
+      ],
+      "query": [],
+      "body": [
+        "policy_submission",
+        "training_report"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "policy_submission",
+        "training_report"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Submit only frozen-policy and training-report identities to the exact boot-trusted sealed evaluator; Gym derives and persists all claims."
     }
   ],
   "cradle": [
