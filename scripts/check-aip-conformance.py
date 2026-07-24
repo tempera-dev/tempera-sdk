@@ -107,6 +107,10 @@ RULES = {
         "aip": "https://google.aip.dev/161",
         "summary": "PATCH update methods accept updateMask.",
     },
+    "aip-193-standard-errors": {
+        "aip": "https://google.aip.dev/193",
+        "summary": "HTTP errors use google.rpc.Status-compatible JSON semantics.",
+    },
 }
 
 
@@ -214,8 +218,106 @@ def operation_json_property_names(
     return names
 
 
+def schema_properties(
+    schema: dict[str, Any],
+    spec: dict[str, Any],
+    seen_references: set[str] | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Return properties declared by a schema and its composed parents."""
+    seen = set() if seen_references is None else seen_references
+    resolved, reference = resolve_local_reference(schema, spec)
+    if reference is not None:
+        if reference in seen:
+            return {}
+        seen.add(reference)
+    properties = {
+        name: value
+        for name, value in (resolved.get("properties") or {}).items()
+        if isinstance(name, str) and isinstance(value, dict)
+    }
+    for keyword in ("allOf", "anyOf", "oneOf"):
+        for child in resolved.get(keyword) or []:
+            if isinstance(child, dict):
+                properties.update(schema_properties(child, spec, seen))
+    return properties
+
+
+def google_rpc_error_schema_issues(
+    schema: dict[str, Any], spec: dict[str, Any]
+) -> list[str]:
+    """Validate the REST JSON wrapper for a google.rpc.Status error."""
+    wrapper = schema_properties(schema, spec)
+    error_schema = wrapper.get("error")
+    if error_schema is None:
+        return ["error"]
+    error = schema_properties(error_schema, spec)
+    issues: list[str] = []
+    expected_types = {
+        "code": "integer",
+        "status": "string",
+        "message": "string",
+        "details": "array",
+    }
+    for name, expected_type in expected_types.items():
+        value = error.get(name)
+        if value is None:
+            issues.append(f"error.{name}")
+            continue
+        resolved, _ = resolve_local_reference(value, spec)
+        actual_type = resolved.get("type")
+        if actual_type != expected_type:
+            issues.append(
+                f"error.{name}:{actual_type or 'unspecified'}"
+            )
+    return issues
+
+
+def operation_standard_error_issues(
+    operation: dict[str, Any], spec: dict[str, Any]
+) -> list[str]:
+    """Return non-conformant HTTP error response codes and schema details."""
+    responses = operation.get("responses") or {}
+    error_responses = {
+        str(status): response
+        for status, response in responses.items()
+        if str(status) == "default"
+        or re.fullmatch(r"[45](?:[0-9]{2}|XX)", str(status), re.IGNORECASE)
+    }
+    if not error_responses:
+        return ["missing-error-response"]
+
+    issues: list[str] = []
+    for status, response in sorted(error_responses.items()):
+        if not isinstance(response, dict):
+            issues.append(f"{status}:response")
+            continue
+        resolved, _ = resolve_local_reference(response, spec)
+        media_type = (resolved.get("content") or {}).get("application/json")
+        if not isinstance(media_type, dict):
+            issues.append(f"{status}:application/json")
+            continue
+        schema = media_type.get("schema")
+        if not isinstance(schema, dict):
+            issues.append(f"{status}:schema")
+            continue
+        for issue in google_rpc_error_schema_issues(schema, spec):
+            issues.append(f"{status}:{issue}")
+    return issues
+
+
 def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     if spec.get("contract_kind") == "http-route-manifest":
+        manifest_error_fields = set(
+            (spec.get("error_shape") or {}).get("fields") or []
+        )
+        manifest_error_issues = []
+        if "error.code" not in manifest_error_fields:
+            manifest_error_issues.append("manifest:error.code")
+        else:
+            manifest_error_issues.append("manifest:error.code:string")
+        for field in ("error.status", "error.details"):
+            if field not in manifest_error_fields:
+                manifest_error_issues.append(f"manifest:{field}")
         rows: list[dict[str, Any]] = []
         for endpoint in spec.get("endpoints") or []:
             if not isinstance(endpoint, dict):
@@ -242,6 +344,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                             for name in endpoint.get(field) or []
                             if isinstance(name, str)
                         ],
+                        "standard_error_issues": manifest_error_issues,
                     }
                 )
         return rows
@@ -272,6 +375,9 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                     "parameters": parameters,
                     "json_fields": sorted(
                         operation_json_property_names(operation, spec)
+                    ),
+                    "standard_error_issues": operation_standard_error_issues(
+                        operation, spec
                     ),
                 }
             )
@@ -365,6 +471,10 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
 
             if row["method"] == "PATCH" and "updateMask" not in parameter_names:
                 add(row, "aip-161-update-mask", ["updateMask"])
+
+            error_issues = row.get("standard_error_issues") or []
+            if error_issues:
+                add(row, "aip-193-standard-errors", error_issues)
     return violations
 
 

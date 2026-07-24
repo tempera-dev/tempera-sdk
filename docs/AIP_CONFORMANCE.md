@@ -17,6 +17,9 @@ producer contract and fails when:
 - a colon custom verb is not lowerCamelCase;
 - a List method omits `pageSize` or `pageToken`;
 - a PATCH method omits `updateMask`;
+- an ordinary resource operation omits a `google.rpc.Status`-compatible JSON
+  error envelope with numeric `error.code`, string `error.status` and
+  `error.message`, and array `error.details`;
 - a recorded violation disappears without removing its stale exception; or
 - the baseline review date expires.
 

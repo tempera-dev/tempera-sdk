@@ -65,6 +65,7 @@ class AipConformanceTest(unittest.TestCase):
                 "aip-136-lower-camel-custom-verb",
                 "aip-158-list-pagination",
                 "aip-161-update-mask",
+                "aip-193-standard-errors",
             },
         )
 
@@ -150,6 +151,108 @@ class AipConformanceTest(unittest.TestCase):
         violations = MODULE.discover_violations({"controlPlane": spec})
         self.assertNotIn(
             "controlPlane|POST|/oauth/token|aip-127-lower-camel-json-fields",
+            violations,
+        )
+        self.assertNotIn(
+            "controlPlane|POST|/oauth/token|aip-193-standard-errors",
+            violations,
+        )
+
+    def test_discovers_non_standard_error_schemas(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/widgets/{name}": {
+                    "get": {
+                        "operationId": "getWidget",
+                        "parameters": [{"name": "name", "in": "path"}],
+                        "responses": {
+                            "404": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "error": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string"
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        key = "test|GET|/v1/widgets/{name}|aip-193-standard-errors"
+        self.assertEqual(
+            violations[key]["observed"],
+            [
+                "404:error.code:string",
+                "404:error.details",
+                "404:error.status",
+            ],
+        )
+
+    def test_accepts_google_rpc_status_compatible_error_schema(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/widgets/{name}": {
+                    "get": {
+                        "operationId": "getWidget",
+                        "parameters": [{"name": "name", "in": "path"}],
+                        "responses": {
+                            "404": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "error": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "integer"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                        "details": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            },
+                                                        },
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        self.assertNotIn(
+            "test|GET|/v1/widgets/{name}|aip-193-standard-errors",
             violations,
         )
 
