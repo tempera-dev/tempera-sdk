@@ -3,11 +3,11 @@
   "gaps": [
     {
       "repository": "tempera-dev/remi",
-      "source_commit": "f867149f06e97f76a93322f3d3fc4a86fb09384e",
+      "source_commit": "29fa2b8ac04f6c0a3b5e04a40c70bb58f6fc7ea1",
       "blocker": "TEMPERA_CONTRACT_READER is not installed on this private repository.",
       "owner": "tempera-dev organization administrator",
       "remediation": "Install the existing least-privilege Tempera Contract Reader GitHub App on remi, enable its exact-source checkout job, and remove this gap.",
-      "producer_ci_url": "https://github.com/tempera-dev/remi/actions/runs/30095124256",
+      "producer_ci_url": "https://github.com/tempera-dev/remi/actions/runs/30100577982",
       "review_after": "2026-08-15"
     },
     {

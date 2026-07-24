@@ -376,6 +376,80 @@ class AipConformanceTest(unittest.TestCase):
             any("stale exact protocol exception" in failure for failure in failures)
         )
 
+    def test_exact_oauth_introspection_operation_is_protocol_native(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/oauth/introspect": {
+                    "post": {
+                        "operationId": "introspectOAuthToken",
+                        "requestBody": {
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "token_type_hint": {"type": "string"}
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token_type": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        self.assertEqual(MODULE.discover_violations({"controlPlane": spec}), {})
+
+    def test_embedded_oauth_response_only_exempts_json_spelling(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/sessions": {
+                    "post": {
+                        "operationId": "createHostedSession",
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"controlPlane": spec})
+        self.assertNotIn(
+            "controlPlane|POST|/v1/sessions|aip-127-lower-camel-json-fields",
+            violations,
+        )
+        self.assertIn(
+            "controlPlane|POST|/v1/sessions|aip-193-standard-errors",
+            violations,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

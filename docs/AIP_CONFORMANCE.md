@@ -67,8 +67,15 @@ webhooks, WebSocket/BiDi, SSE, well-known metadata, health, readiness, and
 metrics endpoints retain their native protocol semantics. Tempera LLM's
 `/v1/chat/completions`, `/v1/responses`, and `/v1/models` routes likewise
 retain the OpenAI-compatible JSON field names required by existing clients.
-Their exact paths are recorded in the baseline and do not authorize new
-resource-API exceptions.
+OAuth introspection retains the RFC 7662 wire contract even at its exact
+versioned Auth Hub operation. Auth Hub's session, workspace-selection,
+staff-step-up, and OAuth-grant management operations retain embedded OAuth
+token/grant response vocabulary while their resource paths, parameters,
+pagination, and AIP-193 errors remain governed by the resource rules.
+
+Exact path, operation, and JSON-only exceptions are recorded separately in the
+baseline. This prevents a protocol response from exempting unrelated methods or
+other AIP rules and does not authorize new resource-API exceptions.
 
 Reference policy:
 

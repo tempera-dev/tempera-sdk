@@ -3789,19 +3789,19 @@
         "path": "/v1/remember",
         "auth": "product",
         "body": [
-          "tenant_id",
-          "project_id",
-          "environment_id",
+          "tenantId",
+          "projectId",
+          "environmentId",
           "kind",
           "text",
-          "idempotency_key",
+          "idempotencyKey",
           "project"
         ],
         "description": "Write one memory event into the tenant and project ledger.",
         "upstreamOperationId": "remember",
         "requiredBody": [
-          "tenant_id",
-          "project_id",
+          "tenantId",
+          "projectId",
           "kind",
           "text"
         ]
@@ -3825,12 +3825,12 @@
         "body": [
           "question",
           "scope",
-          "max_tokens",
-          "require_fresh",
+          "maxTokens",
+          "requireFresh",
           "modes",
-          "reconstruction_mode",
-          "max_reconstruction_steps",
-          "max_reconstruction_tokens"
+          "reconstructionMode",
+          "maxReconstructionSteps",
+          "maxReconstructionTokens"
         ],
         "description": "Answer a scoped memory question with evidence and reconstruction metadata.",
         "upstreamOperationId": "query",
@@ -3846,9 +3846,9 @@
         "auth": "product",
         "body": [
           "vacuum",
-          "repair_orphans",
-          "prune_audit_before_unix_ms",
-          "retain_latest_audit_events"
+          "repairOrphans",
+          "pruneAuditBeforeUnixMs",
+          "retainLatestAuditEvents"
         ],
         "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
         "upstreamOperationId": "maintenance"

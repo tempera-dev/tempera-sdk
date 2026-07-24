@@ -5138,18 +5138,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "tenant_id",
-        "project_id",
-        "environment_id",
+        "tenantId",
+        "projectId",
+        "environmentId",
         "kind",
         "text",
-        "idempotency_key",
+        "idempotencyKey",
         "project"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id",
-        "project_id",
+        "tenantId",
+        "projectId",
         "kind",
         "text"
       ],
@@ -5187,12 +5187,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "question",
         "scope",
-        "max_tokens",
-        "require_fresh",
+        "maxTokens",
+        "requireFresh",
         "modes",
-        "reconstruction_mode",
-        "max_reconstruction_steps",
-        "max_reconstruction_tokens"
+        "reconstructionMode",
+        "maxReconstructionSteps",
+        "maxReconstructionTokens"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -5214,9 +5214,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "vacuum",
-        "repair_orphans",
-        "prune_audit_before_unix_ms",
-        "retain_latest_audit_events"
+        "repairOrphans",
+        "pruneAuditBeforeUnixMs",
+        "retainLatestAuditEvents"
       ],
       "forbiddenBody": [],
       "requiredBody": [],

@@ -79,13 +79,16 @@
     "temperaWorkflows|/events",
     "tempo|/bidi"
   ],
+  "protocol_operation_exceptions": [
+    "controlPlane|POST|/v1/oauth/introspect"
+  ],
+  "protocol_json_exceptions": [
+    "controlPlane|GET|/v1/oauth/grants",
+    "controlPlane|POST|/v1/admin/step-up",
+    "controlPlane|POST|/v1/sessions",
+    "controlPlane|POST|/v1/workspace/select"
+  ],
   "accepted_violations": [
-    "controlPlane|GET|/v1/oauth/grants|aip-127-lower-camel-json-fields",
-    "controlPlane|POST|/v1/admin/step-up|aip-127-lower-camel-json-fields",
-    "controlPlane|POST|/v1/oauth/introspect|aip-127-lower-camel-json-fields",
-    "controlPlane|POST|/v1/oauth/introspect|aip-193-standard-errors",
-    "controlPlane|POST|/v1/sessions|aip-127-lower-camel-json-fields",
-    "controlPlane|POST|/v1/workspace/select|aip-127-lower-camel-json-fields",
     "cradle|DELETE|/v1/jobs/{id}|aip-127-lower-camel-json-fields",
     "cradle|DELETE|/v1/jobs/{id}|aip-193-standard-errors",
     "cradle|GET|/v1/browser/adapter/contract|aip-127-lower-camel-json-fields",
@@ -240,9 +243,6 @@
     "palette|POST|/v1/scenarios/{tenant_id}/{project_id}|aip-127-lower-camel-json-fields",
     "palette|POST|/v1/scenarios/{tenant_id}/{project_id}|aip-127-lower-camel-parameters",
     "palette|POST|/v1/traces/native|aip-127-lower-camel-json-fields",
-    "remi|POST|/v1/maintenance|aip-127-lower-camel-json-fields",
-    "remi|POST|/v1/query|aip-127-lower-camel-json-fields",
-    "remi|POST|/v1/remember|aip-127-lower-camel-json-fields",
     "temperaGym|GET|/v1/domains|aip-127-lower-camel-json-fields",
     "temperaGym|GET|/v1/environments|aip-127-lower-camel-json-fields",
     "temperaGym|GET|/v1/episodes/{episode}|aip-127-lower-camel-json-fields",

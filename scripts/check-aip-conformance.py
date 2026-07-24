@@ -83,6 +83,21 @@ PROTOCOL_SUFFIX_EXCEPTIONS = {
     ("temperaWorkflows", "/events"),
     ("tempo", "/bidi"),
 }
+# Exact operations that implement an externally defined protocol even though
+# they live below a versioned product path. OAuth token introspection is defined
+# by RFC 7662, including its snake_case members and inactive-token response.
+PROTOCOL_OPERATION_EXCEPTIONS = {
+    ("controlPlane", "POST", "/v1/oauth/introspect"),
+}
+# Resource operations may deliberately return an embedded protocol payload.
+# Continue checking their path, parameters, pagination, and AIP-193 errors, but
+# do not reinterpret the OAuth token vocabulary as resource-message debt.
+PROTOCOL_JSON_EXCEPTIONS = {
+    ("controlPlane", "GET", "/v1/oauth/grants"),
+    ("controlPlane", "POST", "/v1/admin/step-up"),
+    ("controlPlane", "POST", "/v1/sessions"),
+    ("controlPlane", "POST", "/v1/workspace/select"),
+}
 
 RULES = {
     "aip-127-versioned-path": {
@@ -441,6 +456,9 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
             path = row["path"]
             if is_protocol_exception(product, path):
                 continue
+            operation_key = (product, row["method"], path)
+            if operation_key in PROTOCOL_OPERATION_EXCEPTIONS:
+                continue
             if not (path == "/v1" or path.startswith("/v1/")):
                 add(row, "aip-127-versioned-path", [path])
             if row["method"] == "PUT":
@@ -465,7 +483,10 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
                 for name in row.get("json_fields") or []
                 if name != "@type" and not is_lower_camel(name)
             )
-            if non_camel_json_fields:
+            if (
+                non_camel_json_fields
+                and operation_key not in PROTOCOL_JSON_EXCEPTIONS
+            ):
                 add(
                     row,
                     "aip-127-lower-camel-json-fields",
@@ -511,9 +532,22 @@ def load_baseline() -> dict[str, Any]:
 
 
 def validate_protocol_exceptions(specs: dict[str, dict[str, Any]]) -> list[str]:
-    paths = {
-        product: {row["path"] for row in operation_rows(product, spec)}
+    rows = {
+        product: operation_rows(product, spec)
         for product, spec in specs.items()
+    }
+    paths = {
+        product: {row["path"] for row in product_rows}
+        for product, product_rows in rows.items()
+    }
+    operations = {
+        (
+            product,
+            row["method"],
+            row["path"],
+        )
+        for product, product_rows in rows.items()
+        for row in product_rows
     }
     failures: list[str] = []
     for product, path in sorted(PROTOCOL_EXCEPTIONS):
@@ -525,6 +559,16 @@ def validate_protocol_exceptions(specs: dict[str, dict[str, Any]]) -> list[str]:
     for product, suffix in sorted(PROTOCOL_SUFFIX_EXCEPTIONS):
         if not any(path.endswith(suffix) for path in paths.get(product, set())):
             failures.append(f"stale protocol suffix exception: {product}|{suffix}")
+    for exception in sorted(PROTOCOL_OPERATION_EXCEPTIONS):
+        if exception not in operations:
+            failures.append(
+                "stale protocol operation exception: " + "|".join(exception)
+            )
+    for exception in sorted(PROTOCOL_JSON_EXCEPTIONS):
+        if exception not in operations:
+            failures.append(
+                "stale protocol JSON exception: " + "|".join(exception)
+            )
     return failures
 
 
@@ -546,6 +590,14 @@ def validate_baseline_shape(baseline: dict[str, Any]) -> list[str]:
         f"{product}|{path}" for product, path in PROTOCOL_SUFFIX_EXCEPTIONS
     ):
         failures.append("baseline protocol suffix exceptions are stale")
+    if baseline.get("protocol_operation_exceptions") != sorted(
+        "|".join(exception) for exception in PROTOCOL_OPERATION_EXCEPTIONS
+    ):
+        failures.append("baseline protocol operation exceptions are stale")
+    if baseline.get("protocol_json_exceptions") != sorted(
+        "|".join(exception) for exception in PROTOCOL_JSON_EXCEPTIONS
+    ):
+        failures.append("baseline protocol JSON exceptions are stale")
     try:
         review_after = date.fromisoformat(baseline["review_after"])
         if review_after < date.today():
@@ -580,6 +632,12 @@ def rendered_baseline(
         ),
         "protocol_suffix_exceptions": sorted(
             f"{product}|{path}" for product, path in PROTOCOL_SUFFIX_EXCEPTIONS
+        ),
+        "protocol_operation_exceptions": sorted(
+            "|".join(exception) for exception in PROTOCOL_OPERATION_EXCEPTIONS
+        ),
+        "protocol_json_exceptions": sorted(
+            "|".join(exception) for exception in PROTOCOL_JSON_EXCEPTIONS
         ),
         "accepted_violations": sorted(violations),
         "design_migrations": previous.get("design_migrations", []),

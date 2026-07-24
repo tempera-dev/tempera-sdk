@@ -5129,18 +5129,18 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "tenant_id",
-                "project_id",
-                "environment_id",
+                "tenantId",
+                "projectId",
+                "environmentId",
                 "kind",
                 "text",
-                "idempotency_key",
+                "idempotencyKey",
                 "project"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
-                "project_id",
+                "tenantId",
+                "projectId",
                 "kind",
                 "text"
             ],
@@ -5178,12 +5178,12 @@ OPERATIONS = {
             "body": [
                 "question",
                 "scope",
-                "max_tokens",
-                "require_fresh",
+                "maxTokens",
+                "requireFresh",
                 "modes",
-                "reconstruction_mode",
-                "max_reconstruction_steps",
-                "max_reconstruction_tokens"
+                "reconstructionMode",
+                "maxReconstructionSteps",
+                "maxReconstructionTokens"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -5205,9 +5205,9 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "vacuum",
-                "repair_orphans",
-                "prune_audit_before_unix_ms",
-                "retain_latest_audit_events"
+                "repairOrphans",
+                "pruneAuditBeforeUnixMs",
+                "retainLatestAuditEvents"
             ],
             "forbidden_body": [],
             "required_body": [],
