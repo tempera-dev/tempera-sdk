@@ -29,19 +29,19 @@ DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "55532b2cf3fb1b228b4d6620a3aa88899c262f12"
+PALETTE_REVISION = "332a6ea6baafbf19511dc6dee5077dd62cc9b0ad"
 PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
-PALETTE_SOURCE_BLOB = "32e5aed508a963fdd4e7af153c81190475beeac8"
+PALETTE_SOURCE_BLOB = "ef6ccc33b3dad70c15d89c89190b877e8c342746"
 PALETTE_SOURCE_SHA256 = (
-    "sha256:18942d5e2c26332b40050cda5a882540f14d914d717d5b94342a0afb72001dd0"
+    "sha256:136074a04219ea2bb96a70674afdbad4eec142c971f7c100ae0ab9db212fc5b7"
 )
-PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/22"
+PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/23"
 PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
 REQUEST_SCHEMA = "#/components/schemas/ImportTemperaEvidenceRequest"
 RECEIPT_SCHEMA = "#/components/schemas/TemperaEvidenceReceipt"
-REQUEST_FIELDS = ["canonical_json", "public_key_pem", "signature_base64"]
-REQUIRED_REQUEST_FIELDS = ["canonical_json", "signature_base64", "public_key_pem"]
+REQUEST_FIELDS = ["canonicalJson", "publicKeyPem", "signatureBase64"]
+REQUIRED_REQUEST_FIELDS = ["canonicalJson", "signatureBase64", "publicKeyPem"]
 IMPORT_RESPONSE_CODES = ["200", "400", "401", "403", "409", "413", "422", "503"]
 RECEIPT_RESPONSE_CODES = ["200", "400", "401", "403", "404"]
 
@@ -50,8 +50,8 @@ OPERATIONS = [
         "sdkOperationId": "importTemperaBundle",
         "operationId": "evalResults.importTemperaBundle",
         "method": "POST",
-        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
-        "pathParams": ["tenant_id", "project_id"],
+        "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
+        "pathParams": ["tenantId", "projectId"],
         "body": REQUEST_FIELDS,
         "requiredBody": REQUIRED_REQUEST_FIELDS,
         "responseCodes": IMPORT_RESPONSE_CODES,
@@ -60,8 +60,8 @@ OPERATIONS = [
         "sdkOperationId": "recordTemperaDecision",
         "operationId": "evalResults.recordTemperaDecision",
         "method": "POST",
-        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
-        "pathParams": ["tenant_id", "project_id"],
+        "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
+        "pathParams": ["tenantId", "projectId"],
         "body": REQUEST_FIELDS,
         "requiredBody": REQUIRED_REQUEST_FIELDS,
         "responseCodes": IMPORT_RESPONSE_CODES,
@@ -71,10 +71,10 @@ OPERATIONS = [
         "operationId": "evalResults.getTemperaEvidence",
         "method": "GET",
         "path": (
-            "/v1/eval-results/{tenant_id}/{project_id}/tempera/"
-            "{kind}/{external_id}"
+            "/v1/eval-results/{tenantId}/{projectId}/tempera/"
+            "{kind}/{externalId}"
         ),
-        "pathParams": ["tenant_id", "project_id", "kind", "external_id"],
+        "pathParams": ["tenantId", "projectId", "kind", "externalId"],
         "body": [],
         "requiredBody": [],
         "responseCodes": RECEIPT_RESPONSE_CODES,
@@ -237,10 +237,10 @@ def render(source: Path, *, source_checkout: Path | None = None) -> str:
         receipt_schema.get("properties") if isinstance(receipt_schema, dict) else None
     )
     required_receipt_fields = {
-        "declared_content_sha256",
-        "signed_payload_sha256",
-        "signature_sha256",
-        "public_key_sha256",
+        "declaredContentSha256",
+        "signedPayloadSha256",
+        "signatureSha256",
+        "publicKeySha256",
         "summary",
     }
     if (

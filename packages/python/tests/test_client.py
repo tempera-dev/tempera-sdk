@@ -423,7 +423,7 @@ class DispatchTest(unittest.TestCase):
         client, _ = make_client()
         with self.assertRaises(TemperaSdkError) as ctx:
             client.palette.get_trace({"tenant_id": "t1"})
-        self.assertIn('missing required path parameter "trace_id"', str(ctx.exception))
+        self.assertIn('missing required path parameter "traceId"', str(ctx.exception))
 
     def test_create_hosted_session_stores_the_account_token_for_later_calls(self):
         def responder(call):

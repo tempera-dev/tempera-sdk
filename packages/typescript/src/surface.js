@@ -1769,13 +1769,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "alertsEvaluate",
       "upstreamOperationId": "alerts.evaluate",
       "method": "POST",
-      "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
+      "path": "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "trace_id"
+        "tenantId",
+        "projectId",
+        "traceId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1796,13 +1796,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createApiKey",
       "upstreamOperationId": "apiKeys.create",
       "method": "POST",
-      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
+      "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id"
+        "tenantId",
+        "projectId",
+        "environmentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1821,14 +1821,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "revokeApiKey",
       "upstreamOperationId": "apiKeys.revoke",
       "method": "POST",
-      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
+      "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id",
-        "api_key_id"
+        "tenantId",
+        "projectId",
+        "environmentId",
+        "apiKeyId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1843,18 +1843,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "archiveQuerySpans",
       "upstreamOperationId": "archive.querySpans",
       "method": "GET",
-      "path": "/v1/archive/{tenant_id}/{project_id}/spans",
+      "path": "/v1/archive/{tenantId}/{projectId}/spans",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "environment_id",
-        "trace_id",
-        "span_id",
+        "environmentId",
+        "traceId",
+        "spanId",
         "kind",
         "status",
         "pageSize",
@@ -1871,13 +1871,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "archiveTrace",
       "upstreamOperationId": "archive.archiveTrace",
       "method": "POST",
-      "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
+      "path": "/v1/archive/{tenantId}/{projectId}/{traceId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "trace_id"
+        "tenantId",
+        "projectId",
+        "traceId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1892,12 +1892,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "auditList",
       "upstreamOperationId": "audit.list",
       "method": "GET",
-      "path": "/v1/audit/{tenant_id}/{project_id}",
+      "path": "/v1/audit/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -1915,21 +1915,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "calibrationsRun",
       "upstreamOperationId": "calibrations.run",
       "method": "POST",
-      "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
+      "path": "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id",
-        "version_id"
+        "tenantId",
+        "projectId",
+        "datasetId",
+        "versionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "eval_report_id",
-        "evaluator_version_id",
-        "pass_threshold"
+        "evalReportId",
+        "evaluatorVersionId",
+        "passThreshold"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1941,12 +1941,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectGetStatus",
       "upstreamOperationId": "connect.getStatus",
       "method": "GET",
-      "path": "/v1/connect/status/{tenant_id}/{project_id}",
+      "path": "/v1/connect/status/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1961,12 +1961,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsList",
       "upstreamOperationId": "connectors.list",
       "method": "GET",
-      "path": "/v1/connectors/{tenant_id}/{project_id}",
+      "path": "/v1/connectors/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -1984,12 +1984,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsConnect",
       "upstreamOperationId": "connectors.connect",
       "method": "POST",
-      "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
+      "path": "/v1/connectors/{tenantId}/{projectId}/connect",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2008,12 +2008,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsInvokeTool",
       "upstreamOperationId": "connectors.invokeTool",
       "method": "POST",
-      "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
+      "path": "/v1/connectors/{tenantId}/{projectId}/invoke",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2033,12 +2033,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsGetSkills",
       "upstreamOperationId": "connectors.getSkills",
       "method": "GET",
-      "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
+      "path": "/v1/connectors/{tenantId}/{projectId}/skills",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2055,12 +2055,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsStatus",
       "upstreamOperationId": "connectors.status",
       "method": "GET",
-      "path": "/v1/connectors/{tenant_id}/{project_id}/status",
+      "path": "/v1/connectors/{tenantId}/{projectId}/status",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2077,12 +2077,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "connectorsListTools",
       "upstreamOperationId": "connectors.listTools",
       "method": "GET",
-      "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
+      "path": "/v1/connectors/{tenantId}/{projectId}/tools",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2101,12 +2101,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createDataset",
       "upstreamOperationId": "datasets.create",
       "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}",
+      "path": "/v1/datasets/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2125,24 +2125,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promoteTraceToCase",
       "upstreamOperationId": "datasets.promoteCaseFromTrace",
       "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
+      "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id"
+        "tenantId",
+        "projectId",
+        "datasetId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
         "reference",
-        "span_id",
-        "trace_id"
+        "spanId",
+        "traceId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "trace_id"
+        "traceId"
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -2152,18 +2152,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createDatasetVersion",
       "upstreamOperationId": "datasets.createVersion",
       "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
+      "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id"
+        "tenantId",
+        "projectId",
+        "datasetId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "case_ids"
+        "caseIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2175,31 +2175,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "evalsRunDeterministic",
       "upstreamOperationId": "evals.runDeterministic",
       "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
+      "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id",
-        "version_id"
+        "tenantId",
+        "projectId",
+        "datasetId",
+        "versionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "agent_release_id",
-        "code_hash",
-        "evaluator_id",
-        "evaluator_version_id",
+        "agentReleaseId",
+        "codeHash",
+        "evaluatorId",
+        "evaluatorVersionId",
         "kind",
-        "prompt_version_id",
-        "wasm_hash"
+        "promptVersionId",
+        "wasmHash"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "evaluator_id",
-        "evaluator_version_id",
-        "agent_release_id",
+        "evaluatorId",
+        "evaluatorVersionId",
+        "agentReleaseId",
         "kind"
       ],
       "bodyDefaults": {},
@@ -2210,33 +2210,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "evalsRunJudge",
       "upstreamOperationId": "evals.runJudge",
       "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
+      "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id",
-        "version_id"
+        "tenantId",
+        "projectId",
+        "datasetId",
+        "versionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "agent_release_id",
-        "code_hash",
-        "evaluator_id",
-        "evaluator_version_id",
+        "agentReleaseId",
+        "codeHash",
+        "evaluatorId",
+        "evaluatorVersionId",
         "kind",
-        "prompt_version_id",
-        "provider_secret_id"
+        "promptVersionId",
+        "providerSecretId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "evaluator_id",
-        "evaluator_version_id",
-        "agent_release_id",
+        "evaluatorId",
+        "evaluatorVersionId",
+        "agentReleaseId",
         "kind",
-        "provider_secret_id"
+        "providerSecretId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2246,25 +2246,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "importTemperaBundle",
       "upstreamOperationId": "evalResults.importTemperaBundle",
       "method": "POST",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "canonical_json",
-        "public_key_pem",
-        "signature_base64"
+        "canonicalJson",
+        "publicKeyPem",
+        "signatureBase64"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
+        "canonicalJson",
+        "signatureBase64",
+        "publicKeyPem"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -2274,25 +2274,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "recordTemperaDecision",
       "upstreamOperationId": "evalResults.recordTemperaDecision",
       "method": "POST",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "canonical_json",
-        "public_key_pem",
-        "signature_base64"
+        "canonicalJson",
+        "publicKeyPem",
+        "signatureBase64"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
+        "canonicalJson",
+        "signatureBase64",
+        "publicKeyPem"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -2302,14 +2302,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getTemperaEvidence",
       "upstreamOperationId": "evalResults.getTemperaEvidence",
       "method": "GET",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
+        "tenantId",
+        "projectId",
         "kind",
-        "external_id"
+        "externalId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2324,36 +2324,36 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "experimentsRunDeterministic",
       "upstreamOperationId": "experiments.runDeterministic",
       "method": "POST",
-      "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
+      "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id",
-        "version_id"
+        "tenantId",
+        "projectId",
+        "datasetId",
+        "versionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "baseline_outputs",
-        "baseline_release_id",
-        "candidate_outputs",
-        "candidate_release_id",
-        "evaluator_id",
-        "evaluator_version_id",
-        "gate_policy",
+        "baselineOutputs",
+        "baselineReleaseId",
+        "candidateOutputs",
+        "candidateReleaseId",
+        "evaluatorId",
+        "evaluatorVersionId",
+        "gatePolicy",
         "kind"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "baseline_release_id",
-        "candidate_release_id",
-        "evaluator_id",
-        "evaluator_version_id",
+        "baselineReleaseId",
+        "candidateReleaseId",
+        "evaluatorId",
+        "evaluatorVersionId",
         "kind",
-        "baseline_outputs",
-        "candidate_outputs"
+        "baselineOutputs",
+        "candidateOutputs"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2363,38 +2363,38 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "experimentsRunJudge",
       "upstreamOperationId": "experiments.runJudge",
       "method": "POST",
-      "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
+      "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id",
-        "version_id"
+        "tenantId",
+        "projectId",
+        "datasetId",
+        "versionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "baseline_outputs",
-        "baseline_release_id",
-        "candidate_outputs",
-        "candidate_release_id",
-        "evaluator_id",
-        "evaluator_version_id",
-        "gate_policy",
+        "baselineOutputs",
+        "baselineReleaseId",
+        "candidateOutputs",
+        "candidateReleaseId",
+        "evaluatorId",
+        "evaluatorVersionId",
+        "gatePolicy",
         "kind",
-        "provider_secret_id"
+        "providerSecretId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "baseline_release_id",
-        "candidate_release_id",
-        "evaluator_id",
-        "evaluator_version_id",
+        "baselineReleaseId",
+        "candidateReleaseId",
+        "evaluatorId",
+        "evaluatorVersionId",
         "kind",
-        "baseline_outputs",
-        "candidate_outputs",
-        "provider_secret_id"
+        "baselineOutputs",
+        "candidateOutputs",
+        "providerSecretId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2404,25 +2404,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "gatesCreate",
       "upstreamOperationId": "gates.create",
       "method": "POST",
-      "path": "/v1/gates/{tenant_id}/{project_id}",
+      "path": "/v1/gates/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "dataset_id",
-        "evaluator_version_id",
-        "gate_id",
-        "inconclusive_policy",
+        "datasetId",
+        "evaluatorVersionId",
+        "gateId",
+        "inconclusivePolicy",
         "name"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "gate_id",
+        "gateId",
         "name"
       ],
       "bodyDefaults": {},
@@ -2433,18 +2433,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "gatesRun",
       "upstreamOperationId": "gates.run",
       "method": "POST",
-      "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
+      "path": "/v1/gates/{tenantId}/{projectId}/{gateId}/run",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "gate_id"
+        "tenantId",
+        "projectId",
+        "gateId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "experiment_run_id"
+        "experimentRunId"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2456,13 +2456,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "importSource",
       "upstreamOperationId": "ingest.importSource",
       "method": "POST",
-      "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
+      "path": "/v1/import/{tenantId}/{projectId}/{environmentId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id"
+        "tenantId",
+        "projectId",
+        "environmentId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2484,17 +2484,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "ingestReplayDeadLetter",
       "upstreamOperationId": "ingest.replayDeadLetter",
       "method": "POST",
-      "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
+      "path": "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "message_id"
+        "tenantId",
+        "projectId",
+        "messageId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "reset_attempts"
+        "resetAttempts"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -2507,12 +2507,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "ingestGetQueueStatus",
       "upstreamOperationId": "ingest.getQueueStatus",
       "method": "GET",
-      "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
+      "path": "/v1/ingest/{tenantId}/{projectId}/queue",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2527,12 +2527,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "ingestDrainTraceIngested",
       "upstreamOperationId": "ingest.drainTraceIngested",
       "method": "POST",
-      "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
+      "path": "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2549,12 +2549,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "ingestDrainTraceWrites",
       "upstreamOperationId": "ingest.drainTraceWrites",
       "method": "POST",
-      "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
+      "path": "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2571,13 +2571,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "ingestReconcileTrace",
       "upstreamOperationId": "ingest.reconcileTrace",
       "method": "POST",
-      "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
+      "path": "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "trace_id"
+        "tenantId",
+        "projectId",
+        "traceId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2592,26 +2592,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "judgeEvaluate",
       "upstreamOperationId": "judge.evaluate",
       "method": "POST",
-      "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
+      "path": "/v1/judge/{tenantId}/{projectId}/evaluate",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "cache_namespace",
+        "cacheNamespace",
         "case",
         "evaluator",
-        "provider_secret_id"
+        "providerSecretId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "evaluator",
         "case",
-        "provider_secret_id"
+        "providerSecretId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2621,12 +2621,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "judgeListLedger",
       "upstreamOperationId": "judge.listLedger",
       "method": "GET",
-      "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
+      "path": "/v1/judge/{tenantId}/{projectId}/ledger",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2644,26 +2644,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "onlineDecideSampling",
       "upstreamOperationId": "online.decideSampling",
       "method": "POST",
-      "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
+      "path": "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "trace_id"
+        "tenantId",
+        "projectId",
+        "traceId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "high_cost_micros_threshold",
-        "keep_errors",
-        "sample_rate_per_mille",
-        "slow_ms_threshold"
+        "highCostMicrosThreshold",
+        "keepErrors",
+        "sampleRatePerMille",
+        "slowMsThreshold"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "sample_rate_per_mille",
-        "keep_errors"
+        "sampleRatePerMille",
+        "keepErrors"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2673,12 +2673,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsList",
       "upstreamOperationId": "prompts.list",
       "method": "GET",
-      "path": "/v1/prompts/{tenant_id}/{project_id}",
+      "path": "/v1/prompts/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2696,17 +2696,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsCreate",
       "upstreamOperationId": "prompts.create",
       "method": "POST",
-      "path": "/v1/prompts/{tenant_id}/{project_id}",
+      "path": "/v1/prompts/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "created_by",
+        "createdBy",
         "description",
         "message",
         "name",
@@ -2725,13 +2725,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsGet",
       "upstreamOperationId": "prompts.get",
       "method": "GET",
-      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
+      "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "prompt_id"
+        "tenantId",
+        "projectId",
+        "promptId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2746,13 +2746,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsDiffVersions",
       "upstreamOperationId": "prompts.diffVersions",
       "method": "GET",
-      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
+      "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "prompt_id"
+        "tenantId",
+        "projectId",
+        "promptId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2770,13 +2770,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsListVersions",
       "upstreamOperationId": "prompts.listVersions",
       "method": "GET",
-      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+      "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "prompt_id"
+        "tenantId",
+        "projectId",
+        "promptId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2794,18 +2794,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "promptsAddVersion",
       "upstreamOperationId": "prompts.addVersion",
       "method": "POST",
-      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+      "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "prompt_id"
+        "tenantId",
+        "projectId",
+        "promptId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "created_by",
+        "createdBy",
         "message",
         "template"
       ],
@@ -2821,12 +2821,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerSecretsList",
       "upstreamOperationId": "providerSecrets.list",
       "method": "GET",
-      "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+      "path": "/v1/provider-secrets/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2844,25 +2844,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerSecretsCreate",
       "upstreamOperationId": "providerSecrets.create",
       "method": "POST",
-      "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+      "path": "/v1/provider-secrets/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "display_name",
+        "displayName",
         "provider",
-        "secret_value"
+        "secretValue"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "provider",
-        "display_name",
-        "secret_value"
+        "displayName",
+        "secretValue"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2872,13 +2872,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerSecretsRevoke",
       "upstreamOperationId": "providerSecrets.revoke",
       "method": "POST",
-      "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
+      "path": "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "provider_secret_id"
+        "tenantId",
+        "projectId",
+        "providerSecretId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -2893,24 +2893,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "reviewsCreateQueue",
       "upstreamOperationId": "reviews.createQueue",
       "method": "POST",
-      "path": "/v1/review-queues/{tenant_id}/{project_id}",
+      "path": "/v1/review-queues/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "annotation_schema",
+        "annotationSchema",
         "name",
-        "queue_id"
+        "queueId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "name",
-        "annotation_schema"
+        "annotationSchema"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2920,13 +2920,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "reviewsListTasks",
       "upstreamOperationId": "reviews.listTasks",
       "method": "GET",
-      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
+      "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "queue_id"
+        "tenantId",
+        "projectId",
+        "queueId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -2945,27 +2945,27 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "reviewsEnqueueTaskFromTrace",
       "upstreamOperationId": "reviews.enqueueTaskFromTrace",
       "method": "POST",
-      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
+      "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "queue_id"
+        "tenantId",
+        "projectId",
+        "queueId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "dataset_case_id",
-        "dataset_id",
+        "datasetCaseId",
+        "datasetId",
         "priority",
-        "span_id",
-        "task_id",
-        "trace_id"
+        "spanId",
+        "taskId",
+        "traceId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "trace_id"
+        "traceId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -2975,26 +2975,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "reviewsSubmitAnnotation",
       "upstreamOperationId": "reviews.submitAnnotation",
       "method": "POST",
-      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
+      "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "queue_id",
-        "task_id"
+        "tenantId",
+        "projectId",
+        "queueId",
+        "taskId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "annotation_id",
+        "annotationId",
         "payload",
-        "reviewer_id",
+        "reviewerId",
         "verdict"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "reviewer_id",
+        "reviewerId",
         "verdict",
         "payload"
       ],
@@ -3006,25 +3006,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "reviewsPromoteAnnotation",
       "upstreamOperationId": "reviews.promoteAnnotation",
       "method": "POST",
-      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
+      "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "queue_id",
-        "task_id",
-        "annotation_id"
+        "tenantId",
+        "projectId",
+        "queueId",
+        "taskId",
+        "annotationId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "dataset_id",
+        "datasetId",
         "reference"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "dataset_id"
+        "datasetId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -3034,12 +3034,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "scenariosList",
       "upstreamOperationId": "scenarios.list",
       "method": "GET",
-      "path": "/v1/scenarios/{tenant_id}/{project_id}",
+      "path": "/v1/scenarios/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -3057,26 +3057,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "scenariosCreate",
       "upstreamOperationId": "scenarios.create",
       "method": "POST",
-      "path": "/v1/scenarios/{tenant_id}/{project_id}",
+      "path": "/v1/scenarios/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "exemplar_trace_id",
-        "expected_outcome",
-        "failure_mode",
-        "source_trace_ids",
+        "exemplarTraceId",
+        "expectedOutcome",
+        "failureMode",
+        "sourceTraceIds",
         "title"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "title",
-        "source_trace_ids"
+        "sourceTraceIds"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -3086,22 +3086,22 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "scenariosMine",
       "upstreamOperationId": "scenarios.mine",
       "method": "POST",
-      "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
+      "path": "/v1/scenarios/{tenantId}/{projectId}/mine",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "jaccard_threshold",
-        "trace_ids"
+        "jaccardThreshold",
+        "traceIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "trace_ids"
+        "traceIds"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -3111,13 +3111,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "scenariosGet",
       "upstreamOperationId": "scenarios.get",
       "method": "GET",
-      "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
+      "path": "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id",
-        "scenario_id"
+        "tenantId",
+        "projectId",
+        "scenarioId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3132,19 +3132,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "searchSpans",
       "upstreamOperationId": "search.spans",
       "method": "GET",
-      "path": "/v1/search/{tenant_id}/spans",
+      "path": "/v1/search/{tenantId}/spans",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id"
+        "tenantId"
       ],
       "pathParamTemplates": {},
       "query": [
         "q",
-        "project_id",
-        "environment_id",
-        "trace_id",
-        "span_id",
+        "projectId",
+        "environmentId",
+        "traceId",
+        "spanId",
         "kind",
         "status",
         "model",
@@ -3163,13 +3163,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getSpan",
       "upstreamOperationId": "spans.get",
       "method": "GET",
-      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
+      "path": "/v1/spans/{tenantId}/{traceId}/{spanId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "trace_id",
-        "span_id"
+        "tenantId",
+        "traceId",
+        "spanId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -3187,13 +3187,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getSpanIo",
       "upstreamOperationId": "spans.getIo",
       "method": "GET",
-      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
+      "path": "/v1/spans/{tenantId}/{traceId}/{spanId}/io",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "trace_id",
-        "span_id"
+        "tenantId",
+        "traceId",
+        "spanId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -3221,36 +3221,36 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "attributes",
-        "auth_context",
+        "authContext",
         "cost",
-        "end_time",
-        "idempotency_key",
+        "endTime",
+        "idempotencyKey",
         "input",
         "kind",
         "model",
         "name",
         "output",
-        "parent_span_id",
-        "redaction_class",
+        "parentSpanId",
+        "redactionClass",
         "scope",
         "seq",
-        "span_id",
-        "start_time",
+        "spanId",
+        "startTime",
         "status",
         "tokens",
-        "trace_id"
+        "traceId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "scope",
-        "trace_id",
-        "span_id",
+        "traceId",
+        "spanId",
         "seq",
         "kind",
         "name",
         "status",
         "attributes",
-        "redaction_class"
+        "redactionClass"
       ],
       "bodyDefaults": {},
       "scope": "trace:write",
@@ -3260,27 +3260,27 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listTraces",
       "upstreamOperationId": "traces.list",
       "method": "GET",
-      "path": "/v1/traces/{tenant_id}",
+      "path": "/v1/traces/{tenantId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id"
+        "tenantId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "project_id",
-        "environment_id",
-        "trace_id",
+        "projectId",
+        "environmentId",
+        "traceId",
         "kind",
         "status",
-        "started_after",
-        "started_before",
+        "startedAfter",
+        "startedBefore",
         "model",
         "release",
-        "min_cost_micros",
-        "max_cost_micros",
-        "min_latency_ms",
-        "max_latency_ms",
+        "minCostMicros",
+        "maxCostMicros",
+        "minLatencyMs",
+        "maxLatencyMs",
         "pageSize",
         "pageToken"
       ],
@@ -3295,12 +3295,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getTrace",
       "upstreamOperationId": "traces.get",
       "method": "GET",
-      "path": "/v1/traces/{tenant_id}/{trace_id}",
+      "path": "/v1/traces/{tenantId}/{traceId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "trace_id"
+        "tenantId",
+        "traceId"
       ],
       "pathParamTemplates": {},
       "query": [
@@ -3318,12 +3318,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getUsageSummary",
       "upstreamOperationId": "usage.getSummary",
       "method": "GET",
-      "path": "/v1/usage/{tenant_id}/{project_id}",
+      "path": "/v1/usage/{tenantId}/{projectId}",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],

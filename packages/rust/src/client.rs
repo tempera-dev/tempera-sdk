@@ -1212,13 +1212,13 @@ mod tests {
             BuildError::MissingPathParam {
                 product: "palette".to_string(),
                 operation: "get_trace".to_string(),
-                name: "trace_id".to_string(),
+                name: "traceId".to_string(),
             }
         );
         assert!(
             error
                 .to_string()
-                .contains("missing required path parameter \"trace_id\"")
+                .contains("missing required path parameter \"traceId\"")
         );
 
         // Empty values count as missing, mirroring the TypeScript client.
@@ -1229,7 +1229,7 @@ mod tests {
                 &[("tenant_id", "tenant_1".into()), ("trace_id", "".into())],
             )
             .unwrap_err();
-        assert!(matches!(error, BuildError::MissingPathParam { name, .. } if name == "trace_id"));
+        assert!(matches!(error, BuildError::MissingPathParam { name, .. } if name == "traceId"));
     }
 
     #[test]

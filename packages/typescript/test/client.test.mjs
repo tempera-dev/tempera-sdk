@@ -307,7 +307,7 @@ test("missing path parameters fail fast with a clear message", async () => {
   await assert.rejects(
     () => client.palette.getTrace({ tenant_id: "t1" }),
     (error) =>
-      error instanceof TemperaSdkError && error.message.includes('missing required path parameter "trace_id"'),
+      error instanceof TemperaSdkError && error.message.includes('missing required path parameter "traceId"'),
   );
 });
 
