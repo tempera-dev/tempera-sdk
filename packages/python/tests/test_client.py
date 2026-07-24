@@ -255,6 +255,32 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[1]["headers"]["authorization"], "Bearer at_remi")
         self.assertEqual(transport.calls[2]["headers"]["authorization"], "Bearer tp_key_1")
 
+    def test_control_plane_discovery_operations_use_producer_pinned_audiences(self):
+        client, transport = make_client(
+            auth=TemperaAuth(
+                issuer_url="https://api.tempera.dev",
+                api_key="tp_key_1",
+                tokens={
+                    "tempera-bio": TokenSet(access_token="at_bio_human"),
+                    "tempera-workflows": TokenSet(
+                        access_token="at_workflows_service"
+                    ),
+                },
+            ),
+        )
+        client.control_plane.list_bio_signer_keys()
+        client.control_plane.resolve_experiment_provider_connection(
+            {"id": "connection-1"}
+        )
+        self.assertEqual(
+            transport.calls[0]["headers"]["authorization"],
+            "Bearer at_bio_human",
+        )
+        self.assertEqual(
+            transport.calls[1]["headers"]["authorization"],
+            "Bearer at_workflows_service",
+        )
+
     def test_passthrough_request_covers_products_without_typed_operations(self):
         client, transport = make_client()
         result = client.temp_js.request("/runtime/status")

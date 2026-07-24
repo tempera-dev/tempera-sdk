@@ -7121,8 +7121,9 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
+            "description": "Maximum number of scenarios to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
             "required": false,
             "schema": {
               "type": "integer",
@@ -7131,8 +7132,9 @@
             }
           },
           {
-            "name": "cursor",
+            "name": "pageToken",
             "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
             "required": false,
             "schema": {
               "type": "string"
@@ -11711,7 +11713,7 @@
           "scenarios"
         ],
         "properties": {
-          "next_cursor": {
+          "nextPageToken": {
             "type": [
               "string",
               "null"

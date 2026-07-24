@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 4
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'model:read', 'model:invoke', 'pii:unmask', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'pii:unmask', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
 
@@ -178,6 +178,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/healthz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -194,6 +195,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/readyz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -208,8 +210,9 @@ OPERATIONS = {
             "id": "me",
             "upstream_operation_id": "getMe",
             "method": "GET",
-            "path": "/me",
+            "path": "/v1/me",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -224,11 +227,15 @@ OPERATIONS = {
             "id": "list_orgs",
             "upstream_operation_id": "listOrganizations",
             "method": "GET",
-            "path": "/orgs",
+            "path": "/v1/orgs",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -240,8 +247,9 @@ OPERATIONS = {
             "id": "create_org",
             "upstream_operation_id": "createOrganization",
             "method": "POST",
-            "path": "/orgs",
+            "path": "/v1/orgs",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -260,11 +268,15 @@ OPERATIONS = {
             "id": "list_sessions",
             "upstream_operation_id": "listAccountSessions",
             "method": "GET",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -276,8 +288,9 @@ OPERATIONS = {
             "id": "create_hosted_session",
             "upstream_operation_id": "createHostedSession",
             "method": "POST",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -286,7 +299,7 @@ OPERATIONS = {
                 "email",
                 "password",
                 "organization",
-                "invite_token"
+                "inviteToken"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -301,8 +314,9 @@ OPERATIONS = {
             "id": "revoke_session",
             "upstream_operation_id": "revokeAccountSession",
             "method": "DELETE",
-            "path": "/sessions/{id}",
+            "path": "/v1/sessions/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -319,21 +333,22 @@ OPERATIONS = {
             "id": "select_workspace",
             "upstream_operation_id": "selectWorkspace",
             "method": "POST",
-            "path": "/workspace/select",
+            "path": "/v1/workspace/select",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -343,11 +358,15 @@ OPERATIONS = {
             "id": "list_team_members",
             "upstream_operation_id": "listTeamMembers",
             "method": "GET",
-            "path": "/team/members",
+            "path": "/v1/team/members",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -359,13 +378,16 @@ OPERATIONS = {
             "id": "update_team_member",
             "upstream_operation_id": "updateTeamMember",
             "method": "PATCH",
-            "path": "/team/members/{id}",
+            "path": "/v1/team/members/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "updateMask"
+            ],
             "body": [
                 "role"
             ],
@@ -381,8 +403,9 @@ OPERATIONS = {
             "id": "remove_team_member",
             "upstream_operation_id": "removeTeamMember",
             "method": "DELETE",
-            "path": "/team/members/{id}",
+            "path": "/v1/team/members/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -399,11 +422,15 @@ OPERATIONS = {
             "id": "list_invites",
             "upstream_operation_id": "listInvites",
             "method": "GET",
-            "path": "/invites",
+            "path": "/v1/invites",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -415,8 +442,9 @@ OPERATIONS = {
             "id": "create_invite",
             "upstream_operation_id": "createInvite",
             "method": "POST",
-            "path": "/invites",
+            "path": "/v1/invites",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -437,8 +465,9 @@ OPERATIONS = {
             "id": "cancel_invite",
             "upstream_operation_id": "cancelInvite",
             "method": "DELETE",
-            "path": "/invites/{id}",
+            "path": "/v1/invites/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -455,11 +484,15 @@ OPERATIONS = {
             "id": "list_projects",
             "upstream_operation_id": "listProjects",
             "method": "GET",
-            "path": "/projects",
+            "path": "/v1/projects",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -471,18 +504,19 @@ OPERATIONS = {
             "id": "create_project",
             "upstream_operation_id": "createProject",
             "method": "POST",
-            "path": "/projects",
+            "path": "/v1/projects",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
+                "orgId",
                 "name"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
+                "orgId",
                 "name"
             ],
             "body_defaults": {},
@@ -493,11 +527,15 @@ OPERATIONS = {
             "id": "list_environments",
             "upstream_operation_id": "listEnvironments",
             "method": "GET",
-            "path": "/environments",
+            "path": "/v1/environments",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -509,18 +547,19 @@ OPERATIONS = {
             "id": "create_environment",
             "upstream_operation_id": "createEnvironment",
             "method": "POST",
-            "path": "/environments",
+            "path": "/v1/environments",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "project_id",
+                "projectId",
                 "name"
             ],
             "forbidden_body": [],
             "required_body": [
-                "project_id",
+                "projectId",
                 "name"
             ],
             "body_defaults": {},
@@ -531,11 +570,15 @@ OPERATIONS = {
             "id": "list_api_keys",
             "upstream_operation_id": "listApiKeys",
             "method": "GET",
-            "path": "/api-keys",
+            "path": "/v1/api-keys",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -547,25 +590,26 @@ OPERATIONS = {
             "id": "create_api_key",
             "upstream_operation_id": "createApiKey",
             "method": "POST",
-            "path": "/api-keys",
+            "path": "/v1/api-keys",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "name",
                 "scopes",
                 "audience",
-                "expires_at"
+                "expiresAt"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "scopes"
             ],
             "body_defaults": {},
@@ -576,8 +620,9 @@ OPERATIONS = {
             "id": "revoke_api_key",
             "upstream_operation_id": "revokeApiKey",
             "method": "DELETE",
-            "path": "/api-keys/{id}",
+            "path": "/v1/api-keys/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -594,8 +639,9 @@ OPERATIONS = {
             "id": "rotate_api_key",
             "upstream_operation_id": "rotateApiKey",
             "method": "POST",
-            "path": "/api-keys/{id}/rotate",
+            "path": "/v1/api-keys/{id}/rotate",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -612,11 +658,15 @@ OPERATIONS = {
             "id": "provider_connections_list",
             "upstream_operation_id": "providerConnections.list",
             "method": "GET",
-            "path": "/provider-connections",
+            "path": "/v1/provider-connections",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -628,28 +678,29 @@ OPERATIONS = {
             "id": "provider_connections_create",
             "upstream_operation_id": "providerConnections.create",
             "method": "POST",
-            "path": "/provider-connections",
+            "path": "/v1/provider-connections",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "provider",
                 "name",
-                "secret_ref",
-                "allowed_models"
+                "secretRef",
+                "allowedModels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "provider",
                 "name",
-                "secret_ref"
+                "secretRef"
             ],
             "body_defaults": {},
             "scope": None,
@@ -659,8 +710,9 @@ OPERATIONS = {
             "id": "provider_connections_revoke",
             "upstream_operation_id": "providerConnections.revoke",
             "method": "DELETE",
-            "path": "/provider-connections/{id}",
+            "path": "/v1/provider-connections/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -677,20 +729,21 @@ OPERATIONS = {
             "id": "provider_connections_rotate",
             "upstream_operation_id": "providerConnections.rotate",
             "method": "POST",
-            "path": "/provider-connections/{id}:rotate",
+            "path": "/v1/provider-connections/{id}:rotate",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "secret_ref",
-                "allowed_models"
+                "secretRef",
+                "allowedModels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "secret_ref"
+                "secretRef"
             ],
             "body_defaults": {},
             "scope": None,
@@ -700,39 +753,299 @@ OPERATIONS = {
             "id": "provider_connections_resolve",
             "upstream_operation_id": "providerConnections.resolve",
             "method": "POST",
-            "path": "/provider-connections/{id}:resolve",
+            "path": "/v1/provider-connections/{id}:resolve",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "usage_delegation"
+                "orgId",
+                "projectId",
+                "environmentId",
+                "usageDelegation"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "usage_delegation"
+                "orgId",
+                "projectId",
+                "environmentId",
+                "usageDelegation"
             ],
             "body_defaults": {},
             "scope": None,
             "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
         },
         {
-            "id": "list_audit_log",
-            "upstream_operation_id": "listAuditLog",
+            "id": "list_experiment_provider_connections",
+            "upstream_operation_id": "experimentProviderConnections.list",
             "method": "GET",
-            "path": "/audit-log",
+            "path": "/v1/experiment-provider-connections",
             "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List external experiment-provider metadata. Secret references and values are never returned."
+        },
+        {
+            "id": "create_experiment_provider_connection",
+            "upstream_operation_id": "experimentProviderConnections.create",
+            "method": "POST",
+            "path": "/v1/experiment-provider-connections",
+            "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "providerKind",
+                "name",
+                "secretRef",
+                "capabilities"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "providerKind",
+                "name",
+                "secretRef",
+                "capabilities"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register a tenant-scoped experiment provider using only an external secret reference."
+        },
+        {
+            "id": "revoke_experiment_provider_connection",
+            "upstream_operation_id": "experimentProviderConnections.revoke",
+            "method": "DELETE",
+            "path": "/v1/experiment-provider-connections/{id}",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
+        },
+        {
+            "id": "resolve_experiment_provider_connection",
+            "upstream_operation_id": "experimentProviderConnections.resolve",
+            "method": "POST",
+            "path": "/v1/experiment-provider-connections/{id}:resolve",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "approvalId",
+                "proposalDigest",
+                "protocolDigest",
+                "mcpPrepareReceiptDigest",
+                "mcpCommitReceiptDigest",
+                "submissionIdempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "approvalId",
+                "proposalDigest",
+                "protocolDigest",
+                "mcpPrepareReceiptDigest",
+                "mcpCommitReceiptDigest",
+                "submissionIdempotencyKey"
+            ],
+            "body_defaults": {},
+            "scope": "bio:experiment:submit",
+            "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
+        },
+        {
+            "id": "list_bio_signer_keys",
+            "upstream_operation_id": "bioSignerKeys.list",
+            "method": "GET",
+            "path": "/v1/bio-signer-keys",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "bio:signer:manage",
+            "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
+        },
+        {
+            "id": "create_bio_signer_key",
+            "upstream_operation_id": "bioSignerKeys.create",
+            "method": "POST",
+            "path": "/v1/bio-signer-keys",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "keyId",
+                "publicJwk"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "keyId",
+                "publicJwk"
+            ],
+            "body_defaults": {},
+            "scope": "bio:signer:manage",
+            "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
+        },
+        {
+            "id": "revoke_bio_signer_key",
+            "upstream_operation_id": "bioSignerKeys.revoke",
+            "method": "DELETE",
+            "path": "/v1/bio-signer-keys/{id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "bio:signer:manage",
+            "description": "Revoke a public verifier key while retaining its history."
+        },
+        {
+            "id": "list_experiment_approvals",
+            "upstream_operation_id": "experimentApprovals.list",
+            "method": "GET",
+            "path": "/v1/experiment-approvals",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "bio:experiment:approve",
+            "description": "List exact, single-use experiment approvals for an authorized human approver."
+        },
+        {
+            "id": "create_experiment_approval",
+            "upstream_operation_id": "experimentApprovals.create",
+            "method": "POST",
+            "path": "/v1/experiment-approvals",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "proposalDigest",
+                "protocolDigest",
+                "connectionId",
+                "mcpPrepareReceiptDigest",
+                "expiresAt"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "proposalDigest",
+                "protocolDigest",
+                "connectionId",
+                "mcpPrepareReceiptDigest",
+                "expiresAt"
+            ],
+            "body_defaults": {},
+            "scope": "bio:experiment:approve",
+            "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
+        },
+        {
+            "id": "revoke_experiment_approval",
+            "upstream_operation_id": "experimentApprovals.revoke",
+            "method": "DELETE",
+            "path": "/v1/experiment-approvals/{id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "bio:experiment:approve",
+            "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
+        },
+        {
+            "id": "list_audit_log",
+            "upstream_operation_id": "listAuditLog",
+            "method": "GET",
+            "path": "/v1/audit-log",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -744,11 +1057,15 @@ OPERATIONS = {
             "id": "list_connectors",
             "upstream_operation_id": "listConnectors",
             "method": "GET",
-            "path": "/connectors",
+            "path": "/v1/connectors",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -760,8 +1077,9 @@ OPERATIONS = {
             "id": "get_connector_status",
             "upstream_operation_id": "getConnectorStatus",
             "method": "GET",
-            "path": "/connectors/{id}/status",
+            "path": "/v1/connectors/{id}/status",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -778,11 +1096,15 @@ OPERATIONS = {
             "id": "list_products",
             "upstream_operation_id": "listProducts",
             "method": "GET",
-            "path": "/products",
+            "path": "/v1/products",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -794,8 +1116,9 @@ OPERATIONS = {
             "id": "get_product_status",
             "upstream_operation_id": "getProductStatus",
             "method": "GET",
-            "path": "/products/{id}/status",
+            "path": "/v1/products/{id}/status",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -812,8 +1135,9 @@ OPERATIONS = {
             "id": "get_billing_status",
             "upstream_operation_id": "getBillingStatus",
             "method": "GET",
-            "path": "/billing/status",
+            "path": "/v1/billing/status",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -828,14 +1152,16 @@ OPERATIONS = {
             "id": "create_billing_checkout",
             "upstream_operation_id": "createBillingCheckout",
             "method": "GET",
-            "path": "/billing/checkout",
+            "path": "/v1/billing/checkout",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
                 "rail",
                 "plan",
-                "plan_id",
+                "planId",
+                "interval",
                 "currency",
                 "network"
             ],
@@ -850,8 +1176,9 @@ OPERATIONS = {
             "id": "get_billing_portal",
             "upstream_operation_id": "createBillingPortal",
             "method": "GET",
-            "path": "/billing/portal",
+            "path": "/v1/billing/portal",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -866,8 +1193,9 @@ OPERATIONS = {
             "id": "get_billing_credits",
             "upstream_operation_id": "getBillingCredits",
             "method": "GET",
-            "path": "/billing/credits",
+            "path": "/v1/billing/credits",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -882,8 +1210,9 @@ OPERATIONS = {
             "id": "get_model_catalog",
             "upstream_operation_id": "getModelCatalog",
             "method": "GET",
-            "path": "/model-catalog",
+            "path": "/v1/model-catalog",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -898,25 +1227,26 @@ OPERATIONS = {
             "id": "record_usage",
             "upstream_operation_id": "recordUsageEvent",
             "method": "POST",
-            "path": "/usage/events",
+            "path": "/v1/usage/events",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "metric",
                 "quantity",
-                "idempotency_key",
+                "idempotencyKey",
                 "cost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "metric"
             ],
             "body_defaults": {},
@@ -927,35 +1257,36 @@ OPERATIONS = {
             "id": "usage_reservations_create",
             "upstream_operation_id": "usageReservations.create",
             "method": "POST",
-            "path": "/usage/reservations",
+            "path": "/v1/usage/reservations",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "subject",
-                "idempotency_key",
+                "idempotencyKey",
                 "provider",
                 "model",
-                "config_id",
+                "configId",
                 "byok",
-                "maximum_provider_cost_micros",
-                "ttl_seconds"
+                "maximumProviderCostMicros",
+                "ttlSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "idempotency_key",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "idempotencyKey",
                 "provider",
                 "model",
-                "config_id",
+                "configId",
                 "byok",
-                "maximum_provider_cost_micros"
+                "maximumProviderCostMicros"
             ],
             "body_defaults": {},
             "scope": None,
@@ -965,26 +1296,27 @@ OPERATIONS = {
             "id": "usage_reservations_commit",
             "upstream_operation_id": "usageReservations.commit",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:commit",
+            "path": "/v1/usage/reservations/{reservationId}:commit",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "cost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "cost"
             ],
             "body_defaults": {},
@@ -995,23 +1327,24 @@ OPERATIONS = {
             "id": "usage_reservations_release",
             "upstream_operation_id": "usageReservations.release",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:release",
+            "path": "/v1/usage/reservations/{reservationId}:release",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1021,31 +1354,32 @@ OPERATIONS = {
             "id": "usage_reservations_reconcile",
             "upstream_operation_id": "usageReservations.reconcile",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:reconcile",
+            "path": "/v1/usage/reservations/{reservationId}:reconcile",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "reason",
-                "trace_id",
-                "observed_usage",
-                "expected_cost"
+                "traceId",
+                "observedUsage",
+                "expectedCost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "reason",
-                "observed_usage"
+                "observedUsage"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1055,11 +1389,15 @@ OPERATIONS = {
             "id": "list_grants",
             "upstream_operation_id": "listOAuthGrants",
             "method": "GET",
-            "path": "/oauth/grants",
+            "path": "/v1/oauth/grants",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1071,8 +1409,9 @@ OPERATIONS = {
             "id": "revoke_grant",
             "upstream_operation_id": "revokeOAuthGrant",
             "method": "DELETE",
-            "path": "/oauth/grants/{id}",
+            "path": "/v1/oauth/grants/{id}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -1089,8 +1428,9 @@ OPERATIONS = {
             "id": "introspect_token",
             "upstream_operation_id": "introspectOAuthToken",
             "method": "POST",
-            "path": "/oauth/introspect",
+            "path": "/v1/oauth/introspect",
             "auth": "introspectionSecret",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1112,6 +1452,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/oauth-authorization-server",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1128,6 +1469,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/oauth-protected-resource",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1144,6 +1486,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/oauth-protected-resource/{resource}",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [
                 "resource"
             ],
@@ -1162,6 +1505,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/jwks.json",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1176,8 +1520,9 @@ OPERATIONS = {
             "id": "admin_operational_provenance",
             "upstream_operation_id": "adminOperationalProvenance",
             "method": "GET",
-            "path": "/admin/operations/provenance",
+            "path": "/v1/admin/operations/provenance",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1192,8 +1537,9 @@ OPERATIONS = {
             "id": "admin_step_up",
             "upstream_operation_id": "adminStepUp",
             "method": "POST",
-            "path": "/admin/step-up",
+            "path": "/v1/admin/step-up",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1212,21 +1558,22 @@ OPERATIONS = {
             "id": "admin_adjust_credits",
             "upstream_operation_id": "adminAdjustCredits",
             "method": "POST",
-            "path": "/admin/billing/credits/adjust",
+            "path": "/v1/admin/billing/credits/adjust",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "credit_micros",
+                "orgId",
+                "creditMicros",
                 "reference",
                 "reason"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "credit_micros"
+                "orgId",
+                "creditMicros"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1236,8 +1583,9 @@ OPERATIONS = {
             "id": "admin_billing_orgs",
             "upstream_operation_id": "adminBillingOrgs",
             "method": "GET",
-            "path": "/admin/billing/orgs",
+            "path": "/v1/admin/billing/orgs",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1252,15 +1600,16 @@ OPERATIONS = {
             "id": "github_setup_sessions_create",
             "upstream_operation_id": "githubSetupSessions.create",
             "method": "POST",
-            "path": "/github/setup-sessions",
+            "path": "/v1/github/setup-sessions",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "project_id",
-                "environment_id",
-                "return_url"
+                "projectId",
+                "environmentId",
+                "returnUrl"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -1274,6 +1623,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/github/callback",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -1291,11 +1641,15 @@ OPERATIONS = {
             "id": "github_installations_list",
             "upstream_operation_id": "githubInstallations.list",
             "method": "GET",
-            "path": "/github/installations",
+            "path": "/v1/github/installations",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1307,10 +1661,11 @@ OPERATIONS = {
             "id": "github_installations_disconnect",
             "upstream_operation_id": "githubInstallations.disconnect",
             "method": "DELETE",
-            "path": "/github/installations/{installation_id}",
+            "path": "/v1/github/installations/{installationId}",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "installation_id"
+                "installationId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1325,13 +1680,17 @@ OPERATIONS = {
             "id": "github_installation_repositories_list",
             "upstream_operation_id": "githubInstallationRepositories.list",
             "method": "GET",
-            "path": "/github/installations/{installation_id}/repositories",
+            "path": "/v1/github/installations/{installationId}/repositories",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "installation_id"
+                "installationId"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1343,11 +1702,12 @@ OPERATIONS = {
             "id": "github_repository_snapshots_capture",
             "upstream_operation_id": "githubRepositorySnapshots.capture",
             "method": "POST",
-            "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+            "path": "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot",
             "auth": "account",
+            "auth_audience": None,
             "path_params": [
-                "installation_id",
-                "repository_id"
+                "installationId",
+                "repositoryId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1366,6 +1726,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/github/webhook",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1384,6 +1745,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/health",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -1400,6 +1762,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1426,6 +1789,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1450,6 +1814,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1471,6 +1836,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/archive/{tenant_id}/{project_id}/spans",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1497,6 +1863,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1517,6 +1884,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/audit/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1536,6 +1904,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1561,6 +1930,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/connect/status/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1580,6 +1950,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/connectors/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1601,6 +1972,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1624,6 +1996,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1648,6 +2021,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1669,6 +2043,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/connectors/{tenant_id}/{project_id}/status",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1690,6 +2065,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1712,6 +2088,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/datasets/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1735,6 +2112,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1761,6 +2139,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1783,6 +2162,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1817,6 +2197,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1852,6 +2233,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1879,6 +2261,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -1906,6 +2289,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1927,6 +2311,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -1965,6 +2350,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2005,6 +2391,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/gates/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2033,6 +2420,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2055,6 +2443,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2082,6 +2471,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2104,6 +2494,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2123,6 +2514,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2144,6 +2536,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2165,6 +2558,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2185,6 +2579,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2213,6 +2608,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2232,6 +2628,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2260,6 +2657,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/prompts/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2279,6 +2677,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/prompts/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2307,6 +2706,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2327,6 +2727,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2350,6 +2751,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2370,6 +2772,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2396,6 +2799,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2415,6 +2819,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2442,6 +2847,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2462,6 +2868,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/review-queues/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2488,6 +2895,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2510,6 +2918,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2539,6 +2948,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2569,6 +2979,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2596,14 +3007,15 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/scenarios/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
             ],
             "path_param_templates": {},
             "query": [
-                "limit",
-                "cursor"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -2618,6 +3030,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/scenarios/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2646,6 +3059,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2670,6 +3084,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id",
@@ -2690,6 +3105,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/search/{tenant_id}/spans",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id"
             ],
@@ -2719,6 +3135,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "trace_id",
@@ -2742,6 +3159,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "trace_id",
@@ -2765,6 +3183,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/traces/native",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -2813,6 +3232,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/traces/{tenant_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id"
             ],
@@ -2847,6 +3267,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/traces/{tenant_id}/{trace_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "trace_id"
@@ -2869,6 +3290,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/usage/{tenant_id}/{project_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "tenant_id",
                 "project_id"
@@ -2890,6 +3312,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/agent-card.json",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2906,6 +3329,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/.well-known/agent.json",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2922,6 +3346,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/drain",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2938,6 +3363,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/health",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2954,6 +3380,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/metrics",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2970,6 +3397,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/openapi.json",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -2986,6 +3414,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/ready",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3002,6 +3431,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/runs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -3020,6 +3450,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/runs/{run_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "run_id"
             ],
@@ -3038,6 +3469,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/runs/{run_id}/cancel",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "run_id"
             ],
@@ -3056,6 +3488,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/runs/{run_id}/events",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "run_id"
             ],
@@ -3076,6 +3509,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/runs/{run_id}/resume",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "run_id"
             ],
@@ -3094,6 +3528,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/sessions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3110,6 +3545,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3131,6 +3567,7 @@ OPERATIONS = {
             "method": "DELETE",
             "path": "/sessions/{session_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3149,6 +3586,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/act_batch",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3176,6 +3614,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/adopt",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3201,6 +3640,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id",
                 "confirmation_id"
@@ -3220,6 +3660,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/sessions/{session_id}/events",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3240,6 +3681,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/handoff",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3258,6 +3700,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/sessions/{session_id}/manager",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3276,6 +3719,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/sessions/{session_id}/observe",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3294,6 +3738,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/runs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3317,6 +3762,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/sessions/{session_id}/screenshot",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3337,6 +3783,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/surfaces",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3362,6 +3809,7 @@ OPERATIONS = {
             "method": "DELETE",
             "path": "/sessions/{session_id}/surfaces/{surface_id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id",
                 "surface_id"
@@ -3381,6 +3829,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/sessions/{session_id}/transform",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "session_id"
             ],
@@ -3411,6 +3860,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/healthz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3427,6 +3877,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/readyz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3443,6 +3894,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/chat/completions",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3471,6 +3923,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/models",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3487,6 +3940,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/responses",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3515,6 +3969,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/healthz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3531,6 +3986,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/node-types",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3547,6 +4003,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/runs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -3566,6 +4023,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/runs/{runId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "runId"
             ],
@@ -3584,6 +4042,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/runs/{runId}:cancel",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "runId"
             ],
@@ -3602,6 +4061,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/workflows",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -3620,6 +4080,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3650,6 +4111,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/workflows/{workflowId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3668,6 +4130,7 @@ OPERATIONS = {
             "method": "PUT",
             "path": "/v1/workflows/{workflowId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3700,6 +4163,7 @@ OPERATIONS = {
             "method": "DELETE",
             "path": "/v1/workflows/{workflowId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3718,6 +4182,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows/{workflowId}/runs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3743,6 +4208,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:call",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3769,6 +4235,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:compose",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "workflowId"
             ],
@@ -3795,6 +4262,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows:assistJson",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3822,6 +4290,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/workflows:validate",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3854,6 +4323,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/healthz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3869,10 +4339,14 @@ OPERATIONS = {
             "upstream_operation_id": "environments.list",
             "method": "GET",
             "path": "/v1/environments",
-            "auth": "product",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3881,16 +4355,241 @@ OPERATIONS = {
             "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
         },
         {
+            "id": "list_domains",
+            "upstream_operation_id": "domains.list",
+            "method": "GET",
+            "path": "/v1/domains",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Domain capabilities represented in the versioned task catalog."
+        },
+        {
+            "id": "list_tasks",
+            "upstream_operation_id": "tasks.list",
+            "method": "GET",
+            "path": "/v1/tasks",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "domain",
+                "family",
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List versioned task definitions without agent inputs."
+        },
+        {
+            "id": "get_task",
+            "upstream_operation_id": "tasks.get",
+            "method": "GET",
+            "path": "/v1/tasks/{task}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "task"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "version"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Get one immutable task definition including its agent-visible input."
+        },
+        {
+            "id": "evaluate_task",
+            "upstream_operation_id": "tasks.evaluate",
+            "method": "POST",
+            "path": "/v1/tasks/{task}:evaluate",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "task"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "version"
+            ],
+            "body": [
+                "candidate",
+                "seed",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidate"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Deterministically verify one candidate without creating an episode."
+        },
+        {
+            "id": "list_verifiers",
+            "upstream_operation_id": "verifiers.list",
+            "method": "GET",
+            "path": "/v1/verifiers",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List verifier identities and bound tasks without grader content."
+        },
+        {
+            "id": "list_episodes",
+            "upstream_operation_id": "episodes.list",
+            "method": "GET",
+            "path": "/v1/episodes",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "domain",
+                "status",
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List durable episode snapshots, newest first."
+        },
+        {
+            "id": "create_episode",
+            "upstream_operation_id": "episodes.create",
+            "method": "POST",
+            "path": "/v1/episodes",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "task",
+                "seed"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "task",
+                "seed"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Reset a versioned task into a durable episode."
+        },
+        {
+            "id": "get_episode",
+            "upstream_operation_id": "episodes.get",
+            "method": "GET",
+            "path": "/v1/episodes/{episode}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Read and content-verify one durable episode snapshot."
+        },
+        {
+            "id": "step_episode",
+            "upstream_operation_id": "episodes.step",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:step",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "action",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "action"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Apply one schema-validated action and persist the transition."
+        },
+        {
+            "id": "export_episode",
+            "upstream_operation_id": "episodes.export",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:export",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "context_evidence_ref",
+                "verifier_receipt_artifact_ref",
+                "request_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "context_evidence_ref"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Retain a completed Gym episode and trajectory in Data Engine."
+        },
+        {
             "id": "list_runs",
             "upstream_operation_id": "runs.list",
             "method": "GET",
             "path": "/v1/runs",
-            "auth": "product",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "environment_id",
-                "limit"
+                "environmentId",
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3904,7 +4603,8 @@ OPERATIONS = {
             "upstream_operation_id": "runs.get",
             "method": "GET",
             "path": "/v1/runs/{run}",
-            "auth": "product",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
             "path_params": [
                 "run"
             ],
@@ -3922,27 +4622,139 @@ OPERATIONS = {
             "upstream_operation_id": "rollouts.create",
             "method": "POST",
             "path": "/v1/rollouts",
-            "auth": "product",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "environment_id",
+                "environmentId",
                 "policy",
                 "seed",
-                "max_steps",
+                "maxSteps",
                 "model",
-                "data_engine_product_id",
-                "data_engine_max_records"
+                "dataEngineProductId",
+                "dataEngineMaxRecords"
             ],
             "forbidden_body": [],
             "required_body": [
-                "environment_id",
+                "environmentId",
                 "seed"
             ],
             "body_defaults": {},
             "scope": "eval:run",
             "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+        },
+        {
+            "id": "list_sealed_evaluators",
+            "upstream_operation_id": "sealedEvaluators.list",
+            "method": "GET",
+            "path": "/v1/sealed-evaluators",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Discover boot-trusted exact sealed-evaluator identities."
+        },
+        {
+            "id": "list_sealed_evaluations",
+            "upstream_operation_id": "sealedEvaluations.list",
+            "method": "GET",
+            "path": "/v1/sealed-evaluations",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "List persisted sealed-evaluation precommits and results."
+        },
+        {
+            "id": "precommit_sealed_evaluation",
+            "upstream_operation_id": "sealedEvaluations.precommit",
+            "method": "POST",
+            "path": "/v1/sealed-evaluations:precommit",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "evaluator",
+                "qualification_policy",
+                "suite",
+                "trainer"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "evaluator",
+                "qualification_policy",
+                "suite",
+                "trainer"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Persist an opaque sealed-suite commitment before policy freeze."
+        },
+        {
+            "id": "get_sealed_evaluation",
+            "upstream_operation_id": "sealedEvaluations.get",
+            "method": "GET",
+            "path": "/v1/sealed-evaluations/{evaluation}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "evaluation"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Read one verified precommit and aggregate sealed result."
+        },
+        {
+            "id": "run_sealed_evaluation",
+            "upstream_operation_id": "sealedEvaluations.run",
+            "method": "POST",
+            "path": "/v1/sealed-evaluations/{evaluation}:run",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [
+                "evaluation"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "policy_submission",
+                "training_report"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "policy_submission",
+                "training_report"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Evaluate one frozen policy through its exact sealed adapter."
         }
     ],
     "cradle": [
@@ -3952,6 +4764,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/capability",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -3977,6 +4790,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/completion/validate",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4015,6 +4829,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/browser/adapter/contract",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4031,6 +4846,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/launch/claim",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4051,6 +4867,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/launch/plan",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4075,6 +4892,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/register",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4101,6 +4919,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/adapter/validate",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4133,6 +4952,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/browser/admit",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4164,6 +4984,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/browser/profiles",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4180,6 +5001,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/capabilities",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4196,6 +5018,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/execute",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4223,6 +5046,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/health",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4239,6 +5063,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/integration",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4255,6 +5080,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/jobs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4282,6 +5108,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/jobs/{id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -4300,6 +5127,7 @@ OPERATIONS = {
             "method": "DELETE",
             "path": "/v1/jobs/{id}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "id"
             ],
@@ -4318,6 +5146,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/projects/{project}/modules",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "project"
             ],
@@ -4340,6 +5169,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/projects/{project}/modules/{sha256}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "project",
                 "sha256"
@@ -4361,6 +5191,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/livez",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4377,6 +5208,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/readyz",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4393,6 +5225,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/health",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4409,6 +5242,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/stats",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4425,6 +5259,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/metrics",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4441,6 +5276,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/metrics/prometheus",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4457,6 +5293,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/audit",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4475,6 +5312,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/remember",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4504,6 +5342,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/project",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4522,6 +5361,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/query",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4550,6 +5390,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/maintenance",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4573,6 +5414,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/health",
             "auth": "none",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4589,13 +5431,17 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/use-cases",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4609,6 +5455,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/use-cases/{useCaseId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "useCaseId"
@@ -4630,6 +5477,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/artifacts:ingest",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4656,6 +5504,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/web:ingest",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4685,6 +5534,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/campaigns",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4716,6 +5566,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/campaigns",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4723,8 +5574,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -4737,11 +5588,12 @@ OPERATIONS = {
             "id": "transition_campaign",
             "upstream_operation_id": "projects.campaigns.transition",
             "method": "POST",
-            "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+            "path": "/v1/{parent}/campaigns/{campaignId}:transition",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "campaign_id"
+                "campaignId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4764,11 +5616,12 @@ OPERATIONS = {
             "id": "get_reviewer_qualification",
             "upstream_operation_id": "projects.reviewerQualifications.get",
             "method": "GET",
-            "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+            "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "campaign_id"
+                "campaignId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4785,8 +5638,9 @@ OPERATIONS = {
             "id": "run_use_case",
             "upstream_operation_id": "projects.pipelines.runUseCase",
             "method": "POST",
-            "path": "/v1/{parent}/pipelines:run-use-case",
+            "path": "/v1/{parent}/pipelines:runUseCase",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4819,6 +5673,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/expert-tasks",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4826,10 +5681,10 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "status",
-                "campaign_name"
+                "campaignName"
             ],
             "body": [],
             "forbidden_body": [],
@@ -4844,6 +5699,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/review-qualification-tasks",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -4872,11 +5728,12 @@ OPERATIONS = {
             "id": "resolve_expert_task",
             "upstream_operation_id": "projects.expertTasks.resolve",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4908,11 +5765,12 @@ OPERATIONS = {
             "id": "claim_expert_task",
             "upstream_operation_id": "projects.expertTaskAssignments.claim",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4936,11 +5794,12 @@ OPERATIONS = {
             "id": "renew_expert_task_assignment",
             "upstream_operation_id": "projects.expertTaskAssignments.renew",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4964,11 +5823,12 @@ OPERATIONS = {
             "id": "release_expert_task_assignment",
             "upstream_operation_id": "projects.expertTaskAssignments.release",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -4991,11 +5851,12 @@ OPERATIONS = {
             "id": "save_expert_task_draft",
             "upstream_operation_id": "projects.expertTaskAssignments.saveDraft",
             "method": "POST",
-            "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
-                "expert_task_id"
+                "expertTaskId"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
@@ -5024,6 +5885,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/review-operations",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5031,8 +5893,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "window_seconds",
-                "sla_target_seconds"
+                "windowSeconds",
+                "slaTargetSeconds"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5047,6 +5909,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/metrics",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5067,6 +5930,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/label-quality",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5087,6 +5951,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/ecosystem/readiness",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5107,6 +5972,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/artifacts",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5114,8 +5980,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "view"
             ],
             "body": [],
@@ -5131,6 +5997,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "artifactId"
@@ -5154,6 +6021,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}/labels",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "artifactId"
@@ -5162,8 +6030,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5178,6 +6046,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/datasets:profile",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5201,6 +6070,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/jobs",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5231,6 +6101,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "jobId"
@@ -5252,6 +6123,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}/results",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "jobId"
@@ -5259,7 +6131,10 @@ OPERATIONS = {
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5273,6 +6148,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "productId"
@@ -5294,6 +6170,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:validate",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "productId"
@@ -5313,8 +6190,9 @@ OPERATIONS = {
             "id": "check_product_leakage",
             "upstream_operation_id": "projects.products.checkLeakage",
             "method": "POST",
-            "path": "/v1/{parent}/products:check-leakage",
+            "path": "/v1/{parent}/products:checkLeakage",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5339,6 +6217,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}/manifest",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "productId"
@@ -5360,6 +6239,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/training-releases:admit",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5388,6 +6268,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/training-releases/{releaseId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "releaseId"
@@ -5409,6 +6290,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:derive",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "productId"
@@ -5437,8 +6319,9 @@ OPERATIONS = {
             "id": "emit_eval",
             "upstream_operation_id": "projects.products.emitEval",
             "method": "POST",
-            "path": "/v1/{parent}/products:emit-eval",
+            "path": "/v1/{parent}/products:emitEval",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5465,6 +6348,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/sources:extract",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5502,6 +6386,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/connectors",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5509,8 +6394,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5525,6 +6410,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/tools",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5557,13 +6443,17 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/tools",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
             "path_param_templates": {
                 "parent": "projects/*"
             },
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5577,6 +6467,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/tools/{toolName}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "toolName"
@@ -5598,6 +6489,7 @@ OPERATIONS = {
             "method": "DELETE",
             "path": "/v1/{parent}/tools/{toolName}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "toolName"
@@ -5619,6 +6511,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/tools/{toolName}:invoke",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "toolName"
@@ -5637,11 +6530,79 @@ OPERATIONS = {
             "description": "Invoke a stored custom tool through its configured execution boundary."
         },
         {
+            "id": "commit_discovery_release",
+            "upstream_operation_id": "projects.discoveryReleases.commit",
+            "method": "POST",
+            "path": "/v1/{parent}/discoveryReleases:commit",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [
+                "schema_version",
+                "request_id",
+                "release_id",
+                "release_kind",
+                "evidence_class",
+                "claim_class",
+                "bindings",
+                "lineage_edges",
+                "budget",
+                "eligibility",
+                "prospective_execution"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema_version",
+                "request_id",
+                "release_id",
+                "release_kind",
+                "evidence_class",
+                "claim_class",
+                "bindings",
+                "lineage_edges",
+                "budget",
+                "eligibility",
+                "prospective_execution"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Atomically commit an immutable discovery release graph."
+        },
+        {
+            "id": "get_discovery_release",
+            "upstream_operation_id": "projects.discoveryReleases.get",
+            "method": "GET",
+            "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "discoveryReleaseId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Get one immutable discovery release."
+        },
+        {
             "id": "create_evidence_record",
             "upstream_operation_id": "projects.evidenceRecords.create",
             "method": "POST",
             "path": "/v1/{parent}/evidenceRecords",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5682,6 +6643,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5689,8 +6651,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "domain"
             ],
             "body": [],
@@ -5706,6 +6668,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "evidenceRecordId"
@@ -5727,6 +6690,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/episodes",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5773,6 +6737,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/episodes",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5780,8 +6745,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token",
+                "pageSize",
+                "pageToken",
                 "domain"
             ],
             "body": [],
@@ -5797,6 +6762,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/episodes/{episodeId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "episodeId"
@@ -5818,6 +6784,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/researchRetrieval:query",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5854,6 +6821,7 @@ OPERATIONS = {
             "method": "POST",
             "path": "/v1/{parent}/researchCatalogEntries",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5888,6 +6856,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent"
             ],
@@ -5895,8 +6864,8 @@ OPERATIONS = {
                 "parent": "projects/*"
             },
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5911,6 +6880,7 @@ OPERATIONS = {
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
             "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "parent",
                 "entryId"

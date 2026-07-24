@@ -124,6 +124,12 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -393,10 +399,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -422,7 +428,7 @@
         }
       }
     },
-    "/v1/{parent}/campaigns/{campaign_id}:transition": {
+    "/v1/{parent}/campaigns/{campaignId}:transition": {
       "post": {
         "operationId": "projects.campaigns.transition",
         "x-tempera-audience": "data-engine",
@@ -488,7 +494,7 @@
         }
       }
     },
-    "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification": {
+    "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification": {
       "get": {
         "operationId": "projects.reviewerQualifications.get",
         "x-tempera-audience": "data-engine",
@@ -532,7 +538,7 @@
         }
       }
     },
-    "/v1/{parent}/pipelines:run-use-case": {
+    "/v1/{parent}/pipelines:runUseCase": {
       "post": {
         "operationId": "projects.pipelines.runUseCase",
         "x-tempera-audience": "data-engine",
@@ -603,10 +609,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "status",
@@ -622,7 +628,7 @@
             "description": "Restrict the queue to actionable or completed tasks."
           },
           {
-            "name": "campaign_name",
+            "name": "campaignName",
             "in": "query",
             "required": false,
             "schema": {
@@ -714,7 +720,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:resolve": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:resolve": {
       "post": {
         "operationId": "projects.expertTasks.resolve",
         "x-tempera-audience": "data-engine",
@@ -777,7 +783,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:claim": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:claim": {
       "post": {
         "operationId": "projects.expertTaskAssignments.claim",
         "x-tempera-audience": "data-engine",
@@ -837,7 +843,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:renew": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:renew": {
       "post": {
         "operationId": "projects.expertTaskAssignments.renew",
         "x-tempera-audience": "data-engine",
@@ -897,7 +903,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:release": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:release": {
       "post": {
         "operationId": "projects.expertTaskAssignments.release",
         "x-tempera-audience": "data-engine",
@@ -957,7 +963,7 @@
         }
       }
     },
-    "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft": {
+    "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft": {
       "post": {
         "operationId": "projects.expertTaskAssignments.saveDraft",
         "x-tempera-audience": "data-engine",
@@ -1029,7 +1035,7 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "window_seconds",
+            "name": "windowSeconds",
             "in": "query",
             "required": false,
             "schema": {
@@ -1041,7 +1047,7 @@
             "description": "Bounded lookback window for throughput counters."
           },
           {
-            "name": "sla_target_seconds",
+            "name": "slaTargetSeconds",
             "in": "query",
             "required": false,
             "schema": {
@@ -1184,10 +1190,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "$ref": "#/components/parameters/ViewQuery"
@@ -1283,10 +1289,10 @@
             "$ref": "#/components/parameters/ArtifactId"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -1466,6 +1472,12 @@
           },
           {
             "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -1480,7 +1492,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LabelListResponse"
+                  "$ref": "#/components/schemas/JobResultListResponse"
                 }
               }
             }
@@ -1569,7 +1581,7 @@
         }
       }
     },
-    "/v1/{parent}/products:check-leakage": {
+    "/v1/{parent}/products:checkLeakage": {
       "post": {
         "operationId": "projects.products.checkLeakage",
         "x-tempera-audience": "data-engine",
@@ -1835,7 +1847,7 @@
         }
       }
     },
-    "/v1/{parent}/products:emit-eval": {
+    "/v1/{parent}/products:emitEval": {
       "post": {
         "operationId": "projects.products.emitEval",
         "x-tempera-audience": "data-engine",
@@ -1958,10 +1970,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "$ref": "#/components/parameters/PageSizeParam"
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "$ref": "#/components/parameters/PageTokenParam"
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2043,6 +2055,12 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2201,6 +2219,123 @@
         }
       }
     },
+    "/v1/{parent}/discoveryReleases:commit": {
+      "post": {
+        "operationId": "projects.discoveryReleases.commit",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Atomically commit an immutable discovery release graph",
+        "description": "Admits an exact, same-project graph of already-ingested artifacts. Artifact type, raw SHA-256, release policy, lineage, eligibility, and integer budget invariants are validated in one transaction. Replaying the same request_id and semantic content returns the original release; reuse with different content fails with ALREADY_EXISTS. This operation records evidence and does not authorize or perform a physical experiment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoveryReleaseCommitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable discovery release",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryRelease"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExists"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/discoveryReleases/{discoveryReleaseId}": {
+      "get": {
+        "operationId": "projects.discoveryReleases.get",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Get one immutable discovery release",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "discoveryReleaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable discovery release",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryRelease"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
     "/v1/{parent}/evidenceRecords": {
       "post": {
         "operationId": "projects.evidenceRecords.create",
@@ -2268,22 +2403,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "maxLength": 4096
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "domain",
@@ -2443,22 +2566,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "maxLength": 4096
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           },
           {
             "name": "domain",
@@ -2662,21 +2773,10 @@
             "$ref": "#/components/parameters/ParentParam"
           },
           {
-            "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
+            "$ref": "#/components/parameters/AipPageSizeParam"
           },
           {
-            "name": "page_token",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/AipPageTokenParam"
           }
         ],
         "responses": {
@@ -2869,7 +2969,7 @@
         }
       },
       "ExpertTaskId": {
-        "name": "expert_task_id",
+        "name": "expertTaskId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2879,7 +2979,7 @@
         }
       },
       "CampaignId": {
-        "name": "campaign_id",
+        "name": "campaignId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2924,8 +3024,8 @@
         },
         "description": "Key:value filter expression"
       },
-      "PageSizeParam": {
-        "name": "page_size",
+      "AipPageSizeParam": {
+        "name": "pageSize",
         "in": "query",
         "required": false,
         "schema": {
@@ -2933,16 +3033,18 @@
           "minimum": 1,
           "maximum": 1000,
           "default": 50
-        }
+        },
+        "description": "AIP-158 JSON wire page size."
       },
-      "PageTokenParam": {
-        "name": "page_token",
+      "AipPageTokenParam": {
+        "name": "pageToken",
         "in": "query",
         "required": false,
         "schema": {
           "type": "string",
           "maxLength": 4096
-        }
+        },
+        "description": "Opaque AIP-158 continuation token from nextPageToken."
       },
       "OrderByParam": {
         "name": "order_by",
@@ -3131,24 +3233,30 @@
       },
       "ErrorBody": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "code",
-          "message",
           "status",
-          "details",
-          "request_id",
-          "retryable"
+          "message",
+          "details"
         ],
         "properties": {
           "code": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP status code for the failed request."
+          },
+          "status": {
             "type": "string",
+            "description": "Canonical Google RPC status name.",
             "enum": [
               "INVALID_ARGUMENT",
               "FAILED_PRECONDITION",
               "NOT_FOUND",
               "ALREADY_EXISTS",
               "UNAUTHENTICATED",
-              "FORBIDDEN",
+              "PERMISSION_DENIED",
               "ABORTED",
               "OUT_OF_RANGE",
               "RESOURCE_EXHAUSTED",
@@ -3161,26 +3269,68 @@
           "message": {
             "type": "string"
           },
-          "status": {
-            "type": "integer"
-          },
-          "request_id": {
-            "type": "string"
-          },
-          "retryable": {
-            "type": "boolean"
-          },
-          "retry_info": {
-            "type": "object",
-            "properties": {
-              "retry_delay": {
-                "type": "string"
-              }
-            }
-          },
           "details": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                },
+                {
+                  "$ref": "#/components/schemas/DiagnosticInfo"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/google.rpc.ErrorInfo"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Stable Data Engine reason for the error."
+          },
+          "domain": {
+            "type": "string",
+            "const": "data-engine.tempera.dev"
+          },
+          "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Includes requestId and retryable correlation metadata."
+          }
+        }
+      },
+      "DiagnosticInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/tempera.dataengine.v1.DiagnosticInfo"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Bounded, non-secret structured diagnostics for this error."
           }
         }
       },
@@ -3197,6 +3347,437 @@
           "minLength": 1,
           "maxLength": 4096,
           "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+        }
+      },
+      "DiscoveryEvidenceClass": {
+        "type": "string",
+        "enum": [
+          "synthetic_fixture",
+          "public_retrospective",
+          "partner_historical",
+          "prospective_experimental"
+        ]
+      },
+      "DiscoveryClaimClass": {
+        "type": "string",
+        "enum": [
+          "contract_conformance",
+          "offline_policy_evaluation",
+          "shadow_decision",
+          "prospective_discovery"
+        ]
+      },
+      "DiscoveryArtifactBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_name",
+          "raw_sha256",
+          "role",
+          "schema_version"
+        ],
+        "properties": {
+          "artifact_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "raw_sha256": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "source_metadata",
+              "source_scores",
+              "source_mappings",
+              "normalized_records",
+              "snapshot_manifest",
+              "program",
+              "candidate_set",
+              "experiment_proposal",
+              "verifier_receipt",
+              "decision_receipt",
+              "release_manifest",
+              "physical_execution_receipt",
+              "human_approval_receipt"
+            ]
+          },
+          "schema_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+          }
+        }
+      },
+      "DiscoveryLineageEdge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from_artifact",
+          "to_artifact",
+          "relation"
+        ],
+        "properties": {
+          "from_artifact": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "to_artifact": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          },
+          "relation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+          }
+        }
+      },
+      "DiscoveryBudget": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "max_rounds",
+          "rounds_used",
+          "max_measurements",
+          "measurements_used",
+          "max_cost_microunits",
+          "cost_used_microunits"
+        ],
+        "properties": {
+          "max_rounds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "rounds_used": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "max_measurements": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "measurements_used": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "max_cost_microunits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
+          },
+          "cost_used_microunits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          }
+        }
+      },
+      "DiscoveryEligibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested_training",
+          "requested_evaluation",
+          "license_admitted",
+          "quality_gate_passed",
+          "leakage_check_passed",
+          "group_split_keys",
+          "temporal_holdout",
+          "data_use_authorization_ref",
+          "admission_reason"
+        ],
+        "properties": {
+          "requested_training": {
+            "type": "boolean"
+          },
+          "requested_evaluation": {
+            "type": "boolean"
+          },
+          "license_admitted": {
+            "type": "boolean"
+          },
+          "quality_gate_passed": {
+            "type": "boolean"
+          },
+          "leakage_check_passed": {
+            "type": "boolean"
+          },
+          "group_split_keys": {
+            "type": "array",
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+            }
+          },
+          "temporal_holdout": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "data_use_authorization_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "admission_reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "DiscoveryProspectiveExecution": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "human_approval_ref",
+          "physical_execution_receipt_ref"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_applicable",
+              "prepared",
+              "proven"
+            ]
+          },
+          "human_approval_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "physical_execution_receipt_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+          }
+        }
+      },
+      "DiscoveryAdmittedEligibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "training_eligible",
+          "evaluation_eligible"
+        ],
+        "properties": {
+          "training_eligible": {
+            "type": "boolean"
+          },
+          "evaluation_eligible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DiscoveryReleaseCommitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "request_id",
+          "release_id",
+          "release_kind",
+          "evidence_class",
+          "claim_class",
+          "bindings",
+          "lineage_edges",
+          "budget",
+          "eligibility",
+          "prospective_execution"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "data-engine.discovery-release-commit.v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "release_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "release_kind": {
+            "type": "string",
+            "enum": [
+              "source_snapshot",
+              "campaign_round"
+            ]
+          },
+          "evidence_class": {
+            "$ref": "#/components/schemas/DiscoveryEvidenceClass"
+          },
+          "claim_class": {
+            "$ref": "#/components/schemas/DiscoveryClaimClass"
+          },
+          "bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryArtifactBinding"
+            }
+          },
+          "lineage_edges": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1024,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryLineageEdge"
+            }
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DiscoveryBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/DiscoveryEligibility"
+          },
+          "prospective_execution": {
+            "$ref": "#/components/schemas/DiscoveryProspectiveExecution"
+          }
+        }
+      },
+      "DiscoveryRelease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "release_id",
+          "release_kind",
+          "evidence_class",
+          "claim_class",
+          "bindings",
+          "lineage_edges",
+          "budget",
+          "eligibility",
+          "prospective_execution",
+          "name",
+          "project",
+          "request_id",
+          "request_hash",
+          "content_hash",
+          "admitted_eligibility",
+          "create_time"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "data-engine.discovery-release.v1"
+          },
+          "release_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "release_kind": {
+            "type": "string",
+            "enum": [
+              "source_snapshot",
+              "campaign_round"
+            ]
+          },
+          "evidence_class": {
+            "$ref": "#/components/schemas/DiscoveryEvidenceClass"
+          },
+          "claim_class": {
+            "$ref": "#/components/schemas/DiscoveryClaimClass"
+          },
+          "bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryArtifactBinding"
+            }
+          },
+          "lineage_edges": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1024,
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryLineageEdge"
+            }
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DiscoveryBudget"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/DiscoveryEligibility"
+          },
+          "prospective_execution": {
+            "$ref": "#/components/schemas/DiscoveryProspectiveExecution"
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^projects/[^/]+/discoveryReleases/[a-z][a-z0-9._-]{0,127}$"
+          },
+          "project": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+          },
+          "request_hash": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "content_hash": {
+            "$ref": "#/components/schemas/PlatformDigest"
+          },
+          "admitted_eligibility": {
+            "$ref": "#/components/schemas/DiscoveryAdmittedEligibility"
+          },
+          "create_time": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
         }
       },
       "EvidenceRecordCreateRequest": {
@@ -3373,7 +3954,7 @@
         "additionalProperties": false,
         "required": [
           "evidence_records",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "properties": {
@@ -3383,7 +3964,7 @@
               "$ref": "#/components/schemas/EvidenceRecord"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3626,7 +4207,7 @@
         "additionalProperties": false,
         "required": [
           "episodes",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "properties": {
@@ -3636,7 +4217,7 @@
               "$ref": "#/components/schemas/Episode"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3847,7 +4428,7 @@
         "additionalProperties": false,
         "required": [
           "research_catalog_entries",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "properties": {
@@ -3857,7 +4438,7 @@
               "$ref": "#/components/schemas/ResearchCatalogEntry"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -4928,7 +5509,7 @@
               ]
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -5818,7 +6399,7 @@
               "$ref": "#/components/schemas/Campaign"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -5875,11 +6456,21 @@
           },
           "sample_artifact_count": {
             "type": "integer"
+          },
+          "requires_input_artifacts": {
+            "type": "boolean",
+            "description": "When true, pipeline runs fail closed unless the caller supplies authorized source artifacts; the catalog does not provide examples as production inputs.\n"
           }
         }
       },
       "UseCaseListResponse": {
         "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "use_cases",
+          "nextPageToken",
+          "total_size"
+        ],
         "properties": {
           "use_cases": {
             "type": "array",
@@ -5887,7 +6478,7 @@
               "$ref": "#/components/schemas/UseCase"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -6263,7 +6854,7 @@
               "$ref": "#/components/schemas/ExpertTask"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -7380,7 +7971,34 @@
               "$ref": "#/components/schemas/Label"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
+            "type": "string"
+          },
+          "total_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "JobResultListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job",
+          "labels",
+          "nextPageToken",
+          "total_size"
+        ],
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          },
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -9215,7 +9833,7 @@
               "$ref": "#/components/schemas/Connector"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -9349,6 +9967,12 @@
       },
       "CustomToolListResponse": {
         "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tools",
+          "nextPageToken",
+          "total_size"
+        ],
         "properties": {
           "tools": {
             "type": "array",
@@ -9356,7 +9980,7 @@
               "$ref": "#/components/schemas/CustomTool"
             }
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {

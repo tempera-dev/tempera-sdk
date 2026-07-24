@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "fe7738dcdd63914ba4ea256fe24579e5d0ae8427",
+    "commit": "3fa3d09087756298a3b6db78ef246324b3469897",
     "files": [
       {
-        "git_blob": "9024508ffc674afb5270a032fb19e5f19a524333",
+        "git_blob": "397272bb080b5e3916d8ed08ab7ed02c5582f308",
         "path": "api/openapi.yaml",
-        "sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02"
+        "sha256": "b57401d80bec953ee9cadcbcafd9345d6ae7eefd215f38b89c0e5f12959163f4"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "0849f58d623b9415b29b92eda8490a58e5960a5e",
+        "git_blob": "9b191033b6e2d136a10caa80d01ed97cbcb4f7af",
         "path": "src/data_engine/app.py",
-        "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
+        "sha256": "836ea12c866fac2564f2fc42b3f68dcbd86999c7369f9e3f90b57147e8f282fb"
       },
       {
-        "git_blob": "4876e6fea4515a0fa41d157c1a482fc882d63d65",
+        "git_blob": "da3684af1e461e6459f8064277edd0a6269347d8",
         "path": "src/data_engine/mcp.py",
-        "sha256": "7fb944df6bfd6713e6aa2134e13c9ee261ecb6ece5a1dfc57b7e86c70dd9de97"
+        "sha256": "a31918f021215f509118fbe5980487169e5ef75bb07474040d05b8a3a27a88a5"
       },
       {
-        "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
+        "git_blob": "9c599001cb3de342adc679e88ddd0be38ef398bd",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "2bbc6369b74f3ed24ff475d212042b6259b55ec75b67a26099f792533eb2f950"
+        "sha256": "98a32246607b25f9ceeb77150a51bff91f01c8a656e8d631d19529d1e661b6a4"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -690,6 +690,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -706,7 +716,7 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -753,6 +763,9 @@
                     "why_now"
                   ],
                   "type": "object"
+                },
+                "requires_input_artifacts": {
+                  "type": "boolean"
                 },
                 "rubric": {
                   "additionalProperties": false,
@@ -809,7 +822,7 @@
         },
         "required": [
           "use_cases",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -885,6 +898,9 @@
               "why_now"
             ],
             "type": "object"
+          },
+          "requires_input_artifacts": {
+            "type": "boolean"
           },
           "rubric": {
             "additionalProperties": false,
@@ -2479,6 +2495,9 @@
                 ],
                 "type": "object"
               },
+              "requires_input_artifacts": {
+                "type": "boolean"
+              },
               "rubric": {
                 "additionalProperties": false,
                 "properties": {
@@ -2809,7 +2828,7 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "campaign_id": {
+          "campaignId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -2837,7 +2856,7 @@
         },
         "required": [
           "project",
-          "campaign_id",
+          "campaignId",
           "target_status",
           "idempotency_key"
         ],
@@ -2898,13 +2917,13 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3052,7 +3071,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3061,7 +3080,7 @@
         },
         "required": [
           "campaigns",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -3078,13 +3097,13 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3155,7 +3174,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3164,7 +3183,7 @@
         },
         "required": [
           "artifacts",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -3336,13 +3355,13 @@
             "minLength": 1,
             "type": "string"
           },
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -3447,7 +3466,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3456,7 +3475,7 @@
         },
         "required": [
           "labels",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -3724,6 +3743,16 @@
             "minLength": 1,
             "type": "string"
           },
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -3828,7 +3857,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -3838,7 +3867,7 @@
         "required": [
           "job",
           "labels",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -3855,18 +3884,18 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
-          "campaign_name": {
+          "campaignName": {
             "maxLength": 4096,
             "minLength": 1,
             "type": "string"
           },
-          "page_size": {
+          "pageSize": {
             "default": 50,
             "maximum": 1000,
             "minimum": 1,
             "type": "integer"
           },
-          "page_token": {
+          "pageToken": {
             "maxLength": 4096,
             "type": "string"
           },
@@ -4004,7 +4033,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -4013,7 +4042,7 @@
         },
         "required": [
           "expert_tasks",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -4043,7 +4072,7 @@
             "additionalProperties": true,
             "type": "object"
           },
-          "expert_task_id": {
+          "expertTaskId": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
@@ -4185,7 +4214,7 @@
         },
         "required": [
           "project",
-          "expert_task_id",
+          "expertTaskId",
           "label",
           "idempotency_key",
           "review_context"
@@ -6594,6 +6623,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -6652,7 +6691,7 @@
             },
             "type": "array"
           },
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "total_size": {
@@ -6661,7 +6700,7 @@
         },
         "required": [
           "connectors",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"
@@ -6966,6 +7005,16 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {
+          "pageSize": {
+            "default": 50,
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pageToken": {
+            "maxLength": 4096,
+            "type": "string"
+          },
           "project": {
             "description": "Project id (the {project} path segment).",
             "maxLength": 256,
@@ -6982,7 +7031,7 @@
       "outputSchema": {
         "additionalProperties": false,
         "properties": {
-          "next_page_token": {
+          "nextPageToken": {
             "type": "string"
           },
           "tools": {
@@ -7077,7 +7126,7 @@
         },
         "required": [
           "tools",
-          "next_page_token",
+          "nextPageToken",
           "total_size"
         ],
         "type": "object"

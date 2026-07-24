@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 61 |
+| Typed operations | 71 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -84,7 +84,7 @@ let spec = client.build_request("control_plane", "get_readiness", &[])?;
 
 ### me
 
-`GET /me`
+`GET /v1/me`
 
 Fetch the authenticated user's identity, active workspace, and roles.
 
@@ -112,7 +112,7 @@ let spec = client.build_request("control_plane", "me", &[])?;
 
 ### listOrgs
 
-`GET /orgs`
+`GET /v1/orgs`
 
 List the organizations the authenticated user belongs to.
 
@@ -120,18 +120,34 @@ List the organizations the authenticated user belongs to.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listOrgs();
+const result = await client.controlPlane.listOrgs({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_orgs()
+result = client.control_plane.list_orgs({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_orgs", &[])?;
+let spec = client.build_request("control_plane", "list_orgs", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -140,7 +156,7 @@ let spec = client.build_request("control_plane", "list_orgs", &[])?;
 
 ### createOrg
 
-`POST /orgs`
+`POST /v1/orgs`
 
 Create an organization; the caller becomes its owner.
 
@@ -180,7 +196,7 @@ let spec = client.build_request("control_plane", "create_org", &[
 
 ### listSessions
 
-`GET /sessions`
+`GET /v1/sessions`
 
 List the user's active account sessions.
 
@@ -188,18 +204,34 @@ List the user's active account sessions.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listSessions();
+const result = await client.controlPlane.listSessions({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_sessions()
+result = client.control_plane.list_sessions({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_sessions", &[])?;
+let spec = client.build_request("control_plane", "list_sessions", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -208,7 +240,7 @@ let spec = client.build_request("control_plane", "list_sessions", &[])?;
 
 ### createHostedSession
 
-`POST /sessions`
+`POST /v1/sessions`
 
 Create a first-party hosted account session from email/password login or signup.
 
@@ -224,7 +256,7 @@ Create a first-party hosted account session from email/password login or signup.
 | `email` | yes | — |
 | `password` | yes | — |
 | `organization` | no | — |
-| `invite_token` | no | — |
+| `inviteToken` | no | — |
 
 <CodeGroup>
 
@@ -258,7 +290,7 @@ let spec = client.build_request("control_plane", "create_hosted_session", &[
 
 ### revokeSession
 
-`DELETE /sessions/{id}`
+`DELETE /v1/sessions/{id}`
 
 Revoke an account session and its tokens immediately (idempotent).
 
@@ -298,7 +330,7 @@ let spec = client.build_request("control_plane", "revoke_session", &[
 
 ### selectWorkspace
 
-`POST /workspace/select`
+`POST /v1/workspace/select`
 
 Switch the active workspace and receive a token pair scoped to it.
 
@@ -310,33 +342,33 @@ Switch the active workspace and receive a token pair scoped to it.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.selectWorkspace({
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.select_workspace({
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "select_workspace", &[
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -346,7 +378,7 @@ let spec = client.build_request("control_plane", "select_workspace", &[
 
 ### listTeamMembers
 
-`GET /team/members`
+`GET /v1/team/members`
 
 List team members of the active organization.
 
@@ -354,18 +386,34 @@ List team members of the active organization.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listTeamMembers();
+const result = await client.controlPlane.listTeamMembers({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_team_members()
+result = client.control_plane.list_team_members({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_team_members", &[])?;
+let spec = client.build_request("control_plane", "list_team_members", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -374,7 +422,7 @@ let spec = client.build_request("control_plane", "list_team_members", &[])?;
 
 ### updateTeamMember
 
-`PATCH /team/members/{id}`
+`PATCH /v1/team/members/{id}`
 
 Change a team member's role (requires an org admin role; at least one owner must remain).
 
@@ -387,6 +435,12 @@ Change a team member's role (requires an org admin role; at least one owner must
 | Parameter | Required | Notes |
 |---|---|---|
 | `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | no | — |
 
 **Body parameters**
 
@@ -423,7 +477,7 @@ let spec = client.build_request("control_plane", "update_team_member", &[
 
 ### removeTeamMember
 
-`DELETE /team/members/{id}`
+`DELETE /v1/team/members/{id}`
 
 Remove a team member from the active organization (idempotent).
 
@@ -463,7 +517,7 @@ let spec = client.build_request("control_plane", "remove_team_member", &[
 
 ### listInvites
 
-`GET /invites`
+`GET /v1/invites`
 
 List invites for the active organization, newest first.
 
@@ -471,18 +525,34 @@ List invites for the active organization, newest first.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listInvites();
+const result = await client.controlPlane.listInvites({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_invites()
+result = client.control_plane.list_invites({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_invites", &[])?;
+let spec = client.build_request("control_plane", "list_invites", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -491,7 +561,7 @@ let spec = client.build_request("control_plane", "list_invites", &[])?;
 
 ### createInvite
 
-`POST /invites`
+`POST /v1/invites`
 
 Invite a user to the active organization; the accept URL is returned once.
 
@@ -535,7 +605,7 @@ let spec = client.build_request("control_plane", "create_invite", &[
 
 ### cancelInvite
 
-`DELETE /invites/{id}`
+`DELETE /v1/invites/{id}`
 
 Cancel a pending invite (idempotent).
 
@@ -575,7 +645,7 @@ let spec = client.build_request("control_plane", "cancel_invite", &[
 
 ### listProjects
 
-`GET /projects`
+`GET /v1/projects`
 
 List projects across every organization the user belongs to.
 
@@ -583,18 +653,34 @@ List projects across every organization the user belongs to.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listProjects()` · Python `client.control_plane.list_projects()` · Rust `build_request("control_plane", "list_projects", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listProjects();
+const result = await client.controlPlane.listProjects({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_projects()
+result = client.control_plane.list_projects({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_projects", &[])?;
+let spec = client.build_request("control_plane", "list_projects", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -603,7 +689,7 @@ let spec = client.build_request("control_plane", "list_projects", &[])?;
 
 ### createProject
 
-`POST /projects`
+`POST /v1/projects`
 
 Create a project in an organization (requires an org admin role).
 
@@ -615,28 +701,28 @@ Create a project in an organization (requires an org admin role).
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
+| `orgId` | yes | — |
 | `name` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.createProject({
-  org_id: "<org_id>",
+  orgId: "<orgId>",
   name: "<name>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_project({
-    "org_id": "<org_id>",
+    "orgId": "<orgId>",
     "name": "<name>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_project", &[
-    ("org_id", "<org_id>".into()),
+    ("orgId", "<orgId>".into()),
     ("name", "<name>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -647,7 +733,7 @@ let spec = client.build_request("control_plane", "create_project", &[
 
 ### listEnvironments
 
-`GET /environments`
+`GET /v1/environments`
 
 List environments across every project the user can access.
 
@@ -655,18 +741,34 @@ List environments across every project the user can access.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listEnvironments()` · Python `client.control_plane.list_environments()` · Rust `build_request("control_plane", "list_environments", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listEnvironments();
+const result = await client.controlPlane.listEnvironments({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_environments()
+result = client.control_plane.list_environments({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_environments", &[])?;
+let spec = client.build_request("control_plane", "list_environments", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -675,7 +777,7 @@ let spec = client.build_request("control_plane", "list_environments", &[])?;
 
 ### createEnvironment
 
-`POST /environments`
+`POST /v1/environments`
 
 Create an environment in a project (requires an org admin role).
 
@@ -687,28 +789,28 @@ Create an environment in a project (requires an org admin role).
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | — |
+| `projectId` | yes | — |
 | `name` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.createEnvironment({
-  project_id: "<project_id>",
+  projectId: "<projectId>",
   name: "<name>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_environment({
-    "project_id": "<project_id>",
+    "projectId": "<projectId>",
     "name": "<name>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_environment", &[
-    ("project_id", "<project_id>".into()),
+    ("projectId", "<projectId>".into()),
     ("name", "<name>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -719,7 +821,7 @@ let spec = client.build_request("control_plane", "create_environment", &[
 
 ### listApiKeys
 
-`GET /api-keys`
+`GET /v1/api-keys`
 
 List API keys in the active workspace; secrets are never returned.
 
@@ -727,18 +829,34 @@ List API keys in the active workspace; secrets are never returned.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listApiKeys()` · Python `client.control_plane.list_api_keys()` · Rust `build_request("control_plane", "list_api_keys", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listApiKeys();
+const result = await client.controlPlane.listApiKeys({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_api_keys()
+result = client.control_plane.list_api_keys({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_api_keys", &[])?;
+let spec = client.build_request("control_plane", "list_api_keys", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -747,7 +865,7 @@ let spec = client.build_request("control_plane", "list_api_keys", &[])?;
 
 ### createApiKey
 
-`POST /api-keys`
+`POST /v1/api-keys`
 
 Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.
 
@@ -759,37 +877,37 @@ Mint a workspace API key (tp_...); the secret is returned exactly once. The work
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 | `name` | no | — |
 | `scopes` | yes | — |
 | `audience` | no | — |
-| `expires_at` | no | — |
+| `expiresAt` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.createApiKey({
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_api_key({
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_api_key", &[
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -799,7 +917,7 @@ let spec = client.build_request("control_plane", "create_api_key", &[
 
 ### revokeApiKey
 
-`DELETE /api-keys/{id}`
+`DELETE /v1/api-keys/{id}`
 
 Revoke an API key (idempotent).
 
@@ -839,7 +957,7 @@ let spec = client.build_request("control_plane", "revoke_api_key", &[
 
 ### rotateApiKey
 
-`POST /api-keys/{id}/rotate`
+`POST /v1/api-keys/{id}/rotate`
 
 Rotate an API key's secret; the new secret is returned exactly once.
 
@@ -879,7 +997,7 @@ let spec = client.build_request("control_plane", "rotate_api_key", &[
 
 ### providerConnectionsList
 
-`GET /provider-connections`
+`GET /v1/provider-connections`
 
 List provider connection metadata using a first-party account session. Secret references and values are never returned.
 
@@ -887,18 +1005,34 @@ List provider connection metadata using a first-party account session. Secret re
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsList()` · Python `client.control_plane.provider_connections_list()` · Rust `build_request("control_plane", "provider_connections_list", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.providerConnectionsList();
+const result = await client.controlPlane.providerConnectionsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.provider_connections_list()
+result = client.control_plane.provider_connections_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "provider_connections_list", &[])?;
+let spec = client.build_request("control_plane", "provider_connections_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -907,7 +1041,7 @@ let spec = client.build_request("control_plane", "provider_connections_list", &[
 
 ### providerConnectionsCreate
 
-`POST /provider-connections`
+`POST /v1/provider-connections`
 
 Create a tenant-scoped provider connection using only an external secret reference.
 
@@ -919,37 +1053,37 @@ Create a tenant-scoped provider connection using only an external secret referen
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 | `provider` | yes | — |
 | `name` | yes | — |
-| `secret_ref` | yes | — |
-| `allowed_models` | no | — |
+| `secretRef` | yes | — |
+| `allowedModels` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.providerConnectionsCreate({
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.provider_connections_create({
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "provider_connections_create", &[
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -959,7 +1093,7 @@ let spec = client.build_request("control_plane", "provider_connections_create", 
 
 ### providerConnectionsRevoke
 
-`DELETE /provider-connections/{id}`
+`DELETE /v1/provider-connections/{id}`
 
 Revoke a provider connection immediately. Revoking an unknown id is a no-op.
 
@@ -999,7 +1133,7 @@ let spec = client.build_request("control_plane", "provider_connections_revoke", 
 
 ### providerConnectionsRotate
 
-`POST /provider-connections/{id}:rotate`
+`POST /v1/provider-connections/{id}:rotate`
 
 Replace a connection secret reference and increment its revision without exposing the reference.
 
@@ -1017,32 +1151,32 @@ Replace a connection secret reference and increment its revision without exposin
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `secret_ref` | yes | — |
-| `allowed_models` | no | — |
+| `secretRef` | yes | — |
+| `allowedModels` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.providerConnectionsRotate({
   id: "<id>",
-  secret_ref: "<secret_ref>",
-  allowed_models: "<allowed_models>",
+  secretRef: "<secretRef>",
+  allowedModels: "<allowedModels>",
 });
 ```
 
 ```python Python
 result = client.control_plane.provider_connections_rotate({
     "id": "<id>",
-    "secret_ref": "<secret_ref>",
-    "allowed_models": "<allowed_models>",
+    "secretRef": "<secretRef>",
+    "allowedModels": "<allowedModels>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "provider_connections_rotate", &[
     ("id", "<id>".into()),
-    ("secret_ref", "<secret_ref>".into()),
-    ("allowed_models", "<allowed_models>".into()),
+    ("secretRef", "<secretRef>".into()),
+    ("allowedModels", "<allowedModels>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1052,7 +1186,7 @@ let spec = client.build_request("control_plane", "provider_connections_rotate", 
 
 ### providerConnectionsResolve
 
-`POST /provider-connections/{id}:resolve`
+`POST /v1/provider-connections/{id}:resolve`
 
 Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.
 
@@ -1070,37 +1204,515 @@ Resolve connection runtime metadata for a tenant-bound tempera-llm service crede
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
-| `usage_delegation` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `usageDelegation` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.providerConnectionsResolve({
   id: "<id>",
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.provider_connections_resolve({
     "id": "<id>",
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "provider_connections_resolve", &[
     ("id", "<id>".into()),
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listExperimentProviderConnections
+
+`GET /v1/experiment-provider-connections`
+
+List external experiment-provider metadata. Secret references and values are never returned.
+
+- **Producer operationId:** `experimentProviderConnections.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listExperimentProviderConnections()` · Python `client.control_plane.list_experiment_provider_connections()` · Rust `build_request("control_plane", "list_experiment_provider_connections", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listExperimentProviderConnections({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_experiment_provider_connections({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_experiment_provider_connections", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createExperimentProviderConnection
+
+`POST /v1/experiment-provider-connections`
+
+Register a tenant-scoped experiment provider using only an external secret reference.
+
+- **Producer operationId:** `experimentProviderConnections.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.createExperimentProviderConnection()` · Python `client.control_plane.create_experiment_provider_connection()` · Rust `build_request("control_plane", "create_experiment_provider_connection", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `provider` | yes | — |
+| `providerKind` | yes | — |
+| `name` | yes | — |
+| `secretRef` | yes | — |
+| `capabilities` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createExperimentProviderConnection({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.create_experiment_provider_connection({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_experiment_provider_connection", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### revokeExperimentProviderConnection
+
+`DELETE /v1/experiment-provider-connections/{id}`
+
+Revoke an experiment-provider connection. An unknown id is a no-op.
+
+- **Producer operationId:** `experimentProviderConnections.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentProviderConnection()` · Python `client.control_plane.revoke_experiment_provider_connection()` · Rust `build_request("control_plane", "revoke_experiment_provider_connection", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.revokeExperimentProviderConnection({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.revoke_experiment_provider_connection({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "revoke_experiment_provider_connection", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### resolveExperimentProviderConnection
+
+`POST /v1/experiment-provider-connections/{id}:resolve`
+
+Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.
+
+- **Producer operationId:** `experimentProviderConnections.resolve`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `bio:experiment:submit`
+- **Call as:** TypeScript `client.controlPlane.resolveExperimentProviderConnection()` · Python `client.control_plane.resolve_experiment_provider_connection()` · Rust `build_request("control_plane", "resolve_experiment_provider_connection", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `approvalId` | yes | — |
+| `proposalDigest` | yes | — |
+| `protocolDigest` | yes | — |
+| `mcpPrepareReceiptDigest` | yes | — |
+| `mcpCommitReceiptDigest` | yes | — |
+| `submissionIdempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.resolveExperimentProviderConnection({
+  id: "<id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.resolve_experiment_provider_connection({
+    "id": "<id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "resolve_experiment_provider_connection", &[
+    ("id", "<id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listBioSignerKeys
+
+`GET /v1/bio-signer-keys`
+
+List versioned public Ed25519 verifier keys for an authorized human administrator.
+
+- **Producer operationId:** `bioSignerKeys.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.listBioSignerKeys()` · Python `client.control_plane.list_bio_signer_keys()` · Rust `build_request("control_plane", "list_bio_signer_keys", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listBioSignerKeys({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_bio_signer_keys({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_bio_signer_keys", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createBioSignerKey
+
+`POST /v1/bio-signer-keys`
+
+Register or rotate a public Ed25519 verifier key. Private key material is rejected.
+
+- **Producer operationId:** `bioSignerKeys.create`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.createBioSignerKey()` · Python `client.control_plane.create_bio_signer_key()` · Rust `build_request("control_plane", "create_bio_signer_key", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `keyId` | yes | — |
+| `publicJwk` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createBioSignerKey({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.create_bio_signer_key({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_bio_signer_key", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### revokeBioSignerKey
+
+`DELETE /v1/bio-signer-keys/{id}`
+
+Revoke a public verifier key while retaining its history.
+
+- **Producer operationId:** `bioSignerKeys.revoke`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:signer:manage`
+- **Call as:** TypeScript `client.controlPlane.revokeBioSignerKey()` · Python `client.control_plane.revoke_bio_signer_key()` · Rust `build_request("control_plane", "revoke_bio_signer_key", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.revokeBioSignerKey({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.revoke_bio_signer_key({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "revoke_bio_signer_key", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listExperimentApprovals
+
+`GET /v1/experiment-approvals`
+
+List exact, single-use experiment approvals for an authorized human approver.
+
+- **Producer operationId:** `experimentApprovals.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.listExperimentApprovals()` · Python `client.control_plane.list_experiment_approvals()` · Rust `build_request("control_plane", "list_experiment_approvals", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listExperimentApprovals({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_experiment_approvals({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_experiment_approvals", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createExperimentApproval
+
+`POST /v1/experiment-approvals`
+
+Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.
+
+- **Producer operationId:** `experimentApprovals.create`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.createExperimentApproval()` · Python `client.control_plane.create_experiment_approval()` · Rust `build_request("control_plane", "create_experiment_approval", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `proposalDigest` | yes | — |
+| `protocolDigest` | yes | — |
+| `connectionId` | yes | — |
+| `mcpPrepareReceiptDigest` | yes | — |
+| `expiresAt` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createExperimentApproval({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.create_experiment_approval({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_experiment_approval", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### revokeExperimentApproval
+
+`DELETE /v1/experiment-approvals/{id}`
+
+Revoke an unused experiment approval. Consumed approvals remain immutable.
+
+- **Producer operationId:** `experimentApprovals.revoke`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:experiment:approve`
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentApproval()` · Python `client.control_plane.revoke_experiment_approval()` · Rust `build_request("control_plane", "revoke_experiment_approval", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.revokeExperimentApproval({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.revoke_experiment_approval({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "revoke_experiment_approval", &[
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1110,7 +1722,7 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
 
 ### listAuditLog
 
-`GET /audit-log`
+`GET /v1/audit-log`
 
 List recent audit-log events for the user and active organization (up to 50, newest first).
 
@@ -1118,18 +1730,34 @@ List recent audit-log events for the user and active organization (up to 50, new
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listAuditLog();
+const result = await client.controlPlane.listAuditLog({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_audit_log()
+result = client.control_plane.list_audit_log({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_audit_log", &[])?;
+let spec = client.build_request("control_plane", "list_audit_log", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1138,7 +1766,7 @@ let spec = client.build_request("control_plane", "list_audit_log", &[])?;
 
 ### listConnectors
 
-`GET /connectors`
+`GET /v1/connectors`
 
 List the connector catalog (MCP clients, editors, and API surfaces).
 
@@ -1146,18 +1774,34 @@ List the connector catalog (MCP clients, editors, and API surfaces).
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listConnectors()` · Python `client.control_plane.list_connectors()` · Rust `build_request("control_plane", "list_connectors", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listConnectors();
+const result = await client.controlPlane.listConnectors({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_connectors()
+result = client.control_plane.list_connectors({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_connectors", &[])?;
+let spec = client.build_request("control_plane", "list_connectors", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1166,7 +1810,7 @@ let spec = client.build_request("control_plane", "list_connectors", &[])?;
 
 ### getConnectorStatus
 
-`GET /connectors/{id}/status`
+`GET /v1/connectors/{id}/status`
 
 Fetch one connector's connection status for the active workspace.
 
@@ -1206,7 +1850,7 @@ let spec = client.build_request("control_plane", "get_connector_status", &[
 
 ### listProducts
 
-`GET /products`
+`GET /v1/products`
 
 List the product catalog with default scopes and setup paths.
 
@@ -1214,18 +1858,34 @@ List the product catalog with default scopes and setup paths.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listProducts()` · Python `client.control_plane.list_products()` · Rust `build_request("control_plane", "list_products", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listProducts();
+const result = await client.controlPlane.listProducts({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_products()
+result = client.control_plane.list_products({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_products", &[])?;
+let spec = client.build_request("control_plane", "list_products", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1234,7 +1894,7 @@ let spec = client.build_request("control_plane", "list_products", &[])?;
 
 ### getProductStatus
 
-`GET /products/{id}/status`
+`GET /v1/products/{id}/status`
 
 Fetch one product's activation status, entitlements, signals, and usage meters.
 
@@ -1274,7 +1934,7 @@ let spec = client.build_request("control_plane", "get_product_status", &[
 
 ### getBillingStatus
 
-`GET /billing/status`
+`GET /v1/billing/status`
 
 Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).
 
@@ -1302,7 +1962,7 @@ let spec = client.build_request("control_plane", "get_billing_status", &[])?;
 
 ### createBillingCheckout
 
-`GET /billing/checkout`
+`GET /v1/billing/checkout`
 
 Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).
 
@@ -1316,7 +1976,8 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 |---|---|---|
 | `rail` | no | — |
 | `plan` | no | — |
-| `plan_id` | no | — |
+| `planId` | no | — |
+| `interval` | no | — |
 | `currency` | no | — |
 | `network` | no | — |
 
@@ -1349,7 +2010,7 @@ let spec = client.build_request("control_plane", "create_billing_checkout", &[
 
 ### getBillingPortal
 
-`GET /billing/portal`
+`GET /v1/billing/portal`
 
 Fetch the billing-portal URL for the organization (requires a billing role).
 
@@ -1377,7 +2038,7 @@ let spec = client.build_request("control_plane", "get_billing_portal", &[])?;
 
 ### getBillingCredits
 
-`GET /billing/credits`
+`GET /v1/billing/credits`
 
 Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.
 
@@ -1405,7 +2066,7 @@ let spec = client.build_request("control_plane", "get_billing_credits", &[])?;
 
 ### getModelCatalog
 
-`GET /model-catalog`
+`GET /v1/model-catalog`
 
 List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
 
@@ -1434,7 +2095,7 @@ let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 
 ### recordUsage
 
-`POST /usage/events`
+`POST /v1/usage/events`
 
 Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.
 
@@ -1446,37 +2107,37 @@ Record a usage event against a metered plan limit; requires a token carrying the
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 | `metric` | yes | — |
 | `quantity` | no | — |
-| `idempotency_key` | no | — |
+| `idempotencyKey` | no | — |
 | `cost` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.recordUsage({
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.record_usage({
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "record_usage", &[
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1486,7 +2147,7 @@ let spec = client.build_request("control_plane", "record_usage", &[
 
 ### usageReservationsCreate
 
-`POST /usage/reservations`
+`POST /v1/usage/reservations`
 
 Atomically reserve the maximum model cost before starting a provider request.
 
@@ -1498,41 +2159,41 @@ Atomically reserve the maximum model cost before starting a provider request.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 | `subject` | no | — |
-| `idempotency_key` | yes | — |
+| `idempotencyKey` | yes | — |
 | `provider` | yes | — |
 | `model` | yes | — |
-| `config_id` | yes | — |
+| `configId` | yes | — |
 | `byok` | yes | — |
-| `maximum_provider_cost_micros` | yes | — |
-| `ttl_seconds` | no | — |
+| `maximumProviderCostMicros` | yes | — |
+| `ttlSeconds` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.usageReservationsCreate({
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.usage_reservations_create({
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "usage_reservations_create", &[
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1542,7 +2203,7 @@ let spec = client.build_request("control_plane", "usage_reservations_create", &[
 
 ### usageReservationsCommit
 
-`POST /usage/reservations/{reservation_id}:commit`
+`POST /v1/usage/reservations/{reservationId}:commit`
 
 Commit exact provider usage against an admitted reservation and release unused capacity.
 
@@ -1554,44 +2215,44 @@ Commit exact provider usage against an admitted reservation and release unused c
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
-| `config_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `configId` | yes | — |
 | `cost` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.usageReservationsCommit({
-  reservation_id: "<reservation_id>",
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  reservationId: "<reservationId>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.usage_reservations_commit({
-    "reservation_id": "<reservation_id>",
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "usage_reservations_commit", &[
-    ("reservation_id", "<reservation_id>".into()),
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1601,7 +2262,7 @@ let spec = client.build_request("control_plane", "usage_reservations_commit", &[
 
 ### usageReservationsRelease
 
-`POST /usage/reservations/{reservation_id}:release`
+`POST /v1/usage/reservations/{reservationId}:release`
 
 Release unused capacity after provider failure or cancellation.
 
@@ -1613,42 +2274,42 @@ Release unused capacity after provider failure or cancellation.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.usageReservationsRelease({
-  reservation_id: "<reservation_id>",
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  reservationId: "<reservationId>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.usage_reservations_release({
-    "reservation_id": "<reservation_id>",
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "usage_reservations_release", &[
-    ("reservation_id", "<reservation_id>".into()),
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1658,7 +2319,7 @@ let spec = client.build_request("control_plane", "usage_reservations_release", &
 
 ### usageReservationsReconcile
 
-`POST /usage/reservations/{reservation_id}:reconcile`
+`POST /v1/usage/reservations/{reservationId}:reconcile`
 
 Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.
 
@@ -1670,47 +2331,47 @@ Hold maximum capacity and record non-secret evidence when exact provider usage i
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | yes | — |
-| `config_id` | yes | — |
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `configId` | yes | — |
 | `reason` | yes | — |
-| `trace_id` | no | — |
-| `observed_usage` | yes | — |
-| `expected_cost` | no | — |
+| `traceId` | no | — |
+| `observedUsage` | yes | — |
+| `expectedCost` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.usageReservationsReconcile({
-  reservation_id: "<reservation_id>",
-  org_id: "<org_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  reservationId: "<reservationId>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.usage_reservations_reconcile({
-    "reservation_id": "<reservation_id>",
-    "org_id": "<org_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "usage_reservations_reconcile", &[
-    ("reservation_id", "<reservation_id>".into()),
-    ("org_id", "<org_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1720,7 +2381,7 @@ let spec = client.build_request("control_plane", "usage_reservations_reconcile",
 
 ### listGrants
 
-`GET /oauth/grants`
+`GET /v1/oauth/grants`
 
 List the OAuth grants the user has approved in the active workspace.
 
@@ -1728,18 +2389,34 @@ List the OAuth grants the user has approved in the active workspace.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listGrants();
+const result = await client.controlPlane.listGrants({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_grants()
+result = client.control_plane.list_grants({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_grants", &[])?;
+let spec = client.build_request("control_plane", "list_grants", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1748,7 +2425,7 @@ let spec = client.build_request("control_plane", "list_grants", &[])?;
 
 ### revokeGrant
 
-`DELETE /oauth/grants/{id}`
+`DELETE /v1/oauth/grants/{id}`
 
 Revoke an OAuth grant and every refresh token issued under it.
 
@@ -1788,7 +2465,7 @@ let spec = client.build_request("control_plane", "revoke_grant", &[
 
 ### introspectToken
 
-`POST /oauth/introspect`
+`POST /v1/oauth/introspect`
 
 Introspect a token or tp_ API key server-side; requires the introspection secret and returns \{active: false\} for anything invalid.
 
@@ -1956,7 +2633,7 @@ let spec = client.build_request("control_plane", "jwks", &[])?;
 
 ### adminOperationalProvenance
 
-`GET /admin/operations/provenance`
+`GET /v1/admin/operations/provenance`
 
 Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.
 
@@ -1984,7 +2661,7 @@ let spec = client.build_request("control_plane", "admin_operational_provenance",
 
 ### adminStepUp
 
-`POST /admin/step-up`
+`POST /v1/admin/step-up`
 
 Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.
 
@@ -2024,7 +2701,7 @@ let spec = client.build_request("control_plane", "admin_step_up", &[
 
 ### adminAdjustCredits
 
-`POST /admin/billing/credits/adjust`
+`POST /v1/admin/billing/credits/adjust`
 
 Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.
 
@@ -2036,8 +2713,8 @@ Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-u
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | yes | — |
-| `credit_micros` | yes | — |
+| `orgId` | yes | — |
+| `creditMicros` | yes | — |
 | `reference` | no | — |
 | `reason` | no | — |
 
@@ -2045,24 +2722,24 @@ Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-u
 
 ```typescript TypeScript
 const result = await client.controlPlane.adminAdjustCredits({
-  org_id: "<org_id>",
-  credit_micros: "<credit_micros>",
+  orgId: "<orgId>",
+  creditMicros: "<creditMicros>",
   reference: "<reference>",
 });
 ```
 
 ```python Python
 result = client.control_plane.admin_adjust_credits({
-    "org_id": "<org_id>",
-    "credit_micros": "<credit_micros>",
+    "orgId": "<orgId>",
+    "creditMicros": "<creditMicros>",
     "reference": "<reference>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "admin_adjust_credits", &[
-    ("org_id", "<org_id>".into()),
-    ("credit_micros", "<credit_micros>".into()),
+    ("orgId", "<orgId>".into()),
+    ("creditMicros", "<creditMicros>".into()),
     ("reference", "<reference>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -2073,7 +2750,7 @@ let spec = client.build_request("control_plane", "admin_adjust_credits", &[
 
 ### adminBillingOrgs
 
-`GET /admin/billing/orgs`
+`GET /v1/admin/billing/orgs`
 
 Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.
 
@@ -2101,7 +2778,7 @@ let spec = client.build_request("control_plane", "admin_billing_orgs", &[])?;
 
 ### githubSetupSessionsCreate
 
-`POST /github/setup-sessions`
+`POST /v1/github/setup-sessions`
 
 Create a one-time CSRF-bound GitHub App installation session.
 
@@ -2113,33 +2790,33 @@ Create a one-time CSRF-bound GitHub App installation session.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | no | — |
-| `environment_id` | no | — |
-| `return_url` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `returnUrl` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.githubSetupSessionsCreate({
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
-  return_url: "<return_url>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  returnUrl: "<returnUrl>",
 });
 ```
 
 ```python Python
 result = client.control_plane.github_setup_sessions_create({
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
-    "return_url": "<return_url>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "returnUrl": "<returnUrl>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "github_setup_sessions_create", &[
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
-    ("return_url", "<return_url>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("returnUrl", "<returnUrl>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2193,7 +2870,7 @@ let spec = client.build_request("control_plane", "github_setup_sessions_complete
 
 ### githubInstallationsList
 
-`GET /github/installations`
+`GET /v1/github/installations`
 
 List active GitHub App installations for the organization.
 
@@ -2201,18 +2878,34 @@ List active GitHub App installations for the organization.
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.githubInstallationsList()` · Python `client.control_plane.github_installations_list()` · Rust `build_request("control_plane", "github_installations_list", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.githubInstallationsList();
+const result = await client.controlPlane.githubInstallationsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.control_plane.github_installations_list()
+result = client.control_plane.github_installations_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "github_installations_list", &[])?;
+let spec = client.build_request("control_plane", "github_installations_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -2221,7 +2914,7 @@ let spec = client.build_request("control_plane", "github_installations_list", &[
 
 ### githubInstallationsDisconnect
 
-`DELETE /github/installations/{installation_id}`
+`DELETE /v1/github/installations/{installationId}`
 
 Disconnect a GitHub App installation from the workspace.
 
@@ -2233,25 +2926,25 @@ Disconnect a GitHub App installation from the workspace.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `installationId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.githubInstallationsDisconnect({
-  installation_id: "<installation_id>",
+  installationId: "<installationId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.github_installations_disconnect({
-    "installation_id": "<installation_id>",
+    "installationId": "<installationId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "github_installations_disconnect", &[
-    ("installation_id", "<installation_id>".into()),
+    ("installationId", "<installationId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2261,7 +2954,7 @@ let spec = client.build_request("control_plane", "github_installations_disconnec
 
 ### githubInstallationRepositoriesList
 
-`GET /github/installations/{installation_id}/repositories`
+`GET /v1/github/installations/{installationId}/repositories`
 
 List repository metadata received for a GitHub installation.
 
@@ -2273,25 +2966,38 @@ List repository metadata received for a GitHub installation.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `installationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.githubInstallationRepositoriesList({
-  installation_id: "<installation_id>",
+  installationId: "<installationId>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.control_plane.github_installation_repositories_list({
-    "installation_id": "<installation_id>",
+    "installationId": "<installationId>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "github_installation_repositories_list", &[
-    ("installation_id", "<installation_id>".into()),
+    ("installationId", "<installationId>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2301,7 +3007,7 @@ let spec = client.build_request("control_plane", "github_installation_repositori
 
 ### githubRepositorySnapshotsCapture
 
-`POST /github/installations/{installation_id}/repositories/{repository_id}:snapshot`
+`POST /v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot`
 
 Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.
 
@@ -2313,8 +3019,8 @@ Capture an ephemeral, immutable GitHub repository snapshot for an authorized wor
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
-| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+| `installationId` | yes | Substituted into the URL path (percent-encoded). |
+| `repositoryId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -2326,24 +3032,24 @@ Capture an ephemeral, immutable GitHub repository snapshot for an authorized wor
 
 ```typescript TypeScript
 const result = await client.controlPlane.githubRepositorySnapshotsCapture({
-  installation_id: "<installation_id>",
-  repository_id: "<repository_id>",
+  installationId: "<installationId>",
+  repositoryId: "<repositoryId>",
   ref: "<ref>",
 });
 ```
 
 ```python Python
 result = client.control_plane.github_repository_snapshots_capture({
-    "installation_id": "<installation_id>",
-    "repository_id": "<repository_id>",
+    "installationId": "<installationId>",
+    "repositoryId": "<repositoryId>",
     "ref": "<ref>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "github_repository_snapshots_capture", &[
-    ("installation_id", "<installation_id>".into()),
-    ("repository_id", "<repository_id>".into()),
+    ("installationId", "<installationId>".into()),
+    ("repositoryId", "<repositoryId>".into()),
     ("ref", "<ref>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json

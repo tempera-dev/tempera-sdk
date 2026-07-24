@@ -213,6 +213,23 @@ test("audience-matched bearers win over the API key fallback", async () => {
   assert.equal(calls[2].options.headers.authorization, "Bearer tp_key_1");
 });
 
+test("control-plane Discovery operations use producer-pinned audiences", async () => {
+  const { client, calls } = testClient({
+    auth: new TemperaAuth({
+      issuerUrl: "https://api.tempera.dev",
+      apiKey: "tp_key_1",
+      tokens: {
+        "tempera-bio": { accessToken: "at_bio_human" },
+        "tempera-workflows": { accessToken: "at_workflows_service" },
+      },
+    }),
+  });
+  await client.controlPlane.listBioSignerKeys();
+  await client.controlPlane.resolveExperimentProviderConnection({ id: "connection-1" });
+  assert.equal(calls[0].options.headers.authorization, "Bearer at_bio_human");
+  assert.equal(calls[1].options.headers.authorization, "Bearer at_workflows_service");
+});
+
 test("passthrough request covers products without typed operations", async () => {
   const { client, calls } = testClient();
   const result = await client.tempJs.request("/runtime/status");

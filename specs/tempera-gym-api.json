@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "tempera-gym API",
-    "version": "0.2.1",
-    "description": "Minimal read/execute surface over the tempera-gym pack: environment catalog, persisted rollout runs, and synchronous rollout execution. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "version": "0.7.0",
+    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -19,6 +19,8 @@
     "/healthz": {
       "get": {
         "operationId": "health.get",
+        "x-tempera-auth-audience": null,
+        "x-tempera-required-scope": null,
         "summary": "Liveness probe (unauthenticated)",
         "security": [],
         "responses": {
@@ -60,17 +62,28 @@
     "/v1/environments": {
       "get": {
         "operationId": "environments.list",
-        "summary": "Pack catalog including implementation status",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Built-in and boot-trusted versioned environment catalog",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Every environment in pack.json, implemented or planned",
+            "description": "Built-in pack environments plus trusted external definitions; unavailable exact adapter identities remain discoverable but fail closed at execution.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
                     "pack",
-                    "environments"
+                    "environments",
+                    "nextPageToken"
                   ],
                   "properties": {
                     "pack": {
@@ -78,7 +91,8 @@
                       "required": [
                         "id",
                         "version",
-                        "contract_version"
+                        "contractVersion",
+                        "externalCatalogDigest"
                       ],
                       "properties": {
                         "id": {
@@ -87,11 +101,14 @@
                         "version": {
                           "type": "string"
                         },
-                        "contract_version": {
+                        "contractVersion": {
                           "type": "string",
                           "enum": [
                             "tempera.gym-pack/v1"
                           ]
+                        },
+                        "externalCatalogDigest": {
+                          "$ref": "#/components/schemas/Digest"
                         }
                       }
                     },
@@ -100,6 +117,91 @@
                       "items": {
                         "$ref": "#/components/schemas/Environment"
                       }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/domains": {
+      "get": {
+        "operationId": "domains.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Domain capabilities represented in the versioned task catalog",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content-addressed domain catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "catalog_digest",
+                    "domains"
+                  ],
+                  "properties": {
+                    "catalog_digest": {
+                      "$ref": "#/components/schemas/Digest"
+                    },
+                    "domains": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "task_count",
+                          "families",
+                          "risk_tiers"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "task_count": {
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "families": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "risk_tiers": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
                     }
                   }
                 }
@@ -115,13 +217,621 @@
         }
       }
     },
+    "/v1/tasks": {
+      "get": {
+        "operationId": "tasks.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "List versioned task definitions without agent inputs",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "family",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task summaries; hidden grader bodies are never returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "catalog_digest",
+                    "tasks"
+                  ],
+                  "properties": {
+                    "catalog_digest": {
+                      "$ref": "#/components/schemas/Digest"
+                    },
+                    "tasks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/tasks/{task}": {
+      "get": {
+        "operationId": "tasks.get",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Get one immutable task definition including its agent-visible input",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          },
+          {
+            "$ref": "#/components/parameters/TaskVersion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task definition with verifier identity, never grader content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "task"
+                  ],
+                  "properties": {
+                    "task": {
+                      "$ref": "#/components/schemas/Task"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/tasks/{task}:evaluate": {
+      "post": {
+        "operationId": "tasks.evaluate",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Deterministically verify one candidate without creating an episode",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          },
+          {
+            "$ref": "#/components/parameters/TaskVersion"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "candidate"
+                ],
+                "properties": {
+                  "candidate": {
+                    "type": "object",
+                    "description": "Validated against the selected Task.action_schema."
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9223372036854775807,
+                    "default": 0
+                  },
+                  "receipts": {
+                    "type": "array",
+                    "maxItems": 64,
+                    "items": {
+                      "$ref": "#/components/schemas/EvidenceReceipt"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hidden-verifier-safe deterministic result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result"
+                  ],
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/VerifierResult"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/verifiers": {
+      "get": {
+        "operationId": "verifiers.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "List verifier identities and bound tasks without grader content",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable verifier references",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "verifiers"
+                  ],
+                  "properties": {
+                    "verifiers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/VerifierIdentity"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/episodes": {
+      "get": {
+        "operationId": "episodes.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "List durable episode snapshots, newest first",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "COMPLETED"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Episode snapshots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "episodes"
+                  ],
+                  "properties": {
+                    "episodes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Episode"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "post": {
+        "operationId": "episodes.create",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Reset a versioned task into a durable episode",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "task",
+                  "seed"
+                ],
+                "properties": {
+                  "task": {
+                    "type": "string",
+                    "description": "Task id or immutable id@semantic-version reference."
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9223372036854775807
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Active episode whose observation is the agent-safe task view",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "episode"
+                  ],
+                  "properties": {
+                    "episode": {
+                      "$ref": "#/components/schemas/Episode"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/episodes/{episode}": {
+      "get": {
+        "operationId": "episodes.get",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Read and content-verify one durable episode snapshot",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EpisodeId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Episode snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "episode"
+                  ],
+                  "properties": {
+                    "episode": {
+                      "$ref": "#/components/schemas/Episode"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/episodes/{episode}:step": {
+      "post": {
+        "operationId": "episodes.step",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Apply one schema-validated action and persist the transition",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EpisodeId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "action"
+                ],
+                "properties": {
+                  "action": {
+                    "type": "object",
+                    "description": "Validated against the episode Task.action_schema."
+                  },
+                  "receipts": {
+                    "type": "array",
+                    "maxItems": 64,
+                    "items": {
+                      "$ref": "#/components/schemas/EvidenceReceipt"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed transition, verifier result, and trajectory projection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "episode",
+                    "transition",
+                    "verifier_result",
+                    "trajectory"
+                  ],
+                  "properties": {
+                    "episode": {
+                      "$ref": "#/components/schemas/Episode"
+                    },
+                    "transition": {
+                      "$ref": "#/components/schemas/Transition"
+                    },
+                    "verifier_result": {
+                      "$ref": "#/components/schemas/VerifierResult"
+                    },
+                    "trajectory": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/episodes/{episode}:export": {
+      "post": {
+        "operationId": "episodes.export",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Retain a completed Gym episode and trajectory in Data Engine",
+        "description": "Requires configured Data Engine service credentials. The context EvidenceRecord and PASS verifier receipt artifact must already exist in the configured project. Centrally authenticated callers require both eval:run and dataset:write.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EpisodeId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "context_evidence_ref"
+                ],
+                "properties": {
+                  "context_evidence_ref": {
+                    "type": "string",
+                    "pattern": "^projects/[^/]+/evidenceRecords/[a-f0-9]{64}$"
+                  },
+                  "verifier_receipt_artifact_ref": {
+                    "type": "string",
+                    "pattern": "^projects/[^/]+/artifacts/[^/]+$"
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Data Engine episode plus completed trajectory ingest operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "episode",
+                    "trajectory_operation"
+                  ],
+                  "properties": {
+                    "episode": {
+                      "type": "object",
+                      "description": "data-engine.episode.v1 immutable resource"
+                    },
+                    "trajectory_operation": {
+                      "$ref": "#/components/schemas/Operation"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/v1/runs": {
       "get": {
         "operationId": "runs.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Persisted-run index, newest first",
         "parameters": [
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "query",
             "required": false,
             "schema": {
@@ -129,14 +839,10 @@
             }
           },
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000
-            }
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -147,7 +853,8 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "runs"
+                    "runs",
+                    "nextPageToken"
                   ],
                   "properties": {
                     "runs": {
@@ -155,6 +862,9 @@
                       "items": {
                         "$ref": "#/components/schemas/RunRecord"
                       }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
                     }
                   }
                 }
@@ -179,6 +889,8 @@
     "/v1/runs/{run}": {
       "get": {
         "operationId": "runs.get",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Full trajectory envelope (incl. metadata.timing) for one run",
         "parameters": [
           {
@@ -234,22 +946,25 @@
     "/v1/rollouts": {
       "post": {
         "operationId": "rollouts.create",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Execute one rollout synchronously, store it, return the summary",
         "requestBody": {
           "required": true,
-          "description": "JSON request body; rejected when Content-Length exceeds 64 KiB.",
+          "description": "JSON request body; rejected when Content-Length exceeds 1 MiB.",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "environment_id",
+                  "environmentId",
                   "seed"
                 ],
                 "additionalProperties": false,
                 "properties": {
-                  "environment_id": {
-                    "type": "string"
+                  "environmentId": {
+                    "type": "string",
+                    "description": "Built-in id or trusted external id, optionally pinned as id@semantic-version."
                   },
                   "policy": {
                     "type": "string",
@@ -263,7 +978,7 @@
                     "type": "integer",
                     "minimum": 0
                   },
-                  "max_steps": {
+                  "maxSteps": {
                     "type": "integer",
                     "minimum": 1,
                     "description": "Capped by the environment's manifest max_steps."
@@ -273,11 +988,11 @@
                     "default": "gpt-4o-mini",
                     "description": "tempera-llm model id; only used when policy is llm."
                   },
-                  "data_engine_product_id": {
+                  "dataEngineProductId": {
                     "type": "string",
                     "description": "Data Engine product id for a manifest-bound PUBLIC Risk RLVR rollout. Only valid with risk-normalization-verification-v1; the service project and credentials are deployment config. Centrally introspected callers need dataset:read and eval:run, plus org/project/environment/sub claims bound to that config."
                   },
-                  "data_engine_max_records": {
+                  "dataEngineMaxRecords": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 256,
@@ -322,9 +1037,370 @@
           }
         }
       }
+    },
+    "/v1/sealed-evaluators": {
+      "get": {
+        "operationId": "sealedEvaluators.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Discover boot-trusted exact sealed-evaluator identities",
+        "description": "Returns only evaluator and immutable qualification-policy identities. Executable adapters remain process-local and cannot be registered over HTTP.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Boot-frozen evaluator registry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sealed_evaluators"
+                  ],
+                  "properties": {
+                    "sealed_evaluators": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SealedEvaluator"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations": {
+      "get": {
+        "operationId": "sealedEvaluations.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "List persisted sealed-evaluation precommits and results",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Newest persisted records first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sealed_evaluations"
+                  ],
+                  "properties": {
+                    "sealed_evaluations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SealedEvaluationRecord"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations:precommit": {
+      "post": {
+        "operationId": "sealedEvaluations.precommit",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Persist an opaque sealed-suite commitment before policy freeze",
+        "description": "Binds exact evaluator, qualification policy, suite commitment, and trainer identities. The request contains no policy, cases, seeds, rows, or labels. A missing exact boot-trusted evaluator fails with 412.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "evaluator",
+                  "qualification_policy",
+                  "suite",
+                  "trainer"
+                ],
+                "properties": {
+                  "evaluator": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "qualification_policy": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "suite": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  },
+                  "trainer": {
+                    "$ref": "#/components/schemas/ExactIdentity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable precommit in PRECOMMITTED state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "evaluation"
+                  ],
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/SealedEvaluationRecord"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations/{evaluation}": {
+      "get": {
+        "operationId": "sealedEvaluations.get",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Read one verified precommit and aggregate sealed result",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SealedEvaluationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persisted state and content-addressed result, if complete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "evaluation"
+                  ],
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/SealedEvaluationRecord"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
+    },
+    "/v1/sealed-evaluations/{evaluation}:run": {
+      "post": {
+        "operationId": "sealedEvaluations.run",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Evaluate one frozen policy through its exact sealed adapter",
+        "description": "Accepts only opaque frozen-policy and training-report identities. Gym verifies precommit-before-freeze ordering, invokes the boot-trusted adapter, validates aggregate-only output and required receipts, derives distinct official, production-qualification, and improvement claims, then hashes and persists the result. Exact replay is idempotent.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SealedEvaluationId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "policy_submission",
+                  "training_report"
+                ],
+                "properties": {
+                  "policy_submission": {
+                    "$ref": "#/components/schemas/FrozenPolicySubmission"
+                  },
+                  "training_report": {
+                    "$ref": "#/components/schemas/TrainingReportSubmission"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gym-owned content-addressed sealed evaluation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "result"
+                  ],
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/SealedEvaluationResult"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
+          }
+        }
+      }
     }
   },
   "components": {
+    "parameters": {
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "description": "Maximum resources to return; defaults to 50 and is capped at 1000.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "required": false,
+        "description": "Opaque continuation token returned by the preceding list response.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "TaskId": {
+        "name": "task",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]{2,127}$"
+        }
+      },
+      "TaskVersion": {
+        "name": "version",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      },
+      "EpisodeId": {
+        "name": "episode",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "SealedEvaluationId": {
+        "name": "evaluation",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -332,26 +1408,852 @@
       }
     },
     "schemas": {
-      "Environment": {
+      "Digest": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "ExactIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "QualificationPolicySummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest",
+          "domain",
+          "lane",
+          "evaluation_classification",
+          "minimum_replays",
+          "required_receipt_kinds",
+          "required_domain_gates"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "pattern": "^tempera\\.[a-z0-9][a-z0-9.-]*\\.qualification-policy/v[0-9]+$"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "lane": {
+            "type": "string"
+          },
+          "evaluation_classification": {
+            "type": "string",
+            "enum": [
+              "sealed-external"
+            ]
+          },
+          "minimum_replays": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 128
+          },
+          "required_receipt_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_domain_gates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SealedEvaluator": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest",
+          "qualification_policy"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "qualification_policy": {
+            "$ref": "#/components/schemas/QualificationPolicySummary"
+          }
+        }
+      },
+      "SealedEvaluationPrecommit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "name",
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "trainer",
+          "created_at",
+          "precommit_digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.sealed-evaluation-precommit/v1"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^sealedEvaluations/[0-9a-f-]{36}$"
+          },
+          "evaluator": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "qualification_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "ref",
+              "digest"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "digest": {
+                "$ref": "#/components/schemas/Digest"
+              }
+            }
+          },
+          "suite": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "trainer": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "precommit_digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "FrozenPolicySubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest",
+          "artifact_ref",
+          "artifact_digest",
+          "media_type",
+          "frozen_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.frozen-policy-submission/v1"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "artifact_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "artifact_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "frozen_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TrainingReportSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.training-report-submission/v1"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "SealedEvaluationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Gym-owned tempera.gym.sealed-evaluation/v1 aggregate. The closed JSON Schema in contracts/sealed-evaluation-v1.schema.json is canonical.",
+        "required": [
+          "schema_version",
+          "name",
+          "precommit_digest",
+          "evaluation_classification",
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "policy",
+          "training",
+          "timing",
+          "aggregate",
+          "comparison",
+          "domain_gates",
+          "integrity",
+          "evidence_receipts",
+          "claim",
+          "content_hash"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.sealed-evaluation/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "precommit_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "evaluation_classification": {
+            "type": "string",
+            "enum": [
+              "sealed-external"
+            ]
+          },
+          "evaluator": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "qualification_policy": {
+            "type": "object"
+          },
+          "suite": {
+            "$ref": "#/components/schemas/ExactIdentity"
+          },
+          "policy": {
+            "type": "object"
+          },
+          "training": {
+            "type": "object"
+          },
+          "timing": {
+            "type": "object"
+          },
+          "aggregate": {
+            "type": "object"
+          },
+          "comparison": {
+            "type": "object"
+          },
+          "domain_gates": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "integrity": {
+            "type": "object"
+          },
+          "evidence_receipts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReceipt"
+            }
+          },
+          "claim": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "official_result_eligible",
+              "independent_evaluation_claimed",
+              "production_qualification_passed",
+              "learned_improvement_claimed",
+              "reason"
+            ],
+            "properties": {
+              "official_result_eligible": {
+                "type": "boolean"
+              },
+              "independent_evaluation_claimed": {
+                "type": "boolean"
+              },
+              "production_qualification_passed": {
+                "type": "boolean"
+              },
+              "learned_improvement_claimed": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "content_hash": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "SealedEvaluationRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "precommit",
+          "result"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PRECOMMITTED",
+              "EVALUATING",
+              "COMPLETED"
+            ]
+          },
+          "precommit": {
+            "$ref": "#/components/schemas/SealedEvaluationPrecommit"
+          },
+          "result": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SealedEvaluationResult"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "EvidenceReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "kind",
+          "digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.evidence-receipt/v1"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "VerifierBinding": {
         "type": "object",
         "required": [
+          "kind",
+          "ref",
+          "hidden",
+          "required_receipts",
+          "digest"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "builtin",
+              "cradle",
+              "data-engine",
+              "external"
+            ]
+          },
+          "ref": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "required_receipts": {
+            "type": "array",
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "VerifierIdentity": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VerifierBinding"
+          },
+          {
+            "type": "object",
+            "required": [
+              "available",
+              "tasks"
+            ],
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Task": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "name",
           "id",
-          "library",
-          "task_family",
-          "license",
-          "deterministic",
-          "network",
-          "max_steps",
-          "status"
+          "version",
+          "domain",
+          "family",
+          "title",
+          "description",
+          "environment",
+          "action_schema",
+          "verifier",
+          "reward",
+          "safety",
+          "provenance",
+          "task_digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.task/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "agent_input": {
+            "type": "object",
+            "description": "Present on get; omitted from collection responses."
+          },
+          "environment": {
+            "type": "object"
+          },
+          "action_schema": {
+            "type": "object"
+          },
+          "verifier": {
+            "$ref": "#/components/schemas/VerifierBinding"
+          },
+          "reward": {
+            "type": "object"
+          },
+          "safety": {
+            "type": "object"
+          },
+          "provenance": {
+            "type": "object"
+          },
+          "task_digest": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "CheckResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "passed",
+          "score",
+          "diagnostic"
         ],
         "properties": {
           "id": {
             "type": "string"
           },
+          "passed": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "diagnostic": {
+            "type": "string"
+          }
+        }
+      },
+      "VerifierResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "task",
+          "task_digest",
+          "verifier",
+          "status",
+          "score",
+          "components",
+          "checks",
+          "evidence_receipts",
+          "content_hash"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.verifier-result/v1"
+            ]
+          },
+          "task": {
+            "type": "string"
+          },
+          "task_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "verifier": {
+            "type": "object",
+            "required": [
+              "kind",
+              "ref",
+              "digest"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "digest": {
+                "$ref": "#/components/schemas/Digest"
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL"
+            ]
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "components": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CheckResult"
+            }
+          },
+          "evidence_receipts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReceipt"
+            }
+          },
+          "content_hash": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "Transition": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "index",
+          "observation",
+          "action",
+          "next_observation",
+          "reward",
+          "terminated",
+          "truncated",
+          "info"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.transition/v1"
+            ]
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "observation": {},
+          "action": {},
+          "next_observation": {},
+          "reward": {
+            "type": "number"
+          },
+          "terminated": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "info": {
+            "type": "object"
+          }
+        }
+      },
+      "Episode": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "name",
+          "task",
+          "task_digest",
+          "domain",
+          "seed",
+          "status",
+          "step_count",
+          "observation",
+          "terminated",
+          "truncated",
+          "verifier_result",
+          "trajectory_content_hash",
+          "last_transition",
+          "created_at",
+          "updated_at",
+          "content_hash"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.episode/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "task": {
+            "type": "string"
+          },
+          "task_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "COMPLETED"
+            ]
+          },
+          "step_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "observation": {},
+          "terminated": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "verifier_result": {
+            "type": "object",
+            "nullable": true
+          },
+          "trajectory_content_hash": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "last_transition": {
+            "type": "object",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "content_hash": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "Environment": {
+        "type": "object",
+        "description": "One built-in pack entry or one resolved tempera.gym.environment/v1 definition. External definitions carry an immutable environment_digest and exact adapter identity.",
+        "required": [
+          "id",
+          "version",
+          "source",
+          "available",
+          "deterministic",
+          "maxSteps"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "builtin",
+              "trusted_catalog"
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.environment/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
           "library": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "license": {
@@ -363,7 +2265,7 @@
           "network": {
             "type": "boolean"
           },
-          "max_steps": {
+          "maxSteps": {
             "type": "integer"
           },
           "status": {
@@ -373,19 +2275,47 @@
               "planned"
             ]
           },
-          "image_digest": {
+          "environmentDigest": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              }
+            ],
+            "nullable": true
+          },
+          "imageDigest": {
             "type": "string",
             "nullable": true
           },
-          "resource_limits": {
+          "resourceLimits": {
             "type": "object",
             "nullable": true
           },
-          "observation_schema": {
+          "observationSchema": {
             "type": "object",
             "nullable": true
           },
-          "action_schema": {
+          "actionSchema": {
+            "type": "object",
+            "nullable": true
+          },
+          "info_schema": {
+            "type": "object",
+            "nullable": true
+          },
+          "action_space": {
+            "type": "object",
+            "nullable": true
+          },
+          "safety": {
+            "type": "object",
+            "nullable": true
+          },
+          "adapter": {
+            "type": "object",
+            "nullable": true
+          },
+          "provenance": {
             "type": "object",
             "nullable": true
           }
@@ -393,30 +2323,30 @@
       },
       "RunRecord": {
         "type": "object",
-        "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, total_reward, terminal_reason, duration_ms) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
+        "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, totalReward, terminalReason, durationMs) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
         "required": [
-          "run_id",
-          "environment_id",
+          "runId",
+          "environmentId",
           "seed",
-          "created_at",
-          "content_hash",
+          "createdAt",
+          "contentHash",
           "policy",
           "verify"
         ],
         "properties": {
-          "run_id": {
+          "runId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "seed": {
             "type": "integer"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string"
           },
-          "content_hash": {
+          "contentHash": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$"
           },
@@ -434,14 +2364,14 @@
           "steps": {
             "type": "integer"
           },
-          "total_reward": {
+          "totalReward": {
             "type": "number"
           },
-          "terminal_reason": {
+          "terminalReason": {
             "type": "string",
             "nullable": true
           },
-          "duration_ms": {
+          "durationMs": {
             "type": "number",
             "nullable": true
           }
@@ -467,42 +2397,47 @@
           "metadata": {
             "type": "object",
             "properties": {
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               }
             }
           }
         }
       },
-      "ErrorBody": {
+      "GoogleRpcStatus": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "code",
           "message",
           "status",
-          "retryable"
+          "details"
         ],
         "properties": {
           "code": {
-            "type": "string"
+            "type": "integer"
           },
           "message": {
             "type": "string"
           },
           "status": {
-            "type": "integer"
+            "type": "string"
           },
-          "retryable": {
-            "type": "boolean"
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           }
         }
       },
@@ -513,7 +2448,7 @@
         ],
         "properties": {
           "error": {
-            "$ref": "#/components/schemas/ErrorBody"
+            "$ref": "#/components/schemas/GoogleRpcStatus"
           }
         }
       }
@@ -561,6 +2496,16 @@
       },
       "FailedPrecondition": {
         "description": "Planned environment or unconfigured data directory",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Episode is complete or was stepped concurrently",
         "content": {
           "application/json": {
             "schema": {

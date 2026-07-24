@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/palette-api.json",
-  "generated_sha256": "26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0",
+  "generated_sha256": "8d47b8d109caf635fb3165047920dc8ebb843f46dc7a5bcb05c275eec1afbb29",
   "generated_with": "source_lock.py@1+palette-api-dump-openapi",
   "schema_version": 1,
-  "source_blob_sha": "c9b1e11d3096adb5ae1af287c5b87e223787b451",
+  "source_blob_sha": "d6ad989f76748d942c4da767574179d9b75429bd",
   "source_branch": "main",
-  "source_commit": "8ee730e5d7c82ae7aa8f828a36087c24424c217b",
+  "source_commit": "579e6abd431fa5e46808958824db0ed28fd69036",
   "source_mode": "100644",
   "source_path": "sdks/openapi/palette-api.json",
   "source_repo": "tempera-dev/palette",
-  "source_sha256": "26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0"
+  "source_sha256": "8d47b8d109caf635fb3165047920dc8ebb843f46dc7a5bcb05c275eec1afbb29"
 }

@@ -2903,8 +2903,8 @@ Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `limit` | no | — |
-| `cursor` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -2912,8 +2912,8 @@ Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 const result = await client.palette.scenariosList({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
-  limit: "<limit>",
-  cursor: "<cursor>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -2921,8 +2921,8 @@ const result = await client.palette.scenariosList({
 result = client.palette.scenarios_list({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
-    "limit": "<limit>",
-    "cursor": "<cursor>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -2930,8 +2930,8 @@ result = client.palette.scenarios_list({
 let spec = client.build_request("palette", "scenarios_list", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
-    ("limit", "<limit>".into()),
-    ("cursor", "<cursor>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

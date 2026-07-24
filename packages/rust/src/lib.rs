@@ -67,6 +67,11 @@ mod tests {
         assert!(SCOPES.contains(&"model:invoke"));
         assert!(SCOPES.contains(&"training:publish"));
         assert!(SCOPES.contains(&"review:gold:manage"));
+        assert!(SCOPES.contains(&"bio:source:read"));
+        assert!(SCOPES.contains(&"bio:experiment:approve"));
+        assert!(SCOPES.contains(&"bio:experiment:submit"));
+        assert!(SCOPES.contains(&"bio:signer:manage"));
+        assert!(SCOPES.contains(&"usage:reserve"));
         assert!(SCOPES.contains(&"admin"));
         assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
         assert!(AUDIENCES.contains(&"tempera-code"));

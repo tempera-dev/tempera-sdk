@@ -45,7 +45,16 @@ test("audience-bearing products map to registered audiences", () => {
 test("scopes match the control-plane scope registry", () => {
   assert.deepEqual(
     [...TEMPERA_SCOPES],
-    ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "pii:unmask", "admin"],
+    [
+      "mcp:invoke", "memory:read", "memory:write", "memory:manage",
+      "trace:read", "trace:write", "dataset:read", "dataset:write",
+      "eval:run", "training:publish", "review:gold:manage", "review:resolve",
+      "workflow:read", "workflow:write", "workflow:run",
+      "bio:source:read", "bio:proposal:write", "bio:measurement:verify",
+      "bio:decision:write", "bio:experiment:approve",
+      "bio:experiment:submit", "bio:signer:manage",
+      "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin",
+    ],
   );
 });
 

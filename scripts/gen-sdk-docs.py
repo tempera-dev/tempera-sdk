@@ -141,6 +141,11 @@ def auth_label(surface: dict, product_key: str, op: dict) -> str:
         return "None (public endpoint)."
     if kind == "account":
         return "Account bearer — the control-plane session token returned by `createHostedSession`."
+    if kind == "oauthResource":
+        return (
+            "Resource bearer — an OAuth access token or central `tp_` API key "
+            f"for audience `{op['authAudience']}`."
+        )
     if kind == "introspectionSecret":
         return "Introspection secret bearer (server-side only)."
     audience = surface["products"][product_key]["audience"] or surface["defaultAudience"]
@@ -614,6 +619,7 @@ def render_authentication(surface: dict) -> str:
         "   - `none` — no `authorization` header is sent.",
         "   - `account` — the account-session token returned by `createHostedSession` (or",
         "     passed as `accountToken` / `account_token` / `with_account_token`).",
+        "   - `oauthResource` — an OAuth access token or central `tp_` API key for the operation's explicit resource audience.",
         "   - `introspectionSecret` — the configured introspection secret",
         "     (`introspectToken` only; server-side).",
         "   - `product` — through `TemperaAuth.bearerFor(audience)`: the audience's",

@@ -82,6 +82,35 @@ class AipConformanceTest(unittest.TestCase):
                 self.assertTrue(MODULE.is_list_operation(operation_id))
         self.assertFalse(MODULE.is_list_operation("getWidget"))
 
+    def test_list_pagination_resolves_component_parameter_references(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/widgets": {
+                    "get": {
+                        "operationId": "widgets.list",
+                        "parameters": [
+                            {"$ref": "#/components/parameters/PageSize"},
+                            {"$ref": "#/components/parameters/PageToken"},
+                        ],
+                    }
+                }
+            },
+            "components": {
+                "parameters": {
+                    "PageSize": {"name": "pageSize", "in": "query"},
+                    "PageToken": {"name": "pageToken", "in": "query"},
+                }
+            },
+        }
+
+        violations = MODULE.discover_violations({"test": spec})
+
+        self.assertNotIn(
+            "test|GET|/v1/widgets|aip-158-list-pagination",
+            violations,
+        )
+
     def test_stale_protocol_exceptions_are_rejected(self) -> None:
         failures = MODULE.validate_protocol_exceptions(
             {
