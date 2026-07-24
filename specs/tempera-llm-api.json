@@ -244,13 +244,48 @@
           "models"
         ],
         "operationId": "models.list",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum models to return. Zero uses the default (50); values above 200\nare coerced to 200, as required by AIP-158.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50,
+              "nullable": true,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque token returned as `nextPageToken` by the preceding request.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List configured models",
+            "description": "A page of configured models in stable registration order",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ModelList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pageSize/pageToken or unsupported query parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
                 }
               }
             }
@@ -704,6 +739,11 @@
             "items": {
               "$ref": "#/components/schemas/Model"
             }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Opaque AIP-158 continuation token. Absent on the final page.",
+            "nullable": true
           },
           "object": {
             "type": "string",

@@ -1367,7 +1367,8 @@
           "span_id",
           "kind",
           "status",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "archive.querySpans"
       },
@@ -1395,7 +1396,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "audit.list"
+        "upstreamOperationId": "audit.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "calibrationsRun",
@@ -1439,7 +1444,8 @@
           "project_id"
         ],
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "connectors.list"
       },
@@ -1522,7 +1528,8 @@
         ],
         "query": [
           "toolkit",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "connectors.listTools"
       },
@@ -1939,7 +1946,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "judge.listLedger"
+        "upstreamOperationId": "judge.listLedger",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "onlineDecideSampling",
@@ -1974,7 +1985,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "prompts.list"
+        "upstreamOperationId": "prompts.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "promptsCreate",
@@ -2040,7 +2055,11 @@
           "project_id",
           "prompt_id"
         ],
-        "upstreamOperationId": "prompts.listVersions"
+        "upstreamOperationId": "prompts.listVersions",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "promptsAddVersion",
@@ -2073,7 +2092,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "providerSecrets.list"
+        "upstreamOperationId": "providerSecrets.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "providerSecretsCreate",
@@ -2143,7 +2166,9 @@
           "queue_id"
         ],
         "query": [
-          "state"
+          "state",
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "reviews.listTasks"
       },
@@ -2307,7 +2332,8 @@
           "status",
           "model",
           "tool",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "trace:read",
         "description": "Search spans by text query and facet filters.",
@@ -2415,8 +2441,8 @@
           "max_cost_micros",
           "min_latency_ms",
           "max_latency_ms",
-          "limit",
-          "cursor"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "trace:read",
         "description": "List trace summaries for a tenant with filters and cursor pagination.",
@@ -2835,7 +2861,11 @@
         "auth": "product",
         "scope": "model:read",
         "description": "List the configured model catalog the gateway can route to.",
-        "upstreamOperationId": "models.list"
+        "upstreamOperationId": "models.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createResponse",
@@ -2875,7 +2905,11 @@
         "auth": "product",
         "scope": "workflow:read",
         "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
-        "upstreamOperationId": "nodeTypes.list"
+        "upstreamOperationId": "nodeTypes.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "listRuns",
@@ -2884,7 +2918,8 @@
         "auth": "product",
         "query": [
           "workflowId",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "workflow:read",
         "description": "List workflow runs, optionally filtered to one workflow.",
@@ -2920,7 +2955,8 @@
         "path": "/v1/workflows",
         "auth": "product",
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "workflow:read",
         "description": "List stored workflow definitions, newest first.",
@@ -2964,8 +3000,20 @@
         "upstreamOperationId": "workflows.get"
       },
       {
+        "id": "deleteWorkflow",
+        "method": "DELETE",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:write",
+        "description": "Delete a stored workflow definition.",
+        "upstreamOperationId": "workflows.delete"
+      },
+      {
         "id": "updateWorkflow",
-        "method": "PUT",
+        "method": "PATCH",
         "path": "/v1/workflows/{workflowId}",
         "auth": "product",
         "pathParams": [
@@ -2989,19 +3037,10 @@
         ],
         "scope": "workflow:write",
         "description": "Replace a stored workflow definition with a new validated revision.",
-        "upstreamOperationId": "workflows.update"
-      },
-      {
-        "id": "deleteWorkflow",
-        "method": "DELETE",
-        "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
-        "pathParams": [
-          "workflowId"
-        ],
-        "scope": "workflow:write",
-        "description": "Delete a stored workflow definition.",
-        "upstreamOperationId": "workflows.delete"
+        "upstreamOperationId": "workflows.update",
+        "query": [
+          "updateMask"
+        ]
       },
       {
         "id": "createRun",
