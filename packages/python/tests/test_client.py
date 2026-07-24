@@ -407,9 +407,31 @@ class DispatchTest(unittest.TestCase):
         client.data_engine.ingest_artifact({"parent": "projects/p1", "envelopes": []})
         self.assertEqual(transport.calls[0]["path"], "/v1/projects/p1/artifacts:ingest")
         self.assertNotIn("%3A", transport.calls[0]["url"], "colon must not be percent-encoded")
+        client.tempera_workflows.runs_signal(
+            {
+                "runId": "run/1",
+                "signalName": "provider.completed",
+                "idempotencyKey": "callback-1",
+                "payload": {"resultRef": "sha256:abc"},
+                "payloadDigest": "sha256:def",
+            }
+        )
+        self.assertEqual(transport.calls[1]["path"], "/v1/runs/run%2F1:signal")
+        self.assertNotIn(
+            "%3A", transport.calls[1]["url"], "action colon must remain literal"
+        )
+        self.assertEqual(
+            transport.calls[1]["body"],
+            {
+                "idempotencyKey": "callback-1",
+                "payload": {"resultRef": "sha256:abc"},
+                "payloadDigest": "sha256:def",
+                "signalName": "provider.completed",
+            },
+        )
         # Colons inside a substituted path *value* are still encoded.
         client.data_engine.get_job({"parent": "projects/p1", "jobId": "job:1"})
-        self.assertEqual(transport.calls[1]["path"], "/v1/projects/p1/jobs/job%3A1")
+        self.assertEqual(transport.calls[2]["path"], "/v1/projects/p1/jobs/job%3A1")
         with self.assertRaisesRegex(
             TemperaSdkError, r'must match AIP resource pattern "projects/\*"'
         ):

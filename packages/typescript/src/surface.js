@@ -4098,6 +4098,35 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel a queued or running workflow run."
     },
     {
+      "id": "runsSignal",
+      "upstreamOperationId": "runs.signal",
+      "method": "POST",
+      "path": "/v1/runs/{runId}:signal",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "runId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "idempotencyKey",
+        "payload",
+        "payloadDigest",
+        "signalName"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "signalName",
+        "idempotencyKey",
+        "payload",
+        "payloadDigest"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Consume a durable external callback and resume a waiting run."
+    },
+    {
       "id": "listWorkflows",
       "upstreamOperationId": "workflows.list",
       "method": "GET",

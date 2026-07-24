@@ -1372,6 +1372,40 @@ mod tests {
             "colon must not be percent-encoded"
         );
 
+        let signal = client
+            .build_request(
+                "tempera_workflows",
+                "runs_signal",
+                &[
+                    ("runId", "run/1".into()),
+                    ("signalName", "provider.completed".into()),
+                    ("idempotencyKey", "callback-1".into()),
+                    (
+                        "payload",
+                        ParamValue::RawJson("{\"resultRef\":\"sha256:abc\"}".to_string()),
+                    ),
+                    ("payloadDigest", "sha256:def".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            signal.url,
+            "https://tempera_workflows.example.test/v1/runs/run%2F1:signal"
+        );
+        assert!(
+            !signal.full_url().contains("%3A"),
+            "action colon must remain literal"
+        );
+        let body = signal.body_json.expect("runs.signal body");
+        for expected in [
+            "\"idempotencyKey\":\"callback-1\"",
+            "\"payload\":{\"resultRef\":\"sha256:abc\"}",
+            "\"payloadDigest\":\"sha256:def\"",
+            "\"signalName\":\"provider.completed\"",
+        ] {
+            assert!(body.contains(expected), "body {body} missing {expected}");
+        }
+
         // Colons inside a substituted path *value* are still encoded.
         let spec = client
             .build_request(

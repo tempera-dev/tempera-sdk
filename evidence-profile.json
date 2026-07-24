@@ -24,7 +24,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients implement exact Data Engine discovery-release commit and get operations. Canonical source locks bind merged Data Engine main head 67e1c88d21961586d5efc39d5db50e0f2cd34906."
+      "notes": "All three generated clients implement exact Data Engine discovery-release commit and get operations. Canonical source locks bind merged Data Engine main head 6c889513d550e2c8fab1c35ac9f8cd667f90703e."
     },
     {
       "integration_id": "prospective-experiment-authorization-client",
@@ -38,7 +38,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "Producer-derived route metadata selects the tempera-bio human bearer or tempera-workflows service bearer for signer, approval, and provider-resolution operations. Canonical provenance binds merged Auth Hub main head 7167ecad3a75f787925ebce0838407fe7d3bde3a."
+      "notes": "Producer-derived route metadata selects the tempera-bio human bearer or tempera-workflows service bearer for signer, approval, and provider-resolution operations. Canonical provenance binds merged Auth Hub main head 1c0c4b9baf7dd49b755432fe14c66e6d7ff0292f."
     },
     {
       "integration_id": "gym-rl-and-sealed-evaluation-client",
@@ -52,7 +52,21 @@
         "packages/python/src/tempera_sdk/surface.py",
         "packages/rust/src/surface.rs"
       ],
-      "notes": "The canonical source lock and generated methods bind merged Gym main head f96317c2a4083780d00d03622181de5cf20fc79e for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+      "notes": "The canonical source lock and generated methods bind merged Gym main head e14c198811943c414e7a9b6de64b8e79af013dfa for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+    },
+    {
+      "integration_id": "workflows-durable-signal-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/tempera-workflows-api.json.source",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds merged Workflows main head 3c067298906b69de5a3481c897282b745a277d18; no hosted callback or external experiment result is claimed."
     }
   ],
   "physical_execution": {
@@ -64,6 +78,7 @@
   "limitations": [
     "Generated Discovery methods prove cross-language dispatch and contract conformance, not a hosted production call.",
     "Canonical source locks prove exact contract provenance and generated-client parity; they do not prove that any hosted producer deployment has adopted those commits.",
+    "Durable-signal client tests prove request construction and exact producer-contract parity; they do not prove receipt of a real provider callback or successful external execution.",
     "Authorization clients transport approvals and external secret references; they do not approve, resolve a secret, submit physical work, or prove provider execution without an authorized caller.",
     "The SDK transports evidence contracts; it does not determine biological validity, experimental execution, production qualification, or dataset eligibility."
   ]

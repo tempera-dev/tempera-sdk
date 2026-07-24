@@ -21,7 +21,7 @@ Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of ty
 | Audience | `tempera-workflows` |
 | Auth | bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key |
 | Client | TypeScript `client.temperaWorkflows` · Python `client.tempera_workflows` · Rust `build_request("tempera_workflows", ...)` |
-| Typed operations | 15 |
+| Typed operations | 16 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaWorkflows.request(path, options)` (TypeScript) /
@@ -223,6 +223,64 @@ result = client.tempera_workflows.cancel_run({
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "cancel_run", &[
     ("runId", "<runId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### runsSignal
+
+`POST /v1/runs/{runId}:signal`
+
+Consume a durable external callback and resume a waiting run.
+
+- **Producer operationId:** `runs.signal`
+- **Auth:** Product bearer — an access token minted for audience `tempera-workflows`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaWorkflows.runsSignal()` · Python `client.tempera_workflows.runs_signal()` · Rust `build_request("tempera_workflows", "runs_signal", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `runId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `payload` | yes | — |
+| `payloadDigest` | yes | — |
+| `signalName` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.runsSignal({
+  runId: "<runId>",
+  idempotencyKey: "<idempotencyKey>",
+  payload: "<payload>",
+  payloadDigest: "<payloadDigest>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.runs_signal({
+    "runId": "<runId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "payload": "<payload>",
+    "payloadDigest": "<payloadDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "runs_signal", &[
+    ("runId", "<runId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("payload", "<payload>".into()),
+    ("payloadDigest", "<payloadDigest>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

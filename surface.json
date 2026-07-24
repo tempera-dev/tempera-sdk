@@ -2956,6 +2956,29 @@
         "upstreamOperationId": "runs.cancel"
       },
       {
+        "id": "runsSignal",
+        "method": "POST",
+        "path": "/v1/runs/{runId}:signal",
+        "auth": "product",
+        "description": "Consume a durable external callback and resume a waiting run.",
+        "upstreamOperationId": "runs.signal",
+        "pathParams": [
+          "runId"
+        ],
+        "body": [
+          "idempotencyKey",
+          "payload",
+          "payloadDigest",
+          "signalName"
+        ],
+        "requiredBody": [
+          "signalName",
+          "idempotencyKey",
+          "payload",
+          "payloadDigest"
+        ]
+      },
+      {
         "id": "listWorkflows",
         "method": "GET",
         "path": "/v1/workflows",

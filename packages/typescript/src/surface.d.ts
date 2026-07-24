@@ -440,6 +440,8 @@ export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel a queued or running workflow run. */
   cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Consume a durable external callback and resume a waiting run. */
+  runsSignal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List stored workflow definitions, newest first. */
   listWorkflows(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored. */

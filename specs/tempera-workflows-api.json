@@ -309,7 +309,7 @@
         "tags": [
           "runs"
         ],
-        "summary": "Cancel a queued/running run. Already-cancelled runs return 200",
+        "summary": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200",
         "description": "(idempotent); other terminal states return 409.",
         "operationId": "runs.cancel",
         "parameters": [
@@ -376,6 +376,109 @@
           },
           "409": {
             "description": "Run already finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}:signal": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Consume a durable external callback and resume a waiting run.",
+        "description": "The request binds one complete callback to the exact active wait through its\nsignal name, canonical payload digest, and idempotency key. Exact replays\nreturn the original receipt without starting a second executor.",
+        "operationId": "runs.signal",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSignalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Exact signal replay; no second resumption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSignalResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Signal consumed and run queued for resumption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSignalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or schema-incompatible signal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Wrong, late, amended, or conflicting signal",
             "content": {
               "application/json": {
                 "schema": {
@@ -843,7 +946,7 @@
           "runs"
         ],
         "summary": "Create a run AND wait for it to finish, returning the run + output in one",
-        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)` (default `waitMs` = 30s,\nwell under proxy idle limits). If the run has not\nfinished by then it returns 200 with the still-running run and a poll hint;\nthe run is never orphaned — it keeps executing in the background.",
+        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)` (default `waitMs` = 30s,\nwell under proxy idle limits). If the run has not finished by then it\nreturns 200 with the non-terminal run and a poll hint. A durable `waiting`\nrun returns immediately so a synchronous caller is not held open while an\nexternal experiment is in flight.",
         "operationId": "workflows.call",
         "parameters": [
           {
@@ -868,7 +971,7 @@
         },
         "responses": {
           "200": {
-            "description": "The run finished (or the wait bound elapsed with status=running)",
+            "description": "The run finished, reached a durable wait, or the synchronous wait bound elapsed",
             "content": {
               "application/json": {
                 "schema": {
@@ -1510,6 +1613,7 @@
         "enum": [
           "pending",
           "running",
+          "waiting",
           "succeeded",
           "failed",
           "skipped"
@@ -1771,6 +1875,14 @@
           "status": {
             "$ref": "#/components/schemas/RunStatus"
           },
+          "wait": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RunWait"
+              }
+            ],
+            "nullable": true
+          },
           "workflowId": {
             "type": "string"
           }
@@ -1868,12 +1980,100 @@
           }
         }
       },
+      "RunSignal": {
+        "type": "object",
+        "description": "One immutable, single-use signal receipt.",
+        "required": [
+          "id",
+          "runId",
+          "nodeId",
+          "signalName",
+          "idempotencyKey",
+          "payload",
+          "payloadDigest",
+          "receivedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "payload": {},
+          "payloadDigest": {
+            "type": "string"
+          },
+          "receivedAt": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "signalName": {
+            "type": "string"
+          }
+        }
+      },
+      "RunSignalRequest": {
+        "type": "object",
+        "description": "`POST /v1/runs/{runId}:signal` request.",
+        "required": [
+          "signalName",
+          "idempotencyKey",
+          "payload",
+          "payloadDigest"
+        ],
+        "properties": {
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Replay key scoped to this run and signal name."
+          },
+          "payload": {
+            "description": "Complete callback payload. Partial updates are not accumulated."
+          },
+          "payloadDigest": {
+            "type": "string",
+            "description": "SHA-256 of the RFC 8785 JCS bytes of `payload`, supplied by the caller\nand independently re-derived by Workflows."
+          },
+          "signalName": {
+            "type": "string",
+            "description": "Must exactly match the active `control.awaitSignal` node."
+          }
+        },
+        "additionalProperties": false
+      },
+      "RunSignalResponse": {
+        "type": "object",
+        "description": "Response from `runs.signal`.",
+        "required": [
+          "signal",
+          "run",
+          "duplicate"
+        ],
+        "properties": {
+          "duplicate": {
+            "type": "boolean",
+            "description": "True only for an exact replay of an already-consumed idempotency key."
+          },
+          "run": {
+            "$ref": "#/components/schemas/Run"
+          },
+          "signal": {
+            "$ref": "#/components/schemas/RunSignal"
+          }
+        }
+      },
       "RunStatus": {
         "type": "string",
         "description": "Run lifecycle states.",
         "enum": [
           "queued",
           "running",
+          "waiting",
           "succeeded",
           "failed",
           "cancelled"
@@ -1907,6 +2107,39 @@
             "$ref": "#/components/schemas/RunStatus"
           },
           "workflowId": {
+            "type": "string"
+          }
+        }
+      },
+      "RunWait": {
+        "type": "object",
+        "description": "One durable external wait reached by a run.",
+        "required": [
+          "nodeId",
+          "signalName",
+          "payloadSchema",
+          "payloadSchemaDigest",
+          "createdAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "payloadSchema": {
+            "description": "JSON Schema applied before a callback can resume the run."
+          },
+          "payloadSchemaDigest": {
+            "type": "string",
+            "description": "SHA-256 of the RFC 8785 JCS bytes of `payloadSchema`."
+          },
+          "signalName": {
             "type": "string"
           }
         }
@@ -2046,7 +2279,7 @@
       },
       "WorkflowCallResponse": {
         "type": "object",
-        "description": "`POST /v1/workflows/{workflowId}:call` response: the full run, its final\noutput, and the observed status. When the wait bound elapses before the run\nfinishes, `status` is `running`, `output` is null, and `hint` points at\n`runs.get` for polling — the run continues in the background.",
+        "description": "`POST /v1/workflows/{workflowId}:call` response: the full run, its final\noutput, and the observed status. When the wait bound elapses before the run\nfinishes, or the run reaches a durable external wait, `output` is null and\n`hint` describes how to continue or poll the run.",
         "required": [
           "run",
           "status"
@@ -2054,7 +2287,7 @@
         "properties": {
           "hint": {
             "type": "string",
-            "description": "Present only when `status` is `running`: how to poll for completion.",
+            "description": "Present for a non-terminal response: how to poll or signal the run.",
             "nullable": true
           },
           "output": {
