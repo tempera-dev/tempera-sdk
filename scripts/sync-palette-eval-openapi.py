@@ -29,11 +29,11 @@ DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "7551c053dc6b36bf4077074be379ced506c960ac"
+PALETTE_REVISION = "55532b2cf3fb1b228b4d6620a3aa88899c262f12"
 PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
-PALETTE_SOURCE_BLOB = "d6ad989f76748d942c4da767574179d9b75429bd"
+PALETTE_SOURCE_BLOB = "32e5aed508a963fdd4e7af153c81190475beeac8"
 PALETTE_SOURCE_SHA256 = (
-    "sha256:8d47b8d109caf635fb3165047920dc8ebb843f46dc7a5bcb05c275eec1afbb29"
+    "sha256:18942d5e2c26332b40050cda5a882540f14d914d717d5b94342a0afb72001dd0"
 )
 PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/16"
 PALETTE_AVAILABILITY = "merged_main"

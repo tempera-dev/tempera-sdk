@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 53 |
+| Typed operations | 55 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -2379,6 +2379,119 @@ let spec = client.build_request("data_engine", "invoke_tool", &[
     ("parent", "<parent>".into()),
     ("toolName", "<toolName>".into()),
     ("arguments", "<arguments>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsDiscoveryReleasesCommit
+
+`POST /v1/{parent}/discoveryReleases:commit`
+
+Atomically commit an immutable discovery release graph.
+
+- **Producer operationId:** `projects.discoveryReleases.commit`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.dataEngine.projectsDiscoveryReleasesCommit()` · Python `client.data_engine.projects_discovery_releases_commit()` · Rust `build_request("data_engine", "projects_discovery_releases_commit", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `schema_version` | yes | — |
+| `request_id` | yes | — |
+| `release_id` | yes | — |
+| `release_kind` | yes | — |
+| `evidence_class` | yes | — |
+| `claim_class` | yes | — |
+| `bindings` | yes | — |
+| `lineage_edges` | yes | — |
+| `budget` | yes | — |
+| `eligibility` | yes | — |
+| `prospective_execution` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsDiscoveryReleasesCommit({
+  parent: "<parent>",
+  schema_version: "<schema_version>",
+  request_id: "<request_id>",
+  release_id: "<release_id>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_discovery_releases_commit({
+    "parent": "<parent>",
+    "schema_version": "<schema_version>",
+    "request_id": "<request_id>",
+    "release_id": "<release_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_discovery_releases_commit", &[
+    ("parent", "<parent>".into()),
+    ("schema_version", "<schema_version>".into()),
+    ("request_id", "<request_id>".into()),
+    ("release_id", "<release_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsDiscoveryReleasesGet
+
+`GET /v1/{parent}/discoveryReleases/{discoveryReleaseId}`
+
+Get one immutable discovery release.
+
+- **Producer operationId:** `projects.discoveryReleases.get`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `dataset:read`
+- **Call as:** TypeScript `client.dataEngine.projectsDiscoveryReleasesGet()` · Python `client.data_engine.projects_discovery_releases_get()` · Rust `build_request("data_engine", "projects_discovery_releases_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `discoveryReleaseId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsDiscoveryReleasesGet({
+  parent: "<parent>",
+  discoveryReleaseId: "<discoveryReleaseId>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_discovery_releases_get({
+    "parent": "<parent>",
+    "discoveryReleaseId": "<discoveryReleaseId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_discovery_releases_get", &[
+    ("parent", "<parent>".into()),
+    ("discoveryReleaseId", "<discoveryReleaseId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

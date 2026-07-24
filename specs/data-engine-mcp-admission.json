@@ -263,6 +263,52 @@
       }
     },
     {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.discoveryReleases.commit",
+      "path": "/v1/{parent}/discoveryReleases:commit",
+      "reason": "Discovery release admission is an application-orchestrated, policy-gated REST operation.",
+      "required_scope": "eval:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "73241fb11da714a381970a15bfda727b53496da8699eecd3b5f0ff90436f3725",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "6dd9f35fec5e9a9b9c6d943450b1d0be289394144a04cf5762827924250a5a08"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.discoveryReleases.get",
+      "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+      "reason": "Discovery release retrieval remains an application-owned REST surface until its model-facing projection is security reviewed.",
+      "required_scope": "dataset:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "1df10c91e816ef70afd8700aa3e7d3447d716878f1cc87f1ffedf8ebfae80049",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "97bb838dbb191b94e366d0fc76ab1a589924e4dd7fb3f874fa054a5aee8a218e"
+      }
+    },
+    {
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -751,7 +797,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
         "mcp_input_schema_sha256": "39f077ab10d493577b7bbb4f418c7026ddd248792cb860b969a73ee25feb8220",
-        "mcp_output_schema_sha256": "c6ce038c6aafc87238729da95401ed8fc781e77f8822c44e5e224757d7fa0aaf",
+        "mcp_output_schema_sha256": "c6867ff16d68cdc4d54b799d3443e27841f4577752516fb5d5fb83797c4dbdcd",
         "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
       }
     },
@@ -1325,7 +1371,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "9833e9c8001e77200c558694f51a193ab10d3c7ce617c7c48b443cddb2a932f8",
         "mcp_input_schema_sha256": "0afddf9d62eac23f99b5e91fe7469cfdbd7868f9bb6a9716a284e4a9cc0e223b",
-        "mcp_output_schema_sha256": "56c9a181ee365176a271d9dbee2c0c2016410660a9039028652a52aacfb3e4c6",
+        "mcp_output_schema_sha256": "8ba33e085691e039f0510104b7d3b2c46466647e5dce5713484c0456a25b4940",
         "output_sha256": "9c2f73cb597aafbbd4ef8805e7db3466bb53589bb26712dd8b441365cbd1df11"
       }
     },
@@ -1354,7 +1400,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "cc6998ea15d8b40566f48bfc6c4fd001cc0366dfdc4af2af16adcaa3aed8e2d2",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
-        "mcp_output_schema_sha256": "be2f3282062adb774151c729cf13495c79246b975de5e607a821c48af54c5846",
+        "mcp_output_schema_sha256": "e291583cf68d6693ecddc754c549839f2fd200201fbdaa28faf8bd749ba59da9",
         "output_sha256": "376a640d4dc86dd115d665321d144f4ba3a858e0c51660ca3f1c25ce440beb74"
       }
     },
@@ -1419,8 +1465,8 @@
     }
   ],
   "policy": {
-    "authenticated_operation_count": 52,
-    "denied_count": 16,
+    "authenticated_operation_count": 54,
+    "denied_count": 18,
     "excluded_transport_operations": [
       "health.get",
       "mcp.jsonrpc"
@@ -1428,19 +1474,19 @@
     "exposed_count": 36,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "a50a217a31c79a161f1a12686e1ff1819c88a90acc443ac491925e5507187e66"
+      "sha256": "0a3282c5f04cb911732a78d1701241e6cd00b2236913e2718680c31f3d3e98f0"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "a9c7ee23e979608ddd030c828b247570523321d2",
+    "commit": "3fa3d09087756298a3b6db78ef246324b3469897",
     "files": [
       {
-        "git_blob": "9d2aa9a887b393ed78feabaa44c978f526527350",
+        "git_blob": "397272bb080b5e3916d8ed08ab7ed02c5582f308",
         "path": "api/openapi.yaml",
-        "sha256": "7928fea19beae70964f38cd840b7dc5f2aad4562ac0d8c296be5fcecbc514771"
+        "sha256": "b57401d80bec953ee9cadcbcafd9345d6ae7eefd215f38b89c0e5f12959163f4"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1448,19 +1494,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "681c36349e7172c675b6b861c1a7acb8ca4de8cf",
+        "git_blob": "9b191033b6e2d136a10caa80d01ed97cbcb4f7af",
         "path": "src/data_engine/app.py",
-        "sha256": "d91b290c1f518cd0398bedc2fc972125c3ce499ccd9a9715986c6e269512d0ad"
+        "sha256": "836ea12c866fac2564f2fc42b3f68dcbd86999c7369f9e3f90b57147e8f282fb"
       },
       {
-        "git_blob": "b78e416ff7a9232d5040ffcb74ee44eb05a12c61",
+        "git_blob": "da3684af1e461e6459f8064277edd0a6269347d8",
         "path": "src/data_engine/mcp.py",
-        "sha256": "0932605ebcd79369b6fa614122e79869c059f2b7b9a44f2379c517f63dd12a5c"
+        "sha256": "a31918f021215f509118fbe5980487169e5ef75bb07474040d05b8a3a27a88a5"
       },
       {
-        "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
+        "git_blob": "9c599001cb3de342adc679e88ddd0be38ef398bd",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "2bbc6369b74f3ed24ff475d212042b6259b55ec75b67a26099f792533eb2f950"
+        "sha256": "98a32246607b25f9ceeb77150a51bff91f01c8a656e8d631d19529d1e661b6a4"
       }
     ],
     "repository": "tempera-dev/data-engine"

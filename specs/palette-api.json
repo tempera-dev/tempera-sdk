@@ -516,12 +516,21 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
+              "format": "int32",
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -780,6 +789,26 @@
             }
           },
           {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of resources to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "Bearer API token for strict auth",
@@ -834,10 +863,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AuditEvent"
-                  }
+                  "$ref": "#/components/schemas/AuditEventListResponse"
                 }
               }
             }
@@ -1175,14 +1201,23 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
-            "description": "Maximum number of apps to return (page size).",
+            "description": "Maximum number of apps to return. Zero selects the server default.",
             "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1240,10 +1275,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Toolkit"
-                  }
+                  "$ref": "#/components/schemas/ConnectorListResponse"
                 }
               }
             }
@@ -1876,14 +1908,23 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
-            "description": "Maximum number of tools to return (page size).",
+            "description": "Maximum number of tools to return. Zero selects the server default.",
             "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1941,10 +1982,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ConnectorTool"
-                  }
+                  "$ref": "#/components/schemas/ConnectorToolListResponse"
                 }
               }
             }
@@ -4764,6 +4802,26 @@
             }
           },
           {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of resources to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "Bearer API token for strict auth",
@@ -4818,10 +4876,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PublicJudgeAuditRecord"
-                  }
+                  "$ref": "#/components/schemas/JudgeLedgerListResponse"
                 }
               }
             }
@@ -5172,6 +5227,26 @@
             "in": "path",
             "description": "project_id",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of resources to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -5720,6 +5795,26 @@
             }
           },
           {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of resources to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "Bearer API token for strict auth",
@@ -5993,6 +6088,26 @@
             }
           },
           {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of resources to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "Bearer API token for strict auth",
@@ -6047,10 +6162,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProviderSecretMetadata"
-                  }
+                  "$ref": "#/components/schemas/ProviderSecretListResponse"
                 }
               }
             }
@@ -6522,6 +6634,26 @@
             }
           },
           {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Maximum number of review tasks to return. Zero selects the server default;\nvalues above the service maximum are coerced to that maximum.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "description": "Opaque continuation token returned by the preceding list request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "Bearer API token for strict auth",
@@ -6576,10 +6708,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReviewTask"
-                  }
+                  "$ref": "#/components/schemas/ReviewTaskListResponse"
                 }
               }
             }
@@ -7723,13 +7852,21 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
               "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -7787,7 +7924,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
+                  "$ref": "#/components/schemas/SearchSpanListResponse"
                 }
               }
             }
@@ -8534,7 +8671,7 @@
             }
           },
           {
-            "name": "limit",
+            "name": "pageSize",
             "in": "query",
             "required": false,
             "schema": {
@@ -8544,7 +8681,7 @@
             }
           },
           {
-            "name": "cursor",
+            "name": "pageToken",
             "in": "query",
             "required": false,
             "schema": {
@@ -8606,7 +8743,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Page_RunSummary"
+                  "$ref": "#/components/schemas/TraceListResponse"
                 }
               }
             }
@@ -9194,6 +9331,12 @@
           "rows"
         ],
         "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "rows": {
             "type": "array",
             "items": {
@@ -9446,6 +9589,26 @@
       },
       "AuditEventId": {
         "type": "string"
+      },
+      "AuditEventListResponse": {
+        "type": "object",
+        "required": [
+          "events"
+        ],
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEvent"
+            }
+          },
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
       },
       "AuditOutcome": {
         "type": "string",
@@ -10050,6 +10213,26 @@
           }
         }
       },
+      "ConnectorListResponse": {
+        "type": "object",
+        "required": [
+          "toolkits"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "toolkits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Toolkit"
+            }
+          }
+        }
+      },
       "ConnectorSkillsResponse": {
         "type": "object",
         "description": "Generated prompting scaffold (\"skills.md\") for a toolkit's tools.",
@@ -10115,6 +10298,26 @@
               "null"
             ],
             "description": "Owning toolkit slug (e.g. `github`), when known."
+          }
+        }
+      },
+      "ConnectorToolListResponse": {
+        "type": "object",
+        "required": [
+          "tools"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorTool"
+            }
           }
         }
       },
@@ -10657,25 +10860,44 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "description": "Error envelope returned by every fallible endpoint.",
+        "description": "AIP-193 HTTP/JSON error envelope returned by every fallible endpoint.",
         "required": [
-          "error",
-          "message",
-          "status"
+          "error"
         ],
         "properties": {
           "error": {
-            "type": "string",
-            "description": "Stable machine-readable error code."
+            "$ref": "#/components/schemas/ErrorStatus"
+          }
+        }
+      },
+      "ErrorStatus": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "status",
+          "details"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "HTTP status code corresponding to the canonical RPC status."
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Machine-readable standard error details."
           },
           "message": {
             "type": "string",
-            "description": "Human-readable error message."
+            "description": "Developer-facing English problem description."
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Deprecated compatibility HTTP status code for older `/v1` clients."
+            "type": "string",
+            "description": "Canonical `google.rpc.Code` enum name."
           }
         }
       },
@@ -11707,6 +11929,26 @@
       "JudgeCallId": {
         "type": "string"
       },
+      "JudgeLedgerListResponse": {
+        "type": "object",
+        "required": [
+          "records"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicJudgeAuditRecord"
+            }
+          }
+        }
+      },
       "ListScenariosResponse": {
         "type": "object",
         "required": [
@@ -11998,98 +12240,6 @@
           }
         }
       },
-      "Page_RunSummary": {
-        "type": "object",
-        "required": [
-          "items"
-        ],
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "tenant_id",
-                "project_id",
-                "trace_id",
-                "first_span_name",
-                "span_count",
-                "status",
-                "started_at",
-                "models",
-                "release_ids"
-              ],
-              "properties": {
-                "duration_ms": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "format": "int64"
-                },
-                "ended_at": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "format": "date-time"
-                },
-                "first_span_name": {
-                  "type": "string"
-                },
-                "models": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ModelRef"
-                  }
-                },
-                "project_id": {
-                  "$ref": "#/components/schemas/ProjectId"
-                },
-                "release_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "span_count": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "started_at": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "status": {
-                  "$ref": "#/components/schemas/SpanStatus"
-                },
-                "tenant_id": {
-                  "$ref": "#/components/schemas/TenantId"
-                },
-                "total_cost": {
-                  "oneOf": [
-                    {
-                      "type": "null"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Money"
-                    }
-                  ]
-                },
-                "trace_id": {
-                  "$ref": "#/components/schemas/TraceId"
-                }
-              }
-            }
-          },
-          "next_cursor": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        }
-      },
       "PaletteConnectStatus": {
         "type": "string",
         "enum": [
@@ -12263,6 +12413,12 @@
           "prompts"
         ],
         "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "prompts": {
             "type": "array",
             "items": {
@@ -12391,6 +12547,12 @@
           "versions"
         ],
         "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "versions": {
             "type": "array",
             "items": {
@@ -12425,6 +12587,26 @@
       },
       "ProviderSecretId": {
         "type": "string"
+      },
+      "ProviderSecretListResponse": {
+        "type": "object",
+        "required": [
+          "providerSecrets"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "providerSecrets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProviderSecretMetadata"
+            }
+          }
+        }
       },
       "ProviderSecretMetadata": {
         "type": "object",
@@ -12767,6 +12949,26 @@
       },
       "ReviewTaskId": {
         "type": "string"
+      },
+      "ReviewTaskListResponse": {
+        "type": "object",
+        "required": [
+          "tasks"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReviewTask"
+            }
+          }
+        }
       },
       "ReviewTaskState": {
         "type": "string",
@@ -13357,7 +13559,7 @@
           }
         }
       },
-      "SearchResponse": {
+      "SearchSpanListResponse": {
         "type": "object",
         "required": [
           "hits"
@@ -13368,6 +13570,12 @@
             "items": {
               "$ref": "#/components/schemas/SearchHit"
             }
+          },
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         }
       },
@@ -13850,6 +14058,26 @@
           },
           "trace_id": {
             "$ref": "#/components/schemas/TraceId"
+          }
+        }
+      },
+      "TraceListResponse": {
+        "type": "object",
+        "required": [
+          "runs"
+        ],
+        "properties": {
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            }
           }
         }
       },

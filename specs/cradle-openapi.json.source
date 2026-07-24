@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "c921dbb9f040bc26c78ef887f6249fd42cd081d6",
   "source_branch": "main",
-  "source_commit": "a765c65dd7e23913dbecf7fec27b406bff23ca69",
+  "source_commit": "71cd4bc8e1ff07123b01be9834c1510213a10385",
   "source_mode": "100644",
   "source_path": "sdks/openapi.json",
   "source_repo": "tempera-dev/cradle",

@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "4f43f48f649dc46c5903a35a4b3b56b3843dc7d7",
+  "source_commit": "67e1c88d21961586d5efc39d5db50e0f2cd34906",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "9d2aa9a887b393ed78feabaa44c978f526527350",
-  "source_sha256": "7928fea19beae70964f38cd840b7dc5f2aad4562ac0d8c296be5fcecbc514771",
+  "source_blob_sha": "397272bb080b5e3916d8ed08ab7ed02c5582f308",
+  "source_sha256": "b57401d80bec953ee9cadcbcafd9345d6ae7eefd215f38b89c0e5f12959163f4",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "7dee3504ab49b38aaa92f2dfc11ba0920abe151f42ba334f55bf2ded131a8f36",
+  "generated_sha256": "429fbd35ba3d411ce4618b6c14768f3f83b0be394b3fbf3968475613822f5340",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -352,6 +352,22 @@
       "path": "/v1/{parent}/tools/{toolName}:invoke",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "projectsDiscoveryReleasesCommit",
+      "operationId": "projects.discoveryReleases.commit",
+      "method": "POST",
+      "path": "/v1/{parent}/discoveryReleases:commit",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "projectsDiscoveryReleasesGet",
+      "operationId": "projects.discoveryReleases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
     },
     {
       "sdkOperationId": "createEvidenceRecord",

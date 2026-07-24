@@ -760,6 +760,251 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
     },
     {
+      "id": "experimentProviderConnectionsList",
+      "upstreamOperationId": "experimentProviderConnections.list",
+      "method": "GET",
+      "path": "/v1/experiment-provider-connections",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List external experiment-provider metadata. Secret references and values are never returned."
+    },
+    {
+      "id": "experimentProviderConnectionsCreate",
+      "upstreamOperationId": "experimentProviderConnections.create",
+      "method": "POST",
+      "path": "/v1/experiment-provider-connections",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "provider",
+        "providerKind",
+        "name",
+        "secretRef",
+        "capabilities"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "provider",
+        "providerKind",
+        "name",
+        "secretRef",
+        "capabilities"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Register a tenant-scoped experiment provider using only an external secret reference."
+    },
+    {
+      "id": "experimentProviderConnectionsRevoke",
+      "upstreamOperationId": "experimentProviderConnections.revoke",
+      "method": "DELETE",
+      "path": "/v1/experiment-provider-connections/{id}",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
+    },
+    {
+      "id": "experimentProviderConnectionsResolve",
+      "upstreamOperationId": "experimentProviderConnections.resolve",
+      "method": "POST",
+      "path": "/v1/experiment-provider-connections/{id}:resolve",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "approvalId",
+        "proposalDigest",
+        "protocolDigest",
+        "mcpPrepareReceiptDigest",
+        "mcpCommitReceiptDigest",
+        "submissionIdempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "approvalId",
+        "proposalDigest",
+        "protocolDigest",
+        "mcpPrepareReceiptDigest",
+        "mcpCommitReceiptDigest",
+        "submissionIdempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
+    },
+    {
+      "id": "bioSignerKeysList",
+      "upstreamOperationId": "bioSignerKeys.list",
+      "method": "GET",
+      "path": "/v1/bio-signer-keys",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
+    },
+    {
+      "id": "bioSignerKeysCreate",
+      "upstreamOperationId": "bioSignerKeys.create",
+      "method": "POST",
+      "path": "/v1/bio-signer-keys",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "keyId",
+        "publicJwk"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "keyId",
+        "publicJwk"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
+    },
+    {
+      "id": "bioSignerKeysRevoke",
+      "upstreamOperationId": "bioSignerKeys.revoke",
+      "method": "DELETE",
+      "path": "/v1/bio-signer-keys/{id}",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Revoke a public verifier key while retaining its history."
+    },
+    {
+      "id": "experimentApprovalsList",
+      "upstreamOperationId": "experimentApprovals.list",
+      "method": "GET",
+      "path": "/v1/experiment-approvals",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List exact, single-use experiment approvals for an authorized human approver."
+    },
+    {
+      "id": "experimentApprovalsCreate",
+      "upstreamOperationId": "experimentApprovals.create",
+      "method": "POST",
+      "path": "/v1/experiment-approvals",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "proposalDigest",
+        "protocolDigest",
+        "connectionId",
+        "mcpPrepareReceiptDigest",
+        "expiresAt"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "orgId",
+        "projectId",
+        "environmentId",
+        "proposalDigest",
+        "protocolDigest",
+        "connectionId",
+        "mcpPrepareReceiptDigest",
+        "expiresAt"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
+    },
+    {
+      "id": "experimentApprovalsRevoke",
+      "upstreamOperationId": "experimentApprovals.revoke",
+      "method": "DELETE",
+      "path": "/v1/experiment-approvals/{id}",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
+    },
+    {
       "id": "listAuditLog",
       "upstreamOperationId": "listAuditLog",
       "method": "GET",
@@ -1536,7 +1781,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "span_id",
         "kind",
         "status",
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -1576,7 +1822,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1640,7 +1889,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -1751,7 +2001,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [
         "toolkit",
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -2272,7 +2523,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2319,7 +2573,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2410,7 +2667,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "prompt_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2455,7 +2715,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "project_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2549,7 +2812,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "state"
+        "state",
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -2758,7 +3023,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "status",
         "model",
         "tool",
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -2885,8 +3151,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_cost_micros",
         "min_latency_ms",
         "max_latency_ms",
-        "limit",
-        "cursor"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -5713,6 +5979,71 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "dataset:write",
       "description": "Invoke a stored custom tool through its configured execution boundary."
+    },
+    {
+      "id": "projectsDiscoveryReleasesCommit",
+      "upstreamOperationId": "projects.discoveryReleases.commit",
+      "method": "POST",
+      "path": "/v1/{parent}/discoveryReleases:commit",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "schema_version",
+        "request_id",
+        "release_id",
+        "release_kind",
+        "evidence_class",
+        "claim_class",
+        "bindings",
+        "lineage_edges",
+        "budget",
+        "eligibility",
+        "prospective_execution"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema_version",
+        "request_id",
+        "release_id",
+        "release_kind",
+        "evidence_class",
+        "claim_class",
+        "bindings",
+        "lineage_edges",
+        "budget",
+        "eligibility",
+        "prospective_execution"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Atomically commit an immutable discovery release graph."
+    },
+    {
+      "id": "projectsDiscoveryReleasesGet",
+      "upstreamOperationId": "projects.discoveryReleases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "discoveryReleaseId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Get one immutable discovery release."
     },
     {
       "id": "createEvidenceRecord",

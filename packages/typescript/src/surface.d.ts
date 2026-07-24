@@ -145,6 +145,26 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   providerConnectionsRotate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resolve connection runtime metadata for a tenant-bound tempera-llm service credential. */
   providerConnectionsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List external experiment-provider metadata. Secret references and values are never returned. */
+  experimentProviderConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register a tenant-scoped experiment provider using only an external secret reference. */
+  experimentProviderConnectionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke an experiment-provider connection. An unknown id is a no-op. */
+  experimentProviderConnectionsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically consume an exact human approval and resolve a provider reference for tempera-workflows. */
+  experimentProviderConnectionsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List versioned public Ed25519 verifier keys for an authorized human administrator. */
+  bioSignerKeysList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register or rotate a public Ed25519 verifier key. Private key material is rejected. */
+  bioSignerKeysCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a public verifier key while retaining its history. */
+  bioSignerKeysRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List exact, single-use experiment approvals for an authorized human approver. */
+  experimentApprovalsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests. */
+  experimentApprovalsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke an unused experiment approval. Consumed approvals remain immutable. */
+  experimentApprovalsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List recent audit-log events for the user and active organization (up to 50, newest first). */
   listAuditLog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the connector catalog (MCP clients, editors, and API surfaces). */
@@ -605,6 +625,10 @@ export interface DataEngineClient extends TemperaProductClientBase {
   deleteTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Invoke a stored custom tool through its configured execution boundary. */
   invokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically commit an immutable discovery release graph. */
+  projectsDiscoveryReleasesCommit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one immutable discovery release. */
+  projectsDiscoveryReleasesGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create an immutable shared evidence record by canonical content hash. */
   createEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List immutable shared evidence records with bounded cursor pagination. */

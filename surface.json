@@ -639,6 +639,186 @@
         "upstreamOperationId": "providerConnections.resolve"
       },
       {
+        "id": "experimentProviderConnectionsList",
+        "method": "GET",
+        "path": "/v1/experiment-provider-connections",
+        "auth": "account",
+        "description": "List external experiment-provider metadata. Secret references and values are never returned.",
+        "upstreamOperationId": "experimentProviderConnections.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "experimentProviderConnectionsCreate",
+        "method": "POST",
+        "path": "/v1/experiment-provider-connections",
+        "auth": "account",
+        "description": "Register a tenant-scoped experiment provider using only an external secret reference.",
+        "upstreamOperationId": "experimentProviderConnections.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "providerKind",
+          "name",
+          "secretRef",
+          "capabilities"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "providerKind",
+          "name",
+          "secretRef",
+          "capabilities"
+        ]
+      },
+      {
+        "id": "experimentProviderConnectionsRevoke",
+        "method": "DELETE",
+        "path": "/v1/experiment-provider-connections/{id}",
+        "auth": "account",
+        "description": "Revoke an experiment-provider connection. An unknown id is a no-op.",
+        "upstreamOperationId": "experimentProviderConnections.revoke",
+        "pathParams": [
+          "id"
+        ]
+      },
+      {
+        "id": "experimentProviderConnectionsResolve",
+        "method": "POST",
+        "path": "/v1/experiment-provider-connections/{id}:resolve",
+        "auth": "account",
+        "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.",
+        "upstreamOperationId": "experimentProviderConnections.resolve",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "approvalId",
+          "proposalDigest",
+          "protocolDigest",
+          "mcpPrepareReceiptDigest",
+          "mcpCommitReceiptDigest",
+          "submissionIdempotencyKey"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "approvalId",
+          "proposalDigest",
+          "protocolDigest",
+          "mcpPrepareReceiptDigest",
+          "mcpCommitReceiptDigest",
+          "submissionIdempotencyKey"
+        ]
+      },
+      {
+        "id": "bioSignerKeysList",
+        "method": "GET",
+        "path": "/v1/bio-signer-keys",
+        "auth": "account",
+        "description": "List versioned public Ed25519 verifier keys for an authorized human administrator.",
+        "upstreamOperationId": "bioSignerKeys.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "bioSignerKeysCreate",
+        "method": "POST",
+        "path": "/v1/bio-signer-keys",
+        "auth": "account",
+        "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected.",
+        "upstreamOperationId": "bioSignerKeys.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "keyId",
+          "publicJwk"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "keyId",
+          "publicJwk"
+        ]
+      },
+      {
+        "id": "bioSignerKeysRevoke",
+        "method": "DELETE",
+        "path": "/v1/bio-signer-keys/{id}",
+        "auth": "account",
+        "description": "Revoke a public verifier key while retaining its history.",
+        "upstreamOperationId": "bioSignerKeys.revoke",
+        "pathParams": [
+          "id"
+        ]
+      },
+      {
+        "id": "experimentApprovalsList",
+        "method": "GET",
+        "path": "/v1/experiment-approvals",
+        "auth": "account",
+        "description": "List exact, single-use experiment approvals for an authorized human approver.",
+        "upstreamOperationId": "experimentApprovals.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "experimentApprovalsCreate",
+        "method": "POST",
+        "path": "/v1/experiment-approvals",
+        "auth": "account",
+        "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.",
+        "upstreamOperationId": "experimentApprovals.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "proposalDigest",
+          "protocolDigest",
+          "connectionId",
+          "mcpPrepareReceiptDigest",
+          "expiresAt"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "proposalDigest",
+          "protocolDigest",
+          "connectionId",
+          "mcpPrepareReceiptDigest",
+          "expiresAt"
+        ]
+      },
+      {
+        "id": "experimentApprovalsRevoke",
+        "method": "DELETE",
+        "path": "/v1/experiment-approvals/{id}",
+        "auth": "account",
+        "description": "Revoke an unused experiment approval. Consumed approvals remain immutable.",
+        "upstreamOperationId": "experimentApprovals.revoke",
+        "pathParams": [
+          "id"
+        ]
+      },
+      {
         "id": "listAuditLog",
         "method": "GET",
         "path": "/v1/audit-log",
@@ -1164,7 +1344,8 @@
           "span_id",
           "kind",
           "status",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "archive.querySpans"
       },
@@ -1192,7 +1373,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "audit.list"
+        "upstreamOperationId": "audit.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "calibrationsRun",
@@ -1236,7 +1421,8 @@
           "project_id"
         ],
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "connectors.list"
       },
@@ -1319,7 +1505,8 @@
         ],
         "query": [
           "toolkit",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "connectors.listTools"
       },
@@ -1736,7 +1923,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "judge.listLedger"
+        "upstreamOperationId": "judge.listLedger",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "onlineDecideSampling",
@@ -1771,7 +1962,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "prompts.list"
+        "upstreamOperationId": "prompts.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "promptsCreate",
@@ -1837,7 +2032,11 @@
           "project_id",
           "prompt_id"
         ],
-        "upstreamOperationId": "prompts.listVersions"
+        "upstreamOperationId": "prompts.listVersions",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "promptsAddVersion",
@@ -1870,7 +2069,11 @@
           "tenant_id",
           "project_id"
         ],
-        "upstreamOperationId": "providerSecrets.list"
+        "upstreamOperationId": "providerSecrets.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "providerSecretsCreate",
@@ -1940,7 +2143,9 @@
           "queue_id"
         ],
         "query": [
-          "state"
+          "state",
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "reviews.listTasks"
       },
@@ -2104,7 +2309,8 @@
           "status",
           "model",
           "tool",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "trace:read",
         "description": "Search spans by text query and facet filters.",
@@ -2212,8 +2418,8 @@
           "max_cost_micros",
           "min_latency_ms",
           "max_latency_ms",
-          "limit",
-          "cursor"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "trace:read",
         "description": "List trace summaries for a tenant with filters and cursor pagination.",
@@ -4319,6 +4525,63 @@
         "scope": "dataset:write",
         "description": "Invoke a stored custom tool through its configured execution boundary.",
         "upstreamOperationId": "projects.tools.invoke",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "projectsDiscoveryReleasesCommit",
+        "method": "POST",
+        "path": "/v1/{parent}/discoveryReleases:commit",
+        "auth": "product",
+        "scope": "eval:run",
+        "description": "Atomically commit an immutable discovery release graph.",
+        "upstreamOperationId": "projects.discoveryReleases.commit",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "body": [
+          "schema_version",
+          "request_id",
+          "release_id",
+          "release_kind",
+          "evidence_class",
+          "claim_class",
+          "bindings",
+          "lineage_edges",
+          "budget",
+          "eligibility",
+          "prospective_execution"
+        ],
+        "requiredBody": [
+          "schema_version",
+          "request_id",
+          "release_id",
+          "release_kind",
+          "evidence_class",
+          "claim_class",
+          "bindings",
+          "lineage_edges",
+          "budget",
+          "eligibility",
+          "prospective_execution"
+        ]
+      },
+      {
+        "id": "projectsDiscoveryReleasesGet",
+        "method": "GET",
+        "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+        "auth": "product",
+        "scope": "dataset:read",
+        "description": "Get one immutable discovery release.",
+        "upstreamOperationId": "projects.discoveryReleases.get",
+        "pathParams": [
+          "parent",
+          "discoveryReleaseId"
+        ],
         "pathParamTemplates": {
           "parent": "projects/*"
         }

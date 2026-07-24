@@ -751,6 +751,251 @@ OPERATIONS = {
             "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
         },
         {
+            "id": "experiment_provider_connections_list",
+            "upstream_operation_id": "experimentProviderConnections.list",
+            "method": "GET",
+            "path": "/v1/experiment-provider-connections",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List external experiment-provider metadata. Secret references and values are never returned."
+        },
+        {
+            "id": "experiment_provider_connections_create",
+            "upstream_operation_id": "experimentProviderConnections.create",
+            "method": "POST",
+            "path": "/v1/experiment-provider-connections",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "providerKind",
+                "name",
+                "secretRef",
+                "capabilities"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "providerKind",
+                "name",
+                "secretRef",
+                "capabilities"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register a tenant-scoped experiment provider using only an external secret reference."
+        },
+        {
+            "id": "experiment_provider_connections_revoke",
+            "upstream_operation_id": "experimentProviderConnections.revoke",
+            "method": "DELETE",
+            "path": "/v1/experiment-provider-connections/{id}",
+            "auth": "account",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
+        },
+        {
+            "id": "experiment_provider_connections_resolve",
+            "upstream_operation_id": "experimentProviderConnections.resolve",
+            "method": "POST",
+            "path": "/v1/experiment-provider-connections/{id}:resolve",
+            "auth": "account",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "approvalId",
+                "proposalDigest",
+                "protocolDigest",
+                "mcpPrepareReceiptDigest",
+                "mcpCommitReceiptDigest",
+                "submissionIdempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "approvalId",
+                "proposalDigest",
+                "protocolDigest",
+                "mcpPrepareReceiptDigest",
+                "mcpCommitReceiptDigest",
+                "submissionIdempotencyKey"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
+        },
+        {
+            "id": "bio_signer_keys_list",
+            "upstream_operation_id": "bioSignerKeys.list",
+            "method": "GET",
+            "path": "/v1/bio-signer-keys",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
+        },
+        {
+            "id": "bio_signer_keys_create",
+            "upstream_operation_id": "bioSignerKeys.create",
+            "method": "POST",
+            "path": "/v1/bio-signer-keys",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "keyId",
+                "publicJwk"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "keyId",
+                "publicJwk"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
+        },
+        {
+            "id": "bio_signer_keys_revoke",
+            "upstream_operation_id": "bioSignerKeys.revoke",
+            "method": "DELETE",
+            "path": "/v1/bio-signer-keys/{id}",
+            "auth": "account",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Revoke a public verifier key while retaining its history."
+        },
+        {
+            "id": "experiment_approvals_list",
+            "upstream_operation_id": "experimentApprovals.list",
+            "method": "GET",
+            "path": "/v1/experiment-approvals",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List exact, single-use experiment approvals for an authorized human approver."
+        },
+        {
+            "id": "experiment_approvals_create",
+            "upstream_operation_id": "experimentApprovals.create",
+            "method": "POST",
+            "path": "/v1/experiment-approvals",
+            "auth": "account",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "proposalDigest",
+                "protocolDigest",
+                "connectionId",
+                "mcpPrepareReceiptDigest",
+                "expiresAt"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "proposalDigest",
+                "protocolDigest",
+                "connectionId",
+                "mcpPrepareReceiptDigest",
+                "expiresAt"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
+        },
+        {
+            "id": "experiment_approvals_revoke",
+            "upstream_operation_id": "experimentApprovals.revoke",
+            "method": "DELETE",
+            "path": "/v1/experiment-approvals/{id}",
+            "auth": "account",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
+        },
+        {
             "id": "list_audit_log",
             "upstream_operation_id": "listAuditLog",
             "method": "GET",
@@ -1527,7 +1772,8 @@ OPERATIONS = {
                 "span_id",
                 "kind",
                 "status",
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -1567,7 +1813,10 @@ OPERATIONS = {
                 "project_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1631,7 +1880,8 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -1742,7 +1992,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [
                 "toolkit",
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -2263,7 +2514,10 @@ OPERATIONS = {
                 "project_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2310,7 +2564,10 @@ OPERATIONS = {
                 "project_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2401,7 +2658,10 @@ OPERATIONS = {
                 "prompt_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2446,7 +2706,10 @@ OPERATIONS = {
                 "project_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2540,7 +2803,9 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "state"
+                "state",
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -2749,7 +3014,8 @@ OPERATIONS = {
                 "status",
                 "model",
                 "tool",
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -2876,8 +3142,8 @@ OPERATIONS = {
                 "max_cost_micros",
                 "min_latency_ms",
                 "max_latency_ms",
-                "limit",
-                "cursor"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5704,6 +5970,71 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": "dataset:write",
             "description": "Invoke a stored custom tool through its configured execution boundary."
+        },
+        {
+            "id": "projects_discovery_releases_commit",
+            "upstream_operation_id": "projects.discoveryReleases.commit",
+            "method": "POST",
+            "path": "/v1/{parent}/discoveryReleases:commit",
+            "auth": "product",
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [
+                "schema_version",
+                "request_id",
+                "release_id",
+                "release_kind",
+                "evidence_class",
+                "claim_class",
+                "bindings",
+                "lineage_edges",
+                "budget",
+                "eligibility",
+                "prospective_execution"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema_version",
+                "request_id",
+                "release_id",
+                "release_kind",
+                "evidence_class",
+                "claim_class",
+                "bindings",
+                "lineage_edges",
+                "budget",
+                "eligibility",
+                "prospective_execution"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Atomically commit an immutable discovery release graph."
+        },
+        {
+            "id": "projects_discovery_releases_get",
+            "upstream_operation_id": "projects.discoveryReleases.get",
+            "method": "GET",
+            "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
+            "auth": "product",
+            "path_params": [
+                "parent",
+                "discoveryReleaseId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Get one immutable discovery release."
         },
         {
             "id": "create_evidence_record",

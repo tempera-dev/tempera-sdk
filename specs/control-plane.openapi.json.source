@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/control-plane.openapi.json",
-  "generated_sha256": "7b86b12f074698e693f8a8d8d41adc9eb2243d600e12bc834eeedc6067167bf3",
+  "generated_sha256": "efd1abc5a6161982a616d200b5c996dab1aac3b6672b86fa1583db22a9aae211",
   "generated_with": "sync-control-plane-openapi.py@1+verbatim",
   "schema_version": 1,
-  "source_blob_sha": "7965e3451f954e502fedd44ee719d406bd49f049",
+  "source_blob_sha": "4cb024bfe7f3e285a8a09c308600c9e7c6a48db4",
   "source_branch": "main",
-  "source_commit": "7a6bebc216c79218ec721b09c306aeb291087f6f",
+  "source_commit": "7167ecad3a75f787925ebce0838407fe7d3bde3a",
   "source_mode": "100644",
   "source_path": "contracts/control-plane.openapi.json",
   "source_repo": "tempera-dev/auth-hub",
-  "source_sha256": "7b86b12f074698e693f8a8d8d41adc9eb2243d600e12bc834eeedc6067167bf3"
+  "source_sha256": "efd1abc5a6161982a616d200b5c996dab1aac3b6672b86fa1583db22a9aae211"
 }

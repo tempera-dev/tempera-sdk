@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 61 |
+| Typed operations | 71 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -1235,6 +1235,477 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
     ("orgId", "<orgId>".into()),
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentProviderConnectionsList
+
+`GET /v1/experiment-provider-connections`
+
+List external experiment-provider metadata. Secret references and values are never returned.
+
+- **Producer operationId:** `experimentProviderConnections.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsList()` · Python `client.control_plane.experiment_provider_connections_list()` · Rust `build_request("control_plane", "experiment_provider_connections_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentProviderConnectionsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_provider_connections_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_provider_connections_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentProviderConnectionsCreate
+
+`POST /v1/experiment-provider-connections`
+
+Register a tenant-scoped experiment provider using only an external secret reference.
+
+- **Producer operationId:** `experimentProviderConnections.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsCreate()` · Python `client.control_plane.experiment_provider_connections_create()` · Rust `build_request("control_plane", "experiment_provider_connections_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `provider` | yes | — |
+| `providerKind` | yes | — |
+| `name` | yes | — |
+| `secretRef` | yes | — |
+| `capabilities` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentProviderConnectionsCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_provider_connections_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_provider_connections_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentProviderConnectionsRevoke
+
+`DELETE /v1/experiment-provider-connections/{id}`
+
+Revoke an experiment-provider connection. An unknown id is a no-op.
+
+- **Producer operationId:** `experimentProviderConnections.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsRevoke()` · Python `client.control_plane.experiment_provider_connections_revoke()` · Rust `build_request("control_plane", "experiment_provider_connections_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentProviderConnectionsRevoke({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_provider_connections_revoke({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_provider_connections_revoke", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentProviderConnectionsResolve
+
+`POST /v1/experiment-provider-connections/{id}:resolve`
+
+Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.
+
+- **Producer operationId:** `experimentProviderConnections.resolve`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentProviderConnectionsResolve()` · Python `client.control_plane.experiment_provider_connections_resolve()` · Rust `build_request("control_plane", "experiment_provider_connections_resolve", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `approvalId` | yes | — |
+| `proposalDigest` | yes | — |
+| `protocolDigest` | yes | — |
+| `mcpPrepareReceiptDigest` | yes | — |
+| `mcpCommitReceiptDigest` | yes | — |
+| `submissionIdempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentProviderConnectionsResolve({
+  id: "<id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_provider_connections_resolve({
+    "id": "<id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_provider_connections_resolve", &[
+    ("id", "<id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### bioSignerKeysList
+
+`GET /v1/bio-signer-keys`
+
+List versioned public Ed25519 verifier keys for an authorized human administrator.
+
+- **Producer operationId:** `bioSignerKeys.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.bioSignerKeysList()` · Python `client.control_plane.bio_signer_keys_list()` · Rust `build_request("control_plane", "bio_signer_keys_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.bioSignerKeysList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.bio_signer_keys_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "bio_signer_keys_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### bioSignerKeysCreate
+
+`POST /v1/bio-signer-keys`
+
+Register or rotate a public Ed25519 verifier key. Private key material is rejected.
+
+- **Producer operationId:** `bioSignerKeys.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.bioSignerKeysCreate()` · Python `client.control_plane.bio_signer_keys_create()` · Rust `build_request("control_plane", "bio_signer_keys_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `keyId` | yes | — |
+| `publicJwk` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.bioSignerKeysCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.bio_signer_keys_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "bio_signer_keys_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### bioSignerKeysRevoke
+
+`DELETE /v1/bio-signer-keys/{id}`
+
+Revoke a public verifier key while retaining its history.
+
+- **Producer operationId:** `bioSignerKeys.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.bioSignerKeysRevoke()` · Python `client.control_plane.bio_signer_keys_revoke()` · Rust `build_request("control_plane", "bio_signer_keys_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.bioSignerKeysRevoke({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.bio_signer_keys_revoke({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "bio_signer_keys_revoke", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentApprovalsList
+
+`GET /v1/experiment-approvals`
+
+List exact, single-use experiment approvals for an authorized human approver.
+
+- **Producer operationId:** `experimentApprovals.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentApprovalsList()` · Python `client.control_plane.experiment_approvals_list()` · Rust `build_request("control_plane", "experiment_approvals_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentApprovalsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_approvals_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_approvals_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentApprovalsCreate
+
+`POST /v1/experiment-approvals`
+
+Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.
+
+- **Producer operationId:** `experimentApprovals.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentApprovalsCreate()` · Python `client.control_plane.experiment_approvals_create()` · Rust `build_request("control_plane", "experiment_approvals_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `proposalDigest` | yes | — |
+| `protocolDigest` | yes | — |
+| `connectionId` | yes | — |
+| `mcpPrepareReceiptDigest` | yes | — |
+| `expiresAt` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentApprovalsCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_approvals_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_approvals_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### experimentApprovalsRevoke
+
+`DELETE /v1/experiment-approvals/{id}`
+
+Revoke an unused experiment approval. Consumed approvals remain immutable.
+
+- **Producer operationId:** `experimentApprovals.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.experimentApprovalsRevoke()` · Python `client.control_plane.experiment_approvals_revoke()` · Rust `build_request("control_plane", "experiment_approvals_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.experimentApprovalsRevoke({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.experiment_approvals_revoke({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "experiment_approvals_revoke", &[
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

@@ -252,7 +252,8 @@ Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
 | `span_id` | no | — |
 | `kind` | no | — |
 | `status` | no | — |
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -353,12 +354,21 @@ Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
 | `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.auditList({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -366,6 +376,8 @@ const result = await client.palette.auditList({
 result = client.palette.audit_list({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -373,6 +385,8 @@ result = client.palette.audit_list({
 let spec = client.build_request("palette", "audit_list", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -514,7 +528,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -522,7 +537,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 const result = await client.palette.connectorsList({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
-  limit: "<limit>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -530,7 +546,8 @@ const result = await client.palette.connectorsList({
 result = client.palette.connectors_list({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -538,7 +555,8 @@ result = client.palette.connectors_list({
 let spec = client.build_request("palette", "connectors_list", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -784,7 +802,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 | Parameter | Required | Notes |
 |---|---|---|
 | `toolkit` | no | — |
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -793,7 +812,7 @@ const result = await client.palette.connectorsListTools({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
   toolkit: "<toolkit>",
-  limit: "<limit>",
+  pageSize: "<pageSize>",
 });
 ```
 
@@ -802,7 +821,7 @@ result = client.palette.connectors_list_tools({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
     "toolkit": "<toolkit>",
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
 })
 ```
 
@@ -811,7 +830,7 @@ let spec = client.build_request("palette", "connectors_list_tools", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
     ("toolkit", "<toolkit>".into()),
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1982,12 +2001,21 @@ Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
 | `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.judgeListLedger({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -1995,6 +2023,8 @@ const result = await client.palette.judgeListLedger({
 result = client.palette.judge_list_ledger({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -2002,6 +2032,8 @@ result = client.palette.judge_list_ledger({
 let spec = client.build_request("palette", "judge_list_ledger", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2092,12 +2124,21 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
 | `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.promptsList({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -2105,6 +2146,8 @@ const result = await client.palette.promptsList({
 result = client.palette.prompts_list({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -2112,6 +2155,8 @@ result = client.palette.prompts_list({
 let spec = client.build_request("palette", "prompts_list", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2309,6 +2354,13 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 | `prompt_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
@@ -2316,6 +2368,8 @@ const result = await client.palette.promptsListVersions({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
   prompt_id: "<prompt_id>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -2324,6 +2378,8 @@ result = client.palette.prompts_list_versions({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
     "prompt_id": "<prompt_id>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -2332,6 +2388,8 @@ let spec = client.build_request("palette", "prompts_list_versions", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
     ("prompt_id", "<prompt_id>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2421,12 +2479,21 @@ Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 | `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
 | `project_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.providerSecretsList({
   tenant_id: "<tenant_id>",
   project_id: "<project_id>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
@@ -2434,6 +2501,8 @@ const result = await client.palette.providerSecretsList({
 result = client.palette.provider_secrets_list({
     "tenant_id": "<tenant_id>",
     "project_id": "<project_id>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
@@ -2441,6 +2510,8 @@ result = client.palette.provider_secrets_list({
 let spec = client.build_request("palette", "provider_secrets_list", &[
     ("tenant_id", "<tenant_id>".into()),
     ("project_id", "<project_id>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2641,6 +2712,8 @@ Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
 | Parameter | Required | Notes |
 |---|---|---|
 | `state` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -2650,6 +2723,7 @@ const result = await client.palette.reviewsListTasks({
   project_id: "<project_id>",
   queue_id: "<queue_id>",
   state: "<state>",
+  pageSize: "<pageSize>",
 });
 ```
 
@@ -2659,6 +2733,7 @@ result = client.palette.reviews_list_tasks({
     "project_id": "<project_id>",
     "queue_id": "<queue_id>",
     "state": "<state>",
+    "pageSize": "<pageSize>",
 })
 ```
 
@@ -2668,6 +2743,7 @@ let spec = client.build_request("palette", "reviews_list_tasks", &[
     ("project_id", "<project_id>".into()),
     ("queue_id", "<queue_id>".into()),
     ("state", "<state>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3137,7 +3213,8 @@ Search spans by text query and facet filters.
 | `status` | no | — |
 | `model` | no | — |
 | `tool` | no | — |
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -3398,8 +3475,8 @@ List trace summaries for a tenant with filters and cursor pagination.
 | `max_cost_micros` | no | — |
 | `min_latency_ms` | no | — |
 | `max_latency_ms` | no | — |
-| `limit` | no | — |
-| `cursor` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
