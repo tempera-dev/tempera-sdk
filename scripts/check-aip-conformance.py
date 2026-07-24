@@ -93,7 +93,6 @@ PROTOCOL_OPERATION_EXCEPTIONS = {
 # Continue checking their path, parameters, pagination, and AIP-193 errors, but
 # do not reinterpret the OAuth token vocabulary as resource-message debt.
 PROTOCOL_JSON_EXCEPTIONS = {
-    ("controlPlane", "GET", "/v1/oauth/grants"),
     ("controlPlane", "POST", "/v1/admin/step-up"),
     ("controlPlane", "POST", "/v1/sessions"),
     ("controlPlane", "POST", "/v1/workspace/select"),

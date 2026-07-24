@@ -83,7 +83,6 @@
     "controlPlane|POST|/v1/oauth/introspect"
   ],
   "protocol_json_exceptions": [
-    "controlPlane|GET|/v1/oauth/grants",
     "controlPlane|POST|/v1/admin/step-up",
     "controlPlane|POST|/v1/sessions",
     "controlPlane|POST|/v1/workspace/select"
