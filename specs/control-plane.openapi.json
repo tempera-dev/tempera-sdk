@@ -71,12 +71,21 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["ok", "storage"],
+                  "required": [
+                    "ok",
+                    "storage"
+                  ],
                   "properties": {
-                    "ok": { "type": "boolean", "const": true },
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
                     "storage": {
                       "type": "string",
-                      "enum": ["reachable", "ephemeral"]
+                      "enum": [
+                        "reachable",
+                        "ephemeral"
+                      ]
                     },
                     "deployment_mode": {
                       "$ref": "#/components/schemas/DeploymentMode"
@@ -94,14 +103,16 @@
             "description": "Durable storage is unavailable",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             }
           }
         }
       }
     },
-    "/me": {
+    "/v1/me": {
       "get": {
         "operationId": "getMe",
         "summary": "Return the current authenticated principal and active workspace context.",
@@ -111,7 +122,10 @@
             "in": "header",
             "required": false,
             "description": "Platform-staff-only reference-load marker. When a platform staff principal supplies this header, it must be a UUID and the serving runtime must have complete source, machine, and image provenance.",
-            "schema": { "type": "string", "format": "uuid" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -120,19 +134,30 @@
             "headers": {
               "X-Tempera-Reference-Request-Id": {
                 "description": "Staff-only reference-load echo when the request supplies a reference request identity.",
-                "schema": { "type": "string", "format": "uuid" }
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
               },
               "X-Tempera-Source-Commit": {
                 "description": "Staff-only serving source SHA for a reference-load request.",
-                "schema": { "type": "string", "pattern": "^[a-f0-9]{40}$" }
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$"
+                }
               },
               "X-Tempera-Machine-Id": {
                 "description": "Staff-only serving machine identity for a reference-load request.",
-                "schema": { "type": "string" }
+                "schema": {
+                  "type": "string"
+                }
               },
               "X-Tempera-Image-Ref-Sha256": {
                 "description": "Staff-only SHA-256 of the serving immutable image reference.",
-                "schema": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
               }
             },
             "content": {
@@ -143,14 +168,23 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
           "400": {
             "description": "A platform staff principal supplied an invalid X-Tempera-Reference-Request-Id header.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
               }
             }
           },
@@ -158,14 +192,16 @@
             "description": "A platform staff reference-load request cannot be served because runtime source, machine, or image provenance is incomplete.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
               }
             }
           }
         }
       }
     },
-    "/orgs": {
+    "/v1/orgs": {
       "get": {
         "operationId": "listOrganizations",
         "summary": "List organizations/workspaces visible to the current user.",
@@ -175,15 +211,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Organization"
+                  "type": "object",
+                  "required": [
+                    "organizations",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "organizations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Organization"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createOrganization",
@@ -210,12 +276,19 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/DeploymentForbidden"
+            "description": "Operation is not permitted by the active deployment topology (e.g. creating additional organizations in a single-tenant deployment)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/sessions": {
+    "/v1/sessions": {
       "get": {
         "operationId": "listAccountSessions",
         "summary": "List active account-console sessions for the current user.",
@@ -225,18 +298,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AccountSession"
+                  "type": "object",
+                  "required": [
+                    "sessions",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "sessions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccountSession"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createHostedSession",
@@ -265,12 +365,19 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/sessions/{id}": {
+    "/v1/sessions/{id}": {
       "delete": {
         "operationId": "revokeAccountSession",
         "summary": "Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op.",
@@ -284,14 +391,21 @@
             "description": "Session revoked or already absent"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
             "description": "Session belongs to a different user",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -299,7 +413,7 @@
         }
       }
     },
-    "/workspace/select": {
+    "/v1/workspace/select": {
       "post": {
         "operationId": "selectWorkspace",
         "summary": "Select the active organization, project, and environment for the account console.",
@@ -326,12 +440,19 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/WrongWorkspace"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/team/members": {
+    "/v1/team/members": {
       "get": {
         "operationId": "listTeamMembers",
         "summary": "List team members for the active organization.",
@@ -341,24 +462,65 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TeamMember"
+                  "type": "object",
+                  "required": [
+                    "members",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "members": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TeamMember"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/team/members/{id}": {
+    "/v1/team/members/{id}": {
       "patch": {
         "operationId": "updateTeamMember",
         "summary": "Update a team member role.",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "role"
+              ]
+            }
           }
         ],
         "requestBody": {
@@ -381,6 +543,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       },
@@ -395,11 +567,21 @@
         "responses": {
           "204": {
             "description": "Team member removed"
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/invites": {
+    "/v1/invites": {
       "get": {
         "operationId": "listInvites",
         "summary": "List organization invites.",
@@ -409,15 +591,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Invite"
+                  "type": "object",
+                  "required": [
+                    "invites",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "invites": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Invite"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createInvite",
@@ -442,11 +654,21 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/invites/{id}": {
+    "/v1/invites/{id}": {
       "delete": {
         "operationId": "cancelInvite",
         "summary": "Cancel an organization invite.",
@@ -458,11 +680,21 @@
         "responses": {
           "204": {
             "description": "Invite cancelled"
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/projects": {
+    "/v1/projects": {
       "get": {
         "operationId": "listProjects",
         "summary": "List projects for the active organization.",
@@ -472,15 +704,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Project"
+                  "type": "object",
+                  "required": [
+                    "projects",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "projects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Project"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createProject",
@@ -505,11 +767,21 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/environments": {
+    "/v1/environments": {
       "get": {
         "operationId": "listEnvironments",
         "summary": "List environments for the active project.",
@@ -519,15 +791,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Environment"
+                  "type": "object",
+                  "required": [
+                    "environments",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "environments": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Environment"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createEnvironment",
@@ -552,11 +854,21 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api-keys": {
+    "/v1/api-keys": {
       "get": {
         "operationId": "listApiKeys",
         "summary": "List scoped API keys for the active workspace. Plaintext key material is never returned.",
@@ -566,18 +878,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApiKey"
+                  "type": "object",
+                  "required": [
+                    "apiKeys",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "apiKeys": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ApiKey"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "createApiKey",
@@ -604,12 +943,19 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api-keys/{id}": {
+    "/v1/api-keys/{id}": {
       "delete": {
         "operationId": "revokeApiKey",
         "summary": "Revoke a scoped API key. Revoking an unknown key id is a no-op.",
@@ -621,11 +967,21 @@
         "responses": {
           "204": {
             "description": "API key revoked or already absent"
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api-keys/{id}/rotate": {
+    "/v1/api-keys/{id}/rotate": {
       "post": {
         "operationId": "rotateApiKey",
         "summary": "Rotate a scoped API key. New plaintext key material is returned once.",
@@ -646,12 +1002,19 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/provider-connections": {
+    "/v1/provider-connections": {
       "get": {
         "operationId": "providerConnections.list",
         "summary": "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
@@ -661,21 +1024,55 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProviderConnection"
+                  "type": "object",
+                  "required": [
+                    "providerConnections",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "providerConnections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProviderConnection"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       },
       "post": {
         "operationId": "providerConnections.create",
@@ -702,14 +1099,21 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "409": {
             "description": "A connection already uses the requested name in this workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -717,7 +1121,7 @@
         }
       }
     },
-    "/provider-connections/{id}": {
+    "/v1/provider-connections/{id}": {
       "delete": {
         "operationId": "providerConnections.revoke",
         "summary": "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
@@ -729,11 +1133,21 @@
         "responses": {
           "204": {
             "description": "Provider connection revoked or already absent"
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/provider-connections/{id}:rotate": {
+    "/v1/provider-connections/{id}:rotate": {
       "post": {
         "operationId": "providerConnections.rotate",
         "summary": "Replace a connection secret reference and increment its revision without exposing the reference.",
@@ -764,12 +1178,19 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/provider-connections/{id}:resolve": {
+    "/v1/provider-connections/{id}:resolve": {
       "post": {
         "operationId": "providerConnections.resolve",
         "summary": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
@@ -800,20 +1221,41 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "410": {
             "description": "Provider connection is revoked",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -821,7 +1263,7 @@
         }
       }
     },
-    "/audit-log": {
+    "/v1/audit-log": {
       "get": {
         "operationId": "listAuditLog",
         "summary": "List recent scoped account and security activity for the active user and organization.",
@@ -831,21 +1273,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AuditEvent"
+                  "type": "object",
+                  "required": [
+                    "auditEvents",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "auditEvents": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuditEvent"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/connectors": {
+    "/v1/connectors": {
       "get": {
         "operationId": "listConnectors",
         "summary": "List supported hosted connectors and their setup metadata.",
@@ -855,18 +1324,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Connector"
+                  "type": "object",
+                  "required": [
+                    "connectors",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "connectors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Connector"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/connectors/{id}/status": {
+    "/v1/connectors/{id}/status": {
       "get": {
         "operationId": "getConnectorStatus",
         "summary": "Return connection status for one connector.",
@@ -885,11 +1384,21 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/products": {
+    "/v1/products": {
       "get": {
         "operationId": "listProducts",
         "summary": "List registered Tempera products and their setup metadata.",
@@ -899,18 +1408,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
+                  "type": "object",
+                  "required": [
+                    "products",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/products/{id}/status": {
+    "/v1/products/{id}/status": {
       "get": {
         "operationId": "getProductStatus",
         "summary": "Return entitlement and first-mile setup status for one product.",
@@ -929,11 +1468,21 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/billing/status": {
+    "/v1/billing/status": {
       "get": {
         "operationId": "getBillingStatus",
         "summary": "Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users.",
@@ -949,12 +1498,19 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/billing/checkout": {
+    "/v1/billing/checkout": {
       "get": {
         "operationId": "createBillingCheckout",
         "summary": "Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL.",
@@ -986,7 +1542,7 @@
           {
             "name": "plan",
             "in": "query",
-            "description": "Billing plan identifier. plan_id is also accepted by the server and SDK.",
+            "description": "Billing plan identifier.",
             "schema": {
               "type": "string",
               "enum": [
@@ -999,7 +1555,7 @@
             }
           },
           {
-            "name": "plan_id",
+            "name": "planId",
             "in": "query",
             "description": "Billing plan identifier alias used by SDK clients.",
             "schema": {
@@ -1009,6 +1565,18 @@
                 "platform",
                 "business",
                 "enterprise"
+              ]
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "description": "Billing interval for the selected plan.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "monthly",
+                "annual"
               ]
             }
           },
@@ -1061,21 +1629,35 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "501": {
-            "$ref": "#/components/responses/NotConfigured"
+            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/billing/portal": {
+    "/v1/billing/portal": {
       "get": {
         "operationId": "createBillingPortal",
         "summary": "Create a customer billing portal handoff URL.",
@@ -1091,12 +1673,19 @@
             }
           },
           "501": {
-            "$ref": "#/components/responses/NotConfigured"
+            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/billing/credits": {
+    "/v1/billing/credits": {
       "get": {
         "operationId": "getBillingCredits",
         "summary": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
@@ -1112,7 +1701,14 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
@@ -1166,7 +1762,7 @@
         }
       }
     },
-    "/model-catalog": {
+    "/v1/model-catalog": {
       "get": {
         "operationId": "getModelCatalog",
         "summary": "List the entitled Tempera Code model catalog. Requires model:read.",
@@ -1186,18 +1782,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/usage/events": {
+    "/v1/usage/events": {
       "post": {
         "operationId": "recordUsageEvent",
         "summary": "Report a billable usage event and receive the current entitlement decision.",
@@ -1227,7 +1830,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1237,7 +1840,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1245,7 +1848,7 @@
         }
       }
     },
-    "/usage/reservations": {
+    "/v1/usage/reservations": {
       "post": {
         "operationId": "usageReservations.create",
         "summary": "Atomically reserve the maximum model cost before starting a provider request.",
@@ -1275,20 +1878,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "409": {
             "description": "Idempotency key was already used for different admission parameters",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1296,13 +1906,13 @@
         }
       }
     },
-    "/usage/reservations/{reservation_id}:commit": {
+    "/v1/usage/reservations/{reservationId}:commit": {
       "post": {
         "operationId": "usageReservations.commit",
         "summary": "Commit exact provider usage against an admitted reservation and release unused capacity.",
         "parameters": [
           {
-            "name": "reservation_id",
+            "name": "reservationId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1332,14 +1942,21 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "409": {
             "description": "Reservation state or exact usage conflicts with a prior commit or release",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1347,13 +1964,13 @@
         }
       }
     },
-    "/usage/reservations/{reservation_id}:release": {
+    "/v1/usage/reservations/{reservationId}:release": {
       "post": {
         "operationId": "usageReservations.release",
         "summary": "Release unused capacity after provider failure or cancellation.",
         "parameters": [
           {
-            "name": "reservation_id",
+            "name": "reservationId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1383,14 +2000,21 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "409": {
             "description": "Committed reservation cannot be released",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1398,23 +2022,27 @@
         }
       }
     },
-    "/usage/reservations/{reservation_id}:reconcile": {
+    "/v1/usage/reservations/{reservationId}:reconcile": {
       "post": {
         "operationId": "usageReservations.reconcile",
         "summary": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
         "parameters": [
           {
-            "name": "reservation_id",
+            "name": "reservationId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UsageReservationReconcileRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UsageReservationReconcileRequest"
+              }
             }
           }
         },
@@ -1423,23 +2051,36 @@
             "description": "Reservation marked reconciliation-pending idempotently",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UsageReservationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/UsageReservationResponse"
+                }
               }
             }
           },
-          "403": { "$ref": "#/components/responses/MissingScope" },
+          "403": {
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
           "409": {
             "description": "Reservation state, config identity, or prior reconciliation evidence conflicts",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
               }
             }
           }
         }
       }
     },
-    "/oauth/grants": {
+    "/v1/oauth/grants": {
       "get": {
         "operationId": "listOAuthGrants",
         "summary": "List connected OAuth app grants for the active workspace.",
@@ -1449,21 +2090,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OAuthGrant"
+                  "type": "object",
+                  "required": [
+                    "grants",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "grants": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/OAuthGrant"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/oauth/grants/{id}": {
+    "/v1/oauth/grants/{id}": {
       "delete": {
         "operationId": "revokeOAuthGrant",
         "summary": "Revoke an OAuth app grant and its refresh tokens.",
@@ -1477,7 +2145,14 @@
             "description": "OAuth grant revoked"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
@@ -1648,7 +2323,7 @@
         }
       }
     },
-    "/oauth/introspect": {
+    "/v1/oauth/introspect": {
       "post": {
         "operationId": "introspectOAuthToken",
         "summary": "Validate a central access token or hosted API key for resource servers.",
@@ -1864,7 +2539,7 @@
         }
       }
     },
-    "/admin/operations/provenance": {
+    "/v1/admin/operations/provenance": {
       "get": {
         "operationId": "adminOperationalProvenance",
         "summary": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
@@ -1876,30 +2551,62 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["source_commit", "machine_id", "image_ref_sha256"],
+                  "required": [
+                    "sourceCommit",
+                    "machineId",
+                    "imageRefSha256"
+                  ],
                   "properties": {
-                    "source_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
-                    "machine_id": { "type": "string" },
-                    "image_ref_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                    "sourceCommit": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{40}$"
+                    },
+                    "machineId": {
+                      "type": "string"
+                    },
+                    "imageRefSha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthenticated" },
-          "403": { "$ref": "#/components/responses/MissingScope" },
+          "401": {
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
           "503": {
             "description": "Serving runtime provenance is incomplete",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
               }
             }
           }
         }
       }
     },
-    "/admin/step-up": {
+    "/v1/admin/step-up": {
       "post": {
         "operationId": "adminStepUp",
         "summary": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
@@ -1925,15 +2632,29 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/admin/billing/credits/adjust": {
+    "/v1/admin/billing/credits/adjust": {
       "post": {
         "operationId": "adminAdjustCredits",
         "summary": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
@@ -1963,20 +2684,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
             "description": "Platform staff or a fresh step-up is required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1986,7 +2714,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -1994,7 +2722,7 @@
         }
       }
     },
-    "/admin/billing/orgs": {
+    "/v1/admin/billing/orgs": {
       "get": {
         "operationId": "adminBillingOrgs",
         "summary": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
@@ -2010,10 +2738,24 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "description": "User is not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           },
           "403": {
-            "$ref": "#/components/responses/MissingScope"
+            "description": "Token or API key is missing a required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
@@ -2189,7 +2931,7 @@
         }
       }
     },
-    "/github/setup-sessions": {
+    "/v1/github/setup-sessions": {
       "post": {
         "operationId": "githubSetupSessions.create",
         "summary": "Create a one-time CSRF-bound GitHub App installation session.",
@@ -2215,7 +2957,14 @@
             }
           },
           "501": {
-            "$ref": "#/components/responses/NotConfigured"
+            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
@@ -2247,7 +2996,7 @@
         }
       }
     },
-    "/github/installations": {
+    "/v1/github/installations": {
       "get": {
         "operationId": "githubInstallations.list",
         "summary": "List active GitHub App installations for the organization.",
@@ -2257,18 +3006,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GithubInstallation"
+                  "type": "object",
+                  "required": [
+                    "installations",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "installations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GithubInstallation"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
       }
     },
-    "/github/installations/{installation_id}": {
+    "/v1/github/installations/{installationId}": {
       "delete": {
         "operationId": "githubInstallations.disconnect",
         "summary": "Disconnect a GitHub App installation from the workspace.",
@@ -2287,17 +3066,33 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/github/installations/{installation_id}/repositories": {
+    "/v1/github/installations/{installationId}/repositories": {
       "get": {
         "operationId": "githubInstallationRepositories.list",
         "summary": "List repository metadata received for a GitHub installation.",
         "parameters": [
           {
             "$ref": "#/components/parameters/InstallationId"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -2306,7 +3101,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GithubRepositoriesResponse"
+                  "type": "object",
+                  "required": [
+                    "repositories",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "repositories": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GithubRepository"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
                 }
               }
             }
@@ -2314,7 +3134,7 @@
         }
       }
     },
-    "/github/installations/{installation_id}/repositories/{repository_id}:snapshot": {
+    "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot": {
       "post": {
         "operationId": "githubRepositorySnapshots.capture",
         "summary": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.",
@@ -2348,7 +3168,14 @@
             }
           },
           "501": {
-            "$ref": "#/components/responses/NotConfigured"
+            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
           }
         }
       }
@@ -2405,7 +3232,7 @@
         }
       },
       "InstallationId": {
-        "name": "installation_id",
+        "name": "installationId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2414,7 +3241,7 @@
         }
       },
       "RepositoryId": {
-        "name": "repository_id",
+        "name": "repositoryId",
         "in": "path",
         "required": true,
         "schema": {
@@ -2429,6 +3256,26 @@
         "schema": {
           "type": "string",
           "minLength": 1
+        }
+      },
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 4096
         }
       }
     },
@@ -2500,9 +3347,9 @@
         "required": [
           "sub",
           "email",
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "roles"
         ],
         "properties": {
@@ -2513,13 +3360,13 @@
             "type": "string",
             "format": "email"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "roles": {
@@ -2533,11 +3380,11 @@
       "Organization": {
         "type": "object",
         "required": [
-          "org_id",
+          "orgId",
           "name"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "name": {
@@ -2548,15 +3395,15 @@
       "Project": {
         "type": "object",
         "required": [
-          "org_id",
-          "project_id",
+          "orgId",
+          "projectId",
           "name"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
           "name": {
@@ -2567,15 +3414,15 @@
       "Environment": {
         "type": "object",
         "required": [
-          "project_id",
-          "environment_id",
+          "projectId",
+          "environmentId",
           "name"
         ],
         "properties": {
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "name": {
@@ -2585,17 +3432,68 @@
       },
       "Scope": {
         "type": "string",
-        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
+        "enum": [
+          "mcp:invoke",
+          "memory:read",
+          "memory:write",
+          "memory:manage",
+          "trace:read",
+          "trace:write",
+          "dataset:read",
+          "dataset:write",
+          "eval:run",
+          "training:publish",
+          "review:gold:manage",
+          "review:resolve",
+          "workflow:read",
+          "workflow:write",
+          "workflow:run",
+          "model:read",
+          "model:invoke",
+          "usage:reserve",
+          "pii:unmask",
+          "admin"
+        ]
       },
       "ApiKeyScope": {
         "type": "string",
         "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, and training:publish are intentionally excluded.",
-        "enum": ["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "workflow:read", "workflow:write", "workflow:run", "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin"]
+        "enum": [
+          "mcp:invoke",
+          "memory:read",
+          "memory:write",
+          "memory:manage",
+          "trace:read",
+          "trace:write",
+          "dataset:read",
+          "dataset:write",
+          "eval:run",
+          "workflow:read",
+          "workflow:write",
+          "workflow:run",
+          "model:read",
+          "model:invoke",
+          "usage:reserve",
+          "pii:unmask",
+          "admin"
+        ]
       },
       "ResourceAudience": {
         "type": "string",
         "description": "Registered Tempera resource audience.",
-        "enum": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]
+        "enum": [
+          "palette",
+          "tempo",
+          "cradle",
+          "remi",
+          "human-data",
+          "data-engine",
+          "tempera-mcp",
+          "tempera-code",
+          "tempera-llm",
+          "tempera-workflows",
+          "tempera-gym"
+        ]
       },
       "TokenClaims": {
         "type": "object",
@@ -2701,7 +3599,7 @@
             "type": "string",
             "minLength": 1
           },
-          "invite_token": {
+          "inviteToken": {
             "type": "string",
             "minLength": 1,
             "description": "One-time invite token from an invite accept link. Joins the inviting organization on login or signup."
@@ -2711,18 +3609,18 @@
       "WorkspaceSelectionRequest": {
         "type": "object",
         "required": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           }
         }
@@ -2730,71 +3628,71 @@
       "AccountSession": {
         "type": "object",
         "required": [
-          "session_id",
-          "org_id",
-          "project_id",
-          "environment_id",
-          "organization_name",
-          "project_name",
-          "environment_name",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "revoked_at"
+          "sessionId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "organizationName",
+          "projectName",
+          "environmentName",
+          "createdAt",
+          "updatedAt",
+          "expiresAt",
+          "revokedAt"
         ],
         "properties": {
-          "session_id": {
+          "sessionId": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "project_id": {
+          "projectId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "environment_id": {
+          "environmentId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "organization_name": {
+          "organizationName": {
             "type": [
               "string",
               "null"
             ]
           },
-          "project_name": {
+          "projectName": {
             "type": [
               "string",
               "null"
             ]
           },
-          "environment_name": {
+          "environmentName": {
             "type": [
               "string",
               "null"
             ]
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": "string",
             "format": "date-time"
           },
-          "revoked_at": {
+          "revokedAt": {
             "type": [
               "string",
               "null"
@@ -2818,21 +3716,21 @@
       "TeamMember": {
         "type": "object",
         "required": [
-          "member_id",
-          "org_id",
+          "memberId",
+          "orgId",
           "email",
           "role",
           "status",
-          "joined_at"
+          "joinedAt"
         ],
         "properties": {
-          "member_id": {
+          "memberId": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "user_id": {
+          "userId": {
             "type": [
               "string",
               "null"
@@ -2851,11 +3749,11 @@
               "active"
             ]
           },
-          "joined_at": {
+          "joinedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -2891,20 +3789,20 @@
       "Invite": {
         "type": "object",
         "required": [
-          "invite_id",
-          "org_id",
+          "inviteId",
+          "orgId",
           "email",
           "role",
           "status",
-          "invited_by",
-          "created_at",
-          "expires_at"
+          "invitedBy",
+          "createdAt",
+          "expiresAt"
         ],
         "properties": {
-          "invite_id": {
+          "inviteId": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "email": {
@@ -2923,35 +3821,35 @@
               "expired"
             ]
           },
-          "invited_by": {
+          "invitedBy": {
             "type": "string"
           },
-          "accepted_by": {
+          "acceptedBy": {
             "type": [
               "string",
               "null"
             ]
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": "string",
             "format": "date-time"
           },
-          "accepted_at": {
+          "acceptedAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "cancelled_at": {
+          "cancelledAt": {
             "type": "string",
             "format": "date-time"
           },
-          "accept_url": {
+          "acceptUrl": {
             "type": "string",
             "format": "uri",
             "description": "Invite acceptance link containing the one-time invite token. Only returned when the invite is created."
@@ -2961,11 +3859,11 @@
       "CreateProjectRequest": {
         "type": "object",
         "required": [
-          "org_id",
+          "orgId",
           "name"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "name": {
@@ -2977,11 +3875,11 @@
       "CreateEnvironmentRequest": {
         "type": "object",
         "required": [
-          "project_id",
+          "projectId",
           "name"
         ],
         "properties": {
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
           "name": {
@@ -2993,19 +3891,19 @@
       "CreateApiKeyRequest": {
         "type": "object",
         "required": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "scopes"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "name": {
@@ -3024,7 +3922,7 @@
             "description": "Resource audience the key is minted for. Defaults to palette.",
             "default": "palette"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": "string",
             "format": "date-time",
             "description": "Optional future expiration time."
@@ -3034,36 +3932,36 @@
       "ApiKey": {
         "type": "object",
         "required": [
-          "api_key_id",
-          "org_id",
-          "project_id",
-          "environment_id",
+          "apiKeyId",
+          "orgId",
+          "projectId",
+          "environmentId",
           "scopes",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "api_key_id": {
+          "apiKeyId": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "name": {
             "type": "string"
           },
-          "key_prefix": {
+          "keyPrefix": {
             "type": "string"
           },
           "audience": {
             "$ref": "#/components/schemas/ResourceAudience"
           },
-          "created_by_user_id": {
+          "createdByUserId": {
             "type": "string"
           },
           "scopes": {
@@ -3072,22 +3970,22 @@
               "$ref": "#/components/schemas/ApiKeyScope"
             }
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "rotated_at": {
+          "rotatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "revoked_at": {
+          "revokedAt": {
             "type": [
               "string",
               "null"
@@ -3099,40 +3997,40 @@
       "CreatedApiKey": {
         "type": "object",
         "required": [
-          "api_key_id",
+          "apiKeyId",
           "secret",
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "scopes",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "api_key_id": {
+          "apiKeyId": {
             "type": "string"
           },
           "secret": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "name": {
             "type": "string"
           },
-          "key_prefix": {
+          "keyPrefix": {
             "type": "string"
           },
           "audience": {
             "$ref": "#/components/schemas/ResourceAudience"
           },
-          "created_by_user_id": {
+          "createdByUserId": {
             "type": "string"
           },
           "scopes": {
@@ -3141,22 +4039,22 @@
               "$ref": "#/components/schemas/ApiKeyScope"
             }
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "rotated_at": {
+          "rotatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "revoked_at": {
+          "revokedAt": {
             "type": [
               "string",
               "null"
@@ -3167,11 +4065,24 @@
       },
       "ProviderConnectionProvider": {
         "type": "string",
-        "enum": ["openai", "anthropic", "nvidia", "glm", "kimi", "codex"]
+        "enum": [
+          "openai",
+          "anthropic",
+          "nvidia",
+          "glm",
+          "kimi",
+          "codex"
+        ]
       },
       "ProviderConnectionSecretBackend": {
         "type": "string",
-        "enum": ["env", "vault", "aws-secretsmanager", "gcp-secretmanager", "azure-keyvault"]
+        "enum": [
+          "env",
+          "vault",
+          "aws-secretsmanager",
+          "gcp-secretmanager",
+          "azure-keyvault"
+        ]
       },
       "ProviderConnectionSecretRef": {
         "type": "string",
@@ -3193,35 +4104,75 @@
       "CreateProviderConnectionRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["org_id", "project_id", "environment_id", "provider", "name", "secret_ref"],
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "secretRef"
+        ],
         "properties": {
-          "org_id": { "type": "string" },
-          "project_id": { "type": "string" },
-          "environment_id": { "type": "string" },
-          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
-          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
-          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
-          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" }
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderConnectionProvider"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          }
         }
       },
       "RotateProviderConnectionRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["secret_ref"],
+        "required": [
+          "secretRef"
+        ],
         "properties": {
-          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
-          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" }
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          }
         }
       },
       "ResolveProviderConnectionRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["org_id", "project_id", "environment_id", "usage_delegation"],
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "usageDelegation"
+        ],
         "properties": {
-          "org_id": { "type": "string" },
-          "project_id": { "type": "string" },
-          "environment_id": { "type": "string" },
-          "usage_delegation": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "usageDelegation": {
             "type": "string",
             "minLength": 1,
             "maxLength": 8192,
@@ -3233,45 +4184,129 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "connection_id", "org_id", "project_id", "environment_id", "provider", "name",
-          "secret_backend", "secret_configured", "allowed_models", "revision", "state",
-          "created_at", "updated_at", "last_resolved_at", "revoked_at"
+          "connectionId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "secretBackend",
+          "secretConfigured",
+          "allowedModels",
+          "revision",
+          "state",
+          "createdAt",
+          "updatedAt",
+          "lastResolvedAt",
+          "revokedAt"
         ],
         "properties": {
-          "connection_id": { "type": "string" },
-          "org_id": { "type": "string" },
-          "project_id": { "type": "string" },
-          "environment_id": { "type": "string" },
-          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
-          "name": { "type": "string" },
-          "secret_backend": { "$ref": "#/components/schemas/ProviderConnectionSecretBackend" },
-          "secret_configured": { "type": "boolean", "const": true },
-          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" },
-          "revision": { "type": "integer", "minimum": 1 },
-          "state": { "type": "string", "enum": ["active", "revoked"] },
-          "created_at": { "type": "string", "format": "date-time" },
-          "updated_at": { "type": "string", "format": "date-time" },
-          "last_resolved_at": { "type": ["string", "null"], "format": "date-time" },
-          "revoked_at": { "type": ["string", "null"], "format": "date-time" }
+          "connectionId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderConnectionProvider"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secretBackend": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
+          },
+          "secretConfigured": {
+            "type": "boolean",
+            "const": true
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastResolvedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
         }
       },
       "ResolvedProviderConnection": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "connection_id", "org_id", "project_id", "environment_id", "provider",
-          "secret_ref", "secret_backend", "allowed_models", "revision"
+          "connectionId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "secretRef",
+          "secretBackend",
+          "allowedModels",
+          "revision"
         ],
         "properties": {
-          "connection_id": { "type": "string" },
-          "org_id": { "type": "string" },
-          "project_id": { "type": "string" },
-          "environment_id": { "type": "string" },
-          "provider": { "$ref": "#/components/schemas/ProviderConnectionProvider" },
-          "secret_ref": { "$ref": "#/components/schemas/ProviderConnectionSecretRef" },
-          "secret_backend": { "$ref": "#/components/schemas/ProviderConnectionSecretBackend" },
-          "allowed_models": { "$ref": "#/components/schemas/ProviderConnectionAllowedModels" },
-          "revision": { "type": "integer", "minimum": 1 }
+          "connectionId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderConnectionProvider"
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          },
+          "secretBackend": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
         }
       },
       "AuditEvent": {
@@ -3314,7 +4349,7 @@
           "id",
           "name",
           "kind",
-          "default_scopes"
+          "defaultScopes"
         ],
         "properties": {
           "id": {
@@ -3334,7 +4369,7 @@
               "api"
             ]
           },
-          "default_scopes": {
+          "defaultScopes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Scope"
@@ -3362,7 +4397,7 @@
               "misconfigured"
             ]
           },
-          "missing_scopes": {
+          "missingScopes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Scope"
@@ -3376,8 +4411,8 @@
           "id",
           "name",
           "kind",
-          "default_scopes",
-          "setup_path"
+          "defaultScopes",
+          "setupPath"
         ],
         "properties": {
           "id": {
@@ -3401,13 +4436,13 @@
               "agent_orchestration"
             ]
           },
-          "default_scopes": {
+          "defaultScopes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Scope"
             }
           },
-          "setup_path": {
+          "setupPath": {
             "type": "string"
           }
         }
@@ -3453,22 +4488,22 @@
           "signals": {
             "type": "object",
             "required": [
-              "first_trace_received",
-              "first_eval_run",
-              "first_browser_session",
-              "first_model_request"
+              "firstTraceReceived",
+              "firstEvalRun",
+              "firstBrowserSession",
+              "firstModelRequest"
             ],
             "properties": {
-              "first_trace_received": {
+              "firstTraceReceived": {
                 "type": "boolean"
               },
-              "first_eval_run": {
+              "firstEvalRun": {
                 "type": "boolean"
               },
-              "first_browser_session": {
+              "firstBrowserSession": {
                 "type": "boolean"
               },
-              "first_model_request": {
+              "firstModelRequest": {
                 "type": "boolean"
               }
             }
@@ -3487,7 +4522,7 @@
         "required": [
           "interval",
           "currency",
-          "unit_amount"
+          "unitAmount"
         ],
         "properties": {
           "interval": {
@@ -3502,7 +4537,7 @@
           "currency": {
             "type": "string"
           },
-          "unit_amount": {
+          "unitAmount": {
             "type": [
               "integer",
               "null"
@@ -3514,15 +4549,15 @@
       "BillingPlan": {
         "type": "object",
         "required": [
-          "plan_id",
+          "planId",
           "name",
           "description",
           "prices",
-          "included_usage",
+          "includedUsage",
           "entitlements"
         ],
         "properties": {
-          "plan_id": {
+          "planId": {
             "type": "string",
             "enum": [
               "starter_trial",
@@ -3543,7 +4578,7 @@
               "$ref": "#/components/schemas/BillingPlanPrice"
             }
           },
-          "included_usage": {
+          "includedUsage": {
             "type": "object",
             "additionalProperties": {
               "type": [
@@ -3564,11 +4599,11 @@
         "required": [
           "rail",
           "provider",
-          "display_name",
+          "displayName",
           "methods",
           "currencies",
-          "supports_checkout",
-          "supports_portal",
+          "supportsCheckout",
+          "supportsPortal",
           "status"
         ],
         "properties": {
@@ -3588,7 +4623,7 @@
               "blockchain_settlement"
             ]
           },
-          "display_name": {
+          "displayName": {
             "type": "string"
           },
           "methods": {
@@ -3615,10 +4650,10 @@
               ]
             }
           },
-          "supports_checkout": {
+          "supportsCheckout": {
             "type": "boolean"
           },
-          "supports_portal": {
+          "supportsPortal": {
             "type": "boolean"
           },
           "status": {
@@ -3634,7 +4669,7 @@
         "type": "object",
         "required": [
           "plans",
-          "payment_rails"
+          "paymentRails"
         ],
         "properties": {
           "plans": {
@@ -3643,7 +4678,7 @@
               "$ref": "#/components/schemas/BillingPlan"
             }
           },
-          "payment_rails": {
+          "paymentRails": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BillingPaymentRail"
@@ -3654,7 +4689,7 @@
       "BillingStatus": {
         "type": "object",
         "required": [
-          "org_id",
+          "orgId",
           "customer",
           "plan",
           "subscription",
@@ -3664,7 +4699,7 @@
           "pricing"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "customer": {
@@ -3673,10 +4708,10 @@
               "null"
             ],
             "properties": {
-              "stripe_customer_id": {
+              "stripeCustomerId": {
                 "type": "string"
               },
-              "created_at": {
+              "createdAt": {
                 "type": "string",
                 "format": "date-time"
               }
@@ -3685,13 +4720,13 @@
           "plan": {
             "type": "object",
             "required": [
-              "plan_id",
+              "planId",
               "name",
               "status",
-              "billing_interval"
+              "billingInterval"
             ],
             "properties": {
-              "plan_id": {
+              "planId": {
                 "type": "string"
               },
               "name": {
@@ -3708,14 +4743,14 @@
                   "incomplete"
                 ]
               },
-              "billing_interval": {
+              "billingInterval": {
                 "type": "string",
                 "enum": [
                   "monthly",
                   "annual"
                 ]
               },
-              "trial_ends_at": {
+              "trialEndsAt": {
                 "type": "string",
                 "format": "date-time"
               }
@@ -3725,20 +4760,20 @@
             "type": "object",
             "required": [
               "status",
-              "stripe_subscription_id",
-              "current_period_end"
+              "stripeSubscriptionId",
+              "currentPeriodEnd"
             ],
             "properties": {
               "status": {
                 "type": "string"
               },
-              "stripe_subscription_id": {
+              "stripeSubscriptionId": {
                 "type": [
                   "string",
                   "null"
                 ]
               },
-              "current_period_end": {
+              "currentPeriodEnd": {
                 "type": "string",
                 "format": "date-time"
               }
@@ -3753,7 +4788,7 @@
                 "label",
                 "used",
                 "limit",
-                "reset_at"
+                "resetAt"
               ],
               "properties": {
                 "metric": {
@@ -3773,11 +4808,11 @@
                   ],
                   "minimum": 0
                 },
-                "reset_at": {
+                "resetAt": {
                   "type": "string",
                   "format": "date-time"
                 },
-                "last_reported_at": {
+                "lastReportedAt": {
                   "type": "string",
                   "format": "date-time"
                 }
@@ -3789,11 +4824,11 @@
             "required": [
               "status",
               "mcp",
-              "tempo_browser",
+              "tempoBrowser",
               "evals",
-              "model_gateway",
-              "api_keys",
-              "pii_unmask",
+              "modelGateway",
+              "apiKeys",
+              "piiUnmask",
               "seats"
             ],
             "properties": {
@@ -3807,19 +4842,19 @@
               "mcp": {
                 "type": "boolean"
               },
-              "tempo_browser": {
+              "tempoBrowser": {
                 "type": "boolean"
               },
               "evals": {
                 "type": "boolean"
               },
-              "model_gateway": {
+              "modelGateway": {
                 "type": "boolean"
               },
-              "api_keys": {
+              "apiKeys": {
                 "type": "boolean"
               },
-              "pii_unmask": {
+              "piiUnmask": {
                 "type": "boolean"
               },
               "seats": {
@@ -3836,34 +4871,34 @@
             "items": {
               "type": "object",
               "required": [
-                "invoice_id",
+                "invoiceId",
                 "status",
-                "amount_due",
+                "amountDue",
                 "currency",
-                "hosted_invoice_url",
-                "created_at"
+                "hostedInvoiceUrl",
+                "createdAt"
               ],
               "properties": {
-                "invoice_id": {
+                "invoiceId": {
                   "type": "string"
                 },
                 "status": {
                   "type": "string"
                 },
-                "amount_due": {
+                "amountDue": {
                   "type": "integer"
                 },
                 "currency": {
                   "type": "string"
                 },
-                "hosted_invoice_url": {
+                "hostedInvoiceUrl": {
                   "type": [
                     "string",
                     "null"
                   ],
                   "format": "uri"
                 },
-                "created_at": {
+                "createdAt": {
                   "type": "string",
                   "format": "date-time"
                 }
@@ -3879,21 +4914,21 @@
         "type": "object",
         "required": [
           "id",
-          "display_name",
+          "displayName",
           "kind",
-          "routing_key",
+          "routingKey",
           "status",
           "roles",
           "capabilities",
-          "reasoning_efforts",
-          "input_modalities",
-          "output_modalities"
+          "reasoningEfforts",
+          "inputModalities",
+          "outputModalities"
         ],
         "properties": {
           "id": {
             "type": "string"
           },
-          "display_name": {
+          "displayName": {
             "type": "string"
           },
           "kind": {
@@ -3906,15 +4941,15 @@
           "provider": {
             "type": "string"
           },
-          "upstream_model": {
+          "upstreamModel": {
             "type": "string",
             "description": "Concrete provider model id. Present only for concrete catalog entries."
           },
-          "target_model": {
+          "targetModel": {
             "type": "string",
             "description": "Concrete model id resolved by an alias."
           },
-          "routing_key": {
+          "routingKey": {
             "type": "string",
             "description": "Opaque gateway routing key; it is not an upstream credential."
           },
@@ -3939,25 +4974,25 @@
               "type": "string"
             }
           },
-          "reasoning_efforts": {
+          "reasoningEfforts": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "input_modalities": {
+          "inputModalities": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "output_modalities": {
+          "outputModalities": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "context_window": {
+          "contextWindow": {
             "type": "integer",
             "minimum": 1
           }
@@ -3990,18 +5025,18 @@
       "WorkspaceBinding": {
         "type": "object",
         "required": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           }
         }
@@ -4009,13 +5044,13 @@
       "ModelCost": {
         "type": "object",
         "required": [
-          "provider_cost_micros",
+          "providerCostMicros",
           "byok",
           "provider",
           "model"
         ],
         "properties": {
-          "provider_cost_micros": {
+          "providerCostMicros": {
             "type": "integer",
             "minimum": 0,
             "description": "Exact micro-USD charged by the provider for this request."
@@ -4033,15 +5068,15 @@
             "minLength": 1,
             "maxLength": 128
           },
-          "input_tokens": {
+          "inputTokens": {
             "type": "integer",
             "minimum": 0
           },
-          "output_tokens": {
+          "outputTokens": {
             "type": "integer",
             "minimum": 0
           },
-          "cache_read_tokens": {
+          "cacheReadTokens": {
             "type": "integer",
             "minimum": 0
           }
@@ -4051,37 +5086,66 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "subject_id",
-          "credential_type",
-          "credential_id",
-          "client_id",
+          "subjectId",
+          "credentialType",
+          "credentialId",
+          "clientId",
           "audience",
           "scopes",
-          "expires_at"
+          "expiresAt"
         ],
         "properties": {
-          "subject_id": { "type": "string", "minLength": 1, "maxLength": 128 },
-          "credential_type": {
+          "subjectId": {
             "type": "string",
-            "enum": ["access_token", "api_key", "static_token", "anonymous"]
+            "minLength": 1,
+            "maxLength": 128
           },
-          "credential_id": {
-            "type": ["string", "null"],
+          "credentialType": {
+            "type": "string",
+            "enum": [
+              "access_token",
+              "api_key",
+              "static_token",
+              "anonymous"
+            ]
+          },
+          "credentialId": {
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 1,
             "maxLength": 128,
             "description": "Introspected access-token jti or API-key id; null only for explicit static/anonymous development modes."
           },
-          "client_id": { "type": "string", "minLength": 1, "maxLength": 128 },
-          "audience": { "type": "string", "enum": ["tempera-llm", "tempera-code"] },
+          "clientId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "tempera-llm",
+              "tempera-code"
+            ]
+          },
           "scopes": {
             "type": "array",
             "minItems": 1,
             "maxItems": 32,
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
           },
-          "expires_at": {
-            "type": ["integer", "null"],
+          "expiresAt": {
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 1,
             "description": "Unix expiry checked by the gateway; required for access-token subjects."
           },
@@ -4102,19 +5166,19 @@
           {
             "type": "object",
             "required": [
-              "idempotency_key",
+              "idempotencyKey",
               "provider",
               "model",
-              "config_id",
+              "configId",
               "byok",
-              "maximum_provider_cost_micros"
+              "maximumProviderCostMicros"
             ],
             "properties": {
               "subject": {
                 "$ref": "#/components/schemas/UsageSubjectIdentity",
                 "description": "Signed original-caller identity. Omission records the authenticated reporting credential itself and cannot assert a different actor."
               },
-              "idempotency_key": {
+              "idempotencyKey": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 255
@@ -4129,7 +5193,7 @@
                 "minLength": 1,
                 "maxLength": 128
               },
-              "config_id": {
+              "configId": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128,
@@ -4138,12 +5202,12 @@
               "byok": {
                 "type": "boolean"
               },
-              "maximum_provider_cost_micros": {
+              "maximumProviderCostMicros": {
                 "type": "integer",
                 "minimum": 1,
                 "description": "Maximum provider cost calculated by tempera-llm for the admitted request."
               },
-              "ttl_seconds": {
+              "ttlSeconds": {
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 300,
@@ -4161,11 +5225,11 @@
           {
             "type": "object",
             "required": [
-              "config_id",
+              "configId",
               "cost"
             ],
             "properties": {
-              "config_id": {
+              "configId": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 128
@@ -4179,19 +5243,41 @@
       },
       "UsageReservationReconcileRequest": {
         "allOf": [
-          { "$ref": "#/components/schemas/WorkspaceBinding" },
+          {
+            "$ref": "#/components/schemas/WorkspaceBinding"
+          },
           {
             "type": "object",
-            "required": ["config_id", "reason", "observed_usage"],
+            "required": [
+              "configId",
+              "reason",
+              "observedUsage"
+            ],
             "properties": {
-              "config_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+              "configId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
               "reason": {
                 "type": "string",
-                "enum": ["execution_started", "missing_terminal_usage", "stream_interrupted", "settlement_pending", "settlement_unavailable"]
+                "enum": [
+                  "execution_started",
+                  "missing_terminal_usage",
+                  "stream_interrupted",
+                  "settlement_pending",
+                  "settlement_unavailable"
+                ]
               },
-              "trace_id": { "type": "string", "minLength": 1, "maxLength": 128 },
-              "observed_usage": { "$ref": "#/components/schemas/ObservedProviderUsage" },
-              "expected_cost": {
+              "traceId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "observedUsage": {
+                "$ref": "#/components/schemas/ObservedProviderUsage"
+              },
+              "expectedCost": {
                 "$ref": "#/components/schemas/ModelCost",
                 "description": "Required only for settlement_pending; binds the later commit to these exact counters and provider cost."
               }
@@ -4202,60 +5288,93 @@
       "ObservedProviderUsage": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["input_tokens", "output_tokens", "cache_read_tokens"],
+        "required": [
+          "inputTokens",
+          "outputTokens",
+          "cacheReadTokens"
+        ],
         "properties": {
-          "input_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
-          "output_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
-          "cache_read_tokens": { "type": "integer", "minimum": 0, "maximum": 4294967295 }
+          "inputTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "outputTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "cacheReadTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          }
         }
       },
       "UsageReconciliationEvidence": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["reason", "observed_usage", "trace_id"],
+        "required": [
+          "reason",
+          "observedUsage",
+          "traceId"
+        ],
         "properties": {
           "reason": {
             "type": "string",
-            "enum": ["execution_started", "missing_terminal_usage", "stream_interrupted", "settlement_pending", "settlement_unavailable", "budget_overshoot_insufficient_credits"]
+            "enum": [
+              "execution_started",
+              "missing_terminal_usage",
+              "stream_interrupted",
+              "settlement_pending",
+              "settlement_unavailable",
+              "budget_overshoot_insufficient_credits"
+            ]
           },
-          "observed_usage": { "$ref": "#/components/schemas/ObservedProviderUsage" },
-          "trace_id": { "type": "string" },
-          "expected_commit_digest": { "type": "string" }
+          "observedUsage": {
+            "$ref": "#/components/schemas/ObservedProviderUsage"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "expectedCommitDigest": {
+            "type": "string"
+          }
         }
       },
       "UsageReservationResponse": {
         "type": "object",
         "required": [
-          "reservation_id",
-          "org_id",
-          "project_id",
-          "environment_id",
+          "reservationId",
+          "orgId",
+          "projectId",
+          "environmentId",
           "subject",
           "provider",
           "model",
-          "config_id",
+          "configId",
           "byok",
-          "maximum_provider_cost_micros",
-          "maximum_billable_micros",
+          "maximumProviderCostMicros",
+          "maximumBillableMicros",
           "state",
-          "policy_version",
-          "created_at",
-          "expires_at",
+          "policyVersion",
+          "createdAt",
+          "expiresAt",
           "deduplicated",
-          "budget_overshot",
-          "reconciliation_required_at"
+          "budgetOvershot",
+          "reconciliationRequiredAt"
         ],
         "properties": {
-          "reservation_id": {
+          "reservationId": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "subject": {
@@ -4267,17 +5386,17 @@
           "model": {
             "type": "string"
           },
-          "config_id": {
+          "configId": {
             "type": "string"
           },
           "byok": {
             "type": "boolean"
           },
-          "maximum_provider_cost_micros": {
+          "maximumProviderCostMicros": {
             "type": "integer",
             "minimum": 0
           },
-          "maximum_billable_micros": {
+          "maximumBillableMicros": {
             "type": "integer",
             "minimum": 0
           },
@@ -4291,32 +5410,32 @@
               "expired"
             ]
           },
-          "policy_version": {
+          "policyVersion": {
             "type": "string"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": "string",
             "format": "date-time"
           },
-          "committed_at": {
+          "committedAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "released_at": {
+          "releasedAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "event_id": {
+          "eventId": {
             "type": [
               "string",
               "null"
@@ -4325,11 +5444,14 @@
           "deduplicated": {
             "type": "boolean"
           },
-          "budget_overshot": {
+          "budgetOvershot": {
             "type": "boolean"
           },
-          "reconciliation_required_at": {
-            "type": ["string", "null"],
+          "reconciliationRequiredAt": {
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "reconciliation": {
@@ -4346,19 +5468,19 @@
       "UsageEventRequest": {
         "type": "object",
         "required": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "metric"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "metric": {
@@ -4381,7 +5503,7 @@
             "minimum": 1,
             "default": 1
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": "string",
             "minLength": 1,
             "maxLength": 255,
@@ -4397,8 +5519,8 @@
         "type": "object",
         "required": [
           "accepted",
-          "event_id",
-          "idempotency_key",
+          "eventId",
+          "idempotencyKey",
           "deduplicated",
           "metric",
           "quantity",
@@ -4410,10 +5532,10 @@
             "type": "boolean",
             "const": true
           },
-          "event_id": {
+          "eventId": {
             "type": "string"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": [
               "string",
               "null"
@@ -4436,7 +5558,7 @@
               "label",
               "used",
               "limit",
-              "reset_at"
+              "resetAt"
             ],
             "properties": {
               "metric": {
@@ -4456,11 +5578,11 @@
                 ],
                 "minimum": 0
               },
-              "reset_at": {
+              "resetAt": {
                 "type": "string",
                 "format": "date-time"
               },
-              "last_reported_at": {
+              "lastReportedAt": {
                 "type": "string",
                 "format": "date-time"
               }
@@ -4471,11 +5593,11 @@
             "required": [
               "status",
               "mcp",
-              "tempo_browser",
+              "tempoBrowser",
               "evals",
-              "model_gateway",
-              "api_keys",
-              "pii_unmask",
+              "modelGateway",
+              "apiKeys",
+              "piiUnmask",
               "seats"
             ],
             "properties": {
@@ -4489,19 +5611,19 @@
               "mcp": {
                 "type": "boolean"
               },
-              "tempo_browser": {
+              "tempoBrowser": {
                 "type": "boolean"
               },
               "evals": {
                 "type": "boolean"
               },
-              "model_gateway": {
+              "modelGateway": {
                 "type": "boolean"
               },
-              "api_keys": {
+              "apiKeys": {
                 "type": "boolean"
               },
-              "pii_unmask": {
+              "piiUnmask": {
                 "type": "boolean"
               },
               "seats": {
@@ -4533,16 +5655,16 @@
       "Credit": {
         "type": "object",
         "required": [
-          "billable_micros",
-          "multiplier_millis",
+          "billableMicros",
+          "multiplierMillis",
           "byok"
         ],
         "properties": {
-          "billable_micros": {
+          "billableMicros": {
             "type": "integer",
             "description": "Credit micro-USD debited from the wallet for this event."
           },
-          "multiplier_millis": {
+          "multiplierMillis": {
             "type": "integer",
             "description": "Applied margin in milli-units (1200 metered, 200 BYOK surcharge)."
           },
@@ -4554,49 +5676,49 @@
       "CreditWallet": {
         "type": "object",
         "required": [
-          "plan_id",
-          "granted_micros",
-          "used_micros",
-          "balance_micros",
-          "overage_micros",
-          "overage_allowed"
+          "planId",
+          "grantedMicros",
+          "usedMicros",
+          "balanceMicros",
+          "overageMicros",
+          "overageAllowed"
         ],
         "properties": {
-          "plan_id": {
+          "planId": {
             "type": "string"
           },
-          "granted_micros": {
+          "grantedMicros": {
             "type": [
               "integer",
               "null"
             ],
             "description": "Credits granted this period; null for unlimited (enterprise)."
           },
-          "used_micros": {
+          "usedMicros": {
             "type": "integer"
           },
-          "balance_micros": {
+          "balanceMicros": {
             "type": [
               "integer",
               "null"
             ],
             "description": "Remaining credits; null for unlimited plans."
           },
-          "overage_micros": {
+          "overageMicros": {
             "type": "integer",
             "description": "Credits consumed past zero on overage-enabled plans, invoiced via Stripe."
           },
-          "overage_allowed": {
+          "overageAllowed": {
             "type": "boolean"
           },
-          "period_end": {
+          "periodEnd": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -4605,12 +5727,12 @@
       "CreditLedgerEntry": {
         "type": "object",
         "required": [
-          "entry_id",
+          "entryId",
           "kind",
-          "credit_micros"
+          "creditMicros"
         ],
         "properties": {
-          "entry_id": {
+          "entryId": {
             "type": "string"
           },
           "kind": {
@@ -4622,7 +5744,7 @@
               "adjustment"
             ]
           },
-          "credit_micros": {
+          "creditMicros": {
             "type": "integer",
             "description": "Signed: grants positive, debits negative."
           },
@@ -4632,13 +5754,13 @@
               "null"
             ]
           },
-          "provider_cost_micros": {
+          "providerCostMicros": {
             "type": [
               "integer",
               "null"
             ]
           },
-          "multiplier_millis": {
+          "multiplierMillis": {
             "type": [
               "integer",
               "null"
@@ -4650,7 +5772,7 @@
               "null"
             ]
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "type": [
               "string",
               "null"
@@ -4660,7 +5782,7 @@
             "type": "object",
             "additionalProperties": true
           },
-          "recorded_at": {
+          "recordedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -4669,11 +5791,11 @@
       "CreditBalance": {
         "type": "object",
         "required": [
-          "org_id",
+          "orgId",
           "wallet"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "wallet": {
@@ -4685,7 +5807,7 @@
               "$ref": "#/components/schemas/CreditLedgerEntry"
             }
           },
-          "multiplier_millis": {
+          "multiplierMillis": {
             "type": "integer",
             "description": "Staff-only. Present only for platform-staff callers."
           }
@@ -4716,7 +5838,7 @@
           "network": {
             "type": "string"
           },
-          "plan_id": {
+          "planId": {
             "type": "string",
             "enum": [
               "starter_trial",
@@ -5246,14 +6368,14 @@
       "AdminCreditAdjustRequest": {
         "type": "object",
         "required": [
-          "org_id",
-          "credit_micros"
+          "orgId",
+          "creditMicros"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "credit_micros": {
+          "creditMicros": {
             "type": "integer",
             "description": "Positive integer number of credit micros to grant."
           },
@@ -5273,13 +6395,13 @@
       "AdminCreditAdjustResponse": {
         "type": "object",
         "required": [
-          "org_id",
+          "orgId",
           "deduplicated",
           "wallet",
           "entry"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "deduplicated": {
@@ -5297,10 +6419,10 @@
       "AdminBillingOrgRow": {
         "type": "object",
         "required": [
-          "org_id"
+          "orgId"
         ],
         "properties": {
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
           "name": {
@@ -5309,43 +6431,43 @@
               "null"
             ]
           },
-          "plan_id": {
+          "planId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "balance_micros": {
+          "balanceMicros": {
             "type": [
               "integer",
               "null"
             ]
           },
-          "granted_micros": {
+          "grantedMicros": {
             "type": [
               "integer",
               "null"
             ]
           },
-          "used_micros": {
+          "usedMicros": {
             "type": "integer"
           },
-          "overage_micros": {
+          "overageMicros": {
             "type": "integer"
           },
-          "provider_cost_micros": {
+          "providerCostMicros": {
             "type": "integer",
             "description": "Staff-only: aggregate upstream provider cost across debits."
           },
-          "customer_charged_micros": {
+          "customerChargedMicros": {
             "type": "integer",
             "description": "Staff-only: aggregate credits debited from the customer."
           },
-          "margin_micros": {
+          "marginMicros": {
             "type": "integer",
             "description": "Staff-only: customer_charged_micros - provider_cost_micros."
           },
-          "debit_count": {
+          "debitCount": {
             "type": "integer"
           }
         }
@@ -5354,7 +6476,7 @@
         "type": "object",
         "required": [
           "orgs",
-          "multiplier_millis"
+          "multiplierMillis"
         ],
         "properties": {
           "orgs": {
@@ -5363,7 +6485,7 @@
               "$ref": "#/components/schemas/AdminBillingOrgRow"
             }
           },
-          "multiplier_millis": {
+          "multiplierMillis": {
             "type": "integer",
             "description": "Ecosystem-wide model-spend multiplier in milli-units (1200 = 1.2x)."
           }
@@ -5383,13 +6505,13 @@
       "GithubSetupSessionRequest": {
         "type": "object",
         "properties": {
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
-          "return_url": {
+          "returnUrl": {
             "type": "string",
             "format": "uri"
           }
@@ -5399,29 +6521,253 @@
       "GithubSetupSession": {
         "type": "object",
         "required": [
-          "setup_session_id",
+          "setupSessionId",
           "state",
-          "expires_at",
-          "installation_url"
+          "expiresAt",
+          "installationUrl"
         ],
         "properties": {
-          "setup_session_id": {
+          "setupSessionId": {
             "type": "string"
           },
           "state": {
             "type": "string"
           },
-          "expires_at": {
+          "expiresAt": {
             "type": "string",
             "format": "date-time"
           },
-          "installation_url": {
+          "installationUrl": {
             "type": "string",
             "format": "uri"
           }
         }
       },
       "GithubInstallation": {
+        "type": "object",
+        "required": [
+          "installationId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "repositoryCount",
+          "connectedAt"
+        ],
+        "properties": {
+          "installationId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "account": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "repositorySelection": {
+            "type": "string"
+          },
+          "repositoryCount": {
+            "type": "integer"
+          },
+          "connectedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspendedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "disconnectedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "lastEventAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GithubInstallationResponse": {
+        "type": "object",
+        "required": [
+          "installation"
+        ],
+        "properties": {
+          "installation": {
+            "$ref": "#/components/schemas/GithubInstallation"
+          }
+        }
+      },
+      "GithubCallbackResponse": {
+        "type": "object",
+        "required": [
+          "installation"
+        ],
+        "properties": {
+          "installation": {
+            "$ref": "#/components/schemas/GithubCallbackInstallation"
+          },
+          "return_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        }
+      },
+      "GithubRepository": {
+        "type": "object",
+        "required": [
+          "repositoryId",
+          "private",
+          "archived"
+        ],
+        "properties": {
+          "repositoryId": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "private": {
+            "type": "boolean"
+          },
+          "defaultBranch": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GithubSnapshotRequest": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "GithubSnapshot": {
+        "type": "object",
+        "required": [
+          "provider",
+          "repositoryId",
+          "fullName",
+          "ref",
+          "commit",
+          "archiveEncoding",
+          "archive",
+          "archiveSha256",
+          "sizeBytes"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "github.com"
+          },
+          "repositoryId": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,64}$"
+          },
+          "archiveEncoding": {
+            "type": "string",
+            "const": "base64"
+          },
+          "archive": {
+            "type": "string",
+            "contentEncoding": "base64"
+          },
+          "archiveSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "GithubSnapshotResponse": {
+        "type": "object",
+        "required": [
+          "snapshot"
+        ],
+        "properties": {
+          "snapshot": {
+            "$ref": "#/components/schemas/GithubSnapshot"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GithubWebhookResponse": {
+        "type": "object",
+        "required": [
+          "accepted",
+          "duplicate"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "boolean"
+          },
+          "duplicate": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GithubCallbackInstallation": {
         "type": "object",
         "required": [
           "installation_id",
@@ -5484,185 +6830,116 @@
         },
         "additionalProperties": false
       },
-      "GithubInstallationResponse": {
+      "GoogleRpcErrorInfo": {
         "type": "object",
         "required": [
-          "installation"
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
         ],
         "properties": {
-          "installation": {
-            "$ref": "#/components/schemas/GithubInstallation"
-          }
-        }
-      },
-      "GithubCallbackResponse": {
-        "type": "object",
-        "required": [
-          "installation"
-        ],
-        "properties": {
-          "installation": {
-            "$ref": "#/components/schemas/GithubInstallation"
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/google.rpc.ErrorInfo"
           },
-          "return_url": {
-            "type": [
-              "string",
-              "null"
+          "reason": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*[A-Z0-9]$"
+          },
+          "domain": {
+            "type": "string",
+            "const": "auth.tempera.dev"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "errorCode"
             ],
-            "format": "uri"
-          }
-        }
-      },
-      "GithubRepositoriesResponse": {
-        "type": "object",
-        "required": [
-          "installation_id",
-          "repositories"
-        ],
-        "properties": {
-          "installation_id": {
-            "type": "string"
-          },
-          "repositories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GithubRepository"
+            "properties": {
+              "errorCode": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": {
+              "type": "string"
             }
           }
         },
         "additionalProperties": false
       },
-      "GithubRepository": {
-        "type": "object",
-        "required": [
-          "repository_id",
-          "private",
-          "archived"
-        ],
-        "properties": {
-          "repository_id": {
-            "type": "string"
+      "GoogleRpcErrorDetail": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GoogleRpcErrorInfo"
           },
-          "full_name": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "owner": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "private": {
-            "type": "boolean"
-          },
-          "default_branch": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "archived": {
-            "type": "boolean"
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
+          {
+            "type": "object",
+            "required": [
+              "@type"
             ],
-            "format": "date-time"
+            "properties": {
+              "@type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
           }
-        },
-        "additionalProperties": false
+        ]
       },
-      "GithubSnapshotRequest": {
-        "type": "object",
-        "properties": {
-          "ref": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "additionalProperties": false
-      },
-      "GithubSnapshot": {
+      "GoogleRpcHttpStatus": {
         "type": "object",
         "required": [
-          "provider",
-          "repository_id",
-          "full_name",
-          "ref",
-          "commit",
-          "archive_encoding",
-          "archive",
-          "archive_sha256",
-          "size_bytes"
+          "code",
+          "message",
+          "status",
+          "details"
         ],
         "properties": {
-          "provider": {
-            "type": "string",
-            "const": "github.com"
-          },
-          "repository_id": {
-            "type": "string"
-          },
-          "full_name": {
-            "type": "string"
-          },
-          "ref": {
-            "type": "string"
-          },
-          "commit": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{40,64}$"
-          },
-          "archive_encoding": {
-            "type": "string",
-            "const": "base64"
-          },
-          "archive": {
-            "type": "string",
-            "contentEncoding": "base64"
-          },
-          "archive_sha256": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{64}$"
-          },
-          "size_bytes": {
+          "code": {
             "type": "integer",
-            "minimum": 0
-          }
-        },
-        "additionalProperties": false
-      },
-      "GithubSnapshotResponse": {
-        "type": "object",
-        "required": [
-          "snapshot"
-        ],
-        "properties": {
-          "snapshot": {
-            "$ref": "#/components/schemas/GithubSnapshot"
-          }
-        },
-        "additionalProperties": false
-      },
-      "GithubWebhookResponse": {
-        "type": "object",
-        "required": [
-          "accepted",
-          "duplicate"
-        ],
-        "properties": {
-          "accepted": {
-            "type": "boolean"
+            "minimum": 400,
+            "maximum": 599
           },
-          "duplicate": {
-            "type": "boolean"
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "INVALID_ARGUMENT",
+              "UNAUTHENTICATED",
+              "PERMISSION_DENIED",
+              "NOT_FOUND",
+              "ABORTED",
+              "FAILED_PRECONDITION",
+              "RESOURCE_EXHAUSTED",
+              "UNIMPLEMENTED",
+              "UNAVAILABLE",
+              "INTERNAL"
+            ]
+          },
+          "details": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/GoogleRpcErrorDetail"
+            }
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "GoogleJsonError": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleRpcHttpStatus"
+          }
+        },
+        "additionalProperties": false
       }
     }
   }

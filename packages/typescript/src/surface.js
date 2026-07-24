@@ -217,7 +217,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "me",
       "upstreamOperationId": "getMe",
       "method": "GET",
-      "path": "/me",
+      "path": "/v1/me",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -233,11 +233,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listOrgs",
       "upstreamOperationId": "listOrganizations",
       "method": "GET",
-      "path": "/orgs",
+      "path": "/v1/orgs",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -249,7 +252,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createOrg",
       "upstreamOperationId": "createOrganization",
       "method": "POST",
-      "path": "/orgs",
+      "path": "/v1/orgs",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -269,11 +272,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listSessions",
       "upstreamOperationId": "listAccountSessions",
       "method": "GET",
-      "path": "/sessions",
+      "path": "/v1/sessions",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -285,7 +291,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createHostedSession",
       "upstreamOperationId": "createHostedSession",
       "method": "POST",
-      "path": "/sessions",
+      "path": "/v1/sessions",
       "auth": "none",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -295,7 +301,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "email",
         "password",
         "organization",
-        "invite_token"
+        "inviteToken"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -310,7 +316,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "revokeSession",
       "upstreamOperationId": "revokeAccountSession",
       "method": "DELETE",
-      "path": "/sessions/{id}",
+      "path": "/v1/sessions/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -328,21 +334,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "selectWorkspace",
       "upstreamOperationId": "selectWorkspace",
       "method": "POST",
-      "path": "/workspace/select",
+      "path": "/v1/workspace/select",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id"
+        "orgId",
+        "projectId",
+        "environmentId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id"
+        "orgId",
+        "projectId",
+        "environmentId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -352,11 +358,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listTeamMembers",
       "upstreamOperationId": "listTeamMembers",
       "method": "GET",
-      "path": "/team/members",
+      "path": "/v1/team/members",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -368,13 +377,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "updateTeamMember",
       "upstreamOperationId": "updateTeamMember",
       "method": "PATCH",
-      "path": "/team/members/{id}",
+      "path": "/v1/team/members/{id}",
       "auth": "account",
       "pathParams": [
         "id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "updateMask"
+      ],
       "body": [
         "role"
       ],
@@ -390,7 +401,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "removeTeamMember",
       "upstreamOperationId": "removeTeamMember",
       "method": "DELETE",
-      "path": "/team/members/{id}",
+      "path": "/v1/team/members/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -408,11 +419,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listInvites",
       "upstreamOperationId": "listInvites",
       "method": "GET",
-      "path": "/invites",
+      "path": "/v1/invites",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -424,7 +438,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createInvite",
       "upstreamOperationId": "createInvite",
       "method": "POST",
-      "path": "/invites",
+      "path": "/v1/invites",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -446,7 +460,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "cancelInvite",
       "upstreamOperationId": "cancelInvite",
       "method": "DELETE",
-      "path": "/invites/{id}",
+      "path": "/v1/invites/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -464,11 +478,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listProjects",
       "upstreamOperationId": "listProjects",
       "method": "GET",
-      "path": "/projects",
+      "path": "/v1/projects",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -480,18 +497,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createProject",
       "upstreamOperationId": "createProject",
       "method": "POST",
-      "path": "/projects",
+      "path": "/v1/projects",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
+        "orgId",
         "name"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
+        "orgId",
         "name"
       ],
       "bodyDefaults": {},
@@ -502,11 +519,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listEnvironments",
       "upstreamOperationId": "listEnvironments",
       "method": "GET",
-      "path": "/environments",
+      "path": "/v1/environments",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -518,18 +538,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createEnvironment",
       "upstreamOperationId": "createEnvironment",
       "method": "POST",
-      "path": "/environments",
+      "path": "/v1/environments",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "project_id",
+        "projectId",
         "name"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "project_id",
+        "projectId",
         "name"
       ],
       "bodyDefaults": {},
@@ -540,11 +560,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listApiKeys",
       "upstreamOperationId": "listApiKeys",
       "method": "GET",
-      "path": "/api-keys",
+      "path": "/v1/api-keys",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -556,25 +579,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createApiKey",
       "upstreamOperationId": "createApiKey",
       "method": "POST",
-      "path": "/api-keys",
+      "path": "/v1/api-keys",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "name",
         "scopes",
         "audience",
-        "expires_at"
+        "expiresAt"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "scopes"
       ],
       "bodyDefaults": {},
@@ -585,7 +608,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "revokeApiKey",
       "upstreamOperationId": "revokeApiKey",
       "method": "DELETE",
-      "path": "/api-keys/{id}",
+      "path": "/v1/api-keys/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -603,7 +626,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "rotateApiKey",
       "upstreamOperationId": "rotateApiKey",
       "method": "POST",
-      "path": "/api-keys/{id}/rotate",
+      "path": "/v1/api-keys/{id}/rotate",
       "auth": "account",
       "pathParams": [
         "id"
@@ -621,11 +644,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerConnectionsList",
       "upstreamOperationId": "providerConnections.list",
       "method": "GET",
-      "path": "/provider-connections",
+      "path": "/v1/provider-connections",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -637,28 +663,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerConnectionsCreate",
       "upstreamOperationId": "providerConnections.create",
       "method": "POST",
-      "path": "/provider-connections",
+      "path": "/v1/provider-connections",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "provider",
         "name",
-        "secret_ref",
-        "allowed_models"
+        "secretRef",
+        "allowedModels"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "provider",
         "name",
-        "secret_ref"
+        "secretRef"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -668,7 +694,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerConnectionsRevoke",
       "upstreamOperationId": "providerConnections.revoke",
       "method": "DELETE",
-      "path": "/provider-connections/{id}",
+      "path": "/v1/provider-connections/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -686,7 +712,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerConnectionsRotate",
       "upstreamOperationId": "providerConnections.rotate",
       "method": "POST",
-      "path": "/provider-connections/{id}:rotate",
+      "path": "/v1/provider-connections/{id}:rotate",
       "auth": "account",
       "pathParams": [
         "id"
@@ -694,12 +720,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "secret_ref",
-        "allowed_models"
+        "secretRef",
+        "allowedModels"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "secret_ref"
+        "secretRef"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -709,7 +735,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "providerConnectionsResolve",
       "upstreamOperationId": "providerConnections.resolve",
       "method": "POST",
-      "path": "/provider-connections/{id}:resolve",
+      "path": "/v1/provider-connections/{id}:resolve",
       "auth": "account",
       "pathParams": [
         "id"
@@ -717,17 +743,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "usage_delegation"
+        "orgId",
+        "projectId",
+        "environmentId",
+        "usageDelegation"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "usage_delegation"
+        "orgId",
+        "projectId",
+        "environmentId",
+        "usageDelegation"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -737,11 +763,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listAuditLog",
       "upstreamOperationId": "listAuditLog",
       "method": "GET",
-      "path": "/audit-log",
+      "path": "/v1/audit-log",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -753,11 +782,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listConnectors",
       "upstreamOperationId": "listConnectors",
       "method": "GET",
-      "path": "/connectors",
+      "path": "/v1/connectors",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -769,7 +801,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getConnectorStatus",
       "upstreamOperationId": "getConnectorStatus",
       "method": "GET",
-      "path": "/connectors/{id}/status",
+      "path": "/v1/connectors/{id}/status",
       "auth": "account",
       "pathParams": [
         "id"
@@ -787,11 +819,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listProducts",
       "upstreamOperationId": "listProducts",
       "method": "GET",
-      "path": "/products",
+      "path": "/v1/products",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -803,7 +838,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getProductStatus",
       "upstreamOperationId": "getProductStatus",
       "method": "GET",
-      "path": "/products/{id}/status",
+      "path": "/v1/products/{id}/status",
       "auth": "account",
       "pathParams": [
         "id"
@@ -821,7 +856,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getBillingStatus",
       "upstreamOperationId": "getBillingStatus",
       "method": "GET",
-      "path": "/billing/status",
+      "path": "/v1/billing/status",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -837,14 +872,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createBillingCheckout",
       "upstreamOperationId": "createBillingCheckout",
       "method": "GET",
-      "path": "/billing/checkout",
+      "path": "/v1/billing/checkout",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
         "rail",
         "plan",
-        "plan_id",
+        "planId",
+        "interval",
         "currency",
         "network"
       ],
@@ -859,7 +895,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getBillingPortal",
       "upstreamOperationId": "createBillingPortal",
       "method": "GET",
-      "path": "/billing/portal",
+      "path": "/v1/billing/portal",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -875,7 +911,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getBillingCredits",
       "upstreamOperationId": "getBillingCredits",
       "method": "GET",
-      "path": "/billing/credits",
+      "path": "/v1/billing/credits",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -891,7 +927,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getModelCatalog",
       "upstreamOperationId": "getModelCatalog",
       "method": "GET",
-      "path": "/model-catalog",
+      "path": "/v1/model-catalog",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -907,25 +943,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "recordUsage",
       "upstreamOperationId": "recordUsageEvent",
       "method": "POST",
-      "path": "/usage/events",
+      "path": "/v1/usage/events",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "metric",
         "quantity",
-        "idempotency_key",
+        "idempotencyKey",
         "cost"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "metric"
       ],
       "bodyDefaults": {},
@@ -936,35 +972,35 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "usageReservationsCreate",
       "upstreamOperationId": "usageReservations.create",
       "method": "POST",
-      "path": "/usage/reservations",
+      "path": "/v1/usage/reservations",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
+        "orgId",
+        "projectId",
+        "environmentId",
         "subject",
-        "idempotency_key",
+        "idempotencyKey",
         "provider",
         "model",
-        "config_id",
+        "configId",
         "byok",
-        "maximum_provider_cost_micros",
-        "ttl_seconds"
+        "maximumProviderCostMicros",
+        "ttlSeconds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "idempotency_key",
+        "orgId",
+        "projectId",
+        "environmentId",
+        "idempotencyKey",
         "provider",
         "model",
-        "config_id",
+        "configId",
         "byok",
-        "maximum_provider_cost_micros"
+        "maximumProviderCostMicros"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -974,26 +1010,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "usageReservationsCommit",
       "upstreamOperationId": "usageReservations.commit",
       "method": "POST",
-      "path": "/usage/reservations/{reservation_id}:commit",
+      "path": "/v1/usage/reservations/{reservationId}:commit",
       "auth": "account",
       "pathParams": [
-        "reservation_id"
+        "reservationId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "config_id",
+        "orgId",
+        "projectId",
+        "environmentId",
+        "configId",
         "cost"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "config_id",
+        "orgId",
+        "projectId",
+        "environmentId",
+        "configId",
         "cost"
       ],
       "bodyDefaults": {},
@@ -1004,23 +1040,23 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "usageReservationsRelease",
       "upstreamOperationId": "usageReservations.release",
       "method": "POST",
-      "path": "/usage/reservations/{reservation_id}:release",
+      "path": "/v1/usage/reservations/{reservationId}:release",
       "auth": "account",
       "pathParams": [
-        "reservation_id"
+        "reservationId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id"
+        "orgId",
+        "projectId",
+        "environmentId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id"
+        "orgId",
+        "projectId",
+        "environmentId"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -1030,31 +1066,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "usageReservationsReconcile",
       "upstreamOperationId": "usageReservations.reconcile",
       "method": "POST",
-      "path": "/usage/reservations/{reservation_id}:reconcile",
+      "path": "/v1/usage/reservations/{reservationId}:reconcile",
       "auth": "account",
       "pathParams": [
-        "reservation_id"
+        "reservationId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "config_id",
+        "orgId",
+        "projectId",
+        "environmentId",
+        "configId",
         "reason",
-        "trace_id",
-        "observed_usage",
-        "expected_cost"
+        "traceId",
+        "observedUsage",
+        "expectedCost"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "project_id",
-        "environment_id",
-        "config_id",
+        "orgId",
+        "projectId",
+        "environmentId",
+        "configId",
         "reason",
-        "observed_usage"
+        "observedUsage"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -1064,11 +1100,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listGrants",
       "upstreamOperationId": "listOAuthGrants",
       "method": "GET",
-      "path": "/oauth/grants",
+      "path": "/v1/oauth/grants",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1080,7 +1119,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "revokeGrant",
       "upstreamOperationId": "revokeOAuthGrant",
       "method": "DELETE",
-      "path": "/oauth/grants/{id}",
+      "path": "/v1/oauth/grants/{id}",
       "auth": "account",
       "pathParams": [
         "id"
@@ -1098,7 +1137,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "introspectToken",
       "upstreamOperationId": "introspectOAuthToken",
       "method": "POST",
-      "path": "/oauth/introspect",
+      "path": "/v1/oauth/introspect",
       "auth": "introspectionSecret",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -1185,7 +1224,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "adminOperationalProvenance",
       "upstreamOperationId": "adminOperationalProvenance",
       "method": "GET",
-      "path": "/admin/operations/provenance",
+      "path": "/v1/admin/operations/provenance",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -1201,7 +1240,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "adminStepUp",
       "upstreamOperationId": "adminStepUp",
       "method": "POST",
-      "path": "/admin/step-up",
+      "path": "/v1/admin/step-up",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -1221,21 +1260,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "adminAdjustCredits",
       "upstreamOperationId": "adminAdjustCredits",
       "method": "POST",
-      "path": "/admin/billing/credits/adjust",
+      "path": "/v1/admin/billing/credits/adjust",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "org_id",
-        "credit_micros",
+        "orgId",
+        "creditMicros",
         "reference",
         "reason"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "org_id",
-        "credit_micros"
+        "orgId",
+        "creditMicros"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -1245,7 +1284,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "adminBillingOrgs",
       "upstreamOperationId": "adminBillingOrgs",
       "method": "GET",
-      "path": "/admin/billing/orgs",
+      "path": "/v1/admin/billing/orgs",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -1261,15 +1300,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "githubSetupSessionsCreate",
       "upstreamOperationId": "githubSetupSessions.create",
       "method": "POST",
-      "path": "/github/setup-sessions",
+      "path": "/v1/github/setup-sessions",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "project_id",
-        "environment_id",
-        "return_url"
+        "projectId",
+        "environmentId",
+        "returnUrl"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1300,11 +1339,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "githubInstallationsList",
       "upstreamOperationId": "githubInstallations.list",
       "method": "GET",
-      "path": "/github/installations",
+      "path": "/v1/github/installations",
       "auth": "account",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1316,10 +1358,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "githubInstallationsDisconnect",
       "upstreamOperationId": "githubInstallations.disconnect",
       "method": "DELETE",
-      "path": "/github/installations/{installation_id}",
+      "path": "/v1/github/installations/{installationId}",
       "auth": "account",
       "pathParams": [
-        "installation_id"
+        "installationId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -1334,13 +1376,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "githubInstallationRepositoriesList",
       "upstreamOperationId": "githubInstallationRepositories.list",
       "method": "GET",
-      "path": "/github/installations/{installation_id}/repositories",
+      "path": "/v1/github/installations/{installationId}/repositories",
       "auth": "account",
       "pathParams": [
-        "installation_id"
+        "installationId"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1352,11 +1397,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "githubRepositorySnapshotsCapture",
       "upstreamOperationId": "githubRepositorySnapshots.capture",
       "method": "POST",
-      "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+      "path": "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot",
       "auth": "account",
       "pathParams": [
-        "installation_id",
-        "repository_id"
+        "installationId",
+        "repositoryId"
       ],
       "pathParamTemplates": {},
       "query": [],

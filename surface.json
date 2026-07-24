@@ -263,7 +263,7 @@
       {
         "id": "me",
         "method": "GET",
-        "path": "/me",
+        "path": "/v1/me",
         "auth": "account",
         "description": "Fetch the authenticated user's identity, active workspace, and roles.",
         "upstreamOperationId": "getMe"
@@ -271,15 +271,19 @@
       {
         "id": "listOrgs",
         "method": "GET",
-        "path": "/orgs",
+        "path": "/v1/orgs",
         "auth": "account",
         "description": "List the organizations the authenticated user belongs to.",
-        "upstreamOperationId": "listOrganizations"
+        "upstreamOperationId": "listOrganizations",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createOrg",
         "method": "POST",
-        "path": "/orgs",
+        "path": "/v1/orgs",
         "auth": "account",
         "body": [
           "name"
@@ -293,22 +297,26 @@
       {
         "id": "listSessions",
         "method": "GET",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "account",
         "description": "List the user's active account sessions.",
-        "upstreamOperationId": "listAccountSessions"
+        "upstreamOperationId": "listAccountSessions",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createHostedSession",
         "method": "POST",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "none",
         "body": [
           "mode",
           "email",
           "password",
           "organization",
-          "invite_token"
+          "inviteToken"
         ],
         "requiredBody": [
           "email",
@@ -320,7 +328,7 @@
       {
         "id": "revokeSession",
         "method": "DELETE",
-        "path": "/sessions/{id}",
+        "path": "/v1/sessions/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -331,33 +339,37 @@
       {
         "id": "selectWorkspace",
         "method": "POST",
-        "path": "/workspace/select",
+        "path": "/v1/workspace/select",
         "auth": "account",
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "description": "Switch the active workspace and receive a token pair scoped to it.",
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "upstreamOperationId": "selectWorkspace"
       },
       {
         "id": "listTeamMembers",
         "method": "GET",
-        "path": "/team/members",
+        "path": "/v1/team/members",
         "auth": "account",
         "description": "List team members of the active organization.",
-        "upstreamOperationId": "listTeamMembers"
+        "upstreamOperationId": "listTeamMembers",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "updateTeamMember",
         "method": "PATCH",
-        "path": "/team/members/{id}",
+        "path": "/v1/team/members/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -369,12 +381,15 @@
         "requiredBody": [
           "role"
         ],
-        "upstreamOperationId": "updateTeamMember"
+        "upstreamOperationId": "updateTeamMember",
+        "query": [
+          "updateMask"
+        ]
       },
       {
         "id": "removeTeamMember",
         "method": "DELETE",
-        "path": "/team/members/{id}",
+        "path": "/v1/team/members/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -385,15 +400,19 @@
       {
         "id": "listInvites",
         "method": "GET",
-        "path": "/invites",
+        "path": "/v1/invites",
         "auth": "account",
         "description": "List invites for the active organization, newest first.",
-        "upstreamOperationId": "listInvites"
+        "upstreamOperationId": "listInvites",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createInvite",
         "method": "POST",
-        "path": "/invites",
+        "path": "/v1/invites",
         "auth": "account",
         "body": [
           "email",
@@ -409,7 +428,7 @@
       {
         "id": "cancelInvite",
         "method": "DELETE",
-        "path": "/invites/{id}",
+        "path": "/v1/invites/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -420,23 +439,27 @@
       {
         "id": "listProjects",
         "method": "GET",
-        "path": "/projects",
+        "path": "/v1/projects",
         "auth": "account",
         "description": "List projects across every organization the user belongs to.",
-        "upstreamOperationId": "listProjects"
+        "upstreamOperationId": "listProjects",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createProject",
         "method": "POST",
-        "path": "/projects",
+        "path": "/v1/projects",
         "auth": "account",
         "body": [
-          "org_id",
+          "orgId",
           "name"
         ],
         "description": "Create a project in an organization (requires an org admin role).",
         "requiredBody": [
-          "org_id",
+          "orgId",
           "name"
         ],
         "upstreamOperationId": "createProject"
@@ -444,23 +467,27 @@
       {
         "id": "listEnvironments",
         "method": "GET",
-        "path": "/environments",
+        "path": "/v1/environments",
         "auth": "account",
         "description": "List environments across every project the user can access.",
-        "upstreamOperationId": "listEnvironments"
+        "upstreamOperationId": "listEnvironments",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createEnvironment",
         "method": "POST",
-        "path": "/environments",
+        "path": "/v1/environments",
         "auth": "account",
         "body": [
-          "project_id",
+          "projectId",
           "name"
         ],
         "description": "Create an environment in a project (requires an org admin role).",
         "requiredBody": [
-          "project_id",
+          "projectId",
           "name"
         ],
         "upstreamOperationId": "createEnvironment"
@@ -468,30 +495,34 @@
       {
         "id": "listApiKeys",
         "method": "GET",
-        "path": "/api-keys",
+        "path": "/v1/api-keys",
         "auth": "account",
         "description": "List API keys in the active workspace; secrets are never returned.",
-        "upstreamOperationId": "listApiKeys"
+        "upstreamOperationId": "listApiKeys",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createApiKey",
         "method": "POST",
-        "path": "/api-keys",
+        "path": "/v1/api-keys",
         "auth": "account",
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "name",
           "scopes",
           "audience",
-          "expires_at"
+          "expiresAt"
         ],
         "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.",
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "scopes"
         ],
         "upstreamOperationId": "createApiKey"
@@ -499,7 +530,7 @@
       {
         "id": "revokeApiKey",
         "method": "DELETE",
-        "path": "/api-keys/{id}",
+        "path": "/v1/api-keys/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -510,7 +541,7 @@
       {
         "id": "rotateApiKey",
         "method": "POST",
-        "path": "/api-keys/{id}/rotate",
+        "path": "/v1/api-keys/{id}/rotate",
         "auth": "account",
         "pathParams": [
           "id"
@@ -521,40 +552,44 @@
       {
         "id": "providerConnectionsList",
         "method": "GET",
-        "path": "/provider-connections",
+        "path": "/v1/provider-connections",
         "auth": "account",
         "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
-        "upstreamOperationId": "providerConnections.list"
+        "upstreamOperationId": "providerConnections.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "providerConnectionsCreate",
         "method": "POST",
-        "path": "/provider-connections",
+        "path": "/v1/provider-connections",
         "auth": "account",
         "description": "Create a tenant-scoped provider connection using only an external secret reference.",
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "provider",
           "name",
-          "secret_ref",
-          "allowed_models"
+          "secretRef",
+          "allowedModels"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "provider",
           "name",
-          "secret_ref"
+          "secretRef"
         ],
         "upstreamOperationId": "providerConnections.create"
       },
       {
         "id": "providerConnectionsRevoke",
         "method": "DELETE",
-        "path": "/provider-connections/{id}",
+        "path": "/v1/provider-connections/{id}",
         "auth": "account",
         "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
         "pathParams": [
@@ -565,64 +600,72 @@
       {
         "id": "providerConnectionsRotate",
         "method": "POST",
-        "path": "/provider-connections/{id}:rotate",
+        "path": "/v1/provider-connections/{id}:rotate",
         "auth": "account",
         "description": "Replace a connection secret reference and increment its revision without exposing the reference.",
         "pathParams": [
           "id"
         ],
         "body": [
-          "secret_ref",
-          "allowed_models"
+          "secretRef",
+          "allowedModels"
         ],
         "requiredBody": [
-          "secret_ref"
+          "secretRef"
         ],
         "upstreamOperationId": "providerConnections.rotate"
       },
       {
         "id": "providerConnectionsResolve",
         "method": "POST",
-        "path": "/provider-connections/{id}:resolve",
+        "path": "/v1/provider-connections/{id}:resolve",
         "auth": "account",
         "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
         "pathParams": [
           "id"
         ],
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "usage_delegation"
+          "orgId",
+          "projectId",
+          "environmentId",
+          "usageDelegation"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "usage_delegation"
+          "orgId",
+          "projectId",
+          "environmentId",
+          "usageDelegation"
         ],
         "upstreamOperationId": "providerConnections.resolve"
       },
       {
         "id": "listAuditLog",
         "method": "GET",
-        "path": "/audit-log",
+        "path": "/v1/audit-log",
         "auth": "account",
         "description": "List recent audit-log events for the user and active organization (up to 50, newest first).",
-        "upstreamOperationId": "listAuditLog"
+        "upstreamOperationId": "listAuditLog",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "listConnectors",
         "method": "GET",
-        "path": "/connectors",
+        "path": "/v1/connectors",
         "auth": "account",
         "description": "List the connector catalog (MCP clients, editors, and API surfaces).",
-        "upstreamOperationId": "listConnectors"
+        "upstreamOperationId": "listConnectors",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "getConnectorStatus",
         "method": "GET",
-        "path": "/connectors/{id}/status",
+        "path": "/v1/connectors/{id}/status",
         "auth": "account",
         "pathParams": [
           "id"
@@ -633,15 +676,19 @@
       {
         "id": "listProducts",
         "method": "GET",
-        "path": "/products",
+        "path": "/v1/products",
         "auth": "account",
         "description": "List the product catalog with default scopes and setup paths.",
-        "upstreamOperationId": "listProducts"
+        "upstreamOperationId": "listProducts",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "getProductStatus",
         "method": "GET",
-        "path": "/products/{id}/status",
+        "path": "/v1/products/{id}/status",
         "auth": "account",
         "pathParams": [
           "id"
@@ -652,7 +699,7 @@
       {
         "id": "getBillingStatus",
         "method": "GET",
-        "path": "/billing/status",
+        "path": "/v1/billing/status",
         "auth": "account",
         "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
         "upstreamOperationId": "getBillingStatus"
@@ -660,12 +707,13 @@
       {
         "id": "createBillingCheckout",
         "method": "GET",
-        "path": "/billing/checkout",
+        "path": "/v1/billing/checkout",
         "auth": "account",
         "query": [
           "rail",
           "plan",
-          "plan_id",
+          "planId",
+          "interval",
           "currency",
           "network"
         ],
@@ -675,7 +723,7 @@
       {
         "id": "getBillingPortal",
         "method": "GET",
-        "path": "/billing/portal",
+        "path": "/v1/billing/portal",
         "auth": "account",
         "description": "Fetch the billing-portal URL for the organization (requires a billing role).",
         "upstreamOperationId": "createBillingPortal"
@@ -683,7 +731,7 @@
       {
         "id": "getBillingCredits",
         "method": "GET",
-        "path": "/billing/credits",
+        "path": "/v1/billing/credits",
         "auth": "account",
         "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
         "upstreamOperationId": "getBillingCredits"
@@ -691,7 +739,7 @@
       {
         "id": "getModelCatalog",
         "method": "GET",
-        "path": "/model-catalog",
+        "path": "/v1/model-catalog",
         "auth": "account",
         "scope": "model:read",
         "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
@@ -700,22 +748,22 @@
       {
         "id": "recordUsage",
         "method": "POST",
-        "path": "/usage/events",
+        "path": "/v1/usage/events",
         "auth": "account",
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "metric",
           "quantity",
-          "idempotency_key",
+          "idempotencyKey",
           "cost"
         ],
         "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "metric"
         ],
         "upstreamOperationId": "recordUsageEvent"
@@ -723,56 +771,56 @@
       {
         "id": "usageReservationsCreate",
         "method": "POST",
-        "path": "/usage/reservations",
+        "path": "/v1/usage/reservations",
         "auth": "account",
         "description": "Atomically reserve the maximum model cost before starting a provider request.",
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "subject",
-          "idempotency_key",
+          "idempotencyKey",
           "provider",
           "model",
-          "config_id",
+          "configId",
           "byok",
-          "maximum_provider_cost_micros",
-          "ttl_seconds"
+          "maximumProviderCostMicros",
+          "ttlSeconds"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "idempotency_key",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "idempotencyKey",
           "provider",
           "model",
-          "config_id",
+          "configId",
           "byok",
-          "maximum_provider_cost_micros"
+          "maximumProviderCostMicros"
         ],
         "upstreamOperationId": "usageReservations.create"
       },
       {
         "id": "usageReservationsCommit",
         "method": "POST",
-        "path": "/usage/reservations/{reservation_id}:commit",
+        "path": "/v1/usage/reservations/{reservationId}:commit",
         "auth": "account",
         "description": "Commit exact provider usage against an admitted reservation and release unused capacity.",
         "pathParams": [
-          "reservation_id"
+          "reservationId"
         ],
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "config_id",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "configId",
           "cost"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "config_id",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "configId",
           "cost"
         ],
         "upstreamOperationId": "usageReservations.commit"
@@ -780,65 +828,69 @@
       {
         "id": "usageReservationsRelease",
         "method": "POST",
-        "path": "/usage/reservations/{reservation_id}:release",
+        "path": "/v1/usage/reservations/{reservationId}:release",
         "auth": "account",
         "description": "Release unused capacity after provider failure or cancellation.",
         "pathParams": [
-          "reservation_id"
+          "reservationId"
         ],
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id"
+          "orgId",
+          "projectId",
+          "environmentId"
         ],
         "upstreamOperationId": "usageReservations.release"
       },
       {
         "id": "usageReservationsReconcile",
         "method": "POST",
-        "path": "/usage/reservations/{reservation_id}:reconcile",
+        "path": "/v1/usage/reservations/{reservationId}:reconcile",
         "auth": "account",
         "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
         "pathParams": [
-          "reservation_id"
+          "reservationId"
         ],
         "body": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "config_id",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "configId",
           "reason",
-          "trace_id",
-          "observed_usage",
-          "expected_cost"
+          "traceId",
+          "observedUsage",
+          "expectedCost"
         ],
         "requiredBody": [
-          "org_id",
-          "project_id",
-          "environment_id",
-          "config_id",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "configId",
           "reason",
-          "observed_usage"
+          "observedUsage"
         ],
         "upstreamOperationId": "usageReservations.reconcile"
       },
       {
         "id": "listGrants",
         "method": "GET",
-        "path": "/oauth/grants",
+        "path": "/v1/oauth/grants",
         "auth": "account",
         "description": "List the OAuth grants the user has approved in the active workspace.",
-        "upstreamOperationId": "listOAuthGrants"
+        "upstreamOperationId": "listOAuthGrants",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "revokeGrant",
         "method": "DELETE",
-        "path": "/oauth/grants/{id}",
+        "path": "/v1/oauth/grants/{id}",
         "auth": "account",
         "pathParams": [
           "id"
@@ -849,7 +901,7 @@
       {
         "id": "introspectToken",
         "method": "POST",
-        "path": "/oauth/introspect",
+        "path": "/v1/oauth/introspect",
         "auth": "introspectionSecret",
         "body": [
           "token",
@@ -899,7 +951,7 @@
       {
         "id": "adminOperationalProvenance",
         "method": "GET",
-        "path": "/admin/operations/provenance",
+        "path": "/v1/admin/operations/provenance",
         "auth": "account",
         "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
         "upstreamOperationId": "adminOperationalProvenance"
@@ -907,7 +959,7 @@
       {
         "id": "adminStepUp",
         "method": "POST",
-        "path": "/admin/step-up",
+        "path": "/v1/admin/step-up",
         "auth": "account",
         "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
         "body": [
@@ -921,25 +973,25 @@
       {
         "id": "adminAdjustCredits",
         "method": "POST",
-        "path": "/admin/billing/credits/adjust",
+        "path": "/v1/admin/billing/credits/adjust",
         "auth": "account",
         "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
         "body": [
-          "org_id",
-          "credit_micros",
+          "orgId",
+          "creditMicros",
           "reference",
           "reason"
         ],
         "requiredBody": [
-          "org_id",
-          "credit_micros"
+          "orgId",
+          "creditMicros"
         ],
         "upstreamOperationId": "adminAdjustCredits"
       },
       {
         "id": "adminBillingOrgs",
         "method": "GET",
-        "path": "/admin/billing/orgs",
+        "path": "/v1/admin/billing/orgs",
         "auth": "account",
         "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
         "upstreamOperationId": "adminBillingOrgs"
@@ -947,14 +999,14 @@
       {
         "id": "githubSetupSessionsCreate",
         "method": "POST",
-        "path": "/github/setup-sessions",
+        "path": "/v1/github/setup-sessions",
         "auth": "account",
         "description": "Create a one-time CSRF-bound GitHub App installation session.",
         "upstreamOperationId": "githubSetupSessions.create",
         "body": [
-          "project_id",
-          "environment_id",
-          "return_url"
+          "projectId",
+          "environmentId",
+          "returnUrl"
         ]
       },
       {
@@ -972,43 +1024,51 @@
       {
         "id": "githubInstallationsList",
         "method": "GET",
-        "path": "/github/installations",
+        "path": "/v1/github/installations",
         "auth": "account",
         "description": "List active GitHub App installations for the organization.",
-        "upstreamOperationId": "githubInstallations.list"
+        "upstreamOperationId": "githubInstallations.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "githubInstallationsDisconnect",
         "method": "DELETE",
-        "path": "/github/installations/{installation_id}",
+        "path": "/v1/github/installations/{installationId}",
         "auth": "account",
         "description": "Disconnect a GitHub App installation from the workspace.",
         "upstreamOperationId": "githubInstallations.disconnect",
         "pathParams": [
-          "installation_id"
+          "installationId"
         ]
       },
       {
         "id": "githubInstallationRepositoriesList",
         "method": "GET",
-        "path": "/github/installations/{installation_id}/repositories",
+        "path": "/v1/github/installations/{installationId}/repositories",
         "auth": "account",
         "description": "List repository metadata received for a GitHub installation.",
         "upstreamOperationId": "githubInstallationRepositories.list",
         "pathParams": [
-          "installation_id"
+          "installationId"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
         ]
       },
       {
         "id": "githubRepositorySnapshotsCapture",
         "method": "POST",
-        "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+        "path": "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot",
         "auth": "account",
         "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.",
         "upstreamOperationId": "githubRepositorySnapshots.capture",
         "pathParams": [
-          "installation_id",
-          "repository_id"
+          "installationId",
+          "repositoryId"
         ],
         "body": [
           "ref"

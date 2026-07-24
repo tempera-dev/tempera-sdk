@@ -208,7 +208,7 @@ OPERATIONS = {
             "id": "me",
             "upstream_operation_id": "getMe",
             "method": "GET",
-            "path": "/me",
+            "path": "/v1/me",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -224,11 +224,14 @@ OPERATIONS = {
             "id": "list_orgs",
             "upstream_operation_id": "listOrganizations",
             "method": "GET",
-            "path": "/orgs",
+            "path": "/v1/orgs",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -240,7 +243,7 @@ OPERATIONS = {
             "id": "create_org",
             "upstream_operation_id": "createOrganization",
             "method": "POST",
-            "path": "/orgs",
+            "path": "/v1/orgs",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -260,11 +263,14 @@ OPERATIONS = {
             "id": "list_sessions",
             "upstream_operation_id": "listAccountSessions",
             "method": "GET",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -276,7 +282,7 @@ OPERATIONS = {
             "id": "create_hosted_session",
             "upstream_operation_id": "createHostedSession",
             "method": "POST",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "none",
             "path_params": [],
             "path_param_templates": {},
@@ -286,7 +292,7 @@ OPERATIONS = {
                 "email",
                 "password",
                 "organization",
-                "invite_token"
+                "inviteToken"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -301,7 +307,7 @@ OPERATIONS = {
             "id": "revoke_session",
             "upstream_operation_id": "revokeAccountSession",
             "method": "DELETE",
-            "path": "/sessions/{id}",
+            "path": "/v1/sessions/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -319,21 +325,21 @@ OPERATIONS = {
             "id": "select_workspace",
             "upstream_operation_id": "selectWorkspace",
             "method": "POST",
-            "path": "/workspace/select",
+            "path": "/v1/workspace/select",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -343,11 +349,14 @@ OPERATIONS = {
             "id": "list_team_members",
             "upstream_operation_id": "listTeamMembers",
             "method": "GET",
-            "path": "/team/members",
+            "path": "/v1/team/members",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -359,13 +368,15 @@ OPERATIONS = {
             "id": "update_team_member",
             "upstream_operation_id": "updateTeamMember",
             "method": "PATCH",
-            "path": "/team/members/{id}",
+            "path": "/v1/team/members/{id}",
             "auth": "account",
             "path_params": [
                 "id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "updateMask"
+            ],
             "body": [
                 "role"
             ],
@@ -381,7 +392,7 @@ OPERATIONS = {
             "id": "remove_team_member",
             "upstream_operation_id": "removeTeamMember",
             "method": "DELETE",
-            "path": "/team/members/{id}",
+            "path": "/v1/team/members/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -399,11 +410,14 @@ OPERATIONS = {
             "id": "list_invites",
             "upstream_operation_id": "listInvites",
             "method": "GET",
-            "path": "/invites",
+            "path": "/v1/invites",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -415,7 +429,7 @@ OPERATIONS = {
             "id": "create_invite",
             "upstream_operation_id": "createInvite",
             "method": "POST",
-            "path": "/invites",
+            "path": "/v1/invites",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -437,7 +451,7 @@ OPERATIONS = {
             "id": "cancel_invite",
             "upstream_operation_id": "cancelInvite",
             "method": "DELETE",
-            "path": "/invites/{id}",
+            "path": "/v1/invites/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -455,11 +469,14 @@ OPERATIONS = {
             "id": "list_projects",
             "upstream_operation_id": "listProjects",
             "method": "GET",
-            "path": "/projects",
+            "path": "/v1/projects",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -471,18 +488,18 @@ OPERATIONS = {
             "id": "create_project",
             "upstream_operation_id": "createProject",
             "method": "POST",
-            "path": "/projects",
+            "path": "/v1/projects",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
+                "orgId",
                 "name"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
+                "orgId",
                 "name"
             ],
             "body_defaults": {},
@@ -493,11 +510,14 @@ OPERATIONS = {
             "id": "list_environments",
             "upstream_operation_id": "listEnvironments",
             "method": "GET",
-            "path": "/environments",
+            "path": "/v1/environments",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -509,18 +529,18 @@ OPERATIONS = {
             "id": "create_environment",
             "upstream_operation_id": "createEnvironment",
             "method": "POST",
-            "path": "/environments",
+            "path": "/v1/environments",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "project_id",
+                "projectId",
                 "name"
             ],
             "forbidden_body": [],
             "required_body": [
-                "project_id",
+                "projectId",
                 "name"
             ],
             "body_defaults": {},
@@ -531,11 +551,14 @@ OPERATIONS = {
             "id": "list_api_keys",
             "upstream_operation_id": "listApiKeys",
             "method": "GET",
-            "path": "/api-keys",
+            "path": "/v1/api-keys",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -547,25 +570,25 @@ OPERATIONS = {
             "id": "create_api_key",
             "upstream_operation_id": "createApiKey",
             "method": "POST",
-            "path": "/api-keys",
+            "path": "/v1/api-keys",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "name",
                 "scopes",
                 "audience",
-                "expires_at"
+                "expiresAt"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "scopes"
             ],
             "body_defaults": {},
@@ -576,7 +599,7 @@ OPERATIONS = {
             "id": "revoke_api_key",
             "upstream_operation_id": "revokeApiKey",
             "method": "DELETE",
-            "path": "/api-keys/{id}",
+            "path": "/v1/api-keys/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -594,7 +617,7 @@ OPERATIONS = {
             "id": "rotate_api_key",
             "upstream_operation_id": "rotateApiKey",
             "method": "POST",
-            "path": "/api-keys/{id}/rotate",
+            "path": "/v1/api-keys/{id}/rotate",
             "auth": "account",
             "path_params": [
                 "id"
@@ -612,11 +635,14 @@ OPERATIONS = {
             "id": "provider_connections_list",
             "upstream_operation_id": "providerConnections.list",
             "method": "GET",
-            "path": "/provider-connections",
+            "path": "/v1/provider-connections",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -628,28 +654,28 @@ OPERATIONS = {
             "id": "provider_connections_create",
             "upstream_operation_id": "providerConnections.create",
             "method": "POST",
-            "path": "/provider-connections",
+            "path": "/v1/provider-connections",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "provider",
                 "name",
-                "secret_ref",
-                "allowed_models"
+                "secretRef",
+                "allowedModels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "provider",
                 "name",
-                "secret_ref"
+                "secretRef"
             ],
             "body_defaults": {},
             "scope": None,
@@ -659,7 +685,7 @@ OPERATIONS = {
             "id": "provider_connections_revoke",
             "upstream_operation_id": "providerConnections.revoke",
             "method": "DELETE",
-            "path": "/provider-connections/{id}",
+            "path": "/v1/provider-connections/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -677,7 +703,7 @@ OPERATIONS = {
             "id": "provider_connections_rotate",
             "upstream_operation_id": "providerConnections.rotate",
             "method": "POST",
-            "path": "/provider-connections/{id}:rotate",
+            "path": "/v1/provider-connections/{id}:rotate",
             "auth": "account",
             "path_params": [
                 "id"
@@ -685,12 +711,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "secret_ref",
-                "allowed_models"
+                "secretRef",
+                "allowedModels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "secret_ref"
+                "secretRef"
             ],
             "body_defaults": {},
             "scope": None,
@@ -700,7 +726,7 @@ OPERATIONS = {
             "id": "provider_connections_resolve",
             "upstream_operation_id": "providerConnections.resolve",
             "method": "POST",
-            "path": "/provider-connections/{id}:resolve",
+            "path": "/v1/provider-connections/{id}:resolve",
             "auth": "account",
             "path_params": [
                 "id"
@@ -708,17 +734,17 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "usage_delegation"
+                "orgId",
+                "projectId",
+                "environmentId",
+                "usageDelegation"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "usage_delegation"
+                "orgId",
+                "projectId",
+                "environmentId",
+                "usageDelegation"
             ],
             "body_defaults": {},
             "scope": None,
@@ -728,11 +754,14 @@ OPERATIONS = {
             "id": "list_audit_log",
             "upstream_operation_id": "listAuditLog",
             "method": "GET",
-            "path": "/audit-log",
+            "path": "/v1/audit-log",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -744,11 +773,14 @@ OPERATIONS = {
             "id": "list_connectors",
             "upstream_operation_id": "listConnectors",
             "method": "GET",
-            "path": "/connectors",
+            "path": "/v1/connectors",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -760,7 +792,7 @@ OPERATIONS = {
             "id": "get_connector_status",
             "upstream_operation_id": "getConnectorStatus",
             "method": "GET",
-            "path": "/connectors/{id}/status",
+            "path": "/v1/connectors/{id}/status",
             "auth": "account",
             "path_params": [
                 "id"
@@ -778,11 +810,14 @@ OPERATIONS = {
             "id": "list_products",
             "upstream_operation_id": "listProducts",
             "method": "GET",
-            "path": "/products",
+            "path": "/v1/products",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -794,7 +829,7 @@ OPERATIONS = {
             "id": "get_product_status",
             "upstream_operation_id": "getProductStatus",
             "method": "GET",
-            "path": "/products/{id}/status",
+            "path": "/v1/products/{id}/status",
             "auth": "account",
             "path_params": [
                 "id"
@@ -812,7 +847,7 @@ OPERATIONS = {
             "id": "get_billing_status",
             "upstream_operation_id": "getBillingStatus",
             "method": "GET",
-            "path": "/billing/status",
+            "path": "/v1/billing/status",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -828,14 +863,15 @@ OPERATIONS = {
             "id": "create_billing_checkout",
             "upstream_operation_id": "createBillingCheckout",
             "method": "GET",
-            "path": "/billing/checkout",
+            "path": "/v1/billing/checkout",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [
                 "rail",
                 "plan",
-                "plan_id",
+                "planId",
+                "interval",
                 "currency",
                 "network"
             ],
@@ -850,7 +886,7 @@ OPERATIONS = {
             "id": "get_billing_portal",
             "upstream_operation_id": "createBillingPortal",
             "method": "GET",
-            "path": "/billing/portal",
+            "path": "/v1/billing/portal",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -866,7 +902,7 @@ OPERATIONS = {
             "id": "get_billing_credits",
             "upstream_operation_id": "getBillingCredits",
             "method": "GET",
-            "path": "/billing/credits",
+            "path": "/v1/billing/credits",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -882,7 +918,7 @@ OPERATIONS = {
             "id": "get_model_catalog",
             "upstream_operation_id": "getModelCatalog",
             "method": "GET",
-            "path": "/model-catalog",
+            "path": "/v1/model-catalog",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -898,25 +934,25 @@ OPERATIONS = {
             "id": "record_usage",
             "upstream_operation_id": "recordUsageEvent",
             "method": "POST",
-            "path": "/usage/events",
+            "path": "/v1/usage/events",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "metric",
                 "quantity",
-                "idempotency_key",
+                "idempotencyKey",
                 "cost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "metric"
             ],
             "body_defaults": {},
@@ -927,35 +963,35 @@ OPERATIONS = {
             "id": "usage_reservations_create",
             "upstream_operation_id": "usageReservations.create",
             "method": "POST",
-            "path": "/usage/reservations",
+            "path": "/v1/usage/reservations",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
+                "orgId",
+                "projectId",
+                "environmentId",
                 "subject",
-                "idempotency_key",
+                "idempotencyKey",
                 "provider",
                 "model",
-                "config_id",
+                "configId",
                 "byok",
-                "maximum_provider_cost_micros",
-                "ttl_seconds"
+                "maximumProviderCostMicros",
+                "ttlSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "idempotency_key",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "idempotencyKey",
                 "provider",
                 "model",
-                "config_id",
+                "configId",
                 "byok",
-                "maximum_provider_cost_micros"
+                "maximumProviderCostMicros"
             ],
             "body_defaults": {},
             "scope": None,
@@ -965,26 +1001,26 @@ OPERATIONS = {
             "id": "usage_reservations_commit",
             "upstream_operation_id": "usageReservations.commit",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:commit",
+            "path": "/v1/usage/reservations/{reservationId}:commit",
             "auth": "account",
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "cost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "cost"
             ],
             "body_defaults": {},
@@ -995,23 +1031,23 @@ OPERATIONS = {
             "id": "usage_reservations_release",
             "upstream_operation_id": "usageReservations.release",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:release",
+            "path": "/v1/usage/reservations/{reservationId}:release",
             "auth": "account",
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id"
+                "orgId",
+                "projectId",
+                "environmentId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1021,31 +1057,31 @@ OPERATIONS = {
             "id": "usage_reservations_reconcile",
             "upstream_operation_id": "usageReservations.reconcile",
             "method": "POST",
-            "path": "/usage/reservations/{reservation_id}:reconcile",
+            "path": "/v1/usage/reservations/{reservationId}:reconcile",
             "auth": "account",
             "path_params": [
-                "reservation_id"
+                "reservationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "reason",
-                "trace_id",
-                "observed_usage",
-                "expected_cost"
+                "traceId",
+                "observedUsage",
+                "expectedCost"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "project_id",
-                "environment_id",
-                "config_id",
+                "orgId",
+                "projectId",
+                "environmentId",
+                "configId",
                 "reason",
-                "observed_usage"
+                "observedUsage"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1055,11 +1091,14 @@ OPERATIONS = {
             "id": "list_grants",
             "upstream_operation_id": "listOAuthGrants",
             "method": "GET",
-            "path": "/oauth/grants",
+            "path": "/v1/oauth/grants",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1071,7 +1110,7 @@ OPERATIONS = {
             "id": "revoke_grant",
             "upstream_operation_id": "revokeOAuthGrant",
             "method": "DELETE",
-            "path": "/oauth/grants/{id}",
+            "path": "/v1/oauth/grants/{id}",
             "auth": "account",
             "path_params": [
                 "id"
@@ -1089,7 +1128,7 @@ OPERATIONS = {
             "id": "introspect_token",
             "upstream_operation_id": "introspectOAuthToken",
             "method": "POST",
-            "path": "/oauth/introspect",
+            "path": "/v1/oauth/introspect",
             "auth": "introspectionSecret",
             "path_params": [],
             "path_param_templates": {},
@@ -1176,7 +1215,7 @@ OPERATIONS = {
             "id": "admin_operational_provenance",
             "upstream_operation_id": "adminOperationalProvenance",
             "method": "GET",
-            "path": "/admin/operations/provenance",
+            "path": "/v1/admin/operations/provenance",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -1192,7 +1231,7 @@ OPERATIONS = {
             "id": "admin_step_up",
             "upstream_operation_id": "adminStepUp",
             "method": "POST",
-            "path": "/admin/step-up",
+            "path": "/v1/admin/step-up",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -1212,21 +1251,21 @@ OPERATIONS = {
             "id": "admin_adjust_credits",
             "upstream_operation_id": "adminAdjustCredits",
             "method": "POST",
-            "path": "/admin/billing/credits/adjust",
+            "path": "/v1/admin/billing/credits/adjust",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "org_id",
-                "credit_micros",
+                "orgId",
+                "creditMicros",
                 "reference",
                 "reason"
             ],
             "forbidden_body": [],
             "required_body": [
-                "org_id",
-                "credit_micros"
+                "orgId",
+                "creditMicros"
             ],
             "body_defaults": {},
             "scope": None,
@@ -1236,7 +1275,7 @@ OPERATIONS = {
             "id": "admin_billing_orgs",
             "upstream_operation_id": "adminBillingOrgs",
             "method": "GET",
-            "path": "/admin/billing/orgs",
+            "path": "/v1/admin/billing/orgs",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
@@ -1252,15 +1291,15 @@ OPERATIONS = {
             "id": "github_setup_sessions_create",
             "upstream_operation_id": "githubSetupSessions.create",
             "method": "POST",
-            "path": "/github/setup-sessions",
+            "path": "/v1/github/setup-sessions",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "project_id",
-                "environment_id",
-                "return_url"
+                "projectId",
+                "environmentId",
+                "returnUrl"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -1291,11 +1330,14 @@ OPERATIONS = {
             "id": "github_installations_list",
             "upstream_operation_id": "githubInstallations.list",
             "method": "GET",
-            "path": "/github/installations",
+            "path": "/v1/github/installations",
             "auth": "account",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1307,10 +1349,10 @@ OPERATIONS = {
             "id": "github_installations_disconnect",
             "upstream_operation_id": "githubInstallations.disconnect",
             "method": "DELETE",
-            "path": "/github/installations/{installation_id}",
+            "path": "/v1/github/installations/{installationId}",
             "auth": "account",
             "path_params": [
-                "installation_id"
+                "installationId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1325,13 +1367,16 @@ OPERATIONS = {
             "id": "github_installation_repositories_list",
             "upstream_operation_id": "githubInstallationRepositories.list",
             "method": "GET",
-            "path": "/github/installations/{installation_id}/repositories",
+            "path": "/v1/github/installations/{installationId}/repositories",
             "auth": "account",
             "path_params": [
-                "installation_id"
+                "installationId"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1343,11 +1388,11 @@ OPERATIONS = {
             "id": "github_repository_snapshots_capture",
             "upstream_operation_id": "githubRepositorySnapshots.capture",
             "method": "POST",
-            "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+            "path": "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot",
             "auth": "account",
             "path_params": [
-                "installation_id",
-                "repository_id"
+                "installationId",
+                "repositoryId"
             ],
             "path_param_templates": {},
             "query": [],
