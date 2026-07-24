@@ -283,6 +283,68 @@ class DispatchTest(unittest.TestCase):
             },
         )
 
+    def test_bio_materializes_gym_batch_through_exact_sealed_bridge(self):
+        operation = next(
+            item
+            for item in OPERATIONS["temperaBio"]
+            if item["id"]
+            == "prepare_experiment_proposal_from_gym_batch"
+        )
+        self.assertEqual(
+            operation["upstream_operation_id"],
+            "prepareExperimentProposalFromGymBatch",
+        )
+        self.assertEqual(operation["method"], "POST")
+        self.assertEqual(
+            operation["path"],
+            "/v1/experimentProposals:prepareFromGymBatch",
+        )
+        self.assertEqual(operation["auth"], "oauthResource")
+        self.assertEqual(operation["auth_audience"], "tempera-bio")
+        self.assertEqual(operation["scope"], "bio:proposal:write")
+
+        program = {"contentDigest": "sha256:" + "1" * 64}
+        candidate_set = {"contentDigest": "sha256:" + "2" * 64}
+        campaign_context = {"contentDigest": "sha256:" + "3" * 64}
+        batch_proposal = {"contentDigest": "sha256:" + "4" * 64}
+        client, transport = make_client(
+            auth=TemperaAuth(
+                issuer_url="https://api.tempera.dev",
+                tokens={
+                    "tempera-bio": TokenSet(access_token="at_bio_proposer")
+                },
+            ),
+        )
+        result = (
+            client.tempera_bio.prepare_experiment_proposal_from_gym_batch(
+                {
+                    "program": program,
+                    "candidate_set": candidate_set,
+                    "campaign_context": campaign_context,
+                    "batch_proposal": batch_proposal,
+                }
+            )
+        )
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(
+            transport.calls[0]["path"],
+            "/v1/experimentProposals:prepareFromGymBatch",
+        )
+        self.assertNotIn("%3A", transport.calls[0]["url"])
+        self.assertEqual(
+            transport.calls[0]["headers"]["authorization"],
+            "Bearer at_bio_proposer",
+        )
+        self.assertEqual(
+            transport.calls[0]["body"],
+            {
+                "batchProposal": batch_proposal,
+                "campaignContext": campaign_context,
+                "candidateSet": candidate_set,
+                "program": program,
+            },
+        )
+
     def test_declared_query_and_body_parameters_route_to_the_right_place(self):
         client, transport = make_client()
         client.palette.list_traces({"tenant_id": "t1", "limit": 5, "cursor": "abc"})

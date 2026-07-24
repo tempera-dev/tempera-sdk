@@ -524,6 +524,8 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   deriveDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare experiment proposal. */
   prepareExperimentProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare experiment proposal from gym batch. */
+  prepareExperimentProposalFromGymBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare hypothesis. */
   prepareHypothesis(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Verify measurement. */

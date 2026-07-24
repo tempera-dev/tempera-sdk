@@ -254,6 +254,30 @@
         ],
         "type": "object"
       },
+      "PrepareExperimentProposalFromGymBatchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "batchProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "campaignContext": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "candidateSet": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          }
+        },
+        "required": [
+          "program",
+          "candidateSet",
+          "campaignContext",
+          "batchProposal"
+        ],
+        "type": "object"
+      },
       "PrepareExperimentProposalRequest": {
         "additionalProperties": false,
         "properties": {
@@ -380,7 +404,7 @@
   "info": {
     "description": "Phase-specific biological discovery derivation. This API does not persist releases or execute physical experiments.",
     "title": "Tempera Bio Discovery API",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -813,6 +837,93 @@
           }
         ],
         "summary": "Prepare experiment proposal",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/experimentProposals:prepareFromGymBatch": {
+      "post": {
+        "operationId": "prepareExperimentProposalFromGymBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareExperimentProposalFromGymBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare experiment proposal from gym batch",
         "x-tempera-auth-audience": "tempera-bio",
         "x-tempera-effect": "derive_artifact",
         "x-tempera-physical-action": false,

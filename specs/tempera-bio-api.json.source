@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-bio-api.json",
-  "generated_sha256": "c25688b669d5f5c0ec3f963cb0ddf6878a554f66a640fed492684eea81a5ab30",
+  "generated_sha256": "546c1edcf1cf25c996f8d7920a316b6e82ce546492ff5df3a0153c491ab80b3d",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "20fd86b1c8de7ed254dd8e21b0e5ef2dfa9e0cdb",
+  "source_blob_sha": "2f2217bbdf42a115184a4d1b1af923fe84136491",
   "source_branch": "main",
-  "source_commit": "35f3d5d2c1cf7025e5b7795a7a4a2728a6743cd8",
+  "source_commit": "9eb36c8cf260d79b5d70839d21788bab5c82228f",
   "source_mode": "100644",
   "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
   "source_repo": "tempera-dev/tempera-bio",
-  "source_sha256": "c25688b669d5f5c0ec3f963cb0ddf6878a554f66a640fed492684eea81a5ab30"
+  "source_sha256": "546c1edcf1cf25c996f8d7920a316b6e82ce546492ff5df3a0153c491ab80b3d"
 }

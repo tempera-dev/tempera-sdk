@@ -5051,6 +5051,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Prepare experiment proposal."
     },
     {
+      "id": "prepareExperimentProposalFromGymBatch",
+      "upstreamOperationId": "prepareExperimentProposalFromGymBatch",
+      "method": "POST",
+      "path": "/v1/experimentProposals:prepareFromGymBatch",
+      "auth": "oauthResource",
+      "authAudience": "tempera-bio",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "batchProposal",
+        "campaignContext",
+        "candidateSet",
+        "program"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "program",
+        "candidateSet",
+        "campaignContext",
+        "batchProposal"
+      ],
+      "bodyDefaults": {},
+      "scope": "bio:proposal:write",
+      "description": "Prepare experiment proposal from gym batch."
+    },
+    {
       "id": "prepareHypothesis",
       "upstreamOperationId": "prepareHypothesis",
       "method": "POST",

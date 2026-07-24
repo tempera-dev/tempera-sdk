@@ -5042,6 +5042,33 @@ OPERATIONS = {
             "description": "Prepare experiment proposal."
         },
         {
+            "id": "prepare_experiment_proposal_from_gym_batch",
+            "upstream_operation_id": "prepareExperimentProposalFromGymBatch",
+            "method": "POST",
+            "path": "/v1/experimentProposals:prepareFromGymBatch",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "batchProposal",
+                "campaignContext",
+                "candidateSet",
+                "program"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "program",
+                "candidateSet",
+                "campaignContext",
+                "batchProposal"
+            ],
+            "body_defaults": {},
+            "scope": "bio:proposal:write",
+            "description": "Prepare experiment proposal from gym batch."
+        },
+        {
             "id": "prepare_hypothesis",
             "upstream_operation_id": "prepareHypothesis",
             "method": "POST",

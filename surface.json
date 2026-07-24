@@ -3710,6 +3710,28 @@
         "scope": "bio:proposal:write"
       },
       {
+        "id": "prepareExperimentProposalFromGymBatch",
+        "method": "POST",
+        "path": "/v1/experimentProposals:prepareFromGymBatch",
+        "auth": "oauthResource",
+        "description": "Prepare experiment proposal from gym batch.",
+        "upstreamOperationId": "prepareExperimentProposalFromGymBatch",
+        "body": [
+          "batchProposal",
+          "campaignContext",
+          "candidateSet",
+          "program"
+        ],
+        "requiredBody": [
+          "program",
+          "candidateSet",
+          "campaignContext",
+          "batchProposal"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
         "id": "prepareHypothesis",
         "method": "POST",
         "path": "/v1/hypotheses:prepare",
