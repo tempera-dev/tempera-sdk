@@ -198,6 +198,51 @@ def migration_count_errors(
     ]
 
 
+def gym_auth_metadata_errors(
+    spec: dict[str, Any],
+    operations: list[dict[str, Any]],
+    product_audience: str,
+) -> list[str]:
+    by_route = {
+        (item["method"], normalize_path(item["path"])): item
+        for item in operations
+    }
+    errors: list[str] = []
+    for path, path_item in (spec.get("paths") or {}).items():
+        if not isinstance(path_item, dict):
+            continue
+        for method, operation in path_item.items():
+            if method not in HTTP_METHODS or not isinstance(operation, dict):
+                continue
+            identity = (method.upper(), normalize_path(path))
+            item = by_route.get(identity)
+            if item is None:
+                continue
+            operation_id = operation.get("operationId", identity)
+            audience = operation.get("x-tempera-audience", "__missing__")
+            scope = operation.get("x-tempera-required-scope", "__missing__")
+            if audience == "__missing__" or scope == "__missing__":
+                errors.append(
+                    f"temperaGym.{operation_id}: producer auth extensions are missing"
+                )
+                continue
+            if audience is None:
+                if scope is not None or item.get("auth") != "none" or item.get("scope") is not None:
+                    errors.append(
+                        f"temperaGym.{operation_id}: unauthenticated metadata differs"
+                    )
+            elif (
+                audience != product_audience
+                or item.get("auth") != "product"
+                or item.get("scope") != scope
+            ):
+                errors.append(
+                    f"temperaGym.{operation_id}: producer audience/scope differs "
+                    "from the SDK surface"
+                )
+    return errors
+
+
 def main() -> int:
     failures: list[str] = []
     warnings: list[str] = []
@@ -238,6 +283,14 @@ def main() -> int:
                     f"!= upstream {observed_operation_id!r}"
                 )
         phantom, missing, stale = classify_routes(sdk, upstream, set(product_exclusions))
+        if product == "temperaGym":
+            failures.extend(
+                gym_auth_metadata_errors(
+                    spec,
+                    surface.get("operations", {}).get(product, []),
+                    surface["products"][product]["audience"],
+                )
+            )
         if product not in STRICT_PRODUCTS:
             failures.extend(
                 migration_count_errors(

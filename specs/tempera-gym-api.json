@@ -19,6 +19,8 @@
     "/healthz": {
       "get": {
         "operationId": "health.get",
+        "x-tempera-audience": null,
+        "x-tempera-required-scope": null,
         "summary": "Liveness probe (unauthenticated)",
         "security": [],
         "responses": {
@@ -60,6 +62,8 @@
     "/v1/environments": {
       "get": {
         "operationId": "environments.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Built-in and boot-trusted versioned environment catalog",
         "responses": {
           "200": {
@@ -122,6 +126,8 @@
     "/v1/domains": {
       "get": {
         "operationId": "domains.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Domain capabilities represented in the versioned task catalog",
         "responses": {
           "200": {
@@ -188,6 +194,8 @@
     "/v1/tasks": {
       "get": {
         "operationId": "tasks.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "List versioned task definitions without agent inputs",
         "parameters": [
           {
@@ -246,6 +254,8 @@
     "/v1/tasks/{task}": {
       "get": {
         "operationId": "tasks.get",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable task definition including its agent-visible input",
         "parameters": [
           {
@@ -292,6 +302,8 @@
     "/v1/tasks/{task}:evaluate": {
       "post": {
         "operationId": "tasks.evaluate",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Deterministically verify one candidate without creating an episode",
         "parameters": [
           {
@@ -374,6 +386,8 @@
     "/v1/verifiers": {
       "get": {
         "operationId": "verifiers.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "List verifier identities and bound tasks without grader content",
         "responses": {
           "200": {
@@ -409,6 +423,8 @@
     "/v1/episodes": {
       "get": {
         "operationId": "episodes.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "List durable episode snapshots, newest first",
         "parameters": [
           {
@@ -475,6 +491,8 @@
       },
       "post": {
         "operationId": "episodes.create",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Reset a versioned task into a durable episode",
         "requestBody": {
           "required": true,
@@ -542,6 +560,8 @@
     "/v1/episodes/{episode}": {
       "get": {
         "operationId": "episodes.get",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Read and content-verify one durable episode snapshot",
         "parameters": [
           {
@@ -582,6 +602,8 @@
     "/v1/episodes/{episode}:step": {
       "post": {
         "operationId": "episodes.step",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Apply one schema-validated action and persist the transition",
         "parameters": [
           {
@@ -670,6 +692,8 @@
     "/v1/episodes/{episode}:export": {
       "post": {
         "operationId": "episodes.export",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Retain a completed Gym episode and trajectory in Data Engine",
         "description": "Requires configured Data Engine service credentials. The context EvidenceRecord and PASS verifier receipt artifact must already exist in the configured project. Centrally authenticated callers require both eval:run and dataset:write.",
         "parameters": [
@@ -757,6 +781,8 @@
     "/v1/runs": {
       "get": {
         "operationId": "runs.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Persisted-run index, newest first",
         "parameters": [
           {
@@ -818,6 +844,8 @@
     "/v1/runs/{run}": {
       "get": {
         "operationId": "runs.get",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Full trajectory envelope (incl. metadata.timing) for one run",
         "parameters": [
           {
@@ -873,6 +901,8 @@
     "/v1/rollouts": {
       "post": {
         "operationId": "rollouts.create",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Execute one rollout synchronously, store it, return the summary",
         "requestBody": {
           "required": true,
@@ -966,6 +996,8 @@
     "/v1/sealed-evaluators": {
       "get": {
         "operationId": "sealedEvaluators.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Discover boot-trusted exact sealed-evaluator identities",
         "description": "Returns only evaluator and immutable qualification-policy identities. Executable adapters remain process-local and cannot be registered over HTTP.",
         "responses": {
@@ -1003,6 +1035,8 @@
     "/v1/sealed-evaluations": {
       "get": {
         "operationId": "sealedEvaluations.list",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "List persisted sealed-evaluation precommits and results",
         "parameters": [
           {
@@ -1058,6 +1092,8 @@
     "/v1/sealed-evaluations:precommit": {
       "post": {
         "operationId": "sealedEvaluations.precommit",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Persist an opaque sealed-suite commitment before policy freeze",
         "description": "Binds exact evaluator, qualification policy, suite commitment, and trainer identities. The request contains no policy, cases, seeds, rows, or labels. A missing exact boot-trusted evaluator fails with 412.",
         "requestBody": {
@@ -1129,6 +1165,8 @@
     "/v1/sealed-evaluations/{evaluation}": {
       "get": {
         "operationId": "sealedEvaluations.get",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
         "summary": "Read one verified precommit and aggregate sealed result",
         "parameters": [
           {
@@ -1173,6 +1211,8 @@
     "/v1/sealed-evaluations/{evaluation}:run": {
       "post": {
         "operationId": "sealedEvaluations.run",
+        "x-tempera-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
         "summary": "Evaluate one frozen policy through its exact sealed adapter",
         "description": "Accepts only opaque frozen-policy and training-report identities. Gym verifies precommit-before-freeze ordering, invokes the boot-trusted adapter, validates aggregate-only output and required receipts, derives distinct official, production-qualification, and improvement claims, then hashes and persists the result. Exact replay is idempotent.",
         "parameters": [

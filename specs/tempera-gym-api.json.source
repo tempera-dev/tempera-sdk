@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-gym-api.json",
-  "generated_sha256": "af62a3e76f2d0ce137ec2841ba63aa62f9ba4ee129bb79e095c82fe0c7a3ab86",
+  "generated_sha256": "ed136c13b485ad6b1d5648ba2effbbc06ea186565fa85fe2bbc4a4f4f584f069",
   "generated_with": "sync-tempera-gym-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
   "schema_version": 1,
-  "source_blob_sha": "5bdd54dad0b021a123d14b63079b73c951d5629c",
+  "source_blob_sha": "e05f71a424ee3a96322936b0e290202061ff09d3",
   "source_branch": "codex/rl-substrate-v1",
-  "source_commit": "0be25ebb60ebaceb9b2574ff80e69c57715dd659",
+  "source_commit": "dff2e0c85f3d0dda562ec6f0954c0d028ec1b827",
   "source_mode": "100644",
   "source_path": "contracts/gym-api.openapi.yaml",
   "source_repo": "tempera-dev/tempera-gym",
-  "source_sha256": "ddd882904bd90c8c4c5a4df1bf180b5c33cd0fa685f3f48da2a9fedf48a6f2c0"
+  "source_sha256": "8bdb991dcfccc314ed3951e278e4718fc52b86fd144f2057826ba757d96fff26"
 }
