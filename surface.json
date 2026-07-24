@@ -2616,7 +2616,11 @@
         "auth": "product",
         "scope": "workflow:read",
         "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
-        "upstreamOperationId": "nodeTypes.list"
+        "upstreamOperationId": "nodeTypes.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "listRuns",
@@ -2625,7 +2629,8 @@
         "auth": "product",
         "query": [
           "workflowId",
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "workflow:read",
         "description": "List workflow runs, optionally filtered to one workflow.",
@@ -2661,7 +2666,8 @@
         "path": "/v1/workflows",
         "auth": "product",
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "scope": "workflow:read",
         "description": "List stored workflow definitions, newest first.",
@@ -2705,8 +2711,20 @@
         "upstreamOperationId": "workflows.get"
       },
       {
+        "id": "deleteWorkflow",
+        "method": "DELETE",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:write",
+        "description": "Delete a stored workflow definition.",
+        "upstreamOperationId": "workflows.delete"
+      },
+      {
         "id": "updateWorkflow",
-        "method": "PUT",
+        "method": "PATCH",
         "path": "/v1/workflows/{workflowId}",
         "auth": "product",
         "pathParams": [
@@ -2730,19 +2748,10 @@
         ],
         "scope": "workflow:write",
         "description": "Replace a stored workflow definition with a new validated revision.",
-        "upstreamOperationId": "workflows.update"
-      },
-      {
-        "id": "deleteWorkflow",
-        "method": "DELETE",
-        "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
-        "pathParams": [
-          "workflowId"
-        ],
-        "scope": "workflow:write",
-        "description": "Delete a stored workflow definition.",
-        "upstreamOperationId": "workflows.delete"
+        "upstreamOperationId": "workflows.update",
+        "query": [
+          "updateMask"
+        ]
       },
       {
         "id": "createRun",

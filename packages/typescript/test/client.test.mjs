@@ -138,6 +138,38 @@ test("declared query and body parameters are routed to the right place", async (
     seed: 42,
   });
 
+  for (const [operation, params] of [
+    ["listNodeTypes", { pageSize: 9, pageToken: "node-types-token" }],
+    ["listWorkflows", { pageSize: 10, pageToken: "workflows-token" }],
+    [
+      "listRuns",
+      {
+        workflowId: "workflow-1",
+        pageSize: 11,
+        pageToken: "workflow-runs-token",
+      },
+    ],
+  ]) {
+    await client.temperaWorkflows[operation](params);
+    const url = calls.at(-1).url;
+    assert.equal(url.searchParams.get("pageSize"), String(params.pageSize), operation);
+    assert.equal(url.searchParams.get("pageToken"), params.pageToken, operation);
+    assert.equal(url.searchParams.get("limit"), null, operation);
+    assert.equal(url.searchParams.get("cursor"), null, operation);
+  }
+  assert.equal(calls.at(-1).url.searchParams.get("workflowId"), "workflow-1");
+  await client.temperaWorkflows.updateWorkflow({
+    workflowId: "workflow-1",
+    updateMask: "definition",
+    contractVersion: "v1",
+    id: "workflow-1",
+    name: "Smoke",
+    nodes: [],
+    edges: [],
+  });
+  assert.equal(calls.at(-1).options.method, "PATCH");
+  assert.equal(calls.at(-1).url.searchParams.get("updateMask"), "definition");
+
   for (const [operation, params, expectedPath] of [
     ["runUseCase", { parent: "projects/p1", use_case: "smoke" }, "/v1/projects/p1/pipelines:runUseCase"],
     [

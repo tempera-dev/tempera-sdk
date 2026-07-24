@@ -211,6 +211,48 @@ class DispatchTest(unittest.TestCase):
             {"environmentId": "env-1", "seed": 42},
         )
 
+        workflow_list_calls = (
+            (
+                client.tempera_workflows.list_node_types,
+                {"pageSize": 9, "pageToken": "node-types-token"},
+            ),
+            (
+                client.tempera_workflows.list_workflows,
+                {"pageSize": 10, "pageToken": "workflows-token"},
+            ),
+            (
+                client.tempera_workflows.list_runs,
+                {
+                    "workflowId": "workflow-1",
+                    "pageSize": 11,
+                    "pageToken": "workflow-runs-token",
+                },
+            ),
+        )
+        for operation, params in workflow_list_calls:
+            operation(params)
+            query = transport.calls[-1]["query"]
+            self.assertEqual(query["pageSize"], str(params["pageSize"]))
+            self.assertEqual(query["pageToken"], params["pageToken"])
+            self.assertNotIn("limit", query)
+            self.assertNotIn("cursor", query)
+        self.assertEqual(transport.calls[-1]["query"]["workflowId"], "workflow-1")
+        client.tempera_workflows.update_workflow(
+            {
+                "workflowId": "workflow-1",
+                "updateMask": "definition",
+                "contractVersion": "v1",
+                "id": "workflow-1",
+                "name": "Smoke",
+                "nodes": [],
+                "edges": [],
+            }
+        )
+        self.assertEqual(transport.calls[-1]["method"], "PATCH")
+        self.assertEqual(
+            transport.calls[-1]["query"]["updateMask"], "definition"
+        )
+
         custom_verb_calls = (
             (
                 client.data_engine.run_use_case,

@@ -3536,7 +3536,10 @@ OPERATIONS = {
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3554,7 +3557,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [
                 "workflowId",
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3608,7 +3612,8 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3666,9 +3671,9 @@ OPERATIONS = {
             "description": "Fetch one stored workflow definition."
         },
         {
-            "id": "update_workflow",
-            "upstream_operation_id": "workflows.update",
-            "method": "PUT",
+            "id": "delete_workflow",
+            "upstream_operation_id": "workflows.delete",
+            "method": "DELETE",
             "path": "/v1/workflows/{workflowId}",
             "auth": "product",
             "path_params": [
@@ -3676,6 +3681,26 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:write",
+            "description": "Delete a stored workflow definition."
+        },
+        {
+            "id": "update_workflow",
+            "upstream_operation_id": "workflows.update",
+            "method": "PATCH",
+            "path": "/v1/workflows/{workflowId}",
+            "auth": "product",
+            "path_params": [
+                "workflowId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "updateMask"
+            ],
             "body": [
                 "contractVersion",
                 "description",
@@ -3696,24 +3721,6 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": "workflow:write",
             "description": "Replace a stored workflow definition with a new validated revision."
-        },
-        {
-            "id": "delete_workflow",
-            "upstream_operation_id": "workflows.delete",
-            "method": "DELETE",
-            "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "path_params": [
-                "workflowId"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": "workflow:write",
-            "description": "Delete a stored workflow definition."
         },
         {
             "id": "create_run",

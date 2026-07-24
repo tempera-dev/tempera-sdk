@@ -832,6 +832,65 @@ mod tests {
     }
 
     #[test]
+    fn workflows_aip_wire_names_cover_lists_and_patch_updates() {
+        let client = full_client();
+        for (operation, params) in [
+            (
+                "list_node_types",
+                vec![
+                    ("pageSize", ParamValue::Int(9)),
+                    ("pageToken", "node-types-token".into()),
+                ],
+            ),
+            (
+                "list_workflows",
+                vec![
+                    ("pageSize", ParamValue::Int(10)),
+                    ("pageToken", "workflows-token".into()),
+                ],
+            ),
+            (
+                "list_runs",
+                vec![
+                    ("workflowId", "workflow-1".into()),
+                    ("pageSize", ParamValue::Int(11)),
+                    ("pageToken", "workflow-runs-token".into()),
+                ],
+            ),
+        ] {
+            let spec = client
+                .build_request("tempera_workflows", operation, &params)
+                .unwrap();
+            assert!(spec.query.iter().any(|(name, _)| name == "pageSize"));
+            assert!(spec.query.iter().any(|(name, _)| name == "pageToken"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "cursor"));
+        }
+
+        let update = client
+            .build_request(
+                "tempera_workflows",
+                "update_workflow",
+                &[
+                    ("workflowId", "workflow-1".into()),
+                    ("updateMask", "definition".into()),
+                    ("contractVersion", "v1".into()),
+                    ("id", "workflow-1".into()),
+                    ("name", "Smoke".into()),
+                    ("nodes", ParamValue::RawJson("[]".to_string())),
+                    ("edges", ParamValue::RawJson("[]".to_string())),
+                ],
+            )
+            .unwrap();
+        assert_eq!(update.method, "PATCH");
+        assert!(
+            update
+                .query
+                .contains(&("updateMask".to_string(), "definition".to_string()))
+        );
+    }
+
+    #[test]
     fn data_engine_aip_custom_verbs_use_lower_camel_paths() {
         let client = full_client();
         for (operation, params, expected_path) in [

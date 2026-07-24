@@ -3545,7 +3545,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3563,7 +3566,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [
         "workflowId",
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -3617,7 +3621,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -3675,9 +3680,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch one stored workflow definition."
     },
     {
-      "id": "updateWorkflow",
-      "upstreamOperationId": "workflows.update",
-      "method": "PUT",
+      "id": "deleteWorkflow",
+      "upstreamOperationId": "workflows.delete",
+      "method": "DELETE",
       "path": "/v1/workflows/{workflowId}",
       "auth": "product",
       "pathParams": [
@@ -3685,6 +3690,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Delete a stored workflow definition."
+    },
+    {
+      "id": "updateWorkflow",
+      "upstreamOperationId": "workflows.update",
+      "method": "PATCH",
+      "path": "/v1/workflows/{workflowId}",
+      "auth": "product",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "updateMask"
+      ],
       "body": [
         "contractVersion",
         "description",
@@ -3705,24 +3730,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "workflow:write",
       "description": "Replace a stored workflow definition with a new validated revision."
-    },
-    {
-      "id": "deleteWorkflow",
-      "upstreamOperationId": "workflows.delete",
-      "method": "DELETE",
-      "path": "/v1/workflows/{workflowId}",
-      "auth": "product",
-      "pathParams": [
-        "workflowId"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:write",
-      "description": "Delete a stored workflow definition."
     },
     {
       "id": "createRun",
