@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "1f53e2ee90e8a857e1da8da1c5280f9d5e4f2c49",
   "source_branch": "main",
-  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
+  "source_commit": "6fae78e21ac03ee3e466d47c9dd517b07a5c46ae",
   "source_path": "api/mcp-admission.json",
   "source_repo": "tempera-dev/data-engine",
   "source_sha256": "57843e416fffc2759795089787095a5517a3f06303a992423791d7eba43115ba"

@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
   "source_branch": "main",
-  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
+  "source_commit": "6fae78e21ac03ee3e466d47c9dd517b07a5c46ae",
   "source_mode": "100644",
   "source_path": "api/openapi.yaml",
   "source_repo": "tempera-dev/data-engine",

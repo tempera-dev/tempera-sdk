@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "06b19d43c03e3974511ec13eac86dbf6e082cec6",
   "source_branch": "main",
-  "source_commit": "6c889513d550e2c8fab1c35ac9f8cd667f90703e",
+  "source_commit": "6fae78e21ac03ee3e466d47c9dd517b07a5c46ae",
   "source_path": "api/mcp-tools.json",
   "source_repo": "tempera-dev/data-engine",
   "source_sha256": "d77fcbe95e862ad1026c34bbab0d0fa4508ecf834a2411a33bec2c33142ae5e4"
