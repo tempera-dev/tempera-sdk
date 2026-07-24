@@ -94,7 +94,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose compileBioCampaign with the exact custom-method path, tempera-workflows audience, and workflow:write scope from Workflows main head 366c87d4588fb843bbdf38eeb75253cf905aea24. The SDK constructs the request but does not save, execute, or validate a physical campaign."
+      "notes": "All three generated clients expose compileBioCampaign with the exact URI-encoded custom-method path, lowerCamel request body, tempera-workflows audience, and workflow:write scope from Workflows main head 366c87d4588fb843bbdf38eeb75253cf905aea24. The SDK constructs the request but does not save, execute, or validate a physical campaign."
     }
   ],
   "physical_execution": {

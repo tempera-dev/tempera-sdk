@@ -352,6 +352,40 @@ test("action-suffix paths keep the literal colon un-encoded", async () => {
   );
 });
 
+test("Bio campaign compiler preserves the exact Workflows wire and auth contract", async () => {
+  const operation = TEMPERA_OPERATIONS.temperaWorkflows.find(
+    (candidate) => candidate.id === "compileBioCampaign",
+  );
+  assert.ok(operation);
+  assert.equal(operation.upstreamOperationId, "workflows.compileBioCampaign");
+  assert.equal(operation.auth, "oauthResource");
+  assert.equal(operation.authAudience, "tempera-workflows");
+  assert.equal(operation.scope, "workflow:write");
+
+  const { client, calls } = testClient();
+  const result = await client.temperaWorkflows.compileBioCampaign({
+    workflowId: "campaign/alpha",
+    name: "Prospective round train",
+    max_rounds: 3,
+    signal_prefix: "bio.provider",
+    signal_expires_after_seconds: 86_400,
+    deadline_ms: 30_000,
+  });
+  assert.deepEqual(result, { ok: true });
+  assert.equal(
+    calls[0].url.pathname,
+    "/v1/workflows/campaign%2Falpha:compileBioCampaign",
+  );
+  assert.ok(!calls[0].url.toString().includes("%3A"));
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    deadlineMs: 30_000,
+    maxRounds: 3,
+    name: "Prospective round train",
+    signalExpiresAfterSeconds: 86_400,
+    signalPrefix: "bio.provider",
+  });
+});
+
 test("missing path parameters fail fast with a clear message", async () => {
   const { client } = testClient();
   await assert.rejects(
