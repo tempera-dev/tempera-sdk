@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "tempera-gym API",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
@@ -160,11 +160,11 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "catalog_digest",
+                    "catalogDigest",
                     "domains"
                   ],
                   "properties": {
-                    "catalog_digest": {
+                    "catalogDigest": {
                       "$ref": "#/components/schemas/Digest"
                     },
                     "domains": {
@@ -173,15 +173,15 @@
                         "type": "object",
                         "required": [
                           "id",
-                          "task_count",
+                          "taskCount",
                           "families",
-                          "risk_tiers"
+                          "riskTiers"
                         ],
                         "properties": {
                           "id": {
                             "type": "string"
                           },
-                          "task_count": {
+                          "taskCount": {
                             "type": "integer",
                             "minimum": 1
                           },
@@ -191,7 +191,7 @@
                               "type": "string"
                             }
                           },
-                          "risk_tiers": {
+                          "riskTiers": {
                             "type": "array",
                             "items": {
                               "type": "string"
@@ -253,11 +253,11 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "catalog_digest",
+                    "catalogDigest",
                     "tasks"
                   ],
                   "properties": {
-                    "catalog_digest": {
+                    "catalogDigest": {
                       "$ref": "#/components/schemas/Digest"
                     },
                     "tasks": {
@@ -361,7 +361,7 @@
                 "properties": {
                   "candidate": {
                     "type": "object",
-                    "description": "Validated against the selected Task.action_schema."
+                    "description": "Validated against the selected Task.actionSchema."
                   },
                   "seed": {
                     "type": "integer",
@@ -668,7 +668,7 @@
                 "properties": {
                   "action": {
                     "type": "object",
-                    "description": "Validated against the episode Task.action_schema."
+                    "description": "Validated against the episode Task.actionSchema."
                   },
                   "receipts": {
                     "type": "array",
@@ -692,7 +692,7 @@
                   "required": [
                     "episode",
                     "transition",
-                    "verifier_result",
+                    "verifierResult",
                     "trajectory"
                   ],
                   "properties": {
@@ -702,7 +702,7 @@
                     "transition": {
                       "$ref": "#/components/schemas/Transition"
                     },
-                    "verifier_result": {
+                    "verifierResult": {
                       "$ref": "#/components/schemas/VerifierResult"
                     },
                     "trajectory": {
@@ -754,18 +754,18 @@
                 "type": "object",
                 "additionalProperties": false,
                 "required": [
-                  "context_evidence_ref"
+                  "contextEvidenceRef"
                 ],
                 "properties": {
-                  "context_evidence_ref": {
+                  "contextEvidenceRef": {
                     "type": "string",
                     "pattern": "^projects/[^/]+/evidenceRecords/[a-f0-9]{64}$"
                   },
-                  "verifier_receipt_artifact_ref": {
+                  "verifierReceiptArtifactRef": {
                     "type": "string",
                     "pattern": "^projects/[^/]+/artifacts/[^/]+$"
                   },
-                  "request_id": {
+                  "requestId": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 256
@@ -784,14 +784,14 @@
                   "type": "object",
                   "required": [
                     "episode",
-                    "trajectory_operation"
+                    "trajectoryOperation"
                   ],
                   "properties": {
                     "episode": {
                       "type": "object",
                       "description": "data-engine.episode.v1 immutable resource"
                     },
-                    "trajectory_operation": {
+                    "trajectoryOperation": {
                       "$ref": "#/components/schemas/Operation"
                     }
                   }
@@ -897,7 +897,7 @@
             "name": "run",
             "in": "path",
             "required": true,
-            "description": "run_id (uuid) or trajectory content_hash (sha256 hex)",
+            "description": "run_id (uuid) or trajectory contentHash (sha256 hex)",
             "schema": {
               "type": "string",
               "pattern": "^[A-Za-z0-9._~-]{1,256}$"
@@ -1062,10 +1062,10 @@
                   "type": "object",
                   "additionalProperties": false,
                   "required": [
-                    "sealed_evaluators"
+                    "sealedEvaluators"
                   ],
                   "properties": {
-                    "sealed_evaluators": {
+                    "sealedEvaluators": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/SealedEvaluator"
@@ -1111,10 +1111,10 @@
                   "type": "object",
                   "additionalProperties": false,
                   "required": [
-                    "sealed_evaluations"
+                    "sealedEvaluations"
                   ],
                   "properties": {
-                    "sealed_evaluations": {
+                    "sealedEvaluations": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/SealedEvaluationRecord"
@@ -1159,7 +1159,7 @@
                 "additionalProperties": false,
                 "required": [
                   "evaluator",
-                  "qualification_policy",
+                  "qualificationPolicy",
                   "suite",
                   "trainer"
                 ],
@@ -1167,7 +1167,7 @@
                   "evaluator": {
                     "$ref": "#/components/schemas/ExactIdentity"
                   },
-                  "qualification_policy": {
+                  "qualificationPolicy": {
                     "$ref": "#/components/schemas/ExactIdentity"
                   },
                   "suite": {
@@ -1282,14 +1282,14 @@
                 "type": "object",
                 "additionalProperties": false,
                 "required": [
-                  "policy_submission",
-                  "training_report"
+                  "policySubmission",
+                  "trainingReport"
                 ],
                 "properties": {
-                  "policy_submission": {
+                  "policySubmission": {
                     "$ref": "#/components/schemas/FrozenPolicySubmission"
                   },
-                  "training_report": {
+                  "trainingReport": {
                     "$ref": "#/components/schemas/TrainingReportSubmission"
                   }
                 }
@@ -1434,18 +1434,18 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "ref",
           "digest",
           "domain",
           "lane",
-          "evaluation_classification",
-          "minimum_replays",
-          "required_receipt_kinds",
-          "required_domain_gates"
+          "evaluationClassification",
+          "minimumReplays",
+          "requiredReceiptKinds",
+          "requiredDomainGates"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "pattern": "^tempera\\.[a-z0-9][a-z0-9.-]*\\.qualification-policy/v[0-9]+$"
           },
@@ -1461,18 +1461,18 @@
           "lane": {
             "type": "string"
           },
-          "evaluation_classification": {
+          "evaluationClassification": {
             "type": "string",
             "enum": [
               "sealed-external"
             ]
           },
-          "minimum_replays": {
+          "minimumReplays": {
             "type": "integer",
             "minimum": 2,
             "maximum": 128
           },
-          "required_receipt_kinds": {
+          "requiredReceiptKinds": {
             "type": "array",
             "minItems": 1,
             "maxItems": 32,
@@ -1481,7 +1481,7 @@
               "type": "string"
             }
           },
-          "required_domain_gates": {
+          "requiredDomainGates": {
             "type": "array",
             "minItems": 1,
             "maxItems": 32,
@@ -1498,7 +1498,7 @@
         "required": [
           "ref",
           "digest",
-          "qualification_policy"
+          "qualificationPolicy"
         ],
         "properties": {
           "ref": {
@@ -1507,7 +1507,7 @@
           "digest": {
             "$ref": "#/components/schemas/Digest"
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "$ref": "#/components/schemas/QualificationPolicySummary"
           }
         }
@@ -1516,17 +1516,17 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "name",
           "evaluator",
-          "qualification_policy",
+          "qualificationPolicy",
           "suite",
           "trainer",
-          "created_at",
-          "precommit_digest"
+          "createdAt",
+          "precommitDigest"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.sealed-evaluation-precommit/v1"
@@ -1539,7 +1539,7 @@
           "evaluator": {
             "$ref": "#/components/schemas/ExactIdentity"
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "type": "object",
             "additionalProperties": false,
             "required": [
@@ -1565,11 +1565,11 @@
           "trainer": {
             "$ref": "#/components/schemas/ExactIdentity"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "precommit_digest": {
+          "precommitDigest": {
             "$ref": "#/components/schemas/Digest"
           }
         }
@@ -1578,16 +1578,16 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "ref",
           "digest",
-          "artifact_ref",
-          "artifact_digest",
-          "media_type",
-          "frozen_at"
+          "artifactRef",
+          "artifactDigest",
+          "mediaType",
+          "frozenAt"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.frozen-policy-submission/v1"
@@ -1601,20 +1601,20 @@
           "digest": {
             "$ref": "#/components/schemas/Digest"
           },
-          "artifact_ref": {
+          "artifactRef": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096
           },
-          "artifact_digest": {
+          "artifactDigest": {
             "$ref": "#/components/schemas/Digest"
           },
-          "media_type": {
+          "mediaType": {
             "type": "string",
             "minLength": 1,
             "maxLength": 128
           },
-          "frozen_at": {
+          "frozenAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -1624,12 +1624,12 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "ref",
           "digest"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.training-report-submission/v1"
@@ -1650,26 +1650,26 @@
         "additionalProperties": false,
         "description": "Gym-owned tempera.gym.sealed-evaluation/v1 aggregate. The closed JSON Schema in contracts/sealed-evaluation-v1.schema.json is canonical.",
         "required": [
-          "schema_version",
+          "schemaVersion",
           "name",
-          "precommit_digest",
-          "evaluation_classification",
+          "precommitDigest",
+          "evaluationClassification",
           "evaluator",
-          "qualification_policy",
+          "qualificationPolicy",
           "suite",
           "policy",
           "training",
           "timing",
           "aggregate",
           "comparison",
-          "domain_gates",
+          "domainGates",
           "integrity",
-          "evidence_receipts",
+          "evidenceReceipts",
           "claim",
-          "content_hash"
+          "contentHash"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.sealed-evaluation/v1"
@@ -1678,10 +1678,10 @@
           "name": {
             "type": "string"
           },
-          "precommit_digest": {
+          "precommitDigest": {
             "$ref": "#/components/schemas/Digest"
           },
-          "evaluation_classification": {
+          "evaluationClassification": {
             "type": "string",
             "enum": [
               "sealed-external"
@@ -1690,7 +1690,7 @@
           "evaluator": {
             "$ref": "#/components/schemas/ExactIdentity"
           },
-          "qualification_policy": {
+          "qualificationPolicy": {
             "type": "object"
           },
           "suite": {
@@ -1711,7 +1711,7 @@
           "comparison": {
             "type": "object"
           },
-          "domain_gates": {
+          "domainGates": {
             "type": "array",
             "items": {
               "type": "object"
@@ -1720,7 +1720,7 @@
           "integrity": {
             "type": "object"
           },
-          "evidence_receipts": {
+          "evidenceReceipts": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EvidenceReceipt"
@@ -1730,23 +1730,23 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "official_result_eligible",
-              "independent_evaluation_claimed",
-              "production_qualification_passed",
-              "learned_improvement_claimed",
+              "officialResultEligible",
+              "independentEvaluationClaimed",
+              "productionQualificationPassed",
+              "learnedImprovementClaimed",
               "reason"
             ],
             "properties": {
-              "official_result_eligible": {
+              "officialResultEligible": {
                 "type": "boolean"
               },
-              "independent_evaluation_claimed": {
+              "independentEvaluationClaimed": {
                 "type": "boolean"
               },
-              "production_qualification_passed": {
+              "productionQualificationPassed": {
                 "type": "boolean"
               },
-              "learned_improvement_claimed": {
+              "learnedImprovementClaimed": {
                 "type": "boolean"
               },
               "reason": {
@@ -1754,7 +1754,7 @@
               }
             }
           },
-          "content_hash": {
+          "contentHash": {
             "$ref": "#/components/schemas/Digest"
           }
         }
@@ -1793,12 +1793,12 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "kind",
           "digest"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.evidence-receipt/v1"
@@ -1826,7 +1826,7 @@
           "kind",
           "ref",
           "hidden",
-          "required_receipts",
+          "requiredReceipts",
           "digest"
         ],
         "properties": {
@@ -1845,7 +1845,7 @@
           "hidden": {
             "type": "boolean"
           },
-          "required_receipts": {
+          "requiredReceipts": {
             "type": "array",
             "maxItems": 16,
             "uniqueItems": true,
@@ -1886,7 +1886,7 @@
       "Task": {
         "type": "object",
         "required": [
-          "schema_version",
+          "schemaVersion",
           "name",
           "id",
           "version",
@@ -1895,15 +1895,15 @@
           "title",
           "description",
           "environment",
-          "action_schema",
+          "actionSchema",
           "verifier",
           "reward",
           "safety",
           "provenance",
-          "task_digest"
+          "taskDigest"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.task/v1"
@@ -1930,14 +1930,14 @@
           "description": {
             "type": "string"
           },
-          "agent_input": {
+          "agentInput": {
             "type": "object",
             "description": "Present on get; omitted from collection responses."
           },
           "environment": {
             "type": "object"
           },
-          "action_schema": {
+          "actionSchema": {
             "type": "object"
           },
           "verifier": {
@@ -1952,7 +1952,7 @@
           "provenance": {
             "type": "object"
           },
-          "task_digest": {
+          "taskDigest": {
             "$ref": "#/components/schemas/Digest"
           }
         }
@@ -1987,19 +1987,19 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "task",
-          "task_digest",
+          "taskDigest",
           "verifier",
           "status",
           "score",
           "components",
           "checks",
-          "evidence_receipts",
-          "content_hash"
+          "evidenceReceipts",
+          "contentHash"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.verifier-result/v1"
@@ -2008,7 +2008,7 @@
           "task": {
             "type": "string"
           },
-          "task_digest": {
+          "taskDigest": {
             "$ref": "#/components/schemas/Digest"
           },
           "verifier": {
@@ -2056,13 +2056,13 @@
               "$ref": "#/components/schemas/CheckResult"
             }
           },
-          "evidence_receipts": {
+          "evidenceReceipts": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EvidenceReceipt"
             }
           },
-          "content_hash": {
+          "contentHash": {
             "$ref": "#/components/schemas/Digest"
           }
         }
@@ -2071,18 +2071,18 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "index",
           "observation",
           "action",
-          "next_observation",
+          "nextObservation",
           "reward",
           "terminated",
           "truncated",
           "info"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.transition/v1"
@@ -2094,7 +2094,7 @@
           },
           "observation": {},
           "action": {},
-          "next_observation": {},
+          "nextObservation": {},
           "reward": {
             "type": "number"
           },
@@ -2113,26 +2113,26 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version",
+          "schemaVersion",
           "name",
           "task",
-          "task_digest",
+          "taskDigest",
           "domain",
           "seed",
           "status",
-          "step_count",
+          "stepCount",
           "observation",
           "terminated",
           "truncated",
-          "verifier_result",
-          "trajectory_content_hash",
-          "last_transition",
-          "created_at",
-          "updated_at",
-          "content_hash"
+          "verifierResult",
+          "trajectoryContentHash",
+          "lastTransition",
+          "createdAt",
+          "updatedAt",
+          "contentHash"
         ],
         "properties": {
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.episode/v1"
@@ -2144,7 +2144,7 @@
           "task": {
             "type": "string"
           },
-          "task_digest": {
+          "taskDigest": {
             "$ref": "#/components/schemas/Digest"
           },
           "domain": {
@@ -2161,7 +2161,7 @@
               "COMPLETED"
             ]
           },
-          "step_count": {
+          "stepCount": {
             "type": "integer",
             "minimum": 0
           },
@@ -2172,28 +2172,28 @@
           "truncated": {
             "type": "boolean"
           },
-          "verifier_result": {
+          "verifierResult": {
             "type": "object",
             "nullable": true
           },
-          "trajectory_content_hash": {
+          "trajectoryContentHash": {
             "type": "string",
             "nullable": true,
             "pattern": "^[a-f0-9]{64}$"
           },
-          "last_transition": {
+          "lastTransition": {
             "type": "object",
             "nullable": true
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "content_hash": {
+          "contentHash": {
             "$ref": "#/components/schemas/Digest"
           }
         }
@@ -2226,7 +2226,7 @@
           "available": {
             "type": "boolean"
           },
-          "schema_version": {
+          "schemaVersion": {
             "type": "string",
             "enum": [
               "tempera.gym.environment/v1"
@@ -2299,11 +2299,11 @@
             "type": "object",
             "nullable": true
           },
-          "info_schema": {
+          "infoSchema": {
             "type": "object",
             "nullable": true
           },
-          "action_space": {
+          "actionSpace": {
             "type": "object",
             "nullable": true
           },
