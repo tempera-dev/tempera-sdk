@@ -3,7 +3,7 @@
   "info": {
     "title": "tempera-gym API",
     "version": "0.8.0",
-    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, outcome-blind Bio batch proposal, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -1038,6 +1038,114 @@
         }
       }
     },
+    "/v1/bio-proposal-policies": {
+      "get": {
+        "operationId": "bioProposalPolicies.list",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "dataset:read",
+        "summary": "Discover the four frozen outcome-blind Bio proposal policies",
+        "description": "Returns exact random, greedy, uncertainty, and diversity policy identities. Policy code is built into Gym; callers cannot register executable policies through this API.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Frozen Bio proposal policies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "bioProposalPolicies",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "bioProposalPolicies": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BioProposalPolicy"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/v1/bio-proposals:proposeBatch": {
+      "post": {
+        "operationId": "bioProposals.proposeBatch",
+        "x-tempera-auth-audience": "tempera-gym",
+        "x-tempera-required-scope": "eval:run",
+        "summary": "Propose one constrained Bio candidate batch without outcome access",
+        "description": "Binds exact campaign, dataset, candidate-set, model, and frozen-policy digests; produces deterministic primary and optional shadow rankings. The closed request has no label, measurement, reward, or observed outcome field. The result has no execution authority and cannot by itself support a prospective, physical, efficacy, clinical, or SOTA claim.",
+        "requestBody": {
+          "required": true,
+          "description": "Closed lowerCamel JSON request, capped at 1 MiB.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BioProposalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content-addressed outcome-blind proposal and shadow rankings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "proposal"
+                  ],
+                  "properties": {
+                    "proposal": {
+                      "$ref": "#/components/schemas/BioBatchProposal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          }
+        }
+      }
+    },
     "/v1/sealed-evaluators": {
       "get": {
         "operationId": "sealedEvaluators.list",
@@ -1427,6 +1535,567 @@
           },
           "digest": {
             "$ref": "#/components/schemas/Digest"
+          }
+        }
+      },
+      "ContentDigest": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      },
+      "BioProposalIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "digest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          }
+        }
+      },
+      "BioProposalPolicyIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "digest"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^tempera-gym://bio/proposal-policies/(random|greedy|uncertainty|diversity)/v1$"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          }
+        }
+      },
+      "BioProposalPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "ref",
+          "version",
+          "algorithm",
+          "requiredCandidateInputs",
+          "tieBreaker",
+          "constraintSolver",
+          "outcomeAccess",
+          "executionAuthority",
+          "digest"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.bio-proposal-policy/v1"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "pattern": "^tempera-gym://bio/proposal-policies/(random|greedy|uncertainty|diversity)/v1$"
+          },
+          "version": {
+            "type": "string",
+            "enum": [
+              "1.0.0"
+            ]
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "random",
+              "greedy",
+              "uncertainty",
+              "diversity"
+            ]
+          },
+          "requiredCandidateInputs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "candidate_digest",
+                "predicted_value",
+                "predictive_uncertainty",
+                "diversity_vector"
+              ]
+            }
+          },
+          "tieBreaker": {
+            "type": "string",
+            "enum": [
+              "candidate_digest_ascending"
+            ]
+          },
+          "constraintSolver": {
+            "type": "string",
+            "enum": [
+              "required_then_coverage_then_rank/v1"
+            ]
+          },
+          "outcomeAccess": {
+            "type": "string",
+            "enum": [
+              "prohibited"
+            ]
+          },
+          "executionAuthority": {
+            "type": "string",
+            "enum": [
+              "none"
+            ]
+          },
+          "digest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          }
+        }
+      },
+      "BioProposalConstraints": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "batchSize",
+          "maxTotalCost",
+          "excludedCandidateDigests",
+          "requiredCandidateDigests",
+          "maxPerGroup",
+          "minimumGroupCoverage"
+        ],
+        "properties": {
+          "batchSize": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "maxTotalCost": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+          },
+          "excludedCandidateDigests": {
+            "type": "array",
+            "maxItems": 512,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ContentDigest"
+            }
+          },
+          "requiredCandidateDigests": {
+            "type": "array",
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ContentDigest"
+            }
+          },
+          "maxPerGroup": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64,
+            "nullable": true
+          },
+          "minimumGroupCoverage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          }
+        }
+      },
+      "BioProposalCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidateDigest",
+          "observationDigest",
+          "predictedValue",
+          "predictiveUncertainty",
+          "estimatedCost",
+          "groupKeys",
+          "diversityVector"
+        ],
+        "properties": {
+          "candidateDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "observationDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "predictedValue": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+          },
+          "predictiveUncertainty": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+          },
+          "estimatedCost": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+          },
+          "groupKeys": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "diversityVector": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+            }
+          }
+        }
+      },
+      "BioProposalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "campaignDigest",
+          "datasetDigest",
+          "candidateSetDigest",
+          "model",
+          "policy",
+          "shadowPolicies",
+          "mode",
+          "constraints",
+          "candidates"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.bio-proposal-request/v1"
+            ]
+          },
+          "campaignDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "datasetDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "candidateSetDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "model": {
+            "$ref": "#/components/schemas/BioProposalIdentity"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/BioProposalPolicyIdentity"
+          },
+          "shadowPolicies": {
+            "type": "array",
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/BioProposalPolicyIdentity"
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "proposal",
+              "shadow"
+            ]
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/BioProposalConstraints"
+          },
+          "candidates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 512,
+            "items": {
+              "$ref": "#/components/schemas/BioProposalCandidate"
+            }
+          }
+        }
+      },
+      "BioPolicyRanking": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "selectionKind",
+          "policy",
+          "eligibleCandidateCount",
+          "ranking",
+          "rankingDigest",
+          "selectedCandidateDigests",
+          "selectedBatchDigest",
+          "totalCost",
+          "groupCoverage",
+          "constraintStatus",
+          "contentDigest"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.bio-policy-ranking/v1"
+            ]
+          },
+          "selectionKind": {
+            "type": "string",
+            "enum": [
+              "proposal",
+              "shadow"
+            ]
+          },
+          "policy": {
+            "$ref": "#/components/schemas/BioProposalPolicyIdentity"
+          },
+          "eligibleCandidateCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "ranking": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 512,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ContentDigest"
+            }
+          },
+          "rankingDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "selectedCandidateDigests": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ContentDigest"
+            }
+          },
+          "selectedBatchDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "totalCost": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?([Ee][+-]?[0-9]+)?$"
+          },
+          "groupCoverage": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 512,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "constraintStatus": {
+            "type": "string",
+            "enum": [
+              "passed"
+            ]
+          },
+          "contentDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          }
+        }
+      },
+      "BioBatchProposal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "engineVersion",
+          "requestDigest",
+          "campaignDigest",
+          "datasetDigest",
+          "candidateSetDigest",
+          "model",
+          "mode",
+          "constraints",
+          "constraintsDigest",
+          "primary",
+          "shadows",
+          "outcomeBoundary",
+          "execution",
+          "claimBoundary",
+          "contentDigest"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.bio-batch-proposal/v1"
+            ]
+          },
+          "engineVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.gym.bio-proposal-engine/v1"
+            ]
+          },
+          "requestDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "campaignDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "datasetDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "candidateSetDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "model": {
+            "$ref": "#/components/schemas/BioProposalIdentity"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "proposal",
+              "shadow"
+            ]
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/BioProposalConstraints"
+          },
+          "constraintsDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "primary": {
+            "$ref": "#/components/schemas/BioPolicyRanking"
+          },
+          "shadows": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/BioPolicyRanking"
+            }
+          },
+          "outcomeBoundary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "access",
+              "acceptedCandidateFields",
+              "measurementsPresent",
+              "labelsPresent"
+            ],
+            "properties": {
+              "access": {
+                "type": "string",
+                "enum": [
+                  "prohibited"
+                ]
+              },
+              "acceptedCandidateFields": {
+                "type": "array",
+                "minItems": 7,
+                "maxItems": 7,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "measurementsPresent": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "labelsPresent": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              }
+            }
+          },
+          "execution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "authorized",
+              "purpose",
+              "humanApprovalRequiredForPhysicalAction"
+            ],
+            "properties": {
+              "authorized": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "purpose": {
+                "type": "string",
+                "enum": [
+                  "proposal_only"
+                ]
+              },
+              "humanApprovalRequiredForPhysicalAction": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              }
+            }
+          },
+          "claimBoundary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prospectiveDiscovery",
+              "physicalExecution",
+              "clinicalUse"
+            ],
+            "properties": {
+              "prospectiveDiscovery": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "physicalExecution": {
+                "type": "string",
+                "enum": [
+                  "not_performed"
+                ]
+              },
+              "clinicalUse": {
+                "type": "string",
+                "enum": [
+                  "prohibited"
+                ]
+              }
+            }
+          },
+          "contentDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
           }
         }
       },

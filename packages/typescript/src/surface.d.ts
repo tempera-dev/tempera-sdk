@@ -497,6 +497,10 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Discover the four frozen outcome-blind Bio proposal policies. */
+  bioProposalPoliciesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Propose one constrained Bio candidate batch without outcome access. */
+  bioProposalsProposeBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Discover boot-trusted exact sealed-evaluator identities. */
   listSealedEvaluators(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List persisted sealed-evaluation precommits and results. */

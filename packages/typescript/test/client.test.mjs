@@ -386,6 +386,91 @@ test("Bio campaign compiler preserves the exact Workflows wire and auth contract
   });
 });
 
+test("Gym Bio proposal preserves the outcome-blind wire and auth contract", async () => {
+  const policyOperation = TEMPERA_OPERATIONS.temperaGym.find(
+    (candidate) => candidate.id === "bioProposalPoliciesList",
+  );
+  assert.ok(policyOperation);
+  assert.equal(policyOperation.upstreamOperationId, "bioProposalPolicies.list");
+  assert.equal(policyOperation.method, "GET");
+  assert.equal(policyOperation.path, "/v1/bio-proposal-policies");
+  assert.equal(policyOperation.authAudience, "tempera-gym");
+  assert.equal(policyOperation.scope, "dataset:read");
+
+  const operation = TEMPERA_OPERATIONS.temperaGym.find(
+    (candidate) => candidate.id === "bioProposalsProposeBatch",
+  );
+  assert.ok(operation);
+  assert.equal(operation.upstreamOperationId, "bioProposals.proposeBatch");
+  assert.equal(operation.method, "POST");
+  assert.equal(operation.path, "/v1/bio-proposals:proposeBatch");
+  assert.equal(operation.auth, "oauthResource");
+  assert.equal(operation.authAudience, "tempera-gym");
+  assert.equal(operation.scope, "eval:run");
+
+  const model = {
+    ref: "model://variant-effect/public-baseline-v1",
+    digest: `sha256:${"4".repeat(64)}`,
+  };
+  const policy = {
+    ref: "tempera-gym://bio/proposal-policies/greedy/v1",
+    digest: "sha256:d1851f83975ce671baa6936f7309d2d956803339f8459c956089bded538d28b6",
+  };
+  const constraints = {
+    batchSize: 1,
+    maxTotalCost: "1.00",
+    excludedCandidateDigests: [],
+    requiredCandidateDigests: [],
+    maxPerGroup: 1,
+    minimumGroupCoverage: 1,
+  };
+  const candidates = [
+    {
+      candidateDigest: `sha256:${"5".repeat(64)}`,
+      observationDigest: `sha256:${"6".repeat(64)}`,
+      predictedValue: "0.80",
+      predictiveUncertainty: "0.20",
+      estimatedCost: "1.00",
+      groupKeys: ["target:public"],
+      diversityVector: ["0.0"],
+    },
+  ];
+  const { client, calls } = testClient({
+    auth: new TemperaAuth({
+      issuerUrl: "https://api.tempera.dev",
+      tokens: { "tempera-gym": { accessToken: "at_gym_proposer" } },
+    }),
+  });
+  const result = await client.temperaGym.bioProposalsProposeBatch({
+    schema_version: "tempera.gym.bio-proposal-request/v1",
+    campaign_digest: `sha256:${"1".repeat(64)}`,
+    dataset_digest: `sha256:${"2".repeat(64)}`,
+    candidate_set_digest: `sha256:${"3".repeat(64)}`,
+    model,
+    policy,
+    shadow_policies: [],
+    mode: "proposal",
+    constraints,
+    candidates,
+  });
+  assert.deepEqual(result, { ok: true });
+  assert.equal(calls[0].url.pathname, "/v1/bio-proposals:proposeBatch");
+  assert.ok(!calls[0].url.toString().includes("%3A"));
+  assert.equal(calls[0].options.headers.authorization, "Bearer at_gym_proposer");
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    schemaVersion: "tempera.gym.bio-proposal-request/v1",
+    campaignDigest: `sha256:${"1".repeat(64)}`,
+    datasetDigest: `sha256:${"2".repeat(64)}`,
+    candidateSetDigest: `sha256:${"3".repeat(64)}`,
+    model,
+    policy,
+    shadowPolicies: [],
+    mode: "proposal",
+    constraints,
+    candidates,
+  });
+});
+
 test("missing path parameters fail fast with a clear message", async () => {
   const { client } = testClient();
   await assert.rejects(

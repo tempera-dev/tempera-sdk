@@ -1556,6 +1556,111 @@ mod tests {
     }
 
     #[test]
+    fn gym_bio_proposal_preserves_outcome_blind_wire_and_auth_contract() {
+        let policy_operation =
+            crate::surface::find_operation("tempera_gym", "bio_proposal_policies_list").unwrap();
+        assert_eq!(
+            policy_operation.upstream_operation_id,
+            "bioProposalPolicies.list"
+        );
+        assert_eq!(policy_operation.method, "GET");
+        assert_eq!(policy_operation.path, "/v1/bio-proposal-policies");
+        assert_eq!(policy_operation.auth_audience, Some("tempera-gym"));
+        assert_eq!(policy_operation.scope, Some("dataset:read"));
+
+        let operation =
+            crate::surface::find_operation("tempera_gym", "bio_proposals_propose_batch").unwrap();
+        assert_eq!(operation.upstream_operation_id, "bioProposals.proposeBatch");
+        assert_eq!(operation.method, "POST");
+        assert_eq!(operation.path, "/v1/bio-proposals:proposeBatch");
+        assert_eq!(operation.auth, "oauthResource");
+        assert_eq!(operation.auth_audience, Some("tempera-gym"));
+        assert_eq!(operation.scope, Some("eval:run"));
+
+        let auth = TemperaAuth::new("https://api.tempera.dev").with_tokens(
+            "tempera-gym",
+            TokenSet {
+                access_token: "at_gym_proposer".into(),
+                ..TokenSet::default()
+            },
+        );
+        let spec = TemperaClient::new()
+            .with_auth(auth)
+            .with_base_url("tempera_gym", base_url_for("tempera_gym"))
+            .build_request(
+                "tempera_gym",
+                "bio_proposals_propose_batch",
+                &[
+                    (
+                        "schema_version",
+                        "tempera.gym.bio-proposal-request/v1".into(),
+                    ),
+                    ("campaign_digest", format!("sha256:{}", "1".repeat(64)).into()),
+                    ("dataset_digest", format!("sha256:{}", "2".repeat(64)).into()),
+                    (
+                        "candidate_set_digest",
+                        format!("sha256:{}", "3".repeat(64)).into(),
+                    ),
+                    (
+                        "model",
+                        ParamValue::RawJson(format!(
+                            r#"{{"ref":"model://variant-effect/public-baseline-v1","digest":"sha256:{}"}}"#,
+                            "4".repeat(64)
+                        )),
+                    ),
+                    (
+                        "policy",
+                        ParamValue::RawJson(
+                            r#"{"ref":"tempera-gym://bio/proposal-policies/greedy/v1","digest":"sha256:d1851f83975ce671baa6936f7309d2d956803339f8459c956089bded538d28b6"}"#
+                                .into(),
+                        ),
+                    ),
+                    ("shadow_policies", ParamValue::RawJson("[]".into())),
+                    ("mode", "proposal".into()),
+                    (
+                        "constraints",
+                        ParamValue::RawJson(
+                            r#"{"batchSize":1,"maxTotalCost":"1.00","excludedCandidateDigests":[],"requiredCandidateDigests":[],"maxPerGroup":1,"minimumGroupCoverage":1}"#
+                                .into(),
+                        ),
+                    ),
+                    (
+                        "candidates",
+                        ParamValue::RawJson(format!(
+                            r#"[{{"candidateDigest":"sha256:{}","observationDigest":"sha256:{}","predictedValue":"0.80","predictiveUncertainty":"0.20","estimatedCost":"1.00","groupKeys":["target:public"],"diversityVector":["0.0"]}}]"#,
+                            "5".repeat(64),
+                            "6".repeat(64)
+                        )),
+                    ),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://tempera_gym.example.test/v1/bio-proposals:proposeBatch"
+        );
+        assert!(!spec.full_url().contains("%3A"));
+        assert_eq!(
+            header(&spec, "authorization"),
+            Some("Bearer at_gym_proposer")
+        );
+        let body = spec.body_json.unwrap();
+        for expected in [
+            r#""schemaVersion":"tempera.gym.bio-proposal-request/v1""#,
+            r#""campaignDigest":"sha256:1111111111111111111111111111111111111111111111111111111111111111""#,
+            r#""datasetDigest":"sha256:2222222222222222222222222222222222222222222222222222222222222222""#,
+            r#""candidateSetDigest":"sha256:3333333333333333333333333333333333333333333333333333333333333333""#,
+            r#""model":{"ref":"model://variant-effect/public-baseline-v1""#,
+            r#""shadowPolicies":[]"#,
+            r#""mode":"proposal""#,
+            r#""constraints":{"batchSize":1"#,
+            r#""candidates":[{"candidateDigest":"sha256:5555555555555555555555555555555555555555555555555555555555555555""#,
+        ] {
+            assert!(body.contains(expected), "body {body} missing {expected}");
+        }
+    }
+
+    #[test]
     fn path_params_are_percent_encoded() {
         let client = full_client();
         let spec = client
