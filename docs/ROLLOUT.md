@@ -43,14 +43,6 @@ producer repository, remote branch, and exact commit explicitly; the producer
 checkout may be detached at that commit, and ambiguous revision expressions are
 rejected.
 
-The aggregate vendored-OpenAPI matrix keeps that immutable commit as the
-provenance anchor while the producer branch advances. The pinned commit must
-remain an ancestor of the current remote branch, and the canonical source path
-must resolve to the same regular Git tree entry (mode and blob) at both
-revisions. Unrelated producer changes therefore do not force lock churn, while
-any contract content, file mode or type change, or deletion immediately
-requires a re-vendor.
-
 ```sh
 python3 scripts/sync-data-engine-openapi.py --check \
   --source ../data-engine/api/openapi.yaml \
