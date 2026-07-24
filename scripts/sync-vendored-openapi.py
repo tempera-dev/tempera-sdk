@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Vendor an upstream OpenAPI artifact from the exact current source branch head."""
+"""Vendor OpenAPI from an immutable commit still equivalent to branch HEAD."""
 
 from __future__ import annotations
 
@@ -139,6 +139,39 @@ def render(content: bytes, transform: str) -> bytes:
     raise ValueError(f"unknown transform {transform!r}")
 
 
+def current_branch_equivalent_file(
+    source_lock: Any,
+    repo: Path,
+    source_repo: str,
+    source_branch: str,
+    requested_commit: str,
+    source_path: str,
+) -> tuple[str, str, str, bytes]:
+    """Read an exact source file whose tree entry still matches branch HEAD."""
+
+    commit = source_lock.validate_source(
+        repo,
+        source_repo,
+        source_branch,
+        requested_commit,
+    )
+    blob, mode, content = source_lock.committed_file(repo, commit, source_path)
+    current_head = git(
+        repo, "rev-parse", f"refs/remotes/origin/{source_branch}^{{commit}}"
+    )
+    current_blob, current_mode, _ = source_lock.committed_file(
+        repo, current_head, source_path
+    )
+    if (blob, mode) != (current_blob, current_mode):
+        raise ValueError(
+            f"source tree entry drift for {source_path}: "
+            f"{commit} has {mode} {blob}, while "
+            f"origin/{source_branch}@{current_head} has "
+            f"{current_mode} {current_blob}; re-vendor from current source"
+        )
+    return commit, blob, mode, content
+
+
 def synchronize(
     product: str,
     repo: Path,
@@ -149,22 +182,13 @@ def synchronize(
     config = PRODUCTS[product]
     selected_branch = source_branch or config["source_branch"]
     source_lock = load_source_lock_module()
-    commit = source_lock.validate_source(
+    commit, blob, mode, content = current_branch_equivalent_file(
+        source_lock,
         repo,
         config["source_repo"],
         selected_branch,
         requested_commit,
-    )
-    current_head = git(
-        repo, "rev-parse", f"refs/remotes/origin/{selected_branch}^{{commit}}"
-    )
-    if commit != current_head:
-        raise ValueError(
-            f"{product} source commit {commit} is not current "
-            f"origin/{selected_branch} ({current_head})"
-        )
-    blob, mode, content = source_lock.committed_file(
-        repo, commit, config["source_path"]
+        config["source_path"],
     )
     rendered = render(content, config["transform"])
     generated = ROOT / config["generated_path"]
@@ -187,7 +211,10 @@ def synchronize(
         observed_lock = lock_path.read_text(encoding="utf-8")
         if generated.read_bytes() != rendered or json.loads(observed_lock) != lock:
             raise ValueError(f"{product} vendored OpenAPI or source lock is stale")
-        print(f"{product} current-head OpenAPI lock verified at {commit}")
+        print(
+            f"{product} OpenAPI lock verified at {commit}; "
+            f"{config['source_path']} is unchanged on origin/{selected_branch}"
+        )
         return
     generated.write_bytes(rendered)
     lock_path.write_text(expected_lock, encoding="utf-8")
