@@ -3116,24 +3116,30 @@
       },
       "ErrorBody": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "code",
-          "message",
           "status",
-          "details",
-          "request_id",
-          "retryable"
+          "message",
+          "details"
         ],
         "properties": {
           "code": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP status code for the failed request."
+          },
+          "status": {
             "type": "string",
+            "description": "Canonical Google RPC status name.",
             "enum": [
               "INVALID_ARGUMENT",
               "FAILED_PRECONDITION",
               "NOT_FOUND",
               "ALREADY_EXISTS",
               "UNAUTHENTICATED",
-              "FORBIDDEN",
+              "PERMISSION_DENIED",
               "ABORTED",
               "OUT_OF_RANGE",
               "RESOURCE_EXHAUSTED",
@@ -3146,26 +3152,68 @@
           "message": {
             "type": "string"
           },
-          "status": {
-            "type": "integer"
-          },
-          "request_id": {
-            "type": "string"
-          },
-          "retryable": {
-            "type": "boolean"
-          },
-          "retry_info": {
-            "type": "object",
-            "properties": {
-              "retry_delay": {
-                "type": "string"
-              }
-            }
-          },
           "details": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                },
+                {
+                  "$ref": "#/components/schemas/DiagnosticInfo"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ErrorInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/google.rpc.ErrorInfo"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Stable Data Engine reason for the error."
+          },
+          "domain": {
+            "type": "string",
+            "const": "data-engine.tempera.dev"
+          },
+          "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Includes requestId and retryable correlation metadata."
+          }
+        }
+      },
+      "DiagnosticInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/tempera.dataengine.v1.DiagnosticInfo"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Bounded, non-secret structured diagnostics for this error."
           }
         }
       },
