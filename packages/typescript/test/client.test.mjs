@@ -370,10 +370,10 @@ test("HTTP errors normalize every fleet wire shape into TemperaApiError", async 
       message: "Bad body.",
       requestId: "req-123",
     },
-    // data-engine: same nested rich shape, uppercase codes + details array
+    // canonical google.rpc.Status REST mapping
     {
       body: {
-        error: { code: "INVALID_ARGUMENT", message: "Bad envelope.", status: 400, request_id: "req-de-1", retryable: false, details: [] },
+        error: { code: 400, status: "INVALID_ARGUMENT", message: "Bad envelope.", requestId: "req-de-1", details: [] },
       },
       code: "INVALID_ARGUMENT",
       message: "Bad envelope.",

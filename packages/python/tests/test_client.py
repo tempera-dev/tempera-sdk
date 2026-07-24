@@ -476,15 +476,14 @@ class ErrorNormalizationTest(unittest.TestCase):
                 "message": "Bad body.",
                 "request_id": "req-123",
             },
-            # data-engine: same nested rich shape, uppercase codes + details array
+            # canonical google.rpc.Status REST mapping
             {
                 "body": {
                     "error": {
-                        "code": "INVALID_ARGUMENT",
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
                         "message": "Bad envelope.",
-                        "status": 400,
-                        "request_id": "req-de-1",
-                        "retryable": False,
+                        "requestId": "req-de-1",
                         "details": [],
                     }
                 },

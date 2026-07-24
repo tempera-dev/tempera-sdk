@@ -25,7 +25,7 @@ language (Python uses `request_id`; the HTTP-less Rust crate normalizes
 
 Applied in order to the parsed error body:
 
-1. If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine; data-engine bodies always carry request_id).
+1. If body.error is an object: code = string body.error.status when present, otherwise legacy string body.error.code; message = body.error.message; requestId = body.error.requestId with body.error.request_id as a migration fallback.
 2. Else if body.error is a string and body.message is present: code = body.error, message = body.message (control plane, palette).
 3. Else if body.error is a string: code = null, message = body.error (tempo).
 4. Else: code = null, message = the HTTP status text.
@@ -39,7 +39,7 @@ Applied in order to the parsed error body:
 | palette | `{"error": "<code>", "message": "<text>", "status": <int>}` |
 | tempo | `{"error": "<message>"}` |
 | cradle | `{"error": {"code", "message", "status", "request_id", "retryable", "details"}}` |
-| remi | `{"error": {"code": "<code>", "message": "<text>"}}` |
+| remi | `{"error": {"code": <http-int>, "status": "<google.rpc.Code>", "message": "<text>", "details": [{"@type": "<type-url>", ...}]}}` |
 | data-engine | `{"error": {"code", "message", "status", "request_id", "retryable", "details"}}` |
 
 ## TemperaMcpError

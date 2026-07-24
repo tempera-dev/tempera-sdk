@@ -109,7 +109,7 @@
     }
   },
   "errorContract": {
-    "$comment": "Every language exposes TemperaApiError with exactly these fields, populated by normalizing the six wire error shapes in the fleet.",
+    "$comment": "Every language exposes TemperaApiError with exactly these fields, preferring the canonical google.rpc.Status REST mapping while retaining legacy fleet compatibility during migration.",
     "name": "TemperaApiError",
     "fields": [
       "status",
@@ -121,7 +121,7 @@
       "body"
     ],
     "normalization": [
-      "If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine; data-engine bodies always carry request_id).",
+      "If body.error is an object: code = string body.error.status when present, otherwise legacy string body.error.code; message = body.error.message; requestId = body.error.requestId with body.error.request_id as a migration fallback.",
       "Else if body.error is a string and body.message is present: code = body.error, message = body.message (control plane, palette).",
       "Else if body.error is a string: code = null, message = body.error (tempo).",
       "Else: code = null, message = the HTTP status text.",
@@ -132,7 +132,7 @@
       "palette": "{\"error\": \"<code>\", \"message\": \"<text>\", \"status\": <int>}",
       "tempo": "{\"error\": \"<message>\"}",
       "cradle": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}",
-      "remi": "{\"error\": {\"code\": \"<code>\", \"message\": \"<text>\"}}",
+      "remi": "{\"error\": {\"code\": <http-int>, \"status\": \"<google.rpc.Code>\", \"message\": \"<text>\", \"details\": [{\"@type\": \"<type-url>\", ...}]}}",
       "dataEngine": "{\"error\": {\"code\", \"message\", \"status\", \"request_id\", \"retryable\", \"details\"}}"
     }
   },

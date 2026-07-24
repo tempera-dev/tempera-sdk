@@ -61,16 +61,24 @@ def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
     Wire shapes handled (see surface.json errorContract.wireShapes):
     - control plane / palette: ``{"error": "<code>", "message": "<text>"}``
     - tempo:                   ``{"error": "<human message>"}``
-    - cradle / remi / data-engine: ``{"error": {"code", "message", "request_id"?, ...}}``
+    - canonical REST status: ``{"error": {"code": 400, "status":
+      "INVALID_ARGUMENT", "message": "...", "details": []}}``
+    - legacy cradle / remi / data-engine: ``{"error": {"code", "message",
+      "request_id"?, ...}}``
     """
     if isinstance(body, Mapping):
         error = body.get("error")
         if isinstance(error, Mapping):
             code = error.get("code")
+            status = error.get("status")
             message = error.get("message")
-            request_id = error.get("request_id")
+            request_id = error.get("requestId", error.get("request_id"))
             return {
-                "code": code if isinstance(code, str) else None,
+                "code": (
+                    status
+                    if isinstance(status, str)
+                    else code if isinstance(code, str) else None
+                ),
                 "message": message if isinstance(message, str) else status_text,
                 "request_id": request_id if isinstance(request_id, str) else None,
             }

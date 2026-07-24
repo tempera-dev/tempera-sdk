@@ -317,7 +317,10 @@ impl std::error::Error for TemperaApiError {}
 /// Wire shapes handled (see `surface.json` `errorContract.wireShapes`):
 /// - control plane / palette: `{"error": "<code>", "message": "<text>"}`
 /// - tempo:                   `{"error": "<human message>"}`
-/// - cradle / remi / data-engine: `{"error": {"code", "message", "request_id"?, ...}}`
+/// - canonical REST status: `{"error": {"code": 400, "status":
+///   "INVALID_ARGUMENT", "message": "...", "details": []}}`
+/// - legacy cradle / remi / data-engine: `{"error": {"code", "message",
+///   "request_id"?, ...}}`
 /// - anything unparseable:    `message` is `status_text`, or `"request failed"`
 ///   when the status text is empty — the same fallback rule as the TypeScript
 ///   and Python packages, so one wire response yields one message everywhere.
@@ -329,15 +332,20 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
             Json::Obj(_) => {
                 return TemperaApiError {
                     status,
-                    code: error.get("code").and_then(Json::as_str).map(str::to_string),
+                    code: error
+                        .get("status")
+                        .and_then(Json::as_str)
+                        .or_else(|| error.get("code").and_then(Json::as_str))
+                        .map(str::to_string),
                     message: error
                         .get("message")
                         .and_then(Json::as_str)
                         .unwrap_or(status_text)
                         .to_string(),
                     request_id: error
-                        .get("request_id")
+                        .get("requestId")
                         .and_then(Json::as_str)
+                        .or_else(|| error.get("request_id").and_then(Json::as_str))
                         .map(str::to_string),
                 };
             }
@@ -428,14 +436,13 @@ mod tests {
     }
 
     #[test]
-    fn data_engine_shape_matches_the_cradle_normalization_path() {
+    fn google_rpc_status_shape_uses_enum_status_as_code() {
         let body = r#"{
             "error": {
-                "code": "INVALID_ARGUMENT",
+                "code": 400,
+                "status": "INVALID_ARGUMENT",
                 "message": "Bad envelope.",
-                "status": 400,
-                "request_id": "req-de-1",
-                "retryable": false,
+                "requestId": "req-de-1",
                 "details": [{"field": "envelopes", "description": "must not be empty"}]
             }
         }"#;
