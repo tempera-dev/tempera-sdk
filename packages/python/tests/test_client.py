@@ -136,6 +136,21 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
+        client.palette.scenarios_list(
+            {
+                "tenant_id": "t1",
+                "project_id": "p1",
+                "pageSize": 12,
+                "pageToken": "scenarios-token",
+            }
+        )
+        self.assertEqual(transport.calls[-1]["path"], "/v1/scenarios/t1/p1")
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "12")
+        self.assertEqual(query["pageToken"], "scenarios-token")
+        self.assertNotIn("limit", query)
+        self.assertNotIn("cursor", query)
+
         pagination_calls = (
             (
                 client.data_engine.list_use_cases,

@@ -1966,8 +1966,8 @@
           "project_id"
         ],
         "query": [
-          "limit",
-          "cursor"
+          "pageSize",
+          "pageToken"
         ],
         "upstreamOperationId": "scenarios.list"
       },

@@ -2340,7 +2340,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         auth: "product",
         path_params: &["tenant_id", "project_id"],
         path_param_templates: &[],
-        query: &["limit", "cursor"],
+        query: &["pageSize", "pageToken"],
         body: &[],
         forbidden_body: &[],
         required_body: &[],

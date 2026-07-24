@@ -97,6 +97,18 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
+  await client.palette.scenariosList({
+    tenant_id: "t1",
+    project_id: "p1",
+    pageSize: 12,
+    pageToken: "scenarios-token",
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/scenarios/t1/p1");
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "12");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "scenarios-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+  assert.equal(calls.at(-1).url.searchParams.get("cursor"), null);
+
   for (const [operation, params] of [
     ["listUseCases", { parent: "projects/p1", pageSize: 2, pageToken: "use-cases-token" }],
     ["getJobResults", { parent: "projects/p1", jobId: "job-1", pageSize: 3, pageToken: "results-token" }],

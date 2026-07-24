@@ -723,6 +723,37 @@ mod tests {
     }
 
     #[test]
+    fn palette_scenarios_use_aip_pagination_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "palette",
+                "scenarios_list",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("project_id", "project_1".into()),
+                    ("pageSize", ParamValue::Int(12)),
+                    ("pageToken", "scenarios-token".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://palette.example.test/v1/scenarios/tenant_1/project_1"
+        );
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "12".to_string()))
+        );
+        assert!(spec.query.contains(&(
+            "pageToken".to_string(),
+            "scenarios-token".to_string()
+        )));
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+        assert!(!spec.query.iter().any(|(name, _)| name == "cursor"));
+    }
+
+    #[test]
     fn remi_aip_pagination_uses_lower_camel_wire_names() {
         let client = full_client();
         let spec = client

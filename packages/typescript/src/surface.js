@@ -2611,8 +2611,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "limit",
-        "cursor"
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],

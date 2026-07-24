@@ -2602,8 +2602,8 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "limit",
-                "cursor"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
