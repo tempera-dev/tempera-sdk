@@ -32,7 +32,10 @@ HEADER = "GENERATED FROM surface.json by scripts/gen-sdk-surface.py -- DO NOT ED
 
 VALID_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE"}
 ID_RE = re.compile(r"^[a-z][a-zA-Z0-9]*$")
-PATH_PARAM_RE = re.compile(r"\{([a-z_]+)\}")
+PATH_PARAM_RE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
+PATH_TEMPLATE_RE = re.compile(
+    r"^[a-z][a-zA-Z0-9]*(?:/(?:[a-z][a-zA-Z0-9]*|\*))*$"
+)
 
 
 def snake(camel: str) -> str:
@@ -50,6 +53,10 @@ def validate(surface: dict) -> list[str]:
             label = f"{product_key}.{op.get('id', '?')}"
             if not ID_RE.match(op.get("id", "")):
                 problems.append(f"{label}: id must be lowerCamelCase")
+            if not isinstance(op.get("upstreamOperationId"), str) or not op[
+                "upstreamOperationId"
+            ]:
+                problems.append(f"{label}: upstreamOperationId must be generated")
             if op["id"] in seen:
                 problems.append(f"{label}: duplicate operation id")
             seen.add(op["id"])
@@ -64,6 +71,26 @@ def validate(surface: dict) -> list[str]:
                 problems.append(
                     f"{label}: pathParams {sorted(declared)} != placeholders {sorted(in_path)}"
                 )
+            path_param_templates = op.get("pathParamTemplates", {})
+            if not isinstance(path_param_templates, dict):
+                problems.append(f"{label}: pathParamTemplates must be an object")
+            else:
+                unknown_templates = set(path_param_templates) - declared
+                if unknown_templates:
+                    problems.append(
+                        f"{label}: pathParamTemplates names undeclared parameters "
+                        f"{sorted(unknown_templates)}"
+                    )
+                for name, template in path_param_templates.items():
+                    if (
+                        not isinstance(template, str)
+                        or not PATH_TEMPLATE_RE.fullmatch(template)
+                        or "*" not in template
+                    ):
+                        problems.append(
+                            f"{label}: pathParamTemplates[{name!r}] is not a safe "
+                            "AIP resource pattern"
+                        )
             desc = op.get("description", "")
             if not desc or not desc[0].isupper() or not desc.endswith("."):
                 problems.append(
@@ -71,15 +98,6 @@ def validate(surface: dict) -> list[str]:
                 )
             if op.get("auth") not in {"none", "account", "product", "introspectionSecret"}:
                 problems.append(f"{label}: invalid auth {op.get('auth')!r}")
-            if product_key == "remi":
-                missing_principal_fields = {
-                    "scope", "tenant_id", "project_id", "environment_id"
-                } - set(op.get("forbiddenBody", []))
-                if missing_principal_fields:
-                    problems.append(
-                        f"{label}: must reject principal-derived fields "
-                        f"{sorted(missing_principal_fields)}"
-                    )
             scope = op.get("scope")
             if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
                 problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
@@ -183,10 +201,12 @@ def render_typescript(surface: dict) -> str:
         product_key: [
             {
                 "id": op["id"],
+                "upstreamOperationId": op["upstreamOperationId"],
                 "method": op["method"],
                 "path": op["path"],
                 "auth": op["auth"],
                 "pathParams": op.get("pathParams", []),
+                "pathParamTemplates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
                 "forbiddenBody": op.get("forbiddenBody", []),
@@ -260,10 +280,12 @@ def render_typescript_dts(surface: dict) -> str:
         "",
         "export type TemperaOperationSpec = {",
         "  id: string;",
+        "  upstreamOperationId: string;",
         "  method: \"GET\" | \"POST\" | \"PUT\" | \"PATCH\" | \"DELETE\";",
         "  path: string;",
         "  auth: \"none\" | \"account\" | \"product\" | \"introspectionSecret\";",
         "  pathParams: readonly string[];",
+        "  pathParamTemplates: Readonly<Record<string, string>>;",
         "  query: readonly string[];",
         "  body: readonly string[];",
         "  forbiddenBody: readonly string[];",
@@ -361,10 +383,12 @@ def render_python(surface: dict) -> str:
         product_key: [
             {
                 "id": snake(op["id"]),
+                "upstream_operation_id": op["upstreamOperationId"],
                 "method": op["method"],
                 "path": op["path"],
                 "auth": op["auth"],
                 "path_params": op.get("pathParams", []),
+                "path_param_templates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
                 "body": op.get("body", []),
                 "forbidden_body": op.get("forbiddenBody", []),
@@ -402,6 +426,13 @@ def rust_str(value: str | None) -> str:
 
 def rust_str_slice(values: list[str]) -> str:
     return "&[" + ", ".join(json.dumps(value) for value in values) + "]"
+
+
+def rust_str_pairs(values: dict[str, str]) -> str:
+    pairs = ", ".join(
+        f"({json.dumps(key)}, {json.dumps(value)})" for key, value in values.items()
+    )
+    return f"&[{pairs}]"
 
 
 def render_rust(surface: dict) -> str:
@@ -467,10 +498,14 @@ def render_rust(surface: dict) -> str:
     lines.append("pub struct OperationSpec {")
     lines.append("    pub product: &'static str,")
     lines.append("    pub id: &'static str,")
+    lines.append("    pub upstream_operation_id: &'static str,")
     lines.append("    pub method: &'static str,")
     lines.append("    pub path: &'static str,")
     lines.append("    pub auth: &'static str,")
     lines.append("    pub path_params: &'static [&'static str],")
+    lines.append(
+        "    pub path_param_templates: &'static [(&'static str, &'static str)],"
+    )
     lines.append("    pub query: &'static [&'static str],")
     lines.append("    pub body: &'static [&'static str],")
     lines.append("    pub forbidden_body: &'static [&'static str],")
@@ -486,10 +521,17 @@ def render_rust(surface: dict) -> str:
             lines.append("    OperationSpec {")
             lines.append(f"        product: {json.dumps(snake(product_key))},")
             lines.append(f"        id: {json.dumps(snake(op['id']))},")
+            lines.append(
+                f"        upstream_operation_id: {json.dumps(op['upstreamOperationId'])},"
+            )
             lines.append(f"        method: {json.dumps(op['method'])},")
             lines.append(f"        path: {json.dumps(op['path'])},")
             lines.append(f"        auth: {json.dumps(op['auth'])},")
             lines.append(f"        path_params: {rust_str_slice(op.get('pathParams', []))},")
+            lines.append(
+                "        path_param_templates: "
+                f"{rust_str_pairs(op.get('pathParamTemplates', {}))},"
+            )
             lines.append(f"        query: {rust_str_slice(op.get('query', []))},")
             lines.append(f"        body: {rust_str_slice(op.get('body', []))},")
             lines.append(f"        forbidden_body: {rust_str_slice(op.get('forbiddenBody', []))},")

@@ -35,6 +35,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 Check tempera-gym service liveness.
 
+- **Producer operationId:** `health.get`
 - **Auth:** None (public endpoint).
 - **Call as:** TypeScript `client.temperaGym.health()` · Python `client.tempera_gym.health()` · Rust `build_request("tempera_gym", "health", params)`
 
@@ -62,6 +63,7 @@ let spec = client.build_request("tempera_gym", "health", &[])?;
 
 List the gym pack's environment catalog, including implementation status and per-environment manifests.
 
+- **Producer operationId:** `environments.list`
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.listEnvironments()` · Python `client.tempera_gym.list_environments()` · Rust `build_request("tempera_gym", "list_environments", params)`
@@ -90,6 +92,7 @@ let spec = client.build_request("tempera_gym", "list_environments", &[])?;
 
 List persisted rollout run index records, newest first.
 
+- **Producer operationId:** `runs.list`
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.listRuns()` · Python `client.tempera_gym.list_runs()` · Rust `build_request("tempera_gym", "list_runs", params)`
@@ -134,6 +137,7 @@ let spec = client.build_request("tempera_gym", "list_runs", &[
 
 Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.
 
+- **Producer operationId:** `runs.get`
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.temperaGym.getRun()` · Python `client.tempera_gym.get_run()` · Rust `build_request("tempera_gym", "get_run", params)`
@@ -174,6 +178,7 @@ let spec = client.build_request("tempera_gym", "get_run", &[
 
 Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.
 
+- **Producer operationId:** `rollouts.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-gym`, or a central `tp_` API key.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.temperaGym.createRollout()` · Python `client.tempera_gym.create_rollout()` · Rust `build_request("tempera_gym", "create_rollout", params)`
@@ -187,6 +192,8 @@ Execute one rollout synchronously, persist the trajectory, and return the comple
 | `seed` | yes | — |
 | `max_steps` | no | — |
 | `model` | no | — |
+| `data_engine_product_id` | no | — |
+| `data_engine_max_records` | no | — |
 
 <CodeGroup>
 

@@ -11,7 +11,6 @@ import type {
   PaletteClient,
   PassthroughClient,
   RemiClient,
-  TemperaCodeClient,
   TemperaLlmClient,
   TemperaWorkflowsClient,
   TemperaGymClient,
@@ -135,7 +134,6 @@ export type TemperaClient = {
   controlPlane: ControlPlaneClient;
   palette: PaletteClient;
   tempo: TempoClient;
-  temperaCode: TemperaCodeClient;
   temperaLlm: TemperaLlmClient;
   temperaWorkflows: TemperaWorkflowsClient;
   temperaGym: TemperaGymClient;

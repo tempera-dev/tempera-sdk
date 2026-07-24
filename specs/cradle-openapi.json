@@ -855,6 +855,167 @@
           }
         }
       }
+    },
+    "/v1/projects/{project}/modules": {
+      "post": {
+        "tags": [
+          "v1"
+        ],
+        "operationId": "projects.modules.create",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project id bound to the introspected central token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateModuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Stored content-addressed module metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Module"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or oversized base64 WebAssembly binary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid central control-plane bearer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project is not the token-bound project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Module-store admission or capacity exhausted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/modules/{sha256}": {
+      "get": {
+        "tags": [
+          "v1"
+        ],
+        "operationId": "projects.modules.get",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project id bound to the introspected central token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sha256",
+            "in": "path",
+            "description": "Lowercase SHA-256 module digest",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored content-addressed module metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Module"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid module digest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid central control-plane bearer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown module or project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Module-store admission or capacity exhausted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3080,6 +3241,20 @@
         },
         "additionalProperties": false
       },
+      "CreateModuleRequest": {
+        "type": "object",
+        "description": "Upload body for a reusable, content-addressed WebAssembly module.",
+        "required": [
+          "bytes_base64"
+        ],
+        "properties": {
+          "bytes_base64": {
+            "type": "string",
+            "description": "Standard base64-encoded WebAssembly binary bytes."
+          }
+        },
+        "additionalProperties": false
+      },
       "Determinism": {
         "oneOf": [
           {
@@ -3865,6 +4040,34 @@
             "minimum": 0
           },
           "wall_time_ms": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "Module": {
+        "type": "object",
+        "description": "Metadata for a durable, content-addressed WebAssembly module.",
+        "required": [
+          "name",
+          "sha256",
+          "size_bytes",
+          "created_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Canonical resource name: `projects/{project}/modules/{sha256}`."
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Lowercase SHA-256 digest of the decoded WebAssembly bytes."
+          },
+          "size_bytes": {
             "type": "integer",
             "format": "int64",
             "minimum": 0

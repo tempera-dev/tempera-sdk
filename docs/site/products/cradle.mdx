@@ -21,7 +21,7 @@ Capability sandbox daemon (cradled): synchronous and job-based sandboxed executi
 | Audience | `cradle` |
 | Auth | bearer minted for audience cradle, central tp_ API key, or the cradled static key |
 | Client | TypeScript `client.cradle` · Python `client.cradle` · Rust `build_request("cradle", ...)` |
-| Typed operations | 10 |
+| Typed operations | 18 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.cradle.request(path, options)` (TypeScript) /
@@ -29,131 +29,49 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ## Operations
 
-### health
+### projectsBrowserAdaptersIssueCapability
 
-`GET /v1/health`
+`POST /v1/browser/adapter/capability`
 
-Check sandbox-daemon liveness; returns status, version, and uptime.
+Call POST /v1/browser/adapter/capability.
 
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.cradle.health()` · Python `client.cradle.health()` · Rust `build_request("cradle", "health", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.cradle.health();
-```
-
-```python Python
-result = client.cradle.health()
-```
-
-```rust Rust
-let spec = client.build_request("cradle", "health", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getCapabilities
-
-`GET /v1/capabilities`
-
-Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.
-
+- **Producer operationId:** `projects.browserAdapters.issueCapability`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getCapabilities()` · Python `client.cradle.get_capabilities()` · Rust `build_request("cradle", "get_capabilities", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.cradle.getCapabilities();
-```
-
-```python Python
-result = client.cradle.get_capabilities()
-```
-
-```rust Rust
-let spec = client.build_request("cradle", "get_capabilities", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getIntegrationContract
-
-`GET /v1/integration`
-
-Fetch the ecosystem integration contract this daemon implements.
-
-- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getIntegrationContract()` · Python `client.cradle.get_integration_contract()` · Rust `build_request("cradle", "get_integration_contract", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.cradle.getIntegrationContract();
-```
-
-```python Python
-result = client.cradle.get_integration_contract()
-```
-
-```rust Rust
-let spec = client.build_request("cradle", "get_integration_contract", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### execute
-
-`POST /v1/execute`
-
-Execute source synchronously in a sandbox lane and return the result with metrics.
-
-- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.execute()` · Python `client.cradle.execute()` · Rust `build_request("cradle", "execute", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersIssueCapability()` · Python `client.cradle.projects_browser_adapters_issue_capability()` · Rust `build_request("cradle", "projects_browser_adapters_issue_capability", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `lane` | no | — |
-| `source` | no | — |
-| `entrypoint` | no | — |
-| `input` | no | — |
-| `stdin` | no | — |
-| `policy` | no | — |
-| `idempotency_key` | no | — |
+| `actor` | yes | — |
+| `adapter_id` | no | — |
+| `sensitive_activity_mode` | no | — |
+| `sensitivity` | yes | — |
+| `ttl_seconds` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.execute({
-  lane: "<lane>",
-  source: "<source>",
-  entrypoint: "<entrypoint>",
+const result = await client.cradle.projectsBrowserAdaptersIssueCapability({
+  actor: "<actor>",
+  adapter_id: "<adapter_id>",
+  sensitive_activity_mode: "<sensitive_activity_mode>",
 });
 ```
 
 ```python Python
-result = client.cradle.execute({
-    "lane": "<lane>",
-    "source": "<source>",
-    "entrypoint": "<entrypoint>",
+result = client.cradle.projects_browser_adapters_issue_capability({
+    "actor": "<actor>",
+    "adapter_id": "<adapter_id>",
+    "sensitive_activity_mode": "<sensitive_activity_mode>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "execute", &[
-    ("lane", "<lane>".into()),
-    ("source", "<source>".into()),
-    ("entrypoint", "<entrypoint>".into()),
+let spec = client.build_request("cradle", "projects_browser_adapters_issue_capability", &[
+    ("actor", "<actor>".into()),
+    ("adapter_id", "<adapter_id>".into()),
+    ("sensitive_activity_mode", "<sensitive_activity_mode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -161,50 +79,54 @@ let spec = client.build_request("cradle", "execute", &[
 
 </CodeGroup>
 
-### createJob
+### projectsBrowserAdaptersValidateCompletion
 
-`POST /v1/jobs`
+`POST /v1/browser/adapter/completion/validate`
 
-Submit an asynchronous sandbox job; returns an operation handle to poll.
+Call POST /v1/browser/adapter/completion/validate.
 
+- **Producer operationId:** `projects.browserAdapters.validateCompletion`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.createJob()` · Python `client.cradle.create_job()` · Rust `build_request("cradle", "create_job", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidateCompletion()` · Python `client.cradle.projects_browser_adapters_validate_completion()` · Rust `build_request("cradle", "projects_browser_adapters_validate_completion", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `lane` | no | — |
-| `source` | no | — |
-| `entrypoint` | no | — |
-| `input` | no | — |
-| `stdin` | no | — |
-| `policy` | no | — |
-| `idempotency_key` | no | — |
+| `adapter_id` | yes | — |
+| `contract_version` | yes | — |
+| `egress_log_sealed_or_discarded` | yes | — |
+| `notes` | yes | — |
+| `plaintext_artifacts_removed` | yes | — |
+| `process_terminated` | yes | — |
+| `proof_ids` | yes | — |
+| `request_id` | yes | — |
+| `sealed_artifact_handles` | yes | — |
+| `temporary_profile_removed` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.createJob({
-  lane: "<lane>",
-  source: "<source>",
-  entrypoint: "<entrypoint>",
+const result = await client.cradle.projectsBrowserAdaptersValidateCompletion({
+  adapter_id: "<adapter_id>",
+  contract_version: "<contract_version>",
+  egress_log_sealed_or_discarded: "<egress_log_sealed_or_discarded>",
 });
 ```
 
 ```python Python
-result = client.cradle.create_job({
-    "lane": "<lane>",
-    "source": "<source>",
-    "entrypoint": "<entrypoint>",
+result = client.cradle.projects_browser_adapters_validate_completion({
+    "adapter_id": "<adapter_id>",
+    "contract_version": "<contract_version>",
+    "egress_log_sealed_or_discarded": "<egress_log_sealed_or_discarded>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "create_job", &[
-    ("lane", "<lane>".into()),
-    ("source", "<source>".into()),
-    ("entrypoint", "<entrypoint>".into()),
+let spec = client.build_request("cradle", "projects_browser_adapters_validate_completion", &[
+    ("adapter_id", "<adapter_id>".into()),
+    ("contract_version", "<contract_version>".into()),
+    ("egress_log_sealed_or_discarded", "<egress_log_sealed_or_discarded>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -212,38 +134,67 @@ let spec = client.build_request("cradle", "create_job", &[
 
 </CodeGroup>
 
-### getJob
+### getBrowserAdapterContract
 
-`GET /v1/jobs/{job_id}`
+`GET /v1/browser/adapter/contract`
 
-Fetch a sandbox job's status and result.
+Fetch the browser adapter contract, required controls, and conformance profile.
 
+- **Producer operationId:** `projects.browserAdapters.getContract`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `job_id` | yes | Substituted into the URL path (percent-encoded). |
+- **Call as:** TypeScript `client.cradle.getBrowserAdapterContract()` · Python `client.cradle.get_browser_adapter_contract()` · Rust `build_request("cradle", "get_browser_adapter_contract", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.getJob({
-  job_id: "<job_id>",
+const result = await client.cradle.getBrowserAdapterContract();
+```
+
+```python Python
+result = client.cradle.get_browser_adapter_contract()
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "get_browser_adapter_contract", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsBrowserAdaptersClaimLaunch
+
+`POST /v1/browser/adapter/launch/claim`
+
+Call POST /v1/browser/adapter/launch/claim.
+
+- **Producer operationId:** `projects.browserAdapters.claimLaunch`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersClaimLaunch()` · Python `client.cradle.projects_browser_adapters_claim_launch()` · Rust `build_request("cradle", "projects_browser_adapters_claim_launch", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `launch_request` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.projectsBrowserAdaptersClaimLaunch({
+  launch_request: "<launch_request>",
 });
 ```
 
 ```python Python
-result = client.cradle.get_job({
-    "job_id": "<job_id>",
+result = client.cradle.projects_browser_adapters_claim_launch({
+    "launch_request": "<launch_request>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "get_job", &[
-    ("job_id", "<job_id>".into()),
+let spec = client.build_request("cradle", "projects_browser_adapters_claim_launch", &[
+    ("launch_request", "<launch_request>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -251,38 +202,203 @@ let spec = client.build_request("cradle", "get_job", &[
 
 </CodeGroup>
 
-### cancelJob
+### projectsBrowserAdaptersPlanLaunch
 
-`DELETE /v1/jobs/{job_id}`
+`POST /v1/browser/adapter/launch/plan`
 
-Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).
+Call POST /v1/browser/adapter/launch/plan.
 
+- **Producer operationId:** `projects.browserAdapters.planLaunch`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.cancelJob()` · Python `client.cradle.cancel_job()` · Rust `build_request("cradle", "cancel_job", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersPlanLaunch()` · Python `client.cradle.projects_browser_adapters_plan_launch()` · Rust `build_request("cradle", "projects_browser_adapters_plan_launch", params)`
 
-**Path parameters**
+**Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `job_id` | yes | Substituted into the URL path (percent-encoded). |
+| `admission` | yes | — |
+| `manifest` | yes | — |
+| `same_user_capability` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.cancelJob({
-  job_id: "<job_id>",
+const result = await client.cradle.projectsBrowserAdaptersPlanLaunch({
+  admission: "<admission>",
+  manifest: "<manifest>",
+  same_user_capability: "<same_user_capability>",
 });
 ```
 
 ```python Python
-result = client.cradle.cancel_job({
-    "job_id": "<job_id>",
+result = client.cradle.projects_browser_adapters_plan_launch({
+    "admission": "<admission>",
+    "manifest": "<manifest>",
+    "same_user_capability": "<same_user_capability>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "cancel_job", &[
-    ("job_id", "<job_id>".into()),
+let spec = client.build_request("cradle", "projects_browser_adapters_plan_launch", &[
+    ("admission", "<admission>".into()),
+    ("manifest", "<manifest>".into()),
+    ("same_user_capability", "<same_user_capability>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsBrowserAdaptersRegister
+
+`POST /v1/browser/adapter/register`
+
+Call POST /v1/browser/adapter/register.
+
+- **Producer operationId:** `projects.browserAdapters.register`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersRegister()` · Python `client.cradle.projects_browser_adapters_register()` · Rust `build_request("cradle", "projects_browser_adapters_register", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `actor` | yes | — |
+| `manifest` | yes | — |
+| `same_user_capability` | yes | — |
+| `sensitivity` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.projectsBrowserAdaptersRegister({
+  actor: "<actor>",
+  manifest: "<manifest>",
+  same_user_capability: "<same_user_capability>",
+});
+```
+
+```python Python
+result = client.cradle.projects_browser_adapters_register({
+    "actor": "<actor>",
+    "manifest": "<manifest>",
+    "same_user_capability": "<same_user_capability>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "projects_browser_adapters_register", &[
+    ("actor", "<actor>".into()),
+    ("manifest", "<manifest>".into()),
+    ("same_user_capability", "<same_user_capability>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsBrowserAdaptersValidate
+
+`POST /v1/browser/adapter/validate`
+
+Call POST /v1/browser/adapter/validate.
+
+- **Producer operationId:** `projects.browserAdapters.validate`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidate()` · Python `client.cradle.projects_browser_adapters_validate()` · Rust `build_request("cradle", "projects_browser_adapters_validate", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `adapter_id` | yes | — |
+| `completion_proofs` | yes | — |
+| `contract_version` | yes | — |
+| `guard_fields` | yes | — |
+| `launch_endpoint` | yes | — |
+| `supported_controls` | yes | — |
+| `supported_levels` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.projectsBrowserAdaptersValidate({
+  adapter_id: "<adapter_id>",
+  completion_proofs: "<completion_proofs>",
+  contract_version: "<contract_version>",
+});
+```
+
+```python Python
+result = client.cradle.projects_browser_adapters_validate({
+    "adapter_id": "<adapter_id>",
+    "completion_proofs": "<completion_proofs>",
+    "contract_version": "<contract_version>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "projects_browser_adapters_validate", &[
+    ("adapter_id", "<adapter_id>".into()),
+    ("completion_proofs", "<completion_proofs>".into()),
+    ("contract_version", "<contract_version>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### admitBrowserSession
+
+`POST /v1/browser/admit`
+
+Request admission for a browser session at a sandbox level and receive the guard plan.
+
+- **Producer operationId:** `projects.browserSessions.admit`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.admitBrowserSession()` · Python `client.cradle.admit_browser_session()` · Rust `build_request("cradle", "admit_browser_session", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `actor` | yes | — |
+| `allow_downgrade` | no | — |
+| `artifact_mode` | no | — |
+| `credential_mode` | no | — |
+| `requested_level` | yes | — |
+| `required_controls` | no | — |
+| `sensitive_activity_mode` | no | — |
+| `sensitivity` | yes | — |
+| `target_origins` | no | — |
+| `task_label` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.admitBrowserSession({
+  actor: "<actor>",
+  allow_downgrade: "<allow_downgrade>",
+  artifact_mode: "<artifact_mode>",
+});
+```
+
+```python Python
+result = client.cradle.admit_browser_session({
+    "actor": "<actor>",
+    "allow_downgrade": "<allow_downgrade>",
+    "artifact_mode": "<artifact_mode>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "admit_browser_session", &[
+    ("actor", "<actor>".into()),
+    ("allow_downgrade", "<allow_downgrade>".into()),
+    ("artifact_mode", "<artifact_mode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -296,6 +412,7 @@ let spec = client.build_request("cradle", "cancel_job", &[
 
 Fetch the browser sandbox profile levels and suppression modes this daemon offers.
 
+- **Producer operationId:** `projects.browserProfiles.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.cradle.getBrowserProfiles()` · Python `client.cradle.get_browser_profiles()` · Rust `build_request("cradle", "get_browser_profiles", params)`
 
@@ -317,53 +434,79 @@ let spec = client.build_request("cradle", "get_browser_profiles", &[])?;
 
 </CodeGroup>
 
-### admitBrowserSession
+### getCapabilities
 
-`POST /v1/browser/admit`
+`GET /v1/capabilities`
 
-Request admission for a browser session at a sandbox level and receive the guard plan.
+Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.
 
+- **Producer operationId:** `projects.capabilities.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.admitBrowserSession()` · Python `client.cradle.admit_browser_session()` · Rust `build_request("cradle", "admit_browser_session", params)`
+- **Call as:** TypeScript `client.cradle.getCapabilities()` · Python `client.cradle.get_capabilities()` · Rust `build_request("cradle", "get_capabilities", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.getCapabilities();
+```
+
+```python Python
+result = client.cradle.get_capabilities()
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "get_capabilities", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### execute
+
+`POST /v1/execute`
+
+Execute source synchronously in a sandbox lane and return the result with metrics.
+
+- **Producer operationId:** `projects.executions.execute`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.execute()` · Python `client.cradle.execute()` · Rust `build_request("cradle", "execute", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `actor` | no | — |
-| `requested_level` | no | — |
-| `sensitivity` | no | — |
-| `allow_downgrade` | no | — |
-| `artifact_mode` | no | — |
-| `credential_mode` | no | — |
-| `required_controls` | no | — |
-| `sensitive_activity_mode` | no | — |
-| `target_origins` | no | — |
-| `task_label` | no | — |
+| `entrypoint` | no | — |
+| `idempotency_key` | no | — |
+| `input` | no | — |
+| `lane` | yes | — |
+| `policy` | no | — |
+| `source` | yes | — |
+| `stdin` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.admitBrowserSession({
-  actor: "<actor>",
-  requested_level: "<requested_level>",
-  sensitivity: "<sensitivity>",
+const result = await client.cradle.execute({
+  entrypoint: "<entrypoint>",
+  idempotency_key: "<idempotency_key>",
+  input: "<input>",
 });
 ```
 
 ```python Python
-result = client.cradle.admit_browser_session({
-    "actor": "<actor>",
-    "requested_level": "<requested_level>",
-    "sensitivity": "<sensitivity>",
+result = client.cradle.execute({
+    "entrypoint": "<entrypoint>",
+    "idempotency_key": "<idempotency_key>",
+    "input": "<input>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "admit_browser_session", &[
-    ("actor", "<actor>".into()),
-    ("requested_level", "<requested_level>".into()),
-    ("sensitivity", "<sensitivity>".into()),
+let spec = client.build_request("cradle", "execute", &[
+    ("entrypoint", "<entrypoint>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("input", "<input>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -371,27 +514,281 @@ let spec = client.build_request("cradle", "admit_browser_session", &[
 
 </CodeGroup>
 
-### getBrowserAdapterContract
+### health
 
-`GET /v1/browser/adapter/contract`
+`GET /v1/health`
 
-Fetch the browser adapter contract, required controls, and conformance profile.
+Check sandbox-daemon liveness; returns status, version, and uptime.
 
-- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getBrowserAdapterContract()` · Python `client.cradle.get_browser_adapter_contract()` · Rust `build_request("cradle", "get_browser_adapter_contract", params)`
+- **Producer operationId:** `health`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.cradle.health()` · Python `client.cradle.health()` · Rust `build_request("cradle", "health", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.cradle.getBrowserAdapterContract();
+const result = await client.cradle.health();
 ```
 
 ```python Python
-result = client.cradle.get_browser_adapter_contract()
+result = client.cradle.health()
 ```
 
 ```rust Rust
-let spec = client.build_request("cradle", "get_browser_adapter_contract", &[])?;
+let spec = client.build_request("cradle", "health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getIntegrationContract
+
+`GET /v1/integration`
+
+Fetch the ecosystem integration contract this daemon implements.
+
+- **Producer operationId:** `projects.integration.get`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.getIntegrationContract()` · Python `client.cradle.get_integration_contract()` · Rust `build_request("cradle", "get_integration_contract", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.getIntegrationContract();
+```
+
+```python Python
+result = client.cradle.get_integration_contract()
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "get_integration_contract", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createJob
+
+`POST /v1/jobs`
+
+Submit an asynchronous sandbox job; returns an operation handle to poll.
+
+- **Producer operationId:** `projects.jobs.create`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.createJob()` · Python `client.cradle.create_job()` · Rust `build_request("cradle", "create_job", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `entrypoint` | no | — |
+| `idempotency_key` | no | — |
+| `input` | no | — |
+| `lane` | yes | — |
+| `policy` | no | — |
+| `source` | yes | — |
+| `stdin` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.createJob({
+  entrypoint: "<entrypoint>",
+  idempotency_key: "<idempotency_key>",
+  input: "<input>",
+});
+```
+
+```python Python
+result = client.cradle.create_job({
+    "entrypoint": "<entrypoint>",
+    "idempotency_key": "<idempotency_key>",
+    "input": "<input>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "create_job", &[
+    ("entrypoint", "<entrypoint>".into()),
+    ("idempotency_key", "<idempotency_key>".into()),
+    ("input", "<input>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getJob
+
+`GET /v1/jobs/{id}`
+
+Fetch a sandbox job's status and result.
+
+- **Producer operationId:** `projects.jobs.get`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.getJob({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.cradle.get_job({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "get_job", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### cancelJob
+
+`DELETE /v1/jobs/{id}`
+
+Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).
+
+- **Producer operationId:** `projects.jobs.cancel`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.cancelJob()` · Python `client.cradle.cancel_job()` · Rust `build_request("cradle", "cancel_job", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.cancelJob({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.cradle.cancel_job({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "cancel_job", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsModulesCreate
+
+`POST /v1/projects/{project}/modules`
+
+Call POST /v1/projects/\{project\}/modules.
+
+- **Producer operationId:** `projects.modules.create`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.projectsModulesCreate()` · Python `client.cradle.projects_modules_create()` · Rust `build_request("cradle", "projects_modules_create", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `bytes_base64` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.projectsModulesCreate({
+  project: "<project>",
+  bytes_base64: "<bytes_base64>",
+});
+```
+
+```python Python
+result = client.cradle.projects_modules_create({
+    "project": "<project>",
+    "bytes_base64": "<bytes_base64>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "projects_modules_create", &[
+    ("project", "<project>".into()),
+    ("bytes_base64", "<bytes_base64>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsModulesGet
+
+`GET /v1/projects/{project}/modules/{sha256}`
+
+Call GET /v1/projects/\{project\}/modules/\{sha256\}.
+
+- **Producer operationId:** `projects.modules.get`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.projectsModulesGet()` · Python `client.cradle.projects_modules_get()` · Rust `build_request("cradle", "projects_modules_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `sha256` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.projectsModulesGet({
+  project: "<project>",
+  sha256: "<sha256>",
+});
+```
+
+```python Python
+result = client.cradle.projects_modules_get({
+    "project": "<project>",
+    "sha256": "<sha256>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "projects_modules_get", &[
+    ("project", "<project>".into()),
+    ("sha256", "<sha256>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

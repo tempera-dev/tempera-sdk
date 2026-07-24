@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "56c1776c9a29343e8031bdf0bb3564403cdcf701",
+  "source_commit": "0602cd1bb6c7cc6f13adfd6f0aedf35fd24b6a61",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "da01fca9de2a9cb813bbcc475cea2e884d7131fd",
-  "source_sha256": "f88ef55de1b174e760857106aa54d6dbc8dc80ae6380ddefd81b8df2e5bf7ec4",
+  "source_blob_sha": "9024508ffc674afb5270a032fb19e5f19a524333",
+  "source_sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "cca48789be4fd4991857d731131e3d65db08cfa5939b233a13ffdb7a16daa6f9",
+  "generated_sha256": "2df165623a68f03bb2029c034400a56f08102b4cf43245f42df120616fa0d8d7",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -16,6 +16,254 @@
       "path": "/v1/health",
       "audience": null,
       "requiredScope": null
+    },
+    {
+      "sdkOperationId": "listUseCases",
+      "operationId": "projects.useCases.list",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getUseCase",
+      "operationId": "projects.useCases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases/{useCaseId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "ingestArtifact",
+      "operationId": "projects.artifacts.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/artifacts:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "ingestWeb",
+      "operationId": "projects.web.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/web:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "createCampaign",
+      "operationId": "projects.campaigns.create",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listCampaigns",
+      "operationId": "projects.campaigns.list",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "transitionCampaign",
+      "operationId": "projects.campaigns.transition",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "getReviewerQualification",
+      "operationId": "projects.reviewerQualifications.get",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "runUseCase",
+      "operationId": "projects.pipelines.runUseCase",
+      "method": "POST",
+      "path": "/v1/{parent}/pipelines:run-use-case",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "listExpertTasks",
+      "operationId": "projects.expertTasks.list",
+      "method": "GET",
+      "path": "/v1/{parent}/expert-tasks",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "createReviewQualificationTask",
+      "operationId": "projects.reviewQualificationTasks.create",
+      "method": "POST",
+      "path": "/v1/{parent}/review-qualification-tasks",
+      "audience": "data-engine",
+      "requiredScope": "review:gold:manage"
+    },
+    {
+      "sdkOperationId": "resolveExpertTask",
+      "operationId": "projects.expertTasks.resolve",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "claimExpertTask",
+      "operationId": "projects.expertTaskAssignments.claim",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "renewExpertTaskAssignment",
+      "operationId": "projects.expertTaskAssignments.renew",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "releaseExpertTaskAssignment",
+      "operationId": "projects.expertTaskAssignments.release",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "saveExpertTaskDraft",
+      "operationId": "projects.expertTaskAssignments.saveDraft",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "getReviewOperations",
+      "operationId": "projects.reviewOperations.get",
+      "method": "GET",
+      "path": "/v1/{parent}/review-operations",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "getMetrics",
+      "operationId": "projects.metrics.get",
+      "method": "GET",
+      "path": "/v1/{parent}/metrics",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getLabelQuality",
+      "operationId": "projects.labelQuality.get",
+      "method": "GET",
+      "path": "/v1/{parent}/label-quality",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getEcosystemReadiness",
+      "operationId": "projects.ecosystem.readiness.get",
+      "method": "GET",
+      "path": "/v1/{parent}/ecosystem/readiness",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listArtifacts",
+      "operationId": "projects.artifacts.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getArtifact",
+      "operationId": "projects.artifacts.get",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "listArtifactLabels",
+      "operationId": "projects.artifacts.labels.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}/labels",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "profileDataset",
+      "operationId": "projects.datasets.profile",
+      "method": "POST",
+      "path": "/v1/{parent}/datasets:profile",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "createJob",
+      "operationId": "projects.jobs.create",
+      "method": "POST",
+      "path": "/v1/{parent}/jobs",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "getJob",
+      "operationId": "projects.jobs.get",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getJobResults",
+      "operationId": "projects.jobs.results.list",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}/results",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getProduct",
+      "operationId": "projects.products.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "validateProduct",
+      "operationId": "projects.products.validate",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:validate",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "checkProductLeakage",
+      "operationId": "projects.products.checkLeakage",
+      "method": "POST",
+      "path": "/v1/{parent}/products:check-leakage",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "getProductManifest",
+      "operationId": "projects.products.manifest.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}/manifest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
     },
     {
       "sdkOperationId": "admitTrainingRelease",
@@ -32,6 +280,78 @@
       "path": "/v1/{parent}/training-releases/{releaseId}",
       "audience": "data-engine",
       "requiredScope": "training:publish"
+    },
+    {
+      "sdkOperationId": "deriveBundle",
+      "operationId": "projects.products.derive",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:derive",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "emitEval",
+      "operationId": "projects.products.emitEval",
+      "method": "POST",
+      "path": "/v1/{parent}/products:emit-eval",
+      "audience": "data-engine",
+      "requiredScope": "eval:run"
+    },
+    {
+      "sdkOperationId": "extractSource",
+      "operationId": "projects.sources.extract",
+      "method": "POST",
+      "path": "/v1/{parent}/sources:extract",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listConnectors",
+      "operationId": "projects.connectors.list",
+      "method": "GET",
+      "path": "/v1/{parent}/connectors",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "createTool",
+      "operationId": "projects.tools.create",
+      "method": "POST",
+      "path": "/v1/{parent}/tools",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "listTools",
+      "operationId": "projects.tools.list",
+      "method": "GET",
+      "path": "/v1/{parent}/tools",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "getTool",
+      "operationId": "projects.tools.get",
+      "method": "GET",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:read"
+    },
+    {
+      "sdkOperationId": "deleteTool",
+      "operationId": "projects.tools.delete",
+      "method": "DELETE",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "invokeTool",
+      "operationId": "projects.tools.invoke",
+      "method": "POST",
+      "path": "/v1/{parent}/tools/{toolName}:invoke",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
     },
     {
       "sdkOperationId": "createEvidenceRecord",
@@ -112,326 +432,6 @@
       "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
       "audience": "data-engine",
       "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "listConnectors",
-      "operationId": "projects.connectors.list",
-      "method": "GET",
-      "path": "/v1/{parent}/connectors",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "listUseCases",
-      "operationId": "projects.useCases.list",
-      "method": "GET",
-      "path": "/v1/{parent}/use-cases",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getUseCase",
-      "operationId": "projects.useCases.get",
-      "method": "GET",
-      "path": "/v1/{parent}/use-cases/{useCaseId}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "ingestArtifact",
-      "operationId": "projects.artifacts.ingest",
-      "method": "POST",
-      "path": "/v1/{parent}/artifacts:ingest",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "ingestWeb",
-      "operationId": "projects.web.ingest",
-      "method": "POST",
-      "path": "/v1/{parent}/web:ingest",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "runUseCase",
-      "operationId": "projects.pipelines.runUseCase",
-      "method": "POST",
-      "path": "/v1/{parent}/pipelines:run-use-case",
-      "audience": "data-engine",
-      "requiredScope": "eval:run"
-    },
-    {
-      "sdkOperationId": "createCampaign",
-      "operationId": "projects.campaigns.create",
-      "method": "POST",
-      "path": "/v1/{parent}/campaigns",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "listCampaigns",
-      "operationId": "projects.campaigns.list",
-      "method": "GET",
-      "path": "/v1/{parent}/campaigns",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "transitionCampaign",
-      "operationId": "projects.campaigns.transition",
-      "method": "POST",
-      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "listArtifacts",
-      "operationId": "projects.artifacts.list",
-      "method": "GET",
-      "path": "/v1/{parent}/artifacts",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getArtifact",
-      "operationId": "projects.artifacts.get",
-      "method": "GET",
-      "path": "/v1/{parent}/artifacts/{artifactId}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "listArtifactLabels",
-      "operationId": "projects.artifacts.labels.list",
-      "method": "GET",
-      "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "profileDataset",
-      "operationId": "projects.datasets.profile",
-      "method": "POST",
-      "path": "/v1/{parent}/datasets:profile",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "createJob",
-      "operationId": "projects.jobs.create",
-      "method": "POST",
-      "path": "/v1/{parent}/jobs",
-      "audience": "data-engine",
-      "requiredScope": "eval:run"
-    },
-    {
-      "sdkOperationId": "getJob",
-      "operationId": "projects.jobs.get",
-      "method": "GET",
-      "path": "/v1/{parent}/jobs/{jobId}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getJobResults",
-      "operationId": "projects.jobs.results.list",
-      "method": "GET",
-      "path": "/v1/{parent}/jobs/{jobId}/results",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "listExpertTasks",
-      "operationId": "projects.expertTasks.list",
-      "method": "GET",
-      "path": "/v1/{parent}/expert-tasks",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "resolveExpertTask",
-      "operationId": "projects.expertTasks.resolve",
-      "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "claimExpertTask",
-      "operationId": "projects.expertTaskAssignments.claim",
-      "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "renewExpertTaskAssignment",
-      "operationId": "projects.expertTaskAssignments.renew",
-      "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "releaseExpertTaskAssignment",
-      "operationId": "projects.expertTaskAssignments.release",
-      "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "saveExpertTaskDraft",
-      "operationId": "projects.expertTaskAssignments.saveDraft",
-      "method": "POST",
-      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "getReviewOperations",
-      "operationId": "projects.reviewOperations.get",
-      "method": "GET",
-      "path": "/v1/{parent}/review-operations",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "createReviewQualificationTask",
-      "operationId": "projects.reviewQualificationTasks.create",
-      "method": "POST",
-      "path": "/v1/{parent}/review-qualification-tasks",
-      "audience": "data-engine",
-      "requiredScope": "review:gold:manage"
-    },
-    {
-      "sdkOperationId": "getReviewerQualification",
-      "operationId": "projects.reviewerQualifications.get",
-      "method": "GET",
-      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
-      "audience": "data-engine",
-      "requiredScope": "review:resolve"
-    },
-    {
-      "sdkOperationId": "getMetrics",
-      "operationId": "projects.metrics.get",
-      "method": "GET",
-      "path": "/v1/{parent}/metrics",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getLabelQuality",
-      "operationId": "projects.labelQuality.get",
-      "method": "GET",
-      "path": "/v1/{parent}/label-quality",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getEcosystemReadiness",
-      "operationId": "projects.ecosystem.readiness.get",
-      "method": "GET",
-      "path": "/v1/{parent}/ecosystem/readiness",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "emitEval",
-      "operationId": "projects.products.emitEval",
-      "method": "POST",
-      "path": "/v1/{parent}/products:emit-eval",
-      "audience": "data-engine",
-      "requiredScope": "eval:run"
-    },
-    {
-      "sdkOperationId": "deriveBundle",
-      "operationId": "projects.products.derive",
-      "method": "POST",
-      "path": "/v1/{parent}/products/{productId}:derive",
-      "audience": "data-engine",
-      "requiredScope": "eval:run"
-    },
-    {
-      "sdkOperationId": "getProduct",
-      "operationId": "projects.products.get",
-      "method": "GET",
-      "path": "/v1/{parent}/products/{productId}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "validateProduct",
-      "operationId": "projects.products.validate",
-      "method": "POST",
-      "path": "/v1/{parent}/products/{productId}:validate",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "checkProductLeakage",
-      "operationId": "projects.products.checkLeakage",
-      "method": "POST",
-      "path": "/v1/{parent}/products:check-leakage",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "getProductManifest",
-      "operationId": "projects.products.manifest.get",
-      "method": "GET",
-      "path": "/v1/{parent}/products/{productId}/manifest",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "extractSource",
-      "operationId": "projects.sources.extract",
-      "method": "POST",
-      "path": "/v1/{parent}/sources:extract",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "createTool",
-      "operationId": "projects.tools.create",
-      "method": "POST",
-      "path": "/v1/{parent}/tools",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "listTools",
-      "operationId": "projects.tools.list",
-      "method": "GET",
-      "path": "/v1/{parent}/tools",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "getTool",
-      "operationId": "projects.tools.get",
-      "method": "GET",
-      "path": "/v1/{parent}/tools/{toolName}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:read"
-    },
-    {
-      "sdkOperationId": "deleteTool",
-      "operationId": "projects.tools.delete",
-      "method": "DELETE",
-      "path": "/v1/{parent}/tools/{toolName}",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
-    },
-    {
-      "sdkOperationId": "invokeTool",
-      "operationId": "projects.tools.invoke",
-      "method": "POST",
-      "path": "/v1/{parent}/tools/{toolName}:invoke",
-      "audience": "data-engine",
-      "requiredScope": "dataset:write"
     }
   ]
 }

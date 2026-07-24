@@ -11,8 +11,7 @@ operation names, the same descriptions, and the same error shape.
   for endpoints the surface tables don't cover yet.
 - Auth: audience products resolve their bearer through TemperaAuth (per-
   audience OAuth token with unified tp_ API-key fallback); control-plane
-  operations use the account-session token, which login()/signup() store
-  automatically.
+  operations use the account-session token returned by create_hosted_session().
 """
 
 from __future__ import annotations
@@ -40,7 +39,6 @@ _ENVIRONMENT_TARGET_KEYS = {
     "controlPlane": "controlPlaneUrl",
     "palette": "paletteApiUrl",
     "tempo": "tempoApiUrl",
-    "temperaCode": "temperaCodeApiUrl",
     "temperaLlm": "temperaLlmApiUrl",
     "temperaWorkflows": "temperaWorkflowsApiUrl",
     "temperaGym": "temperaGymUrl",
@@ -48,7 +46,7 @@ _ENVIRONMENT_TARGET_KEYS = {
     "cradle": "cradleApiUrl",
 }
 
-_PATH_PARAM_RE = re.compile(r"\{([a-z_]+)\}")
+_PATH_PARAM_RE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
 
 def _query_value(value: Any) -> str:
@@ -81,9 +79,9 @@ class _ProductClient:
             merged = dict(params or {})
             merged.update(extra)
             result = client._dispatch(product_key, op, merged, bearer=bearer, headers=headers)
-            # login/signup return the account-session token pair and store the
+            # createHostedSession returns the account-session token pair and stores the
             # access token so later control-plane calls are authenticated.
-            if product_key == "controlPlane" and op["id"] in ("login", "signup"):
+            if product_key == "controlPlane" and op["id"] == "create_hosted_session":
                 if isinstance(result, Mapping) and result.get("access_token"):
                     client.account_token = result["access_token"]
             return result
@@ -138,7 +136,6 @@ class TemperaClient:
         self.control_plane: _ProductClient
         self.palette: _ProductClient
         self.tempo: _ProductClient
-        self.tempera_code: _ProductClient
         self.tempera_llm: _ProductClient
         self.tempera_workflows: _ProductClient
         self.tempera_gym: _ProductClient
@@ -180,7 +177,7 @@ class TemperaClient:
         if auth_kind == "account":
             if not self.account_token:
                 raise TemperaSdkError(
-                    f"{attr}: an account token is required; call control_plane.login()/signup() first or pass account_token"
+                    f"{attr}: an account token is required; call control_plane.create_hosted_session() first or pass account_token"
                 )
             return self.account_token
         audience = PRODUCTS[product_key]["audience"] or DEFAULT_AUDIENCE
@@ -225,13 +222,49 @@ class TemperaClient:
         except TemperaApiError as error:
             raise _with_context(error, product_key, operation) from None
 
-    def _substitute_path(self, template: str, params: Mapping[str, Any], product_key: str, operation_id: str) -> str:
+    def _substitute_path(
+        self,
+        template: str,
+        params: Mapping[str, Any],
+        product_key: str,
+        operation_id: str,
+        path_param_templates: Mapping[str, str] | None = None,
+    ) -> str:
+        path_param_templates = path_param_templates or {}
+
         def replace(match: "re.Match[str]") -> str:
             key = match.group(1)
             value = params.get(key)
             if value is None or value == "":
                 raise TemperaSdkError(
                     f'{PRODUCT_ATTRS[product_key]}.{operation_id}: missing required path parameter "{key}"'
+                )
+            resource_pattern = path_param_templates.get(key)
+            if resource_pattern:
+                expected = resource_pattern.split("/")
+                observed = str(value).split("/")
+                matches = (
+                    len(observed) == len(expected)
+                    and all(
+                        expected_segment == "*" or expected_segment == observed[index]
+                        for index, expected_segment in enumerate(expected)
+                    )
+                    and all(
+                        expected[index] != "*"
+                        or (segment not in {"", ".", ".."})
+                        for index, segment in enumerate(observed)
+                    )
+                )
+                if not matches:
+                    raise TemperaSdkError(
+                        f'{PRODUCT_ATTRS[product_key]}.{operation_id}: path parameter '
+                        f'"{key}" must match AIP resource pattern "{resource_pattern}"'
+                    )
+                return "/".join(
+                    urllib_parse.quote(segment, safe="")
+                    if expected[index] == "*"
+                    else segment
+                    for index, segment in enumerate(observed)
                 )
             return urllib_parse.quote(str(value), safe="")
 
@@ -251,7 +284,13 @@ class TemperaClient:
                 raise TemperaSdkError(
                     f"{product_key}.{op['id']}: {key} is derived from the authenticated principal"
                 )
-        path = self._substitute_path(op["path"], params, product_key, op["id"])
+        path = self._substitute_path(
+            op["path"],
+            params,
+            product_key,
+            op["id"],
+            op.get("path_param_templates"),
+        )
         consumed = set(op["path_params"])
         query: dict[str, Any] = {}
         for key in op["query"]:

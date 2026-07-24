@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -14,17 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 SPECS_DIR = ROOT / "specs"
 EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
-MIGRATIONS = ROOT / "contracts" / "sdk-coverage-migrations.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 VENDORED_SPECS = {
+    "dataEngine": "data-engine-openapi.json",
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",
+    "remi": "remi-http-contract.json",
+    "tempo": "tempo-openapi.json",
 }
-STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows", "temperaGym"}
+STRICT_PRODUCTS = set(VENDORED_SPECS)
 PARAM_RE = re.compile(r"\{[^}]+\}")
 EXCLUSION_KEYS = {
     "product",
@@ -37,19 +40,6 @@ EXCLUSION_KEYS = {
     "migration",
     "review_after",
 }
-MIGRATION_KEYS = {
-    "product",
-    "compatibility",
-    "owner",
-    "depends_on",
-    "migration",
-    "rollback",
-    "review_after",
-    "phantom_routes",
-    "upstream_only_routes",
-    "duplicate_routes",
-}
-
 Route = tuple[str, str]
 
 
@@ -58,6 +48,21 @@ def normalize_path(path: str) -> str:
 
 
 def upstream_index(spec: dict[str, Any]) -> dict[Route, str]:
+    if spec.get("contract_kind") == "http-route-manifest":
+        operations: dict[Route, str] = {}
+        for endpoint in spec.get("endpoints") or []:
+            if not isinstance(endpoint, dict):
+                continue
+            method = endpoint.get("method")
+            path = endpoint.get("path")
+            operation_id = endpoint.get("operation")
+            if not all(isinstance(value, str) and value for value in (method, path, operation_id)):
+                raise ValueError("HTTP route manifest has an invalid endpoint")
+            route = (method.upper(), normalize_path(path))
+            if route in operations:
+                raise ValueError(f"duplicate upstream route shape {route}")
+            operations[route] = operation_id
+        return operations
     operations: dict[Route, str] = {}
     for path, item in (spec.get("paths") or {}).items():
         if not isinstance(path, str) or not isinstance(item, dict):
@@ -88,7 +93,13 @@ def surface_index(
                 f"{indexed[route]!r} and {operation['id']!r}"
             )
             continue
-        indexed[route] = operation["id"]
+        upstream_operation_id = operation.get("upstreamOperationId")
+        if not isinstance(upstream_operation_id, str) or not upstream_operation_id:
+            duplicates.append(
+                f"{operation['id']!r} lacks a generated upstreamOperationId"
+            )
+            upstream_operation_id = operation["id"]
+        indexed[route] = upstream_operation_id
     return indexed, duplicates
 
 
@@ -129,6 +140,16 @@ def load_exclusions(path: Path) -> tuple[dict[str, dict[Route, dict[str, str]]],
         if entry["method"].lower() not in HTTP_METHODS:
             errors.append(f"{label} has unsupported method {entry['method']!r}")
             continue
+        try:
+            review_after = date.fromisoformat(entry["review_after"])
+        except ValueError:
+            errors.append(f"{label} review_after must be an ISO calendar date")
+            continue
+        if review_after < date.today():
+            errors.append(
+                f"{label} operation exclusion review expired on {review_after.isoformat()}"
+            )
+            continue
         route = (entry["method"].upper(), normalize_path(entry["path"]))
         product_entries = indexed.setdefault(entry["product"], {})
         if route in product_entries:
@@ -136,66 +157,6 @@ def load_exclusions(path: Path) -> tuple[dict[str, dict[Route, dict[str, str]]],
             continue
         product_entries[route] = entry
     return indexed, errors
-
-
-def load_migrations(path: Path) -> tuple[dict[str, dict[str, Any]], list[str]]:
-    errors: list[str] = []
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
-        return {}, [f"invalid SDK coverage migration ledger: {error}"]
-    if not isinstance(value, dict) or value.get("schema_version") != 1:
-        return {}, ["SDK coverage migration ledger must use schema_version 1"]
-    entries = value.get("migrations")
-    if not isinstance(entries, list):
-        return {}, ["SDK coverage migration ledger migrations must be an array"]
-    indexed: dict[str, dict[str, Any]] = {}
-    for position, entry in enumerate(entries):
-        label = f"migrations[{position}]"
-        if not isinstance(entry, dict) or set(entry) != MIGRATION_KEYS:
-            errors.append(f"{label} keys differ from the exact migration schema")
-            continue
-        product = entry.get("product")
-        if not isinstance(product, str) or product not in VENDORED_SPECS:
-            errors.append(f"{label} names unknown product {product!r}")
-            continue
-        if product in indexed:
-            errors.append(f"{label} duplicates product {product!r}")
-            continue
-        for key in MIGRATION_KEYS - {
-            "phantom_routes",
-            "upstream_only_routes",
-            "duplicate_routes",
-        }:
-            if not isinstance(entry.get(key), str) or not entry[key]:
-                errors.append(f"{label}.{key} must be a non-empty string")
-        for key in ("phantom_routes", "upstream_only_routes", "duplicate_routes"):
-            if not isinstance(entry.get(key), int) or entry[key] < 0:
-                errors.append(f"{label}.{key} must be a non-negative integer")
-        indexed[product] = entry
-    return indexed, errors
-
-
-def migration_count_errors(
-    product: str,
-    migration: dict[str, Any] | None,
-    *,
-    phantom: int,
-    upstream_only: int,
-    duplicates: int,
-) -> list[str]:
-    if migration is None:
-        return [f"{product}: warning-tier product has no coverage migration"]
-    expected = {
-        "phantom_routes": phantom,
-        "upstream_only_routes": upstream_only,
-        "duplicate_routes": duplicates,
-    }
-    return [
-        f"{product}: migration {field} {migration.get(field)!r} != observed {observed}"
-        for field, observed in expected.items()
-        if migration.get(field) != observed
-    ]
 
 
 def main() -> int:
@@ -208,8 +169,6 @@ def main() -> int:
         return 1
     exclusions, exclusion_errors = load_exclusions(EXCLUSIONS)
     failures.extend(exclusion_errors)
-    migrations, migration_errors = load_migrations(MIGRATIONS)
-    failures.extend(migration_errors)
     rows: list[tuple[str, str, int, int, int, int]] = []
 
     for product, spec_file in VENDORED_SPECS.items():
@@ -238,22 +197,18 @@ def main() -> int:
                     f"!= upstream {observed_operation_id!r}"
                 )
         phantom, missing, stale = classify_routes(sdk, upstream, set(product_exclusions))
-        if product not in STRICT_PRODUCTS:
-            failures.extend(
-                migration_count_errors(
-                    product,
-                    migrations.get(product),
-                    phantom=len(phantom),
-                    upstream_only=len(missing),
-                    duplicates=len(duplicate_sdk_routes),
-                )
-            )
         for route in sorted(stale):
             failures.append(f"{product}: stale operation exclusion {route}")
         for route in sorted(phantom):
             destination.append(
                 f"{product}.{sdk[route]}: phantom SDK route {route[0]} {route[1]}"
             )
+        for route in sorted(set(sdk) & set(upstream)):
+            if sdk[route] != upstream[route]:
+                destination.append(
+                    f"{product}: operationId drift for {route[0]} {route[1]}: "
+                    f"SDK lock {sdk[route]!r} != upstream {upstream[route]!r}"
+                )
         for route in sorted(missing):
             missing_kind = (
                 "missing eligible SDK route"
@@ -287,7 +242,7 @@ def main() -> int:
     if uncovered:
         print("Not gated (no vendored contract): " + ", ".join(uncovered))
     if warnings:
-        print(f"\nWARNINGS ({len(warnings)}) — count-pinned migration gaps:")
+        print(f"\nWARNINGS ({len(warnings)}):")
         for warning in warnings:
             print(f"  - {warning}")
     if failures:

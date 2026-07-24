@@ -19,7 +19,6 @@ PRODUCT_ATTRS = {
     "controlPlane": "control_plane",
     "palette": "palette",
     "tempo": "tempo",
-    "temperaCode": "tempera_code",
     "temperaLlm": "tempera_llm",
     "temperaWorkflows": "tempera_workflows",
     "temperaGym": "tempera_gym",
@@ -33,6 +32,11 @@ PRODUCT_ATTRS = {
 }
 
 SAMPLE_PARAM_VALUE = "sample-value"
+
+
+def sample_path_param(op, key):
+    template = op["path_param_templates"].get(key)
+    return template.replace("*", SAMPLE_PARAM_VALUE) if template else SAMPLE_PARAM_VALUE
 
 
 class FakeTransport:
@@ -69,7 +73,6 @@ def make_client(**overrides):
             "control_plane": "https://cp.example.test",
             "palette": "https://palette.example.test",
             "tempo": "https://tempo.example.test",
-            "tempera_code": "https://code.example.test",
             "tempera_llm": "https://llm.example.test",
             "tempera_workflows": "https://workflows.example.test",
             "tempera_gym": "https://gym.example.test",
@@ -95,13 +98,20 @@ class ConformanceTest(unittest.TestCase):
             for op in ops:
                 label = f"{product_key}.{op['id']}"
                 transport.calls.clear()
-                params = {key: SAMPLE_PARAM_VALUE for key in op["path_params"]}
+                params = {
+                    key: sample_path_param(op, key)
+                    for key in op["path_params"]
+                }
                 result = getattr(product, op["id"])(params)
                 self.assertEqual(result, {"ok": True}, f"{label} result")
                 self.assertEqual(len(transport.calls), 1, f"{label} made one request")
                 call = transport.calls[0]
                 self.assertEqual(call["method"], op["method"], f"{label} method")
-                expected_path = re.sub(r"\{[a-z_]+\}", SAMPLE_PARAM_VALUE, op["path"])
+                expected_path = re.sub(
+                    r"\{([A-Za-z_][A-Za-z0-9_]*)\}",
+                    lambda match: sample_path_param(op, match.group(1)),
+                    op["path"],
+                )
                 self.assertEqual(call["path"], expected_path, f"{label} path")
                 auth_header = call["headers"].get("authorization")
                 if op["auth"] == "none":
@@ -112,7 +122,7 @@ class ConformanceTest(unittest.TestCase):
                     self.assertEqual(auth_header, "Bearer introspect_secret_1", f"{label} introspection bearer")
                 else:
                     self.assertEqual(auth_header, "Bearer tp_key_1", f"{label} product bearer")
-                # Body defaults (e.g. login/signup mode) must reach the wire.
+                # Declared body defaults must reach the wire.
                 for key, value in op["body_defaults"].items():
                     self.assertEqual(call["body"][key], value, f"{label} body default {key}")
 
@@ -126,30 +136,38 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
-        client.remi.remember({"kind": "fact", "text": "hello"})
+        client.remi.remember(
+            {
+                "tenant_id": "t1",
+                "project_id": "p1",
+                "kind": "fact",
+                "text": "hello",
+            }
+        )
         self.assertEqual(
             transport.calls[1]["body"],
-            {"kind": "fact", "text": "hello"},
+            {
+                "tenant_id": "t1",
+                "project_id": "p1",
+                "kind": "fact",
+                "text": "hello",
+            },
         )
-        context = {"question": "Which workflow evidence is current?", "max_tokens": 600, "require_fresh": True, "modes": ["procedural", "gotcha", "state"], "reconstruction_mode": "off"}
-        client.remi.context(context)
-        self.assertEqual(transport.calls[-1]["body"], context)
-        feedback = {"schema": "remi.memory_feedback.v2", "retrieval_receipt_id": "receipt_1", "evidence_node_id": "node_1", "helpful": True, "terminal_state": "succeeded", "outcome_artifact_id": "test://sdk/generated-wire", "idempotency_key": "feedback_1"}
-        client.remi.feedback(feedback)
-        self.assertEqual(transport.calls[-1]["body"], feedback)
-        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
-            client.remi.remember({"tenant_id": "t1", "kind": "fact", "text": "nope"})
-        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
-            client.remi.context({"tenant_id": "t1", "question": "what is current?"})
-        with self.assertRaisesRegex(TemperaSdkError, "derived from the authenticated principal"):
-            client.remi.feedback({"environment_id": "prod", **feedback})
-        before_calls = len(transport.calls)
-        for field in ("scope", "tenant_id", "project_id", "environment_id"):
-            with self.subTest(field=field), self.assertRaisesRegex(
-                TemperaSdkError, "derived from the authenticated principal"
-            ):
-                client.remi.context({"question": "what is current?", field: None})
-        self.assertEqual(len(transport.calls), before_calls)
+        query = {
+            "question": "Which workflow evidence is current?",
+            "scope": {
+                "tenant_id": "t1",
+                "project_id": "p1",
+                "environment_id": "dev",
+                "as_of_unix_ms": None,
+            },
+            "max_tokens": 600,
+            "require_fresh": True,
+            "modes": ["procedural", "gotcha", "state"],
+            "reconstruction_mode": "off",
+        }
+        client.remi.query(query)
+        self.assertEqual(transport.calls[-1]["body"], query)
 
     def test_json_request_bodies_use_the_compact_wire_shape(self):
         client, transport = make_client()
@@ -173,12 +191,20 @@ class DispatchTest(unittest.TestCase):
 
     def test_action_suffix_paths_keep_the_literal_colon_unencoded(self):
         client, transport = make_client()
-        client.data_engine.ingest_artifact({"project_id": "p1", "envelopes": []})
+        client.data_engine.ingest_artifact({"parent": "projects/p1", "envelopes": []})
         self.assertEqual(transport.calls[0]["path"], "/v1/projects/p1/artifacts:ingest")
         self.assertNotIn("%3A", transport.calls[0]["url"], "colon must not be percent-encoded")
         # Colons inside a substituted path *value* are still encoded.
-        client.data_engine.get_job({"project_id": "p1", "job_id": "job:1"})
+        client.data_engine.get_job({"parent": "projects/p1", "jobId": "job:1"})
         self.assertEqual(transport.calls[1]["path"], "/v1/projects/p1/jobs/job%3A1")
+        with self.assertRaisesRegex(
+            TemperaSdkError, r'must match AIP resource pattern "projects/\*"'
+        ):
+            client.data_engine.ingest_artifact({"parent": "projects/../secrets"})
+        with self.assertRaisesRegex(
+            TemperaSdkError, r'must match AIP resource pattern "projects/\*"'
+        ):
+            client.data_engine.ingest_artifact({"parent": "organizations/p1"})
 
     def test_missing_path_parameters_fail_fast_with_a_clear_message(self):
         client, _ = make_client()
@@ -186,7 +212,7 @@ class DispatchTest(unittest.TestCase):
             client.palette.get_trace({"tenant_id": "t1"})
         self.assertIn('missing required path parameter "trace_id"', str(ctx.exception))
 
-    def test_login_and_signup_store_the_account_token_for_later_calls(self):
+    def test_create_hosted_session_stores_the_account_token_for_later_calls(self):
         def responder(call):
             if len(transport.calls) == 1:
                 return {"access_token": "account_at_1", "token_type": "Bearer"}
@@ -194,7 +220,9 @@ class DispatchTest(unittest.TestCase):
 
         transport = FakeTransport(responder)
         client = TemperaClient(base_urls={"control_plane": "https://cp.example.test"}, transport=transport)
-        client.control_plane.login({"email": "demo@tempera.dev", "password": "tempera-demo"})
+        client.control_plane.create_hosted_session(
+            {"mode": "login", "email": "demo@tempera.dev", "password": "tempera-demo"}
+        )
         self.assertEqual(transport.calls[0]["body"]["mode"], "login")
         self.assertEqual(client.account_token, "account_at_1")
         client.control_plane.me()
@@ -204,7 +232,7 @@ class DispatchTest(unittest.TestCase):
         client = TemperaClient(base_urls={"control_plane": "https://cp.example.test"}, transport=FakeTransport())
         with self.assertRaises(TemperaSdkError) as ctx:
             client.control_plane.me()
-        self.assertIn("login()/signup()", str(ctx.exception))
+        self.assertIn("create_hosted_session()", str(ctx.exception))
 
     def test_product_operations_without_credentials_fail_with_guidance(self):
         client = TemperaClient(base_urls={"palette": "https://palette.example.test"}, transport=FakeTransport())
@@ -238,16 +266,14 @@ class DispatchTest(unittest.TestCase):
         client = TemperaClient(environment="production", transport=transport)
         client.control_plane.health()
         client.palette.health()
-        client.tempera_code.health()
         client.tempera_llm.health()
         client.tempera_workflows.health()
         client.tempera_gym.health()
         self.assertEqual(transport.calls[0]["origin"], "https://api.tempera.dev")
         self.assertEqual(transport.calls[1]["origin"], "https://mcp.tempera.dev")
-        self.assertEqual(transport.calls[2]["origin"], "https://code-api.tempera.dev")
-        self.assertEqual(transport.calls[3]["origin"], "https://llm.tempera.dev")
-        self.assertEqual(transport.calls[4]["origin"], "https://workflows.tempera.dev")
-        self.assertEqual(transport.calls[5]["origin"], "https://gym.tempera.dev")
+        self.assertEqual(transport.calls[2]["origin"], "https://llm.tempera.dev")
+        self.assertEqual(transport.calls[3]["origin"], "https://workflows.tempera.dev")
+        self.assertEqual(transport.calls[4]["origin"], "https://gym.tempera.dev")
 
     def test_unknown_environment_is_rejected(self):
         with self.assertRaises(TemperaSdkError):

@@ -16,7 +16,6 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["controlPlane"]["repository"], "https://github.com/tempera-dev/auth-hub")
         self.assertEqual(PRODUCTS["palette"]["repository"], "https://github.com/tempera-dev/palette")
         self.assertEqual(PRODUCTS["tempo"]["repository"], "https://github.com/tempera-dev/tempo")
-        self.assertEqual(PRODUCTS["temperaCode"]["repository"], "https://github.com/tempera-dev/tempera-code")
         self.assertEqual(PRODUCTS["temperaLlm"]["repository"], "https://github.com/tempera-dev/tempera-llm")
         self.assertEqual(PRODUCTS["temperaWorkflows"]["repository"], "https://github.com/tempera-dev/tempera-workflows")
         self.assertEqual(PRODUCTS["temperaGym"]["repository"], "https://github.com/tempera-dev/tempera-gym")
@@ -57,7 +56,6 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(ENVIRONMENTS["production"]["mcpGatewayUrl"], "https://api.tempera.dev/mcp")
         self.assertEqual(ENVIRONMENTS["production"]["paletteMcpUrl"], "https://mcp.tempera.dev/mcp")
         self.assertEqual(ENVIRONMENTS["production"]["tempoApiUrl"], "https://tempo.tempera.dev")
-        self.assertEqual(ENVIRONMENTS["production"]["temperaCodeApiUrl"], "https://code-api.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaLlmApiUrl"], "https://llm.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaWorkflowsApiUrl"], "https://workflows.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaGymUrl"], "https://gym.tempera.dev")
@@ -72,6 +70,7 @@ class TemperaSdkTest(unittest.TestCase):
                 self.assertNotIn(op["id"], seen, f"{label} unique")
                 seen.add(op["id"])
                 self.assertRegex(op["id"], r"^[a-z][a-z0-9_]*$", f"{label} snake_case")
+                self.assertTrue(op["upstream_operation_id"], f"{label} producer operation id")
                 self.assertRegex(op["description"], r"^[A-Z].*\.$", f"{label} description sentence")
                 self.assertIn(op["method"], ("GET", "POST", "PUT", "PATCH", "DELETE"))
 

@@ -14,7 +14,6 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.controlPlane.repository, "https://github.com/tempera-dev/auth-hub");
   assert.equal(TEMPERA_PRODUCTS.palette.repository, "https://github.com/tempera-dev/palette");
   assert.equal(TEMPERA_PRODUCTS.tempo.repository, "https://github.com/tempera-dev/tempo");
-  assert.equal(TEMPERA_PRODUCTS.temperaCode.repository, "https://github.com/tempera-dev/tempera-code");
   assert.equal(TEMPERA_PRODUCTS.temperaLlm.repository, "https://github.com/tempera-dev/tempera-llm");
   assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
   assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
@@ -61,7 +60,6 @@ test("all four environments carry the same target keys", () => {
   assert.equal(TEMPERA_ENVIRONMENTS.production.mcpGatewayUrl, "https://api.tempera.dev/mcp");
   assert.equal(TEMPERA_ENVIRONMENTS.production.paletteMcpUrl, "https://mcp.tempera.dev/mcp");
   assert.equal(TEMPERA_ENVIRONMENTS.production.tempoApiUrl, "https://tempo.tempera.dev");
-  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaCodeApiUrl, "https://code-api.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaLlmApiUrl, "https://llm.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaWorkflowsApiUrl, "https://workflows.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaGymUrl, "https://gym.tempera.dev");
@@ -76,6 +74,7 @@ test("every operation has a unique name and a sentence description", () => {
       assert.ok(!seen.has(op.id), `${productKey}.${op.id} unique`);
       seen.add(op.id);
       assert.match(op.id, /^[a-z][a-zA-Z0-9]*$/, `${productKey}.${op.id} lowerCamelCase`);
+      assert.match(op.upstreamOperationId, /\S/, `${productKey}.${op.id} producer operationId`);
       assert.match(op.description, /^[A-Z].*\.$/, `${productKey}.${op.id} description sentence`);
       assert.ok(["GET", "POST", "PUT", "PATCH", "DELETE"].includes(op.method));
     }

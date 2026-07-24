@@ -12,8 +12,8 @@
  *   for endpoints the surface tables don't cover yet.
  * - Auth: audience products resolve their bearer through TemperaAuth (per-
  *   audience OAuth token with unified tp_ API-key fallback); control-plane
- *   operations use the account-session token, which login()/signup() store
- *   automatically.
+ *   operations use the account-session token returned by
+ *   createHostedSession().
  */
 
 import {
@@ -28,13 +28,31 @@ function trimTrailingSlash(url) {
   return url.replace(/\/+$/, "");
 }
 
-function substitutePath(template, params, { product, operation }) {
-  return template.replace(/\{([a-z_]+)\}/g, (_, key) => {
+function expandPathParam(value, resourcePattern, { product, operation, key }) {
+  if (!resourcePattern) return encodeURIComponent(String(value));
+  const expected = resourcePattern.split("/");
+  const observed = String(value).split("/");
+  if (
+    observed.length !== expected.length ||
+    expected.some((segment, index) => segment !== "*" && segment !== observed[index]) ||
+    observed.some((segment, index) => expected[index] === "*" && (!segment || segment === "." || segment === ".."))
+  ) {
+    throw new TemperaSdkError(
+      `${product}.${operation}: path parameter "${key}" must match AIP resource pattern "${resourcePattern}"`,
+    );
+  }
+  return observed
+    .map((segment, index) => (expected[index] === "*" ? encodeURIComponent(segment) : segment))
+    .join("/");
+}
+
+function substitutePath(template, params, { product, operation, pathParamTemplates = {} }) {
+  return template.replace(/\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (_, key) => {
     const value = params[key];
     if (value === undefined || value === null || value === "") {
       throw new TemperaSdkError(`${product}.${operation}: missing required path parameter "${key}"`);
     }
-    return encodeURIComponent(String(value));
+    return expandPathParam(value, pathParamTemplates[key], { product, operation, key });
   });
 }
 
@@ -82,7 +100,6 @@ export function createTemperaClient({
           controlPlane: environmentTargets.controlPlaneUrl,
           palette: environmentTargets.paletteApiUrl,
           tempo: environmentTargets.tempoApiUrl,
-          temperaCode: environmentTargets.temperaCodeApiUrl,
           temperaLlm: environmentTargets.temperaLlmApiUrl,
           temperaWorkflows: environmentTargets.temperaWorkflowsApiUrl,
           temperaGym: environmentTargets.temperaGymUrl,
@@ -108,7 +125,7 @@ export function createTemperaClient({
     if (authKind === "account") {
       if (!state.accountToken) {
         throw new TemperaSdkError(
-          `${productKey}: an account token is required; call controlPlane.login()/signup() first or pass accountToken`,
+          `${productKey}: an account token is required; call controlPlane.createHostedSession() first or pass accountToken`,
         );
       }
       return state.accountToken;
@@ -155,7 +172,11 @@ export function createTemperaClient({
         throw new TemperaSdkError(`${productKey}.${op.id}: ${key} is derived from the authenticated principal`);
       }
     }
-    const path = substitutePath(op.path, params, { product: productKey, operation: op.id });
+    const path = substitutePath(op.path, params, {
+      product: productKey,
+      operation: op.id,
+      pathParamTemplates: op.pathParamTemplates,
+    });
     const consumed = new Set(op.pathParams);
     const query = {};
     for (const key of op.query) {
@@ -239,16 +260,14 @@ export function createTemperaClient({
     client[productKey] = buildProductClient(productKey);
   }
 
-  // login/signup return the account-session token pair and store the access
+  // createHostedSession returns the account-session token pair and stores the
   // token so subsequent control-plane calls are authenticated automatically.
-  for (const opId of ["login", "signup"]) {
-    const plain = client.controlPlane[opId];
-    client.controlPlane[opId] = async (params, options) => {
-      const tokens = await plain(params, options);
-      if (tokens?.access_token) state.accountToken = tokens.access_token;
-      return tokens;
-    };
-  }
+  const createHostedSession = client.controlPlane.createHostedSession;
+  client.controlPlane.createHostedSession = async (params, options) => {
+    const tokens = await createHostedSession(params, options);
+    if (tokens?.access_token) state.accountToken = tokens.access_token;
+    return tokens;
+  };
 
   return client;
 }

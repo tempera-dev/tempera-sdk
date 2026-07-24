@@ -133,6 +133,17 @@ pub enum BuildError {
         /// Name of the missing path parameter.
         name: String,
     },
+    /// A path parameter did not match its declared AIP resource-name pattern.
+    InvalidPathParam {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Name of the invalid path parameter.
+        name: String,
+        /// AIP resource pattern declared by the producer contract.
+        resource_pattern: String,
+    },
     /// A caller supplied an identifier that Remi derives from the authenticated
     /// principal rather than accepting from an SDK request.
     PrincipalDerivedParameter {
@@ -184,6 +195,15 @@ impl std::fmt::Display for BuildError {
                 f,
                 "{product}.{operation}: missing required path parameter \"{name}\""
             ),
+            BuildError::InvalidPathParam {
+                product,
+                operation,
+                name,
+                resource_pattern,
+            } => write!(
+                f,
+                "{product}.{operation}: path parameter \"{name}\" must match AIP resource pattern \"{resource_pattern}\""
+            ),
             BuildError::PrincipalDerivedParameter {
                 product,
                 operation,
@@ -194,7 +214,7 @@ impl std::fmt::Display for BuildError {
             ),
             BuildError::MissingAccountToken { product } => write!(
                 f,
-                "{product}: an account token is required; call login()/signup() first or pass with_account_token(...)"
+                "{product}: an account token is required; call create_hosted_session first or pass with_account_token(...)"
             ),
             BuildError::MissingIntrospectionSecret { product } => write!(
                 f,
@@ -225,7 +245,7 @@ pub struct TemperaClient {
     /// fallback) used by `auth: "product"` operations.
     pub auth: Option<TemperaAuth>,
     /// Account-session token used by `auth: "account"` (control-plane)
-    /// operations; returned by login/signup.
+    /// operations; returned by `create_hosted_session`.
     pub account_token: Option<String>,
     /// Server-side introspection secret used by `auth: "introspectionSecret"`
     /// operations.
@@ -312,7 +332,9 @@ impl TemperaClient {
             }
         }
 
-        // Path substitution (percent-encoded); empty values count as missing.
+        // Path substitution. Ordinary values are percent-encoded. A producer
+        // may declare an AIP resource pattern such as `projects/*`; its
+        // structural slash is preserved only after exact template validation.
         let mut path = op.path.to_string();
         for name in op.path_params {
             let value = get_param(name)
@@ -323,7 +345,24 @@ impl TemperaClient {
                     operation: operation.to_string(),
                     name: name.to_string(),
                 })?;
-            path = path.replace(&format!("{{{name}}}"), &urlencode(&value));
+            let resource_pattern = op
+                .path_param_templates
+                .iter()
+                .find(|(parameter, _)| parameter == name)
+                .map(|(_, template)| *template);
+            let replacement = if let Some(resource_pattern) = resource_pattern {
+                expand_aip_path_param(&value, resource_pattern).ok_or_else(|| {
+                    BuildError::InvalidPathParam {
+                        product: product.to_string(),
+                        operation: operation.to_string(),
+                        name: name.to_string(),
+                        resource_pattern: resource_pattern.to_string(),
+                    }
+                })?
+            } else {
+                urlencode(&value)
+            };
+            path = path.replace(&format!("{{{name}}}"), &replacement);
         }
 
         let mut consumed: Vec<&str> = op.path_params.to_vec();
@@ -444,6 +483,29 @@ impl TemperaClient {
     }
 }
 
+fn expand_aip_path_param(value: &str, resource_pattern: &str) -> Option<String> {
+    let expected = resource_pattern.split('/').collect::<Vec<_>>();
+    let observed = value.split('/').collect::<Vec<_>>();
+    if expected.len() != observed.len() {
+        return None;
+    }
+    let mut expanded = Vec::with_capacity(expected.len());
+    for (expected_segment, observed_segment) in expected.iter().zip(observed) {
+        match *expected_segment {
+            "*" if !observed_segment.is_empty()
+                && observed_segment != "."
+                && observed_segment != ".." =>
+            {
+                expanded.push(urlencode(observed_segment));
+            }
+            "*" => return None,
+            literal if literal == observed_segment => expanded.push(literal.to_string()),
+            _ => return None,
+        }
+    }
+    Some(expanded.join("/"))
+}
+
 /// Insert or replace one serialized JSON member, keeping keys unique.
 fn set_body_member(members: &mut Vec<(String, String)>, key: &str, value: String) {
     if let Some(member) = members.iter_mut().find(|(existing, _)| existing == key) {
@@ -481,14 +543,28 @@ mod tests {
             .map(|(_, value)| value.as_str())
     }
 
+    fn sample_path_param(op: &crate::surface::OperationSpec, name: &str) -> String {
+        op.path_param_templates
+            .iter()
+            .find(|(template_name, _)| *template_name == name)
+            .map(|(_, pattern)| pattern.replace('*', &format!("{name}_1")))
+            .unwrap_or_else(|| format!("{name}_1"))
+    }
+
     #[test]
     fn builds_every_operation_in_the_surface_tables() {
         let client = full_client();
         for op in OPERATIONS {
+            assert!(
+                !op.upstream_operation_id.is_empty(),
+                "{}.{} producer operation id",
+                op.product,
+                op.id
+            );
             let params: Vec<(&str, ParamValue)> = op
                 .path_params
                 .iter()
-                .map(|name| (*name, ParamValue::from(format!("{name}_1"))))
+                .map(|name| (*name, ParamValue::from(sample_path_param(op, name))))
                 .collect();
             let spec = client
                 .build_request(op.product, op.id, &params)
@@ -498,7 +574,8 @@ mod tests {
 
             let mut expected_path = op.path.to_string();
             for name in op.path_params {
-                expected_path = expected_path.replace(&format!("{{{name}}}"), &format!("{name}_1"));
+                expected_path =
+                    expected_path.replace(&format!("{{{name}}}"), &sample_path_param(op, name));
             }
             assert_eq!(
                 spec.url,
@@ -540,13 +617,14 @@ mod tests {
     }
 
     #[test]
-    fn login_body_carries_the_mode_default() {
+    fn create_hosted_session_carries_the_selected_mode() {
         let client = full_client();
         let spec = client
             .build_request(
                 "control_plane",
-                "login",
+                "create_hosted_session",
                 &[
+                    ("mode", "login".into()),
                     ("email", "dev@example.test".into()),
                     ("password", "hunter2".into()),
                 ],
@@ -560,21 +638,21 @@ mod tests {
     }
 
     #[test]
-    fn explicit_param_overrides_a_body_default_without_duplication() {
+    fn create_hosted_session_serializes_signup_mode_once() {
         let client = full_client();
         let spec = client
             .build_request(
                 "control_plane",
-                "signup",
+                "create_hosted_session",
                 &[
                     ("email", "dev@example.test".into()),
                     ("password", "hunter2".into()),
-                    ("mode", "signup_custom".into()),
+                    ("mode", "signup".into()),
                 ],
             )
             .unwrap();
         let body = spec.body_json.unwrap();
-        assert!(body.contains("\"mode\":\"signup_custom\""));
+        assert!(body.contains("\"mode\":\"signup\""));
         assert_eq!(body.matches("\"mode\":").count(), 1);
     }
 
@@ -780,7 +858,7 @@ mod tests {
             .build_request(
                 "data_engine",
                 "ingest_artifact",
-                &[("project_id", "p1".into())],
+                &[("parent", "projects/p1".into())],
             )
             .unwrap();
         assert_eq!(
@@ -797,13 +875,25 @@ mod tests {
             .build_request(
                 "data_engine",
                 "get_job",
-                &[("project_id", "p1".into()), ("job_id", "job:1".into())],
+                &[("parent", "projects/p1".into()), ("jobId", "job:1".into())],
             )
             .unwrap();
         assert_eq!(
             spec.url,
             "https://data_engine.example.test/v1/projects/p1/jobs/job%3A1"
         );
+
+        for invalid_parent in ["projects/../secrets", "organizations/p1"] {
+            let error = client
+                .build_request(
+                    "data_engine",
+                    "ingest_artifact",
+                    &[("parent", invalid_parent.into())],
+                )
+                .unwrap_err();
+            assert!(matches!(error, BuildError::InvalidPathParam { .. }));
+            assert!(error.to_string().contains("projects/*"));
+        }
     }
 
     #[test]
@@ -899,6 +989,8 @@ mod tests {
                 "remi",
                 "remember",
                 &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("project_id", "project_1".into()),
                     ("kind", "note".into()),
                     ("text", "line1\nline2 \"quoted\"".into()),
                 ],
@@ -912,9 +1004,16 @@ mod tests {
         let spec = client
             .build_request(
                 "remi",
-                "context",
+                "query",
                 &[
                     ("question", "Which workflow evidence is current?".into()),
+                    (
+                        "scope",
+                        ParamValue::RawJson(
+                            r#"{"tenant_id":"tenant_1","project_id":"project_1","environment_id":null,"as_of_unix_ms":null}"#
+                                .to_string(),
+                        ),
+                    ),
                     ("max_tokens", 600.into()),
                     ("require_fresh", true.into()),
                     (
@@ -926,56 +1025,7 @@ mod tests {
             .unwrap();
         let body = spec.body_json.unwrap();
         assert!(body.contains("\"question\":\"Which workflow evidence is current?\""));
+        assert!(body.contains("\"tenant_id\":\"tenant_1\""));
         assert!(body.contains("\"modes\":[\"procedural\",\"gotcha\",\"state\"]"));
-
-        let spec = client
-            .build_request(
-                "remi",
-                "feedback",
-                &[
-                    ("schema", "remi.memory_feedback.v2".into()),
-                    ("retrieval_receipt_id", "receipt_1".into()),
-                    ("evidence_node_id", "node_1".into()),
-                    ("helpful", true.into()),
-                    ("terminal_state", "succeeded".into()),
-                    ("outcome_artifact_id", "test://sdk/generated-wire".into()),
-                    ("idempotency_key", "feedback_1".into()),
-                ],
-            )
-            .unwrap();
-        let body = spec.body_json.unwrap();
-        assert!(body.contains("\"outcome_artifact_id\":\"test://sdk/generated-wire\""));
-
-        let error = client
-            .build_request(
-                "remi",
-                "remember",
-                &[
-                    ("tenant_id", "tenant_1".into()),
-                    ("kind", "note".into()),
-                    ("text", "blocked".into()),
-                ],
-            )
-            .unwrap_err();
-        assert!(matches!(
-            error,
-            BuildError::PrincipalDerivedParameter { .. }
-        ));
-
-        for field in ["scope", "tenant_id", "project_id", "environment_id"] {
-            let error = client
-                .build_request(
-                    "remi",
-                    "context",
-                    &[
-                        ("question", "what is current?".into()),
-                        (field, ParamValue::RawJson("null".to_string())),
-                    ],
-                )
-                .unwrap_err();
-            assert!(
-                matches!(error, BuildError::PrincipalDerivedParameter { name, .. } if name == field)
-            );
-        }
     }
 }
