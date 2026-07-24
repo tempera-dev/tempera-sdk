@@ -82,34 +82,6 @@ let spec = client.build_request("tempo", "agent_json", &[])?;
 
 </CodeGroup>
 
-### drain
-
-`POST /drain`
-
-Call POST /drain.
-
-- **Producer operationId:** `drain`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.drain()` · Python `client.tempo.drain()` · Rust `build_request("tempo", "drain", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.drain();
-```
-
-```python Python
-result = client.tempo.drain()
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "drain", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### health
 
 `GET /health`
@@ -222,9 +194,37 @@ let spec = client.build_request("tempo", "ready", &[])?;
 
 </CodeGroup>
 
+### drain
+
+`POST /v1/drain`
+
+Call POST /drain.
+
+- **Producer operationId:** `drain`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.drain()` · Python `client.tempo.drain()` · Rust `build_request("tempo", "drain", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.drain();
+```
+
+```python Python
+result = client.tempo.drain()
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "drain", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### listRuns
 
-`GET /runs`
+`GET /v1/runs`
 
 List agent runs, optionally filtered to one session.
 
@@ -236,25 +236,30 @@ List agent runs, optionally filtered to one session.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | no | — |
+| `sessionId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.listRuns({
-  session_id: "<session_id>",
+  sessionId: "<sessionId>",
+  pageSize: "<pageSize>",
 });
 ```
 
 ```python Python
 result = client.tempo.list_runs({
-    "session_id": "<session_id>",
+    "sessionId": "<sessionId>",
+    "pageSize": "<pageSize>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "list_runs", &[
-    ("session_id", "<session_id>".into()),
+    ("sessionId", "<sessionId>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -264,7 +269,7 @@ let spec = client.build_request("tempo", "list_runs", &[
 
 ### getRun
 
-`GET /runs/{run_id}`
+`GET /v1/runs/{runId}`
 
 Fetch one agent run with its state.
 
@@ -276,65 +281,25 @@ Fetch one agent run with its state.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `run_id` | yes | Substituted into the URL path (percent-encoded). |
+| `runId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.getRun({
-  run_id: "<run_id>",
+  runId: "<runId>",
 });
 ```
 
 ```python Python
 result = client.tempo.get_run({
-    "run_id": "<run_id>",
+    "runId": "<runId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "get_run", &[
-    ("run_id", "<run_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### cancelRun
-
-`POST /runs/{run_id}/cancel`
-
-Cancel an agent run.
-
-- **Producer operationId:** `cancelRun`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.cancelRun()` · Python `client.tempo.cancel_run()` · Rust `build_request("tempo", "cancel_run", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `run_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.cancelRun({
-  run_id: "<run_id>",
-});
-```
-
-```python Python
-result = client.tempo.cancel_run({
-    "run_id": "<run_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "cancel_run", &[
-    ("run_id", "<run_id>".into()),
+    ("runId", "<runId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -344,7 +309,7 @@ let spec = client.build_request("tempo", "cancel_run", &[
 
 ### runEvents
 
-`GET /runs/{run_id}/events`
+`GET /v1/runs/{runId}/events`
 
 Call GET /runs/\{run_id\}/events.
 
@@ -356,34 +321,74 @@ Call GET /runs/\{run_id\}/events.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `run_id` | yes | Substituted into the URL path (percent-encoded). |
+| `runId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after_seq` | no | — |
+| `afterSeq` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.runEvents({
-  run_id: "<run_id>",
-  after_seq: "<after_seq>",
+  runId: "<runId>",
+  afterSeq: "<afterSeq>",
 });
 ```
 
 ```python Python
 result = client.tempo.run_events({
-    "run_id": "<run_id>",
-    "after_seq": "<after_seq>",
+    "runId": "<runId>",
+    "afterSeq": "<afterSeq>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "run_events", &[
-    ("run_id", "<run_id>".into()),
-    ("after_seq", "<after_seq>".into()),
+    ("runId", "<runId>".into()),
+    ("afterSeq", "<afterSeq>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### cancelRun
+
+`POST /v1/runs/{runId}:cancel`
+
+Cancel an agent run.
+
+- **Producer operationId:** `cancelRun`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.cancelRun()` · Python `client.tempo.cancel_run()` · Rust `build_request("tempo", "cancel_run", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `runId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.cancelRun({
+  runId: "<runId>",
+});
+```
+
+```python Python
+result = client.tempo.cancel_run({
+    "runId": "<runId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "cancel_run", &[
+    ("runId", "<runId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -393,7 +398,7 @@ let spec = client.build_request("tempo", "run_events", &[
 
 ### resumeRun
 
-`POST /runs/{run_id}/resume`
+`POST /v1/runs/{runId}:resume`
 
 Resume an agent run after a human handoff completes.
 
@@ -405,25 +410,25 @@ Resume an agent run after a human handoff completes.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `run_id` | yes | Substituted into the URL path (percent-encoded). |
+| `runId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.resumeRun({
-  run_id: "<run_id>",
+  runId: "<runId>",
 });
 ```
 
 ```python Python
 result = client.tempo.resume_run({
-    "run_id": "<run_id>",
+    "runId": "<runId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "resume_run", &[
-    ("run_id", "<run_id>".into()),
+    ("runId", "<runId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -433,7 +438,7 @@ let spec = client.build_request("tempo", "resume_run", &[
 
 ### listSessions
 
-`GET /sessions`
+`GET /v1/sessions`
 
 List browser sessions with their state and creation time.
 
@@ -441,18 +446,34 @@ List browser sessions with their state and creation time.
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.tempo.listSessions()` · Python `client.tempo.list_sessions()` · Rust `build_request("tempo", "list_sessions", params)`
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.tempo.listSessions();
+const result = await client.tempo.listSessions({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
 ```
 
 ```python Python
-result = client.tempo.list_sessions()
+result = client.tempo.list_sessions({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempo", "list_sessions", &[])?;
+let spec = client.build_request("tempo", "list_sessions", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -461,7 +482,7 @@ let spec = client.build_request("tempo", "list_sessions", &[])?;
 
 ### createSession
 
-`POST /sessions`
+`POST /v1/sessions`
 
 Open a browser session at a URL; driverless sessions skip engine attachment.
 
@@ -505,7 +526,7 @@ let spec = client.build_request("tempo", "create_session", &[
 
 ### closeSession
 
-`DELETE /sessions/{session_id}`
+`DELETE /v1/sessions/{sessionId}`
 
 Close a browser session and release its engine resources.
 
@@ -517,145 +538,25 @@ Close a browser session and release its engine resources.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.closeSession({
-  session_id: "<session_id>",
+  sessionId: "<sessionId>",
 });
 ```
 
 ```python Python
 result = client.tempo.close_session({
-    "session_id": "<session_id>",
+    "sessionId": "<sessionId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "close_session", &[
-    ("session_id", "<session_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### actBatch
-
-`POST /sessions/{session_id}/act_batch`
-
-Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.
-
-- **Producer operationId:** `actBatchSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.actBatch()` · Python `client.tempo.act_batch()` · Rust `build_request("tempo", "act_batch", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `batch` | yes | — |
-| `confirmation_grant` | no | — |
-| `confirmed` | no | — |
-| `idempotency_key` | no | — |
-| `input_tainted` | no | — |
-| `payment_context` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.actBatch({
-  session_id: "<session_id>",
-  batch: "<batch>",
-  confirmation_grant: "<confirmation_grant>",
-  confirmed: "<confirmed>",
-});
-```
-
-```python Python
-result = client.tempo.act_batch({
-    "session_id": "<session_id>",
-    "batch": "<batch>",
-    "confirmation_grant": "<confirmation_grant>",
-    "confirmed": "<confirmed>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "act_batch", &[
-    ("session_id", "<session_id>".into()),
-    ("batch", "<batch>".into()),
-    ("confirmation_grant", "<confirmation_grant>".into()),
-    ("confirmed", "<confirmed>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### adoptSession
-
-`POST /sessions/{session_id}/adopt`
-
-Let a human surface take write ownership of the session and receive an adoption lease.
-
-- **Producer operationId:** `adoptSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.adoptSession()` · Python `client.tempo.adopt_session()` · Rust `build_request("tempo", "adopt_session", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `engine_tier` | no | — |
-| `label` | no | — |
-| `platform` | no | — |
-| `profile_id` | no | — |
-| `storage_continuity` | no | — |
-| `surface_id` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.adoptSession({
-  session_id: "<session_id>",
-  engine_tier: "<engine_tier>",
-  label: "<label>",
-  platform: "<platform>",
-});
-```
-
-```python Python
-result = client.tempo.adopt_session({
-    "session_id": "<session_id>",
-    "engine_tier": "<engine_tier>",
-    "label": "<label>",
-    "platform": "<platform>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "adopt_session", &[
-    ("session_id", "<session_id>".into()),
-    ("engine_tier", "<engine_tier>".into()),
-    ("label", "<label>".into()),
-    ("platform", "<platform>".into()),
+    ("sessionId", "<sessionId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -665,7 +566,7 @@ let spec = client.build_request("tempo", "adopt_session", &[
 
 ### grantConfirmation
 
-`POST /sessions/{session_id}/confirmations/{confirmation_id}`
+`POST /v1/sessions/{sessionId}/confirmations/{confirmationId}:grant`
 
 Grant a pending policy confirmation and receive a single-use grant token.
 
@@ -677,29 +578,29 @@ Grant a pending policy confirmation and receive a single-use grant token.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-| `confirmation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+| `confirmationId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.grantConfirmation({
-  session_id: "<session_id>",
-  confirmation_id: "<confirmation_id>",
+  sessionId: "<sessionId>",
+  confirmationId: "<confirmationId>",
 });
 ```
 
 ```python Python
 result = client.tempo.grant_confirmation({
-    "session_id": "<session_id>",
-    "confirmation_id": "<confirmation_id>",
+    "sessionId": "<sessionId>",
+    "confirmationId": "<confirmationId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "grant_confirmation", &[
-    ("session_id", "<session_id>".into()),
-    ("confirmation_id", "<confirmation_id>".into()),
+    ("sessionId", "<sessionId>".into()),
+    ("confirmationId", "<confirmationId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -709,7 +610,7 @@ let spec = client.build_request("tempo", "grant_confirmation", &[
 
 ### sessionEvents
 
-`GET /sessions/{session_id}/events`
+`GET /v1/sessions/{sessionId}/events`
 
 Fetch the session's event window after a sequence number.
 
@@ -721,74 +622,34 @@ Fetch the session's event window after a sequence number.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after_seq` | no | — |
+| `afterSeq` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.sessionEvents({
-  session_id: "<session_id>",
-  after_seq: "<after_seq>",
+  sessionId: "<sessionId>",
+  afterSeq: "<afterSeq>",
 });
 ```
 
 ```python Python
 result = client.tempo.session_events({
-    "session_id": "<session_id>",
-    "after_seq": "<after_seq>",
+    "sessionId": "<sessionId>",
+    "afterSeq": "<afterSeq>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "session_events", &[
-    ("session_id", "<session_id>".into()),
-    ("after_seq", "<after_seq>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### handoffSession
-
-`POST /sessions/{session_id}/handoff`
-
-Return write ownership of the session to the agent plane.
-
-- **Producer operationId:** `handoffSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.handoffSession()` · Python `client.tempo.handoff_session()` · Rust `build_request("tempo", "handoff_session", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.handoffSession({
-  session_id: "<session_id>",
-});
-```
-
-```python Python
-result = client.tempo.handoff_session({
-    "session_id": "<session_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "handoff_session", &[
-    ("session_id", "<session_id>".into()),
+    ("sessionId", "<sessionId>".into()),
+    ("afterSeq", "<afterSeq>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -798,7 +659,7 @@ let spec = client.build_request("tempo", "handoff_session", &[
 
 ### managerSession
 
-`GET /sessions/{session_id}/manager`
+`GET /v1/sessions/{sessionId}/manager`
 
 Call GET /sessions/\{session_id\}/manager.
 
@@ -810,65 +671,25 @@ Call GET /sessions/\{session_id\}/manager.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.managerSession({
-  session_id: "<session_id>",
+  sessionId: "<sessionId>",
 });
 ```
 
 ```python Python
 result = client.tempo.manager_session({
-    "session_id": "<session_id>",
+    "sessionId": "<sessionId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "manager_session", &[
-    ("session_id", "<session_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### observe
-
-`GET /sessions/{session_id}/observe`
-
-Fetch the session's compiled structured observation (ranked, stably-identified elements).
-
-- **Producer operationId:** `observeSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.observe()` · Python `client.tempo.observe()` · Rust `build_request("tempo", "observe", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.observe({
-  session_id: "<session_id>",
-});
-```
-
-```python Python
-result = client.tempo.observe({
-    "session_id": "<session_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "observe", &[
-    ("session_id", "<session_id>".into()),
+    ("sessionId", "<sessionId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -878,7 +699,7 @@ let spec = client.build_request("tempo", "observe", &[
 
 ### createRun
 
-`POST /sessions/{session_id}/runs`
+`POST /v1/sessions/{sessionId}/runs`
 
 Start an agent run against the session with a goal, action budget, and round limit.
 
@@ -890,7 +711,7 @@ Start an agent run against the session with a goal, action budget, and round lim
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -898,84 +719,35 @@ Start an agent run against the session with a goal, action budget, and round lim
 |---|---|---|
 | `actions` | no | — |
 | `goal` | no | — |
-| `max_rounds` | no | — |
-| `token_budget` | no | — |
+| `maxRounds` | no | — |
+| `tokenBudget` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.createRun({
-  session_id: "<session_id>",
+  sessionId: "<sessionId>",
   actions: "<actions>",
   goal: "<goal>",
-  max_rounds: "<max_rounds>",
+  maxRounds: "<maxRounds>",
 });
 ```
 
 ```python Python
 result = client.tempo.create_run({
-    "session_id": "<session_id>",
+    "sessionId": "<sessionId>",
     "actions": "<actions>",
     "goal": "<goal>",
-    "max_rounds": "<max_rounds>",
+    "maxRounds": "<maxRounds>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "create_run", &[
-    ("session_id", "<session_id>".into()),
+    ("sessionId", "<sessionId>".into()),
     ("actions", "<actions>".into()),
     ("goal", "<goal>".into()),
-    ("max_rounds", "<max_rounds>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### screenshot
-
-`GET /sessions/{session_id}/screenshot`
-
-Capture a PNG screenshot of the session, optionally annotated with set-of-marks.
-
-- **Producer operationId:** `screenshotSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.screenshot()` · Python `client.tempo.screenshot()` · Rust `build_request("tempo", "screenshot", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `set_of_marks` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.tempo.screenshot({
-  session_id: "<session_id>",
-  set_of_marks: "<set_of_marks>",
-});
-```
-
-```python Python
-result = client.tempo.screenshot({
-    "session_id": "<session_id>",
-    "set_of_marks": "<set_of_marks>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempo", "screenshot", &[
-    ("session_id", "<session_id>".into()),
-    ("set_of_marks", "<set_of_marks>".into()),
+    ("maxRounds", "<maxRounds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -985,7 +757,7 @@ let spec = client.build_request("tempo", "screenshot", &[
 
 ### registerSessionSurface
 
-`POST /sessions/{session_id}/surfaces`
+`POST /v1/sessions/{sessionId}/surfaces`
 
 Call POST /sessions/\{session_id\}/surfaces.
 
@@ -997,25 +769,25 @@ Call POST /sessions/\{session_id\}/surfaces.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `engine_tier` | no | — |
+| `engineTier` | no | — |
 | `label` | no | — |
 | `platform` | no | — |
-| `profile_id` | no | — |
-| `storage_continuity` | no | — |
-| `surface_id` | no | — |
+| `profileId` | no | — |
+| `storageContinuity` | no | — |
+| `surfaceId` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.registerSessionSurface({
-  session_id: "<session_id>",
-  engine_tier: "<engine_tier>",
+  sessionId: "<sessionId>",
+  engineTier: "<engineTier>",
   label: "<label>",
   platform: "<platform>",
 });
@@ -1023,8 +795,8 @@ const result = await client.tempo.registerSessionSurface({
 
 ```python Python
 result = client.tempo.register_session_surface({
-    "session_id": "<session_id>",
-    "engine_tier": "<engine_tier>",
+    "sessionId": "<sessionId>",
+    "engineTier": "<engineTier>",
     "label": "<label>",
     "platform": "<platform>",
 })
@@ -1032,8 +804,8 @@ result = client.tempo.register_session_surface({
 
 ```rust Rust
 let spec = client.build_request("tempo", "register_session_surface", &[
-    ("session_id", "<session_id>".into()),
-    ("engine_tier", "<engine_tier>".into()),
+    ("sessionId", "<sessionId>".into()),
+    ("engineTier", "<engineTier>".into()),
     ("label", "<label>".into()),
     ("platform", "<platform>".into()),
 ])?;
@@ -1045,7 +817,7 @@ let spec = client.build_request("tempo", "register_session_surface", &[
 
 ### removeSessionSurface
 
-`DELETE /sessions/{session_id}/surfaces/{surface_id}`
+`DELETE /v1/sessions/{sessionId}/surfaces/{surfaceId}`
 
 Call DELETE /sessions/\{session_id\}/surfaces/\{surface_id\}.
 
@@ -1057,29 +829,278 @@ Call DELETE /sessions/\{session_id\}/surfaces/\{surface_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-| `surface_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+| `surfaceId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.tempo.removeSessionSurface({
-  session_id: "<session_id>",
-  surface_id: "<surface_id>",
+  sessionId: "<sessionId>",
+  surfaceId: "<surfaceId>",
 });
 ```
 
 ```python Python
 result = client.tempo.remove_session_surface({
-    "session_id": "<session_id>",
-    "surface_id": "<surface_id>",
+    "sessionId": "<sessionId>",
+    "surfaceId": "<surfaceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "remove_session_surface", &[
-    ("session_id", "<session_id>".into()),
-    ("surface_id", "<surface_id>".into()),
+    ("sessionId", "<sessionId>".into()),
+    ("surfaceId", "<surfaceId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### actBatch
+
+`POST /v1/sessions/{sessionId}:actBatch`
+
+Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.
+
+- **Producer operationId:** `actBatchSession`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.actBatch()` · Python `client.tempo.act_batch()` · Rust `build_request("tempo", "act_batch", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `batch` | yes | — |
+| `confirmationGrant` | no | — |
+| `confirmed` | no | — |
+| `idempotencyKey` | no | — |
+| `inputTainted` | no | — |
+| `paymentContext` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.actBatch({
+  sessionId: "<sessionId>",
+  batch: "<batch>",
+  confirmationGrant: "<confirmationGrant>",
+  confirmed: "<confirmed>",
+});
+```
+
+```python Python
+result = client.tempo.act_batch({
+    "sessionId": "<sessionId>",
+    "batch": "<batch>",
+    "confirmationGrant": "<confirmationGrant>",
+    "confirmed": "<confirmed>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "act_batch", &[
+    ("sessionId", "<sessionId>".into()),
+    ("batch", "<batch>".into()),
+    ("confirmationGrant", "<confirmationGrant>".into()),
+    ("confirmed", "<confirmed>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adoptSession
+
+`POST /v1/sessions/{sessionId}:adopt`
+
+Let a human surface take write ownership of the session and receive an adoption lease.
+
+- **Producer operationId:** `adoptSession`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.adoptSession()` · Python `client.tempo.adopt_session()` · Rust `build_request("tempo", "adopt_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `engineTier` | no | — |
+| `label` | no | — |
+| `platform` | no | — |
+| `profileId` | no | — |
+| `storageContinuity` | no | — |
+| `surfaceId` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.adoptSession({
+  sessionId: "<sessionId>",
+  engineTier: "<engineTier>",
+  label: "<label>",
+  platform: "<platform>",
+});
+```
+
+```python Python
+result = client.tempo.adopt_session({
+    "sessionId": "<sessionId>",
+    "engineTier": "<engineTier>",
+    "label": "<label>",
+    "platform": "<platform>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "adopt_session", &[
+    ("sessionId", "<sessionId>".into()),
+    ("engineTier", "<engineTier>".into()),
+    ("label", "<label>".into()),
+    ("platform", "<platform>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### handoffSession
+
+`POST /v1/sessions/{sessionId}:handoff`
+
+Return write ownership of the session to the agent plane.
+
+- **Producer operationId:** `handoffSession`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.handoffSession()` · Python `client.tempo.handoff_session()` · Rust `build_request("tempo", "handoff_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.handoffSession({
+  sessionId: "<sessionId>",
+});
+```
+
+```python Python
+result = client.tempo.handoff_session({
+    "sessionId": "<sessionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "handoff_session", &[
+    ("sessionId", "<sessionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### observe
+
+`GET /v1/sessions/{sessionId}:observe`
+
+Fetch the session's compiled structured observation (ranked, stably-identified elements).
+
+- **Producer operationId:** `observeSession`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.observe()` · Python `client.tempo.observe()` · Rust `build_request("tempo", "observe", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.observe({
+  sessionId: "<sessionId>",
+});
+```
+
+```python Python
+result = client.tempo.observe({
+    "sessionId": "<sessionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "observe", &[
+    ("sessionId", "<sessionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### screenshot
+
+`GET /v1/sessions/{sessionId}:screenshot`
+
+Capture a PNG screenshot of the session, optionally annotated with set-of-marks.
+
+- **Producer operationId:** `screenshotSession`
+- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.tempo.screenshot()` · Python `client.tempo.screenshot()` · Rust `build_request("tempo", "screenshot", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `setOfMarks` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.tempo.screenshot({
+  sessionId: "<sessionId>",
+  setOfMarks: "<setOfMarks>",
+});
+```
+
+```python Python
+result = client.tempo.screenshot({
+    "sessionId": "<sessionId>",
+    "setOfMarks": "<setOfMarks>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempo", "screenshot", &[
+    ("sessionId", "<sessionId>".into()),
+    ("setOfMarks", "<setOfMarks>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1089,7 +1110,7 @@ let spec = client.build_request("tempo", "remove_session_surface", &[
 
 ### transformSession
 
-`POST /sessions/{session_id}/transform`
+`POST /v1/sessions/{sessionId}:transform`
 
 Call POST /sessions/\{session_id\}/transform.
 
@@ -1101,14 +1122,14 @@ Call POST /sessions/\{session_id\}/transform.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
 | `determinism` | no | — |
-| `idempotency_key` | no | — |
+| `idempotencyKey` | no | — |
 | `input` | no | — |
 | `lane` | yes | — |
 | `source` | yes | — |
@@ -1118,27 +1139,27 @@ Call POST /sessions/\{session_id\}/transform.
 
 ```typescript TypeScript
 const result = await client.tempo.transformSession({
-  session_id: "<session_id>",
+  sessionId: "<sessionId>",
   determinism: "<determinism>",
-  idempotency_key: "<idempotency_key>",
+  idempotencyKey: "<idempotencyKey>",
   input: "<input>",
 });
 ```
 
 ```python Python
 result = client.tempo.transform_session({
-    "session_id": "<session_id>",
+    "sessionId": "<sessionId>",
     "determinism": "<determinism>",
-    "idempotency_key": "<idempotency_key>",
+    "idempotencyKey": "<idempotencyKey>",
     "input": "<input>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempo", "transform_session", &[
-    ("session_id", "<session_id>".into()),
+    ("sessionId", "<sessionId>".into()),
     ("determinism", "<determinism>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
     ("input", "<input>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json

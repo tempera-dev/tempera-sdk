@@ -1034,7 +1034,7 @@ mod tests {
             .build_request(
                 "tempo",
                 "adopt_session",
-                &[("session_id", "sess_1".into()), ("surface", "ui".into())],
+                &[("sessionId", "sess_1".into()), ("surface", "ui".into())],
             )
             .unwrap();
         assert_eq!(spec.body_json.as_deref(), Some("{\"surface\":\"ui\"}"));

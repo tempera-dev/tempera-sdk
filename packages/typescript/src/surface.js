@@ -3237,22 +3237,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call GET /.well-known/agent.json."
     },
     {
-      "id": "drain",
-      "upstreamOperationId": "drain",
-      "method": "POST",
-      "path": "/drain",
-      "auth": "product",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Call POST /drain."
-    },
-    {
       "id": "health",
       "upstreamOperationId": "health",
       "method": "GET",
@@ -3317,15 +3301,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
     },
     {
+      "id": "drain",
+      "upstreamOperationId": "drain",
+      "method": "POST",
+      "path": "/v1/drain",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /drain."
+    },
+    {
       "id": "listRuns",
       "upstreamOperationId": "listRuns",
       "method": "GET",
-      "path": "/runs",
+      "path": "/v1/runs",
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "session_id"
+        "sessionId",
+        "pageSize",
+        "pageToken"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -3338,10 +3340,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getRun",
       "upstreamOperationId": "getRun",
       "method": "GET",
-      "path": "/runs/{run_id}",
+      "path": "/v1/runs/{runId}",
       "auth": "product",
       "pathParams": [
-        "run_id"
+        "runId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3353,13 +3355,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch one agent run with its state."
     },
     {
+      "id": "runEvents",
+      "upstreamOperationId": "runEvents",
+      "method": "GET",
+      "path": "/v1/runs/{runId}/events",
+      "auth": "product",
+      "pathParams": [
+        "runId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "afterSeq"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /runs/{run_id}/events."
+    },
+    {
       "id": "cancelRun",
       "upstreamOperationId": "cancelRun",
       "method": "POST",
-      "path": "/runs/{run_id}/cancel",
+      "path": "/v1/runs/{runId}:cancel",
       "auth": "product",
       "pathParams": [
-        "run_id"
+        "runId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3371,33 +3393,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel an agent run."
     },
     {
-      "id": "runEvents",
-      "upstreamOperationId": "runEvents",
-      "method": "GET",
-      "path": "/runs/{run_id}/events",
-      "auth": "product",
-      "pathParams": [
-        "run_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after_seq"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Call GET /runs/{run_id}/events."
-    },
-    {
       "id": "resumeRun",
       "upstreamOperationId": "resumeRun",
       "method": "POST",
-      "path": "/runs/{run_id}/resume",
+      "path": "/v1/runs/{runId}:resume",
       "auth": "product",
       "pathParams": [
-        "run_id"
+        "runId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3412,11 +3414,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "listSessions",
       "upstreamOperationId": "listSessions",
       "method": "GET",
-      "path": "/sessions",
+      "path": "/v1/sessions",
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3428,7 +3433,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createSession",
       "upstreamOperationId": "createSession",
       "method": "POST",
-      "path": "/sessions",
+      "path": "/v1/sessions",
       "auth": "product",
       "pathParams": [],
       "pathParamTemplates": {},
@@ -3449,10 +3454,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "closeSession",
       "upstreamOperationId": "closeSession",
       "method": "DELETE",
-      "path": "/sessions/{session_id}",
+      "path": "/v1/sessions/{sessionId}",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3464,66 +3469,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Close a browser session and release its engine resources."
     },
     {
-      "id": "actBatch",
-      "upstreamOperationId": "actBatchSession",
-      "method": "POST",
-      "path": "/sessions/{session_id}/act_batch",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [
-        "batch",
-        "confirmation_grant",
-        "confirmed",
-        "idempotency_key",
-        "input_tainted",
-        "payment_context"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "batch"
-      ],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
-    },
-    {
-      "id": "adoptSession",
-      "upstreamOperationId": "adoptSession",
-      "method": "POST",
-      "path": "/sessions/{session_id}/adopt",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [
-        "engine_tier",
-        "label",
-        "platform",
-        "profile_id",
-        "storage_continuity",
-        "surface_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Let a human surface take write ownership of the session and receive an adoption lease."
-    },
-    {
       "id": "grantConfirmation",
       "upstreamOperationId": "grantSessionConfirmation",
       "method": "POST",
-      "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
+      "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
       "auth": "product",
       "pathParams": [
-        "session_id",
-        "confirmation_id"
+        "sessionId",
+        "confirmationId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3538,14 +3491,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "sessionEvents",
       "upstreamOperationId": "sessionEvents",
       "method": "GET",
-      "path": "/sessions/{session_id}/events",
+      "path": "/v1/sessions/{sessionId}/events",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "after_seq"
+        "afterSeq"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -3555,31 +3508,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch the session's event window after a sequence number."
     },
     {
-      "id": "handoffSession",
-      "upstreamOperationId": "handoffSession",
-      "method": "POST",
-      "path": "/sessions/{session_id}/handoff",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Return write ownership of the session to the agent plane."
-    },
-    {
       "id": "managerSession",
       "upstreamOperationId": "managerSession",
       "method": "GET",
-      "path": "/sessions/{session_id}/manager",
+      "path": "/v1/sessions/{sessionId}/manager",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3591,39 +3526,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call GET /sessions/{session_id}/manager."
     },
     {
-      "id": "observe",
-      "upstreamOperationId": "observeSession",
-      "method": "GET",
-      "path": "/sessions/{session_id}/observe",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
-    },
-    {
       "id": "createRun",
       "upstreamOperationId": "createSessionRun",
       "method": "POST",
-      "path": "/sessions/{session_id}/runs",
+      "path": "/v1/sessions/{sessionId}/runs",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
         "actions",
         "goal",
-        "max_rounds",
-        "token_budget"
+        "maxRounds",
+        "tokenBudget"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3632,43 +3549,23 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Start an agent run against the session with a goal, action budget, and round limit."
     },
     {
-      "id": "screenshot",
-      "upstreamOperationId": "screenshotSession",
-      "method": "GET",
-      "path": "/sessions/{session_id}/screenshot",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "set_of_marks"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
-    },
-    {
       "id": "registerSessionSurface",
       "upstreamOperationId": "registerSessionSurface",
       "method": "POST",
-      "path": "/sessions/{session_id}/surfaces",
+      "path": "/v1/sessions/{sessionId}/surfaces",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "engine_tier",
+        "engineTier",
         "label",
         "platform",
-        "profile_id",
-        "storage_continuity",
-        "surface_id"
+        "profileId",
+        "storageContinuity",
+        "surfaceId"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3680,11 +3577,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "removeSessionSurface",
       "upstreamOperationId": "removeSessionSurface",
       "method": "DELETE",
-      "path": "/sessions/{session_id}/surfaces/{surface_id}",
+      "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
       "auth": "product",
       "pathParams": [
-        "session_id",
-        "surface_id"
+        "sessionId",
+        "surfaceId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -3696,19 +3593,127 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
     },
     {
+      "id": "actBatch",
+      "upstreamOperationId": "actBatchSession",
+      "method": "POST",
+      "path": "/v1/sessions/{sessionId}:actBatch",
+      "auth": "product",
+      "pathParams": [
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "batch",
+        "confirmationGrant",
+        "confirmed",
+        "idempotencyKey",
+        "inputTainted",
+        "paymentContext"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "batch"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+    },
+    {
+      "id": "adoptSession",
+      "upstreamOperationId": "adoptSession",
+      "method": "POST",
+      "path": "/v1/sessions/{sessionId}:adopt",
+      "auth": "product",
+      "pathParams": [
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "engineTier",
+        "label",
+        "platform",
+        "profileId",
+        "storageContinuity",
+        "surfaceId"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+    },
+    {
+      "id": "handoffSession",
+      "upstreamOperationId": "handoffSession",
+      "method": "POST",
+      "path": "/v1/sessions/{sessionId}:handoff",
+      "auth": "product",
+      "pathParams": [
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Return write ownership of the session to the agent plane."
+    },
+    {
+      "id": "observe",
+      "upstreamOperationId": "observeSession",
+      "method": "GET",
+      "path": "/v1/sessions/{sessionId}:observe",
+      "auth": "product",
+      "pathParams": [
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
+    },
+    {
+      "id": "screenshot",
+      "upstreamOperationId": "screenshotSession",
+      "method": "GET",
+      "path": "/v1/sessions/{sessionId}:screenshot",
+      "auth": "product",
+      "pathParams": [
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "setOfMarks"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+    },
+    {
       "id": "transformSession",
       "upstreamOperationId": "transformSession",
       "method": "POST",
-      "path": "/sessions/{session_id}/transform",
+      "path": "/v1/sessions/{sessionId}:transform",
       "auth": "product",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
       "body": [
         "determinism",
-        "idempotency_key",
+        "idempotencyKey",
         "input",
         "lane",
         "source",
@@ -4214,6 +4219,219 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
     },
     {
+      "id": "domainsList",
+      "upstreamOperationId": "domains.list",
+      "method": "GET",
+      "path": "/v1/domains",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Domain capabilities represented in the versioned task catalog."
+    },
+    {
+      "id": "tasksList",
+      "upstreamOperationId": "tasks.list",
+      "method": "GET",
+      "path": "/v1/tasks",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "domain",
+        "family",
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List versioned task definitions without agent inputs."
+    },
+    {
+      "id": "tasksGet",
+      "upstreamOperationId": "tasks.get",
+      "method": "GET",
+      "path": "/v1/tasks/{task}",
+      "auth": "product",
+      "pathParams": [
+        "task"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "version"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Get one immutable task definition including its agent-visible input."
+    },
+    {
+      "id": "tasksEvaluate",
+      "upstreamOperationId": "tasks.evaluate",
+      "method": "POST",
+      "path": "/v1/tasks/{task}:evaluate",
+      "auth": "product",
+      "pathParams": [
+        "task"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "version"
+      ],
+      "body": [
+        "candidate",
+        "seed",
+        "receipts"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "candidate"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Deterministically verify one candidate without creating an episode."
+    },
+    {
+      "id": "verifiersList",
+      "upstreamOperationId": "verifiers.list",
+      "method": "GET",
+      "path": "/v1/verifiers",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List verifier identities and bound tasks without grader content."
+    },
+    {
+      "id": "episodesList",
+      "upstreamOperationId": "episodes.list",
+      "method": "GET",
+      "path": "/v1/episodes",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "domain",
+        "status",
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List durable episode snapshots, newest first."
+    },
+    {
+      "id": "episodesCreate",
+      "upstreamOperationId": "episodes.create",
+      "method": "POST",
+      "path": "/v1/episodes",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "task",
+        "seed"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "task",
+        "seed"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Reset a versioned task into a durable episode."
+    },
+    {
+      "id": "episodesGet",
+      "upstreamOperationId": "episodes.get",
+      "method": "GET",
+      "path": "/v1/episodes/{episode}",
+      "auth": "product",
+      "pathParams": [
+        "episode"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Read and content-verify one durable episode snapshot."
+    },
+    {
+      "id": "episodesStep",
+      "upstreamOperationId": "episodes.step",
+      "method": "POST",
+      "path": "/v1/episodes/{episode}:step",
+      "auth": "product",
+      "pathParams": [
+        "episode"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "action",
+        "receipts"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "action"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Apply one schema-validated action and persist the transition."
+    },
+    {
+      "id": "episodesExport",
+      "upstreamOperationId": "episodes.export",
+      "method": "POST",
+      "path": "/v1/episodes/{episode}:export",
+      "auth": "product",
+      "pathParams": [
+        "episode"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "context_evidence_ref",
+        "verifier_receipt_artifact_ref",
+        "request_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "context_evidence_ref"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Retain a completed Gym episode and trajectory in Data Engine."
+    },
+    {
       "id": "listRuns",
       "upstreamOperationId": "runs.list",
       "method": "GET",
@@ -4277,6 +4495,112 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "eval:run",
       "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+    },
+    {
+      "id": "sealedEvaluatorsList",
+      "upstreamOperationId": "sealedEvaluators.list",
+      "method": "GET",
+      "path": "/v1/sealed-evaluators",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Discover boot-trusted exact sealed-evaluator identities."
+    },
+    {
+      "id": "sealedEvaluationsList",
+      "upstreamOperationId": "sealedEvaluations.list",
+      "method": "GET",
+      "path": "/v1/sealed-evaluations",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List persisted sealed-evaluation precommits and results."
+    },
+    {
+      "id": "sealedEvaluationsPrecommit",
+      "upstreamOperationId": "sealedEvaluations.precommit",
+      "method": "POST",
+      "path": "/v1/sealed-evaluations:precommit",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "evaluator",
+        "qualification_policy",
+        "suite",
+        "trainer"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evaluator",
+        "qualification_policy",
+        "suite",
+        "trainer"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Persist an opaque sealed-suite commitment before policy freeze."
+    },
+    {
+      "id": "sealedEvaluationsGet",
+      "upstreamOperationId": "sealedEvaluations.get",
+      "method": "GET",
+      "path": "/v1/sealed-evaluations/{evaluation}",
+      "auth": "product",
+      "pathParams": [
+        "evaluation"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Read one verified precommit and aggregate sealed result."
+    },
+    {
+      "id": "sealedEvaluationsRun",
+      "upstreamOperationId": "sealedEvaluations.run",
+      "method": "POST",
+      "path": "/v1/sealed-evaluations/{evaluation}:run",
+      "auth": "product",
+      "pathParams": [
+        "evaluation"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "policy_submission",
+        "training_report"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "policy_submission",
+        "training_report"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Evaluate one frozen policy through its exact sealed adapter."
     }
   ],
   "cradle": [

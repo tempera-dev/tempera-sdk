@@ -2474,14 +2474,6 @@
         "upstreamOperationId": "agentJson"
       },
       {
-        "id": "drain",
-        "method": "POST",
-        "path": "/drain",
-        "auth": "product",
-        "description": "Call POST /drain.",
-        "upstreamOperationId": "drain"
-      },
-      {
         "id": "health",
         "method": "GET",
         "path": "/health",
@@ -2514,12 +2506,22 @@
         "upstreamOperationId": "ready"
       },
       {
+        "id": "drain",
+        "method": "POST",
+        "path": "/v1/drain",
+        "auth": "product",
+        "description": "Call POST /drain.",
+        "upstreamOperationId": "drain"
+      },
+      {
         "id": "listRuns",
         "method": "GET",
-        "path": "/runs",
+        "path": "/v1/runs",
         "auth": "product",
         "query": [
-          "session_id"
+          "sessionId",
+          "pageSize",
+          "pageToken"
         ],
         "description": "List agent runs, optionally filtered to one session.",
         "upstreamOperationId": "listRuns"
@@ -2527,46 +2529,46 @@
       {
         "id": "getRun",
         "method": "GET",
-        "path": "/runs/{run_id}",
+        "path": "/v1/runs/{runId}",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Fetch one agent run with its state.",
         "upstreamOperationId": "getRun"
       },
       {
+        "id": "runEvents",
+        "method": "GET",
+        "path": "/v1/runs/{runId}/events",
+        "auth": "product",
+        "description": "Call GET /runs/{run_id}/events.",
+        "upstreamOperationId": "runEvents",
+        "pathParams": [
+          "runId"
+        ],
+        "query": [
+          "afterSeq"
+        ]
+      },
+      {
         "id": "cancelRun",
         "method": "POST",
-        "path": "/runs/{run_id}/cancel",
+        "path": "/v1/runs/{runId}:cancel",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Cancel an agent run.",
         "upstreamOperationId": "cancelRun"
       },
       {
-        "id": "runEvents",
-        "method": "GET",
-        "path": "/runs/{run_id}/events",
-        "auth": "product",
-        "description": "Call GET /runs/{run_id}/events.",
-        "upstreamOperationId": "runEvents",
-        "pathParams": [
-          "run_id"
-        ],
-        "query": [
-          "after_seq"
-        ]
-      },
-      {
         "id": "resumeRun",
         "method": "POST",
-        "path": "/runs/{run_id}/resume",
+        "path": "/v1/runs/{runId}:resume",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Resume an agent run after a human handoff completes.",
         "upstreamOperationId": "resumeRun"
@@ -2574,15 +2576,19 @@
       {
         "id": "listSessions",
         "method": "GET",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "product",
         "description": "List browser sessions with their state and creation time.",
-        "upstreamOperationId": "listSessions"
+        "upstreamOperationId": "listSessions",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createSession",
         "method": "POST",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "product",
         "body": [
           "driverless",
@@ -2597,29 +2603,114 @@
       {
         "id": "closeSession",
         "method": "DELETE",
-        "path": "/sessions/{session_id}",
+        "path": "/v1/sessions/{sessionId}",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Close a browser session and release its engine resources.",
         "upstreamOperationId": "closeSession"
       },
       {
-        "id": "actBatch",
+        "id": "grantConfirmation",
         "method": "POST",
-        "path": "/sessions/{session_id}/act_batch",
+        "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId",
+          "confirmationId"
+        ],
+        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
+        "upstreamOperationId": "grantSessionConfirmation"
+      },
+      {
+        "id": "sessionEvents",
+        "method": "GET",
+        "path": "/v1/sessions/{sessionId}/events",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
+        ],
+        "query": [
+          "afterSeq"
+        ],
+        "description": "Fetch the session's event window after a sequence number.",
+        "upstreamOperationId": "sessionEvents"
+      },
+      {
+        "id": "managerSession",
+        "method": "GET",
+        "path": "/v1/sessions/{sessionId}/manager",
+        "auth": "product",
+        "description": "Call GET /sessions/{session_id}/manager.",
+        "upstreamOperationId": "managerSession",
+        "pathParams": [
+          "sessionId"
+        ]
+      },
+      {
+        "id": "createRun",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}/runs",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
+        ],
+        "body": [
+          "actions",
+          "goal",
+          "maxRounds",
+          "tokenBudget"
+        ],
+        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
+        "upstreamOperationId": "createSessionRun"
+      },
+      {
+        "id": "registerSessionSurface",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}/surfaces",
+        "auth": "product",
+        "description": "Call POST /sessions/{session_id}/surfaces.",
+        "upstreamOperationId": "registerSessionSurface",
+        "pathParams": [
+          "sessionId"
+        ],
+        "body": [
+          "engineTier",
+          "label",
+          "platform",
+          "profileId",
+          "storageContinuity",
+          "surfaceId"
+        ]
+      },
+      {
+        "id": "removeSessionSurface",
+        "method": "DELETE",
+        "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
+        "auth": "product",
+        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
+        "upstreamOperationId": "removeSessionSurface",
+        "pathParams": [
+          "sessionId",
+          "surfaceId"
+        ]
+      },
+      {
+        "id": "actBatch",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}:actBatch",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
         ],
         "body": [
           "batch",
-          "confirmation_grant",
+          "confirmationGrant",
           "confirmed",
-          "idempotency_key",
-          "input_tainted",
-          "payment_context"
+          "idempotencyKey",
+          "inputTainted",
+          "paymentContext"
         ],
         "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
         "upstreamOperationId": "actBatchSession",
@@ -2630,156 +2721,71 @@
       {
         "id": "adoptSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/adopt",
+        "path": "/v1/sessions/{sessionId}:adopt",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Let a human surface take write ownership of the session and receive an adoption lease.",
         "upstreamOperationId": "adoptSession",
         "body": [
-          "engine_tier",
+          "engineTier",
           "label",
           "platform",
-          "profile_id",
-          "storage_continuity",
-          "surface_id"
+          "profileId",
+          "storageContinuity",
+          "surfaceId"
         ]
-      },
-      {
-        "id": "grantConfirmation",
-        "method": "POST",
-        "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
-        "auth": "product",
-        "pathParams": [
-          "session_id",
-          "confirmation_id"
-        ],
-        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
-        "upstreamOperationId": "grantSessionConfirmation"
-      },
-      {
-        "id": "sessionEvents",
-        "method": "GET",
-        "path": "/sessions/{session_id}/events",
-        "auth": "product",
-        "pathParams": [
-          "session_id"
-        ],
-        "query": [
-          "after_seq"
-        ],
-        "description": "Fetch the session's event window after a sequence number.",
-        "upstreamOperationId": "sessionEvents"
       },
       {
         "id": "handoffSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/handoff",
+        "path": "/v1/sessions/{sessionId}:handoff",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Return write ownership of the session to the agent plane.",
         "upstreamOperationId": "handoffSession"
       },
       {
-        "id": "managerSession",
-        "method": "GET",
-        "path": "/sessions/{session_id}/manager",
-        "auth": "product",
-        "description": "Call GET /sessions/{session_id}/manager.",
-        "upstreamOperationId": "managerSession",
-        "pathParams": [
-          "session_id"
-        ]
-      },
-      {
         "id": "observe",
         "method": "GET",
-        "path": "/sessions/{session_id}/observe",
+        "path": "/v1/sessions/{sessionId}:observe",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
         "upstreamOperationId": "observeSession"
       },
       {
-        "id": "createRun",
-        "method": "POST",
-        "path": "/sessions/{session_id}/runs",
-        "auth": "product",
-        "pathParams": [
-          "session_id"
-        ],
-        "body": [
-          "actions",
-          "goal",
-          "max_rounds",
-          "token_budget"
-        ],
-        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
-        "upstreamOperationId": "createSessionRun"
-      },
-      {
         "id": "screenshot",
         "method": "GET",
-        "path": "/sessions/{session_id}/screenshot",
+        "path": "/v1/sessions/{sessionId}:screenshot",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "query": [
-          "set_of_marks"
+          "setOfMarks"
         ],
         "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
         "upstreamOperationId": "screenshotSession"
       },
       {
-        "id": "registerSessionSurface",
-        "method": "POST",
-        "path": "/sessions/{session_id}/surfaces",
-        "auth": "product",
-        "description": "Call POST /sessions/{session_id}/surfaces.",
-        "upstreamOperationId": "registerSessionSurface",
-        "pathParams": [
-          "session_id"
-        ],
-        "body": [
-          "engine_tier",
-          "label",
-          "platform",
-          "profile_id",
-          "storage_continuity",
-          "surface_id"
-        ]
-      },
-      {
-        "id": "removeSessionSurface",
-        "method": "DELETE",
-        "path": "/sessions/{session_id}/surfaces/{surface_id}",
-        "auth": "product",
-        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
-        "upstreamOperationId": "removeSessionSurface",
-        "pathParams": [
-          "session_id",
-          "surface_id"
-        ]
-      },
-      {
         "id": "transformSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/transform",
+        "path": "/v1/sessions/{sessionId}:transform",
         "auth": "product",
         "description": "Call POST /sessions/{session_id}/transform.",
         "upstreamOperationId": "transformSession",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "body": [
           "determinism",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "source",
@@ -3153,6 +3159,158 @@
         ]
       },
       {
+        "id": "domainsList",
+        "method": "GET",
+        "path": "/v1/domains",
+        "auth": "product",
+        "description": "Domain capabilities represented in the versioned task catalog.",
+        "upstreamOperationId": "domains.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "tasksList",
+        "method": "GET",
+        "path": "/v1/tasks",
+        "auth": "product",
+        "description": "List versioned task definitions without agent inputs.",
+        "upstreamOperationId": "tasks.list",
+        "query": [
+          "domain",
+          "family",
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "tasksGet",
+        "method": "GET",
+        "path": "/v1/tasks/{task}",
+        "auth": "product",
+        "description": "Get one immutable task definition including its agent-visible input.",
+        "upstreamOperationId": "tasks.get",
+        "pathParams": [
+          "task"
+        ],
+        "query": [
+          "version"
+        ]
+      },
+      {
+        "id": "tasksEvaluate",
+        "method": "POST",
+        "path": "/v1/tasks/{task}:evaluate",
+        "auth": "product",
+        "description": "Deterministically verify one candidate without creating an episode.",
+        "upstreamOperationId": "tasks.evaluate",
+        "pathParams": [
+          "task"
+        ],
+        "query": [
+          "version"
+        ],
+        "body": [
+          "candidate",
+          "seed",
+          "receipts"
+        ],
+        "requiredBody": [
+          "candidate"
+        ]
+      },
+      {
+        "id": "verifiersList",
+        "method": "GET",
+        "path": "/v1/verifiers",
+        "auth": "product",
+        "description": "List verifier identities and bound tasks without grader content.",
+        "upstreamOperationId": "verifiers.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "episodesList",
+        "method": "GET",
+        "path": "/v1/episodes",
+        "auth": "product",
+        "description": "List durable episode snapshots, newest first.",
+        "upstreamOperationId": "episodes.list",
+        "query": [
+          "domain",
+          "status",
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "episodesCreate",
+        "method": "POST",
+        "path": "/v1/episodes",
+        "auth": "product",
+        "description": "Reset a versioned task into a durable episode.",
+        "upstreamOperationId": "episodes.create",
+        "body": [
+          "task",
+          "seed"
+        ],
+        "requiredBody": [
+          "task",
+          "seed"
+        ]
+      },
+      {
+        "id": "episodesGet",
+        "method": "GET",
+        "path": "/v1/episodes/{episode}",
+        "auth": "product",
+        "description": "Read and content-verify one durable episode snapshot.",
+        "upstreamOperationId": "episodes.get",
+        "pathParams": [
+          "episode"
+        ]
+      },
+      {
+        "id": "episodesStep",
+        "method": "POST",
+        "path": "/v1/episodes/{episode}:step",
+        "auth": "product",
+        "description": "Apply one schema-validated action and persist the transition.",
+        "upstreamOperationId": "episodes.step",
+        "pathParams": [
+          "episode"
+        ],
+        "body": [
+          "action",
+          "receipts"
+        ],
+        "requiredBody": [
+          "action"
+        ]
+      },
+      {
+        "id": "episodesExport",
+        "method": "POST",
+        "path": "/v1/episodes/{episode}:export",
+        "auth": "product",
+        "description": "Retain a completed Gym episode and trajectory in Data Engine.",
+        "upstreamOperationId": "episodes.export",
+        "pathParams": [
+          "episode"
+        ],
+        "body": [
+          "context_evidence_ref",
+          "verifier_receipt_artifact_ref",
+          "request_id"
+        ],
+        "requiredBody": [
+          "context_evidence_ref"
+        ]
+      },
+      {
         "id": "listRuns",
         "method": "GET",
         "path": "/v1/runs",
@@ -3199,6 +3357,80 @@
         "scope": "eval:run",
         "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
         "upstreamOperationId": "rollouts.create"
+      },
+      {
+        "id": "sealedEvaluatorsList",
+        "method": "GET",
+        "path": "/v1/sealed-evaluators",
+        "auth": "product",
+        "description": "Discover boot-trusted exact sealed-evaluator identities.",
+        "upstreamOperationId": "sealedEvaluators.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "sealedEvaluationsList",
+        "method": "GET",
+        "path": "/v1/sealed-evaluations",
+        "auth": "product",
+        "description": "List persisted sealed-evaluation precommits and results.",
+        "upstreamOperationId": "sealedEvaluations.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
+        "id": "sealedEvaluationsPrecommit",
+        "method": "POST",
+        "path": "/v1/sealed-evaluations:precommit",
+        "auth": "product",
+        "description": "Persist an opaque sealed-suite commitment before policy freeze.",
+        "upstreamOperationId": "sealedEvaluations.precommit",
+        "body": [
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "trainer"
+        ],
+        "requiredBody": [
+          "evaluator",
+          "qualification_policy",
+          "suite",
+          "trainer"
+        ]
+      },
+      {
+        "id": "sealedEvaluationsGet",
+        "method": "GET",
+        "path": "/v1/sealed-evaluations/{evaluation}",
+        "auth": "product",
+        "description": "Read one verified precommit and aggregate sealed result.",
+        "upstreamOperationId": "sealedEvaluations.get",
+        "pathParams": [
+          "evaluation"
+        ]
+      },
+      {
+        "id": "sealedEvaluationsRun",
+        "method": "POST",
+        "path": "/v1/sealed-evaluations/{evaluation}:run",
+        "auth": "product",
+        "description": "Evaluate one frozen policy through its exact sealed adapter.",
+        "upstreamOperationId": "sealedEvaluations.run",
+        "pathParams": [
+          "evaluation"
+        ],
+        "body": [
+          "policy_submission",
+          "training_report"
+        ],
+        "requiredBody": [
+          "policy_submission",
+          "training_report"
+        ]
       }
     ],
     "cradle": [

@@ -3228,22 +3228,6 @@ OPERATIONS = {
             "description": "Call GET /.well-known/agent.json."
         },
         {
-            "id": "drain",
-            "upstream_operation_id": "drain",
-            "method": "POST",
-            "path": "/drain",
-            "auth": "product",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Call POST /drain."
-        },
-        {
             "id": "health",
             "upstream_operation_id": "health",
             "method": "GET",
@@ -3308,15 +3292,33 @@ OPERATIONS = {
             "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
         },
         {
+            "id": "drain",
+            "upstream_operation_id": "drain",
+            "method": "POST",
+            "path": "/v1/drain",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Call POST /drain."
+        },
+        {
             "id": "list_runs",
             "upstream_operation_id": "listRuns",
             "method": "GET",
-            "path": "/runs",
+            "path": "/v1/runs",
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "session_id"
+                "sessionId",
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3329,10 +3331,10 @@ OPERATIONS = {
             "id": "get_run",
             "upstream_operation_id": "getRun",
             "method": "GET",
-            "path": "/runs/{run_id}",
+            "path": "/v1/runs/{runId}",
             "auth": "product",
             "path_params": [
-                "run_id"
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3344,13 +3346,33 @@ OPERATIONS = {
             "description": "Fetch one agent run with its state."
         },
         {
+            "id": "run_events",
+            "upstream_operation_id": "runEvents",
+            "method": "GET",
+            "path": "/v1/runs/{runId}/events",
+            "auth": "product",
+            "path_params": [
+                "runId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "afterSeq"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Call GET /runs/{run_id}/events."
+        },
+        {
             "id": "cancel_run",
             "upstream_operation_id": "cancelRun",
             "method": "POST",
-            "path": "/runs/{run_id}/cancel",
+            "path": "/v1/runs/{runId}:cancel",
             "auth": "product",
             "path_params": [
-                "run_id"
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3362,33 +3384,13 @@ OPERATIONS = {
             "description": "Cancel an agent run."
         },
         {
-            "id": "run_events",
-            "upstream_operation_id": "runEvents",
-            "method": "GET",
-            "path": "/runs/{run_id}/events",
-            "auth": "product",
-            "path_params": [
-                "run_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after_seq"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Call GET /runs/{run_id}/events."
-        },
-        {
             "id": "resume_run",
             "upstream_operation_id": "resumeRun",
             "method": "POST",
-            "path": "/runs/{run_id}/resume",
+            "path": "/v1/runs/{runId}:resume",
             "auth": "product",
             "path_params": [
-                "run_id"
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3403,11 +3405,14 @@ OPERATIONS = {
             "id": "list_sessions",
             "upstream_operation_id": "listSessions",
             "method": "GET",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3419,7 +3424,7 @@ OPERATIONS = {
             "id": "create_session",
             "upstream_operation_id": "createSession",
             "method": "POST",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "product",
             "path_params": [],
             "path_param_templates": {},
@@ -3440,10 +3445,10 @@ OPERATIONS = {
             "id": "close_session",
             "upstream_operation_id": "closeSession",
             "method": "DELETE",
-            "path": "/sessions/{session_id}",
+            "path": "/v1/sessions/{sessionId}",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3455,66 +3460,14 @@ OPERATIONS = {
             "description": "Close a browser session and release its engine resources."
         },
         {
-            "id": "act_batch",
-            "upstream_operation_id": "actBatchSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/act_batch",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [
-                "batch",
-                "confirmation_grant",
-                "confirmed",
-                "idempotency_key",
-                "input_tainted",
-                "payment_context"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "batch"
-            ],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
-        },
-        {
-            "id": "adopt_session",
-            "upstream_operation_id": "adoptSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/adopt",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [
-                "engine_tier",
-                "label",
-                "platform",
-                "profile_id",
-                "storage_continuity",
-                "surface_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
-        },
-        {
             "id": "grant_confirmation",
             "upstream_operation_id": "grantSessionConfirmation",
             "method": "POST",
-            "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
+            "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
             "auth": "product",
             "path_params": [
-                "session_id",
-                "confirmation_id"
+                "sessionId",
+                "confirmationId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3529,14 +3482,14 @@ OPERATIONS = {
             "id": "session_events",
             "upstream_operation_id": "sessionEvents",
             "method": "GET",
-            "path": "/sessions/{session_id}/events",
+            "path": "/v1/sessions/{sessionId}/events",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [
-                "after_seq"
+                "afterSeq"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3546,31 +3499,13 @@ OPERATIONS = {
             "description": "Fetch the session's event window after a sequence number."
         },
         {
-            "id": "handoff_session",
-            "upstream_operation_id": "handoffSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/handoff",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Return write ownership of the session to the agent plane."
-        },
-        {
             "id": "manager_session",
             "upstream_operation_id": "managerSession",
             "method": "GET",
-            "path": "/sessions/{session_id}/manager",
+            "path": "/v1/sessions/{sessionId}/manager",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3582,39 +3517,21 @@ OPERATIONS = {
             "description": "Call GET /sessions/{session_id}/manager."
         },
         {
-            "id": "observe",
-            "upstream_operation_id": "observeSession",
-            "method": "GET",
-            "path": "/sessions/{session_id}/observe",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
-        },
-        {
             "id": "create_run",
             "upstream_operation_id": "createSessionRun",
             "method": "POST",
-            "path": "/sessions/{session_id}/runs",
+            "path": "/v1/sessions/{sessionId}/runs",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
                 "actions",
                 "goal",
-                "max_rounds",
-                "token_budget"
+                "maxRounds",
+                "tokenBudget"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -3623,43 +3540,23 @@ OPERATIONS = {
             "description": "Start an agent run against the session with a goal, action budget, and round limit."
         },
         {
-            "id": "screenshot",
-            "upstream_operation_id": "screenshotSession",
-            "method": "GET",
-            "path": "/sessions/{session_id}/screenshot",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "set_of_marks"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
-        },
-        {
             "id": "register_session_surface",
             "upstream_operation_id": "registerSessionSurface",
             "method": "POST",
-            "path": "/sessions/{session_id}/surfaces",
+            "path": "/v1/sessions/{sessionId}/surfaces",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "engine_tier",
+                "engineTier",
                 "label",
                 "platform",
-                "profile_id",
-                "storage_continuity",
-                "surface_id"
+                "profileId",
+                "storageContinuity",
+                "surfaceId"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -3671,11 +3568,11 @@ OPERATIONS = {
             "id": "remove_session_surface",
             "upstream_operation_id": "removeSessionSurface",
             "method": "DELETE",
-            "path": "/sessions/{session_id}/surfaces/{surface_id}",
+            "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
             "auth": "product",
             "path_params": [
-                "session_id",
-                "surface_id"
+                "sessionId",
+                "surfaceId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3687,19 +3584,127 @@ OPERATIONS = {
             "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
         },
         {
+            "id": "act_batch",
+            "upstream_operation_id": "actBatchSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:actBatch",
+            "auth": "product",
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "batch",
+                "confirmationGrant",
+                "confirmed",
+                "idempotencyKey",
+                "inputTainted",
+                "paymentContext"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "batch"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+        },
+        {
+            "id": "adopt_session",
+            "upstream_operation_id": "adoptSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:adopt",
+            "auth": "product",
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "engineTier",
+                "label",
+                "platform",
+                "profileId",
+                "storageContinuity",
+                "surfaceId"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+        },
+        {
+            "id": "handoff_session",
+            "upstream_operation_id": "handoffSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:handoff",
+            "auth": "product",
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Return write ownership of the session to the agent plane."
+        },
+        {
+            "id": "observe",
+            "upstream_operation_id": "observeSession",
+            "method": "GET",
+            "path": "/v1/sessions/{sessionId}:observe",
+            "auth": "product",
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
+        },
+        {
+            "id": "screenshot",
+            "upstream_operation_id": "screenshotSession",
+            "method": "GET",
+            "path": "/v1/sessions/{sessionId}:screenshot",
+            "auth": "product",
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "setOfMarks"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+        },
+        {
             "id": "transform_session",
             "upstream_operation_id": "transformSession",
             "method": "POST",
-            "path": "/sessions/{session_id}/transform",
+            "path": "/v1/sessions/{sessionId}:transform",
             "auth": "product",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
                 "determinism",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "source",
@@ -4205,6 +4210,219 @@ OPERATIONS = {
             "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
         },
         {
+            "id": "domains_list",
+            "upstream_operation_id": "domains.list",
+            "method": "GET",
+            "path": "/v1/domains",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Domain capabilities represented in the versioned task catalog."
+        },
+        {
+            "id": "tasks_list",
+            "upstream_operation_id": "tasks.list",
+            "method": "GET",
+            "path": "/v1/tasks",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "domain",
+                "family",
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List versioned task definitions without agent inputs."
+        },
+        {
+            "id": "tasks_get",
+            "upstream_operation_id": "tasks.get",
+            "method": "GET",
+            "path": "/v1/tasks/{task}",
+            "auth": "product",
+            "path_params": [
+                "task"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "version"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Get one immutable task definition including its agent-visible input."
+        },
+        {
+            "id": "tasks_evaluate",
+            "upstream_operation_id": "tasks.evaluate",
+            "method": "POST",
+            "path": "/v1/tasks/{task}:evaluate",
+            "auth": "product",
+            "path_params": [
+                "task"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "version"
+            ],
+            "body": [
+                "candidate",
+                "seed",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidate"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Deterministically verify one candidate without creating an episode."
+        },
+        {
+            "id": "verifiers_list",
+            "upstream_operation_id": "verifiers.list",
+            "method": "GET",
+            "path": "/v1/verifiers",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List verifier identities and bound tasks without grader content."
+        },
+        {
+            "id": "episodes_list",
+            "upstream_operation_id": "episodes.list",
+            "method": "GET",
+            "path": "/v1/episodes",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "domain",
+                "status",
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List durable episode snapshots, newest first."
+        },
+        {
+            "id": "episodes_create",
+            "upstream_operation_id": "episodes.create",
+            "method": "POST",
+            "path": "/v1/episodes",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "task",
+                "seed"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "task",
+                "seed"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Reset a versioned task into a durable episode."
+        },
+        {
+            "id": "episodes_get",
+            "upstream_operation_id": "episodes.get",
+            "method": "GET",
+            "path": "/v1/episodes/{episode}",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Read and content-verify one durable episode snapshot."
+        },
+        {
+            "id": "episodes_step",
+            "upstream_operation_id": "episodes.step",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:step",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "action",
+                "receipts"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "action"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Apply one schema-validated action and persist the transition."
+        },
+        {
+            "id": "episodes_export",
+            "upstream_operation_id": "episodes.export",
+            "method": "POST",
+            "path": "/v1/episodes/{episode}:export",
+            "auth": "product",
+            "path_params": [
+                "episode"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "context_evidence_ref",
+                "verifier_receipt_artifact_ref",
+                "request_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "context_evidence_ref"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Retain a completed Gym episode and trajectory in Data Engine."
+        },
+        {
             "id": "list_runs",
             "upstream_operation_id": "runs.list",
             "method": "GET",
@@ -4268,6 +4486,112 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": "eval:run",
             "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+        },
+        {
+            "id": "sealed_evaluators_list",
+            "upstream_operation_id": "sealedEvaluators.list",
+            "method": "GET",
+            "path": "/v1/sealed-evaluators",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Discover boot-trusted exact sealed-evaluator identities."
+        },
+        {
+            "id": "sealed_evaluations_list",
+            "upstream_operation_id": "sealedEvaluations.list",
+            "method": "GET",
+            "path": "/v1/sealed-evaluations",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List persisted sealed-evaluation precommits and results."
+        },
+        {
+            "id": "sealed_evaluations_precommit",
+            "upstream_operation_id": "sealedEvaluations.precommit",
+            "method": "POST",
+            "path": "/v1/sealed-evaluations:precommit",
+            "auth": "product",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "evaluator",
+                "qualification_policy",
+                "suite",
+                "trainer"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "evaluator",
+                "qualification_policy",
+                "suite",
+                "trainer"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Persist an opaque sealed-suite commitment before policy freeze."
+        },
+        {
+            "id": "sealed_evaluations_get",
+            "upstream_operation_id": "sealedEvaluations.get",
+            "method": "GET",
+            "path": "/v1/sealed-evaluations/{evaluation}",
+            "auth": "product",
+            "path_params": [
+                "evaluation"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Read one verified precommit and aggregate sealed result."
+        },
+        {
+            "id": "sealed_evaluations_run",
+            "upstream_operation_id": "sealedEvaluations.run",
+            "method": "POST",
+            "path": "/v1/sealed-evaluations/{evaluation}:run",
+            "auth": "product",
+            "path_params": [
+                "evaluation"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "policy_submission",
+                "training_report"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "policy_submission",
+                "training_report"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Evaluate one frozen policy through its exact sealed adapter."
         }
     ],
     "cradle": [
