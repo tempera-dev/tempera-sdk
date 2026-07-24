@@ -36,10 +36,10 @@
   AIP-136 resource-family redesign, plus AIP-151/AIP-155 long-running-operation
   semantics, remain explicit producer-owned breaking work rather than being
   mislabeled as complete. Hosted exact-source jobs reproduce installed private
-  producer contracts at their recorded commits. Bio, Remi, and Tempo retain
-  expiring, commit-bound gap receipts until the least-privilege Contract Reader
-  app is installed on those repositories; their producer-side checks and local
-  exact-source reproduction remain required in the interim.
+  producer contracts at their recorded commits. Bio, Human Data, Remi, and
+  Tempo retain expiring, commit-bound gap receipts until the least-privilege
+  Contract Reader app is installed on those repositories; their producer-side
+  checks and local exact-source reproduction remain required in the interim.
 - Rollback: revert the SDK release and all dependent exact-SHA pins together;
   do not restore phantom routes or weaken current-head drift checks.
 
