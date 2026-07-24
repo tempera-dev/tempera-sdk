@@ -117,7 +117,7 @@ PRODUCTS = {
         "repository": "https://github.com/tempera-dev/tempera-gym",
         "env_var": "TEMPERA_GYM_URL",
         "audience": "tempera-gym",
-        "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
+        "description": "RL and evaluation service with persisted trajectories, sealed evaluators, and deterministic outcome-blind Bio batch proposals."
     },
     "temperaBio": {
         "name": "tempera-bio",
@@ -4741,6 +4741,65 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": "eval:run",
             "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+        },
+        {
+            "id": "bio_proposal_policies_list",
+            "upstream_operation_id": "bioProposalPolicies.list",
+            "method": "GET",
+            "path": "/v1/bio-proposal-policies",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "dataset:read",
+            "description": "Discover the four frozen outcome-blind Bio proposal policies."
+        },
+        {
+            "id": "bio_proposals_propose_batch",
+            "upstream_operation_id": "bioProposals.proposeBatch",
+            "method": "POST",
+            "path": "/v1/bio-proposals:proposeBatch",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-gym",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schemaVersion",
+                "campaignDigest",
+                "datasetDigest",
+                "candidateSetDigest",
+                "model",
+                "policy",
+                "shadowPolicies",
+                "mode",
+                "constraints",
+                "candidates"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schemaVersion",
+                "campaignDigest",
+                "datasetDigest",
+                "candidateSetDigest",
+                "model",
+                "policy",
+                "shadowPolicies",
+                "mode",
+                "constraints",
+                "candidates"
+            ],
+            "body_defaults": {},
+            "scope": "eval:run",
+            "description": "Propose one constrained Bio candidate batch without outcome access."
         },
         {
             "id": "list_sealed_evaluators",

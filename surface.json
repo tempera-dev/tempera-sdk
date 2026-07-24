@@ -193,7 +193,7 @@
       "envVar": "TEMPERA_GYM_URL",
       "audience": "tempera-gym",
       "auth": "bearer minted for audience tempera-gym with dataset:read/eval:run, central tp_ API key, or the gym static token",
-      "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
+      "description": "RL and evaluation service with persisted trajectories, sealed evaluators, and deterministic outcome-blind Bio batch proposals."
     },
     "temperaBio": {
       "name": "tempera-bio",
@@ -3472,6 +3472,54 @@
         "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
         "upstreamOperationId": "rollouts.create",
         "authAudience": "tempera-gym"
+      },
+      {
+        "id": "bioProposalPoliciesList",
+        "method": "GET",
+        "path": "/v1/bio-proposal-policies",
+        "auth": "oauthResource",
+        "description": "Discover the four frozen outcome-blind Bio proposal policies.",
+        "upstreamOperationId": "bioProposalPolicies.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "authAudience": "tempera-gym",
+        "scope": "dataset:read"
+      },
+      {
+        "id": "bioProposalsProposeBatch",
+        "method": "POST",
+        "path": "/v1/bio-proposals:proposeBatch",
+        "auth": "oauthResource",
+        "description": "Propose one constrained Bio candidate batch without outcome access.",
+        "upstreamOperationId": "bioProposals.proposeBatch",
+        "body": [
+          "schemaVersion",
+          "campaignDigest",
+          "datasetDigest",
+          "candidateSetDigest",
+          "model",
+          "policy",
+          "shadowPolicies",
+          "mode",
+          "constraints",
+          "candidates"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "campaignDigest",
+          "datasetDigest",
+          "candidateSetDigest",
+          "model",
+          "policy",
+          "shadowPolicies",
+          "mode",
+          "constraints",
+          "candidates"
+        ],
+        "authAudience": "tempera-gym",
+        "scope": "eval:run"
       },
       {
         "id": "listSealedEvaluators",

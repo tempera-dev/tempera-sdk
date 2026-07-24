@@ -172,6 +172,117 @@ class DispatchTest(unittest.TestCase):
             },
         )
 
+    def test_gym_bio_proposal_preserves_outcome_blind_wire_and_auth_contract(self):
+        policy_operation = next(
+            item
+            for item in OPERATIONS["temperaGym"]
+            if item["id"] == "bio_proposal_policies_list"
+        )
+        self.assertEqual(
+            policy_operation["upstream_operation_id"],
+            "bioProposalPolicies.list",
+        )
+        self.assertEqual(policy_operation["method"], "GET")
+        self.assertEqual(
+            policy_operation["path"],
+            "/v1/bio-proposal-policies",
+        )
+        self.assertEqual(policy_operation["auth_audience"], "tempera-gym")
+        self.assertEqual(policy_operation["scope"], "dataset:read")
+
+        operation = next(
+            item
+            for item in OPERATIONS["temperaGym"]
+            if item["id"] == "bio_proposals_propose_batch"
+        )
+        self.assertEqual(
+            operation["upstream_operation_id"],
+            "bioProposals.proposeBatch",
+        )
+        self.assertEqual(operation["method"], "POST")
+        self.assertEqual(operation["path"], "/v1/bio-proposals:proposeBatch")
+        self.assertEqual(operation["auth"], "oauthResource")
+        self.assertEqual(operation["auth_audience"], "tempera-gym")
+        self.assertEqual(operation["scope"], "eval:run")
+
+        model = {
+            "ref": "model://variant-effect/public-baseline-v1",
+            "digest": "sha256:" + "4" * 64,
+        }
+        policy = {
+            "ref": "tempera-gym://bio/proposal-policies/greedy/v1",
+            "digest": (
+                "sha256:"
+                "d1851f83975ce671baa6936f7309d2d956803339f8459c956089bded538d28b6"
+            ),
+        }
+        constraints = {
+            "batchSize": 1,
+            "maxTotalCost": "1.00",
+            "excludedCandidateDigests": [],
+            "requiredCandidateDigests": [],
+            "maxPerGroup": 1,
+            "minimumGroupCoverage": 1,
+        }
+        candidates = [
+            {
+                "candidateDigest": "sha256:" + "5" * 64,
+                "observationDigest": "sha256:" + "6" * 64,
+                "predictedValue": "0.80",
+                "predictiveUncertainty": "0.20",
+                "estimatedCost": "1.00",
+                "groupKeys": ["target:public"],
+                "diversityVector": ["0.0"],
+            }
+        ]
+        client, transport = make_client(
+            auth=TemperaAuth(
+                issuer_url="https://api.tempera.dev",
+                tokens={
+                    "tempera-gym": TokenSet(access_token="at_gym_proposer")
+                },
+            ),
+        )
+        result = client.tempera_gym.bio_proposals_propose_batch(
+            {
+                "schema_version": "tempera.gym.bio-proposal-request/v1",
+                "campaign_digest": "sha256:" + "1" * 64,
+                "dataset_digest": "sha256:" + "2" * 64,
+                "candidate_set_digest": "sha256:" + "3" * 64,
+                "model": model,
+                "policy": policy,
+                "shadow_policies": [],
+                "mode": "proposal",
+                "constraints": constraints,
+                "candidates": candidates,
+            }
+        )
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(
+            transport.calls[0]["path"],
+            "/v1/bio-proposals:proposeBatch",
+        )
+        self.assertNotIn("%3A", transport.calls[0]["url"])
+        self.assertEqual(
+            transport.calls[0]["headers"]["authorization"],
+            "Bearer at_gym_proposer",
+        )
+        self.assertEqual(
+            transport.calls[0]["body"],
+            {
+                "schemaVersion": "tempera.gym.bio-proposal-request/v1",
+                "campaignDigest": "sha256:" + "1" * 64,
+                "datasetDigest": "sha256:" + "2" * 64,
+                "candidateSetDigest": "sha256:" + "3" * 64,
+                "model": model,
+                "policy": policy,
+                "shadowPolicies": [],
+                "mode": "proposal",
+                "constraints": constraints,
+                "candidates": candidates,
+            },
+        )
+
     def test_declared_query_and_body_parameters_route_to_the_right_place(self):
         client, transport = make_client()
         client.palette.list_traces({"tenant_id": "t1", "limit": 5, "cursor": "abc"})
