@@ -208,42 +208,72 @@ export interface PaletteClient extends TemperaProductClientBase {
 }
 
 export interface TempoClient extends TemperaProductClientBase {
-  /** Check tempod liveness; returns {ok: true}. */
+  /** Fetch tempod's authenticated A2A agent card. */
+  agentCard(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch tempod's authenticated A2A agent metadata alias. */
+  agentJson(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Dispatch one WebDriver BiDi command over the bounded HTTP fallback. */
+  bidiPost(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch one durable BrowserTaskV1 goal run with its current state and pending confirmation. */
+  getBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cooperatively cancel one durable browser task. */
+  cancelBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch replayable typed evidence for one durable browser task. */
+  browserTaskEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resume a paused browser task, consuming its exact one-use confirmation grant when required. */
+  resumeBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Enter drain mode and stop admitting new browser sessions or tasks. */
+  drain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Check authenticated tempod liveness. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Check tempod readiness, including engine attachment, drain state, and session capacity. */
   ready(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch tempod's OpenAPI document, generated at runtime for this host. */
+  /** Fetch tempod's authoritative OpenAPI document for this host. */
   openapi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List browser sessions with their state and creation time. */
-  listSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Open a browser session at a URL; driverless sessions skip engine attachment. */
-  createSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Close a browser session and release its engine resources. */
-  closeSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the session's compiled structured observation (ranked, stably-identified elements). */
-  observe(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision. */
-  actBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Capture a PNG screenshot of the session, optionally annotated with set-of-marks. */
-  screenshot(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the session's event window after a sequence number. */
-  sessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Let a human surface take write ownership of the session and receive an adoption lease. */
-  adoptSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Return write ownership of the session to the agent plane. */
-  handoffSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Start an agent run against the session with a goal, action budget, and round limit. */
-  createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List agent runs, optionally filtered to one session. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one agent run with its state. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel an agent run. */
   cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the session event window associated with one agent run. */
+  runEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resume an agent run after a human handoff completes. */
   resumeRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List browser sessions with their state and creation time. */
+  listSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Open a browser session at a URL; driverless sessions skip engine attachment. */
+  createSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Close a browser session and release its engine resources. */
+  closeSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision. */
+  actBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Let a human surface take write ownership of the session and receive an adoption lease. */
+  adoptSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Dispatch one WebDriver BiDi command within a browser session over the bounded HTTP fallback. */
+  bidiPostSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start an idempotent durable BrowserTaskV1 goal using tempod's operator-configured live decider. */
+  createBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Grant a pending policy confirmation and receive a single-use grant token. */
   grantConfirmation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the session's event window after a sequence number. */
+  sessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Return write ownership of the session to the agent plane. */
+  handoffSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the shared manager state for one browser session. */
+  managerSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the session's compiled structured observation with ranked stable element identifiers. */
+  observe(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start an agent run against the session with a goal, action budget, and round limit. */
+  createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Capture a PNG screenshot of the session, optionally annotated with set-of-marks. */
+  screenshot(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register a bounded human or agent surface on one shared browser session. */
+  registerSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Remove one registered surface from a shared browser session. */
+  removeSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Route page-tainted non-browser computation through tempod's fail-closed Cradle boundary. */
+  transformSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaCodeClient extends TemperaProductClientBase {

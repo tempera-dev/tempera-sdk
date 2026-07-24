@@ -11,6 +11,94 @@
       "product": "temperaWorkflows",
       "rationale": "The aggregate SDK request surface returns buffered JSON; this operation is an unbounded text/event-stream and cannot truthfully use that transport.",
       "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_websocket_transport",
+      "method": "GET",
+      "migration": "Add a reviewed WebSocket transport with protocol framing, cancellation, authentication, and bounded buffering before generating this operation.",
+      "operation_id": "bidiWebSocket",
+      "owner": "tempera-sdk",
+      "path": "/bidi",
+      "product": "tempo",
+      "rationale": "The aggregate SDK request primitive is buffered HTTP JSON and cannot truthfully represent an upgraded WebDriver BiDi WebSocket.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_until_streaming_support",
+      "method": "GET",
+      "migration": "Add a reviewed SSE primitive with cursor replay, cancellation, reconnect, and bounded event parsing before generating this operation.",
+      "operation_id": "streamBrowserTaskEvents",
+      "owner": "tempera-sdk",
+      "path": "/browser-tasks/{task_id}/events/stream",
+      "product": "tempo",
+      "rationale": "Browser-task event streaming is text/event-stream and cannot use the buffered JSON request primitive.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_mcp_transport",
+      "method": "GET",
+      "migration": "Use the dedicated MCP client transport or add a reviewed Streamable HTTP implementation before generating this endpoint.",
+      "operation_id": "mcpGet",
+      "owner": "tempera-sdk",
+      "path": "/mcp",
+      "product": "tempo",
+      "rationale": "MCP Streamable HTTP session and event semantics are not ordinary buffered product API semantics.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_mcp_transport",
+      "method": "POST",
+      "migration": "Use the dedicated MCP client transport or add a reviewed Streamable HTTP implementation before generating this endpoint.",
+      "operation_id": "mcpPost",
+      "owner": "tempera-sdk",
+      "path": "/mcp",
+      "product": "tempo",
+      "rationale": "MCP JSON-RPC request, notification, and session semantics belong to the SDK's dedicated MCP client.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_non_json_response",
+      "method": "GET",
+      "migration": "Add an explicitly typed text response primitive before generating this operation.",
+      "operation_id": "metrics",
+      "owner": "tempera-sdk",
+      "path": "/metrics",
+      "product": "tempo",
+      "rationale": "Prometheus metrics are text/plain and the generated product methods currently normalize JSON responses.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_websocket_transport",
+      "method": "GET",
+      "migration": "Add a reviewed session-scoped WebSocket transport with protocol framing, cancellation, authentication, and bounded buffering before generating this operation.",
+      "operation_id": "bidiWebSocketSession",
+      "owner": "tempera-sdk",
+      "path": "/sessions/{session_id}/bidi",
+      "product": "tempo",
+      "rationale": "The aggregate SDK request primitive cannot represent a session-scoped WebDriver BiDi WebSocket upgrade.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_until_streaming_support",
+      "method": "GET",
+      "migration": "Add a reviewed SSE primitive with cursor replay, cancellation, reconnect, and bounded event parsing before generating this operation.",
+      "operation_id": "streamSessionEvents",
+      "owner": "tempera-sdk",
+      "path": "/sessions/{session_id}/events/stream",
+      "product": "tempo",
+      "rationale": "Live session events are text/event-stream and cannot use the buffered JSON request primitive.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_mcp_transport",
+      "method": "POST",
+      "migration": "Use the dedicated MCP client transport with the opaque session binding or add an explicitly reviewed raw JSON-RPC bridge.",
+      "operation_id": "mcpPostSession",
+      "owner": "tempera-sdk",
+      "path": "/sessions/{session_id}/mcp",
+      "product": "tempo",
+      "rationale": "Session-scoped MCP JSON-RPC carries protocol-native envelopes and should not masquerade as an ordinary product API operation.",
+      "review_after": "2026-10-01"
     }
   ]
 }

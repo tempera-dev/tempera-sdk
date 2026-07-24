@@ -1,0 +1,14 @@
+{
+  "generated_path": "specs/tempo.openapi.json",
+  "generated_sha256": "f10071ee93cc7fa8c6a78676d71321bb088b870ffd3f8b6368cefb3c470befed",
+  "generated_with": "sync-tempo-openapi.py@1+verbatim",
+  "schema_version": 1,
+  "source_blob_sha": "aa4b83efd160acd5bbc933132b89d33904b07f38",
+  "source_branch": "codex/tempo-mcp-browser-contract-20260724",
+  "source_commit": "3bde3f4220321d5646c70ee0d3a8cf9987e1b6eb",
+  "source_mode": "100644",
+  "source_path": "contracts/tempod.openapi.json",
+  "source_repo": "tempera-dev/tempo",
+  "source_sha256": "f10071ee93cc7fa8c6a78676d71321bb088b870ffd3f8b6368cefb3c470befed",
+  "source_state": "unpublished_local_review"
+}

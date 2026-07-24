@@ -1,0 +1,2981 @@
+{
+  "components": {
+    "parameters": {
+      "AetherPayment": {
+        "description": "Raw Aether payment evidence accepted only with x-aether-payment-hash. The raw value is never echoed; clients that can send JSON should prefer payment_context.",
+        "in": "header",
+        "name": "x-payment",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "AetherPaymentHash": {
+        "description": "Hash binding for x-payment. Required when x-payment is present and normalized into the hash-only PaymentContext used by policy, confirmation, and idempotency.",
+        "in": "header",
+        "name": "x-aether-payment-hash",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ConfirmationId": {
+        "in": "path",
+        "name": "confirmation_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RunId": {
+        "in": "path",
+        "name": "run_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "SessionId": {
+        "in": "path",
+        "name": "session_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "SurfaceId": {
+        "in": "path",
+        "name": "surface_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "TaskId": {
+        "in": "path",
+        "name": "task_id",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Action": {
+        "oneOf": [
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "goto",
+                "type": "string"
+              },
+              "url": {
+                "format": "uri-reference",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "url"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "click",
+                "type": "string"
+              },
+              "node": {
+                "$ref": "#/components/schemas/NodeId"
+              }
+            },
+            "required": [
+              "kind",
+              "node"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "type",
+                "type": "string"
+              },
+              "node": {
+                "$ref": "#/components/schemas/NodeId"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "node",
+              "text"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "select",
+                "type": "string"
+              },
+              "node": {
+                "$ref": "#/components/schemas/NodeId"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "node",
+              "value"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "scroll",
+                "type": "string"
+              },
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "kind",
+              "x",
+              "y"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "wait",
+                "type": "string"
+              },
+              "millis": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "kind",
+              "millis"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "extract",
+                "type": "string"
+              },
+              "node": {
+                "$ref": "#/components/schemas/NodeId"
+              }
+            },
+            "required": [
+              "kind",
+              "node"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "case_sensitive": {
+                "default": false,
+                "type": "boolean"
+              },
+              "kind": {
+                "const": "find_text",
+                "type": "string"
+              },
+              "max_results": {
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "text"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "case_sensitive": {
+                "default": false,
+                "type": "boolean"
+              },
+              "kind": {
+                "const": "element_present",
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "selector",
+                  "text"
+                ],
+                "type": "string"
+              },
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "mode",
+              "query"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "kind": {
+                "const": "query_selector",
+                "type": "string"
+              },
+              "max_results": {
+                "maximum": 50,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "selector": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "selector"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": true,
+            "properties": {
+              "input": true,
+              "kind": {
+                "const": "skill",
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "input",
+              "name"
+            ],
+            "type": "object"
+          }
+        ],
+        "title": "Action"
+      },
+      "AdoptionLease": {
+        "additionalProperties": false,
+        "properties": {
+          "adopted_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "lease_id": {
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/ControlOwner"
+          },
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lease_id",
+          "session_id",
+          "owner",
+          "adopted_ms"
+        ],
+        "type": "object"
+      },
+      "AgentRun": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "created_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "last_error": {
+            "type": "string"
+          },
+          "run_id": {
+            "$ref": "#/components/schemas/AgentRunId"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentRunState"
+          },
+          "updated_ms": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "run_id",
+          "session_id",
+          "state",
+          "created_ms",
+          "updated_ms"
+        ],
+        "type": "object"
+      },
+      "AgentRunId": {
+        "description": "Stable identifier for a tempod-managed agent run.",
+        "type": "string"
+      },
+      "AgentRunState": {
+        "enum": [
+          "queued",
+          "running",
+          "waiting_for_human",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "type": "string"
+      },
+      "AgentStepTriple": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/Action"
+          },
+          "key": {
+            "type": "string"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/AgentStepTripleOutcome"
+          },
+          "seq": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "seq",
+          "action",
+          "outcome"
+        ],
+        "type": "object"
+      },
+      "AgentStepTripleOutcome": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "diff": {
+                "$ref": "#/components/schemas/ObservationDiff"
+              },
+              "kind": {
+                "const": "applied"
+              },
+              "read_result": {
+                "additionalProperties": true,
+                "properties": {
+                  "provenance": {
+                    "type": "string"
+                  },
+                  "value": true
+                },
+                "type": "object"
+              }
+            },
+            "required": [
+              "kind",
+              "diff"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "step_error"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "reason"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "BrowserEngineTier": {
+        "enum": [
+          "t1",
+          "t2",
+          "t3",
+          "structured"
+        ],
+        "type": "string"
+      },
+      "BrowserTaskResumeV1": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation_grant": {
+            "$ref": "#/components/schemas/ConfirmationGrant"
+          }
+        },
+        "type": "object"
+      },
+      "BrowserTaskRunV1": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "const": "tempera.browser-task/v1",
+            "type": "string"
+          },
+          "deadline_ms": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "decider": {
+            "enum": [
+              "anthropic",
+              "tempera-code",
+              "tempera-llm"
+            ],
+            "type": "string"
+          },
+          "max_rounds": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pending_confirmation": {
+            "$ref": "#/components/schemas/ConfirmationRequest"
+          },
+          "run": {
+            "$ref": "#/components/schemas/AgentRun"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "token_budget": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "contract_version",
+          "task_id",
+          "decider",
+          "max_rounds",
+          "token_budget",
+          "deadline_ms",
+          "run"
+        ],
+        "type": "object"
+      },
+      "BrowserTaskV1": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "const": "tempera.browser-task/v1",
+            "type": "string"
+          },
+          "deadline_ms": {
+            "maximum": 1800000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "goal": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "type": "string"
+          },
+          "idempotency_key": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[!-~]+$",
+            "type": "string"
+          },
+          "max_rounds": {
+            "maximum": 128,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "token_budget": {
+            "maximum": 10000000,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "contract_version",
+          "idempotency_key",
+          "goal",
+          "max_rounds",
+          "token_budget",
+          "deadline_ms"
+        ],
+        "type": "object"
+      },
+      "ConfirmationGrant": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation_id": {
+            "type": "string"
+          },
+          "expires_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "grant_token": {
+            "type": "string"
+          },
+          "issued_ms": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "confirmation_id",
+          "grant_token",
+          "issued_ms",
+          "expires_ms"
+        ],
+        "type": "object"
+      },
+      "ConfirmationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action_index": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "action_kind": {
+            "type": "string"
+          },
+          "confirmation_id": {
+            "type": "string"
+          },
+          "created_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expires_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "payment_context": {
+            "$ref": "#/components/schemas/PaymentContext"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "side_effect": {
+            "enum": [
+              "read",
+              "draft",
+              "write",
+              "send",
+              "purchase",
+              "delete"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirmation_id",
+          "session_id",
+          "side_effect",
+          "gate",
+          "action_index",
+          "action_kind",
+          "reason",
+          "created_ms",
+          "expires_ms"
+        ],
+        "type": "object"
+      },
+      "ControlOwner": {
+        "oneOf": [
+          {
+            "properties": {
+              "kind": {
+                "const": "agent"
+              },
+              "run_id": {
+                "$ref": "#/components/schemas/AgentRunId"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "kind": {
+                "const": "human"
+              },
+              "surface_id": {
+                "$ref": "#/components/schemas/ShellSurfaceId"
+              }
+            },
+            "required": [
+              "kind",
+              "surface_id"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "kind": {
+                "const": "unowned"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "CradleDeterminism": {
+        "properties": {
+          "epoch_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "off",
+              "seeded"
+            ],
+            "type": "string"
+          },
+          "seed": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "CradleEffectiveIsolation": {
+        "additionalProperties": true,
+        "properties": {
+          "downgrades": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "landlock_abi": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "mechanisms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "os": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "os",
+          "mechanisms",
+          "downgrades"
+        ],
+        "type": "object"
+      },
+      "CradleEgressRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "bytes": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "port": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "domain",
+          "port",
+          "bytes"
+        ],
+        "type": "object"
+      },
+      "CradleLane": {
+        "enum": [
+          "wasm",
+          "python_wasi",
+          "python_native",
+          "js_wasm",
+          "js_native",
+          "exec"
+        ],
+        "type": "string"
+      },
+      "CradleSource": {
+        "additionalProperties": true,
+        "description": "Cradle transform source, internally tagged by `kind`.",
+        "properties": {
+          "kind": {
+            "enum": [
+              "inline",
+              "wasm_file",
+              "wasm_wat",
+              "wasm_bytes_base64",
+              "module_ref"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      },
+      "CreateRunRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "type": "array"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "max_rounds": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "token_budget": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CreateSessionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "driverless": {
+            "default": false,
+            "description": "Explicitly permit metadata-only session creation when no engine is attached.",
+            "type": "boolean"
+          },
+          "url": {
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "type": "object"
+      },
+      "HumanTakeover": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "captcha",
+              "auth_wall",
+              "login_required"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "reason",
+          "url"
+        ],
+        "type": "object"
+      },
+      "ManagerEvent": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "owner_changed"
+              },
+              "owner": {
+                "$ref": "#/components/schemas/ControlOwner"
+              }
+            },
+            "required": [
+              "kind",
+              "owner"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "attachment": {
+                "$ref": "#/components/schemas/SessionAttachment"
+              },
+              "kind": {
+                "const": "surface_registered"
+              }
+            },
+            "required": [
+              "kind",
+              "attachment"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "surface_removed"
+              },
+              "surface_id": {
+                "$ref": "#/components/schemas/ShellSurfaceId"
+              }
+            },
+            "required": [
+              "kind",
+              "surface_id"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "confirmation_requested"
+              },
+              "request": {
+                "$ref": "#/components/schemas/ConfirmationRequest"
+              }
+            },
+            "required": [
+              "kind",
+              "request"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "confirmation_id": {
+                "type": "string"
+              },
+              "grant": {
+                "$ref": "#/components/schemas/ConfirmationGrant"
+              },
+              "kind": {
+                "const": "confirmation_granted"
+              }
+            },
+            "required": [
+              "kind",
+              "confirmation_id",
+              "grant"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "run_state_changed"
+              },
+              "run": {
+                "$ref": "#/components/schemas/AgentRun"
+              }
+            },
+            "required": [
+              "kind",
+              "run"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "human_takeover"
+              },
+              "takeover": {
+                "$ref": "#/components/schemas/HumanTakeover"
+              }
+            },
+            "required": [
+              "kind",
+              "takeover"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "native_prompt_requested"
+              },
+              "request": {
+                "$ref": "#/components/schemas/NativePromptRequest"
+              }
+            },
+            "required": [
+              "kind",
+              "request"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "native_prompt_resolved"
+              },
+              "prompt_id": {
+                "type": "string"
+              },
+              "state": {
+                "$ref": "#/components/schemas/NativePromptState"
+              }
+            },
+            "required": [
+              "kind",
+              "prompt_id",
+              "state"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "ManagerSessionState": {
+        "additionalProperties": false,
+        "properties": {
+          "active_run": {
+            "$ref": "#/components/schemas/AgentRunId"
+          },
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/SessionAttachment"
+            },
+            "type": "array"
+          },
+          "last_event_seq": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/ControlOwner"
+          },
+          "pending_confirmations": {
+            "items": {
+              "$ref": "#/components/schemas/ConfirmationRequest"
+            },
+            "type": "array"
+          },
+          "pending_native_prompts": {
+            "items": {
+              "$ref": "#/components/schemas/NativePromptRequest"
+            },
+            "type": "array"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRun"
+            },
+            "type": "array"
+          },
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "owner",
+          "attachments",
+          "runs",
+          "pending_confirmations"
+        ],
+        "type": "object"
+      },
+      "NativePromptKind": {
+        "enum": [
+          "fed_cm",
+          "web_authn_passkey",
+          "password_autofill",
+          "captcha",
+          "login",
+          "permission",
+          "other"
+        ],
+        "type": "string"
+      },
+      "NativePromptRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "created_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "expires_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/NativePromptKind"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "prompt_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativePromptState"
+          },
+          "surface_id": {
+            "$ref": "#/components/schemas/ShellSurfaceId"
+          }
+        },
+        "required": [
+          "prompt_id",
+          "session_id",
+          "kind",
+          "state",
+          "reason",
+          "created_ms"
+        ],
+        "type": "object"
+      },
+      "NativePromptState": {
+        "enum": [
+          "pending",
+          "resolved",
+          "cancelled"
+        ],
+        "type": "string"
+      },
+      "NodeId": {
+        "type": "string"
+      },
+      "ObservationDiff": {
+        "additionalProperties": true,
+        "properties": {
+          "added": {
+            "items": {
+              "$ref": "#/components/schemas/InteractiveElement"
+            },
+            "type": "array"
+          },
+          "changed": {
+            "items": {
+              "$ref": "#/components/schemas/InteractiveElement"
+            },
+            "type": "array"
+          },
+          "marks": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "$ref": "#/components/schemas/NodeId"
+                },
+                {
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "omitted": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "removed": {
+            "items": {
+              "$ref": "#/components/schemas/NodeId"
+            },
+            "type": "array"
+          },
+          "seq": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "since_seq": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "url": {
+            "format": "uri-reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "since_seq",
+          "seq",
+          "added",
+          "removed",
+          "changed"
+        ],
+        "title": "ObservationDiff",
+        "type": "object"
+      },
+      "PaymentContext": {
+        "additionalProperties": false,
+        "properties": {
+          "payment_hash": {
+            "pattern": "^0x[0-9a-fA-F]{64}$",
+            "type": "string"
+          },
+          "rail": {
+            "const": "aether",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rail",
+          "payment_hash"
+        ],
+        "type": "object"
+      },
+      "ReadinessResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "draining": {
+            "type": "boolean"
+          },
+          "engine_attached": {
+            "type": "boolean"
+          },
+          "engine_live": {
+            "type": "boolean"
+          },
+          "max_sessions": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "ready": {
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "draining",
+                "engine_detached",
+                "engine_dead",
+                "session_limit_reached"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sessions": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ok",
+          "ready",
+          "draining",
+          "engine_attached",
+          "engine_live",
+          "sessions",
+          "max_sessions",
+          "reasons"
+        ],
+        "type": "object"
+      },
+      "RegisterSurfaceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "engine_tier": {
+            "$ref": "#/components/schemas/BrowserEngineTier"
+          },
+          "label": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "profile_id": {
+            "type": "string"
+          },
+          "storage_continuity": {
+            "$ref": "#/components/schemas/StorageContinuityMode"
+          },
+          "surface_id": {
+            "$ref": "#/components/schemas/ShellSurfaceId"
+          }
+        },
+        "type": "object"
+      },
+      "SessionActBatchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "batch": {
+            "type": "object"
+          },
+          "confirmation_grant": {
+            "$ref": "#/components/schemas/ConfirmationGrant"
+          },
+          "confirmed": {
+            "default": false,
+            "type": "boolean"
+          },
+          "idempotency_key": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "input_tainted": {
+            "type": "boolean"
+          },
+          "payment_context": {
+            "$ref": "#/components/schemas/PaymentContext"
+          }
+        },
+        "required": [
+          "batch"
+        ],
+        "type": "object"
+      },
+      "SessionAttachment": {
+        "additionalProperties": false,
+        "properties": {
+          "attached_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "engine_tier": {
+            "$ref": "#/components/schemas/BrowserEngineTier"
+          },
+          "label": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "profile_id": {
+            "type": "string"
+          },
+          "storage_continuity": {
+            "$ref": "#/components/schemas/StorageContinuityMode"
+          },
+          "surface_id": {
+            "$ref": "#/components/schemas/ShellSurfaceId"
+          }
+        },
+        "required": [
+          "surface_id",
+          "attached_ms"
+        ],
+        "type": "object"
+      },
+      "ShellSurfaceId": {
+        "description": "Stable identifier for a native shell or WebView surface.",
+        "type": "string"
+      },
+      "StorageContinuityMode": {
+        "enum": [
+          "shared_profile",
+          "imported_profile",
+          "ephemeral",
+          "unsupported"
+        ],
+        "type": "string"
+      },
+      "TaintSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "provenance": {
+            "enum": [
+              "system",
+              "user",
+              "page"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "provenance",
+          "text"
+        ],
+        "type": "object"
+      },
+      "TempodModelDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "type": "array"
+          },
+          "cache_read_input_tokens": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "input_tokens": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "output_tokens": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "actions",
+          "rationale",
+          "input_tokens",
+          "output_tokens",
+          "cache_read_input_tokens"
+        ],
+        "type": "object"
+      },
+      "TempodSession": {
+        "additionalProperties": false,
+        "properties": {
+          "created_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "id": {
+            "$ref": "#/components/schemas/TempodSessionId"
+          },
+          "state": {
+            "enum": [
+              "running",
+              "adopted",
+              "killed"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "state",
+          "created_ms"
+        ],
+        "type": "object"
+      },
+      "TempodSessionEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/TempodSessionEventKind"
+          },
+          "seq": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "timestamp_ms": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "session_id",
+          "seq",
+          "timestamp_ms",
+          "event"
+        ],
+        "type": "object"
+      },
+      "TempodSessionEventKind": {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "session_created"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "url"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "session_adopted"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "session_handoff"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "session_killed"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "session_drained"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "event": {
+                "$ref": "#/components/schemas/ManagerEvent"
+              },
+              "kind": {
+                "const": "manager"
+              }
+            },
+            "required": [
+              "kind",
+              "event"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "step_triple"
+              },
+              "triple": {
+                "$ref": "#/components/schemas/AgentStepTriple"
+              }
+            },
+            "required": [
+              "kind",
+              "triple"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "decision": {
+                "$ref": "#/components/schemas/TempodModelDecision"
+              },
+              "kind": {
+                "const": "model_decision"
+              }
+            },
+            "required": [
+              "kind",
+              "decision"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "human_takeover_required"
+              },
+              "takeover": {
+                "$ref": "#/components/schemas/HumanTakeover"
+              }
+            },
+            "required": [
+              "kind",
+              "takeover"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "execution": {
+                "$ref": "#/components/schemas/TempodToolExecution"
+              },
+              "kind": {
+                "const": "tool_executed"
+              }
+            },
+            "required": [
+              "kind",
+              "execution"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "TempodSessionEvents": {
+        "additionalProperties": false,
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/TempodSessionEvent"
+            },
+            "type": "array"
+          },
+          "truncated_before_seq": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "events",
+          "truncated_before_seq"
+        ],
+        "type": "object"
+      },
+      "TempodSessionId": {
+        "type": "string"
+      },
+      "TempodToolExecution": {
+        "additionalProperties": false,
+        "properties": {
+          "applied": {
+            "type": "boolean"
+          },
+          "cpu_time_ms": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "cradle_version": {
+            "type": "string"
+          },
+          "deterministic": {
+            "type": "boolean"
+          },
+          "effective_isolation": {
+            "$ref": "#/components/schemas/CradleEffectiveIsolation"
+          },
+          "egress": {
+            "items": {
+              "$ref": "#/components/schemas/CradleEgressRecord"
+            },
+            "type": "array"
+          },
+          "egress_present": {
+            "type": "boolean"
+          },
+          "engine_version": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "inputs_digest": {
+            "type": "string"
+          },
+          "lane": {
+            "$ref": "#/components/schemas/CradleLane"
+          },
+          "policy_double_jail": {
+            "type": "boolean"
+          },
+          "policy_net_denied": {
+            "type": "boolean"
+          },
+          "policy_secrets_empty": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "error",
+              "timeout",
+              "oom",
+              "killed",
+              "denied"
+            ],
+            "type": "string"
+          },
+          "step_error": {
+            "type": "string"
+          },
+          "wall_time_ms": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "idempotency_key",
+          "lane",
+          "status",
+          "applied",
+          "policy_net_denied",
+          "policy_secrets_empty",
+          "policy_double_jail",
+          "deterministic",
+          "inputs_digest",
+          "engine_version",
+          "cradle_version",
+          "egress",
+          "egress_present",
+          "effective_isolation",
+          "wall_time_ms",
+          "cpu_time_ms"
+        ],
+        "type": "object"
+      },
+      "TransformRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "determinism": {
+            "$ref": "#/components/schemas/CradleDeterminism"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "input": true,
+          "lane": {
+            "$ref": "#/components/schemas/CradleLane"
+          },
+          "source": {
+            "$ref": "#/components/schemas/CradleSource"
+          },
+          "spans": {
+            "items": {
+              "$ref": "#/components/schemas/TaintSpan"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "lane",
+          "source"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "TempodBearer": {
+        "description": "Bearer token from TEMPO_TEMPOD_AUTH_TOKEN, --auth-token, or the owner-only tempod runtime token file.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "title": "tempo tempod control plane",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "agentCard",
+        "responses": {
+          "200": {
+            "content": {
+              "application/a2a+json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A2A agent card metadata for this tempod control plane"
+          },
+          "401": {
+            "description": "Bearer auth is required on non-loopback tempod binds"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/.well-known/agent.json": {
+      "get": {
+        "operationId": "agentJson",
+        "responses": {
+          "200": {
+            "content": {
+              "application/a2a+json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A2A agent metadata alias for this tempod control plane"
+          },
+          "401": {
+            "description": "Bearer auth is required on non-loopback tempod binds"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/bidi": {
+      "get": {
+        "operationId": "bidiWebSocket",
+        "responses": {
+          "101": {
+            "description": "Root BiDi WebSocket"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "bidiPost",
+        "responses": {
+          "200": {
+            "description": "Root BiDi command response"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/browser-tasks/{task_id}": {
+      "get": {
+        "operationId": "getBrowserTask",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserTaskRunV1"
+                }
+              }
+            },
+            "description": "Durable browser task status"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/browser-tasks/{task_id}/cancel": {
+      "post": {
+        "operationId": "cancelBrowserTask",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserTaskRunV1"
+                }
+              }
+            },
+            "description": "Cooperatively cancelled browser task"
+          },
+          "409": {
+            "description": "Task is already terminal"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/browser-tasks/{task_id}/events": {
+      "get": {
+        "operationId": "browserTaskEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempodSessionEvents"
+                }
+              }
+            },
+            "description": "Typed evidence/event window for the task's session"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/browser-tasks/{task_id}/events/stream": {
+      "get": {
+        "operationId": "streamBrowserTaskEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server-sent typed task evidence/event stream"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/browser-tasks/{task_id}/resume": {
+      "post": {
+        "operationId": "resumeBrowserTask",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TaskId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserTaskResumeV1"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserTaskRunV1"
+                }
+              }
+            },
+            "description": "Resumed a human-paused task; a matching one-use grant is required when an effect awaits approval"
+          },
+          "403": {
+            "description": "Approval grant missing, expired, consumed, or mismatched"
+          },
+          "409": {
+            "description": "Task is not resumable or a human surface still owns the session"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/drain": {
+      "post": {
+        "operationId": "drain",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "draining": {
+                      "type": "boolean"
+                    },
+                    "sessions": {
+                      "items": {
+                        "$ref": "#/components/schemas/TempodSession"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "draining",
+                    "sessions"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Enter draining mode and close engine resources"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "tempod is reachable"
+          },
+          "401": {
+            "description": "Bearer auth is required on non-loopback tempod binds"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/mcp": {
+      "get": {
+        "operationId": "mcpGet",
+        "responses": {
+          "200": {
+            "description": "MCP metadata"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "mcpPost",
+        "responses": {
+          "200": {
+            "description": "MCP JSON-RPC response"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics",
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain; version=0.0.4; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Prometheus metrics exposition"
+          },
+          "404": {
+            "description": "Metrics exposition disabled by configuration"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "openapi",
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3.1 document"
+          },
+          "401": {
+            "description": "Bearer auth is required on non-loopback tempod binds"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "operationId": "ready",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            },
+            "description": "tempod is ready for new sessions"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            },
+            "description": "tempod is reachable but not ready for new sessions"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/runs": {
+      "get": {
+        "operationId": "listRuns",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgentRun"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List agent runs"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/runs/{run_id}": {
+      "get": {
+        "operationId": "getRun",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RunId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Agent run"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/runs/{run_id}/cancel": {
+      "post": {
+        "operationId": "cancelRun",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RunId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Cancelled agent run"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/runs/{run_id}/events": {
+      "get": {
+        "operationId": "runEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RunId"
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempodSessionEvents"
+                }
+              }
+            },
+            "description": "Session event window for the run's session"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/runs/{run_id}/resume": {
+      "post": {
+        "operationId": "resumeRun",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RunId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Marked the agent run runnable after human handoff"
+          },
+          "409": {
+            "description": "Session is owned by a human surface"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions": {
+      "get": {
+        "operationId": "listSessions",
+        "responses": {
+          "200": {
+            "description": "List sessions"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created session"
+          },
+          "429": {
+            "description": "Session admission limit reached"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}": {
+      "delete": {
+        "operationId": "closeSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Closed session"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/act_batch": {
+      "post": {
+        "operationId": "actBatchSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/AetherPayment"
+          },
+          {
+            "$ref": "#/components/parameters/AetherPaymentHash"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionActBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Action batch outcome"
+          },
+          "403": {
+            "description": "Policy denied"
+          },
+          "409": {
+            "description": "Idempotency conflict"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/adopt": {
+      "post": {
+        "operationId": "adoptSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterSurfaceRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdoptionLease"
+                }
+              }
+            },
+            "description": "Human surface owns the shared session"
+          },
+          "409": {
+            "description": "Session has an active writer"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/bidi": {
+      "get": {
+        "operationId": "bidiWebSocketSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "101": {
+            "description": "BiDi WebSocket bound to this session driver"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "bidiPostSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BiDi command response bound to this session driver"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/browser-tasks": {
+      "post": {
+        "operationId": "createBrowserTask",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserTaskV1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserTaskRunV1"
+                }
+              }
+            },
+            "description": "Idempotent replay of an existing browser task"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserTaskRunV1"
+                }
+              }
+            },
+            "description": "Accepted a new durable browser task"
+          },
+          "409": {
+            "description": "Idempotency conflict or session already has an active writer"
+          },
+          "503": {
+            "description": "Configured browser-task decider or worker capacity is unavailable"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/confirmations/{confirmation_id}": {
+      "post": {
+        "operationId": "grantSessionConfirmation",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/ConfirmationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmationGrant"
+                }
+              }
+            },
+            "description": "Server-minted confirmation grant for one pending native confirmation"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/events": {
+      "get": {
+        "operationId": "sessionEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempodSessionEvents"
+                }
+              }
+            },
+            "description": "Window of retained session events after the optional cursor"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/events/stream": {
+      "get": {
+        "operationId": "streamSessionEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "in": "query",
+            "name": "after_seq",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server-sent session event stream"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/handoff": {
+      "post": {
+        "operationId": "handoffSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempodSession"
+                }
+              }
+            },
+            "description": "Session write ownership returned to the agent plane"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/manager": {
+      "get": {
+        "operationId": "managerSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerSessionState"
+                }
+              }
+            },
+            "description": "Manager snapshot for one shared session"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/mcp": {
+      "post": {
+        "operationId": "mcpPostSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/AetherPayment"
+          },
+          {
+            "$ref": "#/components/parameters/AetherPaymentHash"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MCP JSON-RPC response bound to this session driver"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/observe": {
+      "get": {
+        "operationId": "observeSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compiled observation"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/runs": {
+      "post": {
+        "operationId": "createSessionRun",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRun"
+                }
+              }
+            },
+            "description": "Created and executed an agent run"
+          },
+          "409": {
+            "description": "Session already has an active writer"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/screenshot": {
+      "get": {
+        "operationId": "screenshotSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "in": "query",
+            "name": "set_of_marks",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PNG screenshot for the shared session surface"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/surfaces": {
+      "post": {
+        "operationId": "registerSessionSurface",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterSurfaceRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionAttachment"
+                }
+              }
+            },
+            "description": "Registered native shell/WebView surface"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/surfaces/{surface_id}": {
+      "delete": {
+        "operationId": "removeSessionSurface",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/SurfaceId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "removed": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "removed"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Removed native shell/WebView surface"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    },
+    "/sessions/{session_id}/transform": {
+      "post": {
+        "operationId": "transformSession",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransformRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempodToolExecution"
+                }
+              }
+            },
+            "description": "Page-tainted transform dispatched to the cradle sandbox; the execution audit (also emitted on the session event stream)"
+          },
+          "400": {
+            "description": "No page-derived taint span, or cradle rejected the transform shape"
+          },
+          "404": {
+            "description": "Session not found"
+          },
+          "409": {
+            "description": "Session killed and cannot accept producer events"
+          },
+          "503": {
+            "description": "Cradle sandbox not configured, unreachable, or temporarily unavailable"
+          }
+        },
+        "security": [
+          {
+            "TempodBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://tempod.example.invalid"
+    }
+  ]
+}

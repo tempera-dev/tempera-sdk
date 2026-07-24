@@ -34,7 +34,7 @@ artifacts:
 | auth-hub | `contracts/control-plane.openapi.json` | `scripts/check-control-plane-openapi.py` |
 | palette | `sdks/openapi/palette-api.json` (generated from `#[utoipa::path]`) | `scripts/check-contract-sync.sh` (CI: sdk-contract.yml) |
 | cradle | `sdks/openapi.json` (utoipa, committed) | `tests/openapi_drift.rs` + `tests/mcp_catalog_drift.rs` |
-| tempo | `GET /openapi.json` (runtime-generated; no committed snapshot yet) | route/spec coverage tests in `tempo-headless` |
+| tempo | `contracts/tempod.openapi.json` (generated from the runtime contract) | `scripts/export-tempod-openapi.sh --check` plus runtime-equality and route/spec tests in `tempo-headless` |
 | remi | axum router in `crates/remi/src/server.rs` (no spec) | `cargo test -p remi` |
 | data-engine | `api/openapi.yaml` (contract-first, committed) | route/auth coverage in `tests/test_mvp.py` |
 
@@ -51,6 +51,20 @@ rejected.
 python3 scripts/sync-data-engine-openapi.py --check \
   --source ../data-engine/api/openapi.yaml \
   --source-repo tempera-dev/data-engine --source-branch main \
+  --source-commit <40-character-producer-commit>
+```
+
+Tempo is pinned verbatim in `specs/tempo.openapi.json` with an adjacent exact
+source lock. The normal sync path requires the producer commit to be reachable
+from the named `origin/*` branch. `--allow-unpublished-local` exists only to
+prepare a clean, exact, dependency-ordered review branch before the producer is
+published; its lock is visibly marked `unpublished_local_review` and must be
+regenerated without that flag before release.
+
+```sh
+python3 scripts/sync-tempo-openapi.py --check \
+  --source-repo-dir ../tempo \
+  --source-branch <reviewed-producer-branch> \
   --source-commit <40-character-producer-commit>
 ```
 

@@ -1,5 +1,37 @@
 # SDK compatibility ledger
 
+## 2026-07-24 — Tempo BrowserTaskV1 and authoritative OpenAPI
+
+- Owner: Tempo owns browser behavior and the authoritative OpenAPI; the
+  aggregate SDK owns generated language surfaces and transport eligibility.
+- Compatibility class: additive BrowserTask, manager, surface, A2A, drain,
+  run-event, BiDi HTTP fallback, and Cradle methods plus a corrective pre-1.0
+  auth change; package `0.10.0`, surface version `4`.
+- Producer: `tempera-dev/tempo@3bde3f4220321d5646c70ee0d3a8cf9987e1b6eb`,
+  `contracts/tempod.openapi.json`, blob
+  `aa4b83efd160acd5bbc933132b89d33904b07f38`, SHA-256
+  `f10071ee93cc7fa8c6a78676d71321bb088b870ffd3f8b6368cefb3c470befed`.
+- Added: 15 producer-backed typed methods in TypeScript, Python, and Rust,
+  including create/get/events/cancel/resume for `tempera.browser-task/v1` and
+  the page-tainted Cradle transform boundary. Tempo now has strict
+  bidirectional parity: 33 eligible methods plus eight explicit transport
+  exclusions cover all 41 OpenAPI operations with zero phantom or missing
+  eligible routes.
+- Auth correction: `health`, `openapi`, and A2A metadata now use product auth in
+  the generated clients. Tempod may permit loopback-only local access, but its
+  committed contract requires bearer auth for a shared deployment. Callers
+  relying on unauthenticated remote access must supply a Tempo bearer instead.
+- Streaming and protocol transports: WebSocket, SSE, MCP Streamable HTTP, and
+  Prometheus text operations remain explicitly excluded from the buffered JSON
+  product client; use the dedicated MCP client or raw transport until each
+  primitive is reviewed.
+- Rollout: publish the Tempo producer branch, regenerate the SDK lock without
+  `unpublished_local_review`, run all-language tests, then update Auth Hub and
+  tempera-mcp to the exact SDK/producer SHAs.
+- Rollback: revert the generated SDK release and exact Tempo source lock
+  together; do not remove or weaken the producer's BrowserTask or approval
+  boundaries.
+
 ## 2026-07-21 — Data Engine review qualification v1
 
 - Owner: Contract Spine (Lane 1) consuming the Lane 2 producer contract.

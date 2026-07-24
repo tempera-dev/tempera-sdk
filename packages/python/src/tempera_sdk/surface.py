@@ -5,7 +5,7 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 3
+SURFACE_VERSION = 4
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym')
 DEFAULT_AUDIENCE = 'palette'
@@ -100,7 +100,7 @@ PRODUCTS = {
         "repository": "https://github.com/tempera-dev/tempo",
         "env_var": "TEMPERA_TEMPO_URL",
         "audience": "tempo",
-        "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
+        "description": "Agent-native browser daemon (tempod): structured observation, guarded actions, durable BrowserTask goals, events, recovery, human approval, and Cradle routing."
     },
     "temperaCode": {
         "name": "Tempera Code",
@@ -1200,10 +1200,10 @@ OPERATIONS = {
     ],
     "tempo": [
         {
-            "id": "health",
+            "id": "agent_card",
             "method": "GET",
-            "path": "/health",
-            "auth": "none",
+            "path": "/.well-known/agent-card.json",
+            "auth": "product",
             "path_params": [],
             "query": [],
             "body": [],
@@ -1211,7 +1211,137 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempod liveness; returns {ok: True}."
+            "description": "Fetch tempod's authenticated A2A agent card."
+        },
+        {
+            "id": "agent_json",
+            "method": "GET",
+            "path": "/.well-known/agent.json",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch tempod's authenticated A2A agent metadata alias."
+        },
+        {
+            "id": "bidi_post",
+            "method": "POST",
+            "path": "/bidi",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "id",
+                "method",
+                "params"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "method"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Dispatch one WebDriver BiDi command over the bounded HTTP fallback."
+        },
+        {
+            "id": "get_browser_task",
+            "method": "GET",
+            "path": "/browser-tasks/{task_id}",
+            "auth": "product",
+            "path_params": [
+                "task_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch one durable BrowserTaskV1 goal run with its current state and pending confirmation."
+        },
+        {
+            "id": "cancel_browser_task",
+            "method": "POST",
+            "path": "/browser-tasks/{task_id}/cancel",
+            "auth": "product",
+            "path_params": [
+                "task_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Cooperatively cancel one durable browser task."
+        },
+        {
+            "id": "browser_task_events",
+            "method": "GET",
+            "path": "/browser-tasks/{task_id}/events",
+            "auth": "product",
+            "path_params": [
+                "task_id"
+            ],
+            "query": [
+                "after_seq"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch replayable typed evidence for one durable browser task."
+        },
+        {
+            "id": "resume_browser_task",
+            "method": "POST",
+            "path": "/browser-tasks/{task_id}/resume",
+            "auth": "product",
+            "path_params": [
+                "task_id"
+            ],
+            "query": [],
+            "body": [
+                "confirmation_grant"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Resume a paused browser task, consuming its exact one-use confirmation grant when required."
+        },
+        {
+            "id": "drain",
+            "method": "POST",
+            "path": "/drain",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Enter drain mode and stop admitting new browser sessions or tasks."
+        },
+        {
+            "id": "health",
+            "method": "GET",
+            "path": "/health",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Check authenticated tempod liveness."
         },
         {
             "id": "ready",
@@ -1231,20 +1361,6 @@ OPERATIONS = {
             "id": "openapi",
             "method": "GET",
             "path": "/openapi.json",
-            "auth": "none",
-            "path_params": [],
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
-        },
-        {
-            "id": "list_sessions",
-            "method": "GET",
-            "path": "/sessions",
             "auth": "product",
             "path_params": [],
             "query": [],
@@ -1253,168 +1369,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List browser sessions with their state and creation time."
-        },
-        {
-            "id": "create_session",
-            "method": "POST",
-            "path": "/sessions",
-            "auth": "product",
-            "path_params": [],
-            "query": [],
-            "body": [
-                "url",
-                "driverless"
-            ],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
-        },
-        {
-            "id": "close_session",
-            "method": "DELETE",
-            "path": "/sessions/{session_id}",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Close a browser session and release its engine resources."
-        },
-        {
-            "id": "observe",
-            "method": "GET",
-            "path": "/sessions/{session_id}/observe",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
-        },
-        {
-            "id": "act_batch",
-            "method": "POST",
-            "path": "/sessions/{session_id}/act_batch",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [
-                "batch",
-                "input_tainted",
-                "confirmed",
-                "idempotency_key",
-                "confirmation_grant",
-                "payment_context"
-            ],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
-        },
-        {
-            "id": "screenshot",
-            "method": "GET",
-            "path": "/sessions/{session_id}/screenshot",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [
-                "set_of_marks"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
-        },
-        {
-            "id": "session_events",
-            "method": "GET",
-            "path": "/sessions/{session_id}/events",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [
-                "after_seq"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch the session's event window after a sequence number."
-        },
-        {
-            "id": "adopt_session",
-            "method": "POST",
-            "path": "/sessions/{session_id}/adopt",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
-        },
-        {
-            "id": "handoff_session",
-            "method": "POST",
-            "path": "/sessions/{session_id}/handoff",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Return write ownership of the session to the agent plane."
-        },
-        {
-            "id": "create_run",
-            "method": "POST",
-            "path": "/sessions/{session_id}/runs",
-            "auth": "product",
-            "path_params": [
-                "session_id"
-            ],
-            "query": [],
-            "body": [
-                "goal",
-                "actions",
-                "max_rounds",
-                "token_budget"
-            ],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Start an agent run against the session with a goal, action budget, and round limit."
+            "description": "Fetch tempod's authoritative OpenAPI document for this host."
         },
         {
             "id": "list_runs",
@@ -1465,6 +1420,24 @@ OPERATIONS = {
             "description": "Cancel an agent run."
         },
         {
+            "id": "run_events",
+            "method": "GET",
+            "path": "/runs/{run_id}/events",
+            "auth": "product",
+            "path_params": [
+                "run_id"
+            ],
+            "query": [
+                "after_seq"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the session event window associated with one agent run."
+        },
+        {
             "id": "resume_run",
             "method": "POST",
             "path": "/runs/{run_id}/resume",
@@ -1479,6 +1452,155 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Resume an agent run after a human handoff completes."
+        },
+        {
+            "id": "list_sessions",
+            "method": "GET",
+            "path": "/sessions",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "List browser sessions with their state and creation time."
+        },
+        {
+            "id": "create_session",
+            "method": "POST",
+            "path": "/sessions",
+            "auth": "product",
+            "path_params": [],
+            "query": [],
+            "body": [
+                "url",
+                "driverless"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "url"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
+        },
+        {
+            "id": "close_session",
+            "method": "DELETE",
+            "path": "/sessions/{session_id}",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Close a browser session and release its engine resources."
+        },
+        {
+            "id": "act_batch",
+            "method": "POST",
+            "path": "/sessions/{session_id}/act_batch",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "batch",
+                "input_tainted",
+                "confirmed",
+                "idempotency_key",
+                "confirmation_grant",
+                "payment_context"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "batch"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+        },
+        {
+            "id": "adopt_session",
+            "method": "POST",
+            "path": "/sessions/{session_id}/adopt",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "engine_tier",
+                "label",
+                "platform",
+                "profile_id",
+                "storage_continuity",
+                "surface_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+        },
+        {
+            "id": "bidi_post_session",
+            "method": "POST",
+            "path": "/sessions/{session_id}/bidi",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "id",
+                "method",
+                "params"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "method"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Dispatch one WebDriver BiDi command within a browser session over the bounded HTTP fallback."
+        },
+        {
+            "id": "create_browser_task",
+            "method": "POST",
+            "path": "/sessions/{session_id}/browser-tasks",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "contract_version",
+                "idempotency_key",
+                "goal",
+                "max_rounds",
+                "token_budget",
+                "deadline_ms"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "contract_version",
+                "idempotency_key",
+                "goal",
+                "max_rounds",
+                "token_budget",
+                "deadline_ms"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Start an idempotent durable BrowserTaskV1 goal using tempod's operator-configured live decider."
         },
         {
             "id": "grant_confirmation",
@@ -1496,6 +1618,177 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Grant a pending policy confirmation and receive a single-use grant token."
+        },
+        {
+            "id": "session_events",
+            "method": "GET",
+            "path": "/sessions/{session_id}/events",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [
+                "after_seq"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the session's event window after a sequence number."
+        },
+        {
+            "id": "handoff_session",
+            "method": "POST",
+            "path": "/sessions/{session_id}/handoff",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Return write ownership of the session to the agent plane."
+        },
+        {
+            "id": "manager_session",
+            "method": "GET",
+            "path": "/sessions/{session_id}/manager",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the shared manager state for one browser session."
+        },
+        {
+            "id": "observe",
+            "method": "GET",
+            "path": "/sessions/{session_id}/observe",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the session's compiled structured observation with ranked stable element identifiers."
+        },
+        {
+            "id": "create_run",
+            "method": "POST",
+            "path": "/sessions/{session_id}/runs",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "goal",
+                "actions",
+                "max_rounds",
+                "token_budget"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Start an agent run against the session with a goal, action budget, and round limit."
+        },
+        {
+            "id": "screenshot",
+            "method": "GET",
+            "path": "/sessions/{session_id}/screenshot",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [
+                "set_of_marks"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+        },
+        {
+            "id": "register_session_surface",
+            "method": "POST",
+            "path": "/sessions/{session_id}/surfaces",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "engine_tier",
+                "label",
+                "platform",
+                "profile_id",
+                "storage_continuity",
+                "surface_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Register a bounded human or agent surface on one shared browser session."
+        },
+        {
+            "id": "remove_session_surface",
+            "method": "DELETE",
+            "path": "/sessions/{session_id}/surfaces/{surface_id}",
+            "auth": "product",
+            "path_params": [
+                "session_id",
+                "surface_id"
+            ],
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Remove one registered surface from a shared browser session."
+        },
+        {
+            "id": "transform_session",
+            "method": "POST",
+            "path": "/sessions/{session_id}/transform",
+            "auth": "product",
+            "path_params": [
+                "session_id"
+            ],
+            "query": [],
+            "body": [
+                "determinism",
+                "idempotency_key",
+                "input",
+                "lane",
+                "source",
+                "spans"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "lane",
+                "source"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Route page-tainted non-browser computation through tempod's fail-closed Cradle boundary."
         }
     ],
     "temperaCode": [

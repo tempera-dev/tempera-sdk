@@ -23,8 +23,9 @@ VENDORED_SPECS = {
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",
+    "tempo": "tempo.openapi.json",
 }
-STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows", "temperaGym"}
+STRICT_PRODUCTS = {"temperaLlm", "temperaWorkflows", "temperaGym", "tempo"}
 PARAM_RE = re.compile(r"\{[^}]+\}")
 EXCLUSION_KEYS = {
     "product",
