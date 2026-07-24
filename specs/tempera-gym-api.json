@@ -185,7 +185,7 @@
                         }
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -251,7 +251,7 @@
                         "$ref": "#/components/schemas/Task"
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -434,7 +434,7 @@
                         "$ref": "#/components/schemas/VerifierIdentity"
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -477,18 +477,6 @@
             }
           },
           {
-            "name": "limit",
-            "in": "query",
-            "deprecated": true,
-            "description": "Legacy alias for page_size; cannot be combined with page_size.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 100
-            }
-          },
-          {
             "$ref": "#/components/parameters/PageSize"
           },
           {
@@ -512,7 +500,7 @@
                         "$ref": "#/components/schemas/Episode"
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -1068,7 +1056,7 @@
                         "$ref": "#/components/schemas/SealedEvaluator"
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -1092,19 +1080,6 @@
         "x-tempera-required-scope": "dataset:read",
         "summary": "List persisted sealed-evaluation precommits and results",
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "deprecated": true,
-            "description": "Legacy alias for page_size; cannot be combined with page_size.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 100
-            }
-          },
           {
             "$ref": "#/components/parameters/PageSize"
           },
@@ -1130,7 +1105,7 @@
                         "$ref": "#/components/schemas/SealedEvaluationRecord"
                       }
                     },
-                    "next_page_token": {
+                    "nextPageToken": {
                       "type": "string"
                     }
                   }
@@ -1352,7 +1327,7 @@
   "components": {
     "parameters": {
       "PageSize": {
-        "name": "page_size",
+        "name": "pageSize",
         "in": "query",
         "required": false,
         "description": "Maximum resources to return; defaults to 100 and is capped at 1000.",
@@ -1364,7 +1339,7 @@
         }
       },
       "PageToken": {
-        "name": "page_token",
+        "name": "pageToken",
         "in": "query",
         "required": false,
         "description": "Opaque continuation token returned by the preceding list response.",
