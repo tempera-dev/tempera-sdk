@@ -201,6 +201,7 @@ jobs:
       matrix:
         include:
           - name: Cradle
+            product: cradle
             repository: cradle
             source_branch: main
             source_path: sdks/openapi.json
@@ -209,6 +210,7 @@ jobs:
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
           - name: Human Data
+            product: humanData
             repository: human-data
             source_branch: main
             source_path: api/openapi.json
@@ -217,6 +219,7 @@ jobs:
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
           - name: Tempera Gym
+            product: temperaGym
             repository: tempera-gym
             source_branch: main
             source_path: contracts/gym-api.openapi.yaml
@@ -225,6 +228,7 @@ jobs:
             generated_with: source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2
             transform: yaml-json
           - name: Tempera Bio
+            product: temperaBio
             repository: tempera-bio
             source_branch: main
             source_path: openapi/tempera-bio-discovery-v1.openapi.json
@@ -233,6 +237,7 @@ jobs:
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
           - name: Tempera LLM
+            product: temperaLlm
             repository: tempera-llm
             source_branch: main
             source_path: sdks/openapi/tempera-llm-api.json
@@ -241,6 +246,7 @@ jobs:
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
           - name: Tempera Workflows
+            product: temperaWorkflows
             repository: tempera-workflows
             source_branch: main
             source_path: sdks/openapi/tempera-workflows-api.json
@@ -249,6 +255,7 @@ jobs:
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
           - name: Remi
+            product: remi
             repository: remi
             source_branch: main
             source_path: docs/public-http-contract.json
@@ -257,6 +264,7 @@ jobs:
             generated_with: sync-vendored-openapi.py@1+verbatim-contract-copy
             transform: verbatim
           - name: Tempo
+            product: tempo
             repository: tempo
             source_branch: main
             source_path: api/openapi.json
@@ -317,43 +325,20 @@ jobs:
       - name: Reproduce and verify exact committed source
         if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         env:
-          SOURCE_REPO: tempera-dev/${{ matrix.repository }}
+          PRODUCT: ${{ matrix.product }}
           SOURCE_BRANCH: ${{ matrix.source_branch }}
-          SOURCE_PATH: ${{ matrix.source_path }}
-          GENERATED_PATH: ${{ matrix.generated_path }}
-          GENERATED_WITH: ${{ matrix.generated_with }}
-          LOCK_PATH: ${{ matrix.lock }}
           TRANSFORM: ${{ matrix.transform }}
           COMMIT: ${{ steps.source-lock.outputs.commit }}
         run: |
           git -C .upstream-source fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
-          test "$(git -C .upstream-source rev-parse HEAD)" = "$(git -C .upstream-source rev-parse "refs/remotes/origin/$SOURCE_BRANCH")"
-          if [ "$TRANSFORM" = verbatim ]; then
-            cmp ".upstream-source/$SOURCE_PATH" "$GENERATED_PATH"
-          else
+          if [ "$TRANSFORM" = yaml-json ]; then
             python3 -m pip install PyYAML==6.0.3
-            python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-          import yaml
-
-          source = Path(".upstream-source") / os.environ["SOURCE_PATH"]
-          rendered = json.dumps(yaml.safe_load(source.read_bytes()), indent=2) + "\n"
-          if rendered.encode() != Path(os.environ["GENERATED_PATH"]).read_bytes():
-              raise SystemExit("generated JSON does not reproduce from committed YAML")
-          PY
           fi
-          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check \
-            --repo-dir .upstream-source \
-            --source-repo "$SOURCE_REPO" \
+          python3 scripts/sync-vendored-openapi.py --check \
+            --product "$PRODUCT" \
+            --source-repo-dir .upstream-source \
             --source-branch "$SOURCE_BRANCH" \
-            --commit "$COMMIT" \
-            --source-path "$SOURCE_PATH" \
-            --generated-with "$GENERATED_WITH" \
-            --generated-file "$GENERATED_PATH" \
-            --generated-path "$GENERATED_PATH" \
-            --lock "$LOCK_PATH"
+            --source-commit "$COMMIT"
       - name: Verify explicit hosted exact-source blocker
         if: ${{ matrix.repository == 'remi' || matrix.repository == 'tempo' || matrix.repository == 'tempera-bio' || matrix.repository == 'human-data' }}
         env:
@@ -374,6 +359,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
+      - run: python3 scripts/test-sync-vendored-openapi.py
       - run: python3 scripts/test-upstream-drift.py
       - run: python3 scripts/test-sdk-names.py
       - run: python3 scripts/test-aip-conformance.py
