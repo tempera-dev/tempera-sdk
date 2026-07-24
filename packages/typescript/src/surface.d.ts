@@ -534,10 +534,10 @@ export interface CradleClient extends TemperaProductClientBase {
   getIntegrationContract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Submit an asynchronous sandbox job; returns an operation handle to poll. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch a sandbox job's status and result. */
-  getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel a queued or running sandbox job (idempotent for already-cancelled jobs). */
   cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch a sandbox job's status and result. */
+  getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/modules. */
   projectsModulesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/modules/{sha256}. */

@@ -3499,10 +3499,10 @@
         "description": "Call POST /v1/browser/adapter/capability.",
         "body": [
           "actor",
-          "adapter_id",
-          "sensitive_activity_mode",
+          "adapterId",
+          "sensitiveActivityMode",
           "sensitivity",
-          "ttl_seconds"
+          "ttlSeconds"
         ],
         "requiredBody": [
           "actor",
@@ -3517,27 +3517,27 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/completion/validate.",
         "body": [
-          "adapter_id",
-          "contract_version",
-          "egress_log_sealed_or_discarded",
+          "adapterId",
+          "contractVersion",
+          "egressLogSealedOrDiscarded",
           "notes",
-          "plaintext_artifacts_removed",
-          "process_terminated",
-          "proof_ids",
-          "request_id",
-          "sealed_artifact_handles",
-          "temporary_profile_removed"
+          "plaintextArtifactsRemoved",
+          "processTerminated",
+          "proofIds",
+          "requestId",
+          "sealedArtifactHandles",
+          "temporaryProfileRemoved"
         ],
         "requiredBody": [
-          "request_id",
-          "adapter_id",
-          "contract_version",
-          "process_terminated",
-          "temporary_profile_removed",
-          "plaintext_artifacts_removed",
-          "egress_log_sealed_or_discarded",
-          "sealed_artifact_handles",
-          "proof_ids",
+          "requestId",
+          "adapterId",
+          "contractVersion",
+          "processTerminated",
+          "temporaryProfileRemoved",
+          "plaintextArtifactsRemoved",
+          "egressLogSealedOrDiscarded",
+          "sealedArtifactHandles",
+          "proofIds",
           "notes"
         ],
         "upstreamOperationId": "projects.browserAdapters.validateCompletion"
@@ -3557,10 +3557,10 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/launch/claim.",
         "body": [
-          "launch_request"
+          "launchRequest"
         ],
         "requiredBody": [
-          "launch_request"
+          "launchRequest"
         ],
         "upstreamOperationId": "projects.browserAdapters.claimLaunch"
       },
@@ -3573,10 +3573,10 @@
         "body": [
           "admission",
           "manifest",
-          "same_user_capability"
+          "sameUserCapability"
         ],
         "requiredBody": [
-          "same_user_capability",
+          "sameUserCapability",
           "admission",
           "manifest"
         ],
@@ -3591,13 +3591,13 @@
         "body": [
           "actor",
           "manifest",
-          "same_user_capability",
+          "sameUserCapability",
           "sensitivity"
         ],
         "requiredBody": [
           "actor",
           "sensitivity",
-          "same_user_capability",
+          "sameUserCapability",
           "manifest"
         ],
         "upstreamOperationId": "projects.browserAdapters.register"
@@ -3609,22 +3609,22 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/validate.",
         "body": [
-          "adapter_id",
-          "completion_proofs",
-          "contract_version",
-          "guard_fields",
-          "launch_endpoint",
-          "supported_controls",
-          "supported_levels"
+          "adapterId",
+          "completionProofs",
+          "contractVersion",
+          "guardFields",
+          "launchEndpoint",
+          "supportedControls",
+          "supportedLevels"
         ],
         "requiredBody": [
-          "adapter_id",
-          "contract_version",
-          "launch_endpoint",
-          "supported_levels",
-          "supported_controls",
-          "guard_fields",
-          "completion_proofs"
+          "adapterId",
+          "contractVersion",
+          "launchEndpoint",
+          "supportedLevels",
+          "supportedControls",
+          "guardFields",
+          "completionProofs"
         ],
         "upstreamOperationId": "projects.browserAdapters.validate"
       },
@@ -3635,19 +3635,19 @@
         "auth": "product",
         "body": [
           "actor",
-          "allow_downgrade",
-          "artifact_mode",
-          "credential_mode",
-          "requested_level",
-          "required_controls",
-          "sensitive_activity_mode",
+          "allowDowngrade",
+          "artifactMode",
+          "credentialMode",
+          "requestedLevel",
+          "requiredControls",
+          "sensitiveActivityMode",
           "sensitivity",
-          "target_origins",
-          "task_label"
+          "targetOrigins",
+          "taskLabel"
         ],
         "description": "Request admission for a browser session at a sandbox level and receive the guard plan.",
         "requiredBody": [
-          "requested_level",
+          "requestedLevel",
           "actor",
           "sensitivity"
         ],
@@ -3676,7 +3676,7 @@
         "auth": "product",
         "body": [
           "entrypoint",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "policy",
@@ -3713,7 +3713,7 @@
         "auth": "product",
         "body": [
           "entrypoint",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "policy",
@@ -3728,17 +3728,6 @@
         "upstreamOperationId": "projects.jobs.create"
       },
       {
-        "id": "getJob",
-        "method": "GET",
-        "path": "/v1/jobs/{id}",
-        "auth": "product",
-        "pathParams": [
-          "id"
-        ],
-        "description": "Fetch a sandbox job's status and result.",
-        "upstreamOperationId": "projects.jobs.get"
-      },
-      {
         "id": "cancelJob",
         "method": "DELETE",
         "path": "/v1/jobs/{id}",
@@ -3750,6 +3739,17 @@
         "upstreamOperationId": "projects.jobs.cancel"
       },
       {
+        "id": "getJob",
+        "method": "GET",
+        "path": "/v1/jobs/{id}",
+        "auth": "product",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Fetch a sandbox job's status and result.",
+        "upstreamOperationId": "projects.jobs.get"
+      },
+      {
         "id": "projectsModulesCreate",
         "method": "POST",
         "path": "/v1/projects/{project}/modules",
@@ -3759,10 +3759,10 @@
           "project"
         ],
         "body": [
-          "bytes_base64"
+          "bytesBase64"
         ],
         "requiredBody": [
-          "bytes_base64"
+          "bytesBase64"
         ],
         "upstreamOperationId": "projects.modules.create"
       },

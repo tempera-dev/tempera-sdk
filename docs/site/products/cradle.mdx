@@ -44,34 +44,34 @@ Call POST /v1/browser/adapter/capability.
 | Parameter | Required | Notes |
 |---|---|---|
 | `actor` | yes | — |
-| `adapter_id` | no | — |
-| `sensitive_activity_mode` | no | — |
+| `adapterId` | no | — |
+| `sensitiveActivityMode` | no | — |
 | `sensitivity` | yes | — |
-| `ttl_seconds` | no | — |
+| `ttlSeconds` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.projectsBrowserAdaptersIssueCapability({
   actor: "<actor>",
-  adapter_id: "<adapter_id>",
-  sensitive_activity_mode: "<sensitive_activity_mode>",
+  adapterId: "<adapterId>",
+  sensitiveActivityMode: "<sensitiveActivityMode>",
 });
 ```
 
 ```python Python
 result = client.cradle.projects_browser_adapters_issue_capability({
     "actor": "<actor>",
-    "adapter_id": "<adapter_id>",
-    "sensitive_activity_mode": "<sensitive_activity_mode>",
+    "adapterId": "<adapterId>",
+    "sensitiveActivityMode": "<sensitiveActivityMode>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "projects_browser_adapters_issue_capability", &[
     ("actor", "<actor>".into()),
-    ("adapter_id", "<adapter_id>".into()),
-    ("sensitive_activity_mode", "<sensitive_activity_mode>".into()),
+    ("adapterId", "<adapterId>".into()),
+    ("sensitiveActivityMode", "<sensitiveActivityMode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -93,40 +93,40 @@ Call POST /v1/browser/adapter/completion/validate.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `adapter_id` | yes | — |
-| `contract_version` | yes | — |
-| `egress_log_sealed_or_discarded` | yes | — |
+| `adapterId` | yes | — |
+| `contractVersion` | yes | — |
+| `egressLogSealedOrDiscarded` | yes | — |
 | `notes` | yes | — |
-| `plaintext_artifacts_removed` | yes | — |
-| `process_terminated` | yes | — |
-| `proof_ids` | yes | — |
-| `request_id` | yes | — |
-| `sealed_artifact_handles` | yes | — |
-| `temporary_profile_removed` | yes | — |
+| `plaintextArtifactsRemoved` | yes | — |
+| `processTerminated` | yes | — |
+| `proofIds` | yes | — |
+| `requestId` | yes | — |
+| `sealedArtifactHandles` | yes | — |
+| `temporaryProfileRemoved` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.projectsBrowserAdaptersValidateCompletion({
-  adapter_id: "<adapter_id>",
-  contract_version: "<contract_version>",
-  egress_log_sealed_or_discarded: "<egress_log_sealed_or_discarded>",
+  adapterId: "<adapterId>",
+  contractVersion: "<contractVersion>",
+  egressLogSealedOrDiscarded: "<egressLogSealedOrDiscarded>",
 });
 ```
 
 ```python Python
 result = client.cradle.projects_browser_adapters_validate_completion({
-    "adapter_id": "<adapter_id>",
-    "contract_version": "<contract_version>",
-    "egress_log_sealed_or_discarded": "<egress_log_sealed_or_discarded>",
+    "adapterId": "<adapterId>",
+    "contractVersion": "<contractVersion>",
+    "egressLogSealedOrDiscarded": "<egressLogSealedOrDiscarded>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "projects_browser_adapters_validate_completion", &[
-    ("adapter_id", "<adapter_id>".into()),
-    ("contract_version", "<contract_version>".into()),
-    ("egress_log_sealed_or_discarded", "<egress_log_sealed_or_discarded>".into()),
+    ("adapterId", "<adapterId>".into()),
+    ("contractVersion", "<contractVersion>".into()),
+    ("egressLogSealedOrDiscarded", "<egressLogSealedOrDiscarded>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -176,25 +176,25 @@ Call POST /v1/browser/adapter/launch/claim.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `launch_request` | yes | — |
+| `launchRequest` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.projectsBrowserAdaptersClaimLaunch({
-  launch_request: "<launch_request>",
+  launchRequest: "<launchRequest>",
 });
 ```
 
 ```python Python
 result = client.cradle.projects_browser_adapters_claim_launch({
-    "launch_request": "<launch_request>",
+    "launchRequest": "<launchRequest>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "projects_browser_adapters_claim_launch", &[
-    ("launch_request", "<launch_request>".into()),
+    ("launchRequest", "<launchRequest>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -218,7 +218,7 @@ Call POST /v1/browser/adapter/launch/plan.
 |---|---|---|
 | `admission` | yes | — |
 | `manifest` | yes | — |
-| `same_user_capability` | yes | — |
+| `sameUserCapability` | yes | — |
 
 <CodeGroup>
 
@@ -226,7 +226,7 @@ Call POST /v1/browser/adapter/launch/plan.
 const result = await client.cradle.projectsBrowserAdaptersPlanLaunch({
   admission: "<admission>",
   manifest: "<manifest>",
-  same_user_capability: "<same_user_capability>",
+  sameUserCapability: "<sameUserCapability>",
 });
 ```
 
@@ -234,7 +234,7 @@ const result = await client.cradle.projectsBrowserAdaptersPlanLaunch({
 result = client.cradle.projects_browser_adapters_plan_launch({
     "admission": "<admission>",
     "manifest": "<manifest>",
-    "same_user_capability": "<same_user_capability>",
+    "sameUserCapability": "<sameUserCapability>",
 })
 ```
 
@@ -242,7 +242,7 @@ result = client.cradle.projects_browser_adapters_plan_launch({
 let spec = client.build_request("cradle", "projects_browser_adapters_plan_launch", &[
     ("admission", "<admission>".into()),
     ("manifest", "<manifest>".into()),
-    ("same_user_capability", "<same_user_capability>".into()),
+    ("sameUserCapability", "<sameUserCapability>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -266,7 +266,7 @@ Call POST /v1/browser/adapter/register.
 |---|---|---|
 | `actor` | yes | — |
 | `manifest` | yes | — |
-| `same_user_capability` | yes | — |
+| `sameUserCapability` | yes | — |
 | `sensitivity` | yes | — |
 
 <CodeGroup>
@@ -275,7 +275,7 @@ Call POST /v1/browser/adapter/register.
 const result = await client.cradle.projectsBrowserAdaptersRegister({
   actor: "<actor>",
   manifest: "<manifest>",
-  same_user_capability: "<same_user_capability>",
+  sameUserCapability: "<sameUserCapability>",
 });
 ```
 
@@ -283,7 +283,7 @@ const result = await client.cradle.projectsBrowserAdaptersRegister({
 result = client.cradle.projects_browser_adapters_register({
     "actor": "<actor>",
     "manifest": "<manifest>",
-    "same_user_capability": "<same_user_capability>",
+    "sameUserCapability": "<sameUserCapability>",
 })
 ```
 
@@ -291,7 +291,7 @@ result = client.cradle.projects_browser_adapters_register({
 let spec = client.build_request("cradle", "projects_browser_adapters_register", &[
     ("actor", "<actor>".into()),
     ("manifest", "<manifest>".into()),
-    ("same_user_capability", "<same_user_capability>".into()),
+    ("sameUserCapability", "<sameUserCapability>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -313,37 +313,37 @@ Call POST /v1/browser/adapter/validate.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `adapter_id` | yes | — |
-| `completion_proofs` | yes | — |
-| `contract_version` | yes | — |
-| `guard_fields` | yes | — |
-| `launch_endpoint` | yes | — |
-| `supported_controls` | yes | — |
-| `supported_levels` | yes | — |
+| `adapterId` | yes | — |
+| `completionProofs` | yes | — |
+| `contractVersion` | yes | — |
+| `guardFields` | yes | — |
+| `launchEndpoint` | yes | — |
+| `supportedControls` | yes | — |
+| `supportedLevels` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.projectsBrowserAdaptersValidate({
-  adapter_id: "<adapter_id>",
-  completion_proofs: "<completion_proofs>",
-  contract_version: "<contract_version>",
+  adapterId: "<adapterId>",
+  completionProofs: "<completionProofs>",
+  contractVersion: "<contractVersion>",
 });
 ```
 
 ```python Python
 result = client.cradle.projects_browser_adapters_validate({
-    "adapter_id": "<adapter_id>",
-    "completion_proofs": "<completion_proofs>",
-    "contract_version": "<contract_version>",
+    "adapterId": "<adapterId>",
+    "completionProofs": "<completionProofs>",
+    "contractVersion": "<contractVersion>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "projects_browser_adapters_validate", &[
-    ("adapter_id", "<adapter_id>".into()),
-    ("completion_proofs", "<completion_proofs>".into()),
-    ("contract_version", "<contract_version>".into()),
+    ("adapterId", "<adapterId>".into()),
+    ("completionProofs", "<completionProofs>".into()),
+    ("contractVersion", "<contractVersion>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -366,39 +366,39 @@ Request admission for a browser session at a sandbox level and receive the guard
 | Parameter | Required | Notes |
 |---|---|---|
 | `actor` | yes | — |
-| `allow_downgrade` | no | — |
-| `artifact_mode` | no | — |
-| `credential_mode` | no | — |
-| `requested_level` | yes | — |
-| `required_controls` | no | — |
-| `sensitive_activity_mode` | no | — |
+| `allowDowngrade` | no | — |
+| `artifactMode` | no | — |
+| `credentialMode` | no | — |
+| `requestedLevel` | yes | — |
+| `requiredControls` | no | — |
+| `sensitiveActivityMode` | no | — |
 | `sensitivity` | yes | — |
-| `target_origins` | no | — |
-| `task_label` | no | — |
+| `targetOrigins` | no | — |
+| `taskLabel` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.admitBrowserSession({
   actor: "<actor>",
-  allow_downgrade: "<allow_downgrade>",
-  artifact_mode: "<artifact_mode>",
+  allowDowngrade: "<allowDowngrade>",
+  artifactMode: "<artifactMode>",
 });
 ```
 
 ```python Python
 result = client.cradle.admit_browser_session({
     "actor": "<actor>",
-    "allow_downgrade": "<allow_downgrade>",
-    "artifact_mode": "<artifact_mode>",
+    "allowDowngrade": "<allowDowngrade>",
+    "artifactMode": "<artifactMode>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "admit_browser_session", &[
     ("actor", "<actor>".into()),
-    ("allow_downgrade", "<allow_downgrade>".into()),
-    ("artifact_mode", "<artifact_mode>".into()),
+    ("allowDowngrade", "<allowDowngrade>".into()),
+    ("artifactMode", "<artifactMode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -477,7 +477,7 @@ Execute source synchronously in a sandbox lane and return the result with metric
 | Parameter | Required | Notes |
 |---|---|---|
 | `entrypoint` | no | — |
-| `idempotency_key` | no | — |
+| `idempotencyKey` | no | — |
 | `input` | no | — |
 | `lane` | yes | — |
 | `policy` | no | — |
@@ -489,7 +489,7 @@ Execute source synchronously in a sandbox lane and return the result with metric
 ```typescript TypeScript
 const result = await client.cradle.execute({
   entrypoint: "<entrypoint>",
-  idempotency_key: "<idempotency_key>",
+  idempotencyKey: "<idempotencyKey>",
   input: "<input>",
 });
 ```
@@ -497,7 +497,7 @@ const result = await client.cradle.execute({
 ```python Python
 result = client.cradle.execute({
     "entrypoint": "<entrypoint>",
-    "idempotency_key": "<idempotency_key>",
+    "idempotencyKey": "<idempotencyKey>",
     "input": "<input>",
 })
 ```
@@ -505,7 +505,7 @@ result = client.cradle.execute({
 ```rust Rust
 let spec = client.build_request("cradle", "execute", &[
     ("entrypoint", "<entrypoint>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
     ("input", "<input>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -585,7 +585,7 @@ Submit an asynchronous sandbox job; returns an operation handle to poll.
 | Parameter | Required | Notes |
 |---|---|---|
 | `entrypoint` | no | — |
-| `idempotency_key` | no | — |
+| `idempotencyKey` | no | — |
 | `input` | no | — |
 | `lane` | yes | — |
 | `policy` | no | — |
@@ -597,7 +597,7 @@ Submit an asynchronous sandbox job; returns an operation handle to poll.
 ```typescript TypeScript
 const result = await client.cradle.createJob({
   entrypoint: "<entrypoint>",
-  idempotency_key: "<idempotency_key>",
+  idempotencyKey: "<idempotencyKey>",
   input: "<input>",
 });
 ```
@@ -605,7 +605,7 @@ const result = await client.cradle.createJob({
 ```python Python
 result = client.cradle.create_job({
     "entrypoint": "<entrypoint>",
-    "idempotency_key": "<idempotency_key>",
+    "idempotencyKey": "<idempotencyKey>",
     "input": "<input>",
 })
 ```
@@ -613,48 +613,8 @@ result = client.cradle.create_job({
 ```rust Rust
 let spec = client.build_request("cradle", "create_job", &[
     ("entrypoint", "<entrypoint>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
     ("input", "<input>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getJob
-
-`GET /v1/jobs/{id}`
-
-Fetch a sandbox job's status and result.
-
-- **Producer operationId:** `projects.jobs.get`
-- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.cradle.getJob({
-  id: "<id>",
-});
-```
-
-```python Python
-result = client.cradle.get_job({
-    "id": "<id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("cradle", "get_job", &[
-    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -702,6 +662,46 @@ let spec = client.build_request("cradle", "cancel_job", &[
 
 </CodeGroup>
 
+### getJob
+
+`GET /v1/jobs/{id}`
+
+Fetch a sandbox job's status and result.
+
+- **Producer operationId:** `projects.jobs.get`
+- **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.cradle.getJob({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.cradle.get_job({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("cradle", "get_job", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### projectsModulesCreate
 
 `POST /v1/projects/{project}/modules`
@@ -722,28 +722,28 @@ Call POST /v1/projects/\{project\}/modules.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `bytes_base64` | yes | — |
+| `bytesBase64` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.cradle.projectsModulesCreate({
   project: "<project>",
-  bytes_base64: "<bytes_base64>",
+  bytesBase64: "<bytesBase64>",
 });
 ```
 
 ```python Python
 result = client.cradle.projects_modules_create({
     "project": "<project>",
-    "bytes_base64": "<bytes_base64>",
+    "bytesBase64": "<bytesBase64>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("cradle", "projects_modules_create", &[
     ("project", "<project>".into()),
-    ("bytes_base64", "<bytes_base64>".into()),
+    ("bytesBase64", "<bytesBase64>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

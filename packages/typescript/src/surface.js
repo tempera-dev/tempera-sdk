@@ -4815,10 +4815,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "actor",
-        "adapter_id",
-        "sensitive_activity_mode",
+        "adapterId",
+        "sensitiveActivityMode",
         "sensitivity",
-        "ttl_seconds"
+        "ttlSeconds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -4840,28 +4840,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "adapter_id",
-        "contract_version",
-        "egress_log_sealed_or_discarded",
+        "adapterId",
+        "contractVersion",
+        "egressLogSealedOrDiscarded",
         "notes",
-        "plaintext_artifacts_removed",
-        "process_terminated",
-        "proof_ids",
-        "request_id",
-        "sealed_artifact_handles",
-        "temporary_profile_removed"
+        "plaintextArtifactsRemoved",
+        "processTerminated",
+        "proofIds",
+        "requestId",
+        "sealedArtifactHandles",
+        "temporaryProfileRemoved"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "request_id",
-        "adapter_id",
-        "contract_version",
-        "process_terminated",
-        "temporary_profile_removed",
-        "plaintext_artifacts_removed",
-        "egress_log_sealed_or_discarded",
-        "sealed_artifact_handles",
-        "proof_ids",
+        "requestId",
+        "adapterId",
+        "contractVersion",
+        "processTerminated",
+        "temporaryProfileRemoved",
+        "plaintextArtifactsRemoved",
+        "egressLogSealedOrDiscarded",
+        "sealedArtifactHandles",
+        "proofIds",
         "notes"
       ],
       "bodyDefaults": {},
@@ -4896,11 +4896,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "launch_request"
+        "launchRequest"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "launch_request"
+        "launchRequest"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -4919,11 +4919,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "admission",
         "manifest",
-        "same_user_capability"
+        "sameUserCapability"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "same_user_capability",
+        "sameUserCapability",
         "admission",
         "manifest"
       ],
@@ -4944,14 +4944,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "actor",
         "manifest",
-        "same_user_capability",
+        "sameUserCapability",
         "sensitivity"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "actor",
         "sensitivity",
-        "same_user_capability",
+        "sameUserCapability",
         "manifest"
       ],
       "bodyDefaults": {},
@@ -4969,23 +4969,23 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "adapter_id",
-        "completion_proofs",
-        "contract_version",
-        "guard_fields",
-        "launch_endpoint",
-        "supported_controls",
-        "supported_levels"
+        "adapterId",
+        "completionProofs",
+        "contractVersion",
+        "guardFields",
+        "launchEndpoint",
+        "supportedControls",
+        "supportedLevels"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "adapter_id",
-        "contract_version",
-        "launch_endpoint",
-        "supported_levels",
-        "supported_controls",
-        "guard_fields",
-        "completion_proofs"
+        "adapterId",
+        "contractVersion",
+        "launchEndpoint",
+        "supportedLevels",
+        "supportedControls",
+        "guardFields",
+        "completionProofs"
       ],
       "bodyDefaults": {},
       "scope": null,
@@ -5003,19 +5003,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "actor",
-        "allow_downgrade",
-        "artifact_mode",
-        "credential_mode",
-        "requested_level",
-        "required_controls",
-        "sensitive_activity_mode",
+        "allowDowngrade",
+        "artifactMode",
+        "credentialMode",
+        "requestedLevel",
+        "requiredControls",
+        "sensitiveActivityMode",
         "sensitivity",
-        "target_origins",
-        "task_label"
+        "targetOrigins",
+        "taskLabel"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "requested_level",
+        "requestedLevel",
         "actor",
         "sensitivity"
       ],
@@ -5069,7 +5069,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "entrypoint",
-        "idempotency_key",
+        "idempotencyKey",
         "input",
         "lane",
         "policy",
@@ -5131,7 +5131,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "entrypoint",
-        "idempotency_key",
+        "idempotencyKey",
         "input",
         "lane",
         "policy",
@@ -5146,25 +5146,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
-    },
-    {
-      "id": "getJob",
-      "upstreamOperationId": "projects.jobs.get",
-      "method": "GET",
-      "path": "/v1/jobs/{id}",
-      "auth": "product",
-      "authAudience": null,
-      "pathParams": [
-        "id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch a sandbox job's status and result."
     },
     {
       "id": "cancelJob",
@@ -5186,6 +5167,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
     },
     {
+      "id": "getJob",
+      "upstreamOperationId": "projects.jobs.get",
+      "method": "GET",
+      "path": "/v1/jobs/{id}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch a sandbox job's status and result."
+    },
+    {
       "id": "projectsModulesCreate",
       "upstreamOperationId": "projects.modules.create",
       "method": "POST",
@@ -5198,11 +5198,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "bytes_base64"
+        "bytesBase64"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "bytes_base64"
+        "bytesBase64"
       ],
       "bodyDefaults": {},
       "scope": null,

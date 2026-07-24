@@ -4806,10 +4806,10 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "actor",
-                "adapter_id",
-                "sensitive_activity_mode",
+                "adapterId",
+                "sensitiveActivityMode",
                 "sensitivity",
-                "ttl_seconds"
+                "ttlSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -4831,28 +4831,28 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "adapter_id",
-                "contract_version",
-                "egress_log_sealed_or_discarded",
+                "adapterId",
+                "contractVersion",
+                "egressLogSealedOrDiscarded",
                 "notes",
-                "plaintext_artifacts_removed",
-                "process_terminated",
-                "proof_ids",
-                "request_id",
-                "sealed_artifact_handles",
-                "temporary_profile_removed"
+                "plaintextArtifactsRemoved",
+                "processTerminated",
+                "proofIds",
+                "requestId",
+                "sealedArtifactHandles",
+                "temporaryProfileRemoved"
             ],
             "forbidden_body": [],
             "required_body": [
-                "request_id",
-                "adapter_id",
-                "contract_version",
-                "process_terminated",
-                "temporary_profile_removed",
-                "plaintext_artifacts_removed",
-                "egress_log_sealed_or_discarded",
-                "sealed_artifact_handles",
-                "proof_ids",
+                "requestId",
+                "adapterId",
+                "contractVersion",
+                "processTerminated",
+                "temporaryProfileRemoved",
+                "plaintextArtifactsRemoved",
+                "egressLogSealedOrDiscarded",
+                "sealedArtifactHandles",
+                "proofIds",
                 "notes"
             ],
             "body_defaults": {},
@@ -4887,11 +4887,11 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "launch_request"
+                "launchRequest"
             ],
             "forbidden_body": [],
             "required_body": [
-                "launch_request"
+                "launchRequest"
             ],
             "body_defaults": {},
             "scope": None,
@@ -4910,11 +4910,11 @@ OPERATIONS = {
             "body": [
                 "admission",
                 "manifest",
-                "same_user_capability"
+                "sameUserCapability"
             ],
             "forbidden_body": [],
             "required_body": [
-                "same_user_capability",
+                "sameUserCapability",
                 "admission",
                 "manifest"
             ],
@@ -4935,14 +4935,14 @@ OPERATIONS = {
             "body": [
                 "actor",
                 "manifest",
-                "same_user_capability",
+                "sameUserCapability",
                 "sensitivity"
             ],
             "forbidden_body": [],
             "required_body": [
                 "actor",
                 "sensitivity",
-                "same_user_capability",
+                "sameUserCapability",
                 "manifest"
             ],
             "body_defaults": {},
@@ -4960,23 +4960,23 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "adapter_id",
-                "completion_proofs",
-                "contract_version",
-                "guard_fields",
-                "launch_endpoint",
-                "supported_controls",
-                "supported_levels"
+                "adapterId",
+                "completionProofs",
+                "contractVersion",
+                "guardFields",
+                "launchEndpoint",
+                "supportedControls",
+                "supportedLevels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "adapter_id",
-                "contract_version",
-                "launch_endpoint",
-                "supported_levels",
-                "supported_controls",
-                "guard_fields",
-                "completion_proofs"
+                "adapterId",
+                "contractVersion",
+                "launchEndpoint",
+                "supportedLevels",
+                "supportedControls",
+                "guardFields",
+                "completionProofs"
             ],
             "body_defaults": {},
             "scope": None,
@@ -4994,19 +4994,19 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "actor",
-                "allow_downgrade",
-                "artifact_mode",
-                "credential_mode",
-                "requested_level",
-                "required_controls",
-                "sensitive_activity_mode",
+                "allowDowngrade",
+                "artifactMode",
+                "credentialMode",
+                "requestedLevel",
+                "requiredControls",
+                "sensitiveActivityMode",
                 "sensitivity",
-                "target_origins",
-                "task_label"
+                "targetOrigins",
+                "taskLabel"
             ],
             "forbidden_body": [],
             "required_body": [
-                "requested_level",
+                "requestedLevel",
                 "actor",
                 "sensitivity"
             ],
@@ -5060,7 +5060,7 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "entrypoint",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "policy",
@@ -5122,7 +5122,7 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "entrypoint",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "policy",
@@ -5137,25 +5137,6 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
-        },
-        {
-            "id": "get_job",
-            "upstream_operation_id": "projects.jobs.get",
-            "method": "GET",
-            "path": "/v1/jobs/{id}",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch a sandbox job's status and result."
         },
         {
             "id": "cancel_job",
@@ -5177,6 +5158,25 @@ OPERATIONS = {
             "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
         },
         {
+            "id": "get_job",
+            "upstream_operation_id": "projects.jobs.get",
+            "method": "GET",
+            "path": "/v1/jobs/{id}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch a sandbox job's status and result."
+        },
+        {
             "id": "projects_modules_create",
             "upstream_operation_id": "projects.modules.create",
             "method": "POST",
@@ -5189,11 +5189,11 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "bytes_base64"
+                "bytesBase64"
             ],
             "forbidden_body": [],
             "required_body": [
-                "bytes_base64"
+                "bytesBase64"
             ],
             "body_defaults": {},
             "scope": None,
