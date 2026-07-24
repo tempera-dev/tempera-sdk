@@ -80,7 +80,21 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds current Workflows main head f83acfd0653cd11c4ead536ddc315bd586b7e2fc, whose committed OpenAPI blob is unchanged; no hosted callback or external experiment result is claimed."
+      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds current Workflows main head 366c87d4588fb843bbdf38eeb75253cf905aea24; no hosted callback or external experiment result is claimed."
+    },
+    {
+      "integration_id": "workflows-bio-campaign-compiler-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/tempera-workflows-api.json.source",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "All three generated clients expose compileBioCampaign with the exact custom-method path, tempera-workflows audience, and workflow:write scope from Workflows main head 366c87d4588fb843bbdf38eeb75253cf905aea24. The SDK constructs the request but does not save, execute, or validate a physical campaign."
     }
   ],
   "physical_execution": {
@@ -92,7 +106,7 @@
   "limitations": [
     "Generated Discovery methods prove cross-language dispatch and contract conformance, not a hosted production call.",
     "Canonical source locks prove exact contract provenance and generated-client parity; they do not prove that any hosted producer deployment has adopted those commits.",
-    "Durable-signal client tests prove request construction and exact producer-contract parity; they do not prove receipt of a real provider callback or successful external execution.",
+    "Durable-signal and campaign-compiler client tests prove request construction and exact producer-contract parity; they do not prove receipt of a real provider callback, a saved workflow, or successful external execution.",
     "Authorization clients transport approvals and external secret references; they do not approve, resolve a secret, submit physical work, or prove provider execution without an authorized caller.",
     "The SDK transports evidence contracts; it does not determine biological validity, experimental execution, production qualification, or dataset eligibility."
   ]

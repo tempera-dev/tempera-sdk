@@ -17,14 +17,23 @@
   It transports the complete bounded round history to Bio for independent
   decision replay and stopping-rule derivation; the SDK neither invents
   cumulative counters nor claims that any physical campaign ran.
+- Workflows campaign compilation: `compileBioCampaign` is generated from
+  `tempera-dev/tempera-workflows@366c87d4588fb843bbdf38eeb75253cf905aea24`.
+  Its generated TypeScript, Python, and Rust methods preserve the producer's
+  `workflow:write` scope and `tempera-workflows` audience. The SDK only builds
+  the request; it does not save, execute, or validate a physical campaign.
 - Breaking corrections: Auth Hub's duplicate `signup`/`login` aliases become
   the canonical `createHostedSession` operation; Data Engine adopts its
   canonical `/v1/{parent}` paths and current request fields. Its
   `projects/*` resource-name template is validated and expanded without
   percent-encoding the canonical slash in all three languages. Tempera Bio and
   Human Data gain generated typed clients from their committed producer
-  contracts. Workflows retains its durable run-signal client from current
-  `main`. The fictitious
+  contracts. Workflows retains its durable run-signal client and adds its
+  canonical non-mutating Bio campaign compiler from current `main`; its 15
+  existing authenticated methods now use the producer-declared
+  `oauthResource` kind and `tempera-workflows` audience instead of the generic
+  product fallback, and `runsSignal` gains its canonical `workflow:run` scope.
+  The fictitious
   Tempera Code HTTP gateway methods are removed because its public protocol is
   generated JSON-RPC, not `/v1/models` or `/v1/responses`. Remi is repinned
   from a stale feature branch to its committed `main` manifest; `manage`,
