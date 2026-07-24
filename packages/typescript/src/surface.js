@@ -4605,13 +4605,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "context_evidence_ref",
-        "verifier_receipt_artifact_ref",
-        "request_id"
+        "contextEvidenceRef",
+        "verifierReceiptArtifactRef",
+        "requestId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "context_evidence_ref"
+        "contextEvidenceRef"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -4737,14 +4737,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "evaluator",
-        "qualification_policy",
+        "qualificationPolicy",
         "suite",
         "trainer"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "evaluator",
-        "qualification_policy",
+        "qualificationPolicy",
         "suite",
         "trainer"
       ],
@@ -4784,13 +4784,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "body": [
-        "policy_submission",
-        "training_report"
+        "policySubmission",
+        "trainingReport"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "policy_submission",
-        "training_report"
+        "policySubmission",
+        "trainingReport"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",

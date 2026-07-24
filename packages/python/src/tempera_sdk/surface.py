@@ -4596,13 +4596,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "context_evidence_ref",
-                "verifier_receipt_artifact_ref",
-                "request_id"
+                "contextEvidenceRef",
+                "verifierReceiptArtifactRef",
+                "requestId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "context_evidence_ref"
+                "contextEvidenceRef"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -4728,14 +4728,14 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "evaluator",
-                "qualification_policy",
+                "qualificationPolicy",
                 "suite",
                 "trainer"
             ],
             "forbidden_body": [],
             "required_body": [
                 "evaluator",
-                "qualification_policy",
+                "qualificationPolicy",
                 "suite",
                 "trainer"
             ],
@@ -4775,13 +4775,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "policy_submission",
-                "training_report"
+                "policySubmission",
+                "trainingReport"
             ],
             "forbidden_body": [],
             "required_body": [
-                "policy_submission",
-                "training_report"
+                "policySubmission",
+                "trainingReport"
             ],
             "body_defaults": {},
             "scope": "eval:run",

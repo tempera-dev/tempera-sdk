@@ -6662,38 +6662,38 @@
       "OAuthGrant": {
         "type": "object",
         "required": [
-          "grant_id",
-          "client_id",
-          "client_name",
+          "grantId",
+          "clientId",
+          "clientName",
           "aud",
-          "org_id",
-          "project_id",
-          "environment_id",
+          "orgId",
+          "projectId",
+          "environmentId",
           "scopes",
-          "created_at",
-          "updated_at",
-          "last_used_at"
+          "createdAt",
+          "updatedAt",
+          "lastUsedAt"
         ],
         "properties": {
-          "grant_id": {
+          "grantId": {
             "type": "string"
           },
-          "client_id": {
+          "clientId": {
             "type": "string"
           },
-          "client_name": {
+          "clientName": {
             "type": "string"
           },
           "aud": {
             "type": "string"
           },
-          "org_id": {
+          "orgId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "scopes": {
@@ -6702,19 +6702,19 @@
               "$ref": "#/components/schemas/Scope"
             }
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "last_used_at": {
+          "lastUsedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "revoked_at": {
+          "revokedAt": {
             "type": [
               "string",
               "null"
