@@ -51,6 +51,7 @@ jobs:
         shell: bash
         run: |
           kit_source_commit="$(python3 -c 'import json; print(json.load(open(".tempera/agent-kit.lock.json"))["source"]["commit"])')"
+          test "$kit_source_commit" = "$(git -C .agent-kit-source rev-parse HEAD)"
           python3 scripts/sync-agent-kit.py \
             --mode check \
             --source-dir .agent-kit-source/agent-kit \

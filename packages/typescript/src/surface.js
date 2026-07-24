@@ -3,7 +3,7 @@
 // the error contract, and every typed operation, shared verbatim with
 // the Python and Rust packages.
 
-export const TEMPERA_SURFACE_VERSION = 3;
+export const TEMPERA_SURFACE_VERSION = 4;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"]);
 export const DEFAULT_AUDIENCE = "palette";
@@ -28,7 +28,6 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "dataEngineApiUrl": "http://127.0.0.1:8090",
     "temperaGymUrl": "http://127.0.0.1:8096",
     "cradleApiUrl": "http://127.0.0.1:8088",
-    "temperaCodeApiUrl": "http://127.0.0.1:8789",
     "temperaLlmApiUrl": "http://127.0.0.1:8080",
     "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
     "paletteApiUrl": "http://localhost:8080",
@@ -44,7 +43,6 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "dataEngineApiUrl": "https://preview-data-engine.tempera.dev",
     "temperaGymUrl": "https://preview-gym.tempera.dev",
     "cradleApiUrl": "https://preview-cradle.tempera.dev",
-    "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
     "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
     "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
@@ -60,7 +58,6 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "dataEngineApiUrl": "https://staging-data-engine.tempera.dev",
     "temperaGymUrl": "https://staging-gym.tempera.dev",
     "cradleApiUrl": "https://staging-cradle.tempera.dev",
-    "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
     "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
     "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
@@ -76,7 +73,6 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "dataEngineApiUrl": "https://data-engine.tempera.dev",
     "temperaGymUrl": "https://gym.tempera.dev",
     "cradleApiUrl": "https://cradle.tempera.dev",
-    "temperaCodeApiUrl": "https://code-api.tempera.dev",
     "temperaLlmApiUrl": "https://llm.tempera.dev",
     "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
@@ -108,13 +104,6 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_TEMPO_URL",
     "audience": "tempo",
     "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
-  },
-  "temperaCode": {
-    "name": "Tempera Code",
-    "repository": "https://github.com/tempera-dev/tempera-code",
-    "envVar": "TEMPERA_CODE_GATEWAY_URL",
-    "audience": "tempera-code",
-    "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
   },
   "temperaLlm": {
     "name": "tempera-llm",
@@ -194,10 +183,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   "controlPlane": [
     {
       "id": "health",
+      "upstreamOperationId": "getHealth",
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -207,95 +198,29 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check control-plane liveness; returns {ok: true}."
     },
     {
-      "id": "discovery",
+      "id": "getReadiness",
+      "upstreamOperationId": "getReadiness",
       "method": "GET",
-      "path": "/.well-known/oauth-authorization-server",
+      "path": "/readyz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
-    },
-    {
-      "id": "jwks",
-      "method": "GET",
-      "path": "/.well-known/jwks.json",
-      "auth": "none",
-      "pathParams": [],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
-    },
-    {
-      "id": "protectedResourceMetadata",
-      "method": "GET",
-      "path": "/.well-known/oauth-protected-resource/{resource}",
-      "auth": "none",
-      "pathParams": [
-        "resource"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch OAuth protected-resource metadata for one registered audience."
-    },
-    {
-      "id": "signup",
-      "method": "POST",
-      "path": "/sessions",
-      "auth": "none",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "email",
-        "password",
-        "organization",
-        "invite_token"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {
-        "mode": "signup"
-      },
-      "scope": null,
-      "description": "Create a Tempera account (or accept an invite) and receive an account-session token pair."
-    },
-    {
-      "id": "login",
-      "method": "POST",
-      "path": "/sessions",
-      "auth": "none",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "email",
-        "password"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {
-        "mode": "login"
-      },
-      "scope": null,
-      "description": "Log in with email and password and receive an account-session token pair."
+      "description": "Readiness probe for durable control-plane storage."
     },
     {
       "id": "me",
+      "upstreamOperationId": "getMe",
       "method": "GET",
       "path": "/me",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -305,29 +230,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch the authenticated user's identity, active workspace, and roles."
     },
     {
-      "id": "selectWorkspace",
-      "method": "POST",
-      "path": "/workspace/select",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "org_id",
-        "project_id",
-        "environment_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Switch the active workspace and receive a token pair scoped to it."
-    },
-    {
       "id": "listOrgs",
+      "upstreamOperationId": "listOrganizations",
       "method": "GET",
       "path": "/orgs",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -338,88 +247,115 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createOrg",
+      "upstreamOperationId": "createOrganization",
       "method": "POST",
       "path": "/orgs",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "name"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "name"
+      ],
       "bodyDefaults": {},
       "scope": null,
       "description": "Create an organization; the caller becomes its owner."
     },
     {
-      "id": "listProjects",
+      "id": "listSessions",
+      "upstreamOperationId": "listAccountSessions",
       "method": "GET",
-      "path": "/projects",
+      "path": "/sessions",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List projects across every organization the user belongs to."
+      "description": "List the user's active account sessions."
     },
     {
-      "id": "createProject",
+      "id": "createHostedSession",
+      "upstreamOperationId": "createHostedSession",
       "method": "POST",
-      "path": "/projects",
+      "path": "/sessions",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "mode",
+        "email",
+        "password",
+        "organization",
+        "invite_token"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "email",
+        "password"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create a first-party hosted account session from email/password login or signup."
+    },
+    {
+      "id": "revokeSession",
+      "upstreamOperationId": "revokeAccountSession",
+      "method": "DELETE",
+      "path": "/sessions/{id}",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Revoke an account session and its tokens immediately (idempotent)."
+    },
+    {
+      "id": "selectWorkspace",
+      "upstreamOperationId": "selectWorkspace",
+      "method": "POST",
+      "path": "/workspace/select",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "org_id",
-        "name"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Create a project in an organization (requires an org admin role)."
-    },
-    {
-      "id": "listEnvironments",
-      "method": "GET",
-      "path": "/environments",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "List environments across every project the user can access."
-    },
-    {
-      "id": "createEnvironment",
-      "method": "POST",
-      "path": "/environments",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [
         "project_id",
-        "name"
+        "environment_id"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id"
+      ],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Create an environment in a project (requires an org admin role)."
+      "description": "Switch the active workspace and receive a token pair scoped to it."
     },
     {
       "id": "listTeamMembers",
+      "upstreamOperationId": "listTeamMembers",
       "method": "GET",
       "path": "/team/members",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -430,30 +366,36 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "updateTeamMember",
+      "upstreamOperationId": "updateTeamMember",
       "method": "PATCH",
-      "path": "/team/members/{member_id}",
+      "path": "/team/members/{id}",
       "auth": "account",
       "pathParams": [
-        "member_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "role"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "role"
+      ],
       "bodyDefaults": {},
       "scope": null,
       "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
     },
     {
       "id": "removeTeamMember",
+      "upstreamOperationId": "removeTeamMember",
       "method": "DELETE",
-      "path": "/team/members/{member_id}",
+      "path": "/team/members/{id}",
       "auth": "account",
       "pathParams": [
-        "member_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -464,10 +406,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listInvites",
+      "upstreamOperationId": "listInvites",
       "method": "GET",
       "path": "/invites",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -478,29 +422,36 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createInvite",
+      "upstreamOperationId": "createInvite",
       "method": "POST",
       "path": "/invites",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "email",
         "role"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "email",
+        "role"
+      ],
       "bodyDefaults": {},
       "scope": null,
       "description": "Invite a user to the active organization; the accept URL is returned once."
     },
     {
       "id": "cancelInvite",
+      "upstreamOperationId": "cancelInvite",
       "method": "DELETE",
-      "path": "/invites/{invite_id}",
+      "path": "/invites/{id}",
       "auth": "account",
       "pathParams": [
-        "invite_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -510,11 +461,89 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel a pending invite (idempotent)."
     },
     {
+      "id": "listProjects",
+      "upstreamOperationId": "listProjects",
+      "method": "GET",
+      "path": "/projects",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List projects across every organization the user belongs to."
+    },
+    {
+      "id": "createProject",
+      "upstreamOperationId": "createProject",
+      "method": "POST",
+      "path": "/projects",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "name"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "name"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create a project in an organization (requires an org admin role)."
+    },
+    {
+      "id": "listEnvironments",
+      "upstreamOperationId": "listEnvironments",
+      "method": "GET",
+      "path": "/environments",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List environments across every project the user can access."
+    },
+    {
+      "id": "createEnvironment",
+      "upstreamOperationId": "createEnvironment",
+      "method": "POST",
+      "path": "/environments",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "project_id",
+        "name"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "project_id",
+        "name"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create an environment in a project (requires an org admin role)."
+    },
+    {
       "id": "listApiKeys",
+      "upstreamOperationId": "listApiKeys",
       "method": "GET",
       "path": "/api-keys",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -525,48 +554,43 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createApiKey",
+      "upstreamOperationId": "createApiKey",
       "method": "POST",
       "path": "/api-keys",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
-        "scopes",
-        "audience",
         "org_id",
         "project_id",
-        "environment_id"
+        "environment_id",
+        "name",
+        "scopes",
+        "audience",
+        "expires_at"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "scopes"
+      ],
       "bodyDefaults": {},
       "scope": null,
       "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
     },
     {
-      "id": "rotateApiKey",
-      "method": "POST",
-      "path": "/api-keys/{api_key_id}/rotate",
-      "auth": "account",
-      "pathParams": [
-        "api_key_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Rotate an API key's secret; the new secret is returned exactly once."
-    },
-    {
       "id": "revokeApiKey",
+      "upstreamOperationId": "revokeApiKey",
       "method": "DELETE",
-      "path": "/api-keys/{api_key_id}",
+      "path": "/api-keys/{id}",
       "auth": "account",
       "pathParams": [
-        "api_key_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -576,71 +600,163 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Revoke an API key (idempotent)."
     },
     {
-      "id": "listGrants",
-      "method": "GET",
-      "path": "/oauth/grants",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "List the OAuth grants the user has approved in the active workspace."
-    },
-    {
-      "id": "revokeGrant",
-      "method": "DELETE",
-      "path": "/oauth/grants/{grant_id}",
+      "id": "rotateApiKey",
+      "upstreamOperationId": "rotateApiKey",
+      "method": "POST",
+      "path": "/api-keys/{id}/rotate",
       "auth": "account",
       "pathParams": [
-        "grant_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Revoke an OAuth grant and every refresh token issued under it."
+      "description": "Rotate an API key's secret; the new secret is returned exactly once."
     },
     {
-      "id": "listSessions",
+      "id": "providerConnectionsList",
+      "upstreamOperationId": "providerConnections.list",
       "method": "GET",
-      "path": "/sessions",
+      "path": "/provider-connections",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List the user's active account sessions."
+      "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned."
     },
     {
-      "id": "revokeSession",
+      "id": "providerConnectionsCreate",
+      "upstreamOperationId": "providerConnections.create",
+      "method": "POST",
+      "path": "/provider-connections",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "provider",
+        "name",
+        "secret_ref",
+        "allowed_models"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "provider",
+        "name",
+        "secret_ref"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Create a tenant-scoped provider connection using only an external secret reference."
+    },
+    {
+      "id": "providerConnectionsRevoke",
+      "upstreamOperationId": "providerConnections.revoke",
       "method": "DELETE",
-      "path": "/sessions/{session_id}",
+      "path": "/provider-connections/{id}",
       "auth": "account",
       "pathParams": [
-        "session_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Revoke an account session and its tokens immediately (idempotent)."
+      "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op."
+    },
+    {
+      "id": "providerConnectionsRotate",
+      "upstreamOperationId": "providerConnections.rotate",
+      "method": "POST",
+      "path": "/provider-connections/{id}:rotate",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "secret_ref",
+        "allowed_models"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "secret_ref"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Replace a connection secret reference and increment its revision without exposing the reference."
+    },
+    {
+      "id": "providerConnectionsResolve",
+      "upstreamOperationId": "providerConnections.resolve",
+      "method": "POST",
+      "path": "/provider-connections/{id}:resolve",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "usage_delegation"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "usage_delegation"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
+    },
+    {
+      "id": "listAuditLog",
+      "upstreamOperationId": "listAuditLog",
+      "method": "GET",
+      "path": "/audit-log",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
     },
     {
       "id": "listConnectors",
+      "upstreamOperationId": "listConnectors",
       "method": "GET",
       "path": "/connectors",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -651,12 +767,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getConnectorStatus",
+      "upstreamOperationId": "getConnectorStatus",
       "method": "GET",
-      "path": "/connectors/{connector_id}/status",
+      "path": "/connectors/{id}/status",
       "auth": "account",
       "pathParams": [
-        "connector_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -667,10 +785,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listProducts",
+      "upstreamOperationId": "listProducts",
       "method": "GET",
       "path": "/products",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -681,12 +801,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getProductStatus",
+      "upstreamOperationId": "getProductStatus",
       "method": "GET",
-      "path": "/products/{product_id}/status",
+      "path": "/products/{id}/status",
       "auth": "account",
       "pathParams": [
-        "product_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -696,25 +818,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
     },
     {
-      "id": "getModelCatalog",
-      "method": "GET",
-      "path": "/model-catalog",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "model:read",
-      "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
-    },
-    {
       "id": "getBillingStatus",
+      "upstreamOperationId": "getBillingStatus",
       "method": "GET",
       "path": "/billing/status",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -725,14 +835,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createBillingCheckout",
+      "upstreamOperationId": "createBillingCheckout",
       "method": "GET",
       "path": "/billing/checkout",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [
         "rail",
+        "plan",
         "plan_id",
-        "billing_interval",
         "currency",
         "network"
       ],
@@ -745,10 +857,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getBillingPortal",
+      "upstreamOperationId": "createBillingPortal",
       "method": "GET",
       "path": "/billing/portal",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -758,63 +872,529 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
     },
     {
-      "id": "recordUsage",
-      "method": "POST",
-      "path": "/usage/events",
-      "auth": "account",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "metric",
-        "quantity",
-        "org_id",
-        "project_id",
-        "environment_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
-    },
-    {
-      "id": "listAuditLog",
+      "id": "getBillingCredits",
+      "upstreamOperationId": "getBillingCredits",
       "method": "GET",
-      "path": "/audit-log",
+      "path": "/billing/credits",
       "auth": "account",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
+      "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
+    },
+    {
+      "id": "getModelCatalog",
+      "upstreamOperationId": "getModelCatalog",
+      "method": "GET",
+      "path": "/model-catalog",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "model:read",
+      "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
+    },
+    {
+      "id": "recordUsage",
+      "upstreamOperationId": "recordUsageEvent",
+      "method": "POST",
+      "path": "/usage/events",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "metric",
+        "quantity",
+        "idempotency_key",
+        "cost"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "metric"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
+    },
+    {
+      "id": "usageReservationsCreate",
+      "upstreamOperationId": "usageReservations.create",
+      "method": "POST",
+      "path": "/usage/reservations",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "subject",
+        "idempotency_key",
+        "provider",
+        "model",
+        "config_id",
+        "byok",
+        "maximum_provider_cost_micros",
+        "ttl_seconds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "idempotency_key",
+        "provider",
+        "model",
+        "config_id",
+        "byok",
+        "maximum_provider_cost_micros"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Atomically reserve the maximum model cost before starting a provider request."
+    },
+    {
+      "id": "usageReservationsCommit",
+      "upstreamOperationId": "usageReservations.commit",
+      "method": "POST",
+      "path": "/usage/reservations/{reservation_id}:commit",
+      "auth": "account",
+      "pathParams": [
+        "reservation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "config_id",
+        "cost"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "config_id",
+        "cost"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Commit exact provider usage against an admitted reservation and release unused capacity."
+    },
+    {
+      "id": "usageReservationsRelease",
+      "upstreamOperationId": "usageReservations.release",
+      "method": "POST",
+      "path": "/usage/reservations/{reservation_id}:release",
+      "auth": "account",
+      "pathParams": [
+        "reservation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Release unused capacity after provider failure or cancellation."
+    },
+    {
+      "id": "usageReservationsReconcile",
+      "upstreamOperationId": "usageReservations.reconcile",
+      "method": "POST",
+      "path": "/usage/reservations/{reservation_id}:reconcile",
+      "auth": "account",
+      "pathParams": [
+        "reservation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "config_id",
+        "reason",
+        "trace_id",
+        "observed_usage",
+        "expected_cost"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "project_id",
+        "environment_id",
+        "config_id",
+        "reason",
+        "observed_usage"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable."
+    },
+    {
+      "id": "listGrants",
+      "upstreamOperationId": "listOAuthGrants",
+      "method": "GET",
+      "path": "/oauth/grants",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List the OAuth grants the user has approved in the active workspace."
+    },
+    {
+      "id": "revokeGrant",
+      "upstreamOperationId": "revokeOAuthGrant",
+      "method": "DELETE",
+      "path": "/oauth/grants/{id}",
+      "auth": "account",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Revoke an OAuth grant and every refresh token issued under it."
     },
     {
       "id": "introspectToken",
+      "upstreamOperationId": "introspectOAuthToken",
       "method": "POST",
       "path": "/oauth/introspect",
       "auth": "introspectionSecret",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
+        "token",
+        "token_type_hint"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
         "token"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid."
+    },
+    {
+      "id": "discovery",
+      "upstreamOperationId": "getOAuthAuthorizationServerMetadata",
+      "method": "GET",
+      "path": "/.well-known/oauth-authorization-server",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
+    },
+    {
+      "id": "getOAuthProtectedResourceMetadata",
+      "upstreamOperationId": "getOAuthProtectedResourceMetadata",
+      "method": "GET",
+      "path": "/.well-known/oauth-protected-resource",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "OAuth protected resource discovery metadata for MCP/resource clients."
+    },
+    {
+      "id": "protectedResourceMetadata",
+      "upstreamOperationId": "getOAuthProtectedResourceMetadataForAudience",
+      "method": "GET",
+      "path": "/.well-known/oauth-protected-resource/{resource}",
+      "auth": "none",
+      "pathParams": [
+        "resource"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch OAuth protected-resource metadata for one registered audience."
+    },
+    {
+      "id": "jwks",
+      "upstreamOperationId": "getJsonWebKeySet",
+      "method": "GET",
+      "path": "/.well-known/jwks.json",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
+    },
+    {
+      "id": "adminOperationalProvenance",
+      "upstreamOperationId": "adminOperationalProvenance",
+      "method": "GET",
+      "path": "/admin/operations/provenance",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session."
+    },
+    {
+      "id": "adminStepUp",
+      "upstreamOperationId": "adminStepUp",
+      "method": "POST",
+      "path": "/admin/step-up",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "password"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "password"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations."
+    },
+    {
+      "id": "adminAdjustCredits",
+      "upstreamOperationId": "adminAdjustCredits",
+      "method": "POST",
+      "path": "/admin/billing/credits/adjust",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "org_id",
+        "credit_micros",
+        "reference",
+        "reason"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "org_id",
+        "credit_micros"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference."
+    },
+    {
+      "id": "adminBillingOrgs",
+      "upstreamOperationId": "adminBillingOrgs",
+      "method": "GET",
+      "path": "/admin/billing/orgs",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics."
+    },
+    {
+      "id": "githubSetupSessionsCreate",
+      "upstreamOperationId": "githubSetupSessions.create",
+      "method": "POST",
+      "path": "/github/setup-sessions",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "project_id",
+        "environment_id",
+        "return_url"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid."
+      "description": "Create a one-time CSRF-bound GitHub App installation session."
+    },
+    {
+      "id": "githubSetupSessionsComplete",
+      "upstreamOperationId": "githubSetupSessions.complete",
+      "method": "GET",
+      "path": "/github/callback",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "state",
+        "installation_id"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Bind a GitHub installation callback to its authenticated workspace."
+    },
+    {
+      "id": "githubInstallationsList",
+      "upstreamOperationId": "githubInstallations.list",
+      "method": "GET",
+      "path": "/github/installations",
+      "auth": "account",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List active GitHub App installations for the organization."
+    },
+    {
+      "id": "githubInstallationsDisconnect",
+      "upstreamOperationId": "githubInstallations.disconnect",
+      "method": "DELETE",
+      "path": "/github/installations/{installation_id}",
+      "auth": "account",
+      "pathParams": [
+        "installation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Disconnect a GitHub App installation from the workspace."
+    },
+    {
+      "id": "githubInstallationRepositoriesList",
+      "upstreamOperationId": "githubInstallationRepositories.list",
+      "method": "GET",
+      "path": "/github/installations/{installation_id}/repositories",
+      "auth": "account",
+      "pathParams": [
+        "installation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List repository metadata received for a GitHub installation."
+    },
+    {
+      "id": "githubRepositorySnapshotsCapture",
+      "upstreamOperationId": "githubRepositorySnapshots.capture",
+      "method": "POST",
+      "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+      "auth": "account",
+      "pathParams": [
+        "installation_id",
+        "repository_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "ref"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace."
+    },
+    {
+      "id": "githubWebhooksAccept",
+      "upstreamOperationId": "githubWebhooks.accept",
+      "method": "POST",
+      "path": "/github/webhook",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Accept a signed, replay-deduplicated GitHub webhook."
     }
   ],
   "palette": [
     {
       "id": "health",
+      "upstreamOperationId": "health.check",
       "method": "GET",
       "path": "/health",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -824,13 +1404,1428 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check palette API liveness; returns {ok: true}."
     },
     {
+      "id": "alertsEvaluate",
+      "upstreamOperationId": "alerts.evaluate",
+      "method": "POST",
+      "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "trace_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "input",
+        "policy"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "policy",
+        "input"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook."
+    },
+    {
+      "id": "createApiKey",
+      "upstreamOperationId": "apiKeys.create",
+      "method": "POST",
+      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "scopes"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "scopes"
+      ],
+      "bodyDefaults": {},
+      "scope": "admin",
+      "description": "Mint a palette-scoped API key; the secret is returned exactly once."
+    },
+    {
+      "id": "revokeApiKey",
+      "upstreamOperationId": "apiKeys.revoke",
+      "method": "POST",
+      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "environment_id",
+        "api_key_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "admin",
+      "description": "Revoke a palette API key."
+    },
+    {
+      "id": "archiveQuerySpans",
+      "upstreamOperationId": "archive.querySpans",
+      "method": "GET",
+      "path": "/v1/archive/{tenant_id}/{project_id}/spans",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "environment_id",
+        "trace_id",
+        "span_id",
+        "kind",
+        "status",
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans."
+    },
+    {
+      "id": "archiveTrace",
+      "upstreamOperationId": "archive.archiveTrace",
+      "method": "POST",
+      "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "trace_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "trace:read",
+      "description": "Archive a trace to Parquet and return the archive manifest."
+    },
+    {
+      "id": "auditList",
+      "upstreamOperationId": "audit.list",
+      "method": "GET",
+      "path": "/v1/audit/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/audit/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "calibrationsRun",
+      "upstreamOperationId": "calibrations.run",
+      "method": "POST",
+      "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id",
+        "version_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "eval_report_id",
+        "evaluator_version_id",
+        "pass_threshold"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}."
+    },
+    {
+      "id": "connectGetStatus",
+      "upstreamOperationId": "connect.getStatus",
+      "method": "GET",
+      "path": "/v1/connect/status/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "connectorsList",
+      "upstreamOperationId": "connectors.list",
+      "method": "GET",
+      "path": "/v1/connectors/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/connectors/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "connectorsConnect",
+      "upstreamOperationId": "connectors.connect",
+      "method": "POST",
+      "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "toolkit"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "toolkit"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect."
+    },
+    {
+      "id": "connectorsInvokeTool",
+      "upstreamOperationId": "connectors.invokeTool",
+      "method": "POST",
+      "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "arguments",
+        "tool"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tool"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke."
+    },
+    {
+      "id": "connectorsGetSkills",
+      "upstreamOperationId": "connectors.getSkills",
+      "method": "GET",
+      "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "toolkit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills."
+    },
+    {
+      "id": "connectorsStatus",
+      "upstreamOperationId": "connectors.status",
+      "method": "GET",
+      "path": "/v1/connectors/{tenant_id}/{project_id}/status",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "toolkit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status."
+    },
+    {
+      "id": "connectorsListTools",
+      "upstreamOperationId": "connectors.listTools",
+      "method": "GET",
+      "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "toolkit",
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools."
+    },
+    {
+      "id": "createDataset",
+      "upstreamOperationId": "datasets.create",
+      "method": "POST",
+      "path": "/v1/datasets/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "name"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "name"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Create a dataset for curating cases from traces."
+    },
+    {
+      "id": "promoteTraceToCase",
+      "upstreamOperationId": "datasets.promoteCaseFromTrace",
+      "method": "POST",
+      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "reference",
+        "span_id",
+        "trace_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "trace_id"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Promote a trace (or one span of it) into a dataset case."
+    },
+    {
+      "id": "createDatasetVersion",
+      "upstreamOperationId": "datasets.createVersion",
+      "method": "POST",
+      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "case_ids"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Snapshot a dataset into an immutable version for evals and experiments."
+    },
+    {
+      "id": "evalsRunDeterministic",
+      "upstreamOperationId": "evals.runDeterministic",
+      "method": "POST",
+      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id",
+        "version_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "agent_release_id",
+        "code_hash",
+        "evaluator_id",
+        "evaluator_version_id",
+        "kind",
+        "prompt_version_id",
+        "wasm_hash"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evaluator_id",
+        "evaluator_version_id",
+        "agent_release_id",
+        "kind"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic."
+    },
+    {
+      "id": "evalsRunJudge",
+      "upstreamOperationId": "evals.runJudge",
+      "method": "POST",
+      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id",
+        "version_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "agent_release_id",
+        "code_hash",
+        "evaluator_id",
+        "evaluator_version_id",
+        "kind",
+        "prompt_version_id",
+        "provider_secret_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evaluator_id",
+        "evaluator_version_id",
+        "agent_release_id",
+        "kind",
+        "provider_secret_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge."
+    },
+    {
+      "id": "importTemperaBundle",
+      "upstreamOperationId": "evalResults.importTemperaBundle",
+      "method": "POST",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "canonical_json",
+        "public_key_pem",
+        "signature_base64"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
+    },
+    {
+      "id": "recordTemperaDecision",
+      "upstreamOperationId": "evalResults.recordTemperaDecision",
+      "method": "POST",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "canonical_json",
+        "public_key_pem",
+        "signature_base64"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "canonical_json",
+        "signature_base64",
+        "public_key_pem"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
+    },
+    {
+      "id": "getTemperaEvidence",
+      "upstreamOperationId": "evalResults.getTemperaEvidence",
+      "method": "GET",
+      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "kind",
+        "external_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
+    },
+    {
+      "id": "experimentsRunDeterministic",
+      "upstreamOperationId": "experiments.runDeterministic",
+      "method": "POST",
+      "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id",
+        "version_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "baseline_outputs",
+        "baseline_release_id",
+        "candidate_outputs",
+        "candidate_release_id",
+        "evaluator_id",
+        "evaluator_version_id",
+        "gate_policy",
+        "kind"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "baseline_release_id",
+        "candidate_release_id",
+        "evaluator_id",
+        "evaluator_version_id",
+        "kind",
+        "baseline_outputs",
+        "candidate_outputs"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic."
+    },
+    {
+      "id": "experimentsRunJudge",
+      "upstreamOperationId": "experiments.runJudge",
+      "method": "POST",
+      "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "dataset_id",
+        "version_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "baseline_outputs",
+        "baseline_release_id",
+        "candidate_outputs",
+        "candidate_release_id",
+        "evaluator_id",
+        "evaluator_version_id",
+        "gate_policy",
+        "kind",
+        "provider_secret_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "baseline_release_id",
+        "candidate_release_id",
+        "evaluator_id",
+        "evaluator_version_id",
+        "kind",
+        "baseline_outputs",
+        "candidate_outputs",
+        "provider_secret_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge."
+    },
+    {
+      "id": "gatesCreate",
+      "upstreamOperationId": "gates.create",
+      "method": "POST",
+      "path": "/v1/gates/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "dataset_id",
+        "evaluator_version_id",
+        "gate_id",
+        "inconclusive_policy",
+        "name"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "gate_id",
+        "name"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/gates/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "gatesRun",
+      "upstreamOperationId": "gates.run",
+      "method": "POST",
+      "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "gate_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "experiment_run_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run."
+    },
+    {
+      "id": "importSource",
+      "upstreamOperationId": "ingest.importSource",
+      "method": "POST",
+      "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "environment_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "durability"
+      ],
+      "body": [
+        "payload",
+        "source"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "source"
+      ],
+      "bodyDefaults": {},
+      "scope": "trace:write",
+      "description": "Import spans from a named external source payload."
+    },
+    {
+      "id": "ingestReplayDeadLetter",
+      "upstreamOperationId": "ingest.replayDeadLetter",
+      "method": "POST",
+      "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "message_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "reset_attempts"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay."
+    },
+    {
+      "id": "ingestGetQueueStatus",
+      "upstreamOperationId": "ingest.getQueueStatus",
+      "method": "GET",
+      "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue."
+    },
+    {
+      "id": "ingestDrainTraceIngested",
+      "upstreamOperationId": "ingest.drainTraceIngested",
+      "method": "POST",
+      "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain."
+    },
+    {
+      "id": "ingestDrainTraceWrites",
+      "upstreamOperationId": "ingest.drainTraceWrites",
+      "method": "POST",
+      "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain."
+    },
+    {
+      "id": "ingestReconcileTrace",
+      "upstreamOperationId": "ingest.reconcileTrace",
+      "method": "POST",
+      "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "trace_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile."
+    },
+    {
+      "id": "judgeEvaluate",
+      "upstreamOperationId": "judge.evaluate",
+      "method": "POST",
+      "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "cache_namespace",
+        "case",
+        "evaluator",
+        "provider_secret_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evaluator",
+        "case",
+        "provider_secret_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate."
+    },
+    {
+      "id": "judgeListLedger",
+      "upstreamOperationId": "judge.listLedger",
+      "method": "GET",
+      "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger."
+    },
+    {
+      "id": "onlineDecideSampling",
+      "upstreamOperationId": "online.decideSampling",
+      "method": "POST",
+      "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "trace_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "high_cost_micros_threshold",
+        "keep_errors",
+        "sample_rate_per_mille",
+        "slow_ms_threshold"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "sample_rate_per_mille",
+        "keep_errors"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling."
+    },
+    {
+      "id": "promptsList",
+      "upstreamOperationId": "prompts.list",
+      "method": "GET",
+      "path": "/v1/prompts/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/prompts/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "promptsCreate",
+      "upstreamOperationId": "prompts.create",
+      "method": "POST",
+      "path": "/v1/prompts/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "created_by",
+        "description",
+        "message",
+        "name",
+        "template"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "name",
+        "template"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/prompts/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "promptsGet",
+      "upstreamOperationId": "prompts.get",
+      "method": "GET",
+      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "prompt_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}."
+    },
+    {
+      "id": "promptsDiffVersions",
+      "upstreamOperationId": "prompts.diffVersions",
+      "method": "GET",
+      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "prompt_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "from",
+        "to"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff."
+    },
+    {
+      "id": "promptsListVersions",
+      "upstreamOperationId": "prompts.listVersions",
+      "method": "GET",
+      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "prompt_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
+    },
+    {
+      "id": "promptsAddVersion",
+      "upstreamOperationId": "prompts.addVersion",
+      "method": "POST",
+      "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "prompt_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "created_by",
+        "message",
+        "template"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "template"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
+    },
+    {
+      "id": "providerSecretsList",
+      "upstreamOperationId": "providerSecrets.list",
+      "method": "GET",
+      "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "providerSecretsCreate",
+      "upstreamOperationId": "providerSecrets.create",
+      "method": "POST",
+      "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "display_name",
+        "provider",
+        "secret_value"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "provider",
+        "display_name",
+        "secret_value"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "providerSecretsRevoke",
+      "upstreamOperationId": "providerSecrets.revoke",
+      "method": "POST",
+      "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "provider_secret_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke."
+    },
+    {
+      "id": "reviewsCreateQueue",
+      "upstreamOperationId": "reviews.createQueue",
+      "method": "POST",
+      "path": "/v1/review-queues/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "annotation_schema",
+        "name",
+        "queue_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "name",
+        "annotation_schema"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "reviewsListTasks",
+      "upstreamOperationId": "reviews.listTasks",
+      "method": "GET",
+      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "queue_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "state"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks."
+    },
+    {
+      "id": "reviewsEnqueueTaskFromTrace",
+      "upstreamOperationId": "reviews.enqueueTaskFromTrace",
+      "method": "POST",
+      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "queue_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "dataset_case_id",
+        "dataset_id",
+        "priority",
+        "span_id",
+        "task_id",
+        "trace_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "trace_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace."
+    },
+    {
+      "id": "reviewsSubmitAnnotation",
+      "upstreamOperationId": "reviews.submitAnnotation",
+      "method": "POST",
+      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "queue_id",
+        "task_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "annotation_id",
+        "payload",
+        "reviewer_id",
+        "verdict"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "reviewer_id",
+        "verdict",
+        "payload"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations."
+    },
+    {
+      "id": "reviewsPromoteAnnotation",
+      "upstreamOperationId": "reviews.promoteAnnotation",
+      "method": "POST",
+      "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "queue_id",
+        "task_id",
+        "annotation_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "dataset_id",
+        "reference"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "dataset_id"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote."
+    },
+    {
+      "id": "scenariosList",
+      "upstreamOperationId": "scenarios.list",
+      "method": "GET",
+      "path": "/v1/scenarios/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "limit",
+        "cursor"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "scenariosCreate",
+      "upstreamOperationId": "scenarios.create",
+      "method": "POST",
+      "path": "/v1/scenarios/{tenant_id}/{project_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "exemplar_trace_id",
+        "expected_outcome",
+        "failure_mode",
+        "source_trace_ids",
+        "title"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "title",
+        "source_trace_ids"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}."
+    },
+    {
+      "id": "scenariosMine",
+      "upstreamOperationId": "scenarios.mine",
+      "method": "POST",
+      "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "jaccard_threshold",
+        "trace_ids"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "trace_ids"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine."
+    },
+    {
+      "id": "scenariosGet",
+      "upstreamOperationId": "scenarios.get",
+      "method": "GET",
+      "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "project_id",
+        "scenario_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}."
+    },
+    {
+      "id": "searchSpans",
+      "upstreamOperationId": "search.spans",
+      "method": "GET",
+      "path": "/v1/search/{tenant_id}/spans",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "q",
+        "project_id",
+        "environment_id",
+        "trace_id",
+        "span_id",
+        "kind",
+        "status",
+        "model",
+        "tool",
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "trace:read",
+      "description": "Search spans by text query and facet filters."
+    },
+    {
+      "id": "getSpan",
+      "upstreamOperationId": "spans.get",
+      "method": "GET",
+      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "trace_id",
+        "span_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "unmask",
+        "reason"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "trace:read",
+      "description": "Fetch one canonical span by trace and span id."
+    },
+    {
+      "id": "getSpanIo",
+      "upstreamOperationId": "spans.getIo",
+      "method": "GET",
+      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
+      "auth": "product",
+      "pathParams": [
+        "tenant_id",
+        "trace_id",
+        "span_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "unmask",
+        "reason"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "trace:read",
+      "description": "Fetch a span's recorded input and output values."
+    },
+    {
+      "id": "ingestSpan",
+      "upstreamOperationId": "ingest.native",
+      "method": "POST",
+      "path": "/v1/traces/native",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "durability"
+      ],
+      "body": [
+        "attributes",
+        "auth_context",
+        "cost",
+        "end_time",
+        "idempotency_key",
+        "input",
+        "kind",
+        "model",
+        "name",
+        "output",
+        "parent_span_id",
+        "redaction_class",
+        "scope",
+        "seq",
+        "span_id",
+        "start_time",
+        "status",
+        "tokens",
+        "trace_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "scope",
+        "trace_id",
+        "span_id",
+        "seq",
+        "kind",
+        "name",
+        "status",
+        "attributes",
+        "redaction_class"
+      ],
+      "bodyDefaults": {},
+      "scope": "trace:write",
+      "description": "Ingest one native span; idempotent when an idempotency key is supplied."
+    },
+    {
       "id": "listTraces",
+      "upstreamOperationId": "traces.list",
       "method": "GET",
       "path": "/v1/traces/{tenant_id}",
       "auth": "product",
       "pathParams": [
         "tenant_id"
       ],
+      "pathParamTemplates": {},
       "query": [
         "project_id",
         "environment_id",
@@ -857,6 +2852,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getTrace",
+      "upstreamOperationId": "traces.get",
       "method": "GET",
       "path": "/v1/traces/{tenant_id}/{trace_id}",
       "auth": "product",
@@ -864,6 +2860,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "tenant_id",
         "trace_id"
       ],
+      "pathParamTemplates": {},
       "query": [
         "unmask",
         "reason"
@@ -876,252 +2873,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
     },
     {
-      "id": "getSpan",
-      "method": "GET",
-      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "trace_id",
-        "span_id"
-      ],
-      "query": [
-        "unmask",
-        "reason"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:read",
-      "description": "Fetch one canonical span by trace and span id."
-    },
-    {
-      "id": "getSpanIo",
-      "method": "GET",
-      "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "trace_id",
-        "span_id"
-      ],
-      "query": [
-        "unmask",
-        "reason"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:read",
-      "description": "Fetch a span's recorded input and output values."
-    },
-    {
-      "id": "searchSpans",
-      "method": "GET",
-      "path": "/v1/search/{tenant_id}/spans",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id"
-      ],
-      "query": [
-        "q",
-        "project_id",
-        "environment_id",
-        "trace_id",
-        "span_id",
-        "kind",
-        "status",
-        "model",
-        "tool",
-        "limit"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:read",
-      "description": "Search spans by text query and facet filters."
-    },
-    {
-      "id": "ingestSpan",
-      "method": "POST",
-      "path": "/v1/traces/native",
-      "auth": "product",
-      "pathParams": [],
-      "query": [
-        "durability"
-      ],
-      "body": [
-        "scope",
-        "trace_id",
-        "span_id",
-        "kind",
-        "name",
-        "status",
-        "seq",
-        "attributes",
-        "redaction_class",
-        "parent_span_id",
-        "start_time",
-        "end_time",
-        "input",
-        "output",
-        "model",
-        "tokens",
-        "cost",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:write",
-      "description": "Ingest one native span; idempotent when an idempotency key is supplied."
-    },
-    {
-      "id": "importSource",
-      "method": "POST",
-      "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "query": [
-        "durability"
-      ],
-      "body": [
-        "source",
-        "payload"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:write",
-      "description": "Import spans from a named external source payload."
-    },
-    {
-      "id": "archiveTrace",
-      "method": "POST",
-      "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "trace_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "trace:read",
-      "description": "Archive a trace to Parquet and return the archive manifest."
-    },
-    {
-      "id": "createDataset",
-      "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "name"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Create a dataset for curating cases from traces."
-    },
-    {
-      "id": "promoteTraceToCase",
-      "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id"
-      ],
-      "query": [],
-      "body": [
-        "trace_id",
-        "span_id",
-        "reference"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Promote a trace (or one span of it) into a dataset case."
-    },
-    {
-      "id": "createDatasetVersion",
-      "method": "POST",
-      "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "dataset_id"
-      ],
-      "query": [],
-      "body": [
-        "case_ids"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Snapshot a dataset into an immutable version for evals and experiments."
-    },
-    {
-      "id": "createApiKey",
-      "method": "POST",
-      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "query": [],
-      "body": [
-        "scopes"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "admin",
-      "description": "Mint a palette-scoped API key; the secret is returned exactly once."
-    },
-    {
-      "id": "revokeApiKey",
-      "method": "POST",
-      "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "environment_id",
-        "api_key_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "admin",
-      "description": "Revoke a palette API key."
-    },
-    {
       "id": "getUsageSummary",
+      "upstreamOperationId": "usage.getSummary",
       "method": "GET",
       "path": "/v1/usage/{tenant_id}/{project_id}",
       "auth": "product",
@@ -1129,6 +2882,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "tenant_id",
         "project_id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1136,84 +2890,65 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "admin",
       "description": "Fetch usage totals for a tenant project."
-    },
+    }
+  ],
+  "tempo": [
     {
-      "id": "importTemperaBundle",
-      "method": "POST",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
-      ],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
-    },
-    {
-      "id": "recordTemperaDecision",
-      "method": "POST",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
-      "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
-      ],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
-    },
-    {
-      "id": "getTemperaEvidence",
+      "id": "agentCard",
+      "upstreamOperationId": "agentCard",
       "method": "GET",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "path": "/.well-known/agent-card.json",
       "auth": "product",
-      "pathParams": [
-        "tenant_id",
-        "project_id",
-        "kind",
-        "external_id"
-      ],
+      "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
-    }
-  ],
-  "tempo": [
+      "scope": null,
+      "description": "Call GET /.well-known/agent-card.json."
+    },
+    {
+      "id": "agentJson",
+      "upstreamOperationId": "agentJson",
+      "method": "GET",
+      "path": "/.well-known/agent.json",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /.well-known/agent.json."
+    },
+    {
+      "id": "drain",
+      "upstreamOperationId": "drain",
+      "method": "POST",
+      "path": "/drain",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /drain."
+    },
     {
       "id": "health",
+      "upstreamOperationId": "health",
       "method": "GET",
       "path": "/health",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1223,25 +2958,29 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check tempod liveness; returns {ok: true}."
     },
     {
-      "id": "ready",
+      "id": "metrics",
+      "upstreamOperationId": "metrics",
       "method": "GET",
-      "path": "/ready",
+      "path": "/metrics",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
+      "description": "Call GET /metrics."
     },
     {
       "id": "openapi",
+      "upstreamOperationId": "openapi",
       "method": "GET",
       "path": "/openapi.json",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1251,186 +2990,29 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
     },
     {
-      "id": "listSessions",
+      "id": "ready",
+      "upstreamOperationId": "ready",
       "method": "GET",
-      "path": "/sessions",
+      "path": "/ready",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "List browser sessions with their state and creation time."
-    },
-    {
-      "id": "createSession",
-      "method": "POST",
-      "path": "/sessions",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "url",
-        "driverless"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
-    },
-    {
-      "id": "closeSession",
-      "method": "DELETE",
-      "path": "/sessions/{session_id}",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Close a browser session and release its engine resources."
-    },
-    {
-      "id": "observe",
-      "method": "GET",
-      "path": "/sessions/{session_id}/observe",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
-    },
-    {
-      "id": "actBatch",
-      "method": "POST",
-      "path": "/sessions/{session_id}/act_batch",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [
-        "batch",
-        "input_tainted",
-        "confirmed",
-        "idempotency_key",
-        "confirmation_grant",
-        "payment_context"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
-    },
-    {
-      "id": "screenshot",
-      "method": "GET",
-      "path": "/sessions/{session_id}/screenshot",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [
-        "set_of_marks"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
-    },
-    {
-      "id": "sessionEvents",
-      "method": "GET",
-      "path": "/sessions/{session_id}/events",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [
-        "after_seq"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch the session's event window after a sequence number."
-    },
-    {
-      "id": "adoptSession",
-      "method": "POST",
-      "path": "/sessions/{session_id}/adopt",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Let a human surface take write ownership of the session and receive an adoption lease."
-    },
-    {
-      "id": "handoffSession",
-      "method": "POST",
-      "path": "/sessions/{session_id}/handoff",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Return write ownership of the session to the agent plane."
-    },
-    {
-      "id": "createRun",
-      "method": "POST",
-      "path": "/sessions/{session_id}/runs",
-      "auth": "product",
-      "pathParams": [
-        "session_id"
-      ],
-      "query": [],
-      "body": [
-        "goal",
-        "actions",
-        "max_rounds",
-        "token_budget"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Start an agent run against the session with a goal, action budget, and round limit."
+      "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
     },
     {
       "id": "listRuns",
+      "upstreamOperationId": "listRuns",
       "method": "GET",
       "path": "/runs",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [
         "session_id"
       ],
@@ -1443,12 +3025,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getRun",
+      "upstreamOperationId": "getRun",
       "method": "GET",
       "path": "/runs/{run_id}",
       "auth": "product",
       "pathParams": [
         "run_id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1459,12 +3043,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "cancelRun",
+      "upstreamOperationId": "cancelRun",
       "method": "POST",
       "path": "/runs/{run_id}/cancel",
       "auth": "product",
       "pathParams": [
         "run_id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1474,13 +3060,35 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel an agent run."
     },
     {
+      "id": "runEvents",
+      "upstreamOperationId": "runEvents",
+      "method": "GET",
+      "path": "/runs/{run_id}/events",
+      "auth": "product",
+      "pathParams": [
+        "run_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after_seq"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /runs/{run_id}/events."
+    },
+    {
       "id": "resumeRun",
+      "upstreamOperationId": "resumeRun",
       "method": "POST",
       "path": "/runs/{run_id}/resume",
       "auth": "product",
       "pathParams": [
         "run_id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1490,7 +3098,115 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Resume an agent run after a human handoff completes."
     },
     {
+      "id": "listSessions",
+      "upstreamOperationId": "listSessions",
+      "method": "GET",
+      "path": "/sessions",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "List browser sessions with their state and creation time."
+    },
+    {
+      "id": "createSession",
+      "upstreamOperationId": "createSession",
+      "method": "POST",
+      "path": "/sessions",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "driverless",
+        "url"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "url"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
+    },
+    {
+      "id": "closeSession",
+      "upstreamOperationId": "closeSession",
+      "method": "DELETE",
+      "path": "/sessions/{session_id}",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Close a browser session and release its engine resources."
+    },
+    {
+      "id": "actBatch",
+      "upstreamOperationId": "actBatchSession",
+      "method": "POST",
+      "path": "/sessions/{session_id}/act_batch",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "batch",
+        "confirmation_grant",
+        "confirmed",
+        "idempotency_key",
+        "input_tainted",
+        "payment_context"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "batch"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+    },
+    {
+      "id": "adoptSession",
+      "upstreamOperationId": "adoptSession",
+      "method": "POST",
+      "path": "/sessions/{session_id}/adopt",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "engine_tier",
+        "label",
+        "platform",
+        "profile_id",
+        "storage_continuity",
+        "surface_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+    },
+    {
       "id": "grantConfirmation",
+      "upstreamOperationId": "grantSessionConfirmation",
       "method": "POST",
       "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
       "auth": "product",
@@ -1498,6 +3214,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "session_id",
         "confirmation_id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1505,68 +3222,206 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": null,
       "description": "Grant a pending policy confirmation and receive a single-use grant token."
-    }
-  ],
-  "temperaCode": [
+    },
     {
-      "id": "health",
+      "id": "sessionEvents",
+      "upstreamOperationId": "sessionEvents",
       "method": "GET",
-      "path": "/healthz",
-      "auth": "none",
-      "pathParams": [],
+      "path": "/sessions/{session_id}/events",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after_seq"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the session's event window after a sequence number."
+    },
+    {
+      "id": "handoffSession",
+      "upstreamOperationId": "handoffSession",
+      "method": "POST",
+      "path": "/sessions/{session_id}/handoff",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Check Tempera Code gateway liveness."
+      "description": "Return write ownership of the session to the agent plane."
     },
     {
-      "id": "listModels",
+      "id": "managerSession",
+      "upstreamOperationId": "managerSession",
       "method": "GET",
-      "path": "/v1/models",
+      "path": "/sessions/{session_id}/manager",
       "auth": "product",
-      "pathParams": [],
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "scope": "model:read",
-      "description": "List the entitled Tempera Code hosted model catalog."
+      "scope": null,
+      "description": "Call GET /sessions/{session_id}/manager."
     },
     {
-      "id": "createResponse",
-      "method": "POST",
-      "path": "/v1/responses",
+      "id": "observe",
+      "upstreamOperationId": "observeSession",
+      "method": "GET",
+      "path": "/sessions/{session_id}/observe",
       "auth": "product",
-      "pathParams": [],
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
+    },
+    {
+      "id": "createRun",
+      "upstreamOperationId": "createSessionRun",
+      "method": "POST",
+      "path": "/sessions/{session_id}/runs",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
-        "model",
+        "actions",
+        "goal",
+        "max_rounds",
+        "token_budget"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Start an agent run against the session with a goal, action budget, and round limit."
+    },
+    {
+      "id": "screenshot",
+      "upstreamOperationId": "screenshotSession",
+      "method": "GET",
+      "path": "/sessions/{session_id}/screenshot",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "set_of_marks"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+    },
+    {
+      "id": "registerSessionSurface",
+      "upstreamOperationId": "registerSessionSurface",
+      "method": "POST",
+      "path": "/sessions/{session_id}/surfaces",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "engine_tier",
+        "label",
+        "platform",
+        "profile_id",
+        "storage_continuity",
+        "surface_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /sessions/{session_id}/surfaces."
+    },
+    {
+      "id": "removeSessionSurface",
+      "upstreamOperationId": "removeSessionSurface",
+      "method": "DELETE",
+      "path": "/sessions/{session_id}/surfaces/{surface_id}",
+      "auth": "product",
+      "pathParams": [
+        "session_id",
+        "surface_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
+    },
+    {
+      "id": "transformSession",
+      "upstreamOperationId": "transformSession",
+      "method": "POST",
+      "path": "/sessions/{session_id}/transform",
+      "auth": "product",
+      "pathParams": [
+        "session_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "determinism",
+        "idempotency_key",
         "input",
-        "instructions",
-        "tools",
-        "text"
+        "lane",
+        "source",
+        "spans"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "model",
-        "input"
+        "lane",
+        "source"
       ],
       "bodyDefaults": {},
-      "scope": "model:invoke",
-      "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway."
+      "scope": null,
+      "description": "Call POST /sessions/{session_id}/transform."
     }
   ],
   "temperaLlm": [
     {
       "id": "health",
+      "upstreamOperationId": "health.check",
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1576,11 +3431,57 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check tempera-llm gateway liveness; returns {ok: true}."
     },
     {
+      "id": "readinessCheck",
+      "upstreamOperationId": "readiness.check",
+      "method": "GET",
+      "path": "/readyz",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call GET /readyz."
+    },
+    {
+      "id": "createChatCompletion",
+      "upstreamOperationId": "chatCompletions.create",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "byok",
+        "max_tokens",
+        "messages",
+        "model",
+        "response_format",
+        "stream",
+        "temperature"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "model",
+        "messages",
+        "max_tokens"
+      ],
+      "bodyDefaults": {},
+      "scope": "model:invoke",
+      "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
+    },
+    {
       "id": "listModels",
+      "upstreamOperationId": "models.list",
       "method": "GET",
       "path": "/v1/models",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1590,46 +3491,26 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List the configured model catalog the gateway can route to."
     },
     {
-      "id": "createChatCompletion",
-      "method": "POST",
-      "path": "/v1/chat/completions",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "model",
-        "messages",
-        "max_tokens",
-        "temperature",
-        "stream",
-        "byok"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "model",
-        "messages"
-      ],
-      "bodyDefaults": {},
-      "scope": "model:invoke",
-      "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
-    },
-    {
       "id": "createResponse",
+      "upstreamOperationId": "responses.create",
       "method": "POST",
       "path": "/v1/responses",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
-        "model",
+        "byok",
         "input",
         "max_output_tokens",
-        "byok"
+        "model",
+        "response_format"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "model",
-        "input"
+        "input",
+        "max_output_tokens"
       ],
       "bodyDefaults": {},
       "scope": "model:invoke",
@@ -1639,10 +3520,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   "temperaWorkflows": [
     {
       "id": "health",
+      "upstreamOperationId": "healthz",
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1653,10 +3536,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listNodeTypes",
+      "upstreamOperationId": "nodeTypes.list",
       "method": "GET",
       "path": "/v1/node-types",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1666,11 +3551,68 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
     },
     {
+      "id": "listRuns",
+      "upstreamOperationId": "runs.list",
+      "method": "GET",
+      "path": "/v1/runs",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "workflowId",
+        "limit"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "List workflow runs, optionally filtered to one workflow."
+    },
+    {
+      "id": "getRun",
+      "upstreamOperationId": "runs.get",
+      "method": "GET",
+      "path": "/v1/runs/{runId}",
+      "auth": "product",
+      "pathParams": [
+        "runId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
+    },
+    {
+      "id": "cancelRun",
+      "upstreamOperationId": "runs.cancel",
+      "method": "POST",
+      "path": "/v1/runs/{runId}:cancel",
+      "auth": "product",
+      "pathParams": [
+        "runId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Cancel a queued or running workflow run."
+    },
+    {
       "id": "listWorkflows",
+      "upstreamOperationId": "workflows.list",
       "method": "GET",
       "path": "/v1/workflows",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [
         "limit"
       ],
@@ -1683,18 +3625,20 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createWorkflow",
+      "upstreamOperationId": "workflows.create",
       "method": "POST",
       "path": "/v1/workflows",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "contractVersion",
+        "description",
+        "edges",
         "id",
         "name",
-        "description",
         "nodes",
-        "edges",
         "settings"
       ],
       "forbiddenBody": [],
@@ -1711,12 +3655,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getWorkflow",
+      "upstreamOperationId": "workflows.get",
       "method": "GET",
-      "path": "/v1/workflows/{workflow_id}",
+      "path": "/v1/workflows/{workflowId}",
       "auth": "product",
       "pathParams": [
-        "workflow_id"
+        "workflowId"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1727,20 +3673,22 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "updateWorkflow",
+      "upstreamOperationId": "workflows.update",
       "method": "PUT",
-      "path": "/v1/workflows/{workflow_id}",
+      "path": "/v1/workflows/{workflowId}",
       "auth": "product",
       "pathParams": [
-        "workflow_id"
+        "workflowId"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "contractVersion",
+        "description",
+        "edges",
         "id",
         "name",
-        "description",
         "nodes",
-        "edges",
         "settings"
       ],
       "forbiddenBody": [],
@@ -1757,12 +3705,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "deleteWorkflow",
+      "upstreamOperationId": "workflows.delete",
       "method": "DELETE",
-      "path": "/v1/workflows/{workflow_id}",
+      "path": "/v1/workflows/{workflowId}",
       "auth": "product",
       "pathParams": [
-        "workflow_id"
+        "workflowId"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1772,19 +3722,125 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Delete a stored workflow definition."
     },
     {
+      "id": "createRun",
+      "upstreamOperationId": "runs.create",
+      "method": "POST",
+      "path": "/v1/workflows/{workflowId}/runs",
+      "auth": "product",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "idempotencyKey",
+        "input",
+        "only",
+        "seedOutputs",
+        "startAt",
+        "usePinned"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Start a run of a stored workflow with an optional input document and idempotency key."
+    },
+    {
+      "id": "callWorkflow",
+      "upstreamOperationId": "workflows.call",
+      "method": "POST",
+      "path": "/v1/workflows/{workflowId}:call",
+      "auth": "product",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "idempotencyKey",
+        "input",
+        "only",
+        "seedOutputs",
+        "startAt",
+        "usePinned",
+        "waitMs"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:run",
+      "description": "Run a workflow to completion and return its output in a single call."
+    },
+    {
+      "id": "composeWorkflow",
+      "upstreamOperationId": "workflows.compose",
+      "method": "POST",
+      "path": "/v1/workflows/{workflowId}:compose",
+      "auth": "product",
+      "pathParams": [
+        "workflowId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "attachments",
+        "draft",
+        "history",
+        "model",
+        "prompt"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "prompt"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
+    },
+    {
+      "id": "assistJson",
+      "upstreamOperationId": "workflows.assistJson",
+      "method": "POST",
+      "path": "/v1/workflows:assistJson",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "context",
+        "current",
+        "expectedRoot",
+        "mode",
+        "prompt",
+        "purpose"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "mode",
+        "purpose",
+        "expectedRoot"
+      ],
+      "bodyDefaults": {},
+      "scope": "workflow:write",
+      "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
+    },
+    {
       "id": "validateWorkflow",
+      "upstreamOperationId": "workflows.validate",
       "method": "POST",
       "path": "/v1/workflows:validate",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "contractVersion",
+        "description",
+        "edges",
         "id",
         "name",
-        "description",
         "nodes",
-        "edges",
         "settings"
       ],
       "forbiddenBody": [],
@@ -1798,156 +3854,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "workflow:write",
       "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
-    },
-    {
-      "id": "composeWorkflow",
-      "method": "POST",
-      "path": "/v1/workflows/{workflow_id}:compose",
-      "auth": "product",
-      "pathParams": [
-        "workflow_id"
-      ],
-      "query": [],
-      "body": [
-        "prompt",
-        "draft",
-        "history",
-        "attachments",
-        "model"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "prompt"
-      ],
-      "bodyDefaults": {},
-      "scope": "workflow:write",
-      "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
-    },
-    {
-      "id": "assistJson",
-      "method": "POST",
-      "path": "/v1/workflows:assistJson",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "mode",
-        "purpose",
-        "expectedRoot",
-        "context",
-        "current",
-        "prompt"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "mode",
-        "purpose",
-        "expectedRoot"
-      ],
-      "bodyDefaults": {},
-      "scope": "workflow:write",
-      "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
-    },
-    {
-      "id": "createRun",
-      "method": "POST",
-      "path": "/v1/workflows/{workflow_id}/runs",
-      "auth": "product",
-      "pathParams": [
-        "workflow_id"
-      ],
-      "query": [],
-      "body": [
-        "input",
-        "idempotencyKey"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:run",
-      "description": "Start a run of a stored workflow with an optional input document and idempotency key."
-    },
-    {
-      "id": "callWorkflow",
-      "method": "POST",
-      "path": "/v1/workflows/{workflow_id}:call",
-      "auth": "product",
-      "pathParams": [
-        "workflow_id"
-      ],
-      "query": [],
-      "body": [
-        "input",
-        "idempotencyKey",
-        "usePinned",
-        "startAt",
-        "only",
-        "seedOutputs",
-        "waitMs"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:run",
-      "description": "Run a workflow to completion and return its output in a single call."
-    },
-    {
-      "id": "listRuns",
-      "method": "GET",
-      "path": "/v1/runs",
-      "auth": "product",
-      "pathParams": [],
-      "query": [
-        "workflowId",
-        "limit"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:read",
-      "description": "List workflow runs, optionally filtered to one workflow."
-    },
-    {
-      "id": "getRun",
-      "method": "GET",
-      "path": "/v1/runs/{run_id}",
-      "auth": "product",
-      "pathParams": [
-        "run_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:read",
-      "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
-    },
-    {
-      "id": "cancelRun",
-      "method": "POST",
-      "path": "/v1/runs/{run_id}:cancel",
-      "auth": "product",
-      "pathParams": [
-        "run_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "workflow:run",
-      "description": "Cancel a queued or running workflow run."
     }
   ],
   "temperaGym": [
     {
       "id": "health",
+      "upstreamOperationId": "health.get",
       "method": "GET",
       "path": "/healthz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1958,10 +3875,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listEnvironments",
+      "upstreamOperationId": "environments.list",
       "method": "GET",
       "path": "/v1/environments",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -1972,10 +3891,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listRuns",
+      "upstreamOperationId": "runs.list",
       "method": "GET",
       "path": "/v1/runs",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [
         "environment_id",
         "limit"
@@ -1989,12 +3910,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getRun",
+      "upstreamOperationId": "runs.get",
       "method": "GET",
       "path": "/v1/runs/{run}",
       "auth": "product",
       "pathParams": [
         "run"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2005,17 +3928,21 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createRollout",
+      "upstreamOperationId": "rollouts.create",
       "method": "POST",
       "path": "/v1/rollouts",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "environment_id",
         "policy",
         "seed",
         "max_steps",
-        "model"
+        "model",
+        "data_engine_product_id",
+        "data_engine_max_records"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -2029,25 +3956,241 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "cradle": [
     {
-      "id": "health",
-      "method": "GET",
-      "path": "/v1/health",
-      "auth": "none",
+      "id": "projectsBrowserAdaptersIssueCapability",
+      "upstreamOperationId": "projects.browserAdapters.issueCapability",
+      "method": "POST",
+      "path": "/v1/browser/adapter/capability",
+      "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "actor",
+        "adapter_id",
+        "sensitive_activity_mode",
+        "sensitivity",
+        "ttl_seconds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "actor",
+        "sensitivity"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/capability."
+    },
+    {
+      "id": "projectsBrowserAdaptersValidateCompletion",
+      "upstreamOperationId": "projects.browserAdapters.validateCompletion",
+      "method": "POST",
+      "path": "/v1/browser/adapter/completion/validate",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "adapter_id",
+        "contract_version",
+        "egress_log_sealed_or_discarded",
+        "notes",
+        "plaintext_artifacts_removed",
+        "process_terminated",
+        "proof_ids",
+        "request_id",
+        "sealed_artifact_handles",
+        "temporary_profile_removed"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "request_id",
+        "adapter_id",
+        "contract_version",
+        "process_terminated",
+        "temporary_profile_removed",
+        "plaintext_artifacts_removed",
+        "egress_log_sealed_or_discarded",
+        "sealed_artifact_handles",
+        "proof_ids",
+        "notes"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/completion/validate."
+    },
+    {
+      "id": "getBrowserAdapterContract",
+      "upstreamOperationId": "projects.browserAdapters.getContract",
+      "method": "GET",
+      "path": "/v1/browser/adapter/contract",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
+      "description": "Fetch the browser adapter contract, required controls, and conformance profile."
+    },
+    {
+      "id": "projectsBrowserAdaptersClaimLaunch",
+      "upstreamOperationId": "projects.browserAdapters.claimLaunch",
+      "method": "POST",
+      "path": "/v1/browser/adapter/launch/claim",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "launch_request"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "launch_request"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/launch/claim."
+    },
+    {
+      "id": "projectsBrowserAdaptersPlanLaunch",
+      "upstreamOperationId": "projects.browserAdapters.planLaunch",
+      "method": "POST",
+      "path": "/v1/browser/adapter/launch/plan",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "admission",
+        "manifest",
+        "same_user_capability"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "same_user_capability",
+        "admission",
+        "manifest"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/launch/plan."
+    },
+    {
+      "id": "projectsBrowserAdaptersRegister",
+      "upstreamOperationId": "projects.browserAdapters.register",
+      "method": "POST",
+      "path": "/v1/browser/adapter/register",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "actor",
+        "manifest",
+        "same_user_capability",
+        "sensitivity"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "actor",
+        "sensitivity",
+        "same_user_capability",
+        "manifest"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/register."
+    },
+    {
+      "id": "projectsBrowserAdaptersValidate",
+      "upstreamOperationId": "projects.browserAdapters.validate",
+      "method": "POST",
+      "path": "/v1/browser/adapter/validate",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "adapter_id",
+        "completion_proofs",
+        "contract_version",
+        "guard_fields",
+        "launch_endpoint",
+        "supported_controls",
+        "supported_levels"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "adapter_id",
+        "contract_version",
+        "launch_endpoint",
+        "supported_levels",
+        "supported_controls",
+        "guard_fields",
+        "completion_proofs"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Call POST /v1/browser/adapter/validate."
+    },
+    {
+      "id": "admitBrowserSession",
+      "upstreamOperationId": "projects.browserSessions.admit",
+      "method": "POST",
+      "path": "/v1/browser/admit",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "actor",
+        "allow_downgrade",
+        "artifact_mode",
+        "credential_mode",
+        "requested_level",
+        "required_controls",
+        "sensitive_activity_mode",
+        "sensitivity",
+        "target_origins",
+        "task_label"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "requested_level",
+        "actor",
+        "sensitivity"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
+    },
+    {
+      "id": "getBrowserProfiles",
+      "upstreamOperationId": "projects.browserProfiles.get",
+      "method": "GET",
+      "path": "/v1/browser/profiles",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
     },
     {
       "id": "getCapabilities",
+      "upstreamOperationId": "projects.capabilities.get",
       "method": "GET",
       "path": "/v1/capabilities",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2057,11 +4200,56 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
     },
     {
+      "id": "execute",
+      "upstreamOperationId": "projects.executions.execute",
+      "method": "POST",
+      "path": "/v1/execute",
+      "auth": "product",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "entrypoint",
+        "idempotency_key",
+        "input",
+        "lane",
+        "policy",
+        "source",
+        "stdin"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "lane",
+        "source"
+      ],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
+    },
+    {
+      "id": "health",
+      "upstreamOperationId": "health",
+      "method": "GET",
+      "path": "/v1/health",
+      "auth": "none",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": null,
+      "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
+    },
+    {
       "id": "getIntegrationContract",
+      "upstreamOperationId": "projects.integration.get",
       "method": "GET",
       "path": "/v1/integration",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2071,57 +4259,42 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Fetch the ecosystem integration contract this daemon implements."
     },
     {
-      "id": "execute",
-      "method": "POST",
-      "path": "/v1/execute",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "lane",
-        "source",
-        "entrypoint",
-        "input",
-        "stdin",
-        "policy",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
-    },
-    {
       "id": "createJob",
+      "upstreamOperationId": "projects.jobs.create",
       "method": "POST",
       "path": "/v1/jobs",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
-        "lane",
-        "source",
         "entrypoint",
+        "idempotency_key",
         "input",
-        "stdin",
+        "lane",
         "policy",
-        "idempotency_key"
+        "source",
+        "stdin"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "lane",
+        "source"
+      ],
       "bodyDefaults": {},
       "scope": null,
       "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
     },
     {
       "id": "getJob",
+      "upstreamOperationId": "projects.jobs.get",
       "method": "GET",
-      "path": "/v1/jobs/{job_id}",
+      "path": "/v1/jobs/{id}",
       "auth": "product",
       "pathParams": [
-        "job_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2132,12 +4305,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "cancelJob",
+      "upstreamOperationId": "projects.jobs.cancel",
       "method": "DELETE",
-      "path": "/v1/jobs/{job_id}",
+      "path": "/v1/jobs/{id}",
       "auth": "product",
       "pathParams": [
-        "job_id"
+        "id"
       ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2147,74 +4322,59 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
     },
     {
-      "id": "getBrowserProfiles",
-      "method": "GET",
-      "path": "/v1/browser/profiles",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
-    },
-    {
-      "id": "admitBrowserSession",
+      "id": "projectsModulesCreate",
+      "upstreamOperationId": "projects.modules.create",
       "method": "POST",
-      "path": "/v1/browser/admit",
+      "path": "/v1/projects/{project}/modules",
       "auth": "product",
-      "pathParams": [],
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
-        "actor",
-        "requested_level",
-        "sensitivity",
-        "allow_downgrade",
-        "artifact_mode",
-        "credential_mode",
-        "required_controls",
-        "sensitive_activity_mode",
-        "target_origins",
-        "task_label"
+        "bytes_base64"
       ],
       "forbiddenBody": [],
-      "requiredBody": [],
+      "requiredBody": [
+        "bytes_base64"
+      ],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
+      "description": "Call POST /v1/projects/{project}/modules."
     },
     {
-      "id": "getBrowserAdapterContract",
+      "id": "projectsModulesGet",
+      "upstreamOperationId": "projects.modules.get",
       "method": "GET",
-      "path": "/v1/browser/adapter/contract",
+      "path": "/v1/projects/{project}/modules/{sha256}",
       "auth": "product",
-      "pathParams": [],
+      "pathParams": [
+        "project",
+        "sha256"
+      ],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Fetch the browser adapter contract, required controls, and conformance profile."
+      "description": "Call GET /v1/projects/{project}/modules/{sha256}."
     }
   ],
   "remi": [
     {
       "id": "livez",
+      "upstreamOperationId": "livez",
       "method": "GET",
       "path": "/livez",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2222,18 +4382,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "readyz",
+      "upstreamOperationId": "readyz",
       "method": "GET",
       "path": "/readyz",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2241,18 +4398,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "health",
+      "upstreamOperationId": "health",
       "method": "GET",
       "path": "/v1/health",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2260,18 +4414,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getStats",
+      "upstreamOperationId": "getStats",
       "method": "GET",
       "path": "/v1/stats",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2279,18 +4430,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getMetrics",
+      "upstreamOperationId": "getMetrics",
       "method": "GET",
       "path": "/v1/metrics",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2298,18 +4446,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getPrometheusMetrics",
+      "upstreamOperationId": "getPrometheusMetrics",
       "method": "GET",
       "path": "/v1/metrics/prometheus",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2317,20 +4462,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listAudit",
+      "upstreamOperationId": "listAudit",
       "method": "GET",
       "path": "/v1/audit",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [
         "limit"
       ],
       "body": [],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2338,80 +4480,63 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "remember",
+      "upstreamOperationId": "remember",
       "method": "POST",
       "path": "/v1/remember",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
+        "tenant_id",
+        "project_id",
+        "environment_id",
         "kind",
         "text",
         "idempotency_key",
-        "project",
-        "provenance"
+        "project"
       ],
-      "forbiddenBody": [
-        "scope",
+      "forbiddenBody": [],
+      "requiredBody": [
         "tenant_id",
         "project_id",
-        "environment_id"
+        "kind",
+        "text"
       ],
-      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier."
+      "description": "Write one memory event into the tenant and project ledger."
     },
     {
       "id": "project",
+      "upstreamOperationId": "project",
       "method": "POST",
       "path": "/v1/project",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "limit"
       ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
       "description": "Project pending ledger events into the memory graph and return the projection report."
     },
     {
-      "id": "manage",
-      "method": "POST",
-      "path": "/v1/manage",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "limit"
-      ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Run memory management over pending ledger events (same engine pass as project, tracked separately)."
-    },
-    {
       "id": "query",
+      "upstreamOperationId": "query",
       "method": "POST",
       "path": "/v1/query",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "question",
+        "scope",
         "max_tokens",
         "require_fresh",
         "modes",
@@ -2419,78 +4544,23 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "max_reconstruction_steps",
         "max_reconstruction_tokens"
       ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals."
-    },
-    {
-      "id": "context",
-      "method": "POST",
-      "path": "/v1/context",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
+      "forbiddenBody": [],
+      "requiredBody": [
         "question",
-        "max_tokens",
-        "require_fresh",
-        "modes",
-        "reconstruction_mode",
-        "max_reconstruction_steps",
-        "max_reconstruction_tokens"
+        "scope"
       ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
-      "description": "Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback."
-    },
-    {
-      "id": "feedback",
-      "method": "POST",
-      "path": "/v1/feedback",
-      "auth": "product",
-      "pathParams": [],
-      "query": [],
-      "body": [
-        "schema",
-        "retrieval_receipt_id",
-        "evidence_node_id",
-        "helpful",
-        "outcome_artifact_id",
-        "note",
-        "terminal_state",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": null,
-      "description": "Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth."
+      "description": "Answer a scoped memory question with evidence and reconstruction metadata."
     },
     {
       "id": "maintenance",
+      "upstreamOperationId": "maintenance",
       "method": "POST",
       "path": "/v1/maintenance",
       "auth": "product",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [
         "vacuum",
@@ -2498,12 +4568,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "prune_audit_before_unix_ms",
         "retain_latest_audit_events"
       ],
-      "forbiddenBody": [
-        "scope",
-        "tenant_id",
-        "project_id",
-        "environment_id"
-      ],
+      "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
@@ -2513,10 +4578,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   "dataEngine": [
     {
       "id": "health",
+      "upstreamOperationId": "health.get",
       "method": "GET",
       "path": "/v1/health",
       "auth": "none",
       "pathParams": [],
+      "pathParamTemplates": {},
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2526,13 +4593,788 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check data-engine liveness; returns the service status."
     },
     {
-      "id": "admitTrainingRelease",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/training-releases:admit",
+      "id": "listUseCases",
+      "upstreamOperationId": "projects.useCases.list",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
+    },
+    {
+      "id": "getUseCase",
+      "upstreamOperationId": "projects.useCases.get",
+      "method": "GET",
+      "path": "/v1/{parent}/use-cases/{useCaseId}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "useCaseId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
+    },
+    {
+      "id": "ingestArtifact",
+      "upstreamOperationId": "projects.artifacts.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/artifacts:ingest",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "artifactType",
+        "source",
+        "external_id",
+        "raw_body",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
+    },
+    {
+      "id": "ingestWeb",
+      "upstreamOperationId": "projects.web.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/web:ingest",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "url",
+        "artifactType",
+        "timeoutSeconds",
+        "maxBytes",
+        "producer_version",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "url"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
+    },
+    {
+      "id": "createCampaign",
+      "upstreamOperationId": "projects.campaigns.create",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "task_family",
+        "target_accuracy",
+        "budget_cents",
+        "rubric",
+        "skill_tags",
+        "required_reviews",
+        "qualification_policy",
+        "routing_policy",
+        "annotation_schema",
+        "idempotency_key"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
+    },
+    {
+      "id": "listCampaigns",
+      "upstreamOperationId": "projects.campaigns.list",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List a project's data campaigns with pagination."
+    },
+    {
+      "id": "transitionCampaign",
+      "upstreamOperationId": "projects.campaigns.transition",
+      "method": "POST",
+      "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "campaign_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "target_status",
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
+    },
+    {
+      "id": "getReviewerQualification",
+      "upstreamOperationId": "projects.reviewerQualifications.get",
+      "method": "GET",
+      "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "campaign_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
+    },
+    {
+      "id": "runUseCase",
+      "upstreamOperationId": "projects.pipelines.runUseCase",
+      "method": "POST",
+      "path": "/v1/{parent}/pipelines:run-use-case",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "use_case",
+        "verifier",
+        "budget_cents",
+        "target_accuracy",
+        "rubric",
+        "skill_tags",
+        "required_reviews",
+        "urls",
+        "artifacts"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "use_case"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
+    },
+    {
+      "id": "listExpertTasks",
+      "upstreamOperationId": "projects.expertTasks.list",
+      "method": "GET",
+      "path": "/v1/{parent}/expert-tasks",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "page_size",
+        "page_token",
+        "status",
+        "campaign_name"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List human residual review tasks, optionally filtered by status and campaign."
+    },
+    {
+      "id": "createReviewQualificationTask",
+      "upstreamOperationId": "projects.reviewQualificationTasks.create",
+      "method": "POST",
+      "path": "/v1/{parent}/review-qualification-tasks",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "source_expert_task_name",
+        "expected_label",
+        "mode",
+        "feedback_policy",
+        "idempotency_key"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "source_expert_task_name",
+        "expected_label",
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:gold:manage",
+      "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
+    },
+    {
+      "id": "resolveExpertTask",
+      "upstreamOperationId": "projects.expertTasks.resolve",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "expert_task_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "label",
+        "outcome",
+        "confidence",
+        "rationale",
+        "evidence",
+        "annotation",
+        "annotator_id",
+        "idempotency_key",
+        "lease_token",
+        "review_context"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "label",
+        "idempotency_key",
+        "review_context"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+    },
+    {
+      "id": "claimExpertTask",
+      "upstreamOperationId": "projects.expertTaskAssignments.claim",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "expert_task_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "lease_duration_seconds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Atomically claim one open expert task with an exclusive renewable lease."
+    },
+    {
+      "id": "renewExpertTaskAssignment",
+      "upstreamOperationId": "projects.expertTaskAssignments.renew",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "expert_task_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "lease_duration_seconds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Renew the authenticated reviewer's active expert-task lease."
+    },
+    {
+      "id": "releaseExpertTaskAssignment",
+      "upstreamOperationId": "projects.expertTaskAssignments.release",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "expert_task_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
+    },
+    {
+      "id": "saveExpertTaskDraft",
+      "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "expert_task_id"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "idempotency_key",
+        "lease_token",
+        "draft",
+        "expected_version"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "lease_token",
+        "draft",
+        "expected_version"
+      ],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Autosave a version-checked draft under the active reviewer lease."
+    },
+    {
+      "id": "getReviewOperations",
+      "upstreamOperationId": "projects.reviewOperations.get",
+      "method": "GET",
+      "path": "/v1/{parent}/review-operations",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "window_seconds",
+        "sla_target_seconds"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "review:resolve",
+      "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
+    },
+    {
+      "id": "getMetrics",
+      "upstreamOperationId": "projects.metrics.get",
+      "method": "GET",
+      "path": "/v1/{parent}/metrics",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch data-engine usage and quality metrics for a project."
+    },
+    {
+      "id": "getLabelQuality",
+      "upstreamOperationId": "projects.labelQuality.get",
+      "method": "GET",
+      "path": "/v1/{parent}/label-quality",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch the project label-quality report and unresolved expert backlog."
+    },
+    {
+      "id": "getEcosystemReadiness",
+      "upstreamOperationId": "projects.ecosystem.readiness.get",
+      "method": "GET",
+      "path": "/v1/{parent}/ecosystem/readiness",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch public-site and ecosystem readiness signals for a project."
+    },
+    {
+      "id": "listArtifacts",
+      "upstreamOperationId": "projects.artifacts.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "page_size",
+        "page_token",
+        "view"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
+    },
+    {
+      "id": "getArtifact",
+      "upstreamOperationId": "projects.artifacts.get",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "artifactId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "view"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
+    },
+    {
+      "id": "listArtifactLabels",
+      "upstreamOperationId": "projects.artifacts.labels.list",
+      "method": "GET",
+      "path": "/v1/{parent}/artifacts/{artifactId}/labels",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "artifactId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List the labels attached to one artifact."
+    },
+    {
+      "id": "profileDataset",
+      "upstreamOperationId": "projects.datasets.profile",
+      "method": "POST",
+      "path": "/v1/{parent}/datasets:profile",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "artifact_ids",
+        "artifact_type"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
+    },
+    {
+      "id": "createJob",
+      "upstreamOperationId": "projects.jobs.create",
+      "method": "POST",
+      "path": "/v1/{parent}/jobs",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "artifact_ids",
+        "task_family",
+        "campaign",
+        "target_accuracy",
+        "idempotency_key",
+        "verifier"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "artifact_ids",
+        "task_family"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+    },
+    {
+      "id": "getJob",
+      "upstreamOperationId": "projects.jobs.get",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "jobId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one labeling job with its state and progress."
+    },
+    {
+      "id": "getJobResults",
+      "upstreamOperationId": "projects.jobs.results.list",
+      "method": "GET",
+      "path": "/v1/{parent}/jobs/{jobId}/results",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "jobId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List the deterministic label results a job produced."
+    },
+    {
+      "id": "getProduct",
+      "upstreamOperationId": "projects.products.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "productId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one emitted product bundle with its status and manifest URL."
+    },
+    {
+      "id": "validateProduct",
+      "upstreamOperationId": "projects.products.validate",
+      "method": "POST",
+      "path": "/v1/{parent}/products/{productId}:validate",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "productId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Validate an emitted product bundle's referential integrity and hygiene."
+    },
+    {
+      "id": "checkProductLeakage",
+      "upstreamOperationId": "projects.products.checkLeakage",
+      "method": "POST",
+      "path": "/v1/{parent}/products:check-leakage",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "product_ids"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "product_ids"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Check raw-hash leakage between exactly two product bundles."
+    },
+    {
+      "id": "getProductManifest",
+      "upstreamOperationId": "projects.products.manifest.get",
+      "method": "GET",
+      "path": "/v1/{parent}/products/{productId}/manifest",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "productId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
+    },
+    {
+      "id": "admitTrainingRelease",
+      "upstreamOperationId": "projects.trainingReleases.admit",
+      "method": "POST",
+      "path": "/v1/{parent}/training-releases:admit",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [
         "training_product_id",
@@ -2551,13 +5393,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getTrainingRelease",
+      "upstreamOperationId": "projects.trainingReleases.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/training-releases/{release_id}",
+      "path": "/v1/{parent}/training-releases/{releaseId}",
       "auth": "product",
       "pathParams": [
-        "project_id",
-        "release_id"
+        "parent",
+        "releaseId"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2567,13 +5413,250 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Revalidate and fetch one training release, including any durable stale state."
     },
     {
-      "id": "createEvidenceRecord",
+      "id": "deriveBundle",
+      "upstreamOperationId": "projects.products.derive",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/evidenceRecords",
+      "path": "/v1/{parent}/products/{productId}:derive",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent",
+        "productId"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "format",
+        "train_fraction",
+        "include_raw",
+        "page_size",
+        "page_token",
+        "pair_sources"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "format"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Derive a deterministic post-training bundle from a ready product."
+    },
+    {
+      "id": "emitEval",
+      "upstreamOperationId": "projects.products.emitEval",
+      "method": "POST",
+      "path": "/v1/{parent}/products:emit-eval",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "artifact_ids",
+        "job"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "artifact_ids",
+        "job"
+      ],
+      "bodyDefaults": {},
+      "scope": "eval:run",
+      "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
+    },
+    {
+      "id": "extractSource",
+      "upstreamOperationId": "projects.sources.extract",
+      "method": "POST",
+      "path": "/v1/{parent}/sources:extract",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "connector",
+        "bucket",
+        "prefix",
+        "key",
+        "max_objects",
+        "max_bytes",
+        "statement",
+        "limit",
+        "soql",
+        "max_pages",
+        "artifact_type",
+        "source",
+        "ingest",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "connector"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Extract bounded objects or records from a configured source connector."
+    },
+    {
+      "id": "listConnectors",
+      "upstreamOperationId": "projects.connectors.list",
+      "method": "GET",
+      "path": "/v1/{parent}/connectors",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [
+        "page_size",
+        "page_token"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List registered source connectors for a project."
+    },
+    {
+      "id": "createTool",
+      "upstreamOperationId": "projects.tools.create",
+      "method": "POST",
+      "path": "/v1/{parent}/tools",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "name",
+        "description",
+        "input_schema",
+        "kind",
+        "implementation",
+        "created_by"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "name",
+        "description",
+        "kind",
+        "implementation"
+      ],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Create or version-bump a stored custom tool."
+    },
+    {
+      "id": "listTools",
+      "upstreamOperationId": "projects.tools.list",
+      "method": "GET",
+      "path": "/v1/{parent}/tools",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "List stored custom tools and their usage statistics."
+    },
+    {
+      "id": "getTool",
+      "upstreamOperationId": "projects.tools.get",
+      "method": "GET",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "toolName"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:read",
+      "description": "Fetch one stored custom tool and its usage statistics."
+    },
+    {
+      "id": "deleteTool",
+      "upstreamOperationId": "projects.tools.delete",
+      "method": "DELETE",
+      "path": "/v1/{parent}/tools/{toolName}",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "toolName"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Delete a stored custom tool and every retained version."
+    },
+    {
+      "id": "invokeTool",
+      "upstreamOperationId": "projects.tools.invoke",
+      "method": "POST",
+      "path": "/v1/{parent}/tools/{toolName}:invoke",
+      "auth": "product",
+      "pathParams": [
+        "parent",
+        "toolName"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "arguments"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "dataset:write",
+      "description": "Invoke a stored custom tool through its configured execution boundary."
+    },
+    {
+      "id": "createEvidenceRecord",
+      "upstreamOperationId": "projects.evidenceRecords.create",
+      "method": "POST",
+      "path": "/v1/{parent}/evidenceRecords",
+      "auth": "product",
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [
         "schema_version",
@@ -2604,12 +5687,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listEvidenceRecords",
+      "upstreamOperationId": "projects.evidenceRecords.list",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/evidenceRecords",
+      "path": "/v1/{parent}/evidenceRecords",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [
         "page_size",
         "page_token",
@@ -2624,13 +5711,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getEvidenceRecord",
+      "upstreamOperationId": "projects.evidenceRecords.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/evidenceRecords/{evidence_record_id}",
+      "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
       "auth": "product",
       "pathParams": [
-        "project_id",
-        "evidence_record_id"
+        "parent",
+        "evidenceRecordId"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2641,12 +5732,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createEpisode",
+      "upstreamOperationId": "projects.episodes.create",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/episodes",
+      "path": "/v1/{parent}/episodes",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [
         "schema_version",
@@ -2683,12 +5778,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listEpisodes",
+      "upstreamOperationId": "projects.episodes.list",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/episodes",
+      "path": "/v1/{parent}/episodes",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [
         "page_size",
         "page_token",
@@ -2703,13 +5802,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getEpisode",
+      "upstreamOperationId": "projects.episodes.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/episodes/{episode_id}",
+      "path": "/v1/{parent}/episodes/{episodeId}",
       "auth": "product",
       "pathParams": [
-        "project_id",
-        "episode_id"
+        "parent",
+        "episodeId"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2720,12 +5823,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "queryResearchRetrieval",
+      "upstreamOperationId": "query_research_retrieval",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/researchRetrieval:query",
+      "path": "/v1/{parent}/researchRetrieval:query",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [
         "contractVersion",
@@ -2752,12 +5859,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "createResearchCatalogEntry",
+      "upstreamOperationId": "projects.researchCatalogEntries.create",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/researchCatalogEntries",
+      "path": "/v1/{parent}/researchCatalogEntries",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [
         "kind",
@@ -2782,12 +5893,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "listResearchCatalogEntries",
+      "upstreamOperationId": "projects.researchCatalogEntries.list",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/researchCatalogEntries",
+      "path": "/v1/{parent}/researchCatalogEntries",
       "auth": "product",
       "pathParams": [
-        "project_id"
+        "parent"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [
         "page_size",
         "page_token"
@@ -2801,13 +5916,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     },
     {
       "id": "getResearchCatalogEntry",
+      "upstreamOperationId": "projects.researchCatalogEntries.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/researchCatalogEntries/{entry_id}",
+      "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
       "auth": "product",
       "pathParams": [
-        "project_id",
-        "entry_id"
+        "parent",
+        "entryId"
       ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
       "query": [],
       "body": [],
       "forbiddenBody": [],
@@ -2815,837 +5934,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "scope": "dataset:read",
       "description": "Fetch one immutable executable research catalog entry by content hash."
-    },
-    {
-      "id": "listConnectors",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/connectors",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List registered source connectors for a project."
-    },
-    {
-      "id": "listUseCases",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/use-cases",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
-    },
-    {
-      "id": "getUseCase",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/use-cases/{use_case_id}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "use_case_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
-    },
-    {
-      "id": "ingestArtifact",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/artifacts:ingest",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "artifactType",
-        "source",
-        "external_id",
-        "raw_body",
-        "metadata"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
-    },
-    {
-      "id": "ingestWeb",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/web:ingest",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "url",
-        "artifactType",
-        "timeoutSeconds",
-        "maxBytes",
-        "allowPrivate",
-        "metadata"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
-    },
-    {
-      "id": "runUseCase",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/pipelines:run-use-case",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "use_case",
-        "budget_cents",
-        "target_accuracy",
-        "urls",
-        "artifacts",
-        "verifier"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
-    },
-    {
-      "id": "createCampaign",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/campaigns",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "task_family",
-        "target_accuracy",
-        "budget_cents",
-        "rubric",
-        "skill_tags"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
-    },
-    {
-      "id": "listCampaigns",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/campaigns",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List a project's data campaigns with pagination."
-    },
-    {
-      "id": "transitionCampaign",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/campaigns/{campaign_id}:transition",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "campaign_id"
-      ],
-      "query": [],
-      "body": [
-        "target_status",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "target_status",
-        "idempotency_key"
-      ],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
-    },
-    {
-      "id": "listArtifacts",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/artifacts",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token",
-        "view"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
-    },
-    {
-      "id": "getArtifact",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "artifact_id"
-      ],
-      "query": [
-        "view"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
-    },
-    {
-      "id": "listArtifactLabels",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}/labels",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "artifact_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List the labels attached to one artifact."
-    },
-    {
-      "id": "profileDataset",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/datasets:profile",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "artifact_ids",
-        "artifact_type"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
-    },
-    {
-      "id": "createJob",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/jobs",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "artifact_ids",
-        "task_family",
-        "campaign",
-        "target_accuracy",
-        "verifier",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
-    },
-    {
-      "id": "getJob",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/jobs/{job_id}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "job_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch one labeling job with its state and progress."
-    },
-    {
-      "id": "getJobResults",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/jobs/{job_id}/results",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "job_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List the deterministic label results a job produced."
-    },
-    {
-      "id": "listExpertTasks",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/expert-tasks",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "page_size",
-        "page_token",
-        "status",
-        "campaign_name"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List human residual review tasks, optionally filtered by status and campaign."
-    },
-    {
-      "id": "resolveExpertTask",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:resolve",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "expert_task_id"
-      ],
-      "query": [],
-      "body": [
-        "label",
-        "outcome",
-        "confidence",
-        "rationale",
-        "evidence",
-        "annotator_id",
-        "idempotency_key",
-        "lease_token",
-        "review_context"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "label",
-        "idempotency_key",
-        "review_context"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
-    },
-    {
-      "id": "claimExpertTask",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:claim",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "expert_task_id"
-      ],
-      "query": [],
-      "body": [
-        "idempotency_key",
-        "lease_token",
-        "lease_duration_seconds"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "lease_token"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Atomically claim one open expert task with an exclusive renewable lease."
-    },
-    {
-      "id": "renewExpertTaskAssignment",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:renew",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "expert_task_id"
-      ],
-      "query": [],
-      "body": [
-        "idempotency_key",
-        "lease_token",
-        "lease_duration_seconds"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "lease_token"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Renew the authenticated reviewer's active expert-task lease."
-    },
-    {
-      "id": "releaseExpertTaskAssignment",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:release",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "expert_task_id"
-      ],
-      "query": [],
-      "body": [
-        "idempotency_key",
-        "lease_token"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "lease_token"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
-    },
-    {
-      "id": "saveExpertTaskDraft",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:save-draft",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "expert_task_id"
-      ],
-      "query": [],
-      "body": [
-        "idempotency_key",
-        "lease_token",
-        "draft",
-        "expected_version"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "lease_token",
-        "draft",
-        "expected_version"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Autosave a version-checked draft under the active reviewer lease."
-    },
-    {
-      "id": "getReviewOperations",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/review-operations",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [
-        "window_seconds",
-        "sla_target_seconds"
-      ],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
-    },
-    {
-      "id": "createReviewQualificationTask",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/review-qualification-tasks",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "source_expert_task_name",
-        "expected_label",
-        "mode",
-        "feedback_policy",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "source_expert_task_name",
-        "expected_label",
-        "idempotency_key"
-      ],
-      "bodyDefaults": {},
-      "scope": "review:gold:manage",
-      "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
-    },
-    {
-      "id": "getReviewerQualification",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/campaigns/{campaign_id}/reviewer-qualification",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "campaign_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "review:resolve",
-      "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
-    },
-    {
-      "id": "getMetrics",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/metrics",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch data-engine usage and quality metrics for a project."
-    },
-    {
-      "id": "getLabelQuality",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/label-quality",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch the project label-quality report and unresolved expert backlog."
-    },
-    {
-      "id": "getEcosystemReadiness",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/ecosystem/readiness",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch public-site and ecosystem readiness signals for a project."
-    },
-    {
-      "id": "emitEval",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/products:emit-eval",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "artifact_ids",
-        "include_provenance",
-        "license",
-        "filters"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
-    },
-    {
-      "id": "deriveBundle",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/products/{product_id}:derive",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "product_id"
-      ],
-      "query": [],
-      "body": [
-        "format",
-        "train_fraction",
-        "include_raw",
-        "page_size",
-        "page_token",
-        "pair_sources"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "eval:run",
-      "description": "Derive a deterministic post-training bundle from a ready product."
-    },
-    {
-      "id": "getProduct",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/products/{product_id}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "product_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch one emitted product bundle with its status and manifest URL."
-    },
-    {
-      "id": "validateProduct",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/products/{product_id}:validate",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "product_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Validate an emitted product bundle's referential integrity and hygiene."
-    },
-    {
-      "id": "checkProductLeakage",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/products:check-leakage",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "product_ids"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "product_ids"
-      ],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Check raw-hash leakage between exactly two product bundles."
-    },
-    {
-      "id": "getProductManifest",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/products/{product_id}/manifest",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "product_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
-    },
-    {
-      "id": "extractSource",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/sources:extract",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "connector",
-        "bucket",
-        "prefix",
-        "key",
-        "max_objects",
-        "max_bytes",
-        "statement",
-        "limit",
-        "soql",
-        "max_pages",
-        "artifact_type",
-        "source",
-        "ingest",
-        "metadata"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "connector"
-      ],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Extract bounded objects or records from a configured source connector."
-    },
-    {
-      "id": "createTool",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/tools",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [
-        "name",
-        "description",
-        "input_schema",
-        "kind",
-        "implementation",
-        "created_by"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "name",
-        "description",
-        "kind",
-        "implementation"
-      ],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Create or version-bump a stored custom tool."
-    },
-    {
-      "id": "listTools",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/tools",
-      "auth": "product",
-      "pathParams": [
-        "project_id"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "List stored custom tools and their usage statistics."
-    },
-    {
-      "id": "getTool",
-      "method": "GET",
-      "path": "/v1/projects/{project_id}/tools/{tool_name}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "tool_name"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:read",
-      "description": "Fetch one stored custom tool and its usage statistics."
-    },
-    {
-      "id": "deleteTool",
-      "method": "DELETE",
-      "path": "/v1/projects/{project_id}/tools/{tool_name}",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "tool_name"
-      ],
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Delete a stored custom tool and every retained version."
-    },
-    {
-      "id": "invokeTool",
-      "method": "POST",
-      "path": "/v1/projects/{project_id}/tools/{tool_name}:invoke",
-      "auth": "product",
-      "pathParams": [
-        "project_id",
-        "tool_name"
-      ],
-      "query": [],
-      "body": [
-        "arguments"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "scope": "dataset:write",
-      "description": "Invoke a stored custom tool through its configured execution boundary."
     }
   ]
 }

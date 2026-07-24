@@ -29,7 +29,7 @@ DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "95627810c43d97ae61270a3a1ce7d5f03079d9f5"
+PALETTE_REVISION = "8ee730e5d7c82ae7aa8f828a36087c24424c217b"
 PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
 PALETTE_SOURCE_BLOB = "c9b1e11d3096adb5ae1af287c5b87e223787b451"
 PALETTE_SOURCE_SHA256 = (
@@ -40,7 +40,8 @@ PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
 REQUEST_SCHEMA = "#/components/schemas/ImportTemperaEvidenceRequest"
 RECEIPT_SCHEMA = "#/components/schemas/TemperaEvidenceReceipt"
-REQUEST_FIELDS = ["canonical_json", "signature_base64", "public_key_pem"]
+REQUEST_FIELDS = ["canonical_json", "public_key_pem", "signature_base64"]
+REQUIRED_REQUEST_FIELDS = ["canonical_json", "signature_base64", "public_key_pem"]
 IMPORT_RESPONSE_CODES = ["200", "400", "401", "403", "409", "413", "422", "503"]
 RECEIPT_RESPONSE_CODES = ["200", "400", "401", "403", "404"]
 
@@ -52,7 +53,7 @@ OPERATIONS = [
         "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
         "pathParams": ["tenant_id", "project_id"],
         "body": REQUEST_FIELDS,
-        "requiredBody": REQUEST_FIELDS,
+        "requiredBody": REQUIRED_REQUEST_FIELDS,
         "responseCodes": IMPORT_RESPONSE_CODES,
     },
     {
@@ -62,7 +63,7 @@ OPERATIONS = [
         "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
         "pathParams": ["tenant_id", "project_id"],
         "body": REQUEST_FIELDS,
-        "requiredBody": REQUEST_FIELDS,
+        "requiredBody": REQUIRED_REQUEST_FIELDS,
         "responseCodes": IMPORT_RESPONSE_CODES,
     },
     {
@@ -120,6 +121,14 @@ def git_read(checkout: Path, arguments: list[str], purpose: str) -> str:
     return result.stdout.strip()
 
 
+def canonical_repository(url: str) -> str:
+    value = url.strip().removesuffix(".git")
+    for prefix in ("https://github.com/", "http://github.com/", "git@github.com:"):
+        if value.startswith(prefix):
+            return value[len(prefix) :]
+    return value
+
+
 def verify_source_checkout(source: Path, checkout: Path) -> None:
     checkout = checkout.resolve()
     expected_source = (checkout / PALETTE_SOURCE_PATH).resolve()
@@ -130,7 +139,7 @@ def verify_source_checkout(source: Path, checkout: Path) -> None:
     if git_read(checkout, ["rev-parse", "HEAD"], "revision read") != PALETTE_REVISION:
         raise ContractError("Palette checkout revision differs from the source pin")
     origin = git_read(checkout, ["remote", "get-url", "origin"], "origin read")
-    if origin.removesuffix(".git") != PALETTE_REPOSITORY:
+    if canonical_repository(origin) != canonical_repository(PALETTE_REPOSITORY):
         raise ContractError("Palette checkout origin differs from the source pin")
     if git_read(
         checkout,

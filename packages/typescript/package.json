@@ -1,6 +1,6 @@
 {
   "name": "@tempera/sdk",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "type": "module",
   "license": "UNLICENSED",
   "repository": "https://github.com/tempera-dev/tempera-sdk",

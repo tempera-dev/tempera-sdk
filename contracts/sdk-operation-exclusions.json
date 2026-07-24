@@ -2,6 +2,138 @@
   "schema_version": 1,
   "exclusions": [
     {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue generating Data Engine JSON-RPC calls through the dedicated MCP client rather than duplicating the protocol in the product dispatcher.",
+      "operation_id": "mcp.jsonrpc",
+      "owner": "data-engine",
+      "path": "/mcp",
+      "product": "dataEngine",
+      "rationale": "The route is an MCP JSON-RPC endpoint rather than an ordinary buffered JSON domain operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_otlp_transport_required",
+      "method": "POST",
+      "migration": "Add a reviewed raw-body OTLP exporter primitive with protobuf content type and compression semantics before exposing this operation.",
+      "operation_id": "ingest.otlp",
+      "owner": "palette",
+      "path": "/v1/otlp/{tenant_id}/{project_id}/{environment_id}/v1/traces",
+      "product": "palette",
+      "rationale": "The route accepts an OTLP protobuf byte stream, while aggregate SDK operations serialize buffered JSON objects.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_otlp_transport_required",
+      "method": "POST",
+      "migration": "Add a reviewed OTLP HTTP JSON collector primitive that preserves raw envelopes and resource-derived workspace routing.",
+      "operation_id": "ingest.otlpJsonCollector",
+      "owner": "palette",
+      "path": "/v1/traces",
+      "product": "palette",
+      "rationale": "The collector consumes raw OTLP envelopes and derives routing from headers and resource hints rather than an ordinary domain JSON request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "interactive_redirect_transport",
+      "method": "GET",
+      "migration": "Keep browser authorization in the dedicated OAuth helper and add redirect-aware navigation support before exposing it as a product operation.",
+      "operation_id": "startOAuthAuthorization",
+      "owner": "auth-hub",
+      "path": "/oauth/authorize",
+      "product": "controlPlane",
+      "rationale": "This browser-facing endpoint returns a redirect, not the buffered JSON response contract used by aggregate product methods.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_redirect_transport",
+      "method": "POST",
+      "migration": "Keep authorization approval in the dedicated OAuth helper and add form plus redirect semantics before exposing it as a product operation.",
+      "operation_id": "authorizeOAuthClient",
+      "owner": "auth-hub",
+      "path": "/oauth/authorize",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires form encoding and returns a redirect, neither of which the aggregate JSON product dispatcher represents.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_oauth_helper",
+      "method": "POST",
+      "migration": "Continue generating token exchange through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
+      "operation_id": "exchangeOAuthToken",
+      "owner": "auth-hub",
+      "path": "/oauth/token",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_oauth_helper",
+      "method": "POST",
+      "migration": "Continue generating revocation through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
+      "operation_id": "revokeOAuthToken",
+      "owner": "auth-hub",
+      "path": "/oauth/revoke",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client with notification and protocol error semantics.",
+      "operation_id": "invokeMcpGateway",
+      "owner": "auth-hub",
+      "path": "/mcp",
+      "product": "controlPlane",
+      "rationale": "The route is the MCP JSON-RPC gateway and is already represented by the SDK MCP transport.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "inbound_webhook",
+      "method": "POST",
+      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
+      "operation_id": "receiveStripeBillingWebhook",
+      "owner": "auth-hub",
+      "path": "/billing/webhook",
+      "product": "controlPlane",
+      "rationale": "Stripe invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "inbound_webhook",
+      "method": "POST",
+      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
+      "operation_id": "receiveCoinbaseCommerceWebhook",
+      "owner": "auth-hub",
+      "path": "/billing/rails/coinbase/webhook",
+      "product": "controlPlane",
+      "rationale": "Coinbase invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "inbound_webhook",
+      "method": "POST",
+      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
+      "operation_id": "receivePaypalWebhook",
+      "owner": "auth-hub",
+      "path": "/billing/rails/paypal/webhook",
+      "product": "controlPlane",
+      "rationale": "PayPal invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client after Cradle capability routing is admitted.",
+      "operation_id": "postMcp",
+      "owner": "cradle",
+      "path": "/mcp",
+      "product": "cradle",
+      "rationale": "The route is an MCP protocol endpoint rather than an ordinary buffered JSON domain operation.",
+      "review_after": "2026-10-01"
+    },
+    {
       "compatibility": "ineligible_until_streaming_support",
       "method": "GET",
       "migration": "Add one reviewed SSE streaming primitive with cancellation and reconnect semantics in TypeScript, Python, and Rust before generating this operation.",
@@ -10,6 +142,94 @@
       "path": "/v1/runs/{runId}/events",
       "product": "temperaWorkflows",
       "rationale": "The aggregate SDK request surface returns buffered JSON; this operation is an unbounded text/event-stream and cannot truthfully use that transport.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_bidi_transport",
+      "method": "GET",
+      "migration": "Keep WebSocket upgrade, framing, and command correlation in the dedicated Tempo BiDi client rather than the buffered product dispatcher.",
+      "operation_id": "bidiWebSocket",
+      "owner": "tempo",
+      "path": "/bidi",
+      "product": "tempo",
+      "rationale": "The route upgrades to a WebSocket and cannot be represented by the aggregate SDK buffered request contract.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_bidi_transport",
+      "method": "POST",
+      "migration": "Keep BiDi command envelopes and response correlation in the dedicated Tempo transport until a cross-language protocol primitive exists.",
+      "operation_id": "bidiPost",
+      "owner": "tempo",
+      "path": "/bidi",
+      "product": "tempo",
+      "rationale": "The route carries BiDi protocol commands rather than an ordinary documented JSON domain request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_bidi_transport",
+      "method": "GET",
+      "migration": "Keep session-bound WebSocket upgrade, framing, and command correlation in the dedicated Tempo BiDi client.",
+      "operation_id": "bidiWebSocketSession",
+      "owner": "tempo",
+      "path": "/sessions/{session_id}/bidi",
+      "product": "tempo",
+      "rationale": "The route upgrades a session-bound connection to a WebSocket and cannot use the aggregate buffered request contract.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_bidi_transport",
+      "method": "POST",
+      "migration": "Keep session-bound BiDi command envelopes in the dedicated Tempo transport until a cross-language protocol primitive exists.",
+      "operation_id": "bidiPostSession",
+      "owner": "tempo",
+      "path": "/sessions/{session_id}/bidi",
+      "product": "tempo",
+      "rationale": "The route carries session-bound BiDi protocol commands rather than an ordinary documented JSON domain request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "GET",
+      "migration": "Keep MCP transport negotiation and metadata handling in Tempo's dedicated MCP integration.",
+      "operation_id": "mcpGet",
+      "owner": "tempo",
+      "path": "/mcp",
+      "product": "tempo",
+      "rationale": "The route belongs to the MCP transport lifecycle rather than the ordinary Tempo JSON API.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue routing JSON-RPC calls through the dedicated MCP client with protocol and notification semantics.",
+      "operation_id": "mcpPost",
+      "owner": "tempo",
+      "path": "/mcp",
+      "product": "tempo",
+      "rationale": "The route is an MCP JSON-RPC transport rather than an ordinary buffered JSON domain operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue routing session-bound JSON-RPC calls through Tempo's dedicated MCP client and payment-aware transport.",
+      "operation_id": "mcpPostSession",
+      "owner": "tempo",
+      "path": "/sessions/{session_id}/mcp",
+      "product": "tempo",
+      "rationale": "The route combines MCP protocol semantics with session binding and payment headers that the aggregate dispatcher does not model.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "ineligible_until_streaming_support",
+      "method": "GET",
+      "migration": "Add one reviewed SSE primitive with cancellation and reconnect semantics in TypeScript, Python, and Rust before generating this operation.",
+      "operation_id": "streamSessionEvents",
+      "owner": "tempo",
+      "path": "/sessions/{session_id}/events/stream",
+      "product": "tempo",
+      "rationale": "The endpoint is an unbounded server-sent event stream while aggregate SDK operations return buffered responses.",
       "review_after": "2026-10-01"
     }
   ]

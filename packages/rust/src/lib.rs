@@ -48,7 +48,6 @@ mod tests {
             "control_plane",
             "palette",
             "tempo",
-            "tempera_code",
             "tempera_llm",
             "tempera_workflows",
             "tempera_gym",
@@ -86,10 +85,6 @@ mod tests {
         assert_eq!(production.control_plane_url, "https://api.tempera.dev");
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
-        assert_eq!(
-            production.tempera_code_api_url,
-            "https://code-api.tempera.dev"
-        );
         assert_eq!(production.tempera_llm_api_url, "https://llm.tempera.dev");
         assert_eq!(
             production.tempera_workflows_api_url,

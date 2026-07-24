@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
-  "version": 3,
+  "version": 4,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
     "authorizePath": "/oauth/authorize",
@@ -10,7 +10,19 @@
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
-  "audiences": ["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym"],
+  "audiences": [
+    "palette",
+    "tempo",
+    "cradle",
+    "remi",
+    "human-data",
+    "data-engine",
+    "tempera-mcp",
+    "tempera-code",
+    "tempera-llm",
+    "tempera-workflows",
+    "tempera-gym"
+  ],
   "defaultAudience": "palette",
   "scopes": [
     "mcp:invoke",
@@ -44,7 +56,6 @@
       "dataEngineApiUrl": "http://127.0.0.1:8090",
       "temperaGymUrl": "http://127.0.0.1:8096",
       "cradleApiUrl": "http://127.0.0.1:8088",
-      "temperaCodeApiUrl": "http://127.0.0.1:8789",
       "temperaLlmApiUrl": "http://127.0.0.1:8080",
       "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
       "paletteApiUrl": "http://localhost:8080",
@@ -60,7 +71,6 @@
       "dataEngineApiUrl": "https://preview-data-engine.tempera.dev",
       "temperaGymUrl": "https://preview-gym.tempera.dev",
       "cradleApiUrl": "https://preview-cradle.tempera.dev",
-      "temperaCodeApiUrl": "https://preview-code-api.tempera.dev",
       "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
       "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
       "paletteApiUrl": "https://preview-mcp.tempera.dev",
@@ -76,7 +86,6 @@
       "dataEngineApiUrl": "https://staging-data-engine.tempera.dev",
       "temperaGymUrl": "https://staging-gym.tempera.dev",
       "cradleApiUrl": "https://staging-cradle.tempera.dev",
-      "temperaCodeApiUrl": "https://staging-code-api.tempera.dev",
       "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
       "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
       "paletteApiUrl": "https://staging-mcp.tempera.dev",
@@ -92,7 +101,6 @@
       "dataEngineApiUrl": "https://data-engine.tempera.dev",
       "temperaGymUrl": "https://gym.tempera.dev",
       "cradleApiUrl": "https://cradle.tempera.dev",
-      "temperaCodeApiUrl": "https://code-api.tempera.dev",
       "temperaLlmApiUrl": "https://llm.tempera.dev",
       "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
       "paletteApiUrl": "https://mcp.tempera.dev",
@@ -103,7 +111,15 @@
   "errorContract": {
     "$comment": "Every language exposes TemperaApiError with exactly these fields, populated by normalizing the six wire error shapes in the fleet.",
     "name": "TemperaApiError",
-    "fields": ["status", "code", "message", "requestId", "product", "operation", "body"],
+    "fields": [
+      "status",
+      "code",
+      "message",
+      "requestId",
+      "product",
+      "operation",
+      "body"
+    ],
     "normalization": [
       "If body.error is an object: code = body.error.code, message = body.error.message, requestId = body.error.request_id (cradle, remi, data-engine; data-engine bodies always carry request_id).",
       "Else if body.error is a string and body.message is present: code = body.error, message = body.message (control plane, palette).",
@@ -126,7 +142,7 @@
       "repository": "https://github.com/tempera-dev/auth-hub",
       "envVar": "TEMPERA_CONTROL_PLANE_URL",
       "audience": null,
-      "auth": "account bearer token from login/signup (control-plane session); introspectToken requires the introspection secret",
+      "auth": "account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret",
       "description": "Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API keys, billing, usage metering, and the unified MCP gateway."
     },
     "palette": {
@@ -144,14 +160,6 @@
       "audience": "tempo",
       "auth": "bearer minted for audience tempo, central tp_ API key, or the tempod static token",
       "description": "Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff."
-    },
-    "temperaCode": {
-      "name": "Tempera Code",
-      "repository": "https://github.com/tempera-dev/tempera-code",
-      "envVar": "TEMPERA_CODE_GATEWAY_URL",
-      "audience": "tempera-code",
-      "auth": "bearer minted for audience tempera-code with model:read/model:invoke, or a central tp_ API key",
-      "description": "Durable local workflow orchestration and hosted Responses-compatible inference through the Tempera Code gateway."
     },
     "temperaLlm": {
       "name": "tempera-llm",
@@ -236,215 +244,4289 @@
   },
   "operations": {
     "controlPlane": [
-      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check control-plane liveness; returns {ok: true}." },
-      { "id": "discovery", "method": "GET", "path": "/.well-known/oauth-authorization-server", "auth": "none", "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer." },
-      { "id": "jwks", "method": "GET", "path": "/.well-known/jwks.json", "auth": "none", "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens." },
-      { "id": "protectedResourceMetadata", "method": "GET", "path": "/.well-known/oauth-protected-resource/{resource}", "auth": "none", "pathParams": ["resource"], "description": "Fetch OAuth protected-resource metadata for one registered audience." },
-      { "id": "signup", "method": "POST", "path": "/sessions", "auth": "none", "body": ["email", "password", "organization", "invite_token"], "bodyDefaults": { "mode": "signup" }, "description": "Create a Tempera account (or accept an invite) and receive an account-session token pair." },
-      { "id": "login", "method": "POST", "path": "/sessions", "auth": "none", "body": ["email", "password"], "bodyDefaults": { "mode": "login" }, "description": "Log in with email and password and receive an account-session token pair." },
-      { "id": "me", "method": "GET", "path": "/me", "auth": "account", "description": "Fetch the authenticated user's identity, active workspace, and roles." },
-      { "id": "selectWorkspace", "method": "POST", "path": "/workspace/select", "auth": "account", "body": ["org_id", "project_id", "environment_id"], "description": "Switch the active workspace and receive a token pair scoped to it." },
-      { "id": "listOrgs", "method": "GET", "path": "/orgs", "auth": "account", "description": "List the organizations the authenticated user belongs to." },
-      { "id": "createOrg", "method": "POST", "path": "/orgs", "auth": "account", "body": ["name"], "description": "Create an organization; the caller becomes its owner." },
-      { "id": "listProjects", "method": "GET", "path": "/projects", "auth": "account", "description": "List projects across every organization the user belongs to." },
-      { "id": "createProject", "method": "POST", "path": "/projects", "auth": "account", "body": ["org_id", "name"], "description": "Create a project in an organization (requires an org admin role)." },
-      { "id": "listEnvironments", "method": "GET", "path": "/environments", "auth": "account", "description": "List environments across every project the user can access." },
-      { "id": "createEnvironment", "method": "POST", "path": "/environments", "auth": "account", "body": ["project_id", "name"], "description": "Create an environment in a project (requires an org admin role)." },
-      { "id": "listTeamMembers", "method": "GET", "path": "/team/members", "auth": "account", "description": "List team members of the active organization." },
-      { "id": "updateTeamMember", "method": "PATCH", "path": "/team/members/{member_id}", "auth": "account", "pathParams": ["member_id"], "body": ["role"], "description": "Change a team member's role (requires an org admin role; at least one owner must remain)." },
-      { "id": "removeTeamMember", "method": "DELETE", "path": "/team/members/{member_id}", "auth": "account", "pathParams": ["member_id"], "description": "Remove a team member from the active organization (idempotent)." },
-      { "id": "listInvites", "method": "GET", "path": "/invites", "auth": "account", "description": "List invites for the active organization, newest first." },
-      { "id": "createInvite", "method": "POST", "path": "/invites", "auth": "account", "body": ["email", "role"], "description": "Invite a user to the active organization; the accept URL is returned once." },
-      { "id": "cancelInvite", "method": "DELETE", "path": "/invites/{invite_id}", "auth": "account", "pathParams": ["invite_id"], "description": "Cancel a pending invite (idempotent)." },
-      { "id": "listApiKeys", "method": "GET", "path": "/api-keys", "auth": "account", "description": "List API keys in the active workspace; secrets are never returned." },
-      { "id": "createApiKey", "method": "POST", "path": "/api-keys", "auth": "account", "body": ["scopes", "audience", "org_id", "project_id", "environment_id"], "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace." },
-      { "id": "rotateApiKey", "method": "POST", "path": "/api-keys/{api_key_id}/rotate", "auth": "account", "pathParams": ["api_key_id"], "description": "Rotate an API key's secret; the new secret is returned exactly once." },
-      { "id": "revokeApiKey", "method": "DELETE", "path": "/api-keys/{api_key_id}", "auth": "account", "pathParams": ["api_key_id"], "description": "Revoke an API key (idempotent)." },
-      { "id": "listGrants", "method": "GET", "path": "/oauth/grants", "auth": "account", "description": "List the OAuth grants the user has approved in the active workspace." },
-      { "id": "revokeGrant", "method": "DELETE", "path": "/oauth/grants/{grant_id}", "auth": "account", "pathParams": ["grant_id"], "description": "Revoke an OAuth grant and every refresh token issued under it." },
-      { "id": "listSessions", "method": "GET", "path": "/sessions", "auth": "account", "description": "List the user's active account sessions." },
-      { "id": "revokeSession", "method": "DELETE", "path": "/sessions/{session_id}", "auth": "account", "pathParams": ["session_id"], "description": "Revoke an account session and its tokens immediately (idempotent)." },
-      { "id": "listConnectors", "method": "GET", "path": "/connectors", "auth": "account", "description": "List the connector catalog (MCP clients, editors, and API surfaces)." },
-      { "id": "getConnectorStatus", "method": "GET", "path": "/connectors/{connector_id}/status", "auth": "account", "pathParams": ["connector_id"], "description": "Fetch one connector's connection status for the active workspace." },
-      { "id": "listProducts", "method": "GET", "path": "/products", "auth": "account", "description": "List the product catalog with default scopes and setup paths." },
-      { "id": "getProductStatus", "method": "GET", "path": "/products/{product_id}/status", "auth": "account", "pathParams": ["product_id"], "description": "Fetch one product's activation status, entitlements, signals, and usage meters." },
-      { "id": "getModelCatalog", "method": "GET", "path": "/model-catalog", "auth": "account", "scope": "model:read", "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement." },
-      { "id": "getBillingStatus", "method": "GET", "path": "/billing/status", "auth": "account", "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)." },
-      { "id": "createBillingCheckout", "method": "GET", "path": "/billing/checkout", "auth": "account", "query": ["rail", "plan_id", "billing_interval", "currency", "network"], "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)." },
-      { "id": "getBillingPortal", "method": "GET", "path": "/billing/portal", "auth": "account", "description": "Fetch the billing-portal URL for the organization (requires a billing role)." },
-      { "id": "recordUsage", "method": "POST", "path": "/usage/events", "auth": "account", "body": ["metric", "quantity", "org_id", "project_id", "environment_id"], "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter." },
-      { "id": "listAuditLog", "method": "GET", "path": "/audit-log", "auth": "account", "description": "List recent audit-log events for the user and active organization (up to 50, newest first)." },
-      { "id": "introspectToken", "method": "POST", "path": "/oauth/introspect", "auth": "introspectionSecret", "body": ["token"], "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Check control-plane liveness; returns {ok: true}.",
+        "upstreamOperationId": "getHealth"
+      },
+      {
+        "id": "getReadiness",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Readiness probe for durable control-plane storage.",
+        "upstreamOperationId": "getReadiness"
+      },
+      {
+        "id": "me",
+        "method": "GET",
+        "path": "/me",
+        "auth": "account",
+        "description": "Fetch the authenticated user's identity, active workspace, and roles.",
+        "upstreamOperationId": "getMe"
+      },
+      {
+        "id": "listOrgs",
+        "method": "GET",
+        "path": "/orgs",
+        "auth": "account",
+        "description": "List the organizations the authenticated user belongs to.",
+        "upstreamOperationId": "listOrganizations"
+      },
+      {
+        "id": "createOrg",
+        "method": "POST",
+        "path": "/orgs",
+        "auth": "account",
+        "body": [
+          "name"
+        ],
+        "description": "Create an organization; the caller becomes its owner.",
+        "requiredBody": [
+          "name"
+        ],
+        "upstreamOperationId": "createOrganization"
+      },
+      {
+        "id": "listSessions",
+        "method": "GET",
+        "path": "/sessions",
+        "auth": "account",
+        "description": "List the user's active account sessions.",
+        "upstreamOperationId": "listAccountSessions"
+      },
+      {
+        "id": "createHostedSession",
+        "method": "POST",
+        "path": "/sessions",
+        "auth": "none",
+        "body": [
+          "mode",
+          "email",
+          "password",
+          "organization",
+          "invite_token"
+        ],
+        "requiredBody": [
+          "email",
+          "password"
+        ],
+        "description": "Create a first-party hosted account session from email/password login or signup.",
+        "upstreamOperationId": "createHostedSession"
+      },
+      {
+        "id": "revokeSession",
+        "method": "DELETE",
+        "path": "/sessions/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Revoke an account session and its tokens immediately (idempotent).",
+        "upstreamOperationId": "revokeAccountSession"
+      },
+      {
+        "id": "selectWorkspace",
+        "method": "POST",
+        "path": "/workspace/select",
+        "auth": "account",
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
+        "description": "Switch the active workspace and receive a token pair scoped to it.",
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
+        "upstreamOperationId": "selectWorkspace"
+      },
+      {
+        "id": "listTeamMembers",
+        "method": "GET",
+        "path": "/team/members",
+        "auth": "account",
+        "description": "List team members of the active organization.",
+        "upstreamOperationId": "listTeamMembers"
+      },
+      {
+        "id": "updateTeamMember",
+        "method": "PATCH",
+        "path": "/team/members/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "role"
+        ],
+        "description": "Change a team member's role (requires an org admin role; at least one owner must remain).",
+        "requiredBody": [
+          "role"
+        ],
+        "upstreamOperationId": "updateTeamMember"
+      },
+      {
+        "id": "removeTeamMember",
+        "method": "DELETE",
+        "path": "/team/members/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Remove a team member from the active organization (idempotent).",
+        "upstreamOperationId": "removeTeamMember"
+      },
+      {
+        "id": "listInvites",
+        "method": "GET",
+        "path": "/invites",
+        "auth": "account",
+        "description": "List invites for the active organization, newest first.",
+        "upstreamOperationId": "listInvites"
+      },
+      {
+        "id": "createInvite",
+        "method": "POST",
+        "path": "/invites",
+        "auth": "account",
+        "body": [
+          "email",
+          "role"
+        ],
+        "description": "Invite a user to the active organization; the accept URL is returned once.",
+        "requiredBody": [
+          "email",
+          "role"
+        ],
+        "upstreamOperationId": "createInvite"
+      },
+      {
+        "id": "cancelInvite",
+        "method": "DELETE",
+        "path": "/invites/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Cancel a pending invite (idempotent).",
+        "upstreamOperationId": "cancelInvite"
+      },
+      {
+        "id": "listProjects",
+        "method": "GET",
+        "path": "/projects",
+        "auth": "account",
+        "description": "List projects across every organization the user belongs to.",
+        "upstreamOperationId": "listProjects"
+      },
+      {
+        "id": "createProject",
+        "method": "POST",
+        "path": "/projects",
+        "auth": "account",
+        "body": [
+          "org_id",
+          "name"
+        ],
+        "description": "Create a project in an organization (requires an org admin role).",
+        "requiredBody": [
+          "org_id",
+          "name"
+        ],
+        "upstreamOperationId": "createProject"
+      },
+      {
+        "id": "listEnvironments",
+        "method": "GET",
+        "path": "/environments",
+        "auth": "account",
+        "description": "List environments across every project the user can access.",
+        "upstreamOperationId": "listEnvironments"
+      },
+      {
+        "id": "createEnvironment",
+        "method": "POST",
+        "path": "/environments",
+        "auth": "account",
+        "body": [
+          "project_id",
+          "name"
+        ],
+        "description": "Create an environment in a project (requires an org admin role).",
+        "requiredBody": [
+          "project_id",
+          "name"
+        ],
+        "upstreamOperationId": "createEnvironment"
+      },
+      {
+        "id": "listApiKeys",
+        "method": "GET",
+        "path": "/api-keys",
+        "auth": "account",
+        "description": "List API keys in the active workspace; secrets are never returned.",
+        "upstreamOperationId": "listApiKeys"
+      },
+      {
+        "id": "createApiKey",
+        "method": "POST",
+        "path": "/api-keys",
+        "auth": "account",
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "name",
+          "scopes",
+          "audience",
+          "expires_at"
+        ],
+        "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.",
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "scopes"
+        ],
+        "upstreamOperationId": "createApiKey"
+      },
+      {
+        "id": "revokeApiKey",
+        "method": "DELETE",
+        "path": "/api-keys/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Revoke an API key (idempotent).",
+        "upstreamOperationId": "revokeApiKey"
+      },
+      {
+        "id": "rotateApiKey",
+        "method": "POST",
+        "path": "/api-keys/{id}/rotate",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Rotate an API key's secret; the new secret is returned exactly once.",
+        "upstreamOperationId": "rotateApiKey"
+      },
+      {
+        "id": "providerConnectionsList",
+        "method": "GET",
+        "path": "/provider-connections",
+        "auth": "account",
+        "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
+        "upstreamOperationId": "providerConnections.list"
+      },
+      {
+        "id": "providerConnectionsCreate",
+        "method": "POST",
+        "path": "/provider-connections",
+        "auth": "account",
+        "description": "Create a tenant-scoped provider connection using only an external secret reference.",
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "provider",
+          "name",
+          "secret_ref",
+          "allowed_models"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "provider",
+          "name",
+          "secret_ref"
+        ],
+        "upstreamOperationId": "providerConnections.create"
+      },
+      {
+        "id": "providerConnectionsRevoke",
+        "method": "DELETE",
+        "path": "/provider-connections/{id}",
+        "auth": "account",
+        "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
+        "pathParams": [
+          "id"
+        ],
+        "upstreamOperationId": "providerConnections.revoke"
+      },
+      {
+        "id": "providerConnectionsRotate",
+        "method": "POST",
+        "path": "/provider-connections/{id}:rotate",
+        "auth": "account",
+        "description": "Replace a connection secret reference and increment its revision without exposing the reference.",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secret_ref",
+          "allowed_models"
+        ],
+        "requiredBody": [
+          "secret_ref"
+        ],
+        "upstreamOperationId": "providerConnections.rotate"
+      },
+      {
+        "id": "providerConnectionsResolve",
+        "method": "POST",
+        "path": "/provider-connections/{id}:resolve",
+        "auth": "account",
+        "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "usage_delegation"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "usage_delegation"
+        ],
+        "upstreamOperationId": "providerConnections.resolve"
+      },
+      {
+        "id": "listAuditLog",
+        "method": "GET",
+        "path": "/audit-log",
+        "auth": "account",
+        "description": "List recent audit-log events for the user and active organization (up to 50, newest first).",
+        "upstreamOperationId": "listAuditLog"
+      },
+      {
+        "id": "listConnectors",
+        "method": "GET",
+        "path": "/connectors",
+        "auth": "account",
+        "description": "List the connector catalog (MCP clients, editors, and API surfaces).",
+        "upstreamOperationId": "listConnectors"
+      },
+      {
+        "id": "getConnectorStatus",
+        "method": "GET",
+        "path": "/connectors/{id}/status",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Fetch one connector's connection status for the active workspace.",
+        "upstreamOperationId": "getConnectorStatus"
+      },
+      {
+        "id": "listProducts",
+        "method": "GET",
+        "path": "/products",
+        "auth": "account",
+        "description": "List the product catalog with default scopes and setup paths.",
+        "upstreamOperationId": "listProducts"
+      },
+      {
+        "id": "getProductStatus",
+        "method": "GET",
+        "path": "/products/{id}/status",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Fetch one product's activation status, entitlements, signals, and usage meters.",
+        "upstreamOperationId": "getProductStatus"
+      },
+      {
+        "id": "getBillingStatus",
+        "method": "GET",
+        "path": "/billing/status",
+        "auth": "account",
+        "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
+        "upstreamOperationId": "getBillingStatus"
+      },
+      {
+        "id": "createBillingCheckout",
+        "method": "GET",
+        "path": "/billing/checkout",
+        "auth": "account",
+        "query": [
+          "rail",
+          "plan",
+          "plan_id",
+          "currency",
+          "network"
+        ],
+        "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
+        "upstreamOperationId": "createBillingCheckout"
+      },
+      {
+        "id": "getBillingPortal",
+        "method": "GET",
+        "path": "/billing/portal",
+        "auth": "account",
+        "description": "Fetch the billing-portal URL for the organization (requires a billing role).",
+        "upstreamOperationId": "createBillingPortal"
+      },
+      {
+        "id": "getBillingCredits",
+        "method": "GET",
+        "path": "/billing/credits",
+        "auth": "account",
+        "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
+        "upstreamOperationId": "getBillingCredits"
+      },
+      {
+        "id": "getModelCatalog",
+        "method": "GET",
+        "path": "/model-catalog",
+        "auth": "account",
+        "scope": "model:read",
+        "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
+        "upstreamOperationId": "getModelCatalog"
+      },
+      {
+        "id": "recordUsage",
+        "method": "POST",
+        "path": "/usage/events",
+        "auth": "account",
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "metric",
+          "quantity",
+          "idempotency_key",
+          "cost"
+        ],
+        "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "metric"
+        ],
+        "upstreamOperationId": "recordUsageEvent"
+      },
+      {
+        "id": "usageReservationsCreate",
+        "method": "POST",
+        "path": "/usage/reservations",
+        "auth": "account",
+        "description": "Atomically reserve the maximum model cost before starting a provider request.",
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "subject",
+          "idempotency_key",
+          "provider",
+          "model",
+          "config_id",
+          "byok",
+          "maximum_provider_cost_micros",
+          "ttl_seconds"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "idempotency_key",
+          "provider",
+          "model",
+          "config_id",
+          "byok",
+          "maximum_provider_cost_micros"
+        ],
+        "upstreamOperationId": "usageReservations.create"
+      },
+      {
+        "id": "usageReservationsCommit",
+        "method": "POST",
+        "path": "/usage/reservations/{reservation_id}:commit",
+        "auth": "account",
+        "description": "Commit exact provider usage against an admitted reservation and release unused capacity.",
+        "pathParams": [
+          "reservation_id"
+        ],
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "config_id",
+          "cost"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "config_id",
+          "cost"
+        ],
+        "upstreamOperationId": "usageReservations.commit"
+      },
+      {
+        "id": "usageReservationsRelease",
+        "method": "POST",
+        "path": "/usage/reservations/{reservation_id}:release",
+        "auth": "account",
+        "description": "Release unused capacity after provider failure or cancellation.",
+        "pathParams": [
+          "reservation_id"
+        ],
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id"
+        ],
+        "upstreamOperationId": "usageReservations.release"
+      },
+      {
+        "id": "usageReservationsReconcile",
+        "method": "POST",
+        "path": "/usage/reservations/{reservation_id}:reconcile",
+        "auth": "account",
+        "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
+        "pathParams": [
+          "reservation_id"
+        ],
+        "body": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "config_id",
+          "reason",
+          "trace_id",
+          "observed_usage",
+          "expected_cost"
+        ],
+        "requiredBody": [
+          "org_id",
+          "project_id",
+          "environment_id",
+          "config_id",
+          "reason",
+          "observed_usage"
+        ],
+        "upstreamOperationId": "usageReservations.reconcile"
+      },
+      {
+        "id": "listGrants",
+        "method": "GET",
+        "path": "/oauth/grants",
+        "auth": "account",
+        "description": "List the OAuth grants the user has approved in the active workspace.",
+        "upstreamOperationId": "listOAuthGrants"
+      },
+      {
+        "id": "revokeGrant",
+        "method": "DELETE",
+        "path": "/oauth/grants/{id}",
+        "auth": "account",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Revoke an OAuth grant and every refresh token issued under it.",
+        "upstreamOperationId": "revokeOAuthGrant"
+      },
+      {
+        "id": "introspectToken",
+        "method": "POST",
+        "path": "/oauth/introspect",
+        "auth": "introspectionSecret",
+        "body": [
+          "token",
+          "token_type_hint"
+        ],
+        "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid.",
+        "requiredBody": [
+          "token"
+        ],
+        "upstreamOperationId": "introspectOAuthToken"
+      },
+      {
+        "id": "discovery",
+        "method": "GET",
+        "path": "/.well-known/oauth-authorization-server",
+        "auth": "none",
+        "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer.",
+        "upstreamOperationId": "getOAuthAuthorizationServerMetadata"
+      },
+      {
+        "id": "getOAuthProtectedResourceMetadata",
+        "method": "GET",
+        "path": "/.well-known/oauth-protected-resource",
+        "auth": "account",
+        "description": "OAuth protected resource discovery metadata for MCP/resource clients.",
+        "upstreamOperationId": "getOAuthProtectedResourceMetadata"
+      },
+      {
+        "id": "protectedResourceMetadata",
+        "method": "GET",
+        "path": "/.well-known/oauth-protected-resource/{resource}",
+        "auth": "none",
+        "pathParams": [
+          "resource"
+        ],
+        "description": "Fetch OAuth protected-resource metadata for one registered audience.",
+        "upstreamOperationId": "getOAuthProtectedResourceMetadataForAudience"
+      },
+      {
+        "id": "jwks",
+        "method": "GET",
+        "path": "/.well-known/jwks.json",
+        "auth": "none",
+        "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens.",
+        "upstreamOperationId": "getJsonWebKeySet"
+      },
+      {
+        "id": "adminOperationalProvenance",
+        "method": "GET",
+        "path": "/admin/operations/provenance",
+        "auth": "account",
+        "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
+        "upstreamOperationId": "adminOperationalProvenance"
+      },
+      {
+        "id": "adminStepUp",
+        "method": "POST",
+        "path": "/admin/step-up",
+        "auth": "account",
+        "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
+        "body": [
+          "password"
+        ],
+        "requiredBody": [
+          "password"
+        ],
+        "upstreamOperationId": "adminStepUp"
+      },
+      {
+        "id": "adminAdjustCredits",
+        "method": "POST",
+        "path": "/admin/billing/credits/adjust",
+        "auth": "account",
+        "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
+        "body": [
+          "org_id",
+          "credit_micros",
+          "reference",
+          "reason"
+        ],
+        "requiredBody": [
+          "org_id",
+          "credit_micros"
+        ],
+        "upstreamOperationId": "adminAdjustCredits"
+      },
+      {
+        "id": "adminBillingOrgs",
+        "method": "GET",
+        "path": "/admin/billing/orgs",
+        "auth": "account",
+        "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
+        "upstreamOperationId": "adminBillingOrgs"
+      },
+      {
+        "id": "githubSetupSessionsCreate",
+        "method": "POST",
+        "path": "/github/setup-sessions",
+        "auth": "account",
+        "description": "Create a one-time CSRF-bound GitHub App installation session.",
+        "upstreamOperationId": "githubSetupSessions.create",
+        "body": [
+          "project_id",
+          "environment_id",
+          "return_url"
+        ]
+      },
+      {
+        "id": "githubSetupSessionsComplete",
+        "method": "GET",
+        "path": "/github/callback",
+        "auth": "none",
+        "description": "Bind a GitHub installation callback to its authenticated workspace.",
+        "upstreamOperationId": "githubSetupSessions.complete",
+        "query": [
+          "state",
+          "installation_id"
+        ]
+      },
+      {
+        "id": "githubInstallationsList",
+        "method": "GET",
+        "path": "/github/installations",
+        "auth": "account",
+        "description": "List active GitHub App installations for the organization.",
+        "upstreamOperationId": "githubInstallations.list"
+      },
+      {
+        "id": "githubInstallationsDisconnect",
+        "method": "DELETE",
+        "path": "/github/installations/{installation_id}",
+        "auth": "account",
+        "description": "Disconnect a GitHub App installation from the workspace.",
+        "upstreamOperationId": "githubInstallations.disconnect",
+        "pathParams": [
+          "installation_id"
+        ]
+      },
+      {
+        "id": "githubInstallationRepositoriesList",
+        "method": "GET",
+        "path": "/github/installations/{installation_id}/repositories",
+        "auth": "account",
+        "description": "List repository metadata received for a GitHub installation.",
+        "upstreamOperationId": "githubInstallationRepositories.list",
+        "pathParams": [
+          "installation_id"
+        ]
+      },
+      {
+        "id": "githubRepositorySnapshotsCapture",
+        "method": "POST",
+        "path": "/github/installations/{installation_id}/repositories/{repository_id}:snapshot",
+        "auth": "account",
+        "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.",
+        "upstreamOperationId": "githubRepositorySnapshots.capture",
+        "pathParams": [
+          "installation_id",
+          "repository_id"
+        ],
+        "body": [
+          "ref"
+        ]
+      },
+      {
+        "id": "githubWebhooksAccept",
+        "method": "POST",
+        "path": "/github/webhook",
+        "auth": "none",
+        "description": "Accept a signed, replay-deduplicated GitHub webhook.",
+        "upstreamOperationId": "githubWebhooks.accept"
+      }
     ],
     "palette": [
-      { "id": "health", "method": "GET", "path": "/health", "auth": "none", "description": "Check palette API liveness; returns {ok: true}." },
-      { "id": "listTraces", "method": "GET", "path": "/v1/traces/{tenant_id}", "auth": "product", "pathParams": ["tenant_id"], "query": ["project_id", "environment_id", "trace_id", "kind", "status", "started_after", "started_before", "model", "release", "min_cost_micros", "max_cost_micros", "min_latency_ms", "max_latency_ms", "limit", "cursor"], "scope": "trace:read", "description": "List trace summaries for a tenant with filters and cursor pagination." },
-      { "id": "getTrace", "method": "GET", "path": "/v1/traces/{tenant_id}/{trace_id}", "auth": "product", "pathParams": ["tenant_id", "trace_id"], "query": ["unmask", "reason"], "scope": "trace:read", "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason." },
-      { "id": "getSpan", "method": "GET", "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}", "auth": "product", "pathParams": ["tenant_id", "trace_id", "span_id"], "query": ["unmask", "reason"], "scope": "trace:read", "description": "Fetch one canonical span by trace and span id." },
-      { "id": "getSpanIo", "method": "GET", "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io", "auth": "product", "pathParams": ["tenant_id", "trace_id", "span_id"], "query": ["unmask", "reason"], "scope": "trace:read", "description": "Fetch a span's recorded input and output values." },
-      { "id": "searchSpans", "method": "GET", "path": "/v1/search/{tenant_id}/spans", "auth": "product", "pathParams": ["tenant_id"], "query": ["q", "project_id", "environment_id", "trace_id", "span_id", "kind", "status", "model", "tool", "limit"], "scope": "trace:read", "description": "Search spans by text query and facet filters." },
-      { "id": "ingestSpan", "method": "POST", "path": "/v1/traces/native", "auth": "product", "query": ["durability"], "body": ["scope", "trace_id", "span_id", "kind", "name", "status", "seq", "attributes", "redaction_class", "parent_span_id", "start_time", "end_time", "input", "output", "model", "tokens", "cost", "idempotency_key"], "scope": "trace:write", "description": "Ingest one native span; idempotent when an idempotency key is supplied." },
-      { "id": "importSource", "method": "POST", "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}", "auth": "product", "pathParams": ["tenant_id", "project_id", "environment_id"], "query": ["durability"], "body": ["source", "payload"], "scope": "trace:write", "description": "Import spans from a named external source payload." },
-      { "id": "archiveTrace", "method": "POST", "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}", "auth": "product", "pathParams": ["tenant_id", "project_id", "trace_id"], "scope": "trace:read", "description": "Archive a trace to Parquet and return the archive manifest." },
-      { "id": "createDataset", "method": "POST", "path": "/v1/datasets/{tenant_id}/{project_id}", "auth": "product", "pathParams": ["tenant_id", "project_id"], "body": ["name"], "scope": "dataset:write", "description": "Create a dataset for curating cases from traces." },
-      { "id": "promoteTraceToCase", "method": "POST", "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace", "auth": "product", "pathParams": ["tenant_id", "project_id", "dataset_id"], "body": ["trace_id", "span_id", "reference"], "scope": "dataset:write", "description": "Promote a trace (or one span of it) into a dataset case." },
-      { "id": "createDatasetVersion", "method": "POST", "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions", "auth": "product", "pathParams": ["tenant_id", "project_id", "dataset_id"], "body": ["case_ids"], "scope": "dataset:write", "description": "Snapshot a dataset into an immutable version for evals and experiments." },
-      { "id": "createApiKey", "method": "POST", "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}", "auth": "product", "pathParams": ["tenant_id", "project_id", "environment_id"], "body": ["scopes"], "scope": "admin", "description": "Mint a palette-scoped API key; the secret is returned exactly once." },
-      { "id": "revokeApiKey", "method": "POST", "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke", "auth": "product", "pathParams": ["tenant_id", "project_id", "environment_id", "api_key_id"], "scope": "admin", "description": "Revoke a palette API key." },
-      { "id": "getUsageSummary", "method": "GET", "path": "/v1/usage/{tenant_id}/{project_id}", "auth": "product", "pathParams": ["tenant_id", "project_id"], "scope": "admin", "description": "Fetch usage totals for a tenant project." },
-      { "id": "importTemperaBundle", "method": "POST", "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles", "auth": "product", "pathParams": ["tenant_id", "project_id"], "body": ["canonical_json", "signature_base64", "public_key_pem"], "requiredBody": ["canonical_json", "signature_base64", "public_key_pem"], "scope": "eval:run", "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt." },
-      { "id": "recordTemperaDecision", "method": "POST", "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions", "auth": "product", "pathParams": ["tenant_id", "project_id"], "body": ["canonical_json", "signature_base64", "public_key_pem"], "requiredBody": ["canonical_json", "signature_base64", "public_key_pem"], "scope": "eval:run", "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt." },
-      { "id": "getTemperaEvidence", "method": "GET", "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}", "auth": "product", "pathParams": ["tenant_id", "project_id", "kind", "external_id"], "scope": "eval:run", "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/health",
+        "auth": "none",
+        "description": "Check palette API liveness; returns {ok: true}.",
+        "upstreamOperationId": "health.check"
+      },
+      {
+        "id": "alertsEvaluate",
+        "method": "POST",
+        "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
+        "auth": "product",
+        "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "trace_id"
+        ],
+        "body": [
+          "input",
+          "policy"
+        ],
+        "requiredBody": [
+          "policy",
+          "input"
+        ],
+        "upstreamOperationId": "alerts.evaluate"
+      },
+      {
+        "id": "createApiKey",
+        "method": "POST",
+        "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "environment_id"
+        ],
+        "body": [
+          "scopes"
+        ],
+        "scope": "admin",
+        "description": "Mint a palette-scoped API key; the secret is returned exactly once.",
+        "requiredBody": [
+          "scopes"
+        ],
+        "upstreamOperationId": "apiKeys.create"
+      },
+      {
+        "id": "revokeApiKey",
+        "method": "POST",
+        "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "environment_id",
+          "api_key_id"
+        ],
+        "scope": "admin",
+        "description": "Revoke a palette API key.",
+        "upstreamOperationId": "apiKeys.revoke"
+      },
+      {
+        "id": "archiveQuerySpans",
+        "method": "GET",
+        "path": "/v1/archive/{tenant_id}/{project_id}/spans",
+        "auth": "product",
+        "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "environment_id",
+          "trace_id",
+          "span_id",
+          "kind",
+          "status",
+          "limit"
+        ],
+        "upstreamOperationId": "archive.querySpans"
+      },
+      {
+        "id": "archiveTrace",
+        "method": "POST",
+        "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "trace_id"
+        ],
+        "scope": "trace:read",
+        "description": "Archive a trace to Parquet and return the archive manifest.",
+        "upstreamOperationId": "archive.archiveTrace"
+      },
+      {
+        "id": "auditList",
+        "method": "GET",
+        "path": "/v1/audit/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/audit/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "audit.list"
+      },
+      {
+        "id": "calibrationsRun",
+        "method": "POST",
+        "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
+        "auth": "product",
+        "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id",
+          "version_id"
+        ],
+        "body": [
+          "eval_report_id",
+          "evaluator_version_id",
+          "pass_threshold"
+        ],
+        "upstreamOperationId": "calibrations.run"
+      },
+      {
+        "id": "connectGetStatus",
+        "method": "GET",
+        "path": "/v1/connect/status/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "connect.getStatus"
+      },
+      {
+        "id": "connectorsList",
+        "method": "GET",
+        "path": "/v1/connectors/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "limit"
+        ],
+        "upstreamOperationId": "connectors.list"
+      },
+      {
+        "id": "connectorsConnect",
+        "method": "POST",
+        "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
+        "auth": "product",
+        "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "toolkit"
+        ],
+        "requiredBody": [
+          "toolkit"
+        ],
+        "upstreamOperationId": "connectors.connect"
+      },
+      {
+        "id": "connectorsInvokeTool",
+        "method": "POST",
+        "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
+        "auth": "product",
+        "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "arguments",
+          "tool"
+        ],
+        "requiredBody": [
+          "tool"
+        ],
+        "upstreamOperationId": "connectors.invokeTool"
+      },
+      {
+        "id": "connectorsGetSkills",
+        "method": "GET",
+        "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
+        "auth": "product",
+        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "toolkit"
+        ],
+        "upstreamOperationId": "connectors.getSkills"
+      },
+      {
+        "id": "connectorsStatus",
+        "method": "GET",
+        "path": "/v1/connectors/{tenant_id}/{project_id}/status",
+        "auth": "product",
+        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "toolkit"
+        ],
+        "upstreamOperationId": "connectors.status"
+      },
+      {
+        "id": "connectorsListTools",
+        "method": "GET",
+        "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
+        "auth": "product",
+        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "toolkit",
+          "limit"
+        ],
+        "upstreamOperationId": "connectors.listTools"
+      },
+      {
+        "id": "createDataset",
+        "method": "POST",
+        "path": "/v1/datasets/{tenant_id}/{project_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "name"
+        ],
+        "scope": "dataset:write",
+        "description": "Create a dataset for curating cases from traces.",
+        "requiredBody": [
+          "name"
+        ],
+        "upstreamOperationId": "datasets.create"
+      },
+      {
+        "id": "promoteTraceToCase",
+        "method": "POST",
+        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id"
+        ],
+        "body": [
+          "reference",
+          "span_id",
+          "trace_id"
+        ],
+        "scope": "dataset:write",
+        "description": "Promote a trace (or one span of it) into a dataset case.",
+        "requiredBody": [
+          "trace_id"
+        ],
+        "upstreamOperationId": "datasets.promoteCaseFromTrace"
+      },
+      {
+        "id": "createDatasetVersion",
+        "method": "POST",
+        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id"
+        ],
+        "body": [
+          "case_ids"
+        ],
+        "scope": "dataset:write",
+        "description": "Snapshot a dataset into an immutable version for evals and experiments.",
+        "upstreamOperationId": "datasets.createVersion"
+      },
+      {
+        "id": "evalsRunDeterministic",
+        "method": "POST",
+        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
+        "auth": "product",
+        "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id",
+          "version_id"
+        ],
+        "body": [
+          "agent_release_id",
+          "code_hash",
+          "evaluator_id",
+          "evaluator_version_id",
+          "kind",
+          "prompt_version_id",
+          "wasm_hash"
+        ],
+        "requiredBody": [
+          "evaluator_id",
+          "evaluator_version_id",
+          "agent_release_id",
+          "kind"
+        ],
+        "upstreamOperationId": "evals.runDeterministic"
+      },
+      {
+        "id": "evalsRunJudge",
+        "method": "POST",
+        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
+        "auth": "product",
+        "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id",
+          "version_id"
+        ],
+        "body": [
+          "agent_release_id",
+          "code_hash",
+          "evaluator_id",
+          "evaluator_version_id",
+          "kind",
+          "prompt_version_id",
+          "provider_secret_id"
+        ],
+        "requiredBody": [
+          "evaluator_id",
+          "evaluator_version_id",
+          "agent_release_id",
+          "kind",
+          "provider_secret_id"
+        ],
+        "upstreamOperationId": "evals.runJudge"
+      },
+      {
+        "id": "importTemperaBundle",
+        "method": "POST",
+        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "canonical_json",
+          "public_key_pem",
+          "signature_base64"
+        ],
+        "requiredBody": [
+          "canonical_json",
+          "signature_base64",
+          "public_key_pem"
+        ],
+        "scope": "eval:run",
+        "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
+        "upstreamOperationId": "evalResults.importTemperaBundle"
+      },
+      {
+        "id": "recordTemperaDecision",
+        "method": "POST",
+        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "canonical_json",
+          "public_key_pem",
+          "signature_base64"
+        ],
+        "requiredBody": [
+          "canonical_json",
+          "signature_base64",
+          "public_key_pem"
+        ],
+        "scope": "eval:run",
+        "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
+        "upstreamOperationId": "evalResults.recordTemperaDecision"
+      },
+      {
+        "id": "getTemperaEvidence",
+        "method": "GET",
+        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "kind",
+          "external_id"
+        ],
+        "scope": "eval:run",
+        "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
+        "upstreamOperationId": "evalResults.getTemperaEvidence"
+      },
+      {
+        "id": "experimentsRunDeterministic",
+        "method": "POST",
+        "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
+        "auth": "product",
+        "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id",
+          "version_id"
+        ],
+        "body": [
+          "baseline_outputs",
+          "baseline_release_id",
+          "candidate_outputs",
+          "candidate_release_id",
+          "evaluator_id",
+          "evaluator_version_id",
+          "gate_policy",
+          "kind"
+        ],
+        "requiredBody": [
+          "baseline_release_id",
+          "candidate_release_id",
+          "evaluator_id",
+          "evaluator_version_id",
+          "kind",
+          "baseline_outputs",
+          "candidate_outputs"
+        ],
+        "upstreamOperationId": "experiments.runDeterministic"
+      },
+      {
+        "id": "experimentsRunJudge",
+        "method": "POST",
+        "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
+        "auth": "product",
+        "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "dataset_id",
+          "version_id"
+        ],
+        "body": [
+          "baseline_outputs",
+          "baseline_release_id",
+          "candidate_outputs",
+          "candidate_release_id",
+          "evaluator_id",
+          "evaluator_version_id",
+          "gate_policy",
+          "kind",
+          "provider_secret_id"
+        ],
+        "requiredBody": [
+          "baseline_release_id",
+          "candidate_release_id",
+          "evaluator_id",
+          "evaluator_version_id",
+          "kind",
+          "baseline_outputs",
+          "candidate_outputs",
+          "provider_secret_id"
+        ],
+        "upstreamOperationId": "experiments.runJudge"
+      },
+      {
+        "id": "gatesCreate",
+        "method": "POST",
+        "path": "/v1/gates/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call POST /v1/gates/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "dataset_id",
+          "evaluator_version_id",
+          "gate_id",
+          "inconclusive_policy",
+          "name"
+        ],
+        "requiredBody": [
+          "gate_id",
+          "name"
+        ],
+        "upstreamOperationId": "gates.create"
+      },
+      {
+        "id": "gatesRun",
+        "method": "POST",
+        "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
+        "auth": "product",
+        "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "gate_id"
+        ],
+        "body": [
+          "experiment_run_id"
+        ],
+        "upstreamOperationId": "gates.run"
+      },
+      {
+        "id": "importSource",
+        "method": "POST",
+        "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "environment_id"
+        ],
+        "query": [
+          "durability"
+        ],
+        "body": [
+          "payload",
+          "source"
+        ],
+        "scope": "trace:write",
+        "description": "Import spans from a named external source payload.",
+        "requiredBody": [
+          "source"
+        ],
+        "upstreamOperationId": "ingest.importSource"
+      },
+      {
+        "id": "ingestReplayDeadLetter",
+        "method": "POST",
+        "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
+        "auth": "product",
+        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "message_id"
+        ],
+        "query": [
+          "reset_attempts"
+        ],
+        "upstreamOperationId": "ingest.replayDeadLetter"
+      },
+      {
+        "id": "ingestGetQueueStatus",
+        "method": "GET",
+        "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
+        "auth": "product",
+        "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "ingest.getQueueStatus"
+      },
+      {
+        "id": "ingestDrainTraceIngested",
+        "method": "POST",
+        "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
+        "auth": "product",
+        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "limit"
+        ],
+        "upstreamOperationId": "ingest.drainTraceIngested"
+      },
+      {
+        "id": "ingestDrainTraceWrites",
+        "method": "POST",
+        "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
+        "auth": "product",
+        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "limit"
+        ],
+        "upstreamOperationId": "ingest.drainTraceWrites"
+      },
+      {
+        "id": "ingestReconcileTrace",
+        "method": "POST",
+        "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
+        "auth": "product",
+        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "trace_id"
+        ],
+        "upstreamOperationId": "ingest.reconcileTrace"
+      },
+      {
+        "id": "judgeEvaluate",
+        "method": "POST",
+        "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
+        "auth": "product",
+        "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "cache_namespace",
+          "case",
+          "evaluator",
+          "provider_secret_id"
+        ],
+        "requiredBody": [
+          "evaluator",
+          "case",
+          "provider_secret_id"
+        ],
+        "upstreamOperationId": "judge.evaluate"
+      },
+      {
+        "id": "judgeListLedger",
+        "method": "GET",
+        "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
+        "auth": "product",
+        "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "judge.listLedger"
+      },
+      {
+        "id": "onlineDecideSampling",
+        "method": "POST",
+        "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
+        "auth": "product",
+        "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "trace_id"
+        ],
+        "body": [
+          "high_cost_micros_threshold",
+          "keep_errors",
+          "sample_rate_per_mille",
+          "slow_ms_threshold"
+        ],
+        "requiredBody": [
+          "sample_rate_per_mille",
+          "keep_errors"
+        ],
+        "upstreamOperationId": "online.decideSampling"
+      },
+      {
+        "id": "promptsList",
+        "method": "GET",
+        "path": "/v1/prompts/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "prompts.list"
+      },
+      {
+        "id": "promptsCreate",
+        "method": "POST",
+        "path": "/v1/prompts/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call POST /v1/prompts/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "created_by",
+          "description",
+          "message",
+          "name",
+          "template"
+        ],
+        "requiredBody": [
+          "name",
+          "template"
+        ],
+        "upstreamOperationId": "prompts.create"
+      },
+      {
+        "id": "promptsGet",
+        "method": "GET",
+        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
+        "auth": "product",
+        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "prompt_id"
+        ],
+        "upstreamOperationId": "prompts.get"
+      },
+      {
+        "id": "promptsDiffVersions",
+        "method": "GET",
+        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
+        "auth": "product",
+        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "prompt_id"
+        ],
+        "query": [
+          "from",
+          "to"
+        ],
+        "upstreamOperationId": "prompts.diffVersions"
+      },
+      {
+        "id": "promptsListVersions",
+        "method": "GET",
+        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+        "auth": "product",
+        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "prompt_id"
+        ],
+        "upstreamOperationId": "prompts.listVersions"
+      },
+      {
+        "id": "promptsAddVersion",
+        "method": "POST",
+        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+        "auth": "product",
+        "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "prompt_id"
+        ],
+        "body": [
+          "created_by",
+          "message",
+          "template"
+        ],
+        "requiredBody": [
+          "template"
+        ],
+        "upstreamOperationId": "prompts.addVersion"
+      },
+      {
+        "id": "providerSecretsList",
+        "method": "GET",
+        "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "upstreamOperationId": "providerSecrets.list"
+      },
+      {
+        "id": "providerSecretsCreate",
+        "method": "POST",
+        "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "display_name",
+          "provider",
+          "secret_value"
+        ],
+        "requiredBody": [
+          "provider",
+          "display_name",
+          "secret_value"
+        ],
+        "upstreamOperationId": "providerSecrets.create"
+      },
+      {
+        "id": "providerSecretsRevoke",
+        "method": "POST",
+        "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
+        "auth": "product",
+        "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "provider_secret_id"
+        ],
+        "upstreamOperationId": "providerSecrets.revoke"
+      },
+      {
+        "id": "reviewsCreateQueue",
+        "method": "POST",
+        "path": "/v1/review-queues/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "annotation_schema",
+          "name",
+          "queue_id"
+        ],
+        "requiredBody": [
+          "name",
+          "annotation_schema"
+        ],
+        "upstreamOperationId": "reviews.createQueue"
+      },
+      {
+        "id": "reviewsListTasks",
+        "method": "GET",
+        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
+        "auth": "product",
+        "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "queue_id"
+        ],
+        "query": [
+          "state"
+        ],
+        "upstreamOperationId": "reviews.listTasks"
+      },
+      {
+        "id": "reviewsEnqueueTaskFromTrace",
+        "method": "POST",
+        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
+        "auth": "product",
+        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "queue_id"
+        ],
+        "body": [
+          "dataset_case_id",
+          "dataset_id",
+          "priority",
+          "span_id",
+          "task_id",
+          "trace_id"
+        ],
+        "requiredBody": [
+          "trace_id"
+        ],
+        "upstreamOperationId": "reviews.enqueueTaskFromTrace"
+      },
+      {
+        "id": "reviewsSubmitAnnotation",
+        "method": "POST",
+        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
+        "auth": "product",
+        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "queue_id",
+          "task_id"
+        ],
+        "body": [
+          "annotation_id",
+          "payload",
+          "reviewer_id",
+          "verdict"
+        ],
+        "requiredBody": [
+          "reviewer_id",
+          "verdict",
+          "payload"
+        ],
+        "upstreamOperationId": "reviews.submitAnnotation"
+      },
+      {
+        "id": "reviewsPromoteAnnotation",
+        "method": "POST",
+        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
+        "auth": "product",
+        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "queue_id",
+          "task_id",
+          "annotation_id"
+        ],
+        "body": [
+          "dataset_id",
+          "reference"
+        ],
+        "requiredBody": [
+          "dataset_id"
+        ],
+        "upstreamOperationId": "reviews.promoteAnnotation"
+      },
+      {
+        "id": "scenariosList",
+        "method": "GET",
+        "path": "/v1/scenarios/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "query": [
+          "limit",
+          "cursor"
+        ],
+        "upstreamOperationId": "scenarios.list"
+      },
+      {
+        "id": "scenariosCreate",
+        "method": "POST",
+        "path": "/v1/scenarios/{tenant_id}/{project_id}",
+        "auth": "product",
+        "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "exemplar_trace_id",
+          "expected_outcome",
+          "failure_mode",
+          "source_trace_ids",
+          "title"
+        ],
+        "requiredBody": [
+          "title",
+          "source_trace_ids"
+        ],
+        "upstreamOperationId": "scenarios.create"
+      },
+      {
+        "id": "scenariosMine",
+        "method": "POST",
+        "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
+        "auth": "product",
+        "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "body": [
+          "jaccard_threshold",
+          "trace_ids"
+        ],
+        "requiredBody": [
+          "trace_ids"
+        ],
+        "upstreamOperationId": "scenarios.mine"
+      },
+      {
+        "id": "scenariosGet",
+        "method": "GET",
+        "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
+        "auth": "product",
+        "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
+        "pathParams": [
+          "tenant_id",
+          "project_id",
+          "scenario_id"
+        ],
+        "upstreamOperationId": "scenarios.get"
+      },
+      {
+        "id": "searchSpans",
+        "method": "GET",
+        "path": "/v1/search/{tenant_id}/spans",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id"
+        ],
+        "query": [
+          "q",
+          "project_id",
+          "environment_id",
+          "trace_id",
+          "span_id",
+          "kind",
+          "status",
+          "model",
+          "tool",
+          "limit"
+        ],
+        "scope": "trace:read",
+        "description": "Search spans by text query and facet filters.",
+        "upstreamOperationId": "search.spans"
+      },
+      {
+        "id": "getSpan",
+        "method": "GET",
+        "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "trace_id",
+          "span_id"
+        ],
+        "query": [
+          "unmask",
+          "reason"
+        ],
+        "scope": "trace:read",
+        "description": "Fetch one canonical span by trace and span id.",
+        "upstreamOperationId": "spans.get"
+      },
+      {
+        "id": "getSpanIo",
+        "method": "GET",
+        "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "trace_id",
+          "span_id"
+        ],
+        "query": [
+          "unmask",
+          "reason"
+        ],
+        "scope": "trace:read",
+        "description": "Fetch a span's recorded input and output values.",
+        "upstreamOperationId": "spans.getIo"
+      },
+      {
+        "id": "ingestSpan",
+        "method": "POST",
+        "path": "/v1/traces/native",
+        "auth": "product",
+        "query": [
+          "durability"
+        ],
+        "body": [
+          "attributes",
+          "auth_context",
+          "cost",
+          "end_time",
+          "idempotency_key",
+          "input",
+          "kind",
+          "model",
+          "name",
+          "output",
+          "parent_span_id",
+          "redaction_class",
+          "scope",
+          "seq",
+          "span_id",
+          "start_time",
+          "status",
+          "tokens",
+          "trace_id"
+        ],
+        "scope": "trace:write",
+        "description": "Ingest one native span; idempotent when an idempotency key is supplied.",
+        "requiredBody": [
+          "scope",
+          "trace_id",
+          "span_id",
+          "seq",
+          "kind",
+          "name",
+          "status",
+          "attributes",
+          "redaction_class"
+        ],
+        "upstreamOperationId": "ingest.native"
+      },
+      {
+        "id": "listTraces",
+        "method": "GET",
+        "path": "/v1/traces/{tenant_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id"
+        ],
+        "query": [
+          "project_id",
+          "environment_id",
+          "trace_id",
+          "kind",
+          "status",
+          "started_after",
+          "started_before",
+          "model",
+          "release",
+          "min_cost_micros",
+          "max_cost_micros",
+          "min_latency_ms",
+          "max_latency_ms",
+          "limit",
+          "cursor"
+        ],
+        "scope": "trace:read",
+        "description": "List trace summaries for a tenant with filters and cursor pagination.",
+        "upstreamOperationId": "traces.list"
+      },
+      {
+        "id": "getTrace",
+        "method": "GET",
+        "path": "/v1/traces/{tenant_id}/{trace_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "trace_id"
+        ],
+        "query": [
+          "unmask",
+          "reason"
+        ],
+        "scope": "trace:read",
+        "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
+        "upstreamOperationId": "traces.get"
+      },
+      {
+        "id": "getUsageSummary",
+        "method": "GET",
+        "path": "/v1/usage/{tenant_id}/{project_id}",
+        "auth": "product",
+        "pathParams": [
+          "tenant_id",
+          "project_id"
+        ],
+        "scope": "admin",
+        "description": "Fetch usage totals for a tenant project.",
+        "upstreamOperationId": "usage.getSummary"
+      }
     ],
     "tempo": [
-      { "id": "health", "method": "GET", "path": "/health", "auth": "none", "description": "Check tempod liveness; returns {ok: true}." },
-      { "id": "ready", "method": "GET", "path": "/ready", "auth": "product", "description": "Check tempod readiness, including engine attachment, drain state, and session capacity." },
-      { "id": "openapi", "method": "GET", "path": "/openapi.json", "auth": "none", "description": "Fetch tempod's OpenAPI document, generated at runtime for this host." },
-      { "id": "listSessions", "method": "GET", "path": "/sessions", "auth": "product", "description": "List browser sessions with their state and creation time." },
-      { "id": "createSession", "method": "POST", "path": "/sessions", "auth": "product", "body": ["url", "driverless"], "description": "Open a browser session at a URL; driverless sessions skip engine attachment." },
-      { "id": "closeSession", "method": "DELETE", "path": "/sessions/{session_id}", "auth": "product", "pathParams": ["session_id"], "description": "Close a browser session and release its engine resources." },
-      { "id": "observe", "method": "GET", "path": "/sessions/{session_id}/observe", "auth": "product", "pathParams": ["session_id"], "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)." },
-      { "id": "actBatch", "method": "POST", "path": "/sessions/{session_id}/act_batch", "auth": "product", "pathParams": ["session_id"], "body": ["batch", "input_tainted", "confirmed", "idempotency_key", "confirmation_grant", "payment_context"], "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision." },
-      { "id": "screenshot", "method": "GET", "path": "/sessions/{session_id}/screenshot", "auth": "product", "pathParams": ["session_id"], "query": ["set_of_marks"], "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks." },
-      { "id": "sessionEvents", "method": "GET", "path": "/sessions/{session_id}/events", "auth": "product", "pathParams": ["session_id"], "query": ["after_seq"], "description": "Fetch the session's event window after a sequence number." },
-      { "id": "adoptSession", "method": "POST", "path": "/sessions/{session_id}/adopt", "auth": "product", "pathParams": ["session_id"], "description": "Let a human surface take write ownership of the session and receive an adoption lease." },
-      { "id": "handoffSession", "method": "POST", "path": "/sessions/{session_id}/handoff", "auth": "product", "pathParams": ["session_id"], "description": "Return write ownership of the session to the agent plane." },
-      { "id": "createRun", "method": "POST", "path": "/sessions/{session_id}/runs", "auth": "product", "pathParams": ["session_id"], "body": ["goal", "actions", "max_rounds", "token_budget"], "description": "Start an agent run against the session with a goal, action budget, and round limit." },
-      { "id": "listRuns", "method": "GET", "path": "/runs", "auth": "product", "query": ["session_id"], "description": "List agent runs, optionally filtered to one session." },
-      { "id": "getRun", "method": "GET", "path": "/runs/{run_id}", "auth": "product", "pathParams": ["run_id"], "description": "Fetch one agent run with its state." },
-      { "id": "cancelRun", "method": "POST", "path": "/runs/{run_id}/cancel", "auth": "product", "pathParams": ["run_id"], "description": "Cancel an agent run." },
-      { "id": "resumeRun", "method": "POST", "path": "/runs/{run_id}/resume", "auth": "product", "pathParams": ["run_id"], "description": "Resume an agent run after a human handoff completes." },
-      { "id": "grantConfirmation", "method": "POST", "path": "/sessions/{session_id}/confirmations/{confirmation_id}", "auth": "product", "pathParams": ["session_id", "confirmation_id"], "description": "Grant a pending policy confirmation and receive a single-use grant token." }
-    ],
-    "temperaCode": [
-      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check Tempera Code gateway liveness." },
-      { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the entitled Tempera Code hosted model catalog." },
-      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "instructions", "tools", "text"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming Responses-compatible inference request through the Tempera Code gateway." }
+      {
+        "id": "agentCard",
+        "method": "GET",
+        "path": "/.well-known/agent-card.json",
+        "auth": "product",
+        "description": "Call GET /.well-known/agent-card.json.",
+        "upstreamOperationId": "agentCard"
+      },
+      {
+        "id": "agentJson",
+        "method": "GET",
+        "path": "/.well-known/agent.json",
+        "auth": "product",
+        "description": "Call GET /.well-known/agent.json.",
+        "upstreamOperationId": "agentJson"
+      },
+      {
+        "id": "drain",
+        "method": "POST",
+        "path": "/drain",
+        "auth": "product",
+        "description": "Call POST /drain.",
+        "upstreamOperationId": "drain"
+      },
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/health",
+        "auth": "none",
+        "description": "Check tempod liveness; returns {ok: true}.",
+        "upstreamOperationId": "health"
+      },
+      {
+        "id": "metrics",
+        "method": "GET",
+        "path": "/metrics",
+        "auth": "product",
+        "description": "Call GET /metrics.",
+        "upstreamOperationId": "metrics"
+      },
+      {
+        "id": "openapi",
+        "method": "GET",
+        "path": "/openapi.json",
+        "auth": "none",
+        "description": "Fetch tempod's OpenAPI document, generated at runtime for this host.",
+        "upstreamOperationId": "openapi"
+      },
+      {
+        "id": "ready",
+        "method": "GET",
+        "path": "/ready",
+        "auth": "product",
+        "description": "Check tempod readiness, including engine attachment, drain state, and session capacity.",
+        "upstreamOperationId": "ready"
+      },
+      {
+        "id": "listRuns",
+        "method": "GET",
+        "path": "/runs",
+        "auth": "product",
+        "query": [
+          "session_id"
+        ],
+        "description": "List agent runs, optionally filtered to one session.",
+        "upstreamOperationId": "listRuns"
+      },
+      {
+        "id": "getRun",
+        "method": "GET",
+        "path": "/runs/{run_id}",
+        "auth": "product",
+        "pathParams": [
+          "run_id"
+        ],
+        "description": "Fetch one agent run with its state.",
+        "upstreamOperationId": "getRun"
+      },
+      {
+        "id": "cancelRun",
+        "method": "POST",
+        "path": "/runs/{run_id}/cancel",
+        "auth": "product",
+        "pathParams": [
+          "run_id"
+        ],
+        "description": "Cancel an agent run.",
+        "upstreamOperationId": "cancelRun"
+      },
+      {
+        "id": "runEvents",
+        "method": "GET",
+        "path": "/runs/{run_id}/events",
+        "auth": "product",
+        "description": "Call GET /runs/{run_id}/events.",
+        "upstreamOperationId": "runEvents",
+        "pathParams": [
+          "run_id"
+        ],
+        "query": [
+          "after_seq"
+        ]
+      },
+      {
+        "id": "resumeRun",
+        "method": "POST",
+        "path": "/runs/{run_id}/resume",
+        "auth": "product",
+        "pathParams": [
+          "run_id"
+        ],
+        "description": "Resume an agent run after a human handoff completes.",
+        "upstreamOperationId": "resumeRun"
+      },
+      {
+        "id": "listSessions",
+        "method": "GET",
+        "path": "/sessions",
+        "auth": "product",
+        "description": "List browser sessions with their state and creation time.",
+        "upstreamOperationId": "listSessions"
+      },
+      {
+        "id": "createSession",
+        "method": "POST",
+        "path": "/sessions",
+        "auth": "product",
+        "body": [
+          "driverless",
+          "url"
+        ],
+        "description": "Open a browser session at a URL; driverless sessions skip engine attachment.",
+        "upstreamOperationId": "createSession",
+        "requiredBody": [
+          "url"
+        ]
+      },
+      {
+        "id": "closeSession",
+        "method": "DELETE",
+        "path": "/sessions/{session_id}",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "description": "Close a browser session and release its engine resources.",
+        "upstreamOperationId": "closeSession"
+      },
+      {
+        "id": "actBatch",
+        "method": "POST",
+        "path": "/sessions/{session_id}/act_batch",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "body": [
+          "batch",
+          "confirmation_grant",
+          "confirmed",
+          "idempotency_key",
+          "input_tainted",
+          "payment_context"
+        ],
+        "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
+        "upstreamOperationId": "actBatchSession",
+        "requiredBody": [
+          "batch"
+        ]
+      },
+      {
+        "id": "adoptSession",
+        "method": "POST",
+        "path": "/sessions/{session_id}/adopt",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "description": "Let a human surface take write ownership of the session and receive an adoption lease.",
+        "upstreamOperationId": "adoptSession",
+        "body": [
+          "engine_tier",
+          "label",
+          "platform",
+          "profile_id",
+          "storage_continuity",
+          "surface_id"
+        ]
+      },
+      {
+        "id": "grantConfirmation",
+        "method": "POST",
+        "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
+        "auth": "product",
+        "pathParams": [
+          "session_id",
+          "confirmation_id"
+        ],
+        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
+        "upstreamOperationId": "grantSessionConfirmation"
+      },
+      {
+        "id": "sessionEvents",
+        "method": "GET",
+        "path": "/sessions/{session_id}/events",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "query": [
+          "after_seq"
+        ],
+        "description": "Fetch the session's event window after a sequence number.",
+        "upstreamOperationId": "sessionEvents"
+      },
+      {
+        "id": "handoffSession",
+        "method": "POST",
+        "path": "/sessions/{session_id}/handoff",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "description": "Return write ownership of the session to the agent plane.",
+        "upstreamOperationId": "handoffSession"
+      },
+      {
+        "id": "managerSession",
+        "method": "GET",
+        "path": "/sessions/{session_id}/manager",
+        "auth": "product",
+        "description": "Call GET /sessions/{session_id}/manager.",
+        "upstreamOperationId": "managerSession",
+        "pathParams": [
+          "session_id"
+        ]
+      },
+      {
+        "id": "observe",
+        "method": "GET",
+        "path": "/sessions/{session_id}/observe",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
+        "upstreamOperationId": "observeSession"
+      },
+      {
+        "id": "createRun",
+        "method": "POST",
+        "path": "/sessions/{session_id}/runs",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "body": [
+          "actions",
+          "goal",
+          "max_rounds",
+          "token_budget"
+        ],
+        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
+        "upstreamOperationId": "createSessionRun"
+      },
+      {
+        "id": "screenshot",
+        "method": "GET",
+        "path": "/sessions/{session_id}/screenshot",
+        "auth": "product",
+        "pathParams": [
+          "session_id"
+        ],
+        "query": [
+          "set_of_marks"
+        ],
+        "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
+        "upstreamOperationId": "screenshotSession"
+      },
+      {
+        "id": "registerSessionSurface",
+        "method": "POST",
+        "path": "/sessions/{session_id}/surfaces",
+        "auth": "product",
+        "description": "Call POST /sessions/{session_id}/surfaces.",
+        "upstreamOperationId": "registerSessionSurface",
+        "pathParams": [
+          "session_id"
+        ],
+        "body": [
+          "engine_tier",
+          "label",
+          "platform",
+          "profile_id",
+          "storage_continuity",
+          "surface_id"
+        ]
+      },
+      {
+        "id": "removeSessionSurface",
+        "method": "DELETE",
+        "path": "/sessions/{session_id}/surfaces/{surface_id}",
+        "auth": "product",
+        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
+        "upstreamOperationId": "removeSessionSurface",
+        "pathParams": [
+          "session_id",
+          "surface_id"
+        ]
+      },
+      {
+        "id": "transformSession",
+        "method": "POST",
+        "path": "/sessions/{session_id}/transform",
+        "auth": "product",
+        "description": "Call POST /sessions/{session_id}/transform.",
+        "upstreamOperationId": "transformSession",
+        "pathParams": [
+          "session_id"
+        ],
+        "body": [
+          "determinism",
+          "idempotency_key",
+          "input",
+          "lane",
+          "source",
+          "spans"
+        ],
+        "requiredBody": [
+          "lane",
+          "source"
+        ]
+      }
     ],
     "temperaLlm": [
-      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-llm gateway liveness; returns {ok: true}." },
-      { "id": "listModels", "method": "GET", "path": "/v1/models", "auth": "product", "scope": "model:read", "description": "List the configured model catalog the gateway can route to." },
-      { "id": "createChatCompletion", "method": "POST", "path": "/v1/chat/completions", "auth": "product", "body": ["model", "messages", "max_tokens", "temperature", "stream", "byok"], "requiredBody": ["model", "messages"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway." },
-      { "id": "createResponse", "method": "POST", "path": "/v1/responses", "auth": "product", "body": ["model", "input", "max_output_tokens", "byok"], "requiredBody": ["model", "input"], "scope": "model:invoke", "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Check tempera-llm gateway liveness; returns {ok: true}.",
+        "upstreamOperationId": "health.check"
+      },
+      {
+        "id": "readinessCheck",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Call GET /readyz.",
+        "upstreamOperationId": "readiness.check"
+      },
+      {
+        "id": "createChatCompletion",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "auth": "product",
+        "body": [
+          "byok",
+          "max_tokens",
+          "messages",
+          "model",
+          "response_format",
+          "stream",
+          "temperature"
+        ],
+        "requiredBody": [
+          "model",
+          "messages",
+          "max_tokens"
+        ],
+        "scope": "model:invoke",
+        "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
+        "upstreamOperationId": "chatCompletions.create"
+      },
+      {
+        "id": "listModels",
+        "method": "GET",
+        "path": "/v1/models",
+        "auth": "product",
+        "scope": "model:read",
+        "description": "List the configured model catalog the gateway can route to.",
+        "upstreamOperationId": "models.list"
+      },
+      {
+        "id": "createResponse",
+        "method": "POST",
+        "path": "/v1/responses",
+        "auth": "product",
+        "body": [
+          "byok",
+          "input",
+          "max_output_tokens",
+          "model",
+          "response_format"
+        ],
+        "requiredBody": [
+          "model",
+          "input",
+          "max_output_tokens"
+        ],
+        "scope": "model:invoke",
+        "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
+        "upstreamOperationId": "responses.create"
+      }
     ],
     "temperaWorkflows": [
-      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-workflows engine liveness." },
-      { "id": "listNodeTypes", "method": "GET", "path": "/v1/node-types", "auth": "product", "scope": "workflow:read", "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface." },
-      { "id": "listWorkflows", "method": "GET", "path": "/v1/workflows", "auth": "product", "query": ["limit"], "scope": "workflow:read", "description": "List stored workflow definitions, newest first." },
-      { "id": "createWorkflow", "method": "POST", "path": "/v1/workflows", "auth": "product", "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored." },
-      { "id": "getWorkflow", "method": "GET", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "scope": "workflow:read", "description": "Fetch one stored workflow definition." },
-      { "id": "updateWorkflow", "method": "PUT", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Replace a stored workflow definition with a new validated revision." },
-      { "id": "deleteWorkflow", "method": "DELETE", "path": "/v1/workflows/{workflow_id}", "auth": "product", "pathParams": ["workflow_id"], "scope": "workflow:write", "description": "Delete a stored workflow definition." },
-      { "id": "validateWorkflow", "method": "POST", "path": "/v1/workflows:validate", "auth": "product", "body": ["contractVersion", "id", "name", "description", "nodes", "edges", "settings"], "requiredBody": ["contractVersion", "id", "name", "nodes", "edges"], "scope": "workflow:write", "description": "Validate a workflow definition without storing it; returns the full diagnostic list." },
-      { "id": "composeWorkflow", "method": "POST", "path": "/v1/workflows/{workflow_id}:compose", "auth": "product", "pathParams": ["workflow_id"], "body": ["prompt", "draft", "history", "attachments", "model"], "requiredBody": ["prompt"], "scope": "workflow:write", "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it." },
-      { "id": "assistJson", "method": "POST", "path": "/v1/workflows:assistJson", "auth": "product", "body": ["mode", "purpose", "expectedRoot", "context", "current", "prompt"], "requiredBody": ["mode", "purpose", "expectedRoot"], "scope": "workflow:write", "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node." },
-      { "id": "createRun", "method": "POST", "path": "/v1/workflows/{workflow_id}/runs", "auth": "product", "pathParams": ["workflow_id"], "body": ["input", "idempotencyKey"], "scope": "workflow:run", "description": "Start a run of a stored workflow with an optional input document and idempotency key." },
-      { "id": "callWorkflow", "method": "POST", "path": "/v1/workflows/{workflow_id}:call", "auth": "product", "pathParams": ["workflow_id"], "body": ["input", "idempotencyKey", "usePinned", "startAt", "only", "seedOutputs", "waitMs"], "scope": "workflow:run", "description": "Run a workflow to completion and return its output in a single call." },
-      { "id": "listRuns", "method": "GET", "path": "/v1/runs", "auth": "product", "query": ["workflowId", "limit"], "scope": "workflow:read", "description": "List workflow runs, optionally filtered to one workflow." },
-      { "id": "getRun", "method": "GET", "path": "/v1/runs/{run_id}", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:read", "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only." },
-      { "id": "cancelRun", "method": "POST", "path": "/v1/runs/{run_id}:cancel", "auth": "product", "pathParams": ["run_id"], "scope": "workflow:run", "description": "Cancel a queued or running workflow run." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Check tempera-workflows engine liveness.",
+        "upstreamOperationId": "healthz"
+      },
+      {
+        "id": "listNodeTypes",
+        "method": "GET",
+        "path": "/v1/node-types",
+        "auth": "product",
+        "scope": "workflow:read",
+        "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
+        "upstreamOperationId": "nodeTypes.list"
+      },
+      {
+        "id": "listRuns",
+        "method": "GET",
+        "path": "/v1/runs",
+        "auth": "product",
+        "query": [
+          "workflowId",
+          "limit"
+        ],
+        "scope": "workflow:read",
+        "description": "List workflow runs, optionally filtered to one workflow.",
+        "upstreamOperationId": "runs.list"
+      },
+      {
+        "id": "getRun",
+        "method": "GET",
+        "path": "/v1/runs/{runId}",
+        "auth": "product",
+        "pathParams": [
+          "runId"
+        ],
+        "scope": "workflow:read",
+        "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
+        "upstreamOperationId": "runs.get"
+      },
+      {
+        "id": "cancelRun",
+        "method": "POST",
+        "path": "/v1/runs/{runId}:cancel",
+        "auth": "product",
+        "pathParams": [
+          "runId"
+        ],
+        "scope": "workflow:run",
+        "description": "Cancel a queued or running workflow run.",
+        "upstreamOperationId": "runs.cancel"
+      },
+      {
+        "id": "listWorkflows",
+        "method": "GET",
+        "path": "/v1/workflows",
+        "auth": "product",
+        "query": [
+          "limit"
+        ],
+        "scope": "workflow:read",
+        "description": "List stored workflow definitions, newest first.",
+        "upstreamOperationId": "workflows.list"
+      },
+      {
+        "id": "createWorkflow",
+        "method": "POST",
+        "path": "/v1/workflows",
+        "auth": "product",
+        "body": [
+          "contractVersion",
+          "description",
+          "edges",
+          "id",
+          "name",
+          "nodes",
+          "settings"
+        ],
+        "requiredBody": [
+          "contractVersion",
+          "id",
+          "name",
+          "nodes",
+          "edges"
+        ],
+        "scope": "workflow:write",
+        "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
+        "upstreamOperationId": "workflows.create"
+      },
+      {
+        "id": "getWorkflow",
+        "method": "GET",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:read",
+        "description": "Fetch one stored workflow definition.",
+        "upstreamOperationId": "workflows.get"
+      },
+      {
+        "id": "updateWorkflow",
+        "method": "PUT",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "contractVersion",
+          "description",
+          "edges",
+          "id",
+          "name",
+          "nodes",
+          "settings"
+        ],
+        "requiredBody": [
+          "contractVersion",
+          "id",
+          "name",
+          "nodes",
+          "edges"
+        ],
+        "scope": "workflow:write",
+        "description": "Replace a stored workflow definition with a new validated revision.",
+        "upstreamOperationId": "workflows.update"
+      },
+      {
+        "id": "deleteWorkflow",
+        "method": "DELETE",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:write",
+        "description": "Delete a stored workflow definition.",
+        "upstreamOperationId": "workflows.delete"
+      },
+      {
+        "id": "createRun",
+        "method": "POST",
+        "path": "/v1/workflows/{workflowId}/runs",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "idempotencyKey",
+          "input",
+          "only",
+          "seedOutputs",
+          "startAt",
+          "usePinned"
+        ],
+        "scope": "workflow:run",
+        "description": "Start a run of a stored workflow with an optional input document and idempotency key.",
+        "upstreamOperationId": "runs.create"
+      },
+      {
+        "id": "callWorkflow",
+        "method": "POST",
+        "path": "/v1/workflows/{workflowId}:call",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "idempotencyKey",
+          "input",
+          "only",
+          "seedOutputs",
+          "startAt",
+          "usePinned",
+          "waitMs"
+        ],
+        "scope": "workflow:run",
+        "description": "Run a workflow to completion and return its output in a single call.",
+        "upstreamOperationId": "workflows.call"
+      },
+      {
+        "id": "composeWorkflow",
+        "method": "POST",
+        "path": "/v1/workflows/{workflowId}:compose",
+        "auth": "product",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "attachments",
+          "draft",
+          "history",
+          "model",
+          "prompt"
+        ],
+        "requiredBody": [
+          "prompt"
+        ],
+        "scope": "workflow:write",
+        "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
+        "upstreamOperationId": "workflows.compose"
+      },
+      {
+        "id": "assistJson",
+        "method": "POST",
+        "path": "/v1/workflows:assistJson",
+        "auth": "product",
+        "body": [
+          "context",
+          "current",
+          "expectedRoot",
+          "mode",
+          "prompt",
+          "purpose"
+        ],
+        "requiredBody": [
+          "mode",
+          "purpose",
+          "expectedRoot"
+        ],
+        "scope": "workflow:write",
+        "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
+        "upstreamOperationId": "workflows.assistJson"
+      },
+      {
+        "id": "validateWorkflow",
+        "method": "POST",
+        "path": "/v1/workflows:validate",
+        "auth": "product",
+        "body": [
+          "contractVersion",
+          "description",
+          "edges",
+          "id",
+          "name",
+          "nodes",
+          "settings"
+        ],
+        "requiredBody": [
+          "contractVersion",
+          "id",
+          "name",
+          "nodes",
+          "edges"
+        ],
+        "scope": "workflow:write",
+        "description": "Validate a workflow definition without storing it; returns the full diagnostic list.",
+        "upstreamOperationId": "workflows.validate"
+      }
     ],
     "temperaGym": [
-      { "id": "health", "method": "GET", "path": "/healthz", "auth": "none", "description": "Check tempera-gym service liveness." },
-      { "id": "listEnvironments", "method": "GET", "path": "/v1/environments", "auth": "product", "scope": "dataset:read", "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests." },
-      { "id": "listRuns", "method": "GET", "path": "/v1/runs", "auth": "product", "query": ["environment_id", "limit"], "scope": "dataset:read", "description": "List persisted rollout run index records, newest first." },
-      { "id": "getRun", "method": "GET", "path": "/v1/runs/{run}", "auth": "product", "pathParams": ["run"], "scope": "dataset:read", "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash." },
-      { "id": "createRollout", "method": "POST", "path": "/v1/rollouts", "auth": "product", "body": ["environment_id", "policy", "seed", "max_steps", "model"], "requiredBody": ["environment_id", "seed"], "scope": "eval:run", "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Check tempera-gym service liveness.",
+        "upstreamOperationId": "health.get"
+      },
+      {
+        "id": "listEnvironments",
+        "method": "GET",
+        "path": "/v1/environments",
+        "auth": "product",
+        "scope": "dataset:read",
+        "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
+        "upstreamOperationId": "environments.list"
+      },
+      {
+        "id": "listRuns",
+        "method": "GET",
+        "path": "/v1/runs",
+        "auth": "product",
+        "query": [
+          "environment_id",
+          "limit"
+        ],
+        "scope": "dataset:read",
+        "description": "List persisted rollout run index records, newest first.",
+        "upstreamOperationId": "runs.list"
+      },
+      {
+        "id": "getRun",
+        "method": "GET",
+        "path": "/v1/runs/{run}",
+        "auth": "product",
+        "pathParams": [
+          "run"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
+        "upstreamOperationId": "runs.get"
+      },
+      {
+        "id": "createRollout",
+        "method": "POST",
+        "path": "/v1/rollouts",
+        "auth": "product",
+        "body": [
+          "environment_id",
+          "policy",
+          "seed",
+          "max_steps",
+          "model",
+          "data_engine_product_id",
+          "data_engine_max_records"
+        ],
+        "requiredBody": [
+          "environment_id",
+          "seed"
+        ],
+        "scope": "eval:run",
+        "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
+        "upstreamOperationId": "rollouts.create"
+      }
     ],
     "cradle": [
-      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check sandbox-daemon liveness; returns status, version, and uptime." },
-      { "id": "getCapabilities", "method": "GET", "path": "/v1/capabilities", "auth": "product", "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations." },
-      { "id": "getIntegrationContract", "method": "GET", "path": "/v1/integration", "auth": "product", "description": "Fetch the ecosystem integration contract this daemon implements." },
-      { "id": "execute", "method": "POST", "path": "/v1/execute", "auth": "product", "body": ["lane", "source", "entrypoint", "input", "stdin", "policy", "idempotency_key"], "description": "Execute source synchronously in a sandbox lane and return the result with metrics." },
-      { "id": "createJob", "method": "POST", "path": "/v1/jobs", "auth": "product", "body": ["lane", "source", "entrypoint", "input", "stdin", "policy", "idempotency_key"], "description": "Submit an asynchronous sandbox job; returns an operation handle to poll." },
-      { "id": "getJob", "method": "GET", "path": "/v1/jobs/{job_id}", "auth": "product", "pathParams": ["job_id"], "description": "Fetch a sandbox job's status and result." },
-      { "id": "cancelJob", "method": "DELETE", "path": "/v1/jobs/{job_id}", "auth": "product", "pathParams": ["job_id"], "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)." },
-      { "id": "getBrowserProfiles", "method": "GET", "path": "/v1/browser/profiles", "auth": "product", "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers." },
-      { "id": "admitBrowserSession", "method": "POST", "path": "/v1/browser/admit", "auth": "product", "body": ["actor", "requested_level", "sensitivity", "allow_downgrade", "artifact_mode", "credential_mode", "required_controls", "sensitive_activity_mode", "target_origins", "task_label"], "description": "Request admission for a browser session at a sandbox level and receive the guard plan." },
-      { "id": "getBrowserAdapterContract", "method": "GET", "path": "/v1/browser/adapter/contract", "auth": "product", "description": "Fetch the browser adapter contract, required controls, and conformance profile." }
+      {
+        "id": "projectsBrowserAdaptersIssueCapability",
+        "method": "POST",
+        "path": "/v1/browser/adapter/capability",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/capability.",
+        "body": [
+          "actor",
+          "adapter_id",
+          "sensitive_activity_mode",
+          "sensitivity",
+          "ttl_seconds"
+        ],
+        "requiredBody": [
+          "actor",
+          "sensitivity"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.issueCapability"
+      },
+      {
+        "id": "projectsBrowserAdaptersValidateCompletion",
+        "method": "POST",
+        "path": "/v1/browser/adapter/completion/validate",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/completion/validate.",
+        "body": [
+          "adapter_id",
+          "contract_version",
+          "egress_log_sealed_or_discarded",
+          "notes",
+          "plaintext_artifacts_removed",
+          "process_terminated",
+          "proof_ids",
+          "request_id",
+          "sealed_artifact_handles",
+          "temporary_profile_removed"
+        ],
+        "requiredBody": [
+          "request_id",
+          "adapter_id",
+          "contract_version",
+          "process_terminated",
+          "temporary_profile_removed",
+          "plaintext_artifacts_removed",
+          "egress_log_sealed_or_discarded",
+          "sealed_artifact_handles",
+          "proof_ids",
+          "notes"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.validateCompletion"
+      },
+      {
+        "id": "getBrowserAdapterContract",
+        "method": "GET",
+        "path": "/v1/browser/adapter/contract",
+        "auth": "product",
+        "description": "Fetch the browser adapter contract, required controls, and conformance profile.",
+        "upstreamOperationId": "projects.browserAdapters.getContract"
+      },
+      {
+        "id": "projectsBrowserAdaptersClaimLaunch",
+        "method": "POST",
+        "path": "/v1/browser/adapter/launch/claim",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/launch/claim.",
+        "body": [
+          "launch_request"
+        ],
+        "requiredBody": [
+          "launch_request"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.claimLaunch"
+      },
+      {
+        "id": "projectsBrowserAdaptersPlanLaunch",
+        "method": "POST",
+        "path": "/v1/browser/adapter/launch/plan",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/launch/plan.",
+        "body": [
+          "admission",
+          "manifest",
+          "same_user_capability"
+        ],
+        "requiredBody": [
+          "same_user_capability",
+          "admission",
+          "manifest"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.planLaunch"
+      },
+      {
+        "id": "projectsBrowserAdaptersRegister",
+        "method": "POST",
+        "path": "/v1/browser/adapter/register",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/register.",
+        "body": [
+          "actor",
+          "manifest",
+          "same_user_capability",
+          "sensitivity"
+        ],
+        "requiredBody": [
+          "actor",
+          "sensitivity",
+          "same_user_capability",
+          "manifest"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.register"
+      },
+      {
+        "id": "projectsBrowserAdaptersValidate",
+        "method": "POST",
+        "path": "/v1/browser/adapter/validate",
+        "auth": "product",
+        "description": "Call POST /v1/browser/adapter/validate.",
+        "body": [
+          "adapter_id",
+          "completion_proofs",
+          "contract_version",
+          "guard_fields",
+          "launch_endpoint",
+          "supported_controls",
+          "supported_levels"
+        ],
+        "requiredBody": [
+          "adapter_id",
+          "contract_version",
+          "launch_endpoint",
+          "supported_levels",
+          "supported_controls",
+          "guard_fields",
+          "completion_proofs"
+        ],
+        "upstreamOperationId": "projects.browserAdapters.validate"
+      },
+      {
+        "id": "admitBrowserSession",
+        "method": "POST",
+        "path": "/v1/browser/admit",
+        "auth": "product",
+        "body": [
+          "actor",
+          "allow_downgrade",
+          "artifact_mode",
+          "credential_mode",
+          "requested_level",
+          "required_controls",
+          "sensitive_activity_mode",
+          "sensitivity",
+          "target_origins",
+          "task_label"
+        ],
+        "description": "Request admission for a browser session at a sandbox level and receive the guard plan.",
+        "requiredBody": [
+          "requested_level",
+          "actor",
+          "sensitivity"
+        ],
+        "upstreamOperationId": "projects.browserSessions.admit"
+      },
+      {
+        "id": "getBrowserProfiles",
+        "method": "GET",
+        "path": "/v1/browser/profiles",
+        "auth": "product",
+        "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
+        "upstreamOperationId": "projects.browserProfiles.get"
+      },
+      {
+        "id": "getCapabilities",
+        "method": "GET",
+        "path": "/v1/capabilities",
+        "auth": "product",
+        "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
+        "upstreamOperationId": "projects.capabilities.get"
+      },
+      {
+        "id": "execute",
+        "method": "POST",
+        "path": "/v1/execute",
+        "auth": "product",
+        "body": [
+          "entrypoint",
+          "idempotency_key",
+          "input",
+          "lane",
+          "policy",
+          "source",
+          "stdin"
+        ],
+        "description": "Execute source synchronously in a sandbox lane and return the result with metrics.",
+        "requiredBody": [
+          "lane",
+          "source"
+        ],
+        "upstreamOperationId": "projects.executions.execute"
+      },
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "none",
+        "description": "Check sandbox-daemon liveness; returns status, version, and uptime.",
+        "upstreamOperationId": "health"
+      },
+      {
+        "id": "getIntegrationContract",
+        "method": "GET",
+        "path": "/v1/integration",
+        "auth": "product",
+        "description": "Fetch the ecosystem integration contract this daemon implements.",
+        "upstreamOperationId": "projects.integration.get"
+      },
+      {
+        "id": "createJob",
+        "method": "POST",
+        "path": "/v1/jobs",
+        "auth": "product",
+        "body": [
+          "entrypoint",
+          "idempotency_key",
+          "input",
+          "lane",
+          "policy",
+          "source",
+          "stdin"
+        ],
+        "description": "Submit an asynchronous sandbox job; returns an operation handle to poll.",
+        "requiredBody": [
+          "lane",
+          "source"
+        ],
+        "upstreamOperationId": "projects.jobs.create"
+      },
+      {
+        "id": "getJob",
+        "method": "GET",
+        "path": "/v1/jobs/{id}",
+        "auth": "product",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Fetch a sandbox job's status and result.",
+        "upstreamOperationId": "projects.jobs.get"
+      },
+      {
+        "id": "cancelJob",
+        "method": "DELETE",
+        "path": "/v1/jobs/{id}",
+        "auth": "product",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
+        "upstreamOperationId": "projects.jobs.cancel"
+      },
+      {
+        "id": "projectsModulesCreate",
+        "method": "POST",
+        "path": "/v1/projects/{project}/modules",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/modules.",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "bytes_base64"
+        ],
+        "requiredBody": [
+          "bytes_base64"
+        ],
+        "upstreamOperationId": "projects.modules.create"
+      },
+      {
+        "id": "projectsModulesGet",
+        "method": "GET",
+        "path": "/v1/projects/{project}/modules/{sha256}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/modules/{sha256}.",
+        "pathParams": [
+          "project",
+          "sha256"
+        ],
+        "upstreamOperationId": "projects.modules.get"
+      }
     ],
     "remi": [
-      { "id": "livez", "method": "GET", "path": "/livez", "auth": "none", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Check memory-server liveness." },
-      { "id": "readyz", "method": "GET", "path": "/readyz", "auth": "none", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Check memory-server readiness, including database health." },
-      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "product", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Fetch deep store health: schema version, integrity checks, and graph consistency." },
-      { "id": "getStats", "method": "GET", "path": "/v1/stats", "auth": "product", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind." },
-      { "id": "getMetrics", "method": "GET", "path": "/v1/metrics", "auth": "product", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies." },
-      { "id": "getPrometheusMetrics", "method": "GET", "path": "/v1/metrics/prometheus", "auth": "product", "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring." },
-      { "id": "listAudit", "method": "GET", "path": "/v1/audit", "auth": "product", "query": ["limit"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "List recent service audit events (default 100, maximum 500)." },
-      { "id": "remember", "method": "POST", "path": "/v1/remember", "auth": "product", "body": ["kind", "text", "idempotency_key", "project", "provenance"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Write one memory into the ledger. Hosted scope is derived from the authenticated principal; provenance is a bounded remi.memory_event_provenance.v1 correlation envelope and the SDK never sends a scope, tenant, project, or environment identifier." },
-      { "id": "project", "method": "POST", "path": "/v1/project", "auth": "product", "body": ["limit"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Project pending ledger events into the memory graph and return the projection report." },
-      { "id": "manage", "method": "POST", "path": "/v1/manage", "auth": "product", "body": ["limit"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Run memory management over pending ledger events (same engine pass as project, tracked separately)." },
-      { "id": "query", "method": "POST", "path": "/v1/query", "auth": "product", "body": ["question", "max_tokens", "require_fresh", "modes", "reconstruction_mode", "max_reconstruction_steps", "max_reconstruction_tokens"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Answer a question from principal-scoped memory with evidence, citations, contradictions, and staleness signals." },
-      { "id": "context", "method": "POST", "path": "/v1/context", "auth": "product", "body": ["question", "max_tokens", "require_fresh", "modes", "reconstruction_mode", "max_reconstruction_steps", "max_reconstruction_tokens"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Retrieve a bounded principal-scoped context pack and immutable receipt for later verified feedback." },
-      { "id": "feedback", "method": "POST", "path": "/v1/feedback", "auth": "product", "body": ["schema", "retrieval_receipt_id", "evidence_node_id", "helpful", "outcome_artifact_id", "note", "terminal_state", "idempotency_key"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Attach a verified outcome to evidence returned by an immutable receipt; remi.memory_feedback.v2 additionally retains a terminal state and idempotency key. Hosted scope is derived from the principal and feedback cannot rewrite memory truth." },
-      { "id": "maintenance", "method": "POST", "path": "/v1/maintenance", "auth": "product", "body": ["vacuum", "repair_orphans", "prune_audit_before_unix_ms", "retain_latest_audit_events"], "forbiddenBody": ["scope", "tenant_id", "project_id", "environment_id"], "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history." }
+      {
+        "id": "livez",
+        "method": "GET",
+        "path": "/livez",
+        "auth": "none",
+        "description": "Check memory-server liveness.",
+        "upstreamOperationId": "livez"
+      },
+      {
+        "id": "readyz",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Check memory-server readiness, including database health.",
+        "upstreamOperationId": "readyz"
+      },
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "product",
+        "description": "Fetch deep store health: schema version, integrity checks, and graph consistency.",
+        "upstreamOperationId": "health"
+      },
+      {
+        "id": "getStats",
+        "method": "GET",
+        "path": "/v1/stats",
+        "auth": "product",
+        "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind.",
+        "upstreamOperationId": "getStats"
+      },
+      {
+        "id": "getMetrics",
+        "method": "GET",
+        "path": "/v1/metrics",
+        "auth": "product",
+        "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies.",
+        "upstreamOperationId": "getMetrics"
+      },
+      {
+        "id": "getPrometheusMetrics",
+        "method": "GET",
+        "path": "/v1/metrics/prometheus",
+        "auth": "product",
+        "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring.",
+        "upstreamOperationId": "getPrometheusMetrics"
+      },
+      {
+        "id": "listAudit",
+        "method": "GET",
+        "path": "/v1/audit",
+        "auth": "product",
+        "query": [
+          "limit"
+        ],
+        "description": "List recent service audit events (default 100, maximum 500).",
+        "upstreamOperationId": "listAudit"
+      },
+      {
+        "id": "remember",
+        "method": "POST",
+        "path": "/v1/remember",
+        "auth": "product",
+        "body": [
+          "tenant_id",
+          "project_id",
+          "environment_id",
+          "kind",
+          "text",
+          "idempotency_key",
+          "project"
+        ],
+        "description": "Write one memory event into the tenant and project ledger.",
+        "upstreamOperationId": "remember",
+        "requiredBody": [
+          "tenant_id",
+          "project_id",
+          "kind",
+          "text"
+        ]
+      },
+      {
+        "id": "project",
+        "method": "POST",
+        "path": "/v1/project",
+        "auth": "product",
+        "body": [
+          "limit"
+        ],
+        "description": "Project pending ledger events into the memory graph and return the projection report.",
+        "upstreamOperationId": "project"
+      },
+      {
+        "id": "query",
+        "method": "POST",
+        "path": "/v1/query",
+        "auth": "product",
+        "body": [
+          "question",
+          "scope",
+          "max_tokens",
+          "require_fresh",
+          "modes",
+          "reconstruction_mode",
+          "max_reconstruction_steps",
+          "max_reconstruction_tokens"
+        ],
+        "description": "Answer a scoped memory question with evidence and reconstruction metadata.",
+        "upstreamOperationId": "query",
+        "requiredBody": [
+          "question",
+          "scope"
+        ]
+      },
+      {
+        "id": "maintenance",
+        "method": "POST",
+        "path": "/v1/maintenance",
+        "auth": "product",
+        "body": [
+          "vacuum",
+          "repair_orphans",
+          "prune_audit_before_unix_ms",
+          "retain_latest_audit_events"
+        ],
+        "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
+        "upstreamOperationId": "maintenance"
+      }
     ],
     "dataEngine": [
-      { "id": "health", "method": "GET", "path": "/v1/health", "auth": "none", "description": "Check data-engine liveness; returns the service status." },
-      { "id": "admitTrainingRelease", "method": "POST", "path": "/v1/projects/{project_id}/training-releases:admit", "auth": "product", "pathParams": ["project_id"], "body": ["training_product_id", "heldout_product_id", "idempotency_key"], "requiredBody": ["training_product_id", "heldout_product_id", "idempotency_key"], "scope": "training:publish", "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints." },
-      { "id": "getTrainingRelease", "method": "GET", "path": "/v1/projects/{project_id}/training-releases/{release_id}", "auth": "product", "pathParams": ["project_id", "release_id"], "scope": "training:publish", "description": "Revalidate and fetch one training release, including any durable stale state." },
-      { "id": "createEvidenceRecord", "method": "POST", "path": "/v1/projects/{project_id}/evidenceRecords", "auth": "product", "pathParams": ["project_id"], "body": ["schema_version", "domain", "evidence_type", "payload_schema", "payload", "source_artifact_refs", "artifact_refs", "verification_state", "verifier_receipt_artifact_refs", "quality_flags", "provenance"], "requiredBody": ["schema_version", "domain", "evidence_type", "payload_schema", "payload", "source_artifact_refs", "verification_state"], "scope": "eval:run", "description": "Create an immutable shared evidence record by canonical content hash." },
-      { "id": "listEvidenceRecords", "method": "GET", "path": "/v1/projects/{project_id}/evidenceRecords", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token", "domain"], "scope": "dataset:read", "description": "List immutable shared evidence records with bounded cursor pagination." },
-      { "id": "getEvidenceRecord", "method": "GET", "path": "/v1/projects/{project_id}/evidenceRecords/{evidence_record_id}", "auth": "product", "pathParams": ["project_id", "evidence_record_id"], "scope": "dataset:read", "description": "Fetch one immutable shared evidence record by its platform digest." },
-      { "id": "createEpisode", "method": "POST", "path": "/v1/projects/{project_id}/episodes", "auth": "product", "pathParams": ["project_id"], "body": ["schema_version", "domain", "context_evidence_ref", "environment_ref", "seed", "observations", "tool_calls", "measured_outcomes", "verifier_results", "reward_components", "terminal_reason", "uncertainty", "provenance", "safety_events"], "requiredBody": ["schema_version", "domain", "context_evidence_ref", "environment_ref", "seed", "observations", "measured_outcomes", "verifier_results", "reward_components", "terminal_reason"], "scope": "eval:run", "description": "Create an immutable shared episode by canonical content hash." },
-      { "id": "listEpisodes", "method": "GET", "path": "/v1/projects/{project_id}/episodes", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token", "domain"], "scope": "dataset:read", "description": "List immutable shared episodes with bounded cursor pagination." },
-      { "id": "getEpisode", "method": "GET", "path": "/v1/projects/{project_id}/episodes/{episode_id}", "auth": "product", "pathParams": ["project_id", "episode_id"], "scope": "dataset:read", "description": "Fetch one immutable shared episode by its platform digest." },
-      { "id": "queryResearchRetrieval", "method": "POST", "path": "/v1/projects/{project_id}/researchRetrieval:query", "auth": "product", "pathParams": ["project_id"], "body": ["contractVersion", "requestId", "obligation", "kinds", "epistemicStatuses", "checkerTrust", "includeEquivalent", "includeFailures", "under", "limit"], "requiredBody": ["contractVersion", "requestId", "obligation", "limit"], "scope": "dataset:read", "description": "Retrieve deterministic candidates for one exact canonical typed research obligation." },
-      { "id": "createResearchCatalogEntry", "method": "POST", "path": "/v1/projects/{project_id}/researchCatalogEntries", "auth": "product", "pathParams": ["project_id"], "body": ["kind", "version", "obligationHash", "capabilityRoute", "provenance", "tags", "contentHash"], "requiredBody": ["kind", "version", "obligationHash", "capabilityRoute", "provenance"], "scope": "dataset:write", "description": "Create an immutable executable research catalog entry by canonical content hash." },
-      { "id": "listResearchCatalogEntries", "method": "GET", "path": "/v1/projects/{project_id}/researchCatalogEntries", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List immutable executable research catalog entries with bounded pagination." },
-      { "id": "getResearchCatalogEntry", "method": "GET", "path": "/v1/projects/{project_id}/researchCatalogEntries/{entry_id}", "auth": "product", "pathParams": ["project_id", "entry_id"], "scope": "dataset:read", "description": "Fetch one immutable executable research catalog entry by content hash." },
-      { "id": "listConnectors", "method": "GET", "path": "/v1/projects/{project_id}/connectors", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List registered source connectors for a project." },
-      { "id": "listUseCases", "method": "GET", "path": "/v1/projects/{project_id}/use-cases", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List the MVP use-case templates (data products and pipeline templates) for a project." },
-      { "id": "getUseCase", "method": "GET", "path": "/v1/projects/{project_id}/use-cases/{use_case_id}", "auth": "product", "pathParams": ["project_id", "use_case_id"], "scope": "dataset:read", "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy." },
-      { "id": "ingestArtifact", "method": "POST", "path": "/v1/projects/{project_id}/artifacts:ingest", "auth": "product", "pathParams": ["project_id"], "body": ["artifactType", "source", "external_id", "raw_body", "metadata"], "scope": "dataset:write", "description": "Ingest one artifact deterministically into the project; returns an async operation handle." },
-      { "id": "ingestWeb", "method": "POST", "path": "/v1/projects/{project_id}/web:ingest", "auth": "product", "pathParams": ["project_id"], "body": ["url", "artifactType", "timeoutSeconds", "maxBytes", "allowPrivate", "metadata"], "scope": "dataset:write", "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle." },
-      { "id": "runUseCase", "method": "POST", "path": "/v1/projects/{project_id}/pipelines:run-use-case", "auth": "product", "pathParams": ["project_id"], "body": ["use_case", "budget_cents", "target_accuracy", "urls", "artifacts", "verifier"], "scope": "eval:run", "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend." },
-      { "id": "createCampaign", "method": "POST", "path": "/v1/projects/{project_id}/campaigns", "auth": "product", "pathParams": ["project_id"], "body": ["task_family", "target_accuracy", "budget_cents", "rubric", "skill_tags"], "scope": "dataset:write", "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags." },
-      { "id": "listCampaigns", "method": "GET", "path": "/v1/projects/{project_id}/campaigns", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List a project's data campaigns with pagination." },
-      { "id": "transitionCampaign", "method": "POST", "path": "/v1/projects/{project_id}/campaigns/{campaign_id}:transition", "auth": "product", "pathParams": ["project_id", "campaign_id"], "body": ["target_status", "idempotency_key"], "requiredBody": ["target_status", "idempotency_key"], "scope": "dataset:write", "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition." },
-      { "id": "listArtifacts", "method": "GET", "path": "/v1/projects/{project_id}/artifacts", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token", "view"], "scope": "dataset:read", "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)." },
-      { "id": "getArtifact", "method": "GET", "path": "/v1/projects/{project_id}/artifacts/{artifact_id}", "auth": "product", "pathParams": ["project_id", "artifact_id"], "query": ["view"], "scope": "dataset:read", "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)." },
-      { "id": "listArtifactLabels", "method": "GET", "path": "/v1/projects/{project_id}/artifacts/{artifact_id}/labels", "auth": "product", "pathParams": ["project_id", "artifact_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List the labels attached to one artifact." },
-      { "id": "profileDataset", "method": "POST", "path": "/v1/projects/{project_id}/datasets:profile", "auth": "product", "pathParams": ["project_id"], "body": ["artifact_ids", "artifact_type"], "scope": "dataset:write", "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions." },
-      { "id": "createJob", "method": "POST", "path": "/v1/projects/{project_id}/jobs", "auth": "product", "pathParams": ["project_id"], "body": ["artifact_ids", "task_family", "campaign", "target_accuracy", "verifier", "idempotency_key"], "scope": "eval:run", "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll." },
-      { "id": "getJob", "method": "GET", "path": "/v1/projects/{project_id}/jobs/{job_id}", "auth": "product", "pathParams": ["project_id", "job_id"], "scope": "dataset:read", "description": "Fetch one labeling job with its state and progress." },
-      { "id": "getJobResults", "method": "GET", "path": "/v1/projects/{project_id}/jobs/{job_id}/results", "auth": "product", "pathParams": ["project_id", "job_id"], "query": ["page_size", "page_token"], "scope": "dataset:read", "description": "List the deterministic label results a job produced." },
-      { "id": "listExpertTasks", "method": "GET", "path": "/v1/projects/{project_id}/expert-tasks", "auth": "product", "pathParams": ["project_id"], "query": ["page_size", "page_token", "status", "campaign_name"], "scope": "dataset:read", "description": "List human residual review tasks, optionally filtered by status and campaign." },
-      { "id": "resolveExpertTask", "method": "POST", "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:resolve", "auth": "product", "pathParams": ["project_id", "expert_task_id"], "body": ["label", "outcome", "confidence", "rationale", "evidence", "annotator_id", "idempotency_key", "lease_token", "review_context"], "requiredBody": ["label", "idempotency_key", "review_context"], "scope": "review:resolve", "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision." },
-      { "id": "claimExpertTask", "method": "POST", "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:claim", "auth": "product", "pathParams": ["project_id", "expert_task_id"], "body": ["idempotency_key", "lease_token", "lease_duration_seconds"], "requiredBody": ["idempotency_key", "lease_token"], "scope": "review:resolve", "description": "Atomically claim one open expert task with an exclusive renewable lease." },
-      { "id": "renewExpertTaskAssignment", "method": "POST", "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:renew", "auth": "product", "pathParams": ["project_id", "expert_task_id"], "body": ["idempotency_key", "lease_token", "lease_duration_seconds"], "requiredBody": ["idempotency_key", "lease_token"], "scope": "review:resolve", "description": "Renew the authenticated reviewer's active expert-task lease." },
-      { "id": "releaseExpertTaskAssignment", "method": "POST", "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:release", "auth": "product", "pathParams": ["project_id", "expert_task_id"], "body": ["idempotency_key", "lease_token"], "requiredBody": ["idempotency_key", "lease_token"], "scope": "review:resolve", "description": "Release the authenticated reviewer's active expert-task lease for reassignment." },
-      { "id": "saveExpertTaskDraft", "method": "POST", "path": "/v1/projects/{project_id}/expert-tasks/{expert_task_id}:save-draft", "auth": "product", "pathParams": ["project_id", "expert_task_id"], "body": ["idempotency_key", "lease_token", "draft", "expected_version"], "requiredBody": ["idempotency_key", "lease_token", "draft", "expected_version"], "scope": "review:resolve", "description": "Autosave a version-checked draft under the active reviewer lease." },
-      { "id": "getReviewOperations", "method": "GET", "path": "/v1/projects/{project_id}/review-operations", "auth": "product", "pathParams": ["project_id"], "query": ["window_seconds", "sla_target_seconds"], "scope": "review:resolve", "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations." },
-      { "id": "createReviewQualificationTask", "method": "POST", "path": "/v1/projects/{project_id}/review-qualification-tasks", "auth": "product", "pathParams": ["project_id"], "body": ["source_expert_task_name", "expected_label", "mode", "feedback_policy", "idempotency_key"], "requiredBody": ["source_expert_task_name", "expected_label", "idempotency_key"], "scope": "review:gold:manage", "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label." },
-      { "id": "getReviewerQualification", "method": "GET", "path": "/v1/projects/{project_id}/campaigns/{campaign_id}/reviewer-qualification", "auth": "product", "pathParams": ["project_id", "campaign_id"], "scope": "review:resolve", "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes." },
-      { "id": "getMetrics", "method": "GET", "path": "/v1/projects/{project_id}/metrics", "auth": "product", "pathParams": ["project_id"], "scope": "dataset:read", "description": "Fetch data-engine usage and quality metrics for a project." },
-      { "id": "getLabelQuality", "method": "GET", "path": "/v1/projects/{project_id}/label-quality", "auth": "product", "pathParams": ["project_id"], "scope": "dataset:read", "description": "Fetch the project label-quality report and unresolved expert backlog." },
-      { "id": "getEcosystemReadiness", "method": "GET", "path": "/v1/projects/{project_id}/ecosystem/readiness", "auth": "product", "pathParams": ["project_id"], "scope": "dataset:read", "description": "Fetch public-site and ecosystem readiness signals for a project." },
-      { "id": "emitEval", "method": "POST", "path": "/v1/projects/{project_id}/products:emit-eval", "auth": "product", "pathParams": ["project_id"], "body": ["artifact_ids", "include_provenance", "license", "filters"], "scope": "eval:run", "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle." },
-      { "id": "deriveBundle", "method": "POST", "path": "/v1/projects/{project_id}/products/{product_id}:derive", "auth": "product", "pathParams": ["project_id", "product_id"], "body": ["format", "train_fraction", "include_raw", "page_size", "page_token", "pair_sources"], "scope": "eval:run", "description": "Derive a deterministic post-training bundle from a ready product." },
-      { "id": "getProduct", "method": "GET", "path": "/v1/projects/{project_id}/products/{product_id}", "auth": "product", "pathParams": ["project_id", "product_id"], "scope": "dataset:read", "description": "Fetch one emitted product bundle with its status and manifest URL." },
-      { "id": "validateProduct", "method": "POST", "path": "/v1/projects/{project_id}/products/{product_id}:validate", "auth": "product", "pathParams": ["project_id", "product_id"], "scope": "dataset:write", "description": "Validate an emitted product bundle's referential integrity and hygiene." },
-      { "id": "checkProductLeakage", "method": "POST", "path": "/v1/projects/{project_id}/products:check-leakage", "auth": "product", "pathParams": ["project_id"], "body": ["product_ids"], "requiredBody": ["product_ids"], "scope": "dataset:write", "description": "Check raw-hash leakage between exactly two product bundles." },
-      { "id": "getProductManifest", "method": "GET", "path": "/v1/projects/{project_id}/products/{product_id}/manifest", "auth": "product", "pathParams": ["project_id", "product_id"], "scope": "dataset:read", "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product." },
-      { "id": "extractSource", "method": "POST", "path": "/v1/projects/{project_id}/sources:extract", "auth": "product", "pathParams": ["project_id"], "body": ["connector", "bucket", "prefix", "key", "max_objects", "max_bytes", "statement", "limit", "soql", "max_pages", "artifact_type", "source", "ingest", "metadata"], "requiredBody": ["connector"], "scope": "dataset:write", "description": "Extract bounded objects or records from a configured source connector." },
-      { "id": "createTool", "method": "POST", "path": "/v1/projects/{project_id}/tools", "auth": "product", "pathParams": ["project_id"], "body": ["name", "description", "input_schema", "kind", "implementation", "created_by"], "requiredBody": ["name", "description", "kind", "implementation"], "scope": "dataset:write", "description": "Create or version-bump a stored custom tool." },
-      { "id": "listTools", "method": "GET", "path": "/v1/projects/{project_id}/tools", "auth": "product", "pathParams": ["project_id"], "scope": "dataset:read", "description": "List stored custom tools and their usage statistics." },
-      { "id": "getTool", "method": "GET", "path": "/v1/projects/{project_id}/tools/{tool_name}", "auth": "product", "pathParams": ["project_id", "tool_name"], "scope": "dataset:read", "description": "Fetch one stored custom tool and its usage statistics." },
-      { "id": "deleteTool", "method": "DELETE", "path": "/v1/projects/{project_id}/tools/{tool_name}", "auth": "product", "pathParams": ["project_id", "tool_name"], "scope": "dataset:write", "description": "Delete a stored custom tool and every retained version." },
-      { "id": "invokeTool", "method": "POST", "path": "/v1/projects/{project_id}/tools/{tool_name}:invoke", "auth": "product", "pathParams": ["project_id", "tool_name"], "body": ["arguments"], "scope": "dataset:write", "description": "Invoke a stored custom tool through its configured execution boundary." }
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "none",
+        "description": "Check data-engine liveness; returns the service status.",
+        "upstreamOperationId": "health.get"
+      },
+      {
+        "id": "listUseCases",
+        "method": "GET",
+        "path": "/v1/{parent}/use-cases",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "scope": "dataset:read",
+        "description": "List the MVP use-case templates (data products and pipeline templates) for a project.",
+        "upstreamOperationId": "projects.useCases.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getUseCase",
+        "method": "GET",
+        "path": "/v1/{parent}/use-cases/{useCaseId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "useCaseId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.",
+        "upstreamOperationId": "projects.useCases.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "ingestArtifact",
+        "method": "POST",
+        "path": "/v1/{parent}/artifacts:ingest",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "artifactType",
+          "source",
+          "external_id",
+          "raw_body",
+          "metadata"
+        ],
+        "scope": "dataset:write",
+        "description": "Ingest one artifact deterministically into the project; returns an async operation handle.",
+        "upstreamOperationId": "projects.artifacts.ingest",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "ingestWeb",
+        "method": "POST",
+        "path": "/v1/{parent}/web:ingest",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "url",
+          "artifactType",
+          "timeoutSeconds",
+          "maxBytes",
+          "producer_version",
+          "metadata"
+        ],
+        "scope": "dataset:write",
+        "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.",
+        "requiredBody": [
+          "url"
+        ],
+        "upstreamOperationId": "projects.web.ingest",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createCampaign",
+        "method": "POST",
+        "path": "/v1/{parent}/campaigns",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "task_family",
+          "target_accuracy",
+          "budget_cents",
+          "rubric",
+          "skill_tags",
+          "required_reviews",
+          "qualification_policy",
+          "routing_policy",
+          "annotation_schema",
+          "idempotency_key"
+        ],
+        "scope": "dataset:write",
+        "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags.",
+        "upstreamOperationId": "projects.campaigns.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listCampaigns",
+        "method": "GET",
+        "path": "/v1/{parent}/campaigns",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token"
+        ],
+        "scope": "dataset:read",
+        "description": "List a project's data campaigns with pagination.",
+        "upstreamOperationId": "projects.campaigns.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "transitionCampaign",
+        "method": "POST",
+        "path": "/v1/{parent}/campaigns/{campaign_id}:transition",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "campaign_id"
+        ],
+        "body": [
+          "target_status",
+          "idempotency_key"
+        ],
+        "requiredBody": [
+          "target_status",
+          "idempotency_key"
+        ],
+        "scope": "dataset:write",
+        "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.",
+        "upstreamOperationId": "projects.campaigns.transition",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getReviewerQualification",
+        "method": "GET",
+        "path": "/v1/{parent}/campaigns/{campaign_id}/reviewer-qualification",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "campaign_id"
+        ],
+        "scope": "review:resolve",
+        "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
+        "upstreamOperationId": "projects.reviewerQualifications.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "runUseCase",
+        "method": "POST",
+        "path": "/v1/{parent}/pipelines:run-use-case",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "use_case",
+          "verifier",
+          "budget_cents",
+          "target_accuracy",
+          "rubric",
+          "skill_tags",
+          "required_reviews",
+          "urls",
+          "artifacts"
+        ],
+        "scope": "eval:run",
+        "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.",
+        "requiredBody": [
+          "use_case"
+        ],
+        "upstreamOperationId": "projects.pipelines.runUseCase",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listExpertTasks",
+        "method": "GET",
+        "path": "/v1/{parent}/expert-tasks",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token",
+          "status",
+          "campaign_name"
+        ],
+        "scope": "dataset:read",
+        "description": "List human residual review tasks, optionally filtered by status and campaign.",
+        "upstreamOperationId": "projects.expertTasks.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createReviewQualificationTask",
+        "method": "POST",
+        "path": "/v1/{parent}/review-qualification-tasks",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "source_expert_task_name",
+          "expected_label",
+          "mode",
+          "feedback_policy",
+          "idempotency_key"
+        ],
+        "requiredBody": [
+          "source_expert_task_name",
+          "expected_label",
+          "idempotency_key"
+        ],
+        "scope": "review:gold:manage",
+        "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
+        "upstreamOperationId": "projects.reviewQualificationTasks.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "resolveExpertTask",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:resolve",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expert_task_id"
+        ],
+        "body": [
+          "label",
+          "outcome",
+          "confidence",
+          "rationale",
+          "evidence",
+          "annotation",
+          "annotator_id",
+          "idempotency_key",
+          "lease_token",
+          "review_context"
+        ],
+        "requiredBody": [
+          "label",
+          "idempotency_key",
+          "review_context"
+        ],
+        "scope": "review:resolve",
+        "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
+        "upstreamOperationId": "projects.expertTasks.resolve",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "claimExpertTask",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:claim",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expert_task_id"
+        ],
+        "body": [
+          "idempotency_key",
+          "lease_token",
+          "lease_duration_seconds"
+        ],
+        "requiredBody": [
+          "idempotency_key",
+          "lease_token"
+        ],
+        "scope": "review:resolve",
+        "description": "Atomically claim one open expert task with an exclusive renewable lease.",
+        "upstreamOperationId": "projects.expertTaskAssignments.claim",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "renewExpertTaskAssignment",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:renew",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expert_task_id"
+        ],
+        "body": [
+          "idempotency_key",
+          "lease_token",
+          "lease_duration_seconds"
+        ],
+        "requiredBody": [
+          "idempotency_key",
+          "lease_token"
+        ],
+        "scope": "review:resolve",
+        "description": "Renew the authenticated reviewer's active expert-task lease.",
+        "upstreamOperationId": "projects.expertTaskAssignments.renew",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "releaseExpertTaskAssignment",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:release",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expert_task_id"
+        ],
+        "body": [
+          "idempotency_key",
+          "lease_token"
+        ],
+        "requiredBody": [
+          "idempotency_key",
+          "lease_token"
+        ],
+        "scope": "review:resolve",
+        "description": "Release the authenticated reviewer's active expert-task lease for reassignment.",
+        "upstreamOperationId": "projects.expertTaskAssignments.release",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "saveExpertTaskDraft",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expert_task_id}:save-draft",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expert_task_id"
+        ],
+        "body": [
+          "idempotency_key",
+          "lease_token",
+          "draft",
+          "expected_version"
+        ],
+        "requiredBody": [
+          "idempotency_key",
+          "lease_token",
+          "draft",
+          "expected_version"
+        ],
+        "scope": "review:resolve",
+        "description": "Autosave a version-checked draft under the active reviewer lease.",
+        "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getReviewOperations",
+        "method": "GET",
+        "path": "/v1/{parent}/review-operations",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "window_seconds",
+          "sla_target_seconds"
+        ],
+        "scope": "review:resolve",
+        "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
+        "upstreamOperationId": "projects.reviewOperations.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getMetrics",
+        "method": "GET",
+        "path": "/v1/{parent}/metrics",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch data-engine usage and quality metrics for a project.",
+        "upstreamOperationId": "projects.metrics.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getLabelQuality",
+        "method": "GET",
+        "path": "/v1/{parent}/label-quality",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch the project label-quality report and unresolved expert backlog.",
+        "upstreamOperationId": "projects.labelQuality.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getEcosystemReadiness",
+        "method": "GET",
+        "path": "/v1/{parent}/ecosystem/readiness",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch public-site and ecosystem readiness signals for a project.",
+        "upstreamOperationId": "projects.ecosystem.readiness.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listArtifacts",
+        "method": "GET",
+        "path": "/v1/{parent}/artifacts",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token",
+          "view"
+        ],
+        "scope": "dataset:read",
+        "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).",
+        "upstreamOperationId": "projects.artifacts.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getArtifact",
+        "method": "GET",
+        "path": "/v1/{parent}/artifacts/{artifactId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "artifactId"
+        ],
+        "query": [
+          "view"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL).",
+        "upstreamOperationId": "projects.artifacts.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listArtifactLabels",
+        "method": "GET",
+        "path": "/v1/{parent}/artifacts/{artifactId}/labels",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "artifactId"
+        ],
+        "query": [
+          "page_size",
+          "page_token"
+        ],
+        "scope": "dataset:read",
+        "description": "List the labels attached to one artifact.",
+        "upstreamOperationId": "projects.artifacts.labels.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "profileDataset",
+        "method": "POST",
+        "path": "/v1/{parent}/datasets:profile",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "artifact_ids",
+          "artifact_type"
+        ],
+        "scope": "dataset:write",
+        "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions.",
+        "upstreamOperationId": "projects.datasets.profile",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createJob",
+        "method": "POST",
+        "path": "/v1/{parent}/jobs",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "artifact_ids",
+          "task_family",
+          "campaign",
+          "target_accuracy",
+          "idempotency_key",
+          "verifier"
+        ],
+        "scope": "eval:run",
+        "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.",
+        "requiredBody": [
+          "artifact_ids",
+          "task_family"
+        ],
+        "upstreamOperationId": "projects.jobs.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getJob",
+        "method": "GET",
+        "path": "/v1/{parent}/jobs/{jobId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "jobId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one labeling job with its state and progress.",
+        "upstreamOperationId": "projects.jobs.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getJobResults",
+        "method": "GET",
+        "path": "/v1/{parent}/jobs/{jobId}/results",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "jobId"
+        ],
+        "scope": "dataset:read",
+        "description": "List the deterministic label results a job produced.",
+        "upstreamOperationId": "projects.jobs.results.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getProduct",
+        "method": "GET",
+        "path": "/v1/{parent}/products/{productId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "productId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one emitted product bundle with its status and manifest URL.",
+        "upstreamOperationId": "projects.products.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "validateProduct",
+        "method": "POST",
+        "path": "/v1/{parent}/products/{productId}:validate",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "productId"
+        ],
+        "scope": "dataset:write",
+        "description": "Validate an emitted product bundle's referential integrity and hygiene.",
+        "upstreamOperationId": "projects.products.validate",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "checkProductLeakage",
+        "method": "POST",
+        "path": "/v1/{parent}/products:check-leakage",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "product_ids"
+        ],
+        "requiredBody": [
+          "product_ids"
+        ],
+        "scope": "dataset:write",
+        "description": "Check raw-hash leakage between exactly two product bundles.",
+        "upstreamOperationId": "projects.products.checkLeakage",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getProductManifest",
+        "method": "GET",
+        "path": "/v1/{parent}/products/{productId}/manifest",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "productId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product.",
+        "upstreamOperationId": "projects.products.manifest.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "admitTrainingRelease",
+        "method": "POST",
+        "path": "/v1/{parent}/training-releases:admit",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "training_product_id",
+          "heldout_product_id",
+          "idempotency_key"
+        ],
+        "requiredBody": [
+          "training_product_id",
+          "heldout_product_id",
+          "idempotency_key"
+        ],
+        "scope": "training:publish",
+        "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.",
+        "upstreamOperationId": "projects.trainingReleases.admit",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getTrainingRelease",
+        "method": "GET",
+        "path": "/v1/{parent}/training-releases/{releaseId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "releaseId"
+        ],
+        "scope": "training:publish",
+        "description": "Revalidate and fetch one training release, including any durable stale state.",
+        "upstreamOperationId": "projects.trainingReleases.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "deriveBundle",
+        "method": "POST",
+        "path": "/v1/{parent}/products/{productId}:derive",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "productId"
+        ],
+        "body": [
+          "format",
+          "train_fraction",
+          "include_raw",
+          "page_size",
+          "page_token",
+          "pair_sources"
+        ],
+        "scope": "eval:run",
+        "description": "Derive a deterministic post-training bundle from a ready product.",
+        "requiredBody": [
+          "format"
+        ],
+        "upstreamOperationId": "projects.products.derive",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "emitEval",
+        "method": "POST",
+        "path": "/v1/{parent}/products:emit-eval",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "artifact_ids",
+          "job"
+        ],
+        "scope": "eval:run",
+        "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
+        "requiredBody": [
+          "artifact_ids",
+          "job"
+        ],
+        "upstreamOperationId": "projects.products.emitEval",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "extractSource",
+        "method": "POST",
+        "path": "/v1/{parent}/sources:extract",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "connector",
+          "bucket",
+          "prefix",
+          "key",
+          "max_objects",
+          "max_bytes",
+          "statement",
+          "limit",
+          "soql",
+          "max_pages",
+          "artifact_type",
+          "source",
+          "ingest",
+          "metadata"
+        ],
+        "requiredBody": [
+          "connector"
+        ],
+        "scope": "dataset:write",
+        "description": "Extract bounded objects or records from a configured source connector.",
+        "upstreamOperationId": "projects.sources.extract",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listConnectors",
+        "method": "GET",
+        "path": "/v1/{parent}/connectors",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token"
+        ],
+        "scope": "dataset:read",
+        "description": "List registered source connectors for a project.",
+        "upstreamOperationId": "projects.connectors.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createTool",
+        "method": "POST",
+        "path": "/v1/{parent}/tools",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "name",
+          "description",
+          "input_schema",
+          "kind",
+          "implementation",
+          "created_by"
+        ],
+        "requiredBody": [
+          "name",
+          "description",
+          "kind",
+          "implementation"
+        ],
+        "scope": "dataset:write",
+        "description": "Create or version-bump a stored custom tool.",
+        "upstreamOperationId": "projects.tools.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listTools",
+        "method": "GET",
+        "path": "/v1/{parent}/tools",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "scope": "dataset:read",
+        "description": "List stored custom tools and their usage statistics.",
+        "upstreamOperationId": "projects.tools.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getTool",
+        "method": "GET",
+        "path": "/v1/{parent}/tools/{toolName}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "toolName"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one stored custom tool and its usage statistics.",
+        "upstreamOperationId": "projects.tools.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "deleteTool",
+        "method": "DELETE",
+        "path": "/v1/{parent}/tools/{toolName}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "toolName"
+        ],
+        "scope": "dataset:write",
+        "description": "Delete a stored custom tool and every retained version.",
+        "upstreamOperationId": "projects.tools.delete",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "invokeTool",
+        "method": "POST",
+        "path": "/v1/{parent}/tools/{toolName}:invoke",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "toolName"
+        ],
+        "body": [
+          "arguments"
+        ],
+        "scope": "dataset:write",
+        "description": "Invoke a stored custom tool through its configured execution boundary.",
+        "upstreamOperationId": "projects.tools.invoke",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createEvidenceRecord",
+        "method": "POST",
+        "path": "/v1/{parent}/evidenceRecords",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "schema_version",
+          "domain",
+          "evidence_type",
+          "payload_schema",
+          "payload",
+          "source_artifact_refs",
+          "artifact_refs",
+          "verification_state",
+          "verifier_receipt_artifact_refs",
+          "quality_flags",
+          "provenance"
+        ],
+        "requiredBody": [
+          "schema_version",
+          "domain",
+          "evidence_type",
+          "payload_schema",
+          "payload",
+          "source_artifact_refs",
+          "verification_state"
+        ],
+        "scope": "eval:run",
+        "description": "Create an immutable shared evidence record by canonical content hash.",
+        "upstreamOperationId": "projects.evidenceRecords.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listEvidenceRecords",
+        "method": "GET",
+        "path": "/v1/{parent}/evidenceRecords",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token",
+          "domain"
+        ],
+        "scope": "dataset:read",
+        "description": "List immutable shared evidence records with bounded cursor pagination.",
+        "upstreamOperationId": "projects.evidenceRecords.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getEvidenceRecord",
+        "method": "GET",
+        "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "evidenceRecordId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one immutable shared evidence record by its platform digest.",
+        "upstreamOperationId": "projects.evidenceRecords.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createEpisode",
+        "method": "POST",
+        "path": "/v1/{parent}/episodes",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "schema_version",
+          "domain",
+          "context_evidence_ref",
+          "environment_ref",
+          "seed",
+          "observations",
+          "tool_calls",
+          "measured_outcomes",
+          "verifier_results",
+          "reward_components",
+          "terminal_reason",
+          "uncertainty",
+          "provenance",
+          "safety_events"
+        ],
+        "requiredBody": [
+          "schema_version",
+          "domain",
+          "context_evidence_ref",
+          "environment_ref",
+          "seed",
+          "observations",
+          "measured_outcomes",
+          "verifier_results",
+          "reward_components",
+          "terminal_reason"
+        ],
+        "scope": "eval:run",
+        "description": "Create an immutable shared episode by canonical content hash.",
+        "upstreamOperationId": "projects.episodes.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listEpisodes",
+        "method": "GET",
+        "path": "/v1/{parent}/episodes",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token",
+          "domain"
+        ],
+        "scope": "dataset:read",
+        "description": "List immutable shared episodes with bounded cursor pagination.",
+        "upstreamOperationId": "projects.episodes.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getEpisode",
+        "method": "GET",
+        "path": "/v1/{parent}/episodes/{episodeId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "episodeId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one immutable shared episode by its platform digest.",
+        "upstreamOperationId": "projects.episodes.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "queryResearchRetrieval",
+        "method": "POST",
+        "path": "/v1/{parent}/researchRetrieval:query",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "contractVersion",
+          "requestId",
+          "obligation",
+          "kinds",
+          "epistemicStatuses",
+          "checkerTrust",
+          "includeEquivalent",
+          "includeFailures",
+          "under",
+          "limit"
+        ],
+        "requiredBody": [
+          "contractVersion",
+          "requestId",
+          "obligation",
+          "limit"
+        ],
+        "scope": "dataset:read",
+        "description": "Retrieve deterministic candidates for one exact canonical typed research obligation.",
+        "upstreamOperationId": "query_research_retrieval",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "createResearchCatalogEntry",
+        "method": "POST",
+        "path": "/v1/{parent}/researchCatalogEntries",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "kind",
+          "version",
+          "obligationHash",
+          "capabilityRoute",
+          "provenance",
+          "tags",
+          "contentHash"
+        ],
+        "requiredBody": [
+          "kind",
+          "version",
+          "obligationHash",
+          "capabilityRoute",
+          "provenance"
+        ],
+        "scope": "dataset:write",
+        "description": "Create an immutable executable research catalog entry by canonical content hash.",
+        "upstreamOperationId": "projects.researchCatalogEntries.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "listResearchCatalogEntries",
+        "method": "GET",
+        "path": "/v1/{parent}/researchCatalogEntries",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "query": [
+          "page_size",
+          "page_token"
+        ],
+        "scope": "dataset:read",
+        "description": "List immutable executable research catalog entries with bounded pagination.",
+        "upstreamOperationId": "projects.researchCatalogEntries.list",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      },
+      {
+        "id": "getResearchCatalogEntry",
+        "method": "GET",
+        "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "entryId"
+        ],
+        "scope": "dataset:read",
+        "description": "Fetch one immutable executable research catalog entry by content hash.",
+        "upstreamOperationId": "projects.researchCatalogEntries.get",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        }
+      }
     ]
   },
   "mcpGateway": {
     "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to ten tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
     "methods": [
-      { "id": "initialize", "rpc": "initialize", "description": "Open an MCP session and fetch server capabilities and instructions." },
-      { "id": "ping", "rpc": "ping", "description": "Check gateway liveness over JSON-RPC." },
-      { "id": "listTools", "rpc": "tools/list", "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names." },
-      { "id": "callTool", "rpc": "tools/call", "description": "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit." },
-      { "id": "whoami", "rpc": "tools/call", "tool": "tempera_whoami", "description": "Fetch the caller's identity, workspace, and scopes as seen by the gateway." },
-      { "id": "status", "rpc": "tools/call", "tool": "tempera_status", "description": "Fetch gateway upstream health for every connected product MCP server." }
+      {
+        "id": "initialize",
+        "rpc": "initialize",
+        "description": "Open an MCP session and fetch server capabilities and instructions."
+      },
+      {
+        "id": "ping",
+        "rpc": "ping",
+        "description": "Check gateway liveness over JSON-RPC."
+      },
+      {
+        "id": "listTools",
+        "rpc": "tools/list",
+        "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
+      },
+      {
+        "id": "callTool",
+        "rpc": "tools/call",
+        "description": "Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit."
+      },
+      {
+        "id": "whoami",
+        "rpc": "tools/call",
+        "tool": "tempera_whoami",
+        "description": "Fetch the caller's identity, workspace, and scopes as seen by the gateway."
+      },
+      {
+        "id": "status",
+        "rpc": "tools/call",
+        "tool": "tempera_status",
+        "description": "Fetch gateway upstream health for every connected product MCP server."
+      }
     ],
-    "errorCodes": { "planLimit": -32002, "invalidRequest": -32600, "methodNotFound": -32601, "invalidParams": -32602, "internalError": -32603 }
+    "errorCodes": {
+      "planLimit": -32002,
+      "invalidRequest": -32600,
+      "methodNotFound": -32601,
+      "invalidParams": -32602,
+      "internalError": -32603
+    }
   }
 }

@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "a737f343604645a18caf2bbb8c246e6dcf3b36ba",
+    "commit": "fe7738dcdd63914ba4ea256fe24579e5d0ae8427",
     "files": [
       {
-        "git_blob": "da01fca9de2a9cb813bbcc475cea2e884d7131fd",
+        "git_blob": "9024508ffc674afb5270a032fb19e5f19a524333",
         "path": "api/openapi.yaml",
-        "sha256": "f88ef55de1b174e760857106aa54d6dbc8dc80ae6380ddefd81b8df2e5bf7ec4"
+        "sha256": "86b51276b5fd9342811060c09cf5da9659805e4b2886444310f12603c6666b02"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -20,9 +20,9 @@
         "sha256": "e31b3ce4a62271a04a8920c03749dde169f4e0dad7ba055ffe4187bd1cf65503"
       },
       {
-        "git_blob": "cdbd5fa7dcab2bde2fc13ba37cf5c08407af1ec9",
+        "git_blob": "4876e6fea4515a0fa41d157c1a482fc882d63d65",
         "path": "src/data_engine/mcp.py",
-        "sha256": "9bc9c37802f3e2c314999e4c4c29724163861c8d51053fbd1b19305ebc028cd4"
+        "sha256": "7fb944df6bfd6713e6aa2134e13c9ee261ecb6ece5a1dfc57b7e86c70dd9de97"
       },
       {
         "git_blob": "96d9c68ae401c9e2e3db903c7e9e4b6ab0d3cf2e",
@@ -2046,6 +2046,36 @@
               "required_reviews": {
                 "type": "integer"
               },
+              "routing_policy": {
+                "additionalProperties": false,
+                "properties": {
+                  "batch_key": {
+                    "type": "string"
+                  },
+                  "max_open_tasks": {
+                    "maximum": 100000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "priority": {
+                    "maximum": 100,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "task_sla_seconds": {
+                    "maximum": 2592000,
+                    "minimum": 300,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "priority",
+                  "task_sla_seconds",
+                  "batch_key",
+                  "max_open_tasks"
+                ],
+                "type": "object"
+              },
               "rubric": {
                 "additionalProperties": true,
                 "type": "object"
@@ -2084,6 +2114,7 @@
               "skill_tags",
               "required_reviews",
               "qualification_policy",
+              "routing_policy",
               "status",
               "create_time",
               "update_time"
@@ -2104,6 +2135,9 @@
                 "artifact_name": {
                   "type": "string"
                 },
+                "batch_key": {
+                  "type": "string"
+                },
                 "campaign_name": {
                   "oneOf": [
                     {
@@ -2117,11 +2151,24 @@
                 "create_time": {
                   "type": "string"
                 },
+                "deadline_time": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "label_name": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
+                },
+                "priority": {
+                  "type": "integer"
                 },
                 "qualification_task": {
                   "type": "boolean"
@@ -2175,6 +2222,9 @@
                 "qualification_task",
                 "status",
                 "resolution_label_name",
+                "priority",
+                "deadline_time",
+                "batch_key",
                 "create_time",
                 "update_time"
               ],
@@ -2565,6 +2615,31 @@
             "minimum": 1,
             "type": "integer"
           },
+          "routing_policy": {
+            "additionalProperties": false,
+            "properties": {
+              "batch_key": {
+                "maxLength": 256,
+                "type": "string"
+              },
+              "max_open_tasks": {
+                "maximum": 100000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "priority": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "task_sla_seconds": {
+                "maximum": 2592000,
+                "minimum": 300,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
           "rubric": {
             "additionalProperties": true,
             "description": "Campaign-owned task-family rubric.",
@@ -2647,6 +2722,36 @@
           "required_reviews": {
             "type": "integer"
           },
+          "routing_policy": {
+            "additionalProperties": false,
+            "properties": {
+              "batch_key": {
+                "type": "string"
+              },
+              "max_open_tasks": {
+                "maximum": 100000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "priority": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "task_sla_seconds": {
+                "maximum": 2592000,
+                "minimum": 300,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "priority",
+              "task_sla_seconds",
+              "batch_key",
+              "max_open_tasks"
+            ],
+            "type": "object"
+          },
           "rubric": {
             "additionalProperties": true,
             "type": "object"
@@ -2685,6 +2790,7 @@
           "skill_tags",
           "required_reviews",
           "qualification_policy",
+          "routing_policy",
           "status",
           "create_time",
           "update_time"
@@ -2869,6 +2975,36 @@
                 "required_reviews": {
                   "type": "integer"
                 },
+                "routing_policy": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "batch_key": {
+                      "type": "string"
+                    },
+                    "max_open_tasks": {
+                      "maximum": 100000,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "priority": {
+                      "maximum": 100,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "task_sla_seconds": {
+                      "maximum": 2592000,
+                      "minimum": 300,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "priority",
+                    "task_sla_seconds",
+                    "batch_key",
+                    "max_open_tasks"
+                  ],
+                  "type": "object"
+                },
                 "rubric": {
                   "additionalProperties": true,
                   "type": "object"
@@ -2907,6 +3043,7 @@
                 "skill_tags",
                 "required_reviews",
                 "qualification_policy",
+                "routing_policy",
                 "status",
                 "create_time",
                 "update_time"
@@ -3770,6 +3907,9 @@
                 "artifact_name": {
                   "type": "string"
                 },
+                "batch_key": {
+                  "type": "string"
+                },
                 "campaign_name": {
                   "oneOf": [
                     {
@@ -3783,11 +3923,24 @@
                 "create_time": {
                   "type": "string"
                 },
+                "deadline_time": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "label_name": {
                   "type": "string"
                 },
                 "name": {
                   "type": "string"
+                },
+                "priority": {
+                  "type": "integer"
                 },
                 "qualification_task": {
                   "type": "boolean"
@@ -3841,6 +3994,9 @@
                 "qualification_task",
                 "status",
                 "resolution_label_name",
+                "priority",
+                "deadline_time",
+                "batch_key",
                 "create_time",
                 "update_time"
               ],
@@ -4053,6 +4209,9 @@
               "artifact_name": {
                 "type": "string"
               },
+              "batch_key": {
+                "type": "string"
+              },
               "campaign_name": {
                 "oneOf": [
                   {
@@ -4066,11 +4225,24 @@
               "create_time": {
                 "type": "string"
               },
+              "deadline_time": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "label_name": {
                 "type": "string"
               },
               "name": {
                 "type": "string"
+              },
+              "priority": {
+                "type": "integer"
               },
               "qualification_task": {
                 "type": "boolean"
@@ -4124,6 +4296,9 @@
               "qualification_task",
               "status",
               "resolution_label_name",
+              "priority",
+              "deadline_time",
+              "batch_key",
               "create_time",
               "update_time"
             ],

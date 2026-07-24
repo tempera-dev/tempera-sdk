@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "service": "remi",
+  "default_base_url": "http://127.0.0.1:8765",
+  "contract_kind": "http-route-manifest",
+  "source_of_truth": {
+    "router": "crates/beater-memory/src/server.rs",
+    "cli": "crates/beater-memory/src/bin/beater-memory.rs",
+    "readme": "README.md"
+  },
+  "auth": {
+    "scheme": "bearer",
+    "header": "Authorization",
+    "format": "Bearer <token>",
+    "env": "BEATER_MEMORY_TOKEN",
+    "notes": [
+      "The serve command refuses to start without a bearer token unless --allow-no-auth is passed.",
+      "All /v1 routes require the configured bearer when auth is enabled.",
+      "/livez and /readyz are unauthenticated process and readiness probes."
+    ]
+  },
+  "request_id": {
+    "header": "x-request-id",
+    "semantics": "Tracing and durable audit correlation only; this is not a replay or idempotency guarantee."
+  },
+  "error_shape": {
+    "content_type": "application/json",
+    "schema": "ErrorBody",
+    "fields": [
+      "error.code",
+      "error.message"
+    ],
+    "status_header_semantics": {
+      "401": "WWW-Authenticate: Bearer",
+      "429": "Retry-After",
+      "503": "Retry-After",
+      "504": "Retry-After"
+    },
+    "codes": [
+      "unauthorized",
+      "rate_limited",
+      "service_busy",
+      "service_timeout",
+      "bad_request",
+      "internal_error"
+    ]
+  },
+  "endpoints": [
+    {
+      "operation": "livez",
+      "method": "GET",
+      "path": "/livez",
+      "auth": "public",
+      "response_schema": "LiveResponse"
+    },
+    {
+      "operation": "readyz",
+      "method": "GET",
+      "path": "/readyz",
+      "auth": "public",
+      "response_schema": "ReadyResponse"
+    },
+    {
+      "operation": "health",
+      "method": "GET",
+      "path": "/v1/health",
+      "auth": "bearer",
+      "response_schema": "StoreHealth"
+    },
+    {
+      "operation": "getStats",
+      "method": "GET",
+      "path": "/v1/stats",
+      "auth": "bearer",
+      "response_schema": "StoreStats"
+    },
+    {
+      "operation": "getMetrics",
+      "method": "GET",
+      "path": "/v1/metrics",
+      "auth": "bearer",
+      "response_schema": "ServiceMetricsSnapshot"
+    },
+    {
+      "operation": "getPrometheusMetrics",
+      "method": "GET",
+      "path": "/v1/metrics/prometheus",
+      "auth": "bearer",
+      "response_schema": "PrometheusText"
+    },
+    {
+      "operation": "listAudit",
+      "method": "GET",
+      "path": "/v1/audit",
+      "auth": "bearer",
+      "query_schema": "AuditHttpQuery",
+      "query_fields": [
+        "limit"
+      ],
+      "response_schema": "AuditHttpResponse"
+    },
+    {
+      "operation": "remember",
+      "method": "POST",
+      "path": "/v1/remember",
+      "auth": "bearer",
+      "request_schema": "RememberHttpRequest",
+      "request_fields": [
+        "tenant_id",
+        "project_id",
+        "environment_id",
+        "kind",
+        "text",
+        "idempotency_key",
+        "project"
+      ],
+      "required_request_fields": [
+        "tenant_id",
+        "project_id",
+        "kind",
+        "text"
+      ],
+      "response_schema": "RememberHttpResponse",
+      "idempotency_field": "idempotency_key",
+      "description": "Write one memory event into the tenant and project ledger."
+    },
+    {
+      "operation": "project",
+      "method": "POST",
+      "path": "/v1/project",
+      "auth": "bearer",
+      "request_schema": "ProjectHttpRequest",
+      "request_fields": [
+        "limit"
+      ],
+      "required_request_fields": [],
+      "response_schema": "ProjectReport"
+    },
+    {
+      "operation": "query",
+      "method": "POST",
+      "path": "/v1/query",
+      "auth": "bearer",
+      "request_schema": "QueryHttpRequest",
+      "request_fields": [
+        "question",
+        "scope",
+        "max_tokens",
+        "require_fresh",
+        "modes",
+        "reconstruction_mode",
+        "max_reconstruction_steps",
+        "max_reconstruction_tokens"
+      ],
+      "required_request_fields": [
+        "question",
+        "scope"
+      ],
+      "response_schema": "MemoryAnswer",
+      "description": "Answer a scoped memory question with evidence and reconstruction metadata."
+    },
+    {
+      "operation": "maintenance",
+      "method": "POST",
+      "path": "/v1/maintenance",
+      "auth": "bearer",
+      "request_schema": "MaintenanceHttpRequest",
+      "request_fields": [
+        "vacuum",
+        "repair_orphans",
+        "prune_audit_before_unix_ms",
+        "retain_latest_audit_events"
+      ],
+      "required_request_fields": [],
+      "response_schema": "MaintenanceReport"
+    }
+  ],
+  "sdk": {
+    "status": "producer_contract",
+    "published_in": "tempera-dev/tempera-sdk",
+    "surface": "surface.json operations.remi",
+    "notes": [
+      "The aggregate SDK must vendor this manifest from an immutable Remi main commit.",
+      "Endpoint operation values are the generated SDK operation identities.",
+      "Resource-oriented Google AIP migration remains producer-owned and must update the router, this manifest, and generated clients together."
+    ]
+  }
+}

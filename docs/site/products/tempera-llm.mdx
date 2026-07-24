@@ -21,7 +21,7 @@ OpenAI-compatible LLM gateway every Tempera product calls instead of hitting pro
 | Audience | `tempera-llm` |
 | Auth | bearer minted for audience tempera-llm with model:read/model:invoke, or a central tp_ API key |
 | Client | TypeScript `client.temperaLlm` · Python `client.tempera_llm` · Rust `build_request("tempera_llm", ...)` |
-| Typed operations | 4 |
+| Typed operations | 5 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaLlm.request(path, options)` (TypeScript) /
@@ -35,6 +35,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 Check tempera-llm gateway liveness; returns \{ok: true\}.
 
+- **Producer operationId:** `health.check`
 - **Auth:** None (public endpoint).
 - **Call as:** TypeScript `client.temperaLlm.health()` · Python `client.tempera_llm.health()` · Rust `build_request("tempera_llm", "health", params)`
 
@@ -56,12 +57,94 @@ let spec = client.build_request("tempera_llm", "health", &[])?;
 
 </CodeGroup>
 
+### readinessCheck
+
+`GET /readyz`
+
+Call GET /readyz.
+
+- **Producer operationId:** `readiness.check`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaLlm.readinessCheck()` · Python `client.tempera_llm.readiness_check()` · Rust `build_request("tempera_llm", "readiness_check", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaLlm.readinessCheck();
+```
+
+```python Python
+result = client.tempera_llm.readiness_check()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_llm", "readiness_check", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createChatCompletion
+
+`POST /v1/chat/completions`
+
+Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.
+
+- **Producer operationId:** `chatCompletions.create`
+- **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
+- **Scope:** `model:invoke`
+- **Call as:** TypeScript `client.temperaLlm.createChatCompletion()` · Python `client.tempera_llm.create_chat_completion()` · Rust `build_request("tempera_llm", "create_chat_completion", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `byok` | no | — |
+| `max_tokens` | yes | — |
+| `messages` | yes | — |
+| `model` | yes | — |
+| `response_format` | no | — |
+| `stream` | no | — |
+| `temperature` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaLlm.createChatCompletion({
+  byok: "<byok>",
+  max_tokens: "<max_tokens>",
+  messages: "<messages>",
+});
+```
+
+```python Python
+result = client.tempera_llm.create_chat_completion({
+    "byok": "<byok>",
+    "max_tokens": "<max_tokens>",
+    "messages": "<messages>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_llm", "create_chat_completion", &[
+    ("byok", "<byok>".into()),
+    ("max_tokens", "<max_tokens>".into()),
+    ("messages", "<messages>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### listModels
 
 `GET /v1/models`
 
 List the configured model catalog the gateway can route to.
 
+- **Producer operationId:** `models.list`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
 - **Scope:** `model:read`
 - **Call as:** TypeScript `client.temperaLlm.listModels()` · Python `client.tempera_llm.list_models()` · Rust `build_request("tempera_llm", "list_models", params)`
@@ -84,63 +167,13 @@ let spec = client.build_request("tempera_llm", "list_models", &[])?;
 
 </CodeGroup>
 
-### createChatCompletion
-
-`POST /v1/chat/completions`
-
-Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.
-
-- **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
-- **Scope:** `model:invoke`
-- **Call as:** TypeScript `client.temperaLlm.createChatCompletion()` · Python `client.tempera_llm.create_chat_completion()` · Rust `build_request("tempera_llm", "create_chat_completion", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `model` | yes | — |
-| `messages` | yes | — |
-| `max_tokens` | no | — |
-| `temperature` | no | — |
-| `stream` | no | — |
-| `byok` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaLlm.createChatCompletion({
-  model: "<model>",
-  messages: "<messages>",
-  max_tokens: "<max_tokens>",
-});
-```
-
-```python Python
-result = client.tempera_llm.create_chat_completion({
-    "model": "<model>",
-    "messages": "<messages>",
-    "max_tokens": "<max_tokens>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_llm", "create_chat_completion", &[
-    ("model", "<model>".into()),
-    ("messages", "<messages>".into()),
-    ("max_tokens", "<max_tokens>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### createResponse
 
 `POST /v1/responses`
 
 Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.
 
+- **Producer operationId:** `responses.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
 - **Scope:** `model:invoke`
 - **Call as:** TypeScript `client.temperaLlm.createResponse()` · Python `client.tempera_llm.create_response()` · Rust `build_request("tempera_llm", "create_response", params)`
@@ -149,16 +182,17 @@ Create a non-streaming OpenAI Responses-style inference request through the temp
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `model` | yes | — |
-| `input` | yes | — |
-| `max_output_tokens` | no | — |
 | `byok` | no | — |
+| `input` | yes | — |
+| `max_output_tokens` | yes | — |
+| `model` | yes | — |
+| `response_format` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaLlm.createResponse({
-  model: "<model>",
+  byok: "<byok>",
   input: "<input>",
   max_output_tokens: "<max_output_tokens>",
 });
@@ -166,7 +200,7 @@ const result = await client.temperaLlm.createResponse({
 
 ```python Python
 result = client.tempera_llm.create_response({
-    "model": "<model>",
+    "byok": "<byok>",
     "input": "<input>",
     "max_output_tokens": "<max_output_tokens>",
 })
@@ -174,7 +208,7 @@ result = client.tempera_llm.create_response({
 
 ```rust Rust
 let spec = client.build_request("tempera_llm", "create_response", &[
-    ("model", "<model>".into()),
+    ("byok", "<byok>".into()),
     ("input", "<input>".into()),
     ("max_output_tokens", "<max_output_tokens>".into()),
 ])?;

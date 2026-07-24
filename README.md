@@ -24,10 +24,10 @@ generally available or that the control plane is production-ready.
 
 | Client | Product | Typed operations | Audience |
 |---|---|---|---|
-| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 39 | account tokens |
-| `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 18 | `tempo` |
+| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 54 | account tokens |
+| `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 27 | `tempo` |
 | `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
-| `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 18 | `palette` |
+| `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 61 | `palette` |
 
 Human Data is a provisioned review workflow, not a published raw HTTP route.
 Use only the endpoint contract supplied during onboarding.
@@ -40,18 +40,23 @@ a live hosted service, or an undocumented endpoint.
 
 | Client | Product | Typed operations | Audience |
 |---|---|---|---|
-| `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 10 | `cradle` |
-| `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 4 | `tempera-llm` |
+| `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 18 | `cradle` |
+| `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 5 | `tempera-llm` |
 | `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
 | `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
-| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 12 | `remi` |
+| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 14 | `remi` |
 | `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 53 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
-Palette also ships seven fully generated per-language clients inside its own
-repo (`sdks/clients/`) covering all 55+ operations of its OpenAPI contract;
-this SDK's palette client covers the core read/ingest/dataset/admin loop and
-defers exhaustive coverage to those.
+The aggregate Palette client covers all 61 ordinary JSON operations in the
+current producer OpenAPI. Its two raw OTLP collector routes remain explicit
+transport exclusions and should be called through an OTLP exporter rather than
+the aggregate JSON dispatcher.
+
+Tempera Code is intentionally not an aggregate HTTP product client. Its public
+contract is the app-server JSON-RPC protocol and its generated protocol SDKs;
+the old `/v1/models` and `/v1/responses` entries described a service that the
+repo does not publish and were removed in `0.10.0`.
 
 ## Unified auth
 
@@ -130,11 +135,10 @@ The Palette client includes three generated, `eval:run`-scoped operations from
 the real Palette Rust handlers: `importTemperaBundle`,
 `recordTemperaDecision`, and `getTemperaEvidence` (snake_case in Python and
 Rust). Their generated OpenAPI is pinned to Palette revision
-`8d78defac65dabdb2df309ce00153da8b51445ee`, artifact digest
-`sha256:a9917e9a67d08629b5cfba66443fa663c0d8d5ea5c3c466b8580d6a1debf5bb8`,
-and [Palette PR #10](https://github.com/tempera-dev/palette/pull/10). That PR is
-still under review, so these methods are source-ready and must not be described
-as a merged production release yet.
+`8ee730e5d7c82ae7aa8f828a36087c24424c217b`, artifact digest
+`sha256:26780d59182f0fc362df438b0227f54f5594a620f9ace5313f48587a8e901dc0`,
+and the merged evidence contract from
+[Palette PR #16](https://github.com/tempera-dev/palette/pull/16).
 
 `tempera-evals palette-evidence-handoff` produces the canonical JSON,
 signature, and public key body after independently verifying the suite evidence
@@ -227,6 +231,12 @@ the committed site is always current thanks to the drift gate).
   diff (surface tables and docs site), one version across the three packages,
   uniform-primitive markers, data-engine operation/path/method parity, and the
   exact source-pinned Palette evidence contract.
+- `scripts/check-aip-conformance.py` is the Google Cloud AIP migration
+  ratchet. It rejects new or stale mechanical violations across every vendored
+  producer contract while keeping protocol-native MCP, OAuth, OTLP, webhook,
+  WebSocket/BiDi, and SSE routes explicit. The breaking producer-first
+  migration order is documented in
+  [`docs/AIP_CONFORMANCE.md`](./docs/AIP_CONFORMANCE.md).
 - `contracts/palette-eval-openapi-operations.json` binds the three SDK methods
   to Palette's generated operation IDs, request/receipt schemas, failure
   responses, and immutable source receipt. Refresh it only from a clean,
@@ -264,6 +274,7 @@ or individually:
 
 ```sh
 python3 scripts/check-sdk-surface.py
+python3 scripts/check-aip-conformance.py
 python3 scripts/sync-data-engine-openapi.py --check \
   --source ../data-engine/api/openapi.yaml \
   --source-repo tempera-dev/data-engine --source-branch main \

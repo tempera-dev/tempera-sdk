@@ -140,7 +140,7 @@ def auth_label(surface: dict, product_key: str, op: dict) -> str:
     if kind == "none":
         return "None (public endpoint)."
     if kind == "account":
-        return "Account bearer — the control-plane session token stored by `login`/`signup`."
+        return "Account bearer — the control-plane session token returned by `createHostedSession`."
     if kind == "introspectionSecret":
         return "Introspection secret bearer (server-side only)."
     audience = surface["products"][product_key]["audience"] or surface["defaultAudience"]
@@ -205,7 +205,14 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     lines.append("")
     lines.append(esc(op["description"]))
     lines.append("")
+    lines.append(f"- **Producer operationId:** `{op['upstreamOperationId']}`")
     lines.append(f"- **Auth:** {auth_label(surface, product_key, op)}")
+    if op.get("pathParamTemplates"):
+        rendered_templates = ", ".join(
+            f"`{name}={template}`"
+            for name, template in op["pathParamTemplates"].items()
+        )
+        lines.append(f"- **AIP resource path templates:** {rendered_templates}")
     if op.get("scope"):
         lines.append(f"- **Scope:** `{op['scope']}`")
         if op["scope"] in surface.get("scopeGaps", {}):
@@ -387,8 +394,8 @@ def render_index(surface: dict) -> str:
         ]
     )
     lines += [
-        "Method naming is mechanical across the languages: the manifest's camelCase",
-        "operation id in TypeScript (`listTraces`), snake_case in Python (`list_traces`),",
+        "Method naming is mechanical across the languages: the SDK's lowerCamelCase",
+        "method id in TypeScript (`listTraces`), snake_case in Python (`list_traces`),",
         'and `build_request(product, "list_traces", params)` in Rust. Parameters use wire',
         "names (snake_case) in every language.",
         "",
@@ -605,7 +612,7 @@ def render_authentication(surface: dict) -> str:
         "1. An explicit per-call `bearer` option, when you pass one.",
         "2. Per the operation's auth kind:",
         "   - `none` — no `authorization` header is sent.",
-        "   - `account` — the account-session token stored by `login`/`signup` (or",
+        "   - `account` — the account-session token returned by `createHostedSession` (or",
         "     passed as `accountToken` / `account_token` / `with_account_token`).",
         "   - `introspectionSecret` — the configured introspection secret",
         "     (`introspectToken` only; server-side).",
@@ -921,7 +928,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
         "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.9.0");\n'
+        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.10.0");\n'
         "let (id, body) = mcp.list_tools_body();\n"
         'let (id, body) = mcp.call_tool_body("tempera_search", Some(serde_json::json!({"query": "browser capability"})));\n'
         "let (id, body) = mcp.whoami_body();\n"

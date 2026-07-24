@@ -16,9 +16,9 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Repository | [auth-hub](https://github.com/tempera-dev/auth-hub) |
 | Base URL env var | `TEMPERA_CONTROL_PLANE_URL` (see [Environments](/environments)) |
 | Audience | — (no OAuth audience) |
-| Auth | account bearer token from login/signup (control-plane session); introspectToken requires the introspection secret |
+| Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 39 |
+| Typed operations | 61 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -32,6 +32,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 Check control-plane liveness; returns \{ok: true\}.
 
+- **Producer operationId:** `getHealth`
 - **Auth:** None (public endpoint).
 - **Call as:** TypeScript `client.controlPlane.health()` · Python `client.control_plane.health()` · Rust `build_request("control_plane", "health", params)`
 
@@ -53,186 +54,28 @@ let spec = client.build_request("control_plane", "health", &[])?;
 
 </CodeGroup>
 
-### discovery
+### getReadiness
 
-`GET /.well-known/oauth-authorization-server`
+`GET /readyz`
 
-Fetch OAuth 2.1 authorization-server metadata for the issuer.
+Readiness probe for durable control-plane storage.
 
+- **Producer operationId:** `getReadiness`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.discovery()` · Python `client.control_plane.discovery()` · Rust `build_request("control_plane", "discovery", params)`
+- **Call as:** TypeScript `client.controlPlane.getReadiness()` · Python `client.control_plane.get_readiness()` · Rust `build_request("control_plane", "get_readiness", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.discovery();
+const result = await client.controlPlane.getReadiness();
 ```
 
 ```python Python
-result = client.control_plane.discovery()
+result = client.control_plane.get_readiness()
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "discovery", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### jwks
-
-`GET /.well-known/jwks.json`
-
-Fetch the JSON Web Key Set used to verify control-plane access tokens.
-
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.jwks()` · Python `client.control_plane.jwks()` · Rust `build_request("control_plane", "jwks", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.jwks();
-```
-
-```python Python
-result = client.control_plane.jwks()
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "jwks", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### protectedResourceMetadata
-
-`GET /.well-known/oauth-protected-resource/{resource}`
-
-Fetch OAuth protected-resource metadata for one registered audience.
-
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.protectedResourceMetadata()` · Python `client.control_plane.protected_resource_metadata()` · Rust `build_request("control_plane", "protected_resource_metadata", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `resource` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.protectedResourceMetadata({
-  resource: "<resource>",
-});
-```
-
-```python Python
-result = client.control_plane.protected_resource_metadata({
-    "resource": "<resource>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "protected_resource_metadata", &[
-    ("resource", "<resource>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### signup
-
-`POST /sessions`
-
-Create a Tempera account (or accept an invite) and receive an account-session token pair.
-
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.signup()` · Python `client.control_plane.signup()` · Rust `build_request("control_plane", "signup", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `email` | no | — |
-| `password` | no | — |
-| `organization` | no | — |
-| `invite_token` | no | — |
-| `mode` | always sent | Included automatically as `"signup"`; pass `mode` to override. |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.signup({
-  email: "<email>",
-  password: "<password>",
-  organization: "<organization>",
-});
-```
-
-```python Python
-result = client.control_plane.signup({
-    "email": "<email>",
-    "password": "<password>",
-    "organization": "<organization>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "signup", &[
-    ("email", "<email>".into()),
-    ("password", "<password>".into()),
-    ("organization", "<organization>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### login
-
-`POST /sessions`
-
-Log in with email and password and receive an account-session token pair.
-
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.login()` · Python `client.control_plane.login()` · Rust `build_request("control_plane", "login", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `email` | no | — |
-| `password` | no | — |
-| `mode` | always sent | Included automatically as `"login"`; pass `mode` to override. |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.login({
-  email: "<email>",
-  password: "<password>",
-});
-```
-
-```python Python
-result = client.control_plane.login({
-    "email": "<email>",
-    "password": "<password>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "login", &[
-    ("email", "<email>".into()),
-    ("password", "<password>".into()),
-])?;
+let spec = client.build_request("control_plane", "get_readiness", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -245,7 +88,8 @@ let spec = client.build_request("control_plane", "login", &[
 
 Fetch the authenticated user's identity, active workspace, and roles.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `getMe`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.me()` · Python `client.control_plane.me()` · Rust `build_request("control_plane", "me", params)`
 
 <CodeGroup>
@@ -266,22 +110,209 @@ let spec = client.build_request("control_plane", "me", &[])?;
 
 </CodeGroup>
 
+### listOrgs
+
+`GET /orgs`
+
+List the organizations the authenticated user belongs to.
+
+- **Producer operationId:** `listOrganizations`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listOrgs();
+```
+
+```python Python
+result = client.control_plane.list_orgs()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_orgs", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createOrg
+
+`POST /orgs`
+
+Create an organization; the caller becomes its owner.
+
+- **Producer operationId:** `createOrganization`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.createOrg()` · Python `client.control_plane.create_org()` · Rust `build_request("control_plane", "create_org", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `name` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createOrg({
+  name: "<name>",
+});
+```
+
+```python Python
+result = client.control_plane.create_org({
+    "name": "<name>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_org", &[
+    ("name", "<name>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listSessions
+
+`GET /sessions`
+
+List the user's active account sessions.
+
+- **Producer operationId:** `listAccountSessions`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listSessions();
+```
+
+```python Python
+result = client.control_plane.list_sessions()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_sessions", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createHostedSession
+
+`POST /sessions`
+
+Create a first-party hosted account session from email/password login or signup.
+
+- **Producer operationId:** `createHostedSession`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.createHostedSession()` · Python `client.control_plane.create_hosted_session()` · Rust `build_request("control_plane", "create_hosted_session", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `mode` | no | — |
+| `email` | yes | — |
+| `password` | yes | — |
+| `organization` | no | — |
+| `invite_token` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createHostedSession({
+  mode: "<mode>",
+  email: "<email>",
+  password: "<password>",
+});
+```
+
+```python Python
+result = client.control_plane.create_hosted_session({
+    "mode": "<mode>",
+    "email": "<email>",
+    "password": "<password>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_hosted_session", &[
+    ("mode", "<mode>".into()),
+    ("email", "<email>".into()),
+    ("password", "<password>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### revokeSession
+
+`DELETE /sessions/{id}`
+
+Revoke an account session and its tokens immediately (idempotent).
+
+- **Producer operationId:** `revokeAccountSession`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.revokeSession()` · Python `client.control_plane.revoke_session()` · Rust `build_request("control_plane", "revoke_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.revokeSession({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.revoke_session({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "revoke_session", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### selectWorkspace
 
 `POST /workspace/select`
 
 Switch the active workspace and receive a token pair scoped to it.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `selectWorkspace`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.selectWorkspace()` · Python `client.control_plane.select_workspace()` · Rust `build_request("control_plane", "select_workspace", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | no | — |
-| `project_id` | no | — |
-| `environment_id` | no | — |
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
 
 <CodeGroup>
 
@@ -313,65 +344,228 @@ let spec = client.build_request("control_plane", "select_workspace", &[
 
 </CodeGroup>
 
-### listOrgs
+### listTeamMembers
 
-`GET /orgs`
+`GET /team/members`
 
-List the organizations the authenticated user belongs to.
+List team members of the active organization.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)`
+- **Producer operationId:** `listTeamMembers`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listOrgs();
+const result = await client.controlPlane.listTeamMembers();
 ```
 
 ```python Python
-result = client.control_plane.list_orgs()
+result = client.control_plane.list_team_members()
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_orgs", &[])?;
+let spec = client.build_request("control_plane", "list_team_members", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
 
 </CodeGroup>
 
-### createOrg
+### updateTeamMember
 
-`POST /orgs`
+`PATCH /team/members/{id}`
 
-Create an organization; the caller becomes its owner.
+Change a team member's role (requires an org admin role; at least one owner must remain).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.createOrg()` · Python `client.control_plane.create_org()` · Rust `build_request("control_plane", "create_org", params)`
+- **Producer operationId:** `updateTeamMember`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.updateTeamMember()` · Python `client.control_plane.update_team_member()` · Rust `build_request("control_plane", "update_team_member", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `name` | no | — |
+| `role` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.createOrg({
-  name: "<name>",
+const result = await client.controlPlane.updateTeamMember({
+  id: "<id>",
+  role: "<role>",
 });
 ```
 
 ```python Python
-result = client.control_plane.create_org({
-    "name": "<name>",
+result = client.control_plane.update_team_member({
+    "id": "<id>",
+    "role": "<role>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "create_org", &[
-    ("name", "<name>".into()),
+let spec = client.build_request("control_plane", "update_team_member", &[
+    ("id", "<id>".into()),
+    ("role", "<role>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### removeTeamMember
+
+`DELETE /team/members/{id}`
+
+Remove a team member from the active organization (idempotent).
+
+- **Producer operationId:** `removeTeamMember`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.removeTeamMember()` · Python `client.control_plane.remove_team_member()` · Rust `build_request("control_plane", "remove_team_member", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.removeTeamMember({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.remove_team_member({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "remove_team_member", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listInvites
+
+`GET /invites`
+
+List invites for the active organization, newest first.
+
+- **Producer operationId:** `listInvites`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listInvites();
+```
+
+```python Python
+result = client.control_plane.list_invites()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_invites", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createInvite
+
+`POST /invites`
+
+Invite a user to the active organization; the accept URL is returned once.
+
+- **Producer operationId:** `createInvite`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.createInvite()` · Python `client.control_plane.create_invite()` · Rust `build_request("control_plane", "create_invite", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `email` | yes | — |
+| `role` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createInvite({
+  email: "<email>",
+  role: "<role>",
+});
+```
+
+```python Python
+result = client.control_plane.create_invite({
+    "email": "<email>",
+    "role": "<role>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_invite", &[
+    ("email", "<email>".into()),
+    ("role", "<role>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### cancelInvite
+
+`DELETE /invites/{id}`
+
+Cancel a pending invite (idempotent).
+
+- **Producer operationId:** `cancelInvite`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.cancelInvite()` · Python `client.control_plane.cancel_invite()` · Rust `build_request("control_plane", "cancel_invite", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.cancelInvite({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.cancel_invite({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "cancel_invite", &[
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -385,7 +579,8 @@ let spec = client.build_request("control_plane", "create_org", &[
 
 List projects across every organization the user belongs to.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `listProjects`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listProjects()` · Python `client.control_plane.list_projects()` · Rust `build_request("control_plane", "list_projects", params)`
 
 <CodeGroup>
@@ -412,15 +607,16 @@ let spec = client.build_request("control_plane", "list_projects", &[])?;
 
 Create a project in an organization (requires an org admin role).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `createProject`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.createProject()` · Python `client.control_plane.create_project()` · Rust `build_request("control_plane", "create_project", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `org_id` | no | — |
-| `name` | no | — |
+| `org_id` | yes | — |
+| `name` | yes | — |
 
 <CodeGroup>
 
@@ -455,7 +651,8 @@ let spec = client.build_request("control_plane", "create_project", &[
 
 List environments across every project the user can access.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `listEnvironments`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listEnvironments()` · Python `client.control_plane.list_environments()` · Rust `build_request("control_plane", "list_environments", params)`
 
 <CodeGroup>
@@ -482,15 +679,16 @@ let spec = client.build_request("control_plane", "list_environments", &[])?;
 
 Create an environment in a project (requires an org admin role).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `createEnvironment`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.createEnvironment()` · Python `client.control_plane.create_environment()` · Rust `build_request("control_plane", "create_environment", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | no | — |
-| `name` | no | — |
+| `project_id` | yes | — |
+| `name` | yes | — |
 
 <CodeGroup>
 
@@ -519,236 +717,14 @@ let spec = client.build_request("control_plane", "create_environment", &[
 
 </CodeGroup>
 
-### listTeamMembers
-
-`GET /team/members`
-
-List team members of the active organization.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.listTeamMembers();
-```
-
-```python Python
-result = client.control_plane.list_team_members()
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "list_team_members", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### updateTeamMember
-
-`PATCH /team/members/{member_id}`
-
-Change a team member's role (requires an org admin role; at least one owner must remain).
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.updateTeamMember()` · Python `client.control_plane.update_team_member()` · Rust `build_request("control_plane", "update_team_member", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `member_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `role` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.updateTeamMember({
-  member_id: "<member_id>",
-  role: "<role>",
-});
-```
-
-```python Python
-result = client.control_plane.update_team_member({
-    "member_id": "<member_id>",
-    "role": "<role>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "update_team_member", &[
-    ("member_id", "<member_id>".into()),
-    ("role", "<role>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### removeTeamMember
-
-`DELETE /team/members/{member_id}`
-
-Remove a team member from the active organization (idempotent).
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.removeTeamMember()` · Python `client.control_plane.remove_team_member()` · Rust `build_request("control_plane", "remove_team_member", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `member_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.removeTeamMember({
-  member_id: "<member_id>",
-});
-```
-
-```python Python
-result = client.control_plane.remove_team_member({
-    "member_id": "<member_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "remove_team_member", &[
-    ("member_id", "<member_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listInvites
-
-`GET /invites`
-
-List invites for the active organization, newest first.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.listInvites();
-```
-
-```python Python
-result = client.control_plane.list_invites()
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "list_invites", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createInvite
-
-`POST /invites`
-
-Invite a user to the active organization; the accept URL is returned once.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.createInvite()` · Python `client.control_plane.create_invite()` · Rust `build_request("control_plane", "create_invite", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `email` | no | — |
-| `role` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.createInvite({
-  email: "<email>",
-  role: "<role>",
-});
-```
-
-```python Python
-result = client.control_plane.create_invite({
-    "email": "<email>",
-    "role": "<role>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "create_invite", &[
-    ("email", "<email>".into()),
-    ("role", "<role>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### cancelInvite
-
-`DELETE /invites/{invite_id}`
-
-Cancel a pending invite (idempotent).
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.cancelInvite()` · Python `client.control_plane.cancel_invite()` · Rust `build_request("control_plane", "cancel_invite", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `invite_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.cancelInvite({
-  invite_id: "<invite_id>",
-});
-```
-
-```python Python
-result = client.control_plane.cancel_invite({
-    "invite_id": "<invite_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "cancel_invite", &[
-    ("invite_id", "<invite_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### listApiKeys
 
 `GET /api-keys`
 
 List API keys in the active workspace; secrets are never returned.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `listApiKeys`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listApiKeys()` · Python `client.control_plane.list_api_keys()` · Rust `build_request("control_plane", "list_api_keys", params)`
 
 <CodeGroup>
@@ -775,81 +751,45 @@ let spec = client.build_request("control_plane", "list_api_keys", &[])?;
 
 Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `createApiKey`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.createApiKey()` · Python `client.control_plane.create_api_key()` · Rust `build_request("control_plane", "create_api_key", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `scopes` | no | — |
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `name` | no | — |
+| `scopes` | yes | — |
 | `audience` | no | — |
-| `org_id` | no | — |
-| `project_id` | no | — |
-| `environment_id` | no | — |
+| `expires_at` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.createApiKey({
-  scopes: "<scopes>",
-  audience: "<audience>",
   org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_api_key({
-    "scopes": "<scopes>",
-    "audience": "<audience>",
     "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_api_key", &[
-    ("scopes", "<scopes>".into()),
-    ("audience", "<audience>".into()),
     ("org_id", "<org_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### rotateApiKey
-
-`POST /api-keys/{api_key_id}/rotate`
-
-Rotate an API key's secret; the new secret is returned exactly once.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.rotateApiKey()` · Python `client.control_plane.rotate_api_key()` · Rust `build_request("control_plane", "rotate_api_key", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `api_key_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.rotateApiKey({
-  api_key_id: "<api_key_id>",
-});
-```
-
-```python Python
-result = client.control_plane.rotate_api_key({
-    "api_key_id": "<api_key_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "rotate_api_key", &[
-    ("api_key_id", "<api_key_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -859,36 +799,37 @@ let spec = client.build_request("control_plane", "rotate_api_key", &[
 
 ### revokeApiKey
 
-`DELETE /api-keys/{api_key_id}`
+`DELETE /api-keys/{id}`
 
 Revoke an API key (idempotent).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `revokeApiKey`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.revokeApiKey()` · Python `client.control_plane.revoke_api_key()` · Rust `build_request("control_plane", "revoke_api_key", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `api_key_id` | yes | Substituted into the URL path (percent-encoded). |
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.revokeApiKey({
-  api_key_id: "<api_key_id>",
+  id: "<id>",
 });
 ```
 
 ```python Python
 result = client.control_plane.revoke_api_key({
-    "api_key_id": "<api_key_id>",
+    "id": "<id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "revoke_api_key", &[
-    ("api_key_id", "<api_key_id>".into()),
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -896,65 +837,39 @@ let spec = client.build_request("control_plane", "revoke_api_key", &[
 
 </CodeGroup>
 
-### listGrants
+### rotateApiKey
 
-`GET /oauth/grants`
+`POST /api-keys/{id}/rotate`
 
-List the OAuth grants the user has approved in the active workspace.
+Rotate an API key's secret; the new secret is returned exactly once.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.listGrants();
-```
-
-```python Python
-result = client.control_plane.list_grants()
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "list_grants", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### revokeGrant
-
-`DELETE /oauth/grants/{grant_id}`
-
-Revoke an OAuth grant and every refresh token issued under it.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.revokeGrant()` · Python `client.control_plane.revoke_grant()` · Rust `build_request("control_plane", "revoke_grant", params)`
+- **Producer operationId:** `rotateApiKey`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.rotateApiKey()` · Python `client.control_plane.rotate_api_key()` · Rust `build_request("control_plane", "rotate_api_key", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `grant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.revokeGrant({
-  grant_id: "<grant_id>",
+const result = await client.controlPlane.rotateApiKey({
+  id: "<id>",
 });
 ```
 
 ```python Python
-result = client.control_plane.revoke_grant({
-    "grant_id": "<grant_id>",
+result = client.control_plane.rotate_api_key({
+    "id": "<id>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "revoke_grant", &[
-    ("grant_id", "<grant_id>".into()),
+let spec = client.build_request("control_plane", "rotate_api_key", &[
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -962,66 +877,259 @@ let spec = client.build_request("control_plane", "revoke_grant", &[
 
 </CodeGroup>
 
-### listSessions
+### providerConnectionsList
 
-`GET /sessions`
+`GET /provider-connections`
 
-List the user's active account sessions.
+List provider connection metadata using a first-party account session. Secret references and values are never returned.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)`
+- **Producer operationId:** `providerConnections.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsList()` · Python `client.control_plane.provider_connections_list()` · Rust `build_request("control_plane", "provider_connections_list", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listSessions();
+const result = await client.controlPlane.providerConnectionsList();
 ```
 
 ```python Python
-result = client.control_plane.list_sessions()
+result = client.control_plane.provider_connections_list()
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_sessions", &[])?;
+let spec = client.build_request("control_plane", "provider_connections_list", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
 
 </CodeGroup>
 
-### revokeSession
+### providerConnectionsCreate
 
-`DELETE /sessions/{session_id}`
+`POST /provider-connections`
 
-Revoke an account session and its tokens immediately (idempotent).
+Create a tenant-scoped provider connection using only an external secret reference.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.revokeSession()` · Python `client.control_plane.revoke_session()` · Rust `build_request("control_plane", "revoke_session", params)`
+- **Producer operationId:** `providerConnections.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsCreate()` · Python `client.control_plane.provider_connections_create()` · Rust `build_request("control_plane", "provider_connections_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `provider` | yes | — |
+| `name` | yes | — |
+| `secret_ref` | yes | — |
+| `allowed_models` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.providerConnectionsCreate({
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.control_plane.provider_connections_create({
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "provider_connections_create", &[
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### providerConnectionsRevoke
+
+`DELETE /provider-connections/{id}`
+
+Revoke a provider connection immediately. Revoking an unknown id is a no-op.
+
+- **Producer operationId:** `providerConnections.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsRevoke()` · Python `client.control_plane.provider_connections_revoke()` · Rust `build_request("control_plane", "provider_connections_revoke", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.revokeSession({
-  session_id: "<session_id>",
+const result = await client.controlPlane.providerConnectionsRevoke({
+  id: "<id>",
 });
 ```
 
 ```python Python
-result = client.control_plane.revoke_session({
-    "session_id": "<session_id>",
+result = client.control_plane.provider_connections_revoke({
+    "id": "<id>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "revoke_session", &[
-    ("session_id", "<session_id>".into()),
+let spec = client.build_request("control_plane", "provider_connections_revoke", &[
+    ("id", "<id>".into()),
 ])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### providerConnectionsRotate
+
+`POST /provider-connections/{id}:rotate`
+
+Replace a connection secret reference and increment its revision without exposing the reference.
+
+- **Producer operationId:** `providerConnections.rotate`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsRotate()` · Python `client.control_plane.provider_connections_rotate()` · Rust `build_request("control_plane", "provider_connections_rotate", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `secret_ref` | yes | — |
+| `allowed_models` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.providerConnectionsRotate({
+  id: "<id>",
+  secret_ref: "<secret_ref>",
+  allowed_models: "<allowed_models>",
+});
+```
+
+```python Python
+result = client.control_plane.provider_connections_rotate({
+    "id": "<id>",
+    "secret_ref": "<secret_ref>",
+    "allowed_models": "<allowed_models>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "provider_connections_rotate", &[
+    ("id", "<id>".into()),
+    ("secret_ref", "<secret_ref>".into()),
+    ("allowed_models", "<allowed_models>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### providerConnectionsResolve
+
+`POST /provider-connections/{id}:resolve`
+
+Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.
+
+- **Producer operationId:** `providerConnections.resolve`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsResolve()` · Python `client.control_plane.provider_connections_resolve()` · Rust `build_request("control_plane", "provider_connections_resolve", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `usage_delegation` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.providerConnectionsResolve({
+  id: "<id>",
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.control_plane.provider_connections_resolve({
+    "id": "<id>",
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "provider_connections_resolve", &[
+    ("id", "<id>".into()),
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listAuditLog
+
+`GET /audit-log`
+
+List recent audit-log events for the user and active organization (up to 50, newest first).
+
+- **Producer operationId:** `listAuditLog`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listAuditLog();
+```
+
+```python Python
+result = client.control_plane.list_audit_log()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_audit_log", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1034,7 +1142,8 @@ let spec = client.build_request("control_plane", "revoke_session", &[
 
 List the connector catalog (MCP clients, editors, and API surfaces).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `listConnectors`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listConnectors()` · Python `client.control_plane.list_connectors()` · Rust `build_request("control_plane", "list_connectors", params)`
 
 <CodeGroup>
@@ -1057,36 +1166,37 @@ let spec = client.build_request("control_plane", "list_connectors", &[])?;
 
 ### getConnectorStatus
 
-`GET /connectors/{connector_id}/status`
+`GET /connectors/{id}/status`
 
 Fetch one connector's connection status for the active workspace.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `getConnectorStatus`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.getConnectorStatus()` · Python `client.control_plane.get_connector_status()` · Rust `build_request("control_plane", "get_connector_status", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `connector_id` | yes | Substituted into the URL path (percent-encoded). |
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.getConnectorStatus({
-  connector_id: "<connector_id>",
+  id: "<id>",
 });
 ```
 
 ```python Python
 result = client.control_plane.get_connector_status({
-    "connector_id": "<connector_id>",
+    "id": "<id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "get_connector_status", &[
-    ("connector_id", "<connector_id>".into()),
+    ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1100,7 +1210,8 @@ let spec = client.build_request("control_plane", "get_connector_status", &[
 
 List the product catalog with default scopes and setup paths.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `listProducts`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.listProducts()` · Python `client.control_plane.list_products()` · Rust `build_request("control_plane", "list_products", params)`
 
 <CodeGroup>
@@ -1123,65 +1234,38 @@ let spec = client.build_request("control_plane", "list_products", &[])?;
 
 ### getProductStatus
 
-`GET /products/{product_id}/status`
+`GET /products/{id}/status`
 
 Fetch one product's activation status, entitlements, signals, and usage meters.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `getProductStatus`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.getProductStatus()` · Python `client.control_plane.get_product_status()` · Rust `build_request("control_plane", "get_product_status", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `product_id` | yes | Substituted into the URL path (percent-encoded). |
+| `id` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.getProductStatus({
-  product_id: "<product_id>",
+  id: "<id>",
 });
 ```
 
 ```python Python
 result = client.control_plane.get_product_status({
-    "product_id": "<product_id>",
+    "id": "<id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "get_product_status", &[
-    ("product_id", "<product_id>".into()),
+    ("id", "<id>".into()),
 ])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getModelCatalog
-
-`GET /model-catalog`
-
-List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
-
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Scope:** `model:read`
-- **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.controlPlane.getModelCatalog();
-```
-
-```python Python
-result = client.control_plane.get_model_catalog()
-```
-
-```rust Rust
-let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1194,7 +1278,8 @@ let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 
 Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `getBillingStatus`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.getBillingStatus()` · Python `client.control_plane.get_billing_status()` · Rust `build_request("control_plane", "get_billing_status", params)`
 
 <CodeGroup>
@@ -1221,7 +1306,8 @@ let spec = client.build_request("control_plane", "get_billing_status", &[])?;
 
 Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `createBillingCheckout`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.createBillingCheckout()` · Python `client.control_plane.create_billing_checkout()` · Rust `build_request("control_plane", "create_billing_checkout", params)`
 
 **Query parameters**
@@ -1229,8 +1315,8 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 | Parameter | Required | Notes |
 |---|---|---|
 | `rail` | no | — |
+| `plan` | no | — |
 | `plan_id` | no | — |
-| `billing_interval` | no | — |
 | `currency` | no | — |
 | `network` | no | — |
 
@@ -1239,21 +1325,21 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 ```typescript TypeScript
 const result = await client.controlPlane.createBillingCheckout({
   rail: "<rail>",
-  plan_id: "<plan_id>",
+  plan: "<plan>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_billing_checkout({
     "rail": "<rail>",
-    "plan_id": "<plan_id>",
+    "plan": "<plan>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_billing_checkout", &[
     ("rail", "<rail>".into()),
-    ("plan_id", "<plan_id>".into()),
+    ("plan", "<plan>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1267,7 +1353,8 @@ let spec = client.build_request("control_plane", "create_billing_checkout", &[
 
 Fetch the billing-portal URL for the organization (requires a billing role).
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `createBillingPortal`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.getBillingPortal()` · Python `client.control_plane.get_billing_portal()` · Rust `build_request("control_plane", "get_billing_portal", params)`
 
 <CodeGroup>
@@ -1288,48 +1375,108 @@ let spec = client.build_request("control_plane", "get_billing_portal", &[])?;
 
 </CodeGroup>
 
+### getBillingCredits
+
+`GET /billing/credits`
+
+Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.
+
+- **Producer operationId:** `getBillingCredits`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.getBillingCredits()` · Python `client.control_plane.get_billing_credits()` · Rust `build_request("control_plane", "get_billing_credits", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getBillingCredits();
+```
+
+```python Python
+result = client.control_plane.get_billing_credits()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_billing_credits", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getModelCatalog
+
+`GET /model-catalog`
+
+List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
+
+- **Producer operationId:** `getModelCatalog`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `model:read`
+- **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getModelCatalog();
+```
+
+```python Python
+result = client.control_plane.get_model_catalog()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### recordUsage
 
 `POST /usage/events`
 
 Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
+- **Producer operationId:** `recordUsageEvent`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Call as:** TypeScript `client.controlPlane.recordUsage()` · Python `client.control_plane.record_usage()` · Rust `build_request("control_plane", "record_usage", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `metric` | no | — |
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `metric` | yes | — |
 | `quantity` | no | — |
-| `org_id` | no | — |
-| `project_id` | no | — |
-| `environment_id` | no | — |
+| `idempotency_key` | no | — |
+| `cost` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.recordUsage({
-  metric: "<metric>",
-  quantity: "<quantity>",
   org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
 });
 ```
 
 ```python Python
 result = client.control_plane.record_usage({
-    "metric": "<metric>",
-    "quantity": "<quantity>",
     "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "record_usage", &[
-    ("metric", "<metric>".into()),
-    ("quantity", "<quantity>".into()),
     ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1337,27 +1484,302 @@ let spec = client.build_request("control_plane", "record_usage", &[
 
 </CodeGroup>
 
-### listAuditLog
+### usageReservationsCreate
 
-`GET /audit-log`
+`POST /usage/reservations`
 
-List recent audit-log events for the user and active organization (up to 50, newest first).
+Atomically reserve the maximum model cost before starting a provider request.
 
-- **Auth:** Account bearer — the control-plane session token stored by `login`/`signup`.
-- **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)`
+- **Producer operationId:** `usageReservations.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.usageReservationsCreate()` · Python `client.control_plane.usage_reservations_create()` · Rust `build_request("control_plane", "usage_reservations_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `subject` | no | — |
+| `idempotency_key` | yes | — |
+| `provider` | yes | — |
+| `model` | yes | — |
+| `config_id` | yes | — |
+| `byok` | yes | — |
+| `maximum_provider_cost_micros` | yes | — |
+| `ttl_seconds` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.controlPlane.listAuditLog();
+const result = await client.controlPlane.usageReservationsCreate({
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
 ```
 
 ```python Python
-result = client.control_plane.list_audit_log()
+result = client.control_plane.usage_reservations_create({
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
 ```
 
 ```rust Rust
-let spec = client.build_request("control_plane", "list_audit_log", &[])?;
+let spec = client.build_request("control_plane", "usage_reservations_create", &[
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### usageReservationsCommit
+
+`POST /usage/reservations/{reservation_id}:commit`
+
+Commit exact provider usage against an admitted reservation and release unused capacity.
+
+- **Producer operationId:** `usageReservations.commit`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.usageReservationsCommit()` · Python `client.control_plane.usage_reservations_commit()` · Rust `build_request("control_plane", "usage_reservations_commit", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `config_id` | yes | — |
+| `cost` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.usageReservationsCommit({
+  reservation_id: "<reservation_id>",
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.control_plane.usage_reservations_commit({
+    "reservation_id": "<reservation_id>",
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "usage_reservations_commit", &[
+    ("reservation_id", "<reservation_id>".into()),
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### usageReservationsRelease
+
+`POST /usage/reservations/{reservation_id}:release`
+
+Release unused capacity after provider failure or cancellation.
+
+- **Producer operationId:** `usageReservations.release`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.usageReservationsRelease()` · Python `client.control_plane.usage_reservations_release()` · Rust `build_request("control_plane", "usage_reservations_release", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.usageReservationsRelease({
+  reservation_id: "<reservation_id>",
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.control_plane.usage_reservations_release({
+    "reservation_id": "<reservation_id>",
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "usage_reservations_release", &[
+    ("reservation_id", "<reservation_id>".into()),
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### usageReservationsReconcile
+
+`POST /usage/reservations/{reservation_id}:reconcile`
+
+Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.
+
+- **Producer operationId:** `usageReservations.reconcile`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.usageReservationsReconcile()` · Python `client.control_plane.usage_reservations_reconcile()` · Rust `build_request("control_plane", "usage_reservations_reconcile", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reservation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `project_id` | yes | — |
+| `environment_id` | yes | — |
+| `config_id` | yes | — |
+| `reason` | yes | — |
+| `trace_id` | no | — |
+| `observed_usage` | yes | — |
+| `expected_cost` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.usageReservationsReconcile({
+  reservation_id: "<reservation_id>",
+  org_id: "<org_id>",
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+});
+```
+
+```python Python
+result = client.control_plane.usage_reservations_reconcile({
+    "reservation_id": "<reservation_id>",
+    "org_id": "<org_id>",
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "usage_reservations_reconcile", &[
+    ("reservation_id", "<reservation_id>".into()),
+    ("org_id", "<org_id>".into()),
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listGrants
+
+`GET /oauth/grants`
+
+List the OAuth grants the user has approved in the active workspace.
+
+- **Producer operationId:** `listOAuthGrants`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listGrants();
+```
+
+```python Python
+result = client.control_plane.list_grants()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_grants", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### revokeGrant
+
+`DELETE /oauth/grants/{id}`
+
+Revoke an OAuth grant and every refresh token issued under it.
+
+- **Producer operationId:** `revokeOAuthGrant`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.revokeGrant()` · Python `client.control_plane.revoke_grant()` · Rust `build_request("control_plane", "revoke_grant", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.revokeGrant({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.revoke_grant({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "revoke_grant", &[
+    ("id", "<id>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -1370,6 +1792,7 @@ let spec = client.build_request("control_plane", "list_audit_log", &[])?;
 
 Introspect a token or tp_ API key server-side; requires the introspection secret and returns \{active: false\} for anything invalid.
 
+- **Producer operationId:** `introspectOAuthToken`
 - **Auth:** Introspection secret bearer (server-side only).
 - **Call as:** TypeScript `client.controlPlane.introspectToken()` · Python `client.control_plane.introspect_token()` · Rust `build_request("control_plane", "introspect_token", params)`
 
@@ -1377,26 +1800,580 @@ Introspect a token or tp_ API key server-side; requires the introspection secret
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `token` | no | — |
+| `token` | yes | — |
+| `token_type_hint` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.controlPlane.introspectToken({
   token: "<token>",
+  token_type_hint: "<token_type_hint>",
 });
 ```
 
 ```python Python
 result = client.control_plane.introspect_token({
     "token": "<token>",
+    "token_type_hint": "<token_type_hint>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "introspect_token", &[
     ("token", "<token>".into()),
+    ("token_type_hint", "<token_type_hint>".into()),
 ])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### discovery
+
+`GET /.well-known/oauth-authorization-server`
+
+Fetch OAuth 2.1 authorization-server metadata for the issuer.
+
+- **Producer operationId:** `getOAuthAuthorizationServerMetadata`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.discovery()` · Python `client.control_plane.discovery()` · Rust `build_request("control_plane", "discovery", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.discovery();
+```
+
+```python Python
+result = client.control_plane.discovery()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "discovery", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getOAuthProtectedResourceMetadata
+
+`GET /.well-known/oauth-protected-resource`
+
+OAuth protected resource discovery metadata for MCP/resource clients.
+
+- **Producer operationId:** `getOAuthProtectedResourceMetadata`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.getOAuthProtectedResourceMetadata()` · Python `client.control_plane.get_o_auth_protected_resource_metadata()` · Rust `build_request("control_plane", "get_o_auth_protected_resource_metadata", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getOAuthProtectedResourceMetadata();
+```
+
+```python Python
+result = client.control_plane.get_o_auth_protected_resource_metadata()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_o_auth_protected_resource_metadata", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### protectedResourceMetadata
+
+`GET /.well-known/oauth-protected-resource/{resource}`
+
+Fetch OAuth protected-resource metadata for one registered audience.
+
+- **Producer operationId:** `getOAuthProtectedResourceMetadataForAudience`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.protectedResourceMetadata()` · Python `client.control_plane.protected_resource_metadata()` · Rust `build_request("control_plane", "protected_resource_metadata", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `resource` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.protectedResourceMetadata({
+  resource: "<resource>",
+});
+```
+
+```python Python
+result = client.control_plane.protected_resource_metadata({
+    "resource": "<resource>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "protected_resource_metadata", &[
+    ("resource", "<resource>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### jwks
+
+`GET /.well-known/jwks.json`
+
+Fetch the JSON Web Key Set used to verify control-plane access tokens.
+
+- **Producer operationId:** `getJsonWebKeySet`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.jwks()` · Python `client.control_plane.jwks()` · Rust `build_request("control_plane", "jwks", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.jwks();
+```
+
+```python Python
+result = client.control_plane.jwks()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "jwks", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminOperationalProvenance
+
+`GET /admin/operations/provenance`
+
+Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.
+
+- **Producer operationId:** `adminOperationalProvenance`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.adminOperationalProvenance()` · Python `client.control_plane.admin_operational_provenance()` · Rust `build_request("control_plane", "admin_operational_provenance", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminOperationalProvenance();
+```
+
+```python Python
+result = client.control_plane.admin_operational_provenance()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_operational_provenance", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminStepUp
+
+`POST /admin/step-up`
+
+Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.
+
+- **Producer operationId:** `adminStepUp`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.adminStepUp()` · Python `client.control_plane.admin_step_up()` · Rust `build_request("control_plane", "admin_step_up", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `password` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminStepUp({
+  password: "<password>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_step_up({
+    "password": "<password>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_step_up", &[
+    ("password", "<password>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminAdjustCredits
+
+`POST /admin/billing/credits/adjust`
+
+Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.
+
+- **Producer operationId:** `adminAdjustCredits`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.adminAdjustCredits()` · Python `client.control_plane.admin_adjust_credits()` · Rust `build_request("control_plane", "admin_adjust_credits", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `org_id` | yes | — |
+| `credit_micros` | yes | — |
+| `reference` | no | — |
+| `reason` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminAdjustCredits({
+  org_id: "<org_id>",
+  credit_micros: "<credit_micros>",
+  reference: "<reference>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_adjust_credits({
+    "org_id": "<org_id>",
+    "credit_micros": "<credit_micros>",
+    "reference": "<reference>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_adjust_credits", &[
+    ("org_id", "<org_id>".into()),
+    ("credit_micros", "<credit_micros>".into()),
+    ("reference", "<reference>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminBillingOrgs
+
+`GET /admin/billing/orgs`
+
+Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.
+
+- **Producer operationId:** `adminBillingOrgs`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.adminBillingOrgs()` · Python `client.control_plane.admin_billing_orgs()` · Rust `build_request("control_plane", "admin_billing_orgs", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminBillingOrgs();
+```
+
+```python Python
+result = client.control_plane.admin_billing_orgs()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_billing_orgs", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubSetupSessionsCreate
+
+`POST /github/setup-sessions`
+
+Create a one-time CSRF-bound GitHub App installation session.
+
+- **Producer operationId:** `githubSetupSessions.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsCreate()` · Python `client.control_plane.github_setup_sessions_create()` · Rust `build_request("control_plane", "github_setup_sessions_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project_id` | no | — |
+| `environment_id` | no | — |
+| `return_url` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubSetupSessionsCreate({
+  project_id: "<project_id>",
+  environment_id: "<environment_id>",
+  return_url: "<return_url>",
+});
+```
+
+```python Python
+result = client.control_plane.github_setup_sessions_create({
+    "project_id": "<project_id>",
+    "environment_id": "<environment_id>",
+    "return_url": "<return_url>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_setup_sessions_create", &[
+    ("project_id", "<project_id>".into()),
+    ("environment_id", "<environment_id>".into()),
+    ("return_url", "<return_url>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubSetupSessionsComplete
+
+`GET /github/callback`
+
+Bind a GitHub installation callback to its authenticated workspace.
+
+- **Producer operationId:** `githubSetupSessions.complete`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsComplete()` · Python `client.control_plane.github_setup_sessions_complete()` · Rust `build_request("control_plane", "github_setup_sessions_complete", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `state` | no | — |
+| `installation_id` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubSetupSessionsComplete({
+  state: "<state>",
+  installation_id: "<installation_id>",
+});
+```
+
+```python Python
+result = client.control_plane.github_setup_sessions_complete({
+    "state": "<state>",
+    "installation_id": "<installation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_setup_sessions_complete", &[
+    ("state", "<state>".into()),
+    ("installation_id", "<installation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubInstallationsList
+
+`GET /github/installations`
+
+List active GitHub App installations for the organization.
+
+- **Producer operationId:** `githubInstallations.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.githubInstallationsList()` · Python `client.control_plane.github_installations_list()` · Rust `build_request("control_plane", "github_installations_list", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubInstallationsList();
+```
+
+```python Python
+result = client.control_plane.github_installations_list()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_installations_list", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubInstallationsDisconnect
+
+`DELETE /github/installations/{installation_id}`
+
+Disconnect a GitHub App installation from the workspace.
+
+- **Producer operationId:** `githubInstallations.disconnect`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.githubInstallationsDisconnect()` · Python `client.control_plane.github_installations_disconnect()` · Rust `build_request("control_plane", "github_installations_disconnect", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubInstallationsDisconnect({
+  installation_id: "<installation_id>",
+});
+```
+
+```python Python
+result = client.control_plane.github_installations_disconnect({
+    "installation_id": "<installation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_installations_disconnect", &[
+    ("installation_id", "<installation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubInstallationRepositoriesList
+
+`GET /github/installations/{installation_id}/repositories`
+
+List repository metadata received for a GitHub installation.
+
+- **Producer operationId:** `githubInstallationRepositories.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.githubInstallationRepositoriesList()` · Python `client.control_plane.github_installation_repositories_list()` · Rust `build_request("control_plane", "github_installation_repositories_list", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubInstallationRepositoriesList({
+  installation_id: "<installation_id>",
+});
+```
+
+```python Python
+result = client.control_plane.github_installation_repositories_list({
+    "installation_id": "<installation_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_installation_repositories_list", &[
+    ("installation_id", "<installation_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubRepositorySnapshotsCapture
+
+`POST /github/installations/{installation_id}/repositories/{repository_id}:snapshot`
+
+Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.
+
+- **Producer operationId:** `githubRepositorySnapshots.capture`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.githubRepositorySnapshotsCapture()` · Python `client.control_plane.github_repository_snapshots_capture()` · Rust `build_request("control_plane", "github_repository_snapshots_capture", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `installation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `repository_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `ref` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubRepositorySnapshotsCapture({
+  installation_id: "<installation_id>",
+  repository_id: "<repository_id>",
+  ref: "<ref>",
+});
+```
+
+```python Python
+result = client.control_plane.github_repository_snapshots_capture({
+    "installation_id": "<installation_id>",
+    "repository_id": "<repository_id>",
+    "ref": "<ref>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_repository_snapshots_capture", &[
+    ("installation_id", "<installation_id>".into()),
+    ("repository_id", "<repository_id>".into()),
+    ("ref", "<ref>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### githubWebhooksAccept
+
+`POST /github/webhook`
+
+Accept a signed, replay-deduplicated GitHub webhook.
+
+- **Producer operationId:** `githubWebhooks.accept`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.githubWebhooksAccept()` · Python `client.control_plane.github_webhooks_accept()` · Rust `build_request("control_plane", "github_webhooks_accept", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.githubWebhooksAccept();
+```
+
+```python Python
+result = client.control_plane.github_webhooks_accept()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "github_webhooks_accept", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

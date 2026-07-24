@@ -1,5 +1,37 @@
 # SDK compatibility ledger
 
+## 2026-07-24 — org-wide current-head contract convergence
+
+- Owner: Contract Spine across the current producer default branches.
+- Compatibility class: breaking pre-1.0 correction; package `0.10.0`, surface version `4`.
+- Producers: Data Engine, Auth Hub, Palette, Cradle, Tempera Gym, Tempera LLM,
+  Tempera Workflows, Remi, and Tempo are pinned to their exact current branch
+  heads.
+- Coverage: every ordinary buffered HTTP operation that the aggregate
+  transport can represent is generated in TypeScript, Python, and Rust. OTLP, OAuth
+  form/redirect, inbound webhook, MCP JSON-RPC, private Fabric, BiDi/WebSocket,
+  and SSE routes remain explicit reviewed transport exclusions.
+- Breaking corrections: Auth Hub's duplicate `signup`/`login` aliases become
+  the canonical `createHostedSession` operation; Data Engine adopts its
+  canonical `/v1/{parent}` paths and current request fields. Its
+  `projects/*` resource-name template is validated and expanded without
+  percent-encoding the canonical slash in all three languages. The fictitious
+  Tempera Code HTTP gateway methods are removed because its public protocol is
+  generated JSON-RPC, not `/v1/models` or `/v1/responses`. Remi is repinned
+  from a stale feature branch to its committed `main` manifest; `manage`,
+  `context`, and `feedback` are removed because current main does not route
+  them, while `remember` and `query` regain their actual explicit workspace
+  fields.
+- Enforcement: source locks must equal the fetched producer branch head,
+  generated surface bindings and producer `operationId` receipts must reproduce
+  from the vendored contracts, transport exclusions expire for review, and
+  warning-tier coverage migrations are removed. The Google Cloud AIP ratchet
+  also rejects new or stale path-version, PUT, parameter-casing, custom-verb,
+  pagination, and update-mask violations while resource/error/LRO migrations
+  remain explicit producer-owned breaking work.
+- Rollback: revert the SDK release and all dependent exact-SHA pins together;
+  do not restore phantom routes or weaken current-head drift checks.
+
 ## 2026-07-21 — Data Engine review qualification v1
 
 - Owner: Contract Spine (Lane 1) consuming the Lane 2 producer contract.

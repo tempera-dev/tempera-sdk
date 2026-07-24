@@ -171,7 +171,7 @@
   "schema_version": 1,
   "source": {
     "branch": "main",
-    "commit": "8631390355d7b6afc74b1d05d5162e3f3e6789eb",
+    "commit": "566cf8a472b805def698e2aaa3a3c91824cc5172",
     "manifest_blob_sha": "e93fd952aed127dd59c6a12ebc44406a3adf468e",
     "manifest_mode": "100644",
     "manifest_path": "agent-kit/agent-kit-manifest.json",

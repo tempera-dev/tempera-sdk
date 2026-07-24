@@ -66,6 +66,9 @@ jobs:
       - name: Verify exact committed Data Engine source
         run: |
           git -C .data-engine-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .data-engine-source rev-parse HEAD)" = "$(git -C .data-engine-source rev-parse refs/remotes/origin/main)"
+          python3 -m pip install PyYAML==6.0.3
+          python3 scripts/sync-vendored-openapi.py --check --product dataEngine --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
           python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
           python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
 
@@ -126,6 +129,7 @@ jobs:
       - name: Verify exact committed Auth Hub source
         run: |
           git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .auth-hub-source rev-parse HEAD)" = "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)"
           python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit "${{ steps.auth-hub-lock.outputs.commit }}"
 
   palette-exact-source:
@@ -183,7 +187,9 @@ jobs:
       - name: Verify exact committed Palette source
         run: |
           git -C .palette-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .palette-source rev-parse HEAD)" = "$(git -C .palette-source rev-parse refs/remotes/origin/main)"
           python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .palette-source --source-repo tempera-dev/palette --source-branch main --commit "${{ steps.palette-lock.outputs.commit }}" --source-path sdks/openapi/palette-api.json --generated-with source_lock.py@1+palette-api-dump-openapi --generated-file specs/palette-api.json --generated-path specs/palette-api.json --lock specs/palette-api.json.source
+          python3 scripts/sync-palette-eval-openapi.py --check --source .palette-source/sdks/openapi/palette-api.json --source-checkout .palette-source
 
   upstream-exact-source:
     name: ${{ matrix.name }} exact source
@@ -212,7 +218,7 @@ jobs:
             transform: yaml-json
           - name: Tempera LLM
             repository: tempera-llm
-            source_branch: claude/billing-api-consistency-cbp8cy
+            source_branch: main
             source_path: sdks/openapi/tempera-llm-api.json
             lock: specs/tempera-llm-api.json.source
             generated_path: specs/tempera-llm-api.json
@@ -225,6 +231,22 @@ jobs:
             lock: specs/tempera-workflows-api.json.source
             generated_path: specs/tempera-workflows-api.json
             generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
+          - name: Remi
+            repository: remi
+            source_branch: main
+            source_path: docs/public-http-contract.json
+            lock: specs/remi-http-contract.json.source
+            generated_path: specs/remi-http-contract.json
+            generated_with: sync-vendored-openapi.py@1+verbatim-contract-copy
+            transform: verbatim
+          - name: Tempo
+            repository: tempo
+            source_branch: main
+            source_path: api/openapi.json
+            lock: specs/tempo-openapi.json.source
+            generated_path: specs/tempo-openapi.json
+            generated_with: sync-vendored-openapi.py@1+verbatim-openapi-copy
             transform: verbatim
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -286,6 +308,7 @@ jobs:
           COMMIT: ${{ steps.source-lock.outputs.commit }}
         run: |
           git -C .upstream-source fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
+          test "$(git -C .upstream-source rev-parse HEAD)" = "$(git -C .upstream-source rev-parse "refs/remotes/origin/$SOURCE_BRANCH")"
           if [ "$TRANSFORM" = verbatim ]; then
             cmp ".upstream-source/$SOURCE_PATH" "$GENERATED_PATH"
           else
@@ -328,6 +351,7 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
       - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/sync-openapi-surface.py --check
       - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py
       - run: npm --prefix packages/typescript test

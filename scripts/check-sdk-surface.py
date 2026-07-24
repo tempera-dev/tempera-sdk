@@ -24,6 +24,8 @@ Fails when the three language packages can drift apart:
    model exposure.
 9. The signed Tempera evidence operations must exactly match the source-pinned
    Palette OpenAPI artifact and committed operation lock.
+10. Every vendored producer contract must carry a complete immutable source
+    lock whose generated digest matches the committed artifact.
 
 Runtime conformance (every operation dispatching the right method, path, and
 auth header) is asserted per-language by each package's own test suite, which
@@ -79,6 +81,53 @@ def package_versions() -> dict[str, str]:
     match = re.search(r'^version\s*=\s*"([^"]+)"', cargo, re.MULTILINE)
     versions["rust"] = match.group(1) if match else "?"
     return versions
+
+
+def validate_vendored_source_locks() -> list[str]:
+    failures: list[str] = []
+    for lock_path in sorted((ROOT / "specs").glob("*.source")):
+        label = lock_path.relative_to(ROOT)
+        try:
+            lock = json.loads(lock_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            failures.append(f"{label}: invalid source lock: {error}")
+            continue
+        required = {
+            "schema_version",
+            "source_repo",
+            "source_branch",
+            "source_commit",
+            "source_path",
+            "source_blob_sha",
+            "source_sha256",
+            "generated_with",
+            "generated_path",
+            "generated_sha256",
+        }
+        missing = sorted(required - set(lock))
+        if missing:
+            failures.append(f"{label}: missing fields {missing}")
+            continue
+        if lock.get("schema_version") != 1:
+            failures.append(f"{label}: schema_version must be 1")
+        if lock.get("source_branch") != "main":
+            failures.append(
+                f"{label}: source_branch must be main, not "
+                f"{lock.get('source_branch')!r}"
+            )
+        if re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))) is None:
+            failures.append(f"{label}: source_commit is not a 40-character SHA")
+        generated = ROOT / str(lock["generated_path"])
+        try:
+            digest = hashlib.sha256(generated.read_bytes()).hexdigest()
+        except OSError as error:
+            failures.append(f"{label}: cannot read generated artifact: {error}")
+            continue
+        if digest != lock.get("generated_sha256"):
+            failures.append(
+                f"{label}: generated_sha256 does not match {generated.relative_to(ROOT)}"
+            )
+    return failures
 
 
 def route_identity(method: str, path: str) -> tuple[str, str]:
@@ -272,7 +321,28 @@ def validate_data_engine_mcp_contracts() -> list[str]:
 def main() -> int:
     failures: list[str] = []
 
-    # 1 + 2: manifest invariants and generated-table drift.
+    # 1: every vendored route and request binding must reproduce from OpenAPI.
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/sync-openapi-surface.py"), "--check"],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append("surface.json differs from vendored OpenAPI request bindings")
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/check-upstream-drift.py")],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append("vendored upstream operation coverage is not strict")
+
+    # 2 + 3: manifest invariants and generated-table drift.
     result = subprocess.run(
         [sys.executable, str(ROOT / "scripts/gen-sdk-surface.py"), "--check"],
         capture_output=True,
@@ -345,6 +415,7 @@ def main() -> int:
     # generated, so a new product can be wired into the runtime and surface.d.ts
     # yet silently dropped from the public TemperaClient type. Guard against it.
     surface = json.loads((ROOT / "surface.json").read_text())
+    failures.extend(validate_vendored_source_locks())
     failures.extend(validate_data_engine_openapi_bindings(surface))
     failures.extend(validate_data_engine_mcp_contracts())
     index_dts = (ROOT / "packages/typescript/src/index.d.ts").read_text()

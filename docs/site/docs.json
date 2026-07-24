@@ -26,7 +26,6 @@
           "products/control-plane",
           "products/palette",
           "products/tempo",
-          "products/tempera-code",
           "products/tempera-llm",
           "products/tempera-workflows",
           "products/tempera-gym",

@@ -160,7 +160,7 @@ For each call, the client resolves the bearer in this order:
 1. An explicit per-call `bearer` option, when you pass one.
 2. Per the operation's auth kind:
    - `none` — no `authorization` header is sent.
-   - `account` — the account-session token stored by `login`/`signup` (or
+   - `account` — the account-session token returned by `createHostedSession` (or
      passed as `accountToken` / `account_token` / `with_account_token`).
    - `introspectionSecret` — the configured introspection secret
      (`introspectToken` only; server-side).
@@ -182,7 +182,7 @@ is the default when none is specified.
 | `human-data` | human-data |
 | `data-engine` | data-engine |
 | `tempera-mcp` | the unified [MCP gateway](/mcp-gateway) |
-| `tempera-code` | Tempera Code |
+| `tempera-code` | — |
 | `tempera-llm` | tempera-llm |
 | `tempera-workflows` | tempera-workflows |
 | `tempera-gym` | tempera-gym |
@@ -206,8 +206,8 @@ is the default when none is specified.
 | `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun` |
-| `model:read` | auth-hub: `getModelCatalog`; Tempera Code: `listModels`; tempera-llm: `listModels` |
-| `model:invoke` | Tempera Code: `createResponse`; tempera-llm: `createChatCompletion`, `createResponse` |
+| `model:read` | auth-hub: `getModelCatalog`; tempera-llm: `listModels` |
+| `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 

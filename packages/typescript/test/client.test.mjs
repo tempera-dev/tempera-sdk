@@ -27,7 +27,6 @@ function testClient(overrides = {}) {
       controlPlane: "https://cp.example.test",
       palette: "https://palette.example.test",
       tempo: "https://tempo.example.test",
-      temperaCode: "https://code.example.test",
       temperaLlm: "https://llm.example.test",
       temperaWorkflows: "https://workflows.example.test",
       temperaGym: "https://gym.example.test",
@@ -50,19 +49,26 @@ function testClient(overrides = {}) {
 
 const SAMPLE_PARAM_VALUE = "sample-value";
 
+function samplePathParam(op, key) {
+  return op.pathParamTemplates?.[key]?.replaceAll("*", SAMPLE_PARAM_VALUE) ?? SAMPLE_PARAM_VALUE;
+}
+
 test("every surface operation dispatches its method, path, and auth header", async () => {
   const { client, calls } = testClient();
   for (const [productKey, ops] of Object.entries(TEMPERA_OPERATIONS)) {
     for (const op of ops) {
       calls.length = 0;
       const params = {};
-      for (const key of op.pathParams) params[key] = SAMPLE_PARAM_VALUE;
+      for (const key of op.pathParams) params[key] = samplePathParam(op, key);
       const result = await client[productKey][op.id](params);
       assert.deepEqual(result, { ok: true }, `${productKey}.${op.id} result`);
       assert.equal(calls.length, 1, `${productKey}.${op.id} made one request`);
       const { url, options } = calls[0];
       assert.equal(options.method, op.method, `${productKey}.${op.id} method`);
-      const expectedPath = op.path.replace(/\{[a-z_]+\}/g, SAMPLE_PARAM_VALUE);
+      const expectedPath = op.path.replace(
+        /\{([A-Za-z_][A-Za-z0-9_]*)\}/g,
+        (_, key) => samplePathParam(op, key),
+      );
       assert.equal(url.pathname, expectedPath, `${productKey}.${op.id} path`);
       const authHeader = options.headers.authorization;
       if (op.auth === "none") {
@@ -74,7 +80,7 @@ test("every surface operation dispatches its method, path, and auth header", asy
       } else {
         assert.equal(authHeader, "Bearer tp_key_1", `${productKey}.${op.id} product bearer`);
       }
-      // Body defaults (e.g. login/signup mode) must reach the wire.
+      // Declared body defaults must reach the wire.
       for (const [key, value] of Object.entries(op.bodyDefaults ?? {})) {
         const body = JSON.parse(options.body);
         assert.equal(body[key], value, `${productKey}.${op.id} body default ${key}`);
@@ -91,23 +97,29 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
-  await client.remi.remember({ kind: "fact", text: "hello" });
+  await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
   const body = JSON.parse(calls[1].options.body);
-  assert.deepEqual(body, { kind: "fact", text: "hello" });
-  const context = { question: "Which workflow evidence is current?", max_tokens: 600, require_fresh: true, modes: ["procedural", "gotcha", "state"], reconstruction_mode: "off" };
-  await client.remi.context(context);
-  assert.deepEqual(JSON.parse(calls.at(-1).options.body), context);
-  const feedback = { schema: "remi.memory_feedback.v2", retrieval_receipt_id: "receipt_1", evidence_node_id: "node_1", helpful: true, terminal_state: "succeeded", outcome_artifact_id: "test://sdk/generated-wire", idempotency_key: "feedback_1" };
-  await client.remi.feedback(feedback);
-  assert.deepEqual(JSON.parse(calls.at(-1).options.body), feedback);
-  await assert.rejects(client.remi.remember({ tenant_id: "t1", kind: "fact", text: "nope" }), /derived from the authenticated principal/);
-  await assert.rejects(client.remi.context({ tenant_id: "t1", question: "what is current?" }), /derived from the authenticated principal/);
-  await assert.rejects(client.remi.feedback({ environment_id: "prod", ...feedback }), /derived from the authenticated principal/);
-  const beforeCalls = calls.length;
-  for (const field of ["scope", "tenant_id", "project_id", "environment_id"]) {
-    await assert.rejects(client.remi.context({ question: "what is current?", [field]: null }), /derived from the authenticated principal/);
-  }
-  assert.equal(calls.length, beforeCalls);
+  assert.deepEqual(body, {
+    tenant_id: "t1",
+    project_id: "p1",
+    kind: "fact",
+    text: "hello",
+  });
+  const query = {
+    question: "Which workflow evidence is current?",
+    scope: {
+      tenant_id: "t1",
+      project_id: "p1",
+      environment_id: "dev",
+      as_of_unix_ms: null,
+    },
+    max_tokens: 600,
+    require_fresh: true,
+    modes: ["procedural", "gotcha", "state"],
+    reconstruction_mode: "off",
+  };
+  await client.remi.query(query);
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), query);
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {
@@ -120,13 +132,21 @@ test("undeclared parameters pass through for forward compatibility", async () =>
 
 test("action-suffix paths keep the literal colon un-encoded", async () => {
   const { client, calls } = testClient();
-  await client.dataEngine.ingestArtifact({ project_id: "p1", envelopes: [] });
+  await client.dataEngine.ingestArtifact({ parent: "projects/p1", envelopes: [] });
   assert.equal(calls[0].url.pathname, "/v1/projects/p1/artifacts:ingest");
   assert.ok(calls[0].url.toString().endsWith("/v1/projects/p1/artifacts:ingest"));
   assert.ok(!calls[0].url.toString().includes("%3A"), "colon must not be percent-encoded");
   // Colons inside a substituted path *value* are still encoded.
-  await client.dataEngine.getJob({ project_id: "p1", job_id: "job:1" });
+  await client.dataEngine.getJob({ parent: "projects/p1", jobId: "job:1" });
   assert.equal(calls[1].url.pathname, "/v1/projects/p1/jobs/job%3A1");
+  await assert.rejects(
+    () => client.dataEngine.ingestArtifact({ parent: "projects/../secrets" }),
+    /must match AIP resource pattern "projects\/\*"/,
+  );
+  await assert.rejects(
+    () => client.dataEngine.ingestArtifact({ parent: "organizations/p1" }),
+    /must match AIP resource pattern "projects\/\*"/,
+  );
 });
 
 test("missing path parameters fail fast with a clear message", async () => {
@@ -138,7 +158,7 @@ test("missing path parameters fail fast with a clear message", async () => {
   );
 });
 
-test("login and signup store the account token for later control-plane calls", async () => {
+test("createHostedSession stores the account token for later control-plane calls", async () => {
   const calls = [];
   const client = createTemperaClient({
     baseUrls: { controlPlane: "https://cp.example.test" },
@@ -148,7 +168,7 @@ test("login and signup store the account token for later control-plane calls", a
       return jsonResponse({ sub: "user_1" });
     },
   });
-  await client.controlPlane.login({ email: "demo@tempera.dev", password: "tempera-demo" });
+  await client.controlPlane.createHostedSession({ mode: "login", email: "demo@tempera.dev", password: "tempera-demo" });
   assert.equal(JSON.parse(calls[0].options.body).mode, "login");
   assert.equal(client.accountToken, "account_at_1");
   await client.controlPlane.me();
@@ -162,7 +182,7 @@ test("account operations without a token fail with guidance", async () => {
   });
   await assert.rejects(
     () => client.controlPlane.me(),
-    (error) => error instanceof TemperaSdkError && error.message.includes("login()/signup()"),
+    (error) => error instanceof TemperaSdkError && error.message.includes("createHostedSession()"),
   );
 });
 
@@ -200,7 +220,7 @@ test("passthrough request covers products without typed operations", async () =>
   assert.equal(calls[0].url.toString(), "https://tempjs.example.test/runtime/status");
 });
 
-test("environment presets resolve control-plane, palette, Tempera Code, and tempera-llm base URLs", async () => {
+test("environment presets resolve control-plane, palette, and product gateway base URLs", async () => {
   const calls = [];
   const client = createTemperaClient({
     environment: "production",
@@ -211,16 +231,14 @@ test("environment presets resolve control-plane, palette, Tempera Code, and temp
   });
   await client.controlPlane.health();
   await client.palette.health();
-  await client.temperaCode.health();
   await client.temperaLlm.health();
   await client.temperaWorkflows.health();
   await client.temperaGym.health();
   assert.equal(calls[0].origin, "https://api.tempera.dev");
   assert.equal(calls[1].origin, "https://mcp.tempera.dev");
-  assert.equal(calls[2].origin, "https://code-api.tempera.dev");
-  assert.equal(calls[3].origin, "https://llm.tempera.dev");
-  assert.equal(calls[4].origin, "https://workflows.tempera.dev");
-  assert.equal(calls[5].origin, "https://gym.tempera.dev");
+  assert.equal(calls[2].origin, "https://llm.tempera.dev");
+  assert.equal(calls[3].origin, "https://workflows.tempera.dev");
+  assert.equal(calls[4].origin, "https://gym.tempera.dev");
 });
 
 test("HTTP errors normalize every fleet wire shape into TemperaApiError", async () => {

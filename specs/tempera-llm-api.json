@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Tempera LLM Gateway API",
-    "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly. Reports LLM cost as `model_cost` usage events per the billing-credits contract.",
+    "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly. Reserves maximum model cost before provider execution and settles exact usage afterward per the billing-credits contract.",
     "license": {
       "name": "MIT"
     },
@@ -29,6 +29,36 @@
         }
       }
     },
+    "/readyz": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "operationId": "readiness.check",
+        "responses": {
+          "200": {
+            "description": "Configured admission control plane is reachable and at least one model is registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Admission control plane is unreachable or no models are configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/chat/completions": {
       "post": {
         "tags": [
@@ -40,6 +70,16 @@
             "name": "x-provider-key",
             "in": "header",
             "description": "Customer BYOK provider key; presence bills surcharge-only",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "x-tempera-connection-id",
+            "in": "header",
+            "description": "Tenant provider connection id; resolved by the gateway and billed BYOK surcharge-only",
             "required": false,
             "schema": {
               "type": "string",
@@ -60,6 +100,48 @@
         "responses": {
           "200": {
             "description": "Chat completion (non-streaming)",
+            "headers": {
+              "x-tempera-billable-micros": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Customer credit debit in micro-USD units"
+              },
+              "x-tempera-provider-connection-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Resolved provider connection identity, when used"
+              },
+              "x-tempera-provider-connection-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                "description": "Resolved provider connection revision, when used"
+              },
+              "x-tempera-request-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Stable request/trace identity"
+              },
+              "x-tempera-usage-event-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Committed immutable usage event"
+              },
+              "x-tempera-usage-reservation-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Auth Hub usage reservation"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -89,7 +171,7 @@
             }
           },
           "402": {
-            "description": "Insufficient credits (from control-plane on debit)",
+            "description": "Budget admission or entitlement rejected by the control plane",
             "content": {
               "application/json": {
                 "schema": {
@@ -118,8 +200,28 @@
               }
             }
           },
+          "409": {
+            "description": "Request id already admitted; provider call is not repeated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Provider or control-plane rate limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
           "503": {
-            "description": "Upstream provider or token introspection unavailable",
+            "description": "Provider, token introspection, admission, or settlement unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -207,6 +309,16 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "x-tempera-connection-id",
+            "in": "header",
+            "description": "Tenant provider connection id; resolved by the gateway and billed BYOK surcharge-only",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "requestBody": {
@@ -221,7 +333,49 @@
         },
         "responses": {
           "200": {
-            "description": "Response (JSON when non-streaming, or an SSE text/event-stream when the request set stream:true)",
+            "description": "Response (JSON when non-streaming; SSE when stream:true, ending with tempera.usage.receipt or tempera.usage.reconciliation_required after upstream events)",
+            "headers": {
+              "x-tempera-billable-micros": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Customer credit debit; absent until an SSE stream settles"
+              },
+              "x-tempera-provider-connection-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Resolved provider connection identity, when used"
+              },
+              "x-tempera-provider-connection-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                "description": "Resolved provider connection revision, when used"
+              },
+              "x-tempera-request-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Stable request/trace identity"
+              },
+              "x-tempera-usage-event-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Committed usage event; absent until an SSE stream settles"
+              },
+              "x-tempera-usage-reservation-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Auth Hub usage reservation"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -250,6 +404,16 @@
               }
             }
           },
+          "402": {
+            "description": "Budget admission or entitlement rejected by the control plane",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Wrong audience or missing model:invoke scope",
             "content": {
@@ -270,8 +434,28 @@
               }
             }
           },
+          "409": {
+            "description": "Request id already admitted; provider call is not repeated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Provider or control-plane rate limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crate.error.ErrorResponse"
+                }
+              }
+            }
+          },
           "503": {
-            "description": "Upstream provider or token introspection unavailable",
+            "description": "Provider, token introspection, admission, or settlement unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -318,7 +502,8 @@
         "description": "`POST /v1/chat/completions` request body (OpenAI Chat Completions shape).",
         "required": [
           "model",
-          "messages"
+          "messages",
+          "max_tokens"
         ],
         "properties": {
           "byok": {
@@ -329,7 +514,7 @@
           "max_tokens": {
             "type": "integer",
             "format": "int32",
-            "nullable": true,
+            "description": "Required upper bound used for pre-provider cost admission.",
             "minimum": 0
           },
           "messages": {
@@ -342,6 +527,10 @@
           "model": {
             "type": "string",
             "description": "Target model id, e.g. `gpt-4o`, `claude-sonnet-5`, `glm-4`."
+          },
+          "response_format": {
+            "description": "OpenAI-compatible `text`, `json_object`, or `json_schema` policy. JSON\noutputs are validated locally before a buffered response is returned.",
+            "nullable": true
           },
           "stream": {
             "type": "boolean",
@@ -522,12 +711,34 @@
           }
         }
       },
+      "ReadinessResponse": {
+        "type": "object",
+        "description": "`GET /readyz` response. It proves the configured admission control plane is\nreachable without exercising a billable provider call.",
+        "required": [
+          "ready",
+          "admission",
+          "configured_models"
+        ],
+        "properties": {
+          "admission": {
+            "type": "string"
+          },
+          "configured_models": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ready": {
+            "type": "boolean"
+          }
+        }
+      },
       "ResponsesRequest": {
         "type": "object",
         "description": "`POST /v1/responses` request body (OpenAI Responses-style, thin skeleton).",
         "required": [
           "model",
-          "input"
+          "input",
+          "max_output_tokens"
         ],
         "properties": {
           "byok": {
@@ -540,11 +751,15 @@
           "max_output_tokens": {
             "type": "integer",
             "format": "int32",
-            "nullable": true,
+            "description": "Required upper bound used for pre-provider cost admission.",
             "minimum": 0
           },
           "model": {
             "type": "string"
+          },
+          "response_format": {
+            "description": "OpenAI-compatible structured output policy. Structured streaming is\nrejected because final schema validation must precede response release.",
+            "nullable": true
           }
         }
       },
