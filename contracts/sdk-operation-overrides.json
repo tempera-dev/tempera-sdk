@@ -13,6 +13,7 @@
     {"product": "controlPlane", "method": "GET", "path": "/v1/experiment-approvals", "upstream_operation_id": "experimentApprovals.list", "id": "listExperimentApprovals"},
     {"product": "controlPlane", "method": "POST", "path": "/v1/experiment-approvals", "upstream_operation_id": "experimentApprovals.create", "id": "createExperimentApproval"},
     {"product": "controlPlane", "method": "DELETE", "path": "/v1/experiment-approvals/{id}", "upstream_operation_id": "experimentApprovals.revoke", "id": "revokeExperimentApproval"},
+    {"product": "temperaWorkflows", "method": "POST", "path": "/v1/workflows/{workflowId}:compileBioCampaign", "upstream_operation_id": "workflows.compileBioCampaign", "id": "compileBioCampaign"},
     {"product": "temperaGym", "method": "GET", "path": "/v1/domains", "upstream_operation_id": "domains.list", "id": "listDomains"},
     {"product": "temperaGym", "method": "GET", "path": "/v1/tasks", "upstream_operation_id": "tasks.list", "id": "listTasks"},
     {"product": "temperaGym", "method": "GET", "path": "/v1/tasks/{task}", "upstream_operation_id": "tasks.get", "id": "getTask"},

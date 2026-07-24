@@ -86,7 +86,7 @@ let spec = client.build_request("tempo", "agent_json", &[])?;
 
 `GET /health`
 
-Check tempod liveness; returns \{ok: true\}.
+Call GET /health.
 
 - **Producer operationId:** `health`
 - **Auth:** None (public endpoint).
@@ -142,7 +142,7 @@ let spec = client.build_request("tempo", "metrics", &[])?;
 
 `GET /openapi.json`
 
-Fetch tempod's OpenAPI document, generated at runtime for this host.
+Call GET /openapi.json.
 
 - **Producer operationId:** `openapi`
 - **Auth:** None (public endpoint).
@@ -170,7 +170,7 @@ let spec = client.build_request("tempo", "openapi", &[])?;
 
 `GET /ready`
 
-Check tempod readiness, including engine attachment, drain state, and session capacity.
+Call GET /ready.
 
 - **Producer operationId:** `ready`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -198,7 +198,7 @@ let spec = client.build_request("tempo", "ready", &[])?;
 
 `POST /v1/drain`
 
-Call POST /drain.
+Call POST /v1/drain.
 
 - **Producer operationId:** `drain`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -226,7 +226,7 @@ let spec = client.build_request("tempo", "drain", &[])?;
 
 `GET /v1/runs`
 
-List agent runs, optionally filtered to one session.
+Call GET /v1/runs.
 
 - **Producer operationId:** `listRuns`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -271,7 +271,7 @@ let spec = client.build_request("tempo", "list_runs", &[
 
 `GET /v1/runs/{runId}`
 
-Fetch one agent run with its state.
+Call GET /v1/runs/\{runId\}.
 
 - **Producer operationId:** `getRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -311,7 +311,7 @@ let spec = client.build_request("tempo", "get_run", &[
 
 `GET /v1/runs/{runId}/events`
 
-Call GET /runs/\{run_id\}/events.
+Call GET /v1/runs/\{runId\}/events.
 
 - **Producer operationId:** `runEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -360,7 +360,7 @@ let spec = client.build_request("tempo", "run_events", &[
 
 `POST /v1/runs/{runId}:cancel`
 
-Cancel an agent run.
+Call POST /v1/runs/\{runId\}:cancel.
 
 - **Producer operationId:** `cancelRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -400,7 +400,7 @@ let spec = client.build_request("tempo", "cancel_run", &[
 
 `POST /v1/runs/{runId}:resume`
 
-Resume an agent run after a human handoff completes.
+Call POST /v1/runs/\{runId\}:resume.
 
 - **Producer operationId:** `resumeRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -440,7 +440,7 @@ let spec = client.build_request("tempo", "resume_run", &[
 
 `GET /v1/sessions`
 
-List browser sessions with their state and creation time.
+Call GET /v1/sessions.
 
 - **Producer operationId:** `listSessions`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -484,7 +484,7 @@ let spec = client.build_request("tempo", "list_sessions", &[
 
 `POST /v1/sessions`
 
-Open a browser session at a URL; driverless sessions skip engine attachment.
+Call POST /v1/sessions.
 
 - **Producer operationId:** `createSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -528,7 +528,7 @@ let spec = client.build_request("tempo", "create_session", &[
 
 `DELETE /v1/sessions/{sessionId}`
 
-Close a browser session and release its engine resources.
+Call DELETE /v1/sessions/\{sessionId\}.
 
 - **Producer operationId:** `closeSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -568,7 +568,7 @@ let spec = client.build_request("tempo", "close_session", &[
 
 `POST /v1/sessions/{sessionId}/confirmations/{confirmationId}:grant`
 
-Grant a pending policy confirmation and receive a single-use grant token.
+Call POST /v1/sessions/\{sessionId\}/confirmations/\{confirmationId\}:grant.
 
 - **Producer operationId:** `grantSessionConfirmation`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -612,7 +612,7 @@ let spec = client.build_request("tempo", "grant_confirmation", &[
 
 `GET /v1/sessions/{sessionId}/events`
 
-Fetch the session's event window after a sequence number.
+Call GET /v1/sessions/\{sessionId\}/events.
 
 - **Producer operationId:** `sessionEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -661,7 +661,7 @@ let spec = client.build_request("tempo", "session_events", &[
 
 `GET /v1/sessions/{sessionId}/manager`
 
-Call GET /sessions/\{session_id\}/manager.
+Call GET /v1/sessions/\{sessionId\}/manager.
 
 - **Producer operationId:** `managerSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -701,7 +701,7 @@ let spec = client.build_request("tempo", "manager_session", &[
 
 `POST /v1/sessions/{sessionId}/runs`
 
-Start an agent run against the session with a goal, action budget, and round limit.
+Call POST /v1/sessions/\{sessionId\}/runs.
 
 - **Producer operationId:** `createSessionRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -759,7 +759,7 @@ let spec = client.build_request("tempo", "create_run", &[
 
 `POST /v1/sessions/{sessionId}/surfaces`
 
-Call POST /sessions/\{session_id\}/surfaces.
+Call POST /v1/sessions/\{sessionId\}/surfaces.
 
 - **Producer operationId:** `registerSessionSurface`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -819,7 +819,7 @@ let spec = client.build_request("tempo", "register_session_surface", &[
 
 `DELETE /v1/sessions/{sessionId}/surfaces/{surfaceId}`
 
-Call DELETE /sessions/\{session_id\}/surfaces/\{surface_id\}.
+Call DELETE /v1/sessions/\{sessionId\}/surfaces/\{surfaceId\}.
 
 - **Producer operationId:** `removeSessionSurface`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -863,7 +863,7 @@ let spec = client.build_request("tempo", "remove_session_surface", &[
 
 `POST /v1/sessions/{sessionId}:actBatch`
 
-Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.
+Call POST /v1/sessions/\{sessionId\}:actBatch.
 
 - **Producer operationId:** `actBatchSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -923,7 +923,7 @@ let spec = client.build_request("tempo", "act_batch", &[
 
 `POST /v1/sessions/{sessionId}:adopt`
 
-Let a human surface take write ownership of the session and receive an adoption lease.
+Call POST /v1/sessions/\{sessionId\}:adopt.
 
 - **Producer operationId:** `adoptSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -983,7 +983,7 @@ let spec = client.build_request("tempo", "adopt_session", &[
 
 `POST /v1/sessions/{sessionId}:handoff`
 
-Return write ownership of the session to the agent plane.
+Call POST /v1/sessions/\{sessionId\}:handoff.
 
 - **Producer operationId:** `handoffSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -1023,7 +1023,7 @@ let spec = client.build_request("tempo", "handoff_session", &[
 
 `GET /v1/sessions/{sessionId}:observe`
 
-Fetch the session's compiled structured observation (ranked, stably-identified elements).
+Call GET /v1/sessions/\{sessionId\}:observe.
 
 - **Producer operationId:** `observeSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -1063,7 +1063,7 @@ let spec = client.build_request("tempo", "observe", &[
 
 `GET /v1/sessions/{sessionId}:screenshot`
 
-Capture a PNG screenshot of the session, optionally annotated with set-of-marks.
+Call GET /v1/sessions/\{sessionId\}:screenshot.
 
 - **Producer operationId:** `screenshotSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
@@ -1112,7 +1112,7 @@ let spec = client.build_request("tempo", "screenshot", &[
 
 `POST /v1/sessions/{sessionId}:transform`
 
-Call POST /sessions/\{session_id\}/transform.
+Call POST /v1/sessions/\{sessionId\}:transform.
 
 - **Producer operationId:** `transformSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.

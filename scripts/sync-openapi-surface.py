@@ -404,6 +404,7 @@ def synchronize_product(
             }
             item["method"] = method.upper()
             item["path"] = path
+            item["description"] = sentence(operation, method, path)
             item["upstreamOperationId"] = operation_id
             override = overrides.get(identity)
             if override is not None:

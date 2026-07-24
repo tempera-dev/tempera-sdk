@@ -33,7 +33,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 `GET /healthz`
 
-Check tempera-llm gateway liveness; returns \{ok: true\}.
+Call GET /healthz.
 
 - **Producer operationId:** `health.check`
 - **Auth:** None (public endpoint).
@@ -89,7 +89,7 @@ let spec = client.build_request("tempera_llm", "readiness_check", &[])?;
 
 `POST /v1/chat/completions`
 
-Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.
+Call POST /v1/chat/completions.
 
 - **Producer operationId:** `chatCompletions.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
@@ -142,7 +142,7 @@ let spec = client.build_request("tempera_llm", "create_chat_completion", &[
 
 `GET /v1/models`
 
-List the configured model catalog the gateway can route to.
+Call GET /v1/models.
 
 - **Producer operationId:** `models.list`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
@@ -187,7 +187,7 @@ let spec = client.build_request("tempera_llm", "list_models", &[
 
 `POST /v1/responses`
 
-Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.
+Call POST /v1/responses.
 
 - **Producer operationId:** `responses.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.

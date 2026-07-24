@@ -90,51 +90,51 @@ export type TemperaProductClientBase = TemperaProduct & {
 };
 
 export interface ControlPlaneClient extends TemperaProductClientBase {
-  /** Check control-plane liveness; returns {ok: true}. */
+  /** Liveness probe for the control plane. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Readiness probe for durable control-plane storage. */
   getReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the authenticated user's identity, active workspace, and roles. */
+  /** Return the current authenticated principal and active workspace context. */
   me(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the organizations the authenticated user belongs to. */
+  /** List organizations/workspaces visible to the current user. */
   listOrgs(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an organization; the caller becomes its owner. */
+  /** Create an organization/workspace. */
   createOrg(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the user's active account sessions. */
+  /** List active account-console sessions for the current user. */
   listSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a first-party hosted account session from email/password login or signup. */
   createHostedSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revoke an account session and its tokens immediately (idempotent). */
+  /** Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op. */
   revokeSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Switch the active workspace and receive a token pair scoped to it. */
+  /** Select the active organization, project, and environment for the account console. */
   selectWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List team members of the active organization. */
+  /** List team members for the active organization. */
   listTeamMembers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Change a team member's role (requires an org admin role; at least one owner must remain). */
+  /** Update a team member role. */
   updateTeamMember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Remove a team member from the active organization (idempotent). */
+  /** Remove a team member from the active organization. */
   removeTeamMember(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List invites for the active organization, newest first. */
+  /** List organization invites. */
   listInvites(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Invite a user to the active organization; the accept URL is returned once. */
+  /** Invite a teammate to the active organization. */
   createInvite(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel a pending invite (idempotent). */
+  /** Cancel an organization invite. */
   cancelInvite(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List projects across every organization the user belongs to. */
+  /** List projects for the active organization. */
   listProjects(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a project in an organization (requires an org admin role). */
+  /** Create a project in the active organization. */
   createProject(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List environments across every project the user can access. */
+  /** List environments for the active project. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an environment in a project (requires an org admin role). */
+  /** Create an environment in a project owned by the active organization. */
   createEnvironment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List API keys in the active workspace; secrets are never returned. */
+  /** List scoped API keys for the active workspace. Plaintext key material is never returned. */
   listApiKeys(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace. */
+  /** Create a scoped API key. Plaintext key material is returned once. */
   createApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revoke an API key (idempotent). */
+  /** Revoke a scoped API key. Revoking an unknown key id is a no-op. */
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Rotate an API key's secret; the new secret is returned exactly once. */
+  /** Rotate a scoped API key. New plaintext key material is returned once. */
   rotateApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List provider connection metadata using a first-party account session. Secret references and values are never returned. */
   providerConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -166,27 +166,27 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   createExperimentApproval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an unused experiment approval. Consumed approvals remain immutable. */
   revokeExperimentApproval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List recent audit-log events for the user and active organization (up to 50, newest first). */
+  /** List recent scoped account and security activity for the active user and organization. */
   listAuditLog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the connector catalog (MCP clients, editors, and API surfaces). */
+  /** List supported hosted connectors and their setup metadata. */
   listConnectors(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one connector's connection status for the active workspace. */
+  /** Return connection status for one connector. */
   getConnectorStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the product catalog with default scopes and setup paths. */
+  /** List registered Tempera products and their setup metadata. */
   listProducts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one product's activation status, entitlements, signals, and usage meters. */
+  /** Return entitlement and first-mile setup status for one product. */
   getProductStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role). */
+  /** Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users. */
   getBillingStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role). */
+  /** Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL. */
   createBillingCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the billing-portal URL for the organization (requires a billing role). */
+  /** Create a customer billing portal handoff URL. */
   getBillingPortal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff. */
   getBillingCredits(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement. */
+  /** List the entitled Tempera Code model catalog. Requires model:read. */
   getModelCatalog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter. */
+  /** Report a billable usage event and receive the current entitlement decision. */
   recordUsage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically reserve the maximum model cost before starting a provider request. */
   usageReservationsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -196,19 +196,19 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   usageReservationsRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable. */
   usageReservationsReconcile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the OAuth grants the user has approved in the active workspace. */
+  /** List connected OAuth app grants for the active workspace. */
   listGrants(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revoke an OAuth grant and every refresh token issued under it. */
+  /** Revoke an OAuth app grant and its refresh tokens. */
   revokeGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid. */
+  /** Validate a central access token or hosted API key for resource servers. */
   introspectToken(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch OAuth 2.1 authorization-server metadata for the issuer. */
+  /** OAuth authorization server discovery metadata. */
   discovery(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** OAuth protected resource discovery metadata for MCP/resource clients. */
   getOAuthProtectedResourceMetadata(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch OAuth protected-resource metadata for one registered audience. */
+  /** OAuth protected resource discovery metadata for one registered resource audience. */
   protectedResourceMetadata(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the JSON Web Key Set used to verify control-plane access tokens. */
+  /** JSON Web Key Set for validating central issuer JWTs. */
   jwks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session. */
   adminOperationalProvenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -235,127 +235,127 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
 }
 
 export interface PaletteClient extends TemperaProductClientBase {
-  /** Check palette API liveness; returns {ok: true}. */
+  /** Call GET /health. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook. */
+  /** Call POST /v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook. */
   alertsEvaluate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Mint a palette-scoped API key; the secret is returned exactly once. */
+  /** Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}. */
   createApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revoke a palette API key. */
+  /** Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke. */
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/archive/{tenant_id}/{project_id}/spans. */
+  /** Call GET /v1/archive/{tenantId}/{projectId}/spans. */
   archiveQuerySpans(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Archive a trace to Parquet and return the archive manifest. */
+  /** Call POST /v1/archive/{tenantId}/{projectId}/{traceId}. */
   archiveTrace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/audit/{tenant_id}/{project_id}. */
+  /** Call GET /v1/audit/{tenantId}/{projectId}. */
   auditList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}. */
+  /** Call POST /v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}. */
   calibrationsRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/connect/status/{tenant_id}/{project_id}. */
+  /** Call GET /v1/connect/status/{tenantId}/{projectId}. */
   connectGetStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/connectors/{tenant_id}/{project_id}. */
+  /** Call GET /v1/connectors/{tenantId}/{projectId}. */
   connectorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/connectors/{tenant_id}/{project_id}/connect. */
+  /** Call POST /v1/connectors/{tenantId}/{projectId}/connect. */
   connectorsConnect(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/connectors/{tenant_id}/{project_id}/invoke. */
+  /** Call POST /v1/connectors/{tenantId}/{projectId}/invoke. */
   connectorsInvokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/connectors/{tenant_id}/{project_id}/skills. */
+  /** Call GET /v1/connectors/{tenantId}/{projectId}/skills. */
   connectorsGetSkills(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/connectors/{tenant_id}/{project_id}/status. */
+  /** Call GET /v1/connectors/{tenantId}/{projectId}/status. */
   connectorsStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/connectors/{tenant_id}/{project_id}/tools. */
+  /** Call GET /v1/connectors/{tenantId}/{projectId}/tools. */
   connectorsListTools(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a dataset for curating cases from traces. */
+  /** Call POST /v1/datasets/{tenantId}/{projectId}. */
   createDataset(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Promote a trace (or one span of it) into a dataset case. */
+  /** Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace. */
   promoteTraceToCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Snapshot a dataset into an immutable version for evals and experiments. */
+  /** Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions. */
   createDatasetVersion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic. */
+  /** Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic. */
   evalsRunDeterministic(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge. */
+  /** Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge. */
   evalsRunJudge(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt. */
+  /** Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/bundles. */
   importTemperaBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt. */
+  /** Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/decisions. */
   recordTemperaDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload. */
+  /** Call GET /v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}. */
   getTemperaEvidence(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic. */
+  /** Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic. */
   experimentsRunDeterministic(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge. */
+  /** Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge. */
   experimentsRunJudge(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/gates/{tenant_id}/{project_id}. */
+  /** Call POST /v1/gates/{tenantId}/{projectId}. */
   gatesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run. */
+  /** Call POST /v1/gates/{tenantId}/{projectId}/{gateId}/run. */
   gatesRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Import spans from a named external source payload. */
+  /** Call POST /v1/import/{tenantId}/{projectId}/{environmentId}. */
   importSource(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay. */
+  /** Call POST /v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay. */
   ingestReplayDeadLetter(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/ingest/{tenant_id}/{project_id}/queue. */
+  /** Call GET /v1/ingest/{tenantId}/{projectId}/queue. */
   ingestGetQueueStatus(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain. */
+  /** Call POST /v1/ingest/{tenantId}/{projectId}/trace-ingested/drain. */
   ingestDrainTraceIngested(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain. */
+  /** Call POST /v1/ingest/{tenantId}/{projectId}/trace-writes/drain. */
   ingestDrainTraceWrites(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile. */
+  /** Call POST /v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile. */
   ingestReconcileTrace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/judge/{tenant_id}/{project_id}/evaluate. */
+  /** Call POST /v1/judge/{tenantId}/{projectId}/evaluate. */
   judgeEvaluate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/judge/{tenant_id}/{project_id}/ledger. */
+  /** Call GET /v1/judge/{tenantId}/{projectId}/ledger. */
   judgeListLedger(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling. */
+  /** Call POST /v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling. */
   onlineDecideSampling(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/prompts/{tenant_id}/{project_id}. */
+  /** Call GET /v1/prompts/{tenantId}/{projectId}. */
   promptsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/prompts/{tenant_id}/{project_id}. */
+  /** Call POST /v1/prompts/{tenantId}/{projectId}. */
   promptsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}. */
+  /** Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}. */
   promptsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff. */
+  /** Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/diff. */
   promptsDiffVersions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions. */
+  /** Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/versions. */
   promptsListVersions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions. */
+  /** Call POST /v1/prompts/{tenantId}/{projectId}/{promptId}/versions. */
   promptsAddVersion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/provider-secrets/{tenant_id}/{project_id}. */
+  /** Call GET /v1/provider-secrets/{tenantId}/{projectId}. */
   providerSecretsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/provider-secrets/{tenant_id}/{project_id}. */
+  /** Call POST /v1/provider-secrets/{tenantId}/{projectId}. */
   providerSecretsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke. */
+  /** Call POST /v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke. */
   providerSecretsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/review-queues/{tenant_id}/{project_id}. */
+  /** Call POST /v1/review-queues/{tenantId}/{projectId}. */
   reviewsCreateQueue(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks. */
+  /** Call GET /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks. */
   reviewsListTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace. */
+  /** Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace. */
   reviewsEnqueueTaskFromTrace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations. */
+  /** Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations. */
   reviewsSubmitAnnotation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote. */
+  /** Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote. */
   reviewsPromoteAnnotation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/scenarios/{tenant_id}/{project_id}. */
+  /** Call GET /v1/scenarios/{tenantId}/{projectId}. */
   scenariosList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/scenarios/{tenant_id}/{project_id}. */
+  /** Call POST /v1/scenarios/{tenantId}/{projectId}. */
   scenariosCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /v1/scenarios/{tenant_id}/{project_id}/mine. */
+  /** Call POST /v1/scenarios/{tenantId}/{projectId}/mine. */
   scenariosMine(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}. */
+  /** Call GET /v1/scenarios/{tenantId}/{projectId}/{scenarioId}. */
   scenariosGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Search spans by text query and facet filters. */
+  /** Call GET /v1/search/{tenantId}/spans. */
   searchSpans(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one canonical span by trace and span id. */
+  /** Call GET /v1/spans/{tenantId}/{traceId}/{spanId}. */
   getSpan(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch a span's recorded input and output values. */
+  /** Call GET /v1/spans/{tenantId}/{traceId}/{spanId}/io. */
   getSpanIo(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Ingest one native span; idempotent when an idempotency key is supplied. */
+  /** Call POST /v1/traces/native. */
   ingestSpan(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List trace summaries for a tenant with filters and cursor pagination. */
+  /** Call GET /v1/traces/{tenantId}. */
   listTraces(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason. */
+  /** Call GET /v1/traces/{tenantId}/{traceId}. */
   getTrace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch usage totals for a tenant project. */
+  /** Call GET /v1/usage/{tenantId}/{projectId}. */
   getUsageSummary(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
@@ -364,110 +364,112 @@ export interface TempoClient extends TemperaProductClientBase {
   agentCard(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /.well-known/agent.json. */
   agentJson(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Check tempod liveness; returns {ok: true}. */
+  /** Call GET /health. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /metrics. */
   metrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch tempod's OpenAPI document, generated at runtime for this host. */
+  /** Call GET /openapi.json. */
   openapi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Check tempod readiness, including engine attachment, drain state, and session capacity. */
+  /** Call GET /ready. */
   ready(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /drain. */
+  /** Call POST /v1/drain. */
   drain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List agent runs, optionally filtered to one session. */
+  /** Call GET /v1/runs. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one agent run with its state. */
+  /** Call GET /v1/runs/{runId}. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /runs/{run_id}/events. */
+  /** Call GET /v1/runs/{runId}/events. */
   runEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel an agent run. */
+  /** Call POST /v1/runs/{runId}:cancel. */
   cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Resume an agent run after a human handoff completes. */
+  /** Call POST /v1/runs/{runId}:resume. */
   resumeRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List browser sessions with their state and creation time. */
+  /** Call GET /v1/sessions. */
   listSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Open a browser session at a URL; driverless sessions skip engine attachment. */
+  /** Call POST /v1/sessions. */
   createSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Close a browser session and release its engine resources. */
+  /** Call DELETE /v1/sessions/{sessionId}. */
   closeSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Grant a pending policy confirmation and receive a single-use grant token. */
+  /** Call POST /v1/sessions/{sessionId}/confirmations/{confirmationId}:grant. */
   grantConfirmation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the session's event window after a sequence number. */
+  /** Call GET /v1/sessions/{sessionId}/events. */
   sessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /sessions/{session_id}/manager. */
+  /** Call GET /v1/sessions/{sessionId}/manager. */
   managerSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Start an agent run against the session with a goal, action budget, and round limit. */
+  /** Call POST /v1/sessions/{sessionId}/runs. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /sessions/{session_id}/surfaces. */
+  /** Call POST /v1/sessions/{sessionId}/surfaces. */
   registerSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call DELETE /sessions/{session_id}/surfaces/{surface_id}. */
+  /** Call DELETE /v1/sessions/{sessionId}/surfaces/{surfaceId}. */
   removeSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision. */
+  /** Call POST /v1/sessions/{sessionId}:actBatch. */
   actBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Let a human surface take write ownership of the session and receive an adoption lease. */
+  /** Call POST /v1/sessions/{sessionId}:adopt. */
   adoptSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Return write ownership of the session to the agent plane. */
+  /** Call POST /v1/sessions/{sessionId}:handoff. */
   handoffSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the session's compiled structured observation (ranked, stably-identified elements). */
+  /** Call GET /v1/sessions/{sessionId}:observe. */
   observe(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Capture a PNG screenshot of the session, optionally annotated with set-of-marks. */
+  /** Call GET /v1/sessions/{sessionId}:screenshot. */
   screenshot(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /sessions/{session_id}/transform. */
+  /** Call POST /v1/sessions/{sessionId}:transform. */
   transformSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaLlmClient extends TemperaProductClientBase {
-  /** Check tempera-llm gateway liveness; returns {ok: true}. */
+  /** Call GET /healthz. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /readyz. */
   readinessCheck(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway. */
+  /** Call POST /v1/chat/completions. */
   createChatCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the configured model catalog the gateway can route to. */
+  /** Call GET /v1/models. */
   listModels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway. */
+  /** Call POST /v1/responses. */
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaWorkflowsClient extends TemperaProductClientBase {
-  /** Check tempera-workflows engine liveness. */
+  /** Liveness. Unauthenticated. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface. */
+  /** The studio palette: every node type with config JSON Schema and outputs. */
   listNodeTypes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List workflow runs, optionally filtered to one workflow. */
+  /** List runs, newest first. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only. */
+  /** Full run view: status, per-node states with outputs/logs/metrics, timestamps. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel a queued or running workflow run. */
+  /** Cancel a queued, running, or waiting run. Already-cancelled runs return 200. */
   cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Consume a durable external callback and resume a waiting run. */
   runsSignal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List stored workflow definitions, newest first. */
+  /** List workflows. */
   listWorkflows(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored. */
+  /** Create a workflow from a `tempera.workflow/v1` definition. */
   createWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one stored workflow definition. */
-  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Delete a stored workflow definition. */
+  /** Delete a workflow. Existing runs keep their definition snapshots. */
   deleteWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Replace a stored workflow definition with a new validated revision. */
+  /** Get one workflow. */
+  getWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace a workflow definition through an AIP-style masked update. */
   updateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Start a run of a stored workflow with an optional input document and idempotency key. */
+  /** Start a run (job pattern): returns immediately with the queued run; poll. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run a workflow to completion and return its output in a single call. */
+  /** Create a run AND wait for it to finish, returning the run + output in one. */
   callWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it. */
+  /** Compile a validated, unsaved, bounded Bio campaign workflow draft. */
+  compileBioCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ask Tempera Code to propose a validated workflow draft, or search the full. */
   composeWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node. */
+  /** Generate or repair one JSON configuration value with the configured. */
   assistJson(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Validate a workflow definition without storing it; returns the full diagnostic list. */
+  /** Validate a definition without saving it. Returns 200 with the issue list. */
   validateWorkflow(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaGymClient extends TemperaProductClientBase {
-  /** Check tempera-gym service liveness. */
+  /** Liveness probe (unauthenticated). */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the gym pack's environment catalog, including implementation status and per-environment manifests. */
+  /** Built-in and boot-trusted versioned environment catalog. */
   listEnvironments(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Domain capabilities represented in the versioned task catalog. */
   listDomains(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -489,11 +491,11 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   stepEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Retain a completed Gym episode and trajectory in Data Engine. */
   exportEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List persisted rollout run index records, newest first. */
+  /** Persisted-run index, newest first. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash. */
+  /** Full trajectory envelope (incl. metadata.timing) for one run. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope. */
+  /** Execute one rollout synchronously, store it, return the summary. */
   createRollout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Discover boot-trusted exact sealed-evaluator identities. */
   listSealedEvaluators(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -533,7 +535,7 @@ export interface CradleClient extends TemperaProductClientBase {
   projectsBrowserAdaptersIssueCapability(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/browser/adapter/completion/validate. */
   projectsBrowserAdaptersValidateCompletion(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the browser adapter contract, required controls, and conformance profile. */
+  /** Call GET /v1/browser/adapter/contract. */
   getBrowserAdapterContract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/browser/adapter/launch/claim. */
   projectsBrowserAdaptersClaimLaunch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -543,23 +545,23 @@ export interface CradleClient extends TemperaProductClientBase {
   projectsBrowserAdaptersRegister(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/browser/adapter/validate. */
   projectsBrowserAdaptersValidate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Request admission for a browser session at a sandbox level and receive the guard plan. */
+  /** Call POST /v1/browser/admit. */
   admitBrowserSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the browser sandbox profile levels and suppression modes this daemon offers. */
+  /** Call GET /v1/browser/profiles. */
   getBrowserProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the sandbox capability matrix: lanes, engines, limits, and integrations. */
+  /** Call GET /v1/capabilities. */
   getCapabilities(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Execute source synchronously in a sandbox lane and return the result with metrics. */
+  /** Call POST /v1/execute. */
   execute(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Check sandbox-daemon liveness; returns status, version, and uptime. */
+  /** Call GET /v1/health. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the ecosystem integration contract this daemon implements. */
+  /** Call GET /v1/integration. */
   getIntegrationContract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Submit an asynchronous sandbox job; returns an operation handle to poll. */
+  /** Call POST /v1/jobs. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel a queued or running sandbox job (idempotent for already-cancelled jobs). */
+  /** Call DELETE /v1/jobs/{id}. */
   cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch a sandbox job's status and result. */
+  /** Call GET /v1/jobs/{id}. */
   getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/modules. */
   projectsModulesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -593,115 +595,115 @@ export interface RemiClient extends TemperaProductClientBase {
 }
 
 export interface DataEngineClient extends TemperaProductClientBase {
-  /** Check data-engine liveness; returns the service status. */
+  /** Health check. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the MVP use-case templates (data products and pipeline templates) for a project. */
+  /** List MVP data products and pipeline templates. */
   listUseCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy. */
+  /** Get one MVP use-case template. */
   getUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Ingest one artifact deterministically into the project; returns an async operation handle. */
+  /** Ingest one or many artifacts. */
   ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
+  /** Fetch, parse, and ingest a public HTTP/HTTPS page. */
   ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create a data campaign with a rubric, budget, target accuracy, and skill tags. */
+  /** Create a data campaign with rubric, budget, target accuracy, and skill tags. */
   createCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List a project's data campaigns with pagination. */
+  /** List data campaigns. */
   listCampaigns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition. */
+  /** Pause, resume, or permanently close campaign job admission. */
   transitionCampaign(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes. */
+  /** Get the authenticated reviewer's campaign qualification. */
   getReviewerQualification(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend. */
+  /** Run a complete MVP use-case pipeline. */
   runUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List human residual review tasks, optionally filtered by status and campaign. */
+  /** List human residual review tasks. */
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label. */
+  /** Clone a real review task into an isolated HMAC-scored qualification task. */
   createReviewQualificationTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision. */
+  /** Resolve, abstain, flag, or adjudicate one human residual. */
   resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically claim one open expert task with an exclusive renewable lease. */
   claimExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Renew the authenticated reviewer's active expert-task lease. */
+  /** Renew the authenticated reviewer's active task lease. */
   renewExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Release the authenticated reviewer's active expert-task lease for reassignment. */
+  /** Release the authenticated reviewer's active task lease for reassignment. */
   releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Autosave a version-checked draft under the active reviewer lease. */
   saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations. */
+  /** Get project-scoped human-review operations and quality measures. */
   getReviewOperations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch data-engine usage and quality metrics for a project. */
+  /** Get data-engine usage and quality metrics for a project. */
   getMetrics(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the project label-quality report and unresolved expert backlog. */
+  /** Get the label quality report for a project. */
   getLabelQuality(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch public-site and ecosystem readiness signals for a project. */
+  /** Get public-site and ecosystem readiness for one project. */
   getEcosystemReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL). */
+  /** List artifacts. */
   listArtifacts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one artifact, expanded to the requested view (BASIC or FULL). */
+  /** Get an artifact. */
   getArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the labels attached to one artifact. */
+  /** List labels for an artifact. */
   listArtifactLabels(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Profile dataset quality before export, including duplicates, label coverage, and distributions. */
+  /** Profile dataset quality before export. */
   profileDataset(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll. */
+  /** Create a labeling job. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one labeling job with its state and progress. */
+  /** Get a job. */
   getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List the deterministic label results a job produced. */
+  /** List deterministic results for a job. */
   getJobResults(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one emitted product bundle with its status and manifest URL. */
+  /** Get product. */
   getProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Validate an emitted product bundle's referential integrity and hygiene. */
+  /** Validate an emitted product bundle. */
   validateProduct(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Check raw-hash leakage between exactly two product bundles. */
+  /** Check raw_hash leakage between two product bundles. */
   checkProductLeakage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch an integrity-checked, bounded manifest for an emitted eval product. */
+  /** Get an integrity-checked eval product manifest. */
   getProductManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints. */
+  /** Admit an exact product generation for model training. */
   admitTrainingRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revalidate and fetch one training release, including any durable stale state. */
+  /** Revalidate and get a training release. */
   getTrainingRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Derive a deterministic post-training bundle from a ready product. */
+  /** Derive a post-training bundle (SFT or preference) from a READY product. */
   deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
+  /** Emit eval bundle. */
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Extract bounded objects or records from a configured source connector. */
+  /** Extract from a source connector (s3, snowflake, salesforce) into artifacts. */
   extractSource(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List registered source connectors for a project. */
+  /** List source connectors with configured/unconfigured state. */
   listConnectors(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create or version-bump a stored custom tool. */
   createTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List stored custom tools and their usage statistics. */
+  /** List stored custom tools with usage stats. */
   listTools(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one stored custom tool and its usage statistics. */
+  /** Get a stored custom tool (definition + stats). */
   getTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Delete a stored custom tool and every retained version. */
+  /** Hard-delete a stored custom tool. */
   deleteTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Invoke a stored custom tool through its configured execution boundary. */
+  /** Invoke a stored custom tool. */
   invokeTool(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically commit an immutable discovery release graph. */
   commitDiscoveryRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get one immutable discovery release. */
   getDiscoveryRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an immutable shared evidence record by canonical content hash. */
+  /** Create an immutable shared evidence record. */
   createEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List immutable shared evidence records with bounded cursor pagination. */
+  /** List immutable shared evidence records. */
   listEvidenceRecords(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one immutable shared evidence record by its platform digest. */
+  /** Get one immutable shared evidence record. */
   getEvidenceRecord(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an immutable shared episode by canonical content hash. */
+  /** Create an immutable shared episode. */
   createEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List immutable shared episodes with bounded cursor pagination. */
+  /** List immutable shared episodes. */
   listEpisodes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one immutable shared episode by its platform digest. */
+  /** Get one immutable shared episode. */
   getEpisode(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Retrieve deterministic candidates for one exact canonical typed research obligation. */
+  /** Retrieve candidates for an exact canonical typed obligation. */
   queryResearchRetrieval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create an immutable executable research catalog entry by canonical content hash. */
+  /** Create an immutable executable research catalog entry. */
   createResearchCatalogEntry(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List immutable executable research catalog entries with bounded pagination. */
+  /** List immutable executable research catalog entries. */
   listResearchCatalogEntries(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch one immutable executable research catalog entry by content hash. */
+  /** Get one immutable executable research catalog entry. */
   getResearchCatalogEntry(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 

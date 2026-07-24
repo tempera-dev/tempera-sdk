@@ -267,7 +267,7 @@
         "method": "GET",
         "path": "/healthz",
         "auth": "none",
-        "description": "Check control-plane liveness; returns {ok: true}.",
+        "description": "Liveness probe for the control plane.",
         "upstreamOperationId": "getHealth"
       },
       {
@@ -283,7 +283,7 @@
         "method": "GET",
         "path": "/v1/me",
         "auth": "account",
-        "description": "Fetch the authenticated user's identity, active workspace, and roles.",
+        "description": "Return the current authenticated principal and active workspace context.",
         "upstreamOperationId": "getMe"
       },
       {
@@ -291,7 +291,7 @@
         "method": "GET",
         "path": "/v1/orgs",
         "auth": "account",
-        "description": "List the organizations the authenticated user belongs to.",
+        "description": "List organizations/workspaces visible to the current user.",
         "upstreamOperationId": "listOrganizations",
         "query": [
           "pageSize",
@@ -306,7 +306,7 @@
         "body": [
           "name"
         ],
-        "description": "Create an organization; the caller becomes its owner.",
+        "description": "Create an organization/workspace.",
         "requiredBody": [
           "name"
         ],
@@ -317,7 +317,7 @@
         "method": "GET",
         "path": "/v1/sessions",
         "auth": "account",
-        "description": "List the user's active account sessions.",
+        "description": "List active account-console sessions for the current user.",
         "upstreamOperationId": "listAccountSessions",
         "query": [
           "pageSize",
@@ -351,7 +351,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Revoke an account session and its tokens immediately (idempotent).",
+        "description": "Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op.",
         "upstreamOperationId": "revokeAccountSession"
       },
       {
@@ -364,7 +364,7 @@
           "projectId",
           "environmentId"
         ],
-        "description": "Switch the active workspace and receive a token pair scoped to it.",
+        "description": "Select the active organization, project, and environment for the account console.",
         "requiredBody": [
           "orgId",
           "projectId",
@@ -377,7 +377,7 @@
         "method": "GET",
         "path": "/v1/team/members",
         "auth": "account",
-        "description": "List team members of the active organization.",
+        "description": "List team members for the active organization.",
         "upstreamOperationId": "listTeamMembers",
         "query": [
           "pageSize",
@@ -395,7 +395,7 @@
         "body": [
           "role"
         ],
-        "description": "Change a team member's role (requires an org admin role; at least one owner must remain).",
+        "description": "Update a team member role.",
         "requiredBody": [
           "role"
         ],
@@ -412,7 +412,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Remove a team member from the active organization (idempotent).",
+        "description": "Remove a team member from the active organization.",
         "upstreamOperationId": "removeTeamMember"
       },
       {
@@ -420,7 +420,7 @@
         "method": "GET",
         "path": "/v1/invites",
         "auth": "account",
-        "description": "List invites for the active organization, newest first.",
+        "description": "List organization invites.",
         "upstreamOperationId": "listInvites",
         "query": [
           "pageSize",
@@ -436,7 +436,7 @@
           "email",
           "role"
         ],
-        "description": "Invite a user to the active organization; the accept URL is returned once.",
+        "description": "Invite a teammate to the active organization.",
         "requiredBody": [
           "email",
           "role"
@@ -451,7 +451,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Cancel a pending invite (idempotent).",
+        "description": "Cancel an organization invite.",
         "upstreamOperationId": "cancelInvite"
       },
       {
@@ -459,7 +459,7 @@
         "method": "GET",
         "path": "/v1/projects",
         "auth": "account",
-        "description": "List projects across every organization the user belongs to.",
+        "description": "List projects for the active organization.",
         "upstreamOperationId": "listProjects",
         "query": [
           "pageSize",
@@ -475,7 +475,7 @@
           "orgId",
           "name"
         ],
-        "description": "Create a project in an organization (requires an org admin role).",
+        "description": "Create a project in the active organization.",
         "requiredBody": [
           "orgId",
           "name"
@@ -487,7 +487,7 @@
         "method": "GET",
         "path": "/v1/environments",
         "auth": "account",
-        "description": "List environments across every project the user can access.",
+        "description": "List environments for the active project.",
         "upstreamOperationId": "listEnvironments",
         "query": [
           "pageSize",
@@ -503,7 +503,7 @@
           "projectId",
           "name"
         ],
-        "description": "Create an environment in a project (requires an org admin role).",
+        "description": "Create an environment in a project owned by the active organization.",
         "requiredBody": [
           "projectId",
           "name"
@@ -515,7 +515,7 @@
         "method": "GET",
         "path": "/v1/api-keys",
         "auth": "account",
-        "description": "List API keys in the active workspace; secrets are never returned.",
+        "description": "List scoped API keys for the active workspace. Plaintext key material is never returned.",
         "upstreamOperationId": "listApiKeys",
         "query": [
           "pageSize",
@@ -536,7 +536,7 @@
           "audience",
           "expiresAt"
         ],
-        "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.",
+        "description": "Create a scoped API key. Plaintext key material is returned once.",
         "requiredBody": [
           "orgId",
           "projectId",
@@ -553,7 +553,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Revoke an API key (idempotent).",
+        "description": "Revoke a scoped API key. Revoking an unknown key id is a no-op.",
         "upstreamOperationId": "revokeApiKey"
       },
       {
@@ -564,7 +564,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Rotate an API key's secret; the new secret is returned exactly once.",
+        "description": "Rotate a scoped API key. New plaintext key material is returned once.",
         "upstreamOperationId": "rotateApiKey"
       },
       {
@@ -855,7 +855,7 @@
         "method": "GET",
         "path": "/v1/audit-log",
         "auth": "account",
-        "description": "List recent audit-log events for the user and active organization (up to 50, newest first).",
+        "description": "List recent scoped account and security activity for the active user and organization.",
         "upstreamOperationId": "listAuditLog",
         "query": [
           "pageSize",
@@ -867,7 +867,7 @@
         "method": "GET",
         "path": "/v1/connectors",
         "auth": "account",
-        "description": "List the connector catalog (MCP clients, editors, and API surfaces).",
+        "description": "List supported hosted connectors and their setup metadata.",
         "upstreamOperationId": "listConnectors",
         "query": [
           "pageSize",
@@ -882,7 +882,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Fetch one connector's connection status for the active workspace.",
+        "description": "Return connection status for one connector.",
         "upstreamOperationId": "getConnectorStatus"
       },
       {
@@ -890,7 +890,7 @@
         "method": "GET",
         "path": "/v1/products",
         "auth": "account",
-        "description": "List the product catalog with default scopes and setup paths.",
+        "description": "List registered Tempera products and their setup metadata.",
         "upstreamOperationId": "listProducts",
         "query": [
           "pageSize",
@@ -905,7 +905,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Fetch one product's activation status, entitlements, signals, and usage meters.",
+        "description": "Return entitlement and first-mile setup status for one product.",
         "upstreamOperationId": "getProductStatus"
       },
       {
@@ -913,7 +913,7 @@
         "method": "GET",
         "path": "/v1/billing/status",
         "auth": "account",
-        "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
+        "description": "Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users.",
         "upstreamOperationId": "getBillingStatus"
       },
       {
@@ -929,7 +929,7 @@
           "currency",
           "network"
         ],
-        "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
+        "description": "Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL.",
         "upstreamOperationId": "createBillingCheckout"
       },
       {
@@ -937,7 +937,7 @@
         "method": "GET",
         "path": "/v1/billing/portal",
         "auth": "account",
-        "description": "Fetch the billing-portal URL for the organization (requires a billing role).",
+        "description": "Create a customer billing portal handoff URL.",
         "upstreamOperationId": "createBillingPortal"
       },
       {
@@ -954,7 +954,7 @@
         "path": "/v1/model-catalog",
         "auth": "account",
         "scope": "model:read",
-        "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
+        "description": "List the entitled Tempera Code model catalog. Requires model:read.",
         "upstreamOperationId": "getModelCatalog"
       },
       {
@@ -971,7 +971,7 @@
           "idempotencyKey",
           "cost"
         ],
-        "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
+        "description": "Report a billable usage event and receive the current entitlement decision.",
         "requiredBody": [
           "orgId",
           "projectId",
@@ -1092,7 +1092,7 @@
         "method": "GET",
         "path": "/v1/oauth/grants",
         "auth": "account",
-        "description": "List the OAuth grants the user has approved in the active workspace.",
+        "description": "List connected OAuth app grants for the active workspace.",
         "upstreamOperationId": "listOAuthGrants",
         "query": [
           "pageSize",
@@ -1107,7 +1107,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Revoke an OAuth grant and every refresh token issued under it.",
+        "description": "Revoke an OAuth app grant and its refresh tokens.",
         "upstreamOperationId": "revokeOAuthGrant"
       },
       {
@@ -1119,7 +1119,7 @@
           "token",
           "token_type_hint"
         ],
-        "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid.",
+        "description": "Validate a central access token or hosted API key for resource servers.",
         "requiredBody": [
           "token"
         ],
@@ -1130,7 +1130,7 @@
         "method": "GET",
         "path": "/.well-known/oauth-authorization-server",
         "auth": "none",
-        "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer.",
+        "description": "OAuth authorization server discovery metadata.",
         "upstreamOperationId": "getOAuthAuthorizationServerMetadata"
       },
       {
@@ -1149,7 +1149,7 @@
         "pathParams": [
           "resource"
         ],
-        "description": "Fetch OAuth protected-resource metadata for one registered audience.",
+        "description": "OAuth protected resource discovery metadata for one registered resource audience.",
         "upstreamOperationId": "getOAuthProtectedResourceMetadataForAudience"
       },
       {
@@ -1157,7 +1157,7 @@
         "method": "GET",
         "path": "/.well-known/jwks.json",
         "auth": "none",
-        "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens.",
+        "description": "JSON Web Key Set for validating central issuer JWTs.",
         "upstreamOperationId": "getJsonWebKeySet"
       },
       {
@@ -1301,7 +1301,7 @@
         "method": "GET",
         "path": "/health",
         "auth": "none",
-        "description": "Check palette API liveness; returns {ok: true}.",
+        "description": "Call GET /health.",
         "upstreamOperationId": "health.check"
       },
       {
@@ -1309,7 +1309,7 @@
         "method": "POST",
         "path": "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook",
         "auth": "product",
-        "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
+        "description": "Call POST /v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1339,7 +1339,7 @@
           "scopes"
         ],
         "scope": "admin",
-        "description": "Mint a palette-scoped API key; the secret is returned exactly once.",
+        "description": "Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}.",
         "requiredBody": [
           "scopes"
         ],
@@ -1357,7 +1357,7 @@
           "apiKeyId"
         ],
         "scope": "admin",
-        "description": "Revoke a palette API key.",
+        "description": "Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke.",
         "upstreamOperationId": "apiKeys.revoke"
       },
       {
@@ -1365,7 +1365,7 @@
         "method": "GET",
         "path": "/v1/archive/{tenantId}/{projectId}/spans",
         "auth": "product",
-        "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
+        "description": "Call GET /v1/archive/{tenantId}/{projectId}/spans.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1392,7 +1392,7 @@
           "traceId"
         ],
         "scope": "trace:read",
-        "description": "Archive a trace to Parquet and return the archive manifest.",
+        "description": "Call POST /v1/archive/{tenantId}/{projectId}/{traceId}.",
         "upstreamOperationId": "archive.archiveTrace"
       },
       {
@@ -1400,7 +1400,7 @@
         "method": "GET",
         "path": "/v1/audit/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/audit/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/audit/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1416,7 +1416,7 @@
         "method": "POST",
         "path": "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}",
         "auth": "product",
-        "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
+        "description": "Call POST /v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1435,7 +1435,7 @@
         "method": "GET",
         "path": "/v1/connect/status/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/connect/status/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1447,7 +1447,7 @@
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/connectors/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1463,7 +1463,7 @@
         "method": "POST",
         "path": "/v1/connectors/{tenantId}/{projectId}/connect",
         "auth": "product",
-        "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
+        "description": "Call POST /v1/connectors/{tenantId}/{projectId}/connect.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1481,7 +1481,7 @@
         "method": "POST",
         "path": "/v1/connectors/{tenantId}/{projectId}/invoke",
         "auth": "product",
-        "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
+        "description": "Call POST /v1/connectors/{tenantId}/{projectId}/invoke.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1500,7 +1500,7 @@
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/skills",
         "auth": "product",
-        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
+        "description": "Call GET /v1/connectors/{tenantId}/{projectId}/skills.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1515,7 +1515,7 @@
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/status",
         "auth": "product",
-        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
+        "description": "Call GET /v1/connectors/{tenantId}/{projectId}/status.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1530,7 +1530,7 @@
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/tools",
         "auth": "product",
-        "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
+        "description": "Call GET /v1/connectors/{tenantId}/{projectId}/tools.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1555,7 +1555,7 @@
           "name"
         ],
         "scope": "dataset:write",
-        "description": "Create a dataset for curating cases from traces.",
+        "description": "Call POST /v1/datasets/{tenantId}/{projectId}.",
         "requiredBody": [
           "name"
         ],
@@ -1577,7 +1577,7 @@
           "traceId"
         ],
         "scope": "dataset:write",
-        "description": "Promote a trace (or one span of it) into a dataset case.",
+        "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace.",
         "requiredBody": [
           "traceId"
         ],
@@ -1597,7 +1597,7 @@
           "caseIds"
         ],
         "scope": "dataset:write",
-        "description": "Snapshot a dataset into an immutable version for evals and experiments.",
+        "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions.",
         "upstreamOperationId": "datasets.createVersion"
       },
       {
@@ -1605,7 +1605,7 @@
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic",
         "auth": "product",
-        "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
+        "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1634,7 +1634,7 @@
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge",
         "auth": "product",
-        "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
+        "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1679,7 +1679,7 @@
           "publicKeyPem"
         ],
         "scope": "eval:run",
-        "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
+        "description": "Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/bundles.",
         "upstreamOperationId": "evalResults.importTemperaBundle"
       },
       {
@@ -1702,7 +1702,7 @@
           "publicKeyPem"
         ],
         "scope": "eval:run",
-        "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
+        "description": "Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/decisions.",
         "upstreamOperationId": "evalResults.recordTemperaDecision"
       },
       {
@@ -1717,7 +1717,7 @@
           "externalId"
         ],
         "scope": "eval:run",
-        "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
+        "description": "Call GET /v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}.",
         "upstreamOperationId": "evalResults.getTemperaEvidence"
       },
       {
@@ -1725,7 +1725,7 @@
         "method": "POST",
         "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic",
         "auth": "product",
-        "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
+        "description": "Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1758,7 +1758,7 @@
         "method": "POST",
         "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge",
         "auth": "product",
-        "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
+        "description": "Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1793,7 +1793,7 @@
         "method": "POST",
         "path": "/v1/gates/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call POST /v1/gates/{tenant_id}/{project_id}.",
+        "description": "Call POST /v1/gates/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1816,7 +1816,7 @@
         "method": "POST",
         "path": "/v1/gates/{tenantId}/{projectId}/{gateId}/run",
         "auth": "product",
-        "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
+        "description": "Call POST /v1/gates/{tenantId}/{projectId}/{gateId}/run.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1845,7 +1845,7 @@
           "source"
         ],
         "scope": "trace:write",
-        "description": "Import spans from a named external source payload.",
+        "description": "Call POST /v1/import/{tenantId}/{projectId}/{environmentId}.",
         "requiredBody": [
           "source"
         ],
@@ -1856,7 +1856,7 @@
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay",
         "auth": "product",
-        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
+        "description": "Call POST /v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1872,7 +1872,7 @@
         "method": "GET",
         "path": "/v1/ingest/{tenantId}/{projectId}/queue",
         "auth": "product",
-        "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
+        "description": "Call GET /v1/ingest/{tenantId}/{projectId}/queue.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1884,7 +1884,7 @@
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain",
         "auth": "product",
-        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
+        "description": "Call POST /v1/ingest/{tenantId}/{projectId}/trace-ingested/drain.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1899,7 +1899,7 @@
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain",
         "auth": "product",
-        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
+        "description": "Call POST /v1/ingest/{tenantId}/{projectId}/trace-writes/drain.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1914,7 +1914,7 @@
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile",
         "auth": "product",
-        "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
+        "description": "Call POST /v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1927,7 +1927,7 @@
         "method": "POST",
         "path": "/v1/judge/{tenantId}/{projectId}/evaluate",
         "auth": "product",
-        "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
+        "description": "Call POST /v1/judge/{tenantId}/{projectId}/evaluate.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1950,7 +1950,7 @@
         "method": "GET",
         "path": "/v1/judge/{tenantId}/{projectId}/ledger",
         "auth": "product",
-        "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
+        "description": "Call GET /v1/judge/{tenantId}/{projectId}/ledger.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -1966,7 +1966,7 @@
         "method": "POST",
         "path": "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling",
         "auth": "product",
-        "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
+        "description": "Call POST /v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -1989,7 +1989,7 @@
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/prompts/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2005,7 +2005,7 @@
         "method": "POST",
         "path": "/v1/prompts/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call POST /v1/prompts/{tenant_id}/{project_id}.",
+        "description": "Call POST /v1/prompts/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2028,7 +2028,7 @@
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}",
         "auth": "product",
-        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
+        "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2041,7 +2041,7 @@
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff",
         "auth": "product",
-        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
+        "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/diff.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2058,7 +2058,7 @@
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
         "auth": "product",
-        "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
+        "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/versions.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2075,7 +2075,7 @@
         "method": "POST",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
         "auth": "product",
-        "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
+        "description": "Call POST /v1/prompts/{tenantId}/{projectId}/{promptId}/versions.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2096,7 +2096,7 @@
         "method": "GET",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/provider-secrets/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2112,7 +2112,7 @@
         "method": "POST",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
+        "description": "Call POST /v1/provider-secrets/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2134,7 +2134,7 @@
         "method": "POST",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke",
         "auth": "product",
-        "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
+        "description": "Call POST /v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2147,7 +2147,7 @@
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
+        "description": "Call POST /v1/review-queues/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2168,7 +2168,7 @@
         "method": "GET",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks",
         "auth": "product",
-        "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
+        "description": "Call GET /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2186,7 +2186,7 @@
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace",
         "auth": "product",
-        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
+        "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2210,7 +2210,7 @@
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations",
         "auth": "product",
-        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
+        "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2235,7 +2235,7 @@
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote",
         "auth": "product",
-        "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
+        "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2257,7 +2257,7 @@
         "method": "GET",
         "path": "/v1/scenarios/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
+        "description": "Call GET /v1/scenarios/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2273,7 +2273,7 @@
         "method": "POST",
         "path": "/v1/scenarios/{tenantId}/{projectId}",
         "auth": "product",
-        "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
+        "description": "Call POST /v1/scenarios/{tenantId}/{projectId}.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2296,7 +2296,7 @@
         "method": "POST",
         "path": "/v1/scenarios/{tenantId}/{projectId}/mine",
         "auth": "product",
-        "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
+        "description": "Call POST /v1/scenarios/{tenantId}/{projectId}/mine.",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2315,7 +2315,7 @@
         "method": "GET",
         "path": "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}",
         "auth": "product",
-        "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
+        "description": "Call GET /v1/scenarios/{tenantId}/{projectId}/{scenarioId}.",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2345,7 +2345,7 @@
           "pageToken"
         ],
         "scope": "trace:read",
-        "description": "Search spans by text query and facet filters.",
+        "description": "Call GET /v1/search/{tenantId}/spans.",
         "upstreamOperationId": "search.spans"
       },
       {
@@ -2363,7 +2363,7 @@
           "reason"
         ],
         "scope": "trace:read",
-        "description": "Fetch one canonical span by trace and span id.",
+        "description": "Call GET /v1/spans/{tenantId}/{traceId}/{spanId}.",
         "upstreamOperationId": "spans.get"
       },
       {
@@ -2381,7 +2381,7 @@
           "reason"
         ],
         "scope": "trace:read",
-        "description": "Fetch a span's recorded input and output values.",
+        "description": "Call GET /v1/spans/{tenantId}/{traceId}/{spanId}/io.",
         "upstreamOperationId": "spans.getIo"
       },
       {
@@ -2414,7 +2414,7 @@
           "traceId"
         ],
         "scope": "trace:write",
-        "description": "Ingest one native span; idempotent when an idempotency key is supplied.",
+        "description": "Call POST /v1/traces/native.",
         "requiredBody": [
           "scope",
           "traceId",
@@ -2454,7 +2454,7 @@
           "pageToken"
         ],
         "scope": "trace:read",
-        "description": "List trace summaries for a tenant with filters and cursor pagination.",
+        "description": "Call GET /v1/traces/{tenantId}.",
         "upstreamOperationId": "traces.list"
       },
       {
@@ -2471,7 +2471,7 @@
           "reason"
         ],
         "scope": "trace:read",
-        "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
+        "description": "Call GET /v1/traces/{tenantId}/{traceId}.",
         "upstreamOperationId": "traces.get"
       },
       {
@@ -2484,7 +2484,7 @@
           "projectId"
         ],
         "scope": "admin",
-        "description": "Fetch usage totals for a tenant project.",
+        "description": "Call GET /v1/usage/{tenantId}/{projectId}.",
         "upstreamOperationId": "usage.getSummary"
       }
     ],
@@ -2510,7 +2510,7 @@
         "method": "GET",
         "path": "/health",
         "auth": "none",
-        "description": "Check tempod liveness; returns {ok: true}.",
+        "description": "Call GET /health.",
         "upstreamOperationId": "health"
       },
       {
@@ -2526,7 +2526,7 @@
         "method": "GET",
         "path": "/openapi.json",
         "auth": "none",
-        "description": "Fetch tempod's OpenAPI document, generated at runtime for this host.",
+        "description": "Call GET /openapi.json.",
         "upstreamOperationId": "openapi"
       },
       {
@@ -2534,7 +2534,7 @@
         "method": "GET",
         "path": "/ready",
         "auth": "product",
-        "description": "Check tempod readiness, including engine attachment, drain state, and session capacity.",
+        "description": "Call GET /ready.",
         "upstreamOperationId": "ready"
       },
       {
@@ -2542,7 +2542,7 @@
         "method": "POST",
         "path": "/v1/drain",
         "auth": "product",
-        "description": "Call POST /drain.",
+        "description": "Call POST /v1/drain.",
         "upstreamOperationId": "drain"
       },
       {
@@ -2555,7 +2555,7 @@
           "pageSize",
           "pageToken"
         ],
-        "description": "List agent runs, optionally filtered to one session.",
+        "description": "Call GET /v1/runs.",
         "upstreamOperationId": "listRuns"
       },
       {
@@ -2566,7 +2566,7 @@
         "pathParams": [
           "runId"
         ],
-        "description": "Fetch one agent run with its state.",
+        "description": "Call GET /v1/runs/{runId}.",
         "upstreamOperationId": "getRun"
       },
       {
@@ -2574,7 +2574,7 @@
         "method": "GET",
         "path": "/v1/runs/{runId}/events",
         "auth": "product",
-        "description": "Call GET /runs/{run_id}/events.",
+        "description": "Call GET /v1/runs/{runId}/events.",
         "upstreamOperationId": "runEvents",
         "pathParams": [
           "runId"
@@ -2591,7 +2591,7 @@
         "pathParams": [
           "runId"
         ],
-        "description": "Cancel an agent run.",
+        "description": "Call POST /v1/runs/{runId}:cancel.",
         "upstreamOperationId": "cancelRun"
       },
       {
@@ -2602,7 +2602,7 @@
         "pathParams": [
           "runId"
         ],
-        "description": "Resume an agent run after a human handoff completes.",
+        "description": "Call POST /v1/runs/{runId}:resume.",
         "upstreamOperationId": "resumeRun"
       },
       {
@@ -2610,7 +2610,7 @@
         "method": "GET",
         "path": "/v1/sessions",
         "auth": "product",
-        "description": "List browser sessions with their state and creation time.",
+        "description": "Call GET /v1/sessions.",
         "upstreamOperationId": "listSessions",
         "query": [
           "pageSize",
@@ -2626,7 +2626,7 @@
           "driverless",
           "url"
         ],
-        "description": "Open a browser session at a URL; driverless sessions skip engine attachment.",
+        "description": "Call POST /v1/sessions.",
         "upstreamOperationId": "createSession",
         "requiredBody": [
           "url"
@@ -2640,7 +2640,7 @@
         "pathParams": [
           "sessionId"
         ],
-        "description": "Close a browser session and release its engine resources.",
+        "description": "Call DELETE /v1/sessions/{sessionId}.",
         "upstreamOperationId": "closeSession"
       },
       {
@@ -2652,7 +2652,7 @@
           "sessionId",
           "confirmationId"
         ],
-        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
+        "description": "Call POST /v1/sessions/{sessionId}/confirmations/{confirmationId}:grant.",
         "upstreamOperationId": "grantSessionConfirmation"
       },
       {
@@ -2666,7 +2666,7 @@
         "query": [
           "afterSeq"
         ],
-        "description": "Fetch the session's event window after a sequence number.",
+        "description": "Call GET /v1/sessions/{sessionId}/events.",
         "upstreamOperationId": "sessionEvents"
       },
       {
@@ -2674,7 +2674,7 @@
         "method": "GET",
         "path": "/v1/sessions/{sessionId}/manager",
         "auth": "product",
-        "description": "Call GET /sessions/{session_id}/manager.",
+        "description": "Call GET /v1/sessions/{sessionId}/manager.",
         "upstreamOperationId": "managerSession",
         "pathParams": [
           "sessionId"
@@ -2694,7 +2694,7 @@
           "maxRounds",
           "tokenBudget"
         ],
-        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
+        "description": "Call POST /v1/sessions/{sessionId}/runs.",
         "upstreamOperationId": "createSessionRun"
       },
       {
@@ -2702,7 +2702,7 @@
         "method": "POST",
         "path": "/v1/sessions/{sessionId}/surfaces",
         "auth": "product",
-        "description": "Call POST /sessions/{session_id}/surfaces.",
+        "description": "Call POST /v1/sessions/{sessionId}/surfaces.",
         "upstreamOperationId": "registerSessionSurface",
         "pathParams": [
           "sessionId"
@@ -2721,7 +2721,7 @@
         "method": "DELETE",
         "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
         "auth": "product",
-        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
+        "description": "Call DELETE /v1/sessions/{sessionId}/surfaces/{surfaceId}.",
         "upstreamOperationId": "removeSessionSurface",
         "pathParams": [
           "sessionId",
@@ -2744,7 +2744,7 @@
           "inputTainted",
           "paymentContext"
         ],
-        "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
+        "description": "Call POST /v1/sessions/{sessionId}:actBatch.",
         "upstreamOperationId": "actBatchSession",
         "requiredBody": [
           "batch"
@@ -2758,7 +2758,7 @@
         "pathParams": [
           "sessionId"
         ],
-        "description": "Let a human surface take write ownership of the session and receive an adoption lease.",
+        "description": "Call POST /v1/sessions/{sessionId}:adopt.",
         "upstreamOperationId": "adoptSession",
         "body": [
           "engineTier",
@@ -2777,7 +2777,7 @@
         "pathParams": [
           "sessionId"
         ],
-        "description": "Return write ownership of the session to the agent plane.",
+        "description": "Call POST /v1/sessions/{sessionId}:handoff.",
         "upstreamOperationId": "handoffSession"
       },
       {
@@ -2788,7 +2788,7 @@
         "pathParams": [
           "sessionId"
         ],
-        "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
+        "description": "Call GET /v1/sessions/{sessionId}:observe.",
         "upstreamOperationId": "observeSession"
       },
       {
@@ -2802,7 +2802,7 @@
         "query": [
           "setOfMarks"
         ],
-        "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
+        "description": "Call GET /v1/sessions/{sessionId}:screenshot.",
         "upstreamOperationId": "screenshotSession"
       },
       {
@@ -2810,7 +2810,7 @@
         "method": "POST",
         "path": "/v1/sessions/{sessionId}:transform",
         "auth": "product",
-        "description": "Call POST /sessions/{session_id}/transform.",
+        "description": "Call POST /v1/sessions/{sessionId}:transform.",
         "upstreamOperationId": "transformSession",
         "pathParams": [
           "sessionId"
@@ -2835,7 +2835,7 @@
         "method": "GET",
         "path": "/healthz",
         "auth": "none",
-        "description": "Check tempera-llm gateway liveness; returns {ok: true}.",
+        "description": "Call GET /healthz.",
         "upstreamOperationId": "health.check"
       },
       {
@@ -2866,7 +2866,7 @@
           "max_tokens"
         ],
         "scope": "model:invoke",
-        "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
+        "description": "Call POST /v1/chat/completions.",
         "upstreamOperationId": "chatCompletions.create"
       },
       {
@@ -2875,7 +2875,7 @@
         "path": "/v1/models",
         "auth": "product",
         "scope": "model:read",
-        "description": "List the configured model catalog the gateway can route to.",
+        "description": "Call GET /v1/models.",
         "upstreamOperationId": "models.list",
         "query": [
           "pageSize",
@@ -2900,7 +2900,7 @@
           "max_output_tokens"
         ],
         "scope": "model:invoke",
-        "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
+        "description": "Call POST /v1/responses.",
         "upstreamOperationId": "responses.create"
       }
     ],
@@ -2910,65 +2910,69 @@
         "method": "GET",
         "path": "/healthz",
         "auth": "none",
-        "description": "Check tempera-workflows engine liveness.",
+        "description": "Liveness. Unauthenticated.",
         "upstreamOperationId": "healthz"
       },
       {
         "id": "listNodeTypes",
         "method": "GET",
         "path": "/v1/node-types",
-        "auth": "product",
+        "auth": "oauthResource",
         "scope": "workflow:read",
-        "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
+        "description": "The studio palette: every node type with config JSON Schema and outputs.",
         "upstreamOperationId": "nodeTypes.list",
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "listRuns",
         "method": "GET",
         "path": "/v1/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "workflowId",
           "pageSize",
           "pageToken"
         ],
         "scope": "workflow:read",
-        "description": "List workflow runs, optionally filtered to one workflow.",
-        "upstreamOperationId": "runs.list"
+        "description": "List runs, newest first.",
+        "upstreamOperationId": "runs.list",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "getRun",
         "method": "GET",
         "path": "/v1/runs/{runId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "scope": "workflow:read",
-        "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
-        "upstreamOperationId": "runs.get"
+        "description": "Full run view: status, per-node states with outputs/logs/metrics, timestamps.",
+        "upstreamOperationId": "runs.get",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "cancelRun",
         "method": "POST",
         "path": "/v1/runs/{runId}:cancel",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "scope": "workflow:run",
-        "description": "Cancel a queued or running workflow run.",
-        "upstreamOperationId": "runs.cancel"
+        "description": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200.",
+        "upstreamOperationId": "runs.cancel",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "runsSignal",
         "method": "POST",
         "path": "/v1/runs/{runId}:signal",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Consume a durable external callback and resume a waiting run.",
         "upstreamOperationId": "runs.signal",
         "pathParams": [
@@ -2985,26 +2989,29 @@
           "idempotencyKey",
           "payload",
           "payloadDigest"
-        ]
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:run"
       },
       {
         "id": "listWorkflows",
         "method": "GET",
         "path": "/v1/workflows",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "pageSize",
           "pageToken"
         ],
         "scope": "workflow:read",
-        "description": "List stored workflow definitions, newest first.",
-        "upstreamOperationId": "workflows.list"
+        "description": "List workflows.",
+        "upstreamOperationId": "workflows.list",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "createWorkflow",
         "method": "POST",
         "path": "/v1/workflows",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "contractVersion",
           "description",
@@ -3022,38 +3029,41 @@
           "edges"
         ],
         "scope": "workflow:write",
-        "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
-        "upstreamOperationId": "workflows.create"
-      },
-      {
-        "id": "getWorkflow",
-        "method": "GET",
-        "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
-        "pathParams": [
-          "workflowId"
-        ],
-        "scope": "workflow:read",
-        "description": "Fetch one stored workflow definition.",
-        "upstreamOperationId": "workflows.get"
+        "description": "Create a workflow from a `tempera.workflow/v1` definition.",
+        "upstreamOperationId": "workflows.create",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "deleteWorkflow",
         "method": "DELETE",
         "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
         "scope": "workflow:write",
-        "description": "Delete a stored workflow definition.",
-        "upstreamOperationId": "workflows.delete"
+        "description": "Delete a workflow. Existing runs keep their definition snapshots.",
+        "upstreamOperationId": "workflows.delete",
+        "authAudience": "tempera-workflows"
+      },
+      {
+        "id": "getWorkflow",
+        "method": "GET",
+        "path": "/v1/workflows/{workflowId}",
+        "auth": "oauthResource",
+        "pathParams": [
+          "workflowId"
+        ],
+        "scope": "workflow:read",
+        "description": "Get one workflow.",
+        "upstreamOperationId": "workflows.get",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "updateWorkflow",
         "method": "PATCH",
         "path": "/v1/workflows/{workflowId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3074,17 +3084,18 @@
           "edges"
         ],
         "scope": "workflow:write",
-        "description": "Replace a stored workflow definition with a new validated revision.",
+        "description": "Replace a workflow definition through an AIP-style masked update.",
         "upstreamOperationId": "workflows.update",
         "query": [
           "updateMask"
-        ]
+        ],
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "createRun",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3097,14 +3108,15 @@
           "usePinned"
         ],
         "scope": "workflow:run",
-        "description": "Start a run of a stored workflow with an optional input document and idempotency key.",
-        "upstreamOperationId": "runs.create"
+        "description": "Start a run (job pattern): returns immediately with the queued run; poll.",
+        "upstreamOperationId": "runs.create",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "callWorkflow",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}:call",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3118,14 +3130,35 @@
           "waitMs"
         ],
         "scope": "workflow:run",
-        "description": "Run a workflow to completion and return its output in a single call.",
-        "upstreamOperationId": "workflows.call"
+        "description": "Create a run AND wait for it to finish, returning the run + output in one.",
+        "upstreamOperationId": "workflows.call",
+        "authAudience": "tempera-workflows"
+      },
+      {
+        "id": "compileBioCampaign",
+        "method": "POST",
+        "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+        "auth": "oauthResource",
+        "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
+        "upstreamOperationId": "workflows.compileBioCampaign",
+        "pathParams": [
+          "workflowId"
+        ],
+        "body": [
+          "deadlineMs",
+          "maxRounds",
+          "name",
+          "signalExpiresAfterSeconds",
+          "signalPrefix"
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:write"
       },
       {
         "id": "composeWorkflow",
         "method": "POST",
         "path": "/v1/workflows/{workflowId}:compose",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "workflowId"
         ],
@@ -3140,14 +3173,15 @@
           "prompt"
         ],
         "scope": "workflow:write",
-        "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
-        "upstreamOperationId": "workflows.compose"
+        "description": "Ask Tempera Code to propose a validated workflow draft, or search the full.",
+        "upstreamOperationId": "workflows.compose",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "assistJson",
         "method": "POST",
         "path": "/v1/workflows:assistJson",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "context",
           "current",
@@ -3162,14 +3196,15 @@
           "expectedRoot"
         ],
         "scope": "workflow:write",
-        "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
-        "upstreamOperationId": "workflows.assistJson"
+        "description": "Generate or repair one JSON configuration value with the configured.",
+        "upstreamOperationId": "workflows.assistJson",
+        "authAudience": "tempera-workflows"
       },
       {
         "id": "validateWorkflow",
         "method": "POST",
         "path": "/v1/workflows:validate",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "contractVersion",
           "description",
@@ -3187,8 +3222,9 @@
           "edges"
         ],
         "scope": "workflow:write",
-        "description": "Validate a workflow definition without storing it; returns the full diagnostic list.",
-        "upstreamOperationId": "workflows.validate"
+        "description": "Validate a definition without saving it. Returns 200 with the issue list.",
+        "upstreamOperationId": "workflows.validate",
+        "authAudience": "tempera-workflows"
       }
     ],
     "temperaGym": [
@@ -3197,7 +3233,7 @@
         "method": "GET",
         "path": "/healthz",
         "auth": "none",
-        "description": "Check tempera-gym service liveness.",
+        "description": "Liveness probe (unauthenticated).",
         "upstreamOperationId": "health.get"
       },
       {
@@ -3206,7 +3242,7 @@
         "path": "/v1/environments",
         "auth": "oauthResource",
         "scope": "dataset:read",
-        "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
+        "description": "Built-in and boot-trusted versioned environment catalog.",
         "upstreamOperationId": "environments.list",
         "authAudience": "tempera-gym",
         "query": [
@@ -3397,7 +3433,7 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "description": "List persisted rollout run index records, newest first.",
+        "description": "Persisted-run index, newest first.",
         "upstreamOperationId": "runs.list",
         "authAudience": "tempera-gym"
       },
@@ -3410,7 +3446,7 @@
           "run"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
+        "description": "Full trajectory envelope (incl. metadata.timing) for one run.",
         "upstreamOperationId": "runs.get",
         "authAudience": "tempera-gym"
       },
@@ -3433,7 +3469,7 @@
           "seed"
         ],
         "scope": "eval:run",
-        "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
+        "description": "Execute one rollout synchronously, store it, return the summary.",
         "upstreamOperationId": "rollouts.create",
         "authAudience": "tempera-gym"
       },
@@ -3761,7 +3797,7 @@
         "method": "GET",
         "path": "/v1/browser/adapter/contract",
         "auth": "product",
-        "description": "Fetch the browser adapter contract, required controls, and conformance profile.",
+        "description": "Call GET /v1/browser/adapter/contract.",
         "upstreamOperationId": "projects.browserAdapters.getContract"
       },
       {
@@ -3859,7 +3895,7 @@
           "targetOrigins",
           "taskLabel"
         ],
-        "description": "Request admission for a browser session at a sandbox level and receive the guard plan.",
+        "description": "Call POST /v1/browser/admit.",
         "requiredBody": [
           "requestedLevel",
           "actor",
@@ -3872,7 +3908,7 @@
         "method": "GET",
         "path": "/v1/browser/profiles",
         "auth": "product",
-        "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
+        "description": "Call GET /v1/browser/profiles.",
         "upstreamOperationId": "projects.browserProfiles.get"
       },
       {
@@ -3880,7 +3916,7 @@
         "method": "GET",
         "path": "/v1/capabilities",
         "auth": "product",
-        "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
+        "description": "Call GET /v1/capabilities.",
         "upstreamOperationId": "projects.capabilities.get"
       },
       {
@@ -3897,7 +3933,7 @@
           "source",
           "stdin"
         ],
-        "description": "Execute source synchronously in a sandbox lane and return the result with metrics.",
+        "description": "Call POST /v1/execute.",
         "requiredBody": [
           "lane",
           "source"
@@ -3909,7 +3945,7 @@
         "method": "GET",
         "path": "/v1/health",
         "auth": "none",
-        "description": "Check sandbox-daemon liveness; returns status, version, and uptime.",
+        "description": "Call GET /v1/health.",
         "upstreamOperationId": "health"
       },
       {
@@ -3917,7 +3953,7 @@
         "method": "GET",
         "path": "/v1/integration",
         "auth": "product",
-        "description": "Fetch the ecosystem integration contract this daemon implements.",
+        "description": "Call GET /v1/integration.",
         "upstreamOperationId": "projects.integration.get"
       },
       {
@@ -3934,7 +3970,7 @@
           "source",
           "stdin"
         ],
-        "description": "Submit an asynchronous sandbox job; returns an operation handle to poll.",
+        "description": "Call POST /v1/jobs.",
         "requiredBody": [
           "lane",
           "source"
@@ -3949,7 +3985,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
+        "description": "Call DELETE /v1/jobs/{id}.",
         "upstreamOperationId": "projects.jobs.cancel"
       },
       {
@@ -3960,7 +3996,7 @@
         "pathParams": [
           "id"
         ],
-        "description": "Fetch a sandbox job's status and result.",
+        "description": "Call GET /v1/jobs/{id}.",
         "upstreamOperationId": "projects.jobs.get"
       },
       {
@@ -4131,7 +4167,7 @@
         "method": "GET",
         "path": "/v1/health",
         "auth": "none",
-        "description": "Check data-engine liveness; returns the service status.",
+        "description": "Health check.",
         "upstreamOperationId": "health.get"
       },
       {
@@ -4143,7 +4179,7 @@
           "parent"
         ],
         "scope": "dataset:read",
-        "description": "List the MVP use-case templates (data products and pipeline templates) for a project.",
+        "description": "List MVP data products and pipeline templates.",
         "upstreamOperationId": "projects.useCases.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4163,7 +4199,7 @@
           "useCaseId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.",
+        "description": "Get one MVP use-case template.",
         "upstreamOperationId": "projects.useCases.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4185,7 +4221,7 @@
           "metadata"
         ],
         "scope": "dataset:write",
-        "description": "Ingest one artifact deterministically into the project; returns an async operation handle.",
+        "description": "Ingest one or many artifacts.",
         "upstreamOperationId": "projects.artifacts.ingest",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4208,7 +4244,7 @@
           "metadata"
         ],
         "scope": "dataset:write",
-        "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.",
+        "description": "Fetch, parse, and ingest a public HTTP/HTTPS page.",
         "requiredBody": [
           "url"
         ],
@@ -4238,7 +4274,7 @@
           "idempotencyKey"
         ],
         "scope": "dataset:write",
-        "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags.",
+        "description": "Create a data campaign with rubric, budget, target accuracy, and skill tags.",
         "upstreamOperationId": "projects.campaigns.create",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4257,7 +4293,7 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "description": "List a project's data campaigns with pagination.",
+        "description": "List data campaigns.",
         "upstreamOperationId": "projects.campaigns.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4281,7 +4317,7 @@
           "idempotencyKey"
         ],
         "scope": "dataset:write",
-        "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.",
+        "description": "Pause, resume, or permanently close campaign job admission.",
         "upstreamOperationId": "projects.campaigns.transition",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4297,7 +4333,7 @@
           "campaignId"
         ],
         "scope": "review:resolve",
-        "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
+        "description": "Get the authenticated reviewer's campaign qualification.",
         "upstreamOperationId": "projects.reviewerQualifications.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4323,7 +4359,7 @@
           "artifacts"
         ],
         "scope": "eval:run",
-        "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.",
+        "description": "Run a complete MVP use-case pipeline.",
         "requiredBody": [
           "useCase"
         ],
@@ -4347,7 +4383,7 @@
           "campaignName"
         ],
         "scope": "dataset:read",
-        "description": "List human residual review tasks, optionally filtered by status and campaign.",
+        "description": "List human residual review tasks.",
         "upstreamOperationId": "projects.expertTasks.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4374,7 +4410,7 @@
           "idempotencyKey"
         ],
         "scope": "review:gold:manage",
-        "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
+        "description": "Clone a real review task into an isolated HMAC-scored qualification task.",
         "upstreamOperationId": "projects.reviewQualificationTasks.create",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4407,7 +4443,7 @@
           "reviewContext"
         ],
         "scope": "review:resolve",
-        "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
+        "description": "Resolve, abstain, flag, or adjudicate one human residual.",
         "upstreamOperationId": "projects.expertTasks.resolve",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4457,7 +4493,7 @@
           "leaseToken"
         ],
         "scope": "review:resolve",
-        "description": "Renew the authenticated reviewer's active expert-task lease.",
+        "description": "Renew the authenticated reviewer's active task lease.",
         "upstreamOperationId": "projects.expertTaskAssignments.renew",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4481,7 +4517,7 @@
           "leaseToken"
         ],
         "scope": "review:resolve",
-        "description": "Release the authenticated reviewer's active expert-task lease for reassignment.",
+        "description": "Release the authenticated reviewer's active task lease for reassignment.",
         "upstreamOperationId": "projects.expertTaskAssignments.release",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4528,7 +4564,7 @@
           "slaTargetSeconds"
         ],
         "scope": "review:resolve",
-        "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
+        "description": "Get project-scoped human-review operations and quality measures.",
         "upstreamOperationId": "projects.reviewOperations.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4543,7 +4579,7 @@
           "parent"
         ],
         "scope": "dataset:read",
-        "description": "Fetch data-engine usage and quality metrics for a project.",
+        "description": "Get data-engine usage and quality metrics for a project.",
         "upstreamOperationId": "projects.metrics.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4558,7 +4594,7 @@
           "parent"
         ],
         "scope": "dataset:read",
-        "description": "Fetch the project label-quality report and unresolved expert backlog.",
+        "description": "Get the label quality report for a project.",
         "upstreamOperationId": "projects.labelQuality.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4573,7 +4609,7 @@
           "parent"
         ],
         "scope": "dataset:read",
-        "description": "Fetch public-site and ecosystem readiness signals for a project.",
+        "description": "Get public-site and ecosystem readiness for one project.",
         "upstreamOperationId": "projects.ecosystem.readiness.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4593,7 +4629,7 @@
           "view"
         ],
         "scope": "dataset:read",
-        "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).",
+        "description": "List artifacts.",
         "upstreamOperationId": "projects.artifacts.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4612,7 +4648,7 @@
           "view"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL).",
+        "description": "Get an artifact.",
         "upstreamOperationId": "projects.artifacts.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4632,7 +4668,7 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "description": "List the labels attached to one artifact.",
+        "description": "List labels for an artifact.",
         "upstreamOperationId": "projects.artifacts.labels.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4651,7 +4687,7 @@
           "artifactType"
         ],
         "scope": "dataset:write",
-        "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions.",
+        "description": "Profile dataset quality before export.",
         "upstreamOperationId": "projects.datasets.profile",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4674,7 +4710,7 @@
           "verifier"
         ],
         "scope": "eval:run",
-        "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.",
+        "description": "Create a labeling job.",
         "requiredBody": [
           "artifactIds",
           "taskFamily"
@@ -4694,7 +4730,7 @@
           "jobId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one labeling job with its state and progress.",
+        "description": "Get a job.",
         "upstreamOperationId": "projects.jobs.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4710,7 +4746,7 @@
           "jobId"
         ],
         "scope": "dataset:read",
-        "description": "List the deterministic label results a job produced.",
+        "description": "List deterministic results for a job.",
         "upstreamOperationId": "projects.jobs.results.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4730,7 +4766,7 @@
           "productId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one emitted product bundle with its status and manifest URL.",
+        "description": "Get product.",
         "upstreamOperationId": "projects.products.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4746,7 +4782,7 @@
           "productId"
         ],
         "scope": "dataset:write",
-        "description": "Validate an emitted product bundle's referential integrity and hygiene.",
+        "description": "Validate an emitted product bundle.",
         "upstreamOperationId": "projects.products.validate",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4767,7 +4803,7 @@
           "productIds"
         ],
         "scope": "dataset:write",
-        "description": "Check raw-hash leakage between exactly two product bundles.",
+        "description": "Check raw_hash leakage between two product bundles.",
         "upstreamOperationId": "projects.products.checkLeakage",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4783,7 +4819,7 @@
           "productId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product.",
+        "description": "Get an integrity-checked eval product manifest.",
         "upstreamOperationId": "projects.products.manifest.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4808,7 +4844,7 @@
           "idempotencyKey"
         ],
         "scope": "training:publish",
-        "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.",
+        "description": "Admit an exact product generation for model training.",
         "upstreamOperationId": "projects.trainingReleases.admit",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4824,7 +4860,7 @@
           "releaseId"
         ],
         "scope": "training:publish",
-        "description": "Revalidate and fetch one training release, including any durable stale state.",
+        "description": "Revalidate and get a training release.",
         "upstreamOperationId": "projects.trainingReleases.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4848,7 +4884,7 @@
           "pairSources"
         ],
         "scope": "eval:run",
-        "description": "Derive a deterministic post-training bundle from a ready product.",
+        "description": "Derive a post-training bundle (SFT or preference) from a READY product.",
         "requiredBody": [
           "format"
         ],
@@ -4870,7 +4906,7 @@
           "job"
         ],
         "scope": "eval:run",
-        "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
+        "description": "Emit eval bundle.",
         "requiredBody": [
           "artifactIds",
           "job"
@@ -4908,7 +4944,7 @@
           "connector"
         ],
         "scope": "dataset:write",
-        "description": "Extract bounded objects or records from a configured source connector.",
+        "description": "Extract from a source connector (s3, snowflake, salesforce) into artifacts.",
         "upstreamOperationId": "projects.sources.extract",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4927,7 +4963,7 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "description": "List registered source connectors for a project.",
+        "description": "List source connectors with configured/unconfigured state.",
         "upstreamOperationId": "projects.connectors.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4971,7 +5007,7 @@
           "parent"
         ],
         "scope": "dataset:read",
-        "description": "List stored custom tools and their usage statistics.",
+        "description": "List stored custom tools with usage stats.",
         "upstreamOperationId": "projects.tools.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -4991,7 +5027,7 @@
           "toolName"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one stored custom tool and its usage statistics.",
+        "description": "Get a stored custom tool (definition + stats).",
         "upstreamOperationId": "projects.tools.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5007,7 +5043,7 @@
           "toolName"
         ],
         "scope": "dataset:write",
-        "description": "Delete a stored custom tool and every retained version.",
+        "description": "Hard-delete a stored custom tool.",
         "upstreamOperationId": "projects.tools.delete",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5026,7 +5062,7 @@
           "arguments"
         ],
         "scope": "dataset:write",
-        "description": "Invoke a stored custom tool through its configured execution boundary.",
+        "description": "Invoke a stored custom tool.",
         "upstreamOperationId": "projects.tools.invoke",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5120,7 +5156,7 @@
           "verificationState"
         ],
         "scope": "eval:run",
-        "description": "Create an immutable shared evidence record by canonical content hash.",
+        "description": "Create an immutable shared evidence record.",
         "upstreamOperationId": "projects.evidenceRecords.create",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5140,7 +5176,7 @@
           "domain"
         ],
         "scope": "dataset:read",
-        "description": "List immutable shared evidence records with bounded cursor pagination.",
+        "description": "List immutable shared evidence records.",
         "upstreamOperationId": "projects.evidenceRecords.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5156,7 +5192,7 @@
           "evidenceRecordId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one immutable shared evidence record by its platform digest.",
+        "description": "Get one immutable shared evidence record.",
         "upstreamOperationId": "projects.evidenceRecords.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5199,7 +5235,7 @@
           "terminalReason"
         ],
         "scope": "eval:run",
-        "description": "Create an immutable shared episode by canonical content hash.",
+        "description": "Create an immutable shared episode.",
         "upstreamOperationId": "projects.episodes.create",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5219,7 +5255,7 @@
           "domain"
         ],
         "scope": "dataset:read",
-        "description": "List immutable shared episodes with bounded cursor pagination.",
+        "description": "List immutable shared episodes.",
         "upstreamOperationId": "projects.episodes.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5235,7 +5271,7 @@
           "episodeId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one immutable shared episode by its platform digest.",
+        "description": "Get one immutable shared episode.",
         "upstreamOperationId": "projects.episodes.get",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5268,7 +5304,7 @@
           "limit"
         ],
         "scope": "dataset:read",
-        "description": "Retrieve deterministic candidates for one exact canonical typed research obligation.",
+        "description": "Retrieve candidates for an exact canonical typed obligation.",
         "upstreamOperationId": "query_research_retrieval",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5299,7 +5335,7 @@
           "provenance"
         ],
         "scope": "dataset:write",
-        "description": "Create an immutable executable research catalog entry by canonical content hash.",
+        "description": "Create an immutable executable research catalog entry.",
         "upstreamOperationId": "projects.researchCatalogEntries.create",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5318,7 +5354,7 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "description": "List immutable executable research catalog entries with bounded pagination.",
+        "description": "List immutable executable research catalog entries.",
         "upstreamOperationId": "projects.researchCatalogEntries.list",
         "pathParamTemplates": {
           "parent": "projects/*"
@@ -5334,7 +5370,7 @@
           "entryId"
         ],
         "scope": "dataset:read",
-        "description": "Fetch one immutable executable research catalog entry by content hash.",
+        "description": "Get one immutable executable research catalog entry.",
         "upstreamOperationId": "projects.researchCatalogEntries.get",
         "pathParamTemplates": {
           "parent": "projects/*"

@@ -33,7 +33,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 `GET /healthz`
 
-Check tempera-gym service liveness.
+Liveness probe (unauthenticated).
 
 - **Producer operationId:** `health.get`
 - **Auth:** None (public endpoint).
@@ -61,7 +61,7 @@ let spec = client.build_request("tempera_gym", "health", &[])?;
 
 `GET /v1/environments`
 
-List the gym pack's environment catalog, including implementation status and per-environment manifests.
+Built-in and boot-trusted versioned environment catalog.
 
 - **Producer operationId:** `environments.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
@@ -602,7 +602,7 @@ let spec = client.build_request("tempera_gym", "export_episode", &[
 
 `GET /v1/runs`
 
-List persisted rollout run index records, newest first.
+Persisted-run index, newest first.
 
 - **Producer operationId:** `runs.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
@@ -648,7 +648,7 @@ let spec = client.build_request("tempera_gym", "list_runs", &[
 
 `GET /v1/runs/{run}`
 
-Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.
+Full trajectory envelope (incl. metadata.timing) for one run.
 
 - **Producer operationId:** `runs.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
@@ -689,7 +689,7 @@ let spec = client.build_request("tempera_gym", "get_run", &[
 
 `POST /v1/rollouts`
 
-Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.
+Execute one rollout synchronously, store it, return the summary.
 
 - **Producer operationId:** `rollouts.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.

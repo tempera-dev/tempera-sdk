@@ -33,7 +33,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 `GET /v1/health`
 
-Check data-engine liveness; returns the service status.
+Health check.
 
 - **Producer operationId:** `health.get`
 - **Auth:** None (public endpoint).
@@ -61,7 +61,7 @@ let spec = client.build_request("data_engine", "health", &[])?;
 
 `GET /v1/{parent}/use-cases`
 
-List the MVP use-case templates (data products and pipeline templates) for a project.
+List MVP data products and pipeline templates.
 
 - **Producer operationId:** `projects.useCases.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -116,7 +116,7 @@ let spec = client.build_request("data_engine", "list_use_cases", &[
 
 `GET /v1/{parent}/use-cases/{useCaseId}`
 
-Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.
+Get one MVP use-case template.
 
 - **Producer operationId:** `projects.useCases.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -162,7 +162,7 @@ let spec = client.build_request("data_engine", "get_use_case", &[
 
 `POST /v1/{parent}/artifacts:ingest`
 
-Ingest one artifact deterministically into the project; returns an async operation handle.
+Ingest one or many artifacts.
 
 - **Producer operationId:** `projects.artifacts.ingest`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -223,7 +223,7 @@ let spec = client.build_request("data_engine", "ingest_artifact", &[
 
 `POST /v1/{parent}/web:ingest`
 
-Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.
+Fetch, parse, and ingest a public HTTP/HTTPS page.
 
 - **Producer operationId:** `projects.web.ingest`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -285,7 +285,7 @@ let spec = client.build_request("data_engine", "ingest_web", &[
 
 `POST /v1/{parent}/campaigns`
 
-Create a data campaign with a rubric, budget, target accuracy, and skill tags.
+Create a data campaign with rubric, budget, target accuracy, and skill tags.
 
 - **Producer operationId:** `projects.campaigns.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -351,7 +351,7 @@ let spec = client.build_request("data_engine", "create_campaign", &[
 
 `GET /v1/{parent}/campaigns`
 
-List a project's data campaigns with pagination.
+List data campaigns.
 
 - **Producer operationId:** `projects.campaigns.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -406,7 +406,7 @@ let spec = client.build_request("data_engine", "list_campaigns", &[
 
 `POST /v1/{parent}/campaigns/{campaignId}:transition`
 
-Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.
+Pause, resume, or permanently close campaign job admission.
 
 - **Producer operationId:** `projects.campaigns.transition`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -465,7 +465,7 @@ let spec = client.build_request("data_engine", "transition_campaign", &[
 
 `GET /v1/{parent}/campaigns/{campaignId}/reviewer-qualification`
 
-Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.
+Get the authenticated reviewer's campaign qualification.
 
 - **Producer operationId:** `projects.reviewerQualifications.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -511,7 +511,7 @@ let spec = client.build_request("data_engine", "get_reviewer_qualification", &[
 
 `POST /v1/{parent}/pipelines:runUseCase`
 
-Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.
+Run a complete MVP use-case pipeline.
 
 - **Producer operationId:** `projects.pipelines.runUseCase`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -576,7 +576,7 @@ let spec = client.build_request("data_engine", "run_use_case", &[
 
 `GET /v1/{parent}/expert-tasks`
 
-List human residual review tasks, optionally filtered by status and campaign.
+List human residual review tasks.
 
 - **Producer operationId:** `projects.expertTasks.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -633,7 +633,7 @@ let spec = client.build_request("data_engine", "list_expert_tasks", &[
 
 `POST /v1/{parent}/review-qualification-tasks`
 
-Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.
+Clone a real review task into an isolated HMAC-scored qualification task.
 
 - **Producer operationId:** `projects.reviewQualificationTasks.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -694,7 +694,7 @@ let spec = client.build_request("data_engine", "create_review_qualification_task
 
 `POST /v1/{parent}/expert-tasks/{expertTaskId}:resolve`
 
-Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.
+Resolve, abstain, flag, or adjudicate one human residual.
 
 - **Producer operationId:** `projects.expertTasks.resolve`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -827,7 +827,7 @@ let spec = client.build_request("data_engine", "claim_expert_task", &[
 
 `POST /v1/{parent}/expert-tasks/{expertTaskId}:renew`
 
-Renew the authenticated reviewer's active expert-task lease.
+Renew the authenticated reviewer's active task lease.
 
 - **Producer operationId:** `projects.expertTaskAssignments.renew`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -890,7 +890,7 @@ let spec = client.build_request("data_engine", "renew_expert_task_assignment", &
 
 `POST /v1/{parent}/expert-tasks/{expertTaskId}:release`
 
-Release the authenticated reviewer's active expert-task lease for reassignment.
+Release the authenticated reviewer's active task lease for reassignment.
 
 - **Producer operationId:** `projects.expertTaskAssignments.release`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1016,7 +1016,7 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
 
 `GET /v1/{parent}/review-operations`
 
-Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.
+Get project-scoped human-review operations and quality measures.
 
 - **Producer operationId:** `projects.reviewOperations.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1071,7 +1071,7 @@ let spec = client.build_request("data_engine", "get_review_operations", &[
 
 `GET /v1/{parent}/metrics`
 
-Fetch data-engine usage and quality metrics for a project.
+Get data-engine usage and quality metrics for a project.
 
 - **Producer operationId:** `projects.metrics.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1113,7 +1113,7 @@ let spec = client.build_request("data_engine", "get_metrics", &[
 
 `GET /v1/{parent}/label-quality`
 
-Fetch the project label-quality report and unresolved expert backlog.
+Get the label quality report for a project.
 
 - **Producer operationId:** `projects.labelQuality.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1155,7 +1155,7 @@ let spec = client.build_request("data_engine", "get_label_quality", &[
 
 `GET /v1/{parent}/ecosystem/readiness`
 
-Fetch public-site and ecosystem readiness signals for a project.
+Get public-site and ecosystem readiness for one project.
 
 - **Producer operationId:** `projects.ecosystem.readiness.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1197,7 +1197,7 @@ let spec = client.build_request("data_engine", "get_ecosystem_readiness", &[
 
 `GET /v1/{parent}/artifacts`
 
-List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).
+List artifacts.
 
 - **Producer operationId:** `projects.artifacts.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1253,7 +1253,7 @@ let spec = client.build_request("data_engine", "list_artifacts", &[
 
 `GET /v1/{parent}/artifacts/{artifactId}`
 
-Fetch one artifact, expanded to the requested view (BASIC or FULL).
+Get an artifact.
 
 - **Producer operationId:** `projects.artifacts.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1308,7 +1308,7 @@ let spec = client.build_request("data_engine", "get_artifact", &[
 
 `GET /v1/{parent}/artifacts/{artifactId}/labels`
 
-List the labels attached to one artifact.
+List labels for an artifact.
 
 - **Producer operationId:** `projects.artifacts.labels.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1367,7 +1367,7 @@ let spec = client.build_request("data_engine", "list_artifact_labels", &[
 
 `POST /v1/{parent}/datasets:profile`
 
-Profile dataset quality before export, including duplicates, label coverage, and distributions.
+Profile dataset quality before export.
 
 - **Producer operationId:** `projects.datasets.profile`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1422,7 +1422,7 @@ let spec = client.build_request("data_engine", "profile_dataset", &[
 
 `POST /v1/{parent}/jobs`
 
-Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.
+Create a labeling job.
 
 - **Producer operationId:** `projects.jobs.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1484,7 +1484,7 @@ let spec = client.build_request("data_engine", "create_job", &[
 
 `GET /v1/{parent}/jobs/{jobId}`
 
-Fetch one labeling job with its state and progress.
+Get a job.
 
 - **Producer operationId:** `projects.jobs.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1530,7 +1530,7 @@ let spec = client.build_request("data_engine", "get_job", &[
 
 `GET /v1/{parent}/jobs/{jobId}/results`
 
-List the deterministic label results a job produced.
+List deterministic results for a job.
 
 - **Producer operationId:** `projects.jobs.results.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1589,7 +1589,7 @@ let spec = client.build_request("data_engine", "get_job_results", &[
 
 `GET /v1/{parent}/products/{productId}`
 
-Fetch one emitted product bundle with its status and manifest URL.
+Get product.
 
 - **Producer operationId:** `projects.products.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1635,7 +1635,7 @@ let spec = client.build_request("data_engine", "get_product", &[
 
 `POST /v1/{parent}/products/{productId}:validate`
 
-Validate an emitted product bundle's referential integrity and hygiene.
+Validate an emitted product bundle.
 
 - **Producer operationId:** `projects.products.validate`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1681,7 +1681,7 @@ let spec = client.build_request("data_engine", "validate_product", &[
 
 `POST /v1/{parent}/products:checkLeakage`
 
-Check raw-hash leakage between exactly two product bundles.
+Check raw_hash leakage between two product bundles.
 
 - **Producer operationId:** `projects.products.checkLeakage`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1732,7 +1732,7 @@ let spec = client.build_request("data_engine", "check_product_leakage", &[
 
 `GET /v1/{parent}/products/{productId}/manifest`
 
-Fetch an integrity-checked, bounded manifest for an emitted eval product.
+Get an integrity-checked eval product manifest.
 
 - **Producer operationId:** `projects.products.manifest.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1778,7 +1778,7 @@ let spec = client.build_request("data_engine", "get_product_manifest", &[
 
 `POST /v1/{parent}/training-releases:admit`
 
-Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.
+Admit an exact product generation for model training.
 
 - **Producer operationId:** `projects.trainingReleases.admit`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1837,7 +1837,7 @@ let spec = client.build_request("data_engine", "admit_training_release", &[
 
 `GET /v1/{parent}/training-releases/{releaseId}`
 
-Revalidate and fetch one training release, including any durable stale state.
+Revalidate and get a training release.
 
 - **Producer operationId:** `projects.trainingReleases.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1883,7 +1883,7 @@ let spec = client.build_request("data_engine", "get_training_release", &[
 
 `POST /v1/{parent}/products/{productId}:derive`
 
-Derive a deterministic post-training bundle from a ready product.
+Derive a post-training bundle (SFT or preference) from a READY product.
 
 - **Producer operationId:** `projects.products.derive`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -1949,7 +1949,7 @@ let spec = client.build_request("data_engine", "derive_bundle", &[
 
 `POST /v1/{parent}/products:emitEval`
 
-Emit an eval dataset bundle from verified artifacts; returns an async operation handle.
+Emit eval bundle.
 
 - **Producer operationId:** `projects.products.emitEval`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2004,7 +2004,7 @@ let spec = client.build_request("data_engine", "emit_eval", &[
 
 `POST /v1/{parent}/sources:extract`
 
-Extract bounded objects or records from a configured source connector.
+Extract from a source connector (s3, snowflake, salesforce) into artifacts.
 
 - **Producer operationId:** `projects.sources.extract`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2074,7 +2074,7 @@ let spec = client.build_request("data_engine", "extract_source", &[
 
 `GET /v1/{parent}/connectors`
 
-List registered source connectors for a project.
+List source connectors with configured/unconfigured state.
 
 - **Producer operationId:** `projects.connectors.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2194,7 +2194,7 @@ let spec = client.build_request("data_engine", "create_tool", &[
 
 `GET /v1/{parent}/tools`
 
-List stored custom tools and their usage statistics.
+List stored custom tools with usage stats.
 
 - **Producer operationId:** `projects.tools.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2249,7 +2249,7 @@ let spec = client.build_request("data_engine", "list_tools", &[
 
 `GET /v1/{parent}/tools/{toolName}`
 
-Fetch one stored custom tool and its usage statistics.
+Get a stored custom tool (definition + stats).
 
 - **Producer operationId:** `projects.tools.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2295,7 +2295,7 @@ let spec = client.build_request("data_engine", "get_tool", &[
 
 `DELETE /v1/{parent}/tools/{toolName}`
 
-Delete a stored custom tool and every retained version.
+Hard-delete a stored custom tool.
 
 - **Producer operationId:** `projects.tools.delete`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2341,7 +2341,7 @@ let spec = client.build_request("data_engine", "delete_tool", &[
 
 `POST /v1/{parent}/tools/{toolName}:invoke`
 
-Invoke a stored custom tool through its configured execution boundary.
+Invoke a stored custom tool.
 
 - **Producer operationId:** `projects.tools.invoke`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2533,7 +2533,7 @@ let spec = client.build_request("data_engine", "get_discovery_release", &[
 
 `POST /v1/{parent}/evidenceRecords`
 
-Create an immutable shared evidence record by canonical content hash.
+Create an immutable shared evidence record.
 
 - **Producer operationId:** `projects.evidenceRecords.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2612,7 +2612,7 @@ let spec = client.build_request("data_engine", "create_evidence_record", &[
 
 `GET /v1/{parent}/evidenceRecords`
 
-List immutable shared evidence records with bounded cursor pagination.
+List immutable shared evidence records.
 
 - **Producer operationId:** `projects.evidenceRecords.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2668,7 +2668,7 @@ let spec = client.build_request("data_engine", "list_evidence_records", &[
 
 `GET /v1/{parent}/evidenceRecords/{evidenceRecordId}`
 
-Fetch one immutable shared evidence record by its platform digest.
+Get one immutable shared evidence record.
 
 - **Producer operationId:** `projects.evidenceRecords.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2714,7 +2714,7 @@ let spec = client.build_request("data_engine", "get_evidence_record", &[
 
 `POST /v1/{parent}/episodes`
 
-Create an immutable shared episode by canonical content hash.
+Create an immutable shared episode.
 
 - **Producer operationId:** `projects.episodes.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2805,7 +2805,7 @@ let spec = client.build_request("data_engine", "create_episode", &[
 
 `GET /v1/{parent}/episodes`
 
-List immutable shared episodes with bounded cursor pagination.
+List immutable shared episodes.
 
 - **Producer operationId:** `projects.episodes.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2861,7 +2861,7 @@ let spec = client.build_request("data_engine", "list_episodes", &[
 
 `GET /v1/{parent}/episodes/{episodeId}`
 
-Fetch one immutable shared episode by its platform digest.
+Get one immutable shared episode.
 
 - **Producer operationId:** `projects.episodes.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2907,7 +2907,7 @@ let spec = client.build_request("data_engine", "get_episode", &[
 
 `POST /v1/{parent}/researchRetrieval:query`
 
-Retrieve deterministic candidates for one exact canonical typed research obligation.
+Retrieve candidates for an exact canonical typed obligation.
 
 - **Producer operationId:** `query_research_retrieval`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -2976,7 +2976,7 @@ let spec = client.build_request("data_engine", "query_research_retrieval", &[
 
 `POST /v1/{parent}/researchCatalogEntries`
 
-Create an immutable executable research catalog entry by canonical content hash.
+Create an immutable executable research catalog entry.
 
 - **Producer operationId:** `projects.researchCatalogEntries.create`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -3045,7 +3045,7 @@ let spec = client.build_request("data_engine", "create_research_catalog_entry", 
 
 `GET /v1/{parent}/researchCatalogEntries`
 
-List immutable executable research catalog entries with bounded pagination.
+List immutable executable research catalog entries.
 
 - **Producer operationId:** `projects.researchCatalogEntries.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
@@ -3100,7 +3100,7 @@ let spec = client.build_request("data_engine", "list_research_catalog_entries", 
 
 `GET /v1/{parent}/researchCatalogEntries/{entryId}`
 
-Fetch one immutable executable research catalog entry by content hash.
+Get one immutable executable research catalog entry.
 
 - **Producer operationId:** `projects.researchCatalogEntries.get`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.

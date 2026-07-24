@@ -194,7 +194,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check control-plane liveness; returns {ok: True}."
+            "description": "Liveness probe for the control plane."
         },
         {
             "id": "get_readiness",
@@ -228,7 +228,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the authenticated user's identity, active workspace, and roles."
+            "description": "Return the current authenticated principal and active workspace context."
         },
         {
             "id": "list_orgs",
@@ -248,7 +248,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List the organizations the authenticated user belongs to."
+            "description": "List organizations/workspaces visible to the current user."
         },
         {
             "id": "create_org",
@@ -269,7 +269,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Create an organization; the caller becomes its owner."
+            "description": "Create an organization/workspace."
         },
         {
             "id": "list_sessions",
@@ -289,7 +289,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List the user's active account sessions."
+            "description": "List active account-console sessions for the current user."
         },
         {
             "id": "create_hosted_session",
@@ -334,7 +334,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Revoke an account session and its tokens immediately (idempotent)."
+            "description": "Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op."
         },
         {
             "id": "select_workspace",
@@ -359,7 +359,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Switch the active workspace and receive a token pair scoped to it."
+            "description": "Select the active organization, project, and environment for the account console."
         },
         {
             "id": "list_team_members",
@@ -379,7 +379,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List team members of the active organization."
+            "description": "List team members for the active organization."
         },
         {
             "id": "update_team_member",
@@ -404,7 +404,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
+            "description": "Update a team member role."
         },
         {
             "id": "remove_team_member",
@@ -423,7 +423,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Remove a team member from the active organization (idempotent)."
+            "description": "Remove a team member from the active organization."
         },
         {
             "id": "list_invites",
@@ -443,7 +443,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List invites for the active organization, newest first."
+            "description": "List organization invites."
         },
         {
             "id": "create_invite",
@@ -466,7 +466,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Invite a user to the active organization; the accept URL is returned once."
+            "description": "Invite a teammate to the active organization."
         },
         {
             "id": "cancel_invite",
@@ -485,7 +485,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Cancel a pending invite (idempotent)."
+            "description": "Cancel an organization invite."
         },
         {
             "id": "list_projects",
@@ -505,7 +505,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List projects across every organization the user belongs to."
+            "description": "List projects for the active organization."
         },
         {
             "id": "create_project",
@@ -528,7 +528,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Create a project in an organization (requires an org admin role)."
+            "description": "Create a project in the active organization."
         },
         {
             "id": "list_environments",
@@ -548,7 +548,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List environments across every project the user can access."
+            "description": "List environments for the active project."
         },
         {
             "id": "create_environment",
@@ -571,7 +571,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Create an environment in a project (requires an org admin role)."
+            "description": "Create an environment in a project owned by the active organization."
         },
         {
             "id": "list_api_keys",
@@ -591,7 +591,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List API keys in the active workspace; secrets are never returned."
+            "description": "List scoped API keys for the active workspace. Plaintext key material is never returned."
         },
         {
             "id": "create_api_key",
@@ -621,7 +621,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
+            "description": "Create a scoped API key. Plaintext key material is returned once."
         },
         {
             "id": "revoke_api_key",
@@ -640,7 +640,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Revoke an API key (idempotent)."
+            "description": "Revoke a scoped API key. Revoking an unknown key id is a no-op."
         },
         {
             "id": "rotate_api_key",
@@ -659,7 +659,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Rotate an API key's secret; the new secret is returned exactly once."
+            "description": "Rotate a scoped API key. New plaintext key material is returned once."
         },
         {
             "id": "provider_connections_list",
@@ -1058,7 +1058,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
+            "description": "List recent scoped account and security activity for the active user and organization."
         },
         {
             "id": "list_connectors",
@@ -1078,7 +1078,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
+            "description": "List supported hosted connectors and their setup metadata."
         },
         {
             "id": "get_connector_status",
@@ -1097,7 +1097,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch one connector's connection status for the active workspace."
+            "description": "Return connection status for one connector."
         },
         {
             "id": "list_products",
@@ -1117,7 +1117,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List the product catalog with default scopes and setup paths."
+            "description": "List registered Tempera products and their setup metadata."
         },
         {
             "id": "get_product_status",
@@ -1136,7 +1136,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
+            "description": "Return entitlement and first-mile setup status for one product."
         },
         {
             "id": "get_billing_status",
@@ -1153,7 +1153,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
+            "description": "Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users."
         },
         {
             "id": "create_billing_checkout",
@@ -1177,7 +1177,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
+            "description": "Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL."
         },
         {
             "id": "get_billing_portal",
@@ -1194,7 +1194,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
+            "description": "Create a customer billing portal handoff URL."
         },
         {
             "id": "get_billing_credits",
@@ -1228,7 +1228,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
-            "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
+            "description": "List the entitled Tempera Code model catalog. Requires model:read."
         },
         {
             "id": "record_usage",
@@ -1258,7 +1258,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
+            "description": "Report a billable usage event and receive the current entitlement decision."
         },
         {
             "id": "usage_reservations_create",
@@ -1410,7 +1410,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List the OAuth grants the user has approved in the active workspace."
+            "description": "List connected OAuth app grants for the active workspace."
         },
         {
             "id": "revoke_grant",
@@ -1429,7 +1429,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Revoke an OAuth grant and every refresh token issued under it."
+            "description": "Revoke an OAuth app grant and its refresh tokens."
         },
         {
             "id": "introspect_token",
@@ -1451,7 +1451,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: False} for anything invalid."
+            "description": "Validate a central access token or hosted API key for resource servers."
         },
         {
             "id": "discovery",
@@ -1468,7 +1468,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
+            "description": "OAuth authorization server discovery metadata."
         },
         {
             "id": "get_o_auth_protected_resource_metadata",
@@ -1504,7 +1504,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch OAuth protected-resource metadata for one registered audience."
+            "description": "OAuth protected resource discovery metadata for one registered resource audience."
         },
         {
             "id": "jwks",
@@ -1521,7 +1521,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
+            "description": "JSON Web Key Set for validating central issuer JWTs."
         },
         {
             "id": "admin_operational_provenance",
@@ -1761,7 +1761,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check palette API liveness; returns {ok: True}."
+            "description": "Call GET /health."
         },
         {
             "id": "alerts_evaluate",
@@ -1788,7 +1788,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook."
+            "description": "Call POST /v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook."
         },
         {
             "id": "create_api_key",
@@ -1813,7 +1813,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "admin",
-            "description": "Mint a palette-scoped API key; the secret is returned exactly once."
+            "description": "Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}."
         },
         {
             "id": "revoke_api_key",
@@ -1835,7 +1835,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
-            "description": "Revoke a palette API key."
+            "description": "Call POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke."
         },
         {
             "id": "archive_query_spans",
@@ -1863,7 +1863,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans."
+            "description": "Call GET /v1/archive/{tenantId}/{projectId}/spans."
         },
         {
             "id": "archive_trace",
@@ -1884,7 +1884,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "Archive a trace to Parquet and return the archive manifest."
+            "description": "Call POST /v1/archive/{tenantId}/{projectId}/{traceId}."
         },
         {
             "id": "audit_list",
@@ -1907,7 +1907,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/audit/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/audit/{tenantId}/{projectId}."
         },
         {
             "id": "calibrations_run",
@@ -1933,7 +1933,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}."
+            "description": "Call POST /v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}."
         },
         {
             "id": "connect_get_status",
@@ -1953,7 +1953,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/connect/status/{tenantId}/{projectId}."
         },
         {
             "id": "connectors_list",
@@ -1976,7 +1976,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/connectors/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/connectors/{tenantId}/{projectId}."
         },
         {
             "id": "connectors_connect",
@@ -2000,7 +2000,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect."
+            "description": "Call POST /v1/connectors/{tenantId}/{projectId}/connect."
         },
         {
             "id": "connectors_invoke_tool",
@@ -2025,7 +2025,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke."
+            "description": "Call POST /v1/connectors/{tenantId}/{projectId}/invoke."
         },
         {
             "id": "connectors_get_skills",
@@ -2047,7 +2047,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills."
+            "description": "Call GET /v1/connectors/{tenantId}/{projectId}/skills."
         },
         {
             "id": "connectors_status",
@@ -2069,7 +2069,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status."
+            "description": "Call GET /v1/connectors/{tenantId}/{projectId}/status."
         },
         {
             "id": "connectors_list_tools",
@@ -2093,7 +2093,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools."
+            "description": "Call GET /v1/connectors/{tenantId}/{projectId}/tools."
         },
         {
             "id": "create_dataset",
@@ -2117,7 +2117,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Create a dataset for curating cases from traces."
+            "description": "Call POST /v1/datasets/{tenantId}/{projectId}."
         },
         {
             "id": "promote_trace_to_case",
@@ -2144,7 +2144,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Promote a trace (or one span of it) into a dataset case."
+            "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace."
         },
         {
             "id": "create_dataset_version",
@@ -2167,7 +2167,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Snapshot a dataset into an immutable version for evals and experiments."
+            "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions."
         },
         {
             "id": "evals_run_deterministic",
@@ -2202,7 +2202,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic."
+            "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic."
         },
         {
             "id": "evals_run_judge",
@@ -2238,7 +2238,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge."
+            "description": "Call POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge."
         },
         {
             "id": "import_tempera_bundle",
@@ -2266,7 +2266,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
+            "description": "Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/bundles."
         },
         {
             "id": "record_tempera_decision",
@@ -2294,7 +2294,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
+            "description": "Call POST /v1/eval-results/{tenantId}/{projectId}/tempera/decisions."
         },
         {
             "id": "get_tempera_evidence",
@@ -2316,7 +2316,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
+            "description": "Call GET /v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}."
         },
         {
             "id": "experiments_run_deterministic",
@@ -2355,7 +2355,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic."
+            "description": "Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic."
         },
         {
             "id": "experiments_run_judge",
@@ -2396,7 +2396,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge."
+            "description": "Call POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge."
         },
         {
             "id": "gates_create",
@@ -2425,7 +2425,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/gates/{tenant_id}/{project_id}."
+            "description": "Call POST /v1/gates/{tenantId}/{projectId}."
         },
         {
             "id": "gates_run",
@@ -2448,7 +2448,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run."
+            "description": "Call POST /v1/gates/{tenantId}/{projectId}/{gateId}/run."
         },
         {
             "id": "import_source",
@@ -2476,7 +2476,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "trace:write",
-            "description": "Import spans from a named external source payload."
+            "description": "Call POST /v1/import/{tenantId}/{projectId}/{environmentId}."
         },
         {
             "id": "ingest_replay_dead_letter",
@@ -2499,7 +2499,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay."
+            "description": "Call POST /v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay."
         },
         {
             "id": "ingest_get_queue_status",
@@ -2519,7 +2519,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue."
+            "description": "Call GET /v1/ingest/{tenantId}/{projectId}/queue."
         },
         {
             "id": "ingest_drain_trace_ingested",
@@ -2541,7 +2541,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain."
+            "description": "Call POST /v1/ingest/{tenantId}/{projectId}/trace-ingested/drain."
         },
         {
             "id": "ingest_drain_trace_writes",
@@ -2563,7 +2563,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain."
+            "description": "Call POST /v1/ingest/{tenantId}/{projectId}/trace-writes/drain."
         },
         {
             "id": "ingest_reconcile_trace",
@@ -2584,7 +2584,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile."
+            "description": "Call POST /v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile."
         },
         {
             "id": "judge_evaluate",
@@ -2613,7 +2613,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate."
+            "description": "Call POST /v1/judge/{tenantId}/{projectId}/evaluate."
         },
         {
             "id": "judge_list_ledger",
@@ -2636,7 +2636,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger."
+            "description": "Call GET /v1/judge/{tenantId}/{projectId}/ledger."
         },
         {
             "id": "online_decide_sampling",
@@ -2665,7 +2665,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling."
+            "description": "Call POST /v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling."
         },
         {
             "id": "prompts_list",
@@ -2688,7 +2688,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/prompts/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/prompts/{tenantId}/{projectId}."
         },
         {
             "id": "prompts_create",
@@ -2717,7 +2717,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/prompts/{tenant_id}/{project_id}."
+            "description": "Call POST /v1/prompts/{tenantId}/{projectId}."
         },
         {
             "id": "prompts_get",
@@ -2738,7 +2738,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}."
+            "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}."
         },
         {
             "id": "prompts_diff_versions",
@@ -2762,7 +2762,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff."
+            "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/diff."
         },
         {
             "id": "prompts_list_versions",
@@ -2786,7 +2786,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
+            "description": "Call GET /v1/prompts/{tenantId}/{projectId}/{promptId}/versions."
         },
         {
             "id": "prompts_add_version",
@@ -2813,7 +2813,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
+            "description": "Call POST /v1/prompts/{tenantId}/{projectId}/{promptId}/versions."
         },
         {
             "id": "provider_secrets_list",
@@ -2836,7 +2836,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/provider-secrets/{tenantId}/{projectId}."
         },
         {
             "id": "provider_secrets_create",
@@ -2864,7 +2864,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}."
+            "description": "Call POST /v1/provider-secrets/{tenantId}/{projectId}."
         },
         {
             "id": "provider_secrets_revoke",
@@ -2885,7 +2885,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke."
+            "description": "Call POST /v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke."
         },
         {
             "id": "reviews_create_queue",
@@ -2912,7 +2912,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}."
+            "description": "Call POST /v1/review-queues/{tenantId}/{projectId}."
         },
         {
             "id": "reviews_list_tasks",
@@ -2937,7 +2937,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks."
+            "description": "Call GET /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks."
         },
         {
             "id": "reviews_enqueue_task_from_trace",
@@ -2967,7 +2967,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace."
+            "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace."
         },
         {
             "id": "reviews_submit_annotation",
@@ -2998,7 +2998,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations."
+            "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations."
         },
         {
             "id": "reviews_promote_annotation",
@@ -3026,7 +3026,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote."
+            "description": "Call POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote."
         },
         {
             "id": "scenarios_list",
@@ -3049,7 +3049,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}."
+            "description": "Call GET /v1/scenarios/{tenantId}/{projectId}."
         },
         {
             "id": "scenarios_create",
@@ -3078,7 +3078,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}."
+            "description": "Call POST /v1/scenarios/{tenantId}/{projectId}."
         },
         {
             "id": "scenarios_mine",
@@ -3103,7 +3103,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine."
+            "description": "Call POST /v1/scenarios/{tenantId}/{projectId}/mine."
         },
         {
             "id": "scenarios_get",
@@ -3124,7 +3124,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}."
+            "description": "Call GET /v1/scenarios/{tenantId}/{projectId}/{scenarioId}."
         },
         {
             "id": "search_spans",
@@ -3155,7 +3155,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "Search spans by text query and facet filters."
+            "description": "Call GET /v1/search/{tenantId}/spans."
         },
         {
             "id": "get_span",
@@ -3179,7 +3179,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "Fetch one canonical span by trace and span id."
+            "description": "Call GET /v1/spans/{tenantId}/{traceId}/{spanId}."
         },
         {
             "id": "get_span_io",
@@ -3203,7 +3203,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "Fetch a span's recorded input and output values."
+            "description": "Call GET /v1/spans/{tenantId}/{traceId}/{spanId}/io."
         },
         {
             "id": "ingest_span",
@@ -3252,7 +3252,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "trace:write",
-            "description": "Ingest one native span; idempotent when an idempotency key is supplied."
+            "description": "Call POST /v1/traces/native."
         },
         {
             "id": "list_traces",
@@ -3287,7 +3287,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "List trace summaries for a tenant with filters and cursor pagination."
+            "description": "Call GET /v1/traces/{tenantId}."
         },
         {
             "id": "get_trace",
@@ -3310,7 +3310,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
-            "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
+            "description": "Call GET /v1/traces/{tenantId}/{traceId}."
         },
         {
             "id": "get_usage_summary",
@@ -3330,7 +3330,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
-            "description": "Fetch usage totals for a tenant project."
+            "description": "Call GET /v1/usage/{tenantId}/{projectId}."
         }
     ],
     "tempo": [
@@ -3383,7 +3383,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempod liveness; returns {ok: True}."
+            "description": "Call GET /health."
         },
         {
             "id": "metrics",
@@ -3417,7 +3417,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
+            "description": "Call GET /openapi.json."
         },
         {
             "id": "ready",
@@ -3434,7 +3434,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
+            "description": "Call GET /ready."
         },
         {
             "id": "drain",
@@ -3451,7 +3451,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /drain."
+            "description": "Call POST /v1/drain."
         },
         {
             "id": "list_runs",
@@ -3472,7 +3472,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List agent runs, optionally filtered to one session."
+            "description": "Call GET /v1/runs."
         },
         {
             "id": "get_run",
@@ -3491,7 +3491,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch one agent run with its state."
+            "description": "Call GET /v1/runs/{runId}."
         },
         {
             "id": "run_events",
@@ -3512,7 +3512,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /runs/{run_id}/events."
+            "description": "Call GET /v1/runs/{runId}/events."
         },
         {
             "id": "cancel_run",
@@ -3531,7 +3531,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Cancel an agent run."
+            "description": "Call POST /v1/runs/{runId}:cancel."
         },
         {
             "id": "resume_run",
@@ -3550,7 +3550,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Resume an agent run after a human handoff completes."
+            "description": "Call POST /v1/runs/{runId}:resume."
         },
         {
             "id": "list_sessions",
@@ -3570,7 +3570,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "List browser sessions with their state and creation time."
+            "description": "Call GET /v1/sessions."
         },
         {
             "id": "create_session",
@@ -3592,7 +3592,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
+            "description": "Call POST /v1/sessions."
         },
         {
             "id": "close_session",
@@ -3611,7 +3611,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Close a browser session and release its engine resources."
+            "description": "Call DELETE /v1/sessions/{sessionId}."
         },
         {
             "id": "grant_confirmation",
@@ -3631,7 +3631,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Grant a pending policy confirmation and receive a single-use grant token."
+            "description": "Call POST /v1/sessions/{sessionId}/confirmations/{confirmationId}:grant."
         },
         {
             "id": "session_events",
@@ -3652,7 +3652,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the session's event window after a sequence number."
+            "description": "Call GET /v1/sessions/{sessionId}/events."
         },
         {
             "id": "manager_session",
@@ -3671,7 +3671,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call GET /sessions/{session_id}/manager."
+            "description": "Call GET /v1/sessions/{sessionId}/manager."
         },
         {
             "id": "create_run",
@@ -3695,7 +3695,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Start an agent run against the session with a goal, action budget, and round limit."
+            "description": "Call POST /v1/sessions/{sessionId}/runs."
         },
         {
             "id": "register_session_surface",
@@ -3721,7 +3721,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /sessions/{session_id}/surfaces."
+            "description": "Call POST /v1/sessions/{sessionId}/surfaces."
         },
         {
             "id": "remove_session_surface",
@@ -3741,7 +3741,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
+            "description": "Call DELETE /v1/sessions/{sessionId}/surfaces/{surfaceId}."
         },
         {
             "id": "act_batch",
@@ -3769,7 +3769,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+            "description": "Call POST /v1/sessions/{sessionId}:actBatch."
         },
         {
             "id": "adopt_session",
@@ -3795,7 +3795,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+            "description": "Call POST /v1/sessions/{sessionId}:adopt."
         },
         {
             "id": "handoff_session",
@@ -3814,7 +3814,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Return write ownership of the session to the agent plane."
+            "description": "Call POST /v1/sessions/{sessionId}:handoff."
         },
         {
             "id": "observe",
@@ -3833,7 +3833,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
+            "description": "Call GET /v1/sessions/{sessionId}:observe."
         },
         {
             "id": "screenshot",
@@ -3854,7 +3854,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+            "description": "Call GET /v1/sessions/{sessionId}:screenshot."
         },
         {
             "id": "transform_session",
@@ -3883,7 +3883,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Call POST /sessions/{session_id}/transform."
+            "description": "Call POST /v1/sessions/{sessionId}:transform."
         }
     ],
     "temperaLlm": [
@@ -3902,7 +3902,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempera-llm gateway liveness; returns {ok: True}."
+            "description": "Call GET /healthz."
         },
         {
             "id": "readiness_check",
@@ -3948,7 +3948,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "model:invoke",
-            "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
+            "description": "Call POST /v1/chat/completions."
         },
         {
             "id": "list_models",
@@ -3968,7 +3968,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
-            "description": "List the configured model catalog the gateway can route to."
+            "description": "Call GET /v1/models."
         },
         {
             "id": "create_response",
@@ -3995,7 +3995,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "model:invoke",
-            "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
+            "description": "Call POST /v1/responses."
         }
     ],
     "temperaWorkflows": [
@@ -4014,15 +4014,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempera-workflows engine liveness."
+            "description": "Liveness. Unauthenticated."
         },
         {
             "id": "list_node_types",
             "upstream_operation_id": "nodeTypes.list",
             "method": "GET",
             "path": "/v1/node-types",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4034,15 +4034,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
-            "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
+            "description": "The studio palette: every node type with config JSON Schema and outputs."
         },
         {
             "id": "list_runs",
             "upstream_operation_id": "runs.list",
             "method": "GET",
             "path": "/v1/runs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4055,15 +4055,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
-            "description": "List workflow runs, optionally filtered to one workflow."
+            "description": "List runs, newest first."
         },
         {
             "id": "get_run",
             "upstream_operation_id": "runs.get",
             "method": "GET",
             "path": "/v1/runs/{runId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4074,15 +4074,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
-            "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
+            "description": "Full run view: status, per-node states with outputs/logs/metrics, timestamps."
         },
         {
             "id": "cancel_run",
             "upstream_operation_id": "runs.cancel",
             "method": "POST",
             "path": "/v1/runs/{runId}:cancel",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4093,15 +4093,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
-            "description": "Cancel a queued or running workflow run."
+            "description": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200."
         },
         {
             "id": "runs_signal",
             "upstream_operation_id": "runs.signal",
             "method": "POST",
             "path": "/v1/runs/{runId}:signal",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "runId"
             ],
@@ -4121,7 +4121,7 @@ OPERATIONS = {
                 "payloadDigest"
             ],
             "body_defaults": {},
-            "scope": None,
+            "scope": "workflow:run",
             "description": "Consume a durable external callback and resume a waiting run."
         },
         {
@@ -4129,8 +4129,8 @@ OPERATIONS = {
             "upstream_operation_id": "workflows.list",
             "method": "GET",
             "path": "/v1/workflows",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -4142,15 +4142,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
-            "description": "List stored workflow definitions, newest first."
+            "description": "List workflows."
         },
         {
             "id": "create_workflow",
             "upstream_operation_id": "workflows.create",
             "method": "POST",
             "path": "/v1/workflows",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4173,34 +4173,15 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
-        },
-        {
-            "id": "get_workflow",
-            "upstream_operation_id": "workflows.get",
-            "method": "GET",
-            "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "workflowId"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": "workflow:read",
-            "description": "Fetch one stored workflow definition."
+            "description": "Create a workflow from a `tempera.workflow/v1` definition."
         },
         {
             "id": "delete_workflow",
             "upstream_operation_id": "workflows.delete",
             "method": "DELETE",
             "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4211,15 +4192,34 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Delete a stored workflow definition."
+            "description": "Delete a workflow. Existing runs keep their definition snapshots."
+        },
+        {
+            "id": "get_workflow",
+            "upstream_operation_id": "workflows.get",
+            "method": "GET",
+            "path": "/v1/workflows/{workflowId}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "workflowId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:read",
+            "description": "Get one workflow."
         },
         {
             "id": "update_workflow",
             "upstream_operation_id": "workflows.update",
             "method": "PATCH",
             "path": "/v1/workflows/{workflowId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4246,15 +4246,15 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Replace a stored workflow definition with a new validated revision."
+            "description": "Replace a workflow definition through an AIP-style masked update."
         },
         {
             "id": "create_run",
             "upstream_operation_id": "runs.create",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}/runs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4272,15 +4272,15 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
-            "description": "Start a run of a stored workflow with an optional input document and idempotency key."
+            "description": "Start a run (job pattern): returns immediately with the queued run; poll."
         },
         {
             "id": "call_workflow",
             "upstream_operation_id": "workflows.call",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:call",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4299,15 +4299,40 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
-            "description": "Run a workflow to completion and return its output in a single call."
+            "description": "Create a run AND wait for it to finish, returning the run + output in one."
+        },
+        {
+            "id": "compile_bio_campaign",
+            "upstream_operation_id": "workflows.compileBioCampaign",
+            "method": "POST",
+            "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "workflowId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "deadlineMs",
+                "maxRounds",
+                "name",
+                "signalExpiresAfterSeconds",
+                "signalPrefix"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:write",
+            "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
         },
         {
             "id": "compose_workflow",
             "upstream_operation_id": "workflows.compose",
             "method": "POST",
             "path": "/v1/workflows/{workflowId}:compose",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [
                 "workflowId"
             ],
@@ -4326,15 +4351,15 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
+            "description": "Ask Tempera Code to propose a validated workflow draft, or search the full."
         },
         {
             "id": "assist_json",
             "upstream_operation_id": "workflows.assistJson",
             "method": "POST",
             "path": "/v1/workflows:assistJson",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4354,15 +4379,15 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
+            "description": "Generate or repair one JSON configuration value with the configured."
         },
         {
             "id": "validate_workflow",
             "upstream_operation_id": "workflows.validate",
             "method": "POST",
             "path": "/v1/workflows:validate",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -4385,7 +4410,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
-            "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
+            "description": "Validate a definition without saving it. Returns 200 with the issue list."
         }
     ],
     "temperaGym": [
@@ -4404,7 +4429,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check tempera-gym service liveness."
+            "description": "Liveness probe (unauthenticated)."
         },
         {
             "id": "list_environments",
@@ -4424,7 +4449,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
+            "description": "Built-in and boot-trusted versioned environment catalog."
         },
         {
             "id": "list_domains",
@@ -4668,7 +4693,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List persisted rollout run index records, newest first."
+            "description": "Persisted-run index, newest first."
         },
         {
             "id": "get_run",
@@ -4687,7 +4712,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
+            "description": "Full trajectory envelope (incl. metadata.timing) for one run."
         },
         {
             "id": "create_rollout",
@@ -4715,7 +4740,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
+            "description": "Execute one rollout synchronously, store it, return the summary."
         },
         {
             "id": "list_sealed_evaluators",
@@ -5137,7 +5162,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the browser adapter contract, required controls, and conformance profile."
+            "description": "Call GET /v1/browser/adapter/contract."
         },
         {
             "id": "projects_browser_adapters_claim_launch",
@@ -5275,7 +5300,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
+            "description": "Call POST /v1/browser/admit."
         },
         {
             "id": "get_browser_profiles",
@@ -5292,7 +5317,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
+            "description": "Call GET /v1/browser/profiles."
         },
         {
             "id": "get_capabilities",
@@ -5309,7 +5334,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
+            "description": "Call GET /v1/capabilities."
         },
         {
             "id": "execute",
@@ -5337,7 +5362,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
+            "description": "Call POST /v1/execute."
         },
         {
             "id": "health",
@@ -5354,7 +5379,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
+            "description": "Call GET /v1/health."
         },
         {
             "id": "get_integration_contract",
@@ -5371,7 +5396,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch the ecosystem integration contract this daemon implements."
+            "description": "Call GET /v1/integration."
         },
         {
             "id": "create_job",
@@ -5399,7 +5424,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
-            "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
+            "description": "Call POST /v1/jobs."
         },
         {
             "id": "cancel_job",
@@ -5418,7 +5443,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
+            "description": "Call DELETE /v1/jobs/{id}."
         },
         {
             "id": "get_job",
@@ -5437,7 +5462,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Fetch a sandbox job's status and result."
+            "description": "Call GET /v1/jobs/{id}."
         },
         {
             "id": "projects_modules_create",
@@ -5723,7 +5748,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
-            "description": "Check data-engine liveness; returns the service status."
+            "description": "Health check."
         },
         {
             "id": "list_use_cases",
@@ -5747,7 +5772,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
+            "description": "List MVP data products and pipeline templates."
         },
         {
             "id": "get_use_case",
@@ -5769,7 +5794,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
+            "description": "Get one MVP use-case template."
         },
         {
             "id": "ingest_artifact",
@@ -5796,7 +5821,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
+            "description": "Ingest one or many artifacts."
         },
         {
             "id": "ingest_web",
@@ -5826,7 +5851,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
+            "description": "Fetch, parse, and ingest a public HTTP/HTTPS page."
         },
         {
             "id": "create_campaign",
@@ -5858,7 +5883,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
+            "description": "Create a data campaign with rubric, budget, target accuracy, and skill tags."
         },
         {
             "id": "list_campaigns",
@@ -5882,7 +5907,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List a project's data campaigns with pagination."
+            "description": "List data campaigns."
         },
         {
             "id": "transition_campaign",
@@ -5910,7 +5935,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
+            "description": "Pause, resume, or permanently close campaign job admission."
         },
         {
             "id": "get_reviewer_qualification",
@@ -5932,7 +5957,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "review:resolve",
-            "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
+            "description": "Get the authenticated reviewer's campaign qualification."
         },
         {
             "id": "run_use_case",
@@ -5965,7 +5990,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
+            "description": "Run a complete MVP use-case pipeline."
         },
         {
             "id": "list_expert_tasks",
@@ -5991,7 +6016,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List human residual review tasks, optionally filtered by status and campaign."
+            "description": "List human residual review tasks."
         },
         {
             "id": "create_review_qualification_task",
@@ -6022,7 +6047,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:gold:manage",
-            "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
+            "description": "Clone a real review task into an isolated HMAC-scored qualification task."
         },
         {
             "id": "resolve_expert_task",
@@ -6059,7 +6084,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
-            "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+            "description": "Resolve, abstain, flag, or adjudicate one human residual."
         },
         {
             "id": "claim_expert_task",
@@ -6117,7 +6142,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
-            "description": "Renew the authenticated reviewer's active expert-task lease."
+            "description": "Renew the authenticated reviewer's active task lease."
         },
         {
             "id": "release_expert_task_assignment",
@@ -6145,7 +6170,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
-            "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
+            "description": "Release the authenticated reviewer's active task lease for reassignment."
         },
         {
             "id": "save_expert_task_draft",
@@ -6201,7 +6226,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "review:resolve",
-            "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
+            "description": "Get project-scoped human-review operations and quality measures."
         },
         {
             "id": "get_metrics",
@@ -6222,7 +6247,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch data-engine usage and quality metrics for a project."
+            "description": "Get data-engine usage and quality metrics for a project."
         },
         {
             "id": "get_label_quality",
@@ -6243,7 +6268,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch the project label-quality report and unresolved expert backlog."
+            "description": "Get the label quality report for a project."
         },
         {
             "id": "get_ecosystem_readiness",
@@ -6264,7 +6289,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch public-site and ecosystem readiness signals for a project."
+            "description": "Get public-site and ecosystem readiness for one project."
         },
         {
             "id": "list_artifacts",
@@ -6289,7 +6314,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
+            "description": "List artifacts."
         },
         {
             "id": "get_artifact",
@@ -6313,7 +6338,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
+            "description": "Get an artifact."
         },
         {
             "id": "list_artifact_labels",
@@ -6338,7 +6363,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List the labels attached to one artifact."
+            "description": "List labels for an artifact."
         },
         {
             "id": "profile_dataset",
@@ -6362,7 +6387,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
+            "description": "Profile dataset quality before export."
         },
         {
             "id": "create_job",
@@ -6393,7 +6418,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
+            "description": "Create a labeling job."
         },
         {
             "id": "get_job",
@@ -6415,7 +6440,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one labeling job with its state and progress."
+            "description": "Get a job."
         },
         {
             "id": "get_job_results",
@@ -6440,7 +6465,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List the deterministic label results a job produced."
+            "description": "List deterministic results for a job."
         },
         {
             "id": "get_product",
@@ -6462,7 +6487,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one emitted product bundle with its status and manifest URL."
+            "description": "Get product."
         },
         {
             "id": "validate_product",
@@ -6484,7 +6509,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Validate an emitted product bundle's referential integrity and hygiene."
+            "description": "Validate an emitted product bundle."
         },
         {
             "id": "check_product_leakage",
@@ -6509,7 +6534,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Check raw-hash leakage between exactly two product bundles."
+            "description": "Check raw_hash leakage between two product bundles."
         },
         {
             "id": "get_product_manifest",
@@ -6531,7 +6556,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
+            "description": "Get an integrity-checked eval product manifest."
         },
         {
             "id": "admit_training_release",
@@ -6560,7 +6585,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "training:publish",
-            "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints."
+            "description": "Admit an exact product generation for model training."
         },
         {
             "id": "get_training_release",
@@ -6582,7 +6607,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "training:publish",
-            "description": "Revalidate and fetch one training release, including any durable stale state."
+            "description": "Revalidate and get a training release."
         },
         {
             "id": "derive_bundle",
@@ -6613,7 +6638,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Derive a deterministic post-training bundle from a ready product."
+            "description": "Derive a post-training bundle (SFT or preference) from a READY product."
         },
         {
             "id": "emit_eval",
@@ -6640,7 +6665,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
+            "description": "Emit eval bundle."
         },
         {
             "id": "extract_source",
@@ -6678,7 +6703,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Extract bounded objects or records from a configured source connector."
+            "description": "Extract from a source connector (s3, snowflake, salesforce) into artifacts."
         },
         {
             "id": "list_connectors",
@@ -6702,7 +6727,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List registered source connectors for a project."
+            "description": "List source connectors with configured/unconfigured state."
         },
         {
             "id": "create_tool",
@@ -6759,7 +6784,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List stored custom tools and their usage statistics."
+            "description": "List stored custom tools with usage stats."
         },
         {
             "id": "get_tool",
@@ -6781,7 +6806,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one stored custom tool and its usage statistics."
+            "description": "Get a stored custom tool (definition + stats)."
         },
         {
             "id": "delete_tool",
@@ -6803,7 +6828,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Delete a stored custom tool and every retained version."
+            "description": "Hard-delete a stored custom tool."
         },
         {
             "id": "invoke_tool",
@@ -6827,7 +6852,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Invoke a stored custom tool through its configured execution boundary."
+            "description": "Invoke a stored custom tool."
         },
         {
             "id": "commit_discovery_release",
@@ -6935,7 +6960,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Create an immutable shared evidence record by canonical content hash."
+            "description": "Create an immutable shared evidence record."
         },
         {
             "id": "list_evidence_records",
@@ -6960,7 +6985,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List immutable shared evidence records with bounded cursor pagination."
+            "description": "List immutable shared evidence records."
         },
         {
             "id": "get_evidence_record",
@@ -6982,7 +7007,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one immutable shared evidence record by its platform digest."
+            "description": "Get one immutable shared evidence record."
         },
         {
             "id": "create_episode",
@@ -7029,7 +7054,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
-            "description": "Create an immutable shared episode by canonical content hash."
+            "description": "Create an immutable shared episode."
         },
         {
             "id": "list_episodes",
@@ -7054,7 +7079,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List immutable shared episodes with bounded cursor pagination."
+            "description": "List immutable shared episodes."
         },
         {
             "id": "get_episode",
@@ -7076,7 +7101,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one immutable shared episode by its platform digest."
+            "description": "Get one immutable shared episode."
         },
         {
             "id": "query_research_retrieval",
@@ -7113,7 +7138,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Retrieve deterministic candidates for one exact canonical typed research obligation."
+            "description": "Retrieve candidates for an exact canonical typed obligation."
         },
         {
             "id": "create_research_catalog_entry",
@@ -7148,7 +7173,7 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
-            "description": "Create an immutable executable research catalog entry by canonical content hash."
+            "description": "Create an immutable executable research catalog entry."
         },
         {
             "id": "list_research_catalog_entries",
@@ -7172,7 +7197,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "List immutable executable research catalog entries with bounded pagination."
+            "description": "List immutable executable research catalog entries."
         },
         {
             "id": "get_research_catalog_entry",
@@ -7194,7 +7219,7 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
-            "description": "Fetch one immutable executable research catalog entry by content hash."
+            "description": "Get one immutable executable research catalog entry."
         }
     ],
     "humanData": [

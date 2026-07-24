@@ -1,1285 +1,117 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Tempera Workflows API",
-    "description": "Deterministic workflow engine for the Tempera ecosystem: bounded-DAG workflows (tempera.workflow/v1) of typed nodes — native orchestration nodes plus sdk.<product>.<opId> nodes generated from the tempera-sdk surface — executed as replayable, event-streamed runs. Thin orchestrator: code runs in cradle, LLM calls go through tempera-llm, data operations through data-engine.",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "0.1.0"
-  },
-  "paths": {
-    "/healthz": {
-      "get": {
-        "tags": [
-          "health"
-        ],
-        "summary": "Liveness. Unauthenticated.",
-        "operationId": "healthz",
-        "responses": {
-          "200": {
-            "description": "Service is live",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/node-types": {
-      "get": {
-        "tags": [
-          "nodeTypes"
-        ],
-        "summary": "The studio palette: every node type with config JSON Schema and outputs.",
-        "operationId": "nodeTypes.list",
-        "parameters": [
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Maximum entries to return (default 100, max 500).",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "nullable": true,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "pageToken",
-            "in": "query",
-            "description": "Opaque continuation token returned by the preceding list response.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Node type catalog (native + sdk.* nodes)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NodeTypeList"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/runs": {
-      "get": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "List runs, newest first.",
-        "operationId": "runs.list",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "query",
-            "description": "Filter by workflow id.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Maximum entries to return (default 100, max 500).",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "nullable": true,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "pageToken",
-            "in": "query",
-            "description": "Opaque continuation token returned by the preceding list response.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Run summaries",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RunList"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/runs/{runId}": {
-      "get": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Full run view: status, per-node states with outputs/logs/metrics, timestamps.",
-        "operationId": "runs.get",
-        "parameters": [
-          {
-            "name": "runId",
-            "in": "path",
-            "description": "Run id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The run",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Run"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/runs/{runId}/events": {
-      "get": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Server-sent events for a run: replays history from `?since=seq`, then",
-        "description": "streams live `run.state` / `node.state` / `node.log` events until the run\nreaches a terminal state. SSE `id` = seq, `event` = type.",
-        "operationId": "runs.events",
-        "parameters": [
-          {
-            "name": "runId",
-            "in": "path",
-            "description": "Run id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "since",
-            "in": "query",
-            "description": "Replay events with seq greater than this (default 0 = from the start).",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "text/event-stream of RunEvent payloads",
-            "content": {
-              "text/event-stream": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/runs/{runId}:cancel": {
-      "post": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200",
-        "description": "(idempotent); other terminal states return 409.",
-        "operationId": "runs.cancel",
-        "parameters": [
-          {
-            "name": "runId",
-            "in": "path",
-            "description": "Run id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Run already cancelled",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Run"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "Cancellation requested; poll runs.get",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Run"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Run already finished",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/runs/{runId}:signal": {
-      "post": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Consume a durable external callback and resume a waiting run.",
-        "description": "The request binds one complete callback to the exact active wait through its\nsignal name, canonical payload digest, and idempotency key. Exact replays\nreturn the original receipt without starting a second executor.",
-        "operationId": "runs.signal",
-        "parameters": [
-          {
-            "name": "runId",
-            "in": "path",
-            "description": "Run id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunSignalRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Exact signal replay; no second resumption",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RunSignalResponse"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "Signal consumed and run queued for resumption",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RunSignalResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid or schema-incompatible signal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Run not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Wrong, late, amended, or conflicting signal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows": {
-      "get": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "List workflows.",
-        "operationId": "workflows.list",
-        "parameters": [
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Maximum entries to return (default 100, max 500).",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "nullable": true,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "pageToken",
-            "in": "query",
-            "description": "Opaque continuation token returned by the preceding list response.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Workflows, id-sorted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowList"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Create a workflow from a `tempera.workflow/v1` definition.",
-        "operationId": "workflows.create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowDefinition"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResource"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid definition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Workflow id already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Definition too large",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows/{workflowId}": {
-      "get": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Get one workflow.",
-        "operationId": "workflows.get",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The workflow",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResource"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
-        "operationId": "workflows.delete",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Deleted"
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Replace a workflow definition through an AIP-style masked update.",
-        "operationId": "workflows.update",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "updateMask",
-            "in": "query",
-            "description": "Fields to replace. This full-definition endpoint accepts `definition` or `*`.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowDefinition"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResource"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid definition or id mismatch",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Definition too large",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows/{workflowId}/runs": {
-      "post": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Start a run (job pattern): returns immediately with the queued run; poll",
-        "description": "`runs.get` or stream `runs.events`. `idempotencyKey` replays are returned\nwith 200 instead of 202.",
-        "operationId": "runs.create",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunCreateRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Idempotent replay of an existing run",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Run"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "Run accepted and queued",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Run"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Workflow not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows/{workflowId}:call": {
-      "post": {
-        "tags": [
-          "runs"
-        ],
-        "summary": "Create a run AND wait for it to finish, returning the run + output in one",
-        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)` (default `waitMs` = 30s,\nwell under proxy idle limits). If the run has not finished by then it\nreturns 200 with the non-terminal run and a poll hint. A durable `waiting`\nrun returns immediately so a synchronous caller is not held open while an\nexternal experiment is in flight.",
-        "operationId": "workflows.call",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowCallRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The run finished, reached a durable wait, or the synchronous wait bound elapsed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowCallResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Workflow not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows/{workflowId}:compose": {
-      "post": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Ask Tempera Code to propose a validated workflow draft, or search the full",
-        "description": "node catalog when the agent is not connected. This method never saves or\nruns the returned definition. A supplied draft may use a fresh id that is\nnot stored yet, which powers the Studio's prompt-first creation flow;\napplying it still requires an explicit create/update action.",
-        "operationId": "workflows.compose",
-        "parameters": [
-          {
-            "name": "workflowId",
-            "in": "path",
-            "description": "Workflow id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowComposeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Validated draft proposal or full-catalog node matches",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowComposeResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid prompt or draft",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Workflow not found and no draft supplied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Request too large",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows:assistJson": {
-      "post": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Generate or repair one JSON configuration value with the configured",
-        "description": "server-side workflow model. The result is parsed and shape-validated before\nit is returned; this method never saves a workflow or executes a node.",
-        "operationId": "workflows.assistJson",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/JsonAssistRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Validated JSON editor value",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/JsonAssistResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid prompt, mode, or editor value",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Editor value is too large",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Workflow model unavailable or returned the wrong shape",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/workflows:validate": {
-      "post": {
-        "tags": [
-          "workflows"
-        ],
-        "summary": "Validate a definition without saving it. Returns 200 with the issue list",
-        "description": "even when invalid — this is the studio's live linting endpoint.",
-        "operationId": "workflows.validate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WorkflowDefinition"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Validation verdict with issues",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidateResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Body is not a workflow definition",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Missing scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
   "components": {
     "schemas": {
+      "BioCampaignCompileRequest": {
+        "additionalProperties": false,
+        "description": "Compile a bounded, non-mutating Bio campaign workflow.\n\nThe caller supplies sealed Bio artifacts when the returned workflow is run.\nThis request controls orchestration shape only; it cannot supply candidate,\nassay, measurement, or outcome data.",
+        "properties": {
+          "deadlineMs": {
+            "description": "Per-resume execution budget for computation around each durable wait.",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "maxRounds": {
+            "description": "Maximum durable measurement rounds represented in the graph (1..=8).",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "description": "Display name for the returned draft.",
+            "nullable": true,
+            "type": "string"
+          },
+          "signalExpiresAfterSeconds": {
+            "description": "Time each external measurement callback remains acceptable (1..=30 days).",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "signalPrefix": {
+            "description": "Prefix for exact per-round durable signal names.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BioCampaignCompileResponse": {
+        "description": "A validated workflow draft plus the evidence boundary needed to run it.",
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/WorkflowDefinition"
+          },
+          "evidenceBoundary": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxRounds": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "requiredRunInputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "signalContracts": {
+            "items": {
+              "$ref": "#/components/schemas/BioCampaignSignalContract"
+            },
+            "type": "array"
+          },
+          "templateId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "templateId",
+          "definition",
+          "maxRounds",
+          "requiredRunInputs",
+          "signalContracts",
+          "evidenceBoundary"
+        ],
+        "type": "object"
+      },
+      "BioCampaignSignalContract": {
+        "description": "One exact callback contract in a compiled Bio campaign.",
+        "properties": {
+          "payloadSchema": {},
+          "roundNumber": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "signalName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "roundNumber",
+          "signalName",
+          "payloadSchema"
+        ],
+        "type": "object"
+      },
       "ComposeMode": {
-        "type": "string",
         "description": "How `workflows.compose` produced its response.",
         "enum": [
           "agent",
           "guided",
           "catalog",
           "clarify"
-        ]
+        ],
+        "type": "string"
       },
       "EdgeDef": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "A directed data edge.",
-        "required": [
-          "from",
-          "to"
-        ],
         "properties": {
           "from": {
             "$ref": "#/components/schemas/EdgeFrom"
@@ -1288,175 +120,174 @@
             "$ref": "#/components/schemas/EdgeTo"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object"
       },
       "EdgeFrom": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Edge source endpoint.",
-        "required": [
-          "node"
-        ],
         "properties": {
           "node": {
-            "type": "string",
-            "description": "Source node id."
+            "description": "Source node id.",
+            "type": "string"
           },
           "output": {
-            "type": "string",
             "description": "For multi-output nodes (`branch.condition`): the route name\n(`true`/`false`). For single-output nodes: an optional selector into the\noutput — a JSON pointer when it starts with `/`, else an object key.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           }
         },
-        "additionalProperties": false
-      },
-      "EdgeTo": {
-        "type": "object",
-        "description": "Edge target endpoint.",
         "required": [
           "node"
         ],
+        "type": "object"
+      },
+      "EdgeTo": {
+        "additionalProperties": false,
+        "description": "Edge target endpoint.",
         "properties": {
           "input": {
-            "type": "string",
             "description": "Key under which the value lands in the target's input object. When\nomitted, object values are shallow-merged and scalars land under the\nsource node id.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "node": {
-            "type": "string",
-            "description": "Target node id."
+            "description": "Target node id.",
+            "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "node"
+        ],
+        "type": "object"
       },
       "ErrorBody": {
-        "type": "object",
         "description": "The error payload inside [`ErrorResponse`].",
+        "properties": {
+          "code": {
+            "description": "Numeric HTTP status code.",
+            "example": 400,
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "details": {
+            "description": "Typed machine-readable error details.",
+            "items": {
+              "$ref": "#/components/schemas/ErrorInfo"
+            },
+            "type": "array"
+          },
+          "message": {
+            "description": "Human-readable description safe to show to operators.",
+            "type": "string"
+          },
+          "status": {
+            "description": "Canonical `google.rpc.Code` enum name, e.g. `INVALID_ARGUMENT`.",
+            "example": "INVALID_ARGUMENT",
+            "type": "string"
+          }
+        },
         "required": [
           "code",
           "status",
           "message",
           "details"
         ],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Numeric HTTP status code.",
-            "example": 400,
-            "minimum": 0
-          },
-          "details": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ErrorInfo"
-            },
-            "description": "Typed machine-readable error details."
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable description safe to show to operators."
-          },
-          "status": {
-            "type": "string",
-            "description": "Canonical `google.rpc.Code` enum name, e.g. `INVALID_ARGUMENT`.",
-            "example": "INVALID_ARGUMENT"
-          }
-        }
+        "type": "object"
       },
       "ErrorInfo": {
-        "type": "object",
         "description": "A typed `google.rpc.ErrorInfo` detail preserving the service reason.",
+        "properties": {
+          "@type": {
+            "type": "string"
+          },
+          "domain": {
+            "description": "Service namespace for the reason.",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "String metadata, including the retryability decision.",
+            "type": "object"
+          },
+          "reason": {
+            "description": "Stable Workflows reason, e.g. `PAYLOAD_TOO_LARGE`.",
+            "type": "string"
+          }
+        },
         "required": [
           "@type",
           "reason",
           "domain",
           "metadata"
         ],
-        "properties": {
-          "@type": {
-            "type": "string"
-          },
-          "domain": {
-            "type": "string",
-            "description": "Service namespace for the reason."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "String metadata, including the retryability decision.",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "reason": {
-            "type": "string",
-            "description": "Stable Workflows reason, e.g. `PAYLOAD_TOO_LARGE`."
-          }
-        }
+        "type": "object"
       },
       "ErrorResponse": {
-        "type": "object",
         "description": "Wire envelope for every non-2xx response.",
-        "required": [
-          "error"
-        ],
         "properties": {
           "error": {
             "$ref": "#/components/schemas/ErrorBody"
           }
-        }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
       },
       "HealthResponse": {
-        "type": "object",
         "description": "`GET /healthz` response.",
-        "required": [
-          "status",
-          "version"
-        ],
         "properties": {
           "status": {
-            "type": "string",
-            "example": "ok"
+            "example": "ok",
+            "type": "string"
           },
           "version": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "status",
+          "version"
+        ],
+        "type": "object"
       },
       "JsonAssistMode": {
-        "type": "string",
         "description": "Whether JSON assist creates a value from a description or repairs the\ncurrent editor text.",
         "enum": [
           "generate",
           "repair"
-        ]
+        ],
+        "type": "string"
       },
       "JsonAssistPurpose": {
-        "type": "string",
         "description": "Semantic rules applied after the model returns JSON.",
         "enum": [
           "value",
           "jsonSchema",
           "templateMap"
-        ]
+        ],
+        "type": "string"
       },
       "JsonAssistRequest": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Generate or repair one JSON editor value. This authoring helper never\nsaves a workflow or executes a node.",
-        "required": [
-          "mode",
-          "purpose",
-          "expectedRoot"
-        ],
         "properties": {
           "context": {
-            "type": "string",
             "description": "Human-readable field context such as \"Templates\" or \"JSON schema\".",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "current": {
-            "type": "string",
             "description": "Raw editor text. Required in repair mode so malformed JSON can be fixed.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "expectedRoot": {
             "$ref": "#/components/schemas/JsonRootKind"
@@ -1465,24 +296,22 @@
             "$ref": "#/components/schemas/JsonAssistMode"
           },
           "prompt": {
-            "type": "string",
-            "description": "Natural-language description, for example \"a nested customer object\nwith a required string id and an optional array of labels\"."
+            "description": "Natural-language description, for example \"a nested customer object\nwith a required string id and an optional array of labels\".",
+            "type": "string"
           },
           "purpose": {
             "$ref": "#/components/schemas/JsonAssistPurpose"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "mode",
+          "purpose",
+          "expectedRoot"
+        ],
+        "type": "object"
       },
       "JsonAssistResponse": {
-        "type": "object",
         "description": "Strictly parsed and server-validated JSON returned to an editor.",
-        "required": [
-          "value",
-          "formatted",
-          "message",
-          "model"
-        ],
         "properties": {
           "formatted": {
             "type": "string"
@@ -1494,36 +323,39 @@
             "type": "string"
           },
           "value": {}
-        }
+        },
+        "required": [
+          "value",
+          "formatted",
+          "message",
+          "model"
+        ],
+        "type": "object"
       },
       "JsonRootKind": {
-        "type": "string",
         "description": "Required root shape for the generated JSON value.",
         "enum": [
           "any",
           "object",
           "array"
-        ]
+        ],
+        "type": "string"
       },
       "NodeDef": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "One typed node.",
-        "required": [
-          "id",
-          "type"
-        ],
         "properties": {
           "config": {
             "description": "Type-specific configuration, validated against the registry JSON Schema."
           },
           "id": {
-            "type": "string",
-            "description": "Graph-unique id (`[A-Za-z0-9_.-]{1,64}`); the deterministic tie-break key."
+            "description": "Graph-unique id (`[A-Za-z0-9_.-]{1,64}`); the deterministic tie-break key.",
+            "type": "string"
           },
           "name": {
-            "type": "string",
             "description": "Optional display name for the studio canvas.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "onError": {
             "allOf": [
@@ -1546,15 +378,18 @@
             "nullable": true
           },
           "type": {
-            "type": "string",
             "description": "Node type from the registry (`GET /v1/node-types`), e.g. `python.execute`.",
-            "example": "python.execute"
+            "example": "python.execute",
+            "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object"
       },
       "NodeRole": {
-        "type": "string",
         "description": "Semantic role rendered for a node in the workflow graph.",
         "enum": [
           "trigger",
@@ -1562,28 +397,25 @@
           "action",
           "control",
           "output"
-        ]
+        ],
+        "type": "string"
       },
       "NodeState": {
-        "type": "object",
         "description": "Recorded state of one node within a run.",
-        "required": [
-          "state"
-        ],
         "properties": {
           "error": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "finishedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "logs": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "metrics": {
             "description": "`durationMs` plus executor-specific metrics.",
@@ -1594,21 +426,24 @@
             "nullable": true
           },
           "route": {
-            "type": "string",
             "description": "Taken route for multi-output nodes.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "startedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "state": {
             "$ref": "#/components/schemas/NodeStateKind"
           }
-        }
+        },
+        "required": [
+          "state"
+        ],
+        "type": "object"
       },
       "NodeStateKind": {
-        "type": "string",
         "description": "Per-node lifecycle states.",
         "enum": [
           "pending",
@@ -1617,17 +452,11 @@
           "succeeded",
           "failed",
           "skipped"
-        ]
+        ],
+        "type": "string"
       },
       "NodeSuggestion": {
-        "type": "object",
         "description": "One relevant node from the complete native + SDK catalog.",
-        "required": [
-          "type",
-          "displayName",
-          "description",
-          "role"
-        ],
         "properties": {
           "description": {
             "type": "string"
@@ -1636,14 +465,14 @@
             "type": "string"
           },
           "product": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "requiredInputs": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "role": {
             "$ref": "#/components/schemas/NodeRole"
@@ -1651,28 +480,26 @@
           "type": {
             "type": "string"
           }
-        }
-      },
-      "NodeTypeInfo": {
-        "type": "object",
-        "description": "One node type in the studio palette catalog.",
+        },
         "required": [
           "type",
+          "displayName",
           "description",
-          "category",
-          "role",
-          "outputs",
-          "configSchema"
+          "role"
         ],
+        "type": "object"
+      },
+      "NodeTypeInfo": {
+        "description": "One node type in the studio palette catalog.",
         "properties": {
           "apiPath": {
-            "type": "string",
             "description": "Upstream resource or custom-method path for an SDK action.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "category": {
-            "type": "string",
-            "description": "trigger | compute | control | llm | output | sdk."
+            "description": "trigger | compute | control | llm | output | sdk.",
+            "type": "string"
           },
           "configSchema": {
             "description": "JSON Schema for the node's `config`."
@@ -1681,95 +508,104 @@
             "type": "string"
           },
           "displayName": {
-            "type": "string",
             "description": "Friendly studio alias (e.g. \"S3 Ingest\").",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "httpMethod": {
-            "type": "string",
             "description": "Upstream HTTP method for an SDK action.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "operationId": {
-            "type": "string",
             "description": "SDK operation id without the `sdk.<product>.` prefix.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "outputs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "product": {
-            "type": "string",
-            "description": "SDK product key for `sdk.*` nodes.",
-            "nullable": true
-          },
-          "requiredInputs": {
-            "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Inputs that must be supplied by configuration or incoming node data."
+            "type": "array"
+          },
+          "product": {
+            "description": "SDK product key for `sdk.*` nodes.",
+            "nullable": true,
+            "type": "string"
+          },
+          "requiredInputs": {
+            "description": "Inputs that must be supplied by configuration or incoming node data.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           },
           "role": {
             "$ref": "#/components/schemas/NodeRole"
           },
           "type": {
-            "type": "string",
             "description": "Unique type name used in workflow definitions.",
-            "example": "sdk.dataEngine.extractSource"
+            "example": "sdk.dataEngine.extractSource",
+            "type": "string"
           },
           "verified": {
-            "type": "boolean",
             "description": "Honesty flag, present where the operation was cross-checked against the\nupstream product's real contract (today: dataEngine). `false` marks a\nphantom SDK operation — the studio should badge it as unverified.",
-            "nullable": true
+            "nullable": true,
+            "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "type",
+          "description",
+          "category",
+          "role",
+          "outputs",
+          "configSchema"
+        ],
+        "type": "object"
       },
       "NodeTypeList": {
-        "type": "object",
         "description": "`GET /v1/node-types` response: the palette catalog, grouped by product.",
+        "properties": {
+          "groups": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "Group index: category or `sdk.<product>` -> node type names.",
+            "type": "object"
+          },
+          "nextPageToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "nodeTypes": {
+            "description": "All node types, name-sorted.",
+            "items": {
+              "$ref": "#/components/schemas/NodeTypeInfo"
+            },
+            "type": "array"
+          }
+        },
         "required": [
           "nodeTypes",
           "groups"
         ],
-        "properties": {
-          "groups": {
-            "type": "object",
-            "description": "Group index: category or `sdk.<product>` -> node type names.",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "nextPageToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "nodeTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NodeTypeInfo"
-            },
-            "description": "All node types, name-sorted."
-          }
-        }
+        "type": "object"
       },
       "OnErrorMode": {
-        "type": "string",
         "description": "How the engine reacts to a node failure.",
         "enum": [
           "fail",
           "continue",
           "route"
-        ]
+        ],
+        "type": "string"
       },
       "OnErrorPolicy": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Per-node failure policy, attached to a [`NodeDef`] as `onError`.",
         "properties": {
           "mode": {
@@ -1784,93 +620,84 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "type": "object"
       },
       "Position": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Studio canvas coordinates.",
+        "properties": {
+          "x": {
+            "format": "double",
+            "type": "number"
+          },
+          "y": {
+            "format": "double",
+            "type": "number"
+          }
+        },
         "required": [
           "x",
           "y"
         ],
-        "properties": {
-          "x": {
-            "type": "number",
-            "format": "double"
-          },
-          "y": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
+        "type": "object"
       },
       "RetryPolicy": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Bounded retry policy for a node.",
+        "properties": {
+          "backoffMs": {
+            "description": "Fixed delay between attempts in ms (0..=[`MAX_RETRY_BACKOFF_MS`]).",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxAttempts": {
+            "description": "Total attempts including the first (1..=[`MAX_RETRY_ATTEMPTS`]).",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
         "required": [
           "maxAttempts"
         ],
-        "properties": {
-          "backoffMs": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Fixed delay between attempts in ms (0..=[`MAX_RETRY_BACKOFF_MS`]).",
-            "minimum": 0
-          },
-          "maxAttempts": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Total attempts including the first (1..=[`MAX_RETRY_ATTEMPTS`]).",
-            "minimum": 0
-          }
-        },
-        "additionalProperties": false
+        "type": "object"
       },
       "Run": {
-        "type": "object",
         "description": "Full run view (`GET /v1/runs/{runId}`).",
-        "required": [
-          "id",
-          "workflowId",
-          "status",
-          "input",
-          "nodeStates",
-          "createdAt"
-        ],
         "properties": {
           "createdAt": {
             "type": "string"
           },
           "error": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "finishedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "id": {
             "type": "string"
           },
           "idempotencyKey": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "input": {},
           "nodeStates": {
-            "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/NodeState"
-            }
+            },
+            "type": "object"
           },
           "output": {
             "description": "Outputs of the workflow's sink nodes, keyed by node id (size-capped).",
             "nullable": true
           },
           "startedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/RunStatus"
@@ -1886,51 +713,81 @@
           "workflowId": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "workflowId",
+          "status",
+          "input",
+          "nodeStates",
+          "createdAt"
+        ],
+        "type": "object"
       },
       "RunCreateRequest": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "`POST /v1/workflows/{workflowId}/runs` request.",
         "properties": {
           "idempotencyKey": {
-            "type": "string",
             "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "input": {
             "description": "Payload delivered to the trigger node (default `{}`).",
             "nullable": true
           },
           "only": {
-            "type": "array",
+            "description": "Execute exactly this set of node ids; all others are skipped. Combine\nwith `seedOutputs` for a \"test single node\" run.",
             "items": {
               "type": "string"
             },
-            "description": "Execute exactly this set of node ids; all others are skipped. Combine\nwith `seedOutputs` for a \"test single node\" run.",
-            "nullable": true
+            "nullable": true,
+            "type": "array"
           },
           "seedOutputs": {
-            "type": "object",
-            "description": "Inject outputs for nodes treated as already-produced, so `startAt`/`only`\nhave upstream data. Keyed by node id.",
             "additionalProperties": {},
-            "nullable": true
+            "description": "Inject outputs for nodes treated as already-produced, so `startAt`/`only`\nhave upstream data. Keyed by node id.",
+            "nullable": true,
+            "type": "object"
           },
           "startAt": {
-            "type": "string",
             "description": "Execute only this node and its transitive descendants; ancestors are\nskipped unless supplied via `seedOutputs`.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "usePinned": {
-            "type": "boolean",
             "description": "When true, any node with `pinnedOutput` set returns it verbatim without\nexecuting (studio testing of downstream logic). Default false.",
-            "nullable": true
+            "nullable": true,
+            "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "type": "object"
       },
       "RunEvent": {
-        "type": "object",
         "description": "One replayable run event (also the SSE `data` payload; the SSE `id` is\n`seq` and the SSE `event` is `type`).",
+        "properties": {
+          "data": {},
+          "nodeId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "seq": {
+            "description": "Monotonic per-run sequence, starting at 1. Resume with `?since=seq`.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "ts": {
+            "type": "string"
+          },
+          "type": {
+            "description": "`run.state`, `node.state`, or `node.log`.",
+            "type": "string"
+          }
+        },
         "required": [
           "seq",
           "ts",
@@ -1938,61 +795,29 @@
           "runId",
           "data"
         ],
-        "properties": {
-          "data": {},
-          "nodeId": {
-            "type": "string",
-            "nullable": true
-          },
-          "runId": {
-            "type": "string"
-          },
-          "seq": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Monotonic per-run sequence, starting at 1. Resume with `?since=seq`."
-          },
-          "ts": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "description": "`run.state`, `node.state`, or `node.log`."
-          }
-        }
+        "type": "object"
       },
       "RunList": {
-        "type": "object",
         "description": "`GET /v1/runs` response.",
+        "properties": {
+          "nextPageToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            },
+            "type": "array"
+          }
+        },
         "required": [
           "runs"
         ],
-        "properties": {
-          "nextPageToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "runs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RunSummary"
-            }
-          }
-        }
+        "type": "object"
       },
       "RunSignal": {
-        "type": "object",
         "description": "One immutable, single-use signal receipt.",
-        "required": [
-          "id",
-          "runId",
-          "nodeId",
-          "signalName",
-          "idempotencyKey",
-          "payload",
-          "payloadDigest",
-          "receivedAt"
-        ],
         "properties": {
           "id": {
             "type": "string"
@@ -2016,48 +841,53 @@
           "signalName": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "runId",
+          "nodeId",
+          "signalName",
+          "idempotencyKey",
+          "payload",
+          "payloadDigest",
+          "receivedAt"
+        ],
+        "type": "object"
       },
       "RunSignalRequest": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "`POST /v1/runs/{runId}:signal` request.",
+        "properties": {
+          "idempotencyKey": {
+            "description": "Replay key scoped to this run and signal name.",
+            "type": "string"
+          },
+          "payload": {
+            "description": "Complete callback payload. Partial updates are not accumulated."
+          },
+          "payloadDigest": {
+            "description": "SHA-256 of the RFC 8785 JCS bytes of `payload`, supplied by the caller\nand independently re-derived by Workflows.",
+            "type": "string"
+          },
+          "signalName": {
+            "description": "Must exactly match the active `control.awaitSignal` node.",
+            "type": "string"
+          }
+        },
         "required": [
           "signalName",
           "idempotencyKey",
           "payload",
           "payloadDigest"
         ],
-        "properties": {
-          "idempotencyKey": {
-            "type": "string",
-            "description": "Replay key scoped to this run and signal name."
-          },
-          "payload": {
-            "description": "Complete callback payload. Partial updates are not accumulated."
-          },
-          "payloadDigest": {
-            "type": "string",
-            "description": "SHA-256 of the RFC 8785 JCS bytes of `payload`, supplied by the caller\nand independently re-derived by Workflows."
-          },
-          "signalName": {
-            "type": "string",
-            "description": "Must exactly match the active `control.awaitSignal` node."
-          }
-        },
-        "additionalProperties": false
+        "type": "object"
       },
       "RunSignalResponse": {
-        "type": "object",
         "description": "Response from `runs.signal`.",
-        "required": [
-          "signal",
-          "run",
-          "duplicate"
-        ],
         "properties": {
           "duplicate": {
-            "type": "boolean",
-            "description": "True only for an exact replay of an already-consumed idempotency key."
+            "description": "True only for an exact replay of an already-consumed idempotency key.",
+            "type": "boolean"
           },
           "run": {
             "$ref": "#/components/schemas/Run"
@@ -2065,10 +895,15 @@
           "signal": {
             "$ref": "#/components/schemas/RunSignal"
           }
-        }
+        },
+        "required": [
+          "signal",
+          "run",
+          "duplicate"
+        ],
+        "type": "object"
       },
       "RunStatus": {
-        "type": "string",
         "description": "Run lifecycle states.",
         "enum": [
           "queued",
@@ -2077,31 +912,25 @@
           "succeeded",
           "failed",
           "cancelled"
-        ]
+        ],
+        "type": "string"
       },
       "RunSummary": {
-        "type": "object",
         "description": "Run summary for lists.",
-        "required": [
-          "id",
-          "workflowId",
-          "status",
-          "createdAt"
-        ],
         "properties": {
           "createdAt": {
             "type": "string"
           },
           "finishedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "id": {
             "type": "string"
           },
           "startedAt": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/RunStatus"
@@ -2109,19 +938,17 @@
           "workflowId": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "workflowId",
+          "status",
+          "createdAt"
+        ],
+        "type": "object"
       },
       "RunWait": {
-        "type": "object",
         "description": "One durable external wait reached by a run.",
-        "required": [
-          "nodeId",
-          "signalName",
-          "payloadSchema",
-          "payloadSchemaDigest",
-          "createdAt",
-          "expiresAt"
-        ],
         "properties": {
           "createdAt": {
             "type": "string"
@@ -2136,78 +963,82 @@
             "description": "JSON Schema applied before a callback can resume the run."
           },
           "payloadSchemaDigest": {
-            "type": "string",
-            "description": "SHA-256 of the RFC 8785 JCS bytes of `payloadSchema`."
+            "description": "SHA-256 of the RFC 8785 JCS bytes of `payloadSchema`.",
+            "type": "string"
           },
           "signalName": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "nodeId",
+          "signalName",
+          "payloadSchema",
+          "payloadSchemaDigest",
+          "createdAt",
+          "expiresAt"
+        ],
+        "type": "object"
       },
       "Severity": {
-        "type": "string",
         "description": "Severity of a [`ValidationIssue`]. Defaults to `error` for backward\ncompatibility: an issue deserialized without a severity is an error, and\n`runs.create` refuses only on `error`-severity issues.",
         "enum": [
           "error",
           "warning"
-        ]
+        ],
+        "type": "string"
       },
       "ValidateResponse": {
-        "type": "object",
         "description": "`POST /v1/workflows:validate` response (200 even when invalid).",
-        "required": [
-          "valid",
-          "issues"
-        ],
         "properties": {
           "issues": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ValidationIssue"
-            }
+            },
+            "type": "array"
           },
           "valid": {
             "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "valid",
+          "issues"
+        ],
+        "type": "object"
       },
       "ValidationIssue": {
-        "type": "object",
         "description": "One validation finding.",
-        "required": [
-          "code",
-          "message"
-        ],
         "properties": {
           "code": {
-            "type": "string",
-            "description": "Stable machine code, e.g. `CYCLE_DETECTED`."
+            "description": "Stable machine code, e.g. `CYCLE_DETECTED`.",
+            "type": "string"
           },
           "message": {
             "type": "string"
           },
           "nodeId": {
-            "type": "string",
             "description": "Offending node id when the issue is node-scoped.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "severity": {
             "$ref": "#/components/schemas/Severity"
           }
-        }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
       },
       "WorkflowAttachment": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "A small, ephemeral attachment used while composing. Attachments are never\npersisted in the workflow definition or returned to the browser.",
-        "required": [
-          "name",
-          "mediaType",
-          "kind"
-        ],
         "properties": {
           "content": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "kind": {
             "$ref": "#/components/schemas/WorkflowAttachmentKind"
@@ -2219,76 +1050,76 @@
             "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "name",
+          "mediaType",
+          "kind"
+        ],
+        "type": "object"
       },
       "WorkflowAttachmentKind": {
-        "type": "string",
         "description": "How an attachment is supplied to the workflow copilot.",
         "enum": [
           "text",
           "image",
           "reference"
-        ]
+        ],
+        "type": "string"
       },
       "WorkflowCallRequest": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "`POST /v1/workflows/{workflowId}:call` request. The same body as\n`runs.create` plus an optional `waitMs` wait bound: this custom method both\ncreates a run and waits for it to finish, returning the run and its output\nin a single response.",
         "properties": {
           "idempotencyKey": {
-            "type": "string",
             "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "input": {
             "description": "Payload delivered to the trigger node (default `{}`).",
             "nullable": true
           },
           "only": {
-            "type": "array",
+            "description": "Execute exactly this set of node ids; all others are skipped.",
             "items": {
               "type": "string"
             },
-            "description": "Execute exactly this set of node ids; all others are skipped.",
-            "nullable": true
+            "nullable": true,
+            "type": "array"
           },
           "seedOutputs": {
-            "type": "object",
-            "description": "Inject outputs for nodes treated as already-produced.",
             "additionalProperties": {},
-            "nullable": true
+            "description": "Inject outputs for nodes treated as already-produced.",
+            "nullable": true,
+            "type": "object"
           },
           "startAt": {
-            "type": "string",
             "description": "Execute only this node and its transitive descendants.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "usePinned": {
-            "type": "boolean",
             "description": "When true, any node with `pinnedOutput` set returns it verbatim.",
-            "nullable": true
+            "nullable": true,
+            "type": "boolean"
           },
           "waitMs": {
-            "type": "integer",
-            "format": "int64",
             "description": "Max milliseconds to wait for the run to finish before returning it still\nrunning. Bounded by the workflow's `settings.deadlineMs`; when omitted,\na proxy-safe default (30s) is used so the call returns promptly. The run\nkeeps executing in the background either way — poll `runs.get` to finish.",
+            "format": "int64",
+            "minimum": 0,
             "nullable": true,
-            "minimum": 0
+            "type": "integer"
           }
         },
-        "additionalProperties": false
+        "type": "object"
       },
       "WorkflowCallResponse": {
-        "type": "object",
         "description": "`POST /v1/workflows/{workflowId}:call` response: the full run, its final\noutput, and the observed status. When the wait bound elapses before the run\nfinishes, or the run reaches a durable external wait, `output` is null and\n`hint` describes how to continue or poll the run.",
-        "required": [
-          "run",
-          "status"
-        ],
         "properties": {
           "hint": {
-            "type": "string",
             "description": "Present for a non-terminal response: how to poll or signal the run.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "output": {
             "description": "Final run output (sink node outputs) when the run finished; else null.",
@@ -2300,16 +1131,16 @@
           "status": {
             "$ref": "#/components/schemas/RunStatus"
           }
-        }
+        },
+        "required": [
+          "run",
+          "status"
+        ],
+        "type": "object"
       },
       "WorkflowComposeChoice": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "One safe, user-facing answer to a workflow setup question. Selecting a\nchoice sends its bounded follow-up prompt through the same non-mutating\ncomposition path; the browser never writes configuration directly.",
-        "required": [
-          "label",
-          "description",
-          "prompt"
-        ],
         "properties": {
           "description": {
             "type": "string"
@@ -2321,15 +1152,16 @@
             "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "label",
+          "description",
+          "prompt"
+        ],
+        "type": "object"
       },
       "WorkflowComposeMessage": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "One bounded turn of workflow-authoring context. The draft remains the\nsource of truth; history only helps the copilot interpret follow-up edits.",
-        "required": [
-          "role",
-          "content"
-        ],
         "properties": {
           "content": {
             "type": "string"
@@ -2338,22 +1170,21 @@
             "$ref": "#/components/schemas/WorkflowComposeRole"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "role",
+          "content"
+        ],
+        "type": "object"
       },
       "WorkflowComposeQuestion": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "A setup question Architect must resolve before proposing a workflow.",
-        "required": [
-          "id",
-          "question",
-          "choices"
-        ],
         "properties": {
           "choices": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/WorkflowComposeChoice"
-            }
+            },
+            "type": "array"
           },
           "id": {
             "type": "string"
@@ -2362,21 +1193,23 @@
             "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "id",
+          "question",
+          "choices"
+        ],
+        "type": "object"
       },
       "WorkflowComposeRequest": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Ask the workflow copilot to search the SDK or propose a complete draft.\nThe request never saves or executes the workflow.",
-        "required": [
-          "prompt"
-        ],
         "properties": {
           "attachments": {
-            "type": "array",
+            "description": "Ephemeral text, image, or file-reference context. Never persisted.",
             "items": {
               "$ref": "#/components/schemas/WorkflowAttachment"
             },
-            "description": "Ephemeral text, image, or file-reference context. Never persisted."
+            "type": "array"
           },
           "draft": {
             "allOf": [
@@ -2387,37 +1220,35 @@
             "nullable": true
           },
           "history": {
-            "type": "array",
+            "description": "Recent bounded turns for follow-up requests such as “send that weekly”.",
             "items": {
               "$ref": "#/components/schemas/WorkflowComposeMessage"
             },
-            "description": "Recent bounded turns for follow-up requests such as “send that weekly”."
+            "type": "array"
           },
           "model": {
-            "type": "string",
             "description": "Optional entitled model id. The server-side provider default is used when omitted.",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "prompt": {
-            "type": "string",
-            "description": "Natural-language outcome or edit request."
+            "description": "Natural-language outcome or edit request.",
+            "type": "string"
           }
         },
-        "additionalProperties": false
+        "required": [
+          "prompt"
+        ],
+        "type": "object"
       },
       "WorkflowComposeResponse": {
-        "type": "object",
         "description": "A non-mutating workflow proposal or full-catalog search result.",
-        "required": [
-          "mode",
-          "message"
-        ],
         "properties": {
           "changes": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "definition": {
             "allOf": [
@@ -2428,10 +1259,10 @@
             "nullable": true
           },
           "issues": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ValidationIssue"
-            }
+            },
+            "type": "array"
           },
           "message": {
             "type": "string"
@@ -2440,78 +1271,76 @@
             "$ref": "#/components/schemas/ComposeMode"
           },
           "model": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "questions": {
-            "type": "array",
+            "description": "Setup choices that must be answered before a safe proposal can be made.",
             "items": {
               "$ref": "#/components/schemas/WorkflowComposeQuestion"
             },
-            "description": "Setup choices that must be answered before a safe proposal can be made."
+            "type": "array"
           },
           "suggestions": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/NodeSuggestion"
-            }
+            },
+            "type": "array"
           },
           "valid": {
-            "type": "boolean",
             "description": "Whether the proposal passed validation. Absent for catalog-only results.",
-            "nullable": true
+            "nullable": true,
+            "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "mode",
+          "message"
+        ],
+        "type": "object"
       },
       "WorkflowComposeRole": {
-        "type": "string",
         "enum": [
           "user",
           "assistant"
-        ]
+        ],
+        "type": "string"
       },
       "WorkflowDefinition": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "A complete `tempera.workflow/v1` definition.",
-        "required": [
-          "contractVersion",
-          "id",
-          "name",
-          "nodes",
-          "edges"
-        ],
         "properties": {
           "contractVersion": {
-            "type": "string",
             "description": "Must be exactly `tempera.workflow/v1`.",
-            "example": "tempera.workflow/v1"
+            "example": "tempera.workflow/v1",
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           },
           "edges": {
-            "type": "array",
+            "description": "Directed edges carrying data between nodes.",
             "items": {
               "$ref": "#/components/schemas/EdgeDef"
             },
-            "description": "Directed edges carrying data between nodes."
+            "type": "array"
           },
           "id": {
-            "type": "string",
             "description": "Workflow id; doubles as the resource id (`[A-Za-z0-9_-]{1,64}`).",
-            "example": "wf_example"
+            "example": "wf_example",
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "description": "Human-readable name."
+            "description": "Human-readable name.",
+            "type": "string"
           },
           "nodes": {
-            "type": "array",
+            "description": "The DAG nodes.",
             "items": {
               "$ref": "#/components/schemas/NodeDef"
             },
-            "description": "The DAG nodes."
+            "type": "array"
           },
           "settings": {
             "allOf": [
@@ -2522,40 +1351,40 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "required": [
+          "contractVersion",
+          "id",
+          "name",
+          "nodes",
+          "edges"
+        ],
+        "type": "object"
       },
       "WorkflowList": {
-        "type": "object",
         "description": "`GET /v1/workflows` response.",
+        "properties": {
+          "nextPageToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "workflows": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowResource"
+            },
+            "type": "array"
+          }
+        },
         "required": [
           "workflows"
         ],
-        "properties": {
-          "nextPageToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "workflows": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/WorkflowResource"
-            }
-          }
-        }
+        "type": "object"
       },
       "WorkflowResource": {
-        "type": "object",
         "description": "A stored workflow resource.",
-        "required": [
-          "id",
-          "definition",
-          "createdAt",
-          "updatedAt"
-        ],
         "properties": {
           "createdAt": {
-            "type": "string",
-            "description": "RFC 3339 timestamps."
+            "description": "RFC 3339 timestamps.",
+            "type": "string"
           },
           "definition": {
             "$ref": "#/components/schemas/WorkflowDefinition"
@@ -2566,47 +1395,1463 @@
           "updatedAt": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "definition",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
       },
       "WorkflowSettings": {
-        "type": "object",
+        "additionalProperties": false,
         "description": "Run-level execution settings.",
         "properties": {
           "deadlineMs": {
-            "type": "integer",
-            "format": "int64",
             "description": "Wall-clock budget for a whole run (default 300000, max 3600000).",
+            "format": "int64",
+            "minimum": 0,
             "nullable": true,
-            "minimum": 0
+            "type": "integer"
           },
           "maxOutputBytes": {
-            "type": "integer",
-            "format": "int64",
             "description": "Per-node stored-output cap; larger outputs are truncated in the record\n(execution still sees full values). Default 262144, max 2097152.",
+            "format": "int64",
+            "minimum": 0,
             "nullable": true,
-            "minimum": 0
+            "type": "integer"
           }
         },
-        "additionalProperties": false
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Deterministic workflow engine for the Tempera ecosystem: bounded-DAG workflows (tempera.workflow/v1) of typed nodes — native orchestration nodes plus sdk.<product>.<opId> nodes generated from the tempera-sdk surface — executed as replayable, event-streamed runs. Thin orchestrator: code runs in cradle, LLM calls go through tempera-llm, data operations through data-engine.",
+    "license": {
+      "name": "MIT"
+    },
+    "title": "Tempera Workflows API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "healthz",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service is live"
+          }
+        },
+        "summary": "Liveness. Unauthenticated.",
+        "tags": [
+          "health"
+        ],
+        "x-tempera-auth-audience": null,
+        "x-tempera-auth-kind": "none",
+        "x-tempera-required-scope": null
+      }
+    },
+    "/v1/node-types": {
+      "get": {
+        "operationId": "nodeTypes.list",
+        "parameters": [
+          {
+            "description": "Maximum entries to return (default 100, max 500).",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeTypeList"
+                }
+              }
+            },
+            "description": "Node type catalog (native + sdk.* nodes)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          }
+        },
+        "summary": "The studio palette: every node type with config JSON Schema and outputs.",
+        "tags": [
+          "nodeTypes"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      }
+    },
+    "/v1/runs": {
+      "get": {
+        "operationId": "runs.list",
+        "parameters": [
+          {
+            "description": "Filter by workflow id.",
+            "in": "query",
+            "name": "workflowId",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Maximum entries to return (default 100, max 500).",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunList"
+                }
+              }
+            },
+            "description": "Run summaries"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          }
+        },
+        "summary": "List runs, newest first.",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      }
+    },
+    "/v1/runs/{runId}": {
+      "get": {
+        "operationId": "runs.get",
+        "parameters": [
+          {
+            "description": "Run id",
+            "in": "path",
+            "name": "runId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            },
+            "description": "The run"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Full run view: status, per-node states with outputs/logs/metrics, timestamps.",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      }
+    },
+    "/v1/runs/{runId}/events": {
+      "get": {
+        "description": "streams live `run.state` / `node.state` / `node.log` events until the run\nreaches a terminal state. SSE `id` = seq, `event` = type.",
+        "operationId": "runs.events",
+        "parameters": [
+          {
+            "description": "Run id",
+            "in": "path",
+            "name": "runId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Replay events with seq greater than this (default 0 = from the start).",
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "format": "int64",
+              "nullable": true,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "text/event-stream of RunEvent payloads"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Server-sent events for a run: replays history from `?since=seq`, then",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      }
+    },
+    "/v1/runs/{runId}:cancel": {
+      "post": {
+        "description": "(idempotent); other terminal states return 409.",
+        "operationId": "runs.cancel",
+        "parameters": [
+          {
+            "description": "Run id",
+            "in": "path",
+            "name": "runId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            },
+            "description": "Run already cancelled"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            },
+            "description": "Cancellation requested; poll runs.get"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Run already finished"
+          }
+        },
+        "summary": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:run"
+      }
+    },
+    "/v1/runs/{runId}:signal": {
+      "post": {
+        "description": "The request binds one complete callback to the exact active wait through its\nsignal name, canonical payload digest, and idempotency key. Exact replays\nreturn the original receipt without starting a second executor.",
+        "operationId": "runs.signal",
+        "parameters": [
+          {
+            "description": "Run id",
+            "in": "path",
+            "name": "runId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSignalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSignalResponse"
+                }
+              }
+            },
+            "description": "Exact signal replay; no second resumption"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSignalResponse"
+                }
+              }
+            },
+            "description": "Signal consumed and run queued for resumption"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid or schema-incompatible signal"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Run not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Wrong, late, amended, or conflicting signal"
+          }
+        },
+        "summary": "Consume a durable external callback and resume a waiting run.",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:run"
+      }
+    },
+    "/v1/workflows": {
+      "get": {
+        "operationId": "workflows.list",
+        "parameters": [
+          {
+            "description": "Maximum entries to return (default 100, max 500).",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowList"
+                }
+              }
+            },
+            "description": "Workflows, id-sorted"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          }
+        },
+        "summary": "List workflows.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      },
+      "post": {
+        "operationId": "workflows.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            },
+            "description": "Created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid definition"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Workflow id already exists"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Definition too large"
+          }
+        },
+        "summary": "Create a workflow from a `tempera.workflow/v1` definition.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      }
+    },
+    "/v1/workflows/{workflowId}": {
+      "delete": {
+        "operationId": "workflows.delete",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      },
+      "get": {
+        "operationId": "workflows.get",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            },
+            "description": "The workflow"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Get one workflow.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:read"
+      },
+      "patch": {
+        "operationId": "workflows.update",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Fields to replace. This full-definition endpoint accepts `definition` or `*`.",
+            "in": "query",
+            "name": "updateMask",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResource"
+                }
+              }
+            },
+            "description": "Updated"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid definition or id mismatch"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Definition too large"
+          }
+        },
+        "summary": "Replace a workflow definition through an AIP-style masked update.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      }
+    },
+    "/v1/workflows/{workflowId}/runs": {
+      "post": {
+        "description": "`runs.get` or stream `runs.events`. `idempotencyKey` replays are returned\nwith 200 instead of 202.",
+        "operationId": "runs.create",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            },
+            "description": "Idempotent replay of an existing run"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            },
+            "description": "Run accepted and queued"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Workflow not found"
+          }
+        },
+        "summary": "Start a run (job pattern): returns immediately with the queued run; poll",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:run"
+      }
+    },
+    "/v1/workflows/{workflowId}:call": {
+      "post": {
+        "description": "response — the customer-facing \"one call, several services under the hood\"\nsurface. Reuses the exact run machinery as `runs.create` (same executor),\nthen waits up to `min(waitMs, settings.deadlineMs)` (default `waitMs` = 30s,\nwell under proxy idle limits). If the run has not finished by then it\nreturns 200 with the non-terminal run and a poll hint. A durable `waiting`\nrun returns immediately so a synchronous caller is not held open while an\nexternal experiment is in flight.",
+        "operationId": "workflows.call",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowCallRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowCallResponse"
+                }
+              }
+            },
+            "description": "The run finished, reached a durable wait, or the synchronous wait bound elapsed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Workflow not found"
+          }
+        },
+        "summary": "Create a run AND wait for it to finish, returning the run + output in one",
+        "tags": [
+          "runs"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:run"
+      }
+    },
+    "/v1/workflows/{workflowId}:compileBioCampaign": {
+      "post": {
+        "description": "The compiler embeds no candidate, assay, measurement, or outcome fixtures.\nA caller supplies sealed Bio artifacts only when explicitly creating and\nrunning the returned workflow, and measurements enter only through its\ndurable signal boundary.",
+        "operationId": "workflows.compileBioCampaign",
+        "parameters": [
+          {
+            "description": "Workflow id for the returned unsaved draft",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BioCampaignCompileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BioCampaignCompileResponse"
+                }
+              }
+            },
+            "description": "Validated, unsaved Bio campaign workflow draft and exact callback contracts"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid compiler bounds or workflow id"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing workflow:write scope"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request too large"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Generated definition failed internal validation"
+          }
+        },
+        "summary": "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      }
+    },
+    "/v1/workflows/{workflowId}:compose": {
+      "post": {
+        "description": "node catalog when the agent is not connected. This method never saves or\nruns the returned definition. A supplied draft may use a fresh id that is\nnot stored yet, which powers the Studio's prompt-first creation flow;\napplying it still requires an explicit create/update action.",
+        "operationId": "workflows.compose",
+        "parameters": [
+          {
+            "description": "Workflow id",
+            "in": "path",
+            "name": "workflowId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowComposeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowComposeResponse"
+                }
+              }
+            },
+            "description": "Validated draft proposal or full-catalog node matches"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid prompt or draft"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Workflow not found and no draft supplied"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request too large"
+          }
+        },
+        "summary": "Ask Tempera Code to propose a validated workflow draft, or search the full",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      }
+    },
+    "/v1/workflows:assistJson": {
+      "post": {
+        "description": "server-side workflow model. The result is parsed and shape-validated before\nit is returned; this method never saves a workflow or executes a node.",
+        "operationId": "workflows.assistJson",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonAssistRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonAssistResponse"
+                }
+              }
+            },
+            "description": "Validated JSON editor value"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid prompt, mode, or editor value"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Editor value is too large"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Workflow model unavailable or returned the wrong shape"
+          }
+        },
+        "summary": "Generate or repair one JSON configuration value with the configured",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
+      }
+    },
+    "/v1/workflows:validate": {
+      "post": {
+        "description": "even when invalid — this is the studio's live linting endpoint.",
+        "operationId": "workflows.validate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            },
+            "description": "Validation verdict with issues"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Body is not a workflow definition"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          }
+        },
+        "summary": "Validate a definition without saving it. Returns 200 with the issue list",
+        "tags": [
+          "workflows"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "workflow:write"
       }
     }
   },
   "tags": [
     {
-      "name": "health",
-      "description": "Runtime health"
+      "description": "Runtime health",
+      "name": "health"
     },
     {
-      "name": "workflows",
-      "description": "Workflow definitions (tempera.workflow/v1) CRUD + validation"
+      "description": "Workflow definitions (tempera.workflow/v1) CRUD + validation",
+      "name": "workflows"
     },
     {
-      "name": "runs",
-      "description": "Deterministic run execution: job pattern, per-node states, SSE events"
+      "description": "Deterministic run execution: job pattern, per-node states, SSE events",
+      "name": "runs"
     },
     {
-      "name": "nodeTypes",
-      "description": "Data-driven node catalog for the studio palette"
+      "description": "Data-driven node catalog for the studio palette",
+      "name": "nodeTypes"
     }
   ]
 }

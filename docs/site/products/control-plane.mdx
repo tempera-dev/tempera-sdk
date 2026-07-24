@@ -30,7 +30,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 `GET /healthz`
 
-Check control-plane liveness; returns \{ok: true\}.
+Liveness probe for the control plane.
 
 - **Producer operationId:** `getHealth`
 - **Auth:** None (public endpoint).
@@ -86,7 +86,7 @@ let spec = client.build_request("control_plane", "get_readiness", &[])?;
 
 `GET /v1/me`
 
-Fetch the authenticated user's identity, active workspace, and roles.
+Return the current authenticated principal and active workspace context.
 
 - **Producer operationId:** `getMe`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -114,7 +114,7 @@ let spec = client.build_request("control_plane", "me", &[])?;
 
 `GET /v1/orgs`
 
-List the organizations the authenticated user belongs to.
+List organizations/workspaces visible to the current user.
 
 - **Producer operationId:** `listOrganizations`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -158,7 +158,7 @@ let spec = client.build_request("control_plane", "list_orgs", &[
 
 `POST /v1/orgs`
 
-Create an organization; the caller becomes its owner.
+Create an organization/workspace.
 
 - **Producer operationId:** `createOrganization`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -198,7 +198,7 @@ let spec = client.build_request("control_plane", "create_org", &[
 
 `GET /v1/sessions`
 
-List the user's active account sessions.
+List active account-console sessions for the current user.
 
 - **Producer operationId:** `listAccountSessions`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -292,7 +292,7 @@ let spec = client.build_request("control_plane", "create_hosted_session", &[
 
 `DELETE /v1/sessions/{id}`
 
-Revoke an account session and its tokens immediately (idempotent).
+Revoke an account-console session and its refresh token. Revoking an unknown session id is a no-op.
 
 - **Producer operationId:** `revokeAccountSession`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -332,7 +332,7 @@ let spec = client.build_request("control_plane", "revoke_session", &[
 
 `POST /v1/workspace/select`
 
-Switch the active workspace and receive a token pair scoped to it.
+Select the active organization, project, and environment for the account console.
 
 - **Producer operationId:** `selectWorkspace`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -380,7 +380,7 @@ let spec = client.build_request("control_plane", "select_workspace", &[
 
 `GET /v1/team/members`
 
-List team members of the active organization.
+List team members for the active organization.
 
 - **Producer operationId:** `listTeamMembers`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -424,7 +424,7 @@ let spec = client.build_request("control_plane", "list_team_members", &[
 
 `PATCH /v1/team/members/{id}`
 
-Change a team member's role (requires an org admin role; at least one owner must remain).
+Update a team member role.
 
 - **Producer operationId:** `updateTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -479,7 +479,7 @@ let spec = client.build_request("control_plane", "update_team_member", &[
 
 `DELETE /v1/team/members/{id}`
 
-Remove a team member from the active organization (idempotent).
+Remove a team member from the active organization.
 
 - **Producer operationId:** `removeTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -519,7 +519,7 @@ let spec = client.build_request("control_plane", "remove_team_member", &[
 
 `GET /v1/invites`
 
-List invites for the active organization, newest first.
+List organization invites.
 
 - **Producer operationId:** `listInvites`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -563,7 +563,7 @@ let spec = client.build_request("control_plane", "list_invites", &[
 
 `POST /v1/invites`
 
-Invite a user to the active organization; the accept URL is returned once.
+Invite a teammate to the active organization.
 
 - **Producer operationId:** `createInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -607,7 +607,7 @@ let spec = client.build_request("control_plane", "create_invite", &[
 
 `DELETE /v1/invites/{id}`
 
-Cancel a pending invite (idempotent).
+Cancel an organization invite.
 
 - **Producer operationId:** `cancelInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -647,7 +647,7 @@ let spec = client.build_request("control_plane", "cancel_invite", &[
 
 `GET /v1/projects`
 
-List projects across every organization the user belongs to.
+List projects for the active organization.
 
 - **Producer operationId:** `listProjects`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -691,7 +691,7 @@ let spec = client.build_request("control_plane", "list_projects", &[
 
 `POST /v1/projects`
 
-Create a project in an organization (requires an org admin role).
+Create a project in the active organization.
 
 - **Producer operationId:** `createProject`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -735,7 +735,7 @@ let spec = client.build_request("control_plane", "create_project", &[
 
 `GET /v1/environments`
 
-List environments across every project the user can access.
+List environments for the active project.
 
 - **Producer operationId:** `listEnvironments`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -779,7 +779,7 @@ let spec = client.build_request("control_plane", "list_environments", &[
 
 `POST /v1/environments`
 
-Create an environment in a project (requires an org admin role).
+Create an environment in a project owned by the active organization.
 
 - **Producer operationId:** `createEnvironment`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -823,7 +823,7 @@ let spec = client.build_request("control_plane", "create_environment", &[
 
 `GET /v1/api-keys`
 
-List API keys in the active workspace; secrets are never returned.
+List scoped API keys for the active workspace. Plaintext key material is never returned.
 
 - **Producer operationId:** `listApiKeys`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -867,7 +867,7 @@ let spec = client.build_request("control_plane", "list_api_keys", &[
 
 `POST /v1/api-keys`
 
-Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.
+Create a scoped API key. Plaintext key material is returned once.
 
 - **Producer operationId:** `createApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -922,7 +922,7 @@ let spec = client.build_request("control_plane", "create_api_key", &[
 
 `DELETE /v1/api-keys/{id}`
 
-Revoke an API key (idempotent).
+Revoke a scoped API key. Revoking an unknown key id is a no-op.
 
 - **Producer operationId:** `revokeApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -962,7 +962,7 @@ let spec = client.build_request("control_plane", "revoke_api_key", &[
 
 `POST /v1/api-keys/{id}/rotate`
 
-Rotate an API key's secret; the new secret is returned exactly once.
+Rotate a scoped API key. New plaintext key material is returned once.
 
 - **Producer operationId:** `rotateApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -1793,7 +1793,7 @@ let spec = client.build_request("control_plane", "revoke_experiment_approval", &
 
 `GET /v1/audit-log`
 
-List recent audit-log events for the user and active organization (up to 50, newest first).
+List recent scoped account and security activity for the active user and organization.
 
 - **Producer operationId:** `listAuditLog`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -1837,7 +1837,7 @@ let spec = client.build_request("control_plane", "list_audit_log", &[
 
 `GET /v1/connectors`
 
-List the connector catalog (MCP clients, editors, and API surfaces).
+List supported hosted connectors and their setup metadata.
 
 - **Producer operationId:** `listConnectors`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -1881,7 +1881,7 @@ let spec = client.build_request("control_plane", "list_connectors", &[
 
 `GET /v1/connectors/{id}/status`
 
-Fetch one connector's connection status for the active workspace.
+Return connection status for one connector.
 
 - **Producer operationId:** `getConnectorStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -1921,7 +1921,7 @@ let spec = client.build_request("control_plane", "get_connector_status", &[
 
 `GET /v1/products`
 
-List the product catalog with default scopes and setup paths.
+List registered Tempera products and their setup metadata.
 
 - **Producer operationId:** `listProducts`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -1965,7 +1965,7 @@ let spec = client.build_request("control_plane", "list_products", &[
 
 `GET /v1/products/{id}/status`
 
-Fetch one product's activation status, entitlements, signals, and usage meters.
+Return entitlement and first-mile setup status for one product.
 
 - **Producer operationId:** `getProductStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2005,7 +2005,7 @@ let spec = client.build_request("control_plane", "get_product_status", &[
 
 `GET /v1/billing/status`
 
-Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).
+Return billing plan, usage, entitlement, customer, and invoice state for owner, admin, or billing users.
 
 - **Producer operationId:** `getBillingStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2033,7 +2033,7 @@ let spec = client.build_request("control_plane", "get_billing_status", &[])?;
 
 `GET /v1/billing/checkout`
 
-Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).
+Create a Stripe checkout, fiat invoice, or crypto settlement handoff URL.
 
 - **Producer operationId:** `createBillingCheckout`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2081,7 +2081,7 @@ let spec = client.build_request("control_plane", "create_billing_checkout", &[
 
 `GET /v1/billing/portal`
 
-Fetch the billing-portal URL for the organization (requires a billing role).
+Create a customer billing portal handoff URL.
 
 - **Producer operationId:** `createBillingPortal`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2137,7 +2137,7 @@ let spec = client.build_request("control_plane", "get_billing_credits", &[])?;
 
 `GET /v1/model-catalog`
 
-List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
+List the entitled Tempera Code model catalog. Requires model:read.
 
 - **Producer operationId:** `getModelCatalog`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2166,7 +2166,7 @@ let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 
 `POST /v1/usage/events`
 
-Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.
+Report a billable usage event and receive the current entitlement decision.
 
 - **Producer operationId:** `recordUsageEvent`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2488,7 +2488,7 @@ let spec = client.build_request("control_plane", "usage_reservations_reconcile",
 
 `GET /v1/oauth/grants`
 
-List the OAuth grants the user has approved in the active workspace.
+List connected OAuth app grants for the active workspace.
 
 - **Producer operationId:** `listOAuthGrants`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2532,7 +2532,7 @@ let spec = client.build_request("control_plane", "list_grants", &[
 
 `DELETE /v1/oauth/grants/{id}`
 
-Revoke an OAuth grant and every refresh token issued under it.
+Revoke an OAuth app grant and its refresh tokens.
 
 - **Producer operationId:** `revokeOAuthGrant`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
@@ -2572,7 +2572,7 @@ let spec = client.build_request("control_plane", "revoke_grant", &[
 
 `POST /v1/oauth/introspect`
 
-Introspect a token or tp_ API key server-side; requires the introspection secret and returns \{active: false\} for anything invalid.
+Validate a central access token or hosted API key for resource servers.
 
 - **Producer operationId:** `introspectOAuthToken`
 - **Auth:** Introspection secret bearer (server-side only).
@@ -2616,7 +2616,7 @@ let spec = client.build_request("control_plane", "introspect_token", &[
 
 `GET /.well-known/oauth-authorization-server`
 
-Fetch OAuth 2.1 authorization-server metadata for the issuer.
+OAuth authorization server discovery metadata.
 
 - **Producer operationId:** `getOAuthAuthorizationServerMetadata`
 - **Auth:** None (public endpoint).
@@ -2672,7 +2672,7 @@ let spec = client.build_request("control_plane", "get_o_auth_protected_resource_
 
 `GET /.well-known/oauth-protected-resource/{resource}`
 
-Fetch OAuth protected-resource metadata for one registered audience.
+OAuth protected resource discovery metadata for one registered resource audience.
 
 - **Producer operationId:** `getOAuthProtectedResourceMetadataForAudience`
 - **Auth:** None (public endpoint).
@@ -2712,7 +2712,7 @@ let spec = client.build_request("control_plane", "protected_resource_metadata", 
 
 `GET /.well-known/jwks.json`
 
-Fetch the JSON Web Key Set used to verify control-plane access tokens.
+JSON Web Key Set for validating central issuer JWTs.
 
 - **Producer operationId:** `getJsonWebKeySet`
 - **Auth:** None (public endpoint).

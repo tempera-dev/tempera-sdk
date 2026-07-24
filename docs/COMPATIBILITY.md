@@ -17,6 +17,12 @@
   It transports the complete bounded round history to Bio for independent
   decision replay and stopping-rule derivation; the SDK neither invents
   cumulative counters nor claims that any physical campaign ran.
+- Bio campaign compiler: `compileBioCampaign` is generated from
+  `tempera-dev/tempera-workflows@366c87d4588fb843bbdf38eeb75253cf905aea24`
+  with the exact custom-method path, lower-camel request body, audience
+  `tempera-workflows`, and scope `workflow:write`. It returns an unsaved
+  workflow draft; the SDK does not create or run the workflow, provide
+  biological artifacts, submit physical work, or claim an experimental result.
 - Breaking corrections: Auth Hub's duplicate `signup`/`login` aliases become
   the canonical `createHostedSession` operation; Data Engine adopts its
   canonical `/v1/{parent}` paths and current request fields. Its

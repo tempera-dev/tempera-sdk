@@ -130,6 +130,48 @@ class ConformanceTest(unittest.TestCase):
 
 
 class DispatchTest(unittest.TestCase):
+    def test_bio_campaign_compiler_preserves_exact_workflows_contract(self):
+        operation = next(
+            item
+            for item in OPERATIONS["temperaWorkflows"]
+            if item["id"] == "compile_bio_campaign"
+        )
+        self.assertEqual(
+            operation["upstream_operation_id"],
+            "workflows.compileBioCampaign",
+        )
+        self.assertEqual(operation["auth"], "oauthResource")
+        self.assertEqual(operation["auth_audience"], "tempera-workflows")
+        self.assertEqual(operation["scope"], "workflow:write")
+
+        client, transport = make_client()
+        result = client.tempera_workflows.compile_bio_campaign(
+            {
+                "workflowId": "campaign/alpha",
+                "name": "Prospective round train",
+                "max_rounds": 3,
+                "signal_prefix": "bio.provider",
+                "signal_expires_after_seconds": 86_400,
+                "deadline_ms": 30_000,
+            }
+        )
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(
+            transport.calls[0]["path"],
+            "/v1/workflows/campaign%2Falpha:compileBioCampaign",
+        )
+        self.assertNotIn("%3A", transport.calls[0]["url"])
+        self.assertEqual(
+            transport.calls[0]["body"],
+            {
+                "deadlineMs": 30_000,
+                "maxRounds": 3,
+                "name": "Prospective round train",
+                "signalExpiresAfterSeconds": 86_400,
+                "signalPrefix": "bio.provider",
+            },
+        )
+
     def test_declared_query_and_body_parameters_route_to_the_right_place(self):
         client, transport = make_client()
         client.palette.list_traces({"tenant_id": "t1", "limit": 5, "cursor": "abc"})
@@ -701,9 +743,14 @@ class ProductMetadataTest(unittest.TestCase):
 
     def test_operation_methods_carry_the_surface_description_as_docstring(self):
         client, _ = make_client()
+        operation = next(
+            item
+            for item in OPERATIONS["palette"]
+            if item["id"] == "get_trace"
+        )
         self.assertEqual(
             client.palette.get_trace.__doc__,
-            "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
+            operation["description"],
         )
 
 

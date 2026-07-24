@@ -30,7 +30,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 `GET /health`
 
-Check palette API liveness; returns \{ok: true\}.
+Call GET /health.
 
 - **Producer operationId:** `health.check`
 - **Auth:** None (public endpoint).
@@ -58,7 +58,7 @@ let spec = client.build_request("palette", "health", &[])?;
 
 `POST /v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook`
 
-Call POST /v1/alerts/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/webhook.
+Call POST /v1/alerts/\{tenantId\}/\{projectId\}/traces/\{traceId\}/webhook.
 
 - **Producer operationId:** `alerts.evaluate`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -119,7 +119,7 @@ let spec = client.build_request("palette", "alerts_evaluate", &[
 
 `POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}`
 
-Mint a palette-scoped API key; the secret is returned exactly once.
+Call POST /v1/api-keys/\{tenantId\}/\{projectId\}/\{environmentId\}.
 
 - **Producer operationId:** `apiKeys.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -177,7 +177,7 @@ let spec = client.build_request("palette", "create_api_key", &[
 
 `POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke`
 
-Revoke a palette API key.
+Call POST /v1/api-keys/\{tenantId\}/\{projectId\}/\{environmentId\}/\{apiKeyId\}/revoke.
 
 - **Producer operationId:** `apiKeys.revoke`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -230,7 +230,7 @@ let spec = client.build_request("palette", "revoke_api_key", &[
 
 `GET /v1/archive/{tenantId}/{projectId}/spans`
 
-Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
+Call GET /v1/archive/\{tenantId\}/\{projectId\}/spans.
 
 - **Producer operationId:** `archive.querySpans`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -292,7 +292,7 @@ let spec = client.build_request("palette", "archive_query_spans", &[
 
 `POST /v1/archive/{tenantId}/{projectId}/{traceId}`
 
-Archive a trace to Parquet and return the archive manifest.
+Call POST /v1/archive/\{tenantId\}/\{projectId\}/\{traceId\}.
 
 - **Producer operationId:** `archive.archiveTrace`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -341,7 +341,7 @@ let spec = client.build_request("palette", "archive_trace", &[
 
 `GET /v1/audit/{tenantId}/{projectId}`
 
-Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
+Call GET /v1/audit/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `audit.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -398,7 +398,7 @@ let spec = client.build_request("palette", "audit_list", &[
 
 `POST /v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}`
 
-Call POST /v1/calibrations/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}.
+Call POST /v1/calibrations/\{tenantId\}/\{projectId\}/\{datasetId\}/versions/\{versionId\}.
 
 - **Producer operationId:** `calibrations.run`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -467,7 +467,7 @@ let spec = client.build_request("palette", "calibrations_run", &[
 
 `GET /v1/connect/status/{tenantId}/{projectId}`
 
-Call GET /v1/connect/status/\{tenant_id\}/\{project_id\}.
+Call GET /v1/connect/status/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `connect.getStatus`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -511,7 +511,7 @@ let spec = client.build_request("palette", "connect_get_status", &[
 
 `GET /v1/connectors/{tenantId}/{projectId}`
 
-Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
+Call GET /v1/connectors/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `connectors.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -568,7 +568,7 @@ let spec = client.build_request("palette", "connectors_list", &[
 
 `POST /v1/connectors/{tenantId}/{projectId}/connect`
 
-Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/connect.
+Call POST /v1/connectors/\{tenantId\}/\{projectId\}/connect.
 
 - **Producer operationId:** `connectors.connect`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -621,7 +621,7 @@ let spec = client.build_request("palette", "connectors_connect", &[
 
 `POST /v1/connectors/{tenantId}/{projectId}/invoke`
 
-Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
+Call POST /v1/connectors/\{tenantId\}/\{projectId\}/invoke.
 
 - **Producer operationId:** `connectors.invokeTool`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -678,7 +678,7 @@ let spec = client.build_request("palette", "connectors_invoke_tool", &[
 
 `GET /v1/connectors/{tenantId}/{projectId}/skills`
 
-Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
+Call GET /v1/connectors/\{tenantId\}/\{projectId\}/skills.
 
 - **Producer operationId:** `connectors.getSkills`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -731,7 +731,7 @@ let spec = client.build_request("palette", "connectors_get_skills", &[
 
 `GET /v1/connectors/{tenantId}/{projectId}/status`
 
-Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
+Call GET /v1/connectors/\{tenantId\}/\{projectId\}/status.
 
 - **Producer operationId:** `connectors.status`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -784,7 +784,7 @@ let spec = client.build_request("palette", "connectors_status", &[
 
 `GET /v1/connectors/{tenantId}/{projectId}/tools`
 
-Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
+Call GET /v1/connectors/\{tenantId\}/\{projectId\}/tools.
 
 - **Producer operationId:** `connectors.listTools`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -842,7 +842,7 @@ let spec = client.build_request("palette", "connectors_list_tools", &[
 
 `POST /v1/datasets/{tenantId}/{projectId}`
 
-Create a dataset for curating cases from traces.
+Call POST /v1/datasets/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `datasets.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -896,7 +896,7 @@ let spec = client.build_request("palette", "create_dataset", &[
 
 `POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace`
 
-Promote a trace (or one span of it) into a dataset case.
+Call POST /v1/datasets/\{tenantId\}/\{projectId\}/\{datasetId\}/cases/from-trace.
 
 - **Producer operationId:** `datasets.promoteCaseFromTrace`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -962,7 +962,7 @@ let spec = client.build_request("palette", "promote_trace_to_case", &[
 
 `POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions`
 
-Snapshot a dataset into an immutable version for evals and experiments.
+Call POST /v1/datasets/\{tenantId\}/\{projectId\}/\{datasetId\}/versions.
 
 - **Producer operationId:** `datasets.createVersion`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1020,7 +1020,7 @@ let spec = client.build_request("palette", "create_dataset_version", &[
 
 `POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic`
 
-Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/deterministic.
+Call POST /v1/datasets/\{tenantId\}/\{projectId\}/\{datasetId\}/versions/\{versionId\}/evals/deterministic.
 
 - **Producer operationId:** `evals.runDeterministic`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1096,7 +1096,7 @@ let spec = client.build_request("palette", "evals_run_deterministic", &[
 
 `POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge`
 
-Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/judge.
+Call POST /v1/datasets/\{tenantId\}/\{projectId\}/\{datasetId\}/versions/\{versionId\}/evals/judge.
 
 - **Producer operationId:** `evals.runJudge`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1175,7 +1175,7 @@ let spec = client.build_request("palette", "evals_run_judge", &[
 
 `POST /v1/eval-results/{tenantId}/{projectId}/tempera/bundles`
 
-Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.
+Call POST /v1/eval-results/\{tenantId\}/\{projectId\}/tempera/bundles.
 
 - **Producer operationId:** `evalResults.importTemperaBundle`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1237,7 +1237,7 @@ let spec = client.build_request("palette", "import_tempera_bundle", &[
 
 `POST /v1/eval-results/{tenantId}/{projectId}/tempera/decisions`
 
-Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.
+Call POST /v1/eval-results/\{tenantId\}/\{projectId\}/tempera/decisions.
 
 - **Producer operationId:** `evalResults.recordTemperaDecision`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1299,7 +1299,7 @@ let spec = client.build_request("palette", "record_tempera_decision", &[
 
 `GET /v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}`
 
-Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.
+Call GET /v1/eval-results/\{tenantId\}/\{projectId\}/tempera/\{kind\}/\{externalId\}.
 
 - **Producer operationId:** `evalResults.getTemperaEvidence`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1352,7 +1352,7 @@ let spec = client.build_request("palette", "get_tempera_evidence", &[
 
 `POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic`
 
-Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/deterministic.
+Call POST /v1/experiments/\{tenantId\}/\{projectId\}/\{datasetId\}/versions/\{versionId\}/deterministic.
 
 - **Producer operationId:** `experiments.runDeterministic`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1438,7 +1438,7 @@ let spec = client.build_request("palette", "experiments_run_deterministic", &[
 
 `POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge`
 
-Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/judge.
+Call POST /v1/experiments/\{tenantId\}/\{projectId\}/\{datasetId\}/versions/\{versionId\}/judge.
 
 - **Producer operationId:** `experiments.runJudge`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1528,7 +1528,7 @@ let spec = client.build_request("palette", "experiments_run_judge", &[
 
 `POST /v1/gates/{tenantId}/{projectId}`
 
-Call POST /v1/gates/\{tenant_id\}/\{project_id\}.
+Call POST /v1/gates/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `gates.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1591,7 +1591,7 @@ let spec = client.build_request("palette", "gates_create", &[
 
 `POST /v1/gates/{tenantId}/{projectId}/{gateId}/run`
 
-Call POST /v1/gates/\{tenant_id\}/\{project_id\}/\{gate_id\}/run.
+Call POST /v1/gates/\{tenantId\}/\{projectId\}/\{gateId\}/run.
 
 - **Producer operationId:** `gates.run`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1648,7 +1648,7 @@ let spec = client.build_request("palette", "gates_run", &[
 
 `POST /v1/import/{tenantId}/{projectId}/{environmentId}`
 
-Import spans from a named external source payload.
+Call POST /v1/import/\{tenantId\}/\{projectId\}/\{environmentId\}.
 
 - **Producer operationId:** `ingest.importSource`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1716,7 +1716,7 @@ let spec = client.build_request("palette", "import_source", &[
 
 `POST /v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay`
 
-Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/dead-letters/\{message_id\}/replay.
+Call POST /v1/ingest/\{tenantId\}/\{projectId\}/dead-letters/\{messageId\}/replay.
 
 - **Producer operationId:** `ingest.replayDeadLetter`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1770,7 +1770,7 @@ let spec = client.build_request("palette", "ingest_replay_dead_letter", &[
 
 `GET /v1/ingest/{tenantId}/{projectId}/queue`
 
-Call GET /v1/ingest/\{tenant_id\}/\{project_id\}/queue.
+Call GET /v1/ingest/\{tenantId\}/\{projectId\}/queue.
 
 - **Producer operationId:** `ingest.getQueueStatus`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1814,7 +1814,7 @@ let spec = client.build_request("palette", "ingest_get_queue_status", &[
 
 `POST /v1/ingest/{tenantId}/{projectId}/trace-ingested/drain`
 
-Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-ingested/drain.
+Call POST /v1/ingest/\{tenantId\}/\{projectId\}/trace-ingested/drain.
 
 - **Producer operationId:** `ingest.drainTraceIngested`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1864,7 +1864,7 @@ let spec = client.build_request("palette", "ingest_drain_trace_ingested", &[
 
 `POST /v1/ingest/{tenantId}/{projectId}/trace-writes/drain`
 
-Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-writes/drain.
+Call POST /v1/ingest/\{tenantId\}/\{projectId\}/trace-writes/drain.
 
 - **Producer operationId:** `ingest.drainTraceWrites`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1914,7 +1914,7 @@ let spec = client.build_request("palette", "ingest_drain_trace_writes", &[
 
 `POST /v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile`
 
-Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/reconcile.
+Call POST /v1/ingest/\{tenantId\}/\{projectId\}/traces/\{traceId\}/reconcile.
 
 - **Producer operationId:** `ingest.reconcileTrace`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -1962,7 +1962,7 @@ let spec = client.build_request("palette", "ingest_reconcile_trace", &[
 
 `POST /v1/judge/{tenantId}/{projectId}/evaluate`
 
-Call POST /v1/judge/\{tenant_id\}/\{project_id\}/evaluate.
+Call POST /v1/judge/\{tenantId\}/\{projectId\}/evaluate.
 
 - **Producer operationId:** `judge.evaluate`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2024,7 +2024,7 @@ let spec = client.build_request("palette", "judge_evaluate", &[
 
 `GET /v1/judge/{tenantId}/{projectId}/ledger`
 
-Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
+Call GET /v1/judge/\{tenantId\}/\{projectId\}/ledger.
 
 - **Producer operationId:** `judge.listLedger`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2081,7 +2081,7 @@ let spec = client.build_request("palette", "judge_list_ledger", &[
 
 `POST /v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling`
 
-Call POST /v1/online/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/sampling.
+Call POST /v1/online/\{tenantId\}/\{projectId\}/traces/\{traceId\}/sampling.
 
 - **Producer operationId:** `online.decideSampling`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2147,7 +2147,7 @@ let spec = client.build_request("palette", "online_decide_sampling", &[
 
 `GET /v1/prompts/{tenantId}/{projectId}`
 
-Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
+Call GET /v1/prompts/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `prompts.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2204,7 +2204,7 @@ let spec = client.build_request("palette", "prompts_list", &[
 
 `POST /v1/prompts/{tenantId}/{projectId}`
 
-Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
+Call POST /v1/prompts/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `prompts.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2267,7 +2267,7 @@ let spec = client.build_request("palette", "prompts_create", &[
 
 `GET /v1/prompts/{tenantId}/{projectId}/{promptId}`
 
-Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}.
+Call GET /v1/prompts/\{tenantId\}/\{projectId\}/\{promptId\}.
 
 - **Producer operationId:** `prompts.get`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2315,7 +2315,7 @@ let spec = client.build_request("palette", "prompts_get", &[
 
 `GET /v1/prompts/{tenantId}/{projectId}/{promptId}/diff`
 
-Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
+Call GET /v1/prompts/\{tenantId\}/\{projectId\}/\{promptId\}/diff.
 
 - **Producer operationId:** `prompts.diffVersions`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2376,7 +2376,7 @@ let spec = client.build_request("palette", "prompts_diff_versions", &[
 
 `GET /v1/prompts/{tenantId}/{projectId}/{promptId}/versions`
 
-Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
+Call GET /v1/prompts/\{tenantId\}/\{projectId\}/\{promptId\}/versions.
 
 - **Producer operationId:** `prompts.listVersions`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2437,7 +2437,7 @@ let spec = client.build_request("palette", "prompts_list_versions", &[
 
 `POST /v1/prompts/{tenantId}/{projectId}/{promptId}/versions`
 
-Call POST /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
+Call POST /v1/prompts/\{tenantId\}/\{projectId\}/\{promptId\}/versions.
 
 - **Producer operationId:** `prompts.addVersion`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2502,7 +2502,7 @@ let spec = client.build_request("palette", "prompts_add_version", &[
 
 `GET /v1/provider-secrets/{tenantId}/{projectId}`
 
-Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
+Call GET /v1/provider-secrets/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `providerSecrets.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2559,7 +2559,7 @@ let spec = client.build_request("palette", "provider_secrets_list", &[
 
 `POST /v1/provider-secrets/{tenantId}/{projectId}`
 
-Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
+Call POST /v1/provider-secrets/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `providerSecrets.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2620,7 +2620,7 @@ let spec = client.build_request("palette", "provider_secrets_create", &[
 
 `POST /v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke`
 
-Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}/\{provider_secret_id\}/revoke.
+Call POST /v1/provider-secrets/\{tenantId\}/\{projectId\}/\{providerSecretId\}/revoke.
 
 - **Producer operationId:** `providerSecrets.revoke`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2668,7 +2668,7 @@ let spec = client.build_request("palette", "provider_secrets_revoke", &[
 
 `POST /v1/review-queues/{tenantId}/{projectId}`
 
-Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}.
+Call POST /v1/review-queues/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `reviews.createQueue`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2729,7 +2729,7 @@ let spec = client.build_request("palette", "reviews_create_queue", &[
 
 `GET /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks`
 
-Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
+Call GET /v1/review-queues/\{tenantId\}/\{projectId\}/\{queueId\}/tasks.
 
 - **Producer operationId:** `reviews.listTasks`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2791,7 +2791,7 @@ let spec = client.build_request("palette", "reviews_list_tasks", &[
 
 `POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace`
 
-Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/from-trace.
+Call POST /v1/review-queues/\{tenantId\}/\{projectId\}/\{queueId\}/tasks/from-trace.
 
 - **Producer operationId:** `reviews.enqueueTaskFromTrace`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2859,7 +2859,7 @@ let spec = client.build_request("palette", "reviews_enqueue_task_from_trace", &[
 
 `POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations`
 
-Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations.
+Call POST /v1/review-queues/\{tenantId\}/\{projectId\}/\{queueId\}/tasks/\{taskId\}/annotations.
 
 - **Producer operationId:** `reviews.submitAnnotation`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2929,7 +2929,7 @@ let spec = client.build_request("palette", "reviews_submit_annotation", &[
 
 `POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote`
 
-Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations/\{annotation_id\}/promote.
+Call POST /v1/review-queues/\{tenantId\}/\{projectId\}/\{queueId\}/tasks/\{taskId\}/annotations/\{annotationId\}/promote.
 
 - **Producer operationId:** `reviews.promoteAnnotation`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -2998,7 +2998,7 @@ let spec = client.build_request("palette", "reviews_promote_annotation", &[
 
 `GET /v1/scenarios/{tenantId}/{projectId}`
 
-Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
+Call GET /v1/scenarios/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `scenarios.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3055,7 +3055,7 @@ let spec = client.build_request("palette", "scenarios_list", &[
 
 `POST /v1/scenarios/{tenantId}/{projectId}`
 
-Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}.
+Call POST /v1/scenarios/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `scenarios.create`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3118,7 +3118,7 @@ let spec = client.build_request("palette", "scenarios_create", &[
 
 `POST /v1/scenarios/{tenantId}/{projectId}/mine`
 
-Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}/mine.
+Call POST /v1/scenarios/\{tenantId\}/\{projectId\}/mine.
 
 - **Producer operationId:** `scenarios.mine`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3175,7 +3175,7 @@ let spec = client.build_request("palette", "scenarios_mine", &[
 
 `GET /v1/scenarios/{tenantId}/{projectId}/{scenarioId}`
 
-Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}/\{scenario_id\}.
+Call GET /v1/scenarios/\{tenantId\}/\{projectId\}/\{scenarioId\}.
 
 - **Producer operationId:** `scenarios.get`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3223,7 +3223,7 @@ let spec = client.build_request("palette", "scenarios_get", &[
 
 `GET /v1/search/{tenantId}/spans`
 
-Search spans by text query and facet filters.
+Call GET /v1/search/\{tenantId\}/spans.
 
 - **Producer operationId:** `search.spans`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3286,7 +3286,7 @@ let spec = client.build_request("palette", "search_spans", &[
 
 `GET /v1/spans/{tenantId}/{traceId}/{spanId}`
 
-Fetch one canonical span by trace and span id.
+Call GET /v1/spans/\{tenantId\}/\{traceId\}/\{spanId\}.
 
 - **Producer operationId:** `spans.get`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3348,7 +3348,7 @@ let spec = client.build_request("palette", "get_span", &[
 
 `GET /v1/spans/{tenantId}/{traceId}/{spanId}/io`
 
-Fetch a span's recorded input and output values.
+Call GET /v1/spans/\{tenantId\}/\{traceId\}/\{spanId\}/io.
 
 - **Producer operationId:** `spans.getIo`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3410,7 +3410,7 @@ let spec = client.build_request("palette", "get_span_io", &[
 
 `POST /v1/traces/native`
 
-Ingest one native span; idempotent when an idempotency key is supplied.
+Call POST /v1/traces/native.
 
 - **Producer operationId:** `ingest.native`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3499,7 +3499,7 @@ let spec = client.build_request("palette", "ingest_span", &[
 
 `GET /v1/traces/{tenantId}`
 
-List trace summaries for a tenant with filters and cursor pagination.
+Call GET /v1/traces/\{tenantId\}.
 
 - **Producer operationId:** `traces.list`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3566,7 +3566,7 @@ let spec = client.build_request("palette", "list_traces", &[
 
 `GET /v1/traces/{tenantId}/{traceId}`
 
-Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.
+Call GET /v1/traces/\{tenantId\}/\{traceId\}.
 
 - **Producer operationId:** `traces.get`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
@@ -3624,7 +3624,7 @@ let spec = client.build_request("palette", "get_trace", &[
 
 `GET /v1/usage/{tenantId}/{projectId}`
 
-Fetch usage totals for a tenant project.
+Call GET /v1/usage/\{tenantId\}/\{projectId\}.
 
 - **Producer operationId:** `usage.getSummary`
 - **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.

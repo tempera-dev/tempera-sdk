@@ -47,6 +47,50 @@ class SynchronizeProductTests(unittest.TestCase):
         operation = surface["operations"]["dataEngine"][0]
         self.assertEqual(operation["id"], "runUseCase")
         self.assertEqual(operation["path"], "/v1/{parent}/pipelines:runUseCase")
+        self.assertEqual(operation["description"], "Run a use case.")
+
+    def test_refreshes_description_from_the_current_producer_contract(self) -> None:
+        surface = {
+            "operations": {
+                "temperaWorkflows": [
+                    {
+                        "id": "compileBioCampaign",
+                        "method": "POST",
+                        "path": "/v1/workflows/{workflowId}:compileBioCampaign",
+                        "auth": "oauthResource",
+                        "description": "Stale generated copy.",
+                        "upstreamOperationId": "workflows.compileBioCampaign",
+                    }
+                ]
+            }
+        }
+        producer = {
+            "paths": {
+                "/v1/workflows/{workflowId}:compileBioCampaign": {
+                    "post": {
+                        "operationId": "workflows.compileBioCampaign",
+                        "summary": (
+                            "Compile a validated, unsaved, bounded Bio "
+                            "campaign workflow draft"
+                        ),
+                    }
+                }
+            }
+        }
+
+        MODULE.synchronize_product(
+            surface,
+            "temperaWorkflows",
+            producer,
+            set(),
+            {},
+        )
+
+        operation = surface["operations"]["temperaWorkflows"][0]
+        self.assertEqual(
+            operation["description"],
+            "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
+        )
 
     def test_still_rejects_unexplained_deleted_routes(self) -> None:
         surface = {

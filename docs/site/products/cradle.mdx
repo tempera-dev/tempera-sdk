@@ -159,7 +159,7 @@ let spec = client.build_request("cradle", "projects_browser_adapters_validate_co
 
 `GET /v1/browser/adapter/contract`
 
-Fetch the browser adapter contract, required controls, and conformance profile.
+Call GET /v1/browser/adapter/contract.
 
 - **Producer operationId:** `projects.browserAdapters.getContract`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -391,7 +391,7 @@ let spec = client.build_request("cradle", "projects_browser_adapters_validate", 
 
 `POST /v1/browser/admit`
 
-Request admission for a browser session at a sandbox level and receive the guard plan.
+Call POST /v1/browser/admit.
 
 - **Producer operationId:** `projects.browserSessions.admit`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -446,7 +446,7 @@ let spec = client.build_request("cradle", "admit_browser_session", &[
 
 `GET /v1/browser/profiles`
 
-Fetch the browser sandbox profile levels and suppression modes this daemon offers.
+Call GET /v1/browser/profiles.
 
 - **Producer operationId:** `projects.browserProfiles.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -474,7 +474,7 @@ let spec = client.build_request("cradle", "get_browser_profiles", &[])?;
 
 `GET /v1/capabilities`
 
-Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.
+Call GET /v1/capabilities.
 
 - **Producer operationId:** `projects.capabilities.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -502,7 +502,7 @@ let spec = client.build_request("cradle", "get_capabilities", &[])?;
 
 `POST /v1/execute`
 
-Execute source synchronously in a sandbox lane and return the result with metrics.
+Call POST /v1/execute.
 
 - **Producer operationId:** `projects.executions.execute`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -554,7 +554,7 @@ let spec = client.build_request("cradle", "execute", &[
 
 `GET /v1/health`
 
-Check sandbox-daemon liveness; returns status, version, and uptime.
+Call GET /v1/health.
 
 - **Producer operationId:** `health`
 - **Auth:** None (public endpoint).
@@ -582,7 +582,7 @@ let spec = client.build_request("cradle", "health", &[])?;
 
 `GET /v1/integration`
 
-Fetch the ecosystem integration contract this daemon implements.
+Call GET /v1/integration.
 
 - **Producer operationId:** `projects.integration.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -610,7 +610,7 @@ let spec = client.build_request("cradle", "get_integration_contract", &[])?;
 
 `POST /v1/jobs`
 
-Submit an asynchronous sandbox job; returns an operation handle to poll.
+Call POST /v1/jobs.
 
 - **Producer operationId:** `projects.jobs.create`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -662,7 +662,7 @@ let spec = client.build_request("cradle", "create_job", &[
 
 `DELETE /v1/jobs/{id}`
 
-Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).
+Call DELETE /v1/jobs/\{id\}.
 
 - **Producer operationId:** `projects.jobs.cancel`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
@@ -702,7 +702,7 @@ let spec = client.build_request("cradle", "cancel_job", &[
 
 `GET /v1/jobs/{id}`
 
-Fetch a sandbox job's status and result.
+Call GET /v1/jobs/\{id\}.
 
 - **Producer operationId:** `projects.jobs.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
