@@ -137,10 +137,11 @@ export type TemperaClient = {
   temperaLlm: TemperaLlmClient;
   temperaWorkflows: TemperaWorkflowsClient;
   temperaGym: TemperaGymClient;
+  temperaBio: TemperaBioClient;
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;
-  humanData: PassthroughClient;
+  humanData: HumanDataClient;
   tempJs: PassthroughClient;
   tempOS: PassthroughClient;
   arrha: PassthroughClient;

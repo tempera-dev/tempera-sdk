@@ -210,7 +210,7 @@
           {
             "additionalProperties": true,
             "properties": {
-              "case_sensitive": {
+              "caseSensitive": {
                 "default": false,
                 "type": "boolean"
               },
@@ -218,7 +218,7 @@
                 "const": "find_text",
                 "type": "string"
               },
-              "max_results": {
+              "maxResults": {
                 "maximum": 50,
                 "minimum": 1,
                 "type": "integer"
@@ -236,7 +236,7 @@
           {
             "additionalProperties": true,
             "properties": {
-              "case_sensitive": {
+              "caseSensitive": {
                 "default": false,
                 "type": "boolean"
               },
@@ -269,7 +269,7 @@
                 "const": "query_selector",
                 "type": "string"
               },
-              "max_results": {
+              "maxResults": {
                 "maximum": 50,
                 "minimum": 1,
                 "type": "integer"
@@ -422,7 +422,7 @@
               "kind": {
                 "const": "applied"
               },
-              "read_result": {
+              "readResult": {
                 "additionalProperties": true,
                 "properties": {
                   "provenance": {
@@ -1162,7 +1162,7 @@
             "minimum": 0,
             "type": "integer"
           },
-          "since_seq": {
+          "sinceSeq": {
             "minimum": 0,
             "type": "integer"
           },
@@ -1172,7 +1172,7 @@
           }
         },
         "required": [
-          "since_seq",
+          "sinceSeq",
           "seq",
           "added",
           "removed",

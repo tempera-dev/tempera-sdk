@@ -208,6 +208,14 @@ jobs:
             generated_path: specs/cradle-openapi.json
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
+          - name: Human Data
+            repository: human-data
+            source_branch: main
+            source_path: api/openapi.json
+            lock: specs/human-data-openapi.json.source
+            generated_path: specs/human-data-openapi.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
           - name: Tempera Gym
             repository: tempera-gym
             source_branch: main
@@ -216,6 +224,14 @@ jobs:
             generated_path: specs/tempera-gym-api.json
             generated_with: source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2
             transform: yaml-json
+          - name: Tempera Bio
+            repository: tempera-bio
+            source_branch: main
+            source_path: openapi/tempera-bio-discovery-v1.openapi.json
+            lock: specs/tempera-bio-api.json.source
+            generated_path: specs/tempera-bio-api.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
           - name: Tempera LLM
             repository: tempera-llm
             source_branch: main
@@ -282,7 +298,7 @@ jobs:
               output.write(f"commit={commit}\n")
           PY
       - name: Mint private contract reader token
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' }}
+        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         id: contract-reader
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -291,7 +307,7 @@ jobs:
           owner: tempera-dev
           repositories: ${{ matrix.repository }}
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' }}
+        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         with:
           repository: tempera-dev/${{ matrix.repository }}
           ref: ${{ steps.source-lock.outputs.commit }}
@@ -299,7 +315,7 @@ jobs:
           path: .upstream-source
           token: ${{ steps.contract-reader.outputs.token }}
       - name: Reproduce and verify exact committed source
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' }}
+        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         env:
           SOURCE_REPO: tempera-dev/${{ matrix.repository }}
           SOURCE_BRANCH: ${{ matrix.source_branch }}
@@ -339,7 +355,7 @@ jobs:
             --generated-path "$GENERATED_PATH" \
             --lock "$LOCK_PATH"
       - name: Verify explicit hosted exact-source blocker
-        if: ${{ matrix.repository == 'remi' || matrix.repository == 'tempo' }}
+        if: ${{ matrix.repository == 'remi' || matrix.repository == 'tempo' || matrix.repository == 'tempera-bio' || matrix.repository == 'human-data' }}
         env:
           SOURCE_REPO: tempera-dev/${{ matrix.repository }}
         run: python3 scripts/check-exact-source-gaps.py --repository "$SOURCE_REPO"
@@ -359,6 +375,10 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
       - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/test-sdk-names.py
+      - run: python3 scripts/test-aip-conformance.py
+      - run: python3 scripts/check-aip-conformance.py
+      - run: python3 scripts/check-exact-source-gaps.py
       - run: python3 scripts/sync-openapi-surface.py --check
       - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py

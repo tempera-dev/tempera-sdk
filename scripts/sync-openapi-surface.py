@@ -18,23 +18,27 @@ OVERRIDES = ROOT / "contracts" / "sdk-operation-overrides.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 PRODUCT_SPECS = {
     "dataEngine": "data-engine-openapi.json",
+    "humanData": "human-data-openapi.json",
     "controlPlane": "control-plane.openapi.json",
     "palette": "palette-api.json",
     "cradle": "cradle-openapi.json",
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
+    "temperaBio": "tempera-bio-api.json",
     "remi": "remi-http-contract.json",
     "tempo": "tempo-openapi.json",
 }
 DEFAULT_AUTH = {
     "dataEngine": "product",
+    "humanData": "product",
     "controlPlane": "account",
     "palette": "product",
     "cradle": "product",
     "temperaLlm": "product",
     "temperaWorkflows": "product",
     "temperaGym": "product",
+    "temperaBio": "product",
     "remi": "product",
     "tempo": "product",
 }

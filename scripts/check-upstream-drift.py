@@ -18,9 +18,11 @@ EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 VENDORED_SPECS = {
     "dataEngine": "data-engine-openapi.json",
+    "humanData": "human-data-openapi.json",
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
+    "temperaBio": "tempera-bio-api.json",
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",

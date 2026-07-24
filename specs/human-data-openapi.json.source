@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/human-data-openapi.json",
+  "generated_sha256": "2543aa07c7ece2744427646f889777009fe4bee5f9bdd9597235e5a8b3282516",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "1ea7d8f1c1c3fd2fb719232bb111afb3f381f173",
+  "source_branch": "main",
+  "source_commit": "7b44e80fe06c22215e87b06ae651a8b7e6dee5cf",
+  "source_mode": "100644",
+  "source_path": "api/openapi.json",
+  "source_repo": "tempera-dev/human-data",
+  "source_sha256": "2543aa07c7ece2744427646f889777009fe4bee5f9bdd9597235e5a8b3282516"
+}

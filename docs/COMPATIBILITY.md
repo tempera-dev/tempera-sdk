@@ -3,10 +3,11 @@
 ## 2026-07-24 — org-wide current-head contract convergence
 
 - Owner: Contract Spine across the current producer default branches.
-- Compatibility class: breaking pre-1.0 correction; package `0.10.0`, surface version `4`.
-- Producers: Data Engine, Auth Hub, Palette, Cradle, Tempera Gym, Tempera LLM,
-  Tempera Workflows, Remi, and Tempo are pinned to their exact current branch
-  heads.
+- Compatibility class: breaking pre-1.0 correction; package `0.11.0`, surface version `5`.
+- Producers: Data Engine, Auth Hub, Palette, Cradle, Tempera Gym, Tempera Bio,
+  Human Data, Tempera LLM, Tempera Workflows, Remi, and Tempo are pinned to
+  exact reviewed source commits. Each adjacent source receipt records the
+  authoritative repository, `main` branch, path, commit, and content hashes.
 - Coverage: every ordinary buffered HTTP operation that the aggregate
   transport can represent is generated in TypeScript, Python, and Rust. OTLP, OAuth
   form/redirect, inbound webhook, MCP JSON-RPC, private Fabric, BiDi/WebSocket,
@@ -15,7 +16,10 @@
   the canonical `createHostedSession` operation; Data Engine adopts its
   canonical `/v1/{parent}` paths and current request fields. Its
   `projects/*` resource-name template is validated and expanded without
-  percent-encoding the canonical slash in all three languages. The fictitious
+  percent-encoding the canonical slash in all three languages. Tempera Bio and
+  Human Data gain generated typed clients from their committed producer
+  contracts. Workflows retains its durable run-signal client from current
+  `main`. The fictitious
   Tempera Code HTTP gateway methods are removed because its public protocol is
   generated JSON-RPC, not `/v1/models` or `/v1/responses`. Remi is repinned
   from a stale feature branch to its committed `main` manifest; `manage`,
@@ -25,14 +29,17 @@
 - Enforcement: source locks must equal the fetched producer branch head,
   generated surface bindings and producer `operationId` receipts must reproduce
   from the vendored contracts, transport exclusions expire for review, and
-  warning-tier coverage migrations are removed. The Google Cloud AIP ratchet
-  also rejects new or stale path-version, PUT, parameter-casing, custom-verb,
-  pagination, and update-mask violations while resource/error/LRO migrations
-  remain explicit producer-owned breaking work. Remi and Tempo have
-  producer-side hosted green receipts and locally reproduced exact locks, but
-  SDK-hosted cross-repository checkout remains an explicit expiring gap until
-  the Tempera Contract Reader GitHub App is installed on those two private
-  repositories.
+  warning-tier coverage migrations are removed. The executable Google Cloud AIP
+  ratchet rejects path-version, PUT, parameter-casing, JSON-field-casing,
+  custom-verb-casing, pagination, update-mask, and standard-error violations;
+  all eight mechanical categories are at zero. Full AIP-122 and AIP-131 through
+  AIP-136 resource-family redesign, plus AIP-151/AIP-155 long-running-operation
+  semantics, remain explicit producer-owned breaking work rather than being
+  mislabeled as complete. Hosted exact-source jobs reproduce installed private
+  producer contracts at their recorded commits. Bio, Human Data, Remi, and
+  Tempo retain expiring, commit-bound gap receipts until the least-privilege
+  Contract Reader app is installed on those repositories; their producer-side
+  checks and local exact-source reproduction remain required in the interim.
 - Rollback: revert the SDK release and all dependent exact-SHA pins together;
   do not restore phantom routes or weaken current-head drift checks.
 

@@ -7,7 +7,7 @@ for what happens when any product endpoint changes.
 ## The chain of custody
 
 ```
-product handler change                     (palette, tempo, cradle, remi, data-engine, auth-hub)
+product handler change                     (all source-locked HTTP producers)
   └─ product contract artifact             (each repo's own gate, see table below)
        └─ surface.json in this repo        (single source of truth for the SDK)
             └─ scripts/gen-sdk-surface.py  (renders the per-language tables)
@@ -28,7 +28,9 @@ artifacts:
 | tempo | `api/openapi.json` (committed from the runtime generator) | `crates/tempo-headless/tests/openapi_drift.rs` |
 | remi | `docs/public-http-contract.json` | `scripts/check-public-http-contract.py` |
 | data-engine | `api/openapi.yaml` (contract-first, committed) | route/auth coverage in `tests/test_mvp.py` |
+| human-data | `api/openapi.json` | deterministic OpenAPI drift plus runtime conformance tests |
 | tempera-gym | `contracts/gym-api.openapi.yaml` | producer contract tests plus generated-client drift |
+| tempera-bio | `openapi/tempera-bio-discovery-v1.openapi.json` | deterministic runtime regeneration plus REST/auth conformance tests |
 | tempera-llm | `sdks/openapi/tempera-llm-api.json` | CI regenerates from handlers and rejects diff |
 | tempera-workflows | `sdks/openapi/tempera-workflows-api.json` | `scripts/check-contract-sync.sh` |
 
@@ -88,19 +90,21 @@ telemetry or substitute evidence, migration, rollout, and rollback.
 
 ## Error-contract changes
 
-The six products speak four different wire error shapes (see
-`errorContract.wireShapes` in `surface.json`). The SDK normalizes them into
-one `TemperaApiError` (`status`, `code`, `message`, `requestId`, `product`,
-`operation`, `body`) in every language. If a product changes its error shape:
+Ordinary resource APIs converge on the AIP-193 `google.rpc.Status` JSON
+envelope. Protocol and legacy compatibility shapes remain exact and documented
+in `errorContract.wireShapes` in `surface.json`. The SDK normalizes every
+supported shape into one `TemperaApiError` (`status`, `code`, `message`,
+`requestId`, `product`, `operation`, `body`) in every language. If a product
+changes its error shape:
 
 1. Update `errorContract` in `surface.json` (the shapes are documentation,
    but keep them exact).
 2. Update `normalizeErrorBody` / `normalize_error_body` in all three packages
    and their shape tests (each package tests every wire shape).
 
-A product adding a *new* shape should prefer one of the existing ones —
-ideally the cradle shape (`{"error": {code, message, request_id, ...}}`),
-which is the richest.
+A product adding a *new* ordinary HTTP error shape must use the canonical
+AIP-193 envelope. A protocol-native endpoint keeps the error contract defined
+by that protocol and must be admitted as an exact exception.
 
 ## Adding a product
 

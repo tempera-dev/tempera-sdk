@@ -25,6 +25,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from sdk_names import snake_case
+
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 
@@ -39,7 +41,7 @@ PATH_TEMPLATE_RE = re.compile(
 
 
 def snake(camel: str) -> str:
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", camel).lower()
+    return snake_case(camel)
 
 
 def validate(surface: dict) -> list[str]:

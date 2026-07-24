@@ -13,7 +13,7 @@
 //! - [`client`]: [`TemperaClient`] turns `(product, operation, params)` into
 //!   a fully-described [`RequestSpec`].
 //! - [`error`]: [`TemperaApiError`] and [`normalize_error_body`], folding the
-//!   five fleet wire error shapes into one type.
+//!   canonical AIP-193 envelope and supported compatibility shapes into one type.
 //! - [`mcp`]: JSON-RPC 2.0 body builders for the unified MCP gateway.
 
 pub mod auth;
@@ -53,12 +53,13 @@ mod tests {
             "tempera_llm",
             "tempera_workflows",
             "tempera_gym",
+            "tempera_bio",
             "cradle",
             "remi",
             "data_engine",
             "human_data",
             "temp_js",
-            "temp_o_s",
+            "temp_os",
             "arrha",
         ] {
             assert!(find_product(key).is_some(), "missing product {key}");
@@ -80,6 +81,7 @@ mod tests {
         assert!(AUDIENCES.contains(&"tempera-llm"));
         assert!(AUDIENCES.contains(&"tempera-workflows"));
         assert!(AUDIENCES.contains(&"tempera-gym"));
+        assert!(AUDIENCES.contains(&"tempera-bio"));
         assert!(SCOPES.contains(&"workflow:read"));
         assert!(SCOPES.contains(&"workflow:write"));
         assert!(SCOPES.contains(&"workflow:run"));

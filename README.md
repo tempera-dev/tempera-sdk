@@ -24,13 +24,14 @@ generally available or that the control plane is production-ready.
 
 | Client | Product | Typed operations | Audience |
 |---|---|---|---|
-| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 54 | account tokens |
+| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 71 | account tokens |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 27 | `tempo` |
-| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence, record decisions, and return candidate cases to the quality loop | passthrough; no typed operations yet | `human-data` |
+| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence and compute qualification receipts | 1 | `human-data` |
 | `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 61 | `palette` |
 
-Human Data is a provisioned review workflow, not a published raw HTTP route.
-Use only the endpoint contract supplied during onboarding.
+Human Data remains a provisioned review workflow. Its typed
+`computeQualification` method is generated from the exact producer OpenAPI;
+its presence does not advertise unrestricted hosted access.
 
 ## Versioned private contract inventory
 
@@ -42,10 +43,11 @@ a live hosted service, or an undocumented endpoint.
 |---|---|---|---|
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 18 | `cradle` |
 | `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 5 | `tempera-llm` |
-| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
-| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
-| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 14 | `remi` |
-| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 53 | `data-engine` |
+| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 16 | `tempera-workflows` |
+| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 20 | `tempera-gym` |
+| `temperaBio` / `tempera_bio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) — fail-closed computational-biology artifact preparation and verification | 8 | `tempera-bio` |
+| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |
+| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 55 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 The aggregate Palette client covers all 61 ordinary JSON operations in the
@@ -63,7 +65,8 @@ repo does not publish and were removed in `0.10.0`.
 Your provisioned control-plane URL is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
 RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
-`remi`, `human-data`, `data-engine`, `tempera-mcp` registered). One account mints one token
+`remi`, `human-data`, `data-engine`, `tempera-bio`, `tempera-gym`,
+`tempera-llm`, `tempera-workflows`, and `tempera-mcp` registered). One account mints one token
 per product audience, and control-plane API keys (`tp_...`) work as bearers
 at every product via central introspection.
 

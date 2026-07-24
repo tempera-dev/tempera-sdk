@@ -31,6 +31,8 @@ import re
 import sys
 from pathlib import Path
 
+from sdk_names import snake_case
+
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 ROLLOUT = ROOT / "docs" / "ROLLOUT.md"
@@ -59,7 +61,7 @@ MCP_ERROR_MEANINGS = {
 
 def snake(camel: str) -> str:
     """lowerCamelCase -> snake_case (matches gen-sdk-surface.py and the Rust keys)."""
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", camel).lower()
+    return snake_case(camel)
 
 
 def snake_attr(camel: str) -> str:
@@ -446,7 +448,7 @@ def render_index(surface: dict) -> str:
         "",
         "- [Authentication](/authentication) — the unified account model, OAuth2 + PKCE, and `tp_` API keys.",
         "- [Environments](/environments) — presets and base-URL resolution.",
-        "- [Errors](/errors) — one `TemperaApiError` across six wire shapes.",
+        "- [Errors](/errors) — one `TemperaApiError` across canonical and compatibility wire shapes.",
         "- [MCP gateway](/mcp-gateway) — fixed capability-fabric verbs and discovered product cards.",
         "- [Rollout](/rollout) — how an endpoint change propagates into the SDK.",
         "",
@@ -776,15 +778,17 @@ def render_environments(surface: dict) -> str:
 
 def render_errors(surface: dict) -> str:
     contract = surface["errorContract"]
+    wire_shape_count = len(contract["wireShapes"])
     lines = [
         frontmatter(
             "Errors",
-            "One TemperaApiError across six wire error shapes, plus MCP gateway errors.",
+            f"One TemperaApiError across {wire_shape_count} documented wire families, plus MCP gateway errors.",
         )
     ]
     lines += [
-        "Every product speaks its own wire error shape; the SDK normalizes all of",
-        f"them into one **`{contract['name']}`** with identical fields in every",
+        "Resource APIs converge on the AIP-193 error envelope while protocol and",
+        "legacy surfaces retain explicit compatibility. The SDK normalizes them",
+        f"into one **`{contract['name']}`** with identical fields in every",
         "language (Python uses `request_id`; the HTTP-less Rust crate normalizes",
         "`status`/`code`/`message`/`request_id` from response bodies via",
         "`normalize_error_body` and carries no request context):",

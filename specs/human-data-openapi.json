@@ -1,0 +1,283 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Human Data API",
+    "version": "0.1.0",
+    "description": "Read-only live qualification evidence projected from Data Engine. Human Data does not duplicate durable review or release truth."
+  },
+  "tags": [
+    {
+      "name": "Qualifications",
+      "description": "Live qualification evidence for reviewed training products."
+    }
+  ],
+  "paths": {
+    "/v1/qualifications:compute": {
+      "get": {
+        "tags": [
+          "Qualifications"
+        ],
+        "operationId": "computeQualification",
+        "summary": "Compute live qualification evidence",
+        "description": "Idempotently verifies the current product, manifest, and training release on every request and returns a stateless receipt only when all qualification conditions hold.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "query",
+            "required": true,
+            "description": "Data Engine product identifier within the configured project.",
+            "schema": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,254}[A-Za-z0-9])?$"
+            }
+          },
+          {
+            "name": "releaseId",
+            "in": "query",
+            "required": true,
+            "description": "Data Engine training release identifier within the configured project.",
+            "schema": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,254}[A-Za-z0-9])?$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Live qualification evidence.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputeQualificationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The query is malformed or the live evidence is not qualification-ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleApiError"
+                }
+              }
+            }
+          },
+          "414": {
+            "description": "The request URL exceeds the service limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The live evidence provider is unavailable or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleApiError"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with the AIP-193 HTTP/JSON projection of google.rpc.Status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "ComputeQualificationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project",
+          "product",
+          "trainingRelease",
+          "independentReviewerCount",
+          "qualityState",
+          "trainingReleaseState",
+          "rawHashOverlapCount",
+          "verifyTime"
+        ],
+        "properties": {
+          "project": {
+            "description": "Canonical Data Engine project resource name.",
+            "type": "string",
+            "pattern": "^projects/[^/]+$"
+          },
+          "product": {
+            "description": "Canonical Data Engine product resource name.",
+            "type": "string",
+            "pattern": "^projects/[^/]+/products/[^/]+$"
+          },
+          "trainingRelease": {
+            "description": "Canonical Data Engine training release resource name.",
+            "type": "string",
+            "pattern": "^projects/[^/]+/trainingReleases/[^/]+$"
+          },
+          "independentReviewerCount": {
+            "description": "Number of distinct resolved primary review tasks in the live manifest.",
+            "type": "integer",
+            "minimum": 2
+          },
+          "qualityState": {
+            "description": "Live product quality state.",
+            "type": "string",
+            "const": "READY"
+          },
+          "trainingReleaseState": {
+            "description": "Live training release state.",
+            "type": "string",
+            "const": "ACTIVE"
+          },
+          "rawHashOverlapCount": {
+            "description": "Live raw-hash overlap count for the release.",
+            "type": "integer",
+            "const": 0
+          },
+          "verifyTime": {
+            "description": "Time at which Human Data verified the live evidence.",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GoogleRpcErrorInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "type.googleapis.com/google.rpc.ErrorInfo"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[A-Z][A-Z0-9_]+[A-Z0-9]$"
+          },
+          "domain": {
+            "type": "string",
+            "const": "human-data.tempera.dev"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "required": [
+              "httpStatus"
+            ],
+            "properties": {
+              "httpStatus": {
+                "type": "string",
+                "pattern": "^[1-5][0-9]{2}$"
+              }
+            }
+          }
+        }
+      },
+      "GoogleRpcStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "status",
+          "details"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CANCELLED",
+              "UNKNOWN",
+              "INVALID_ARGUMENT",
+              "DEADLINE_EXCEEDED",
+              "NOT_FOUND",
+              "ALREADY_EXISTS",
+              "PERMISSION_DENIED",
+              "RESOURCE_EXHAUSTED",
+              "FAILED_PRECONDITION",
+              "ABORTED",
+              "OUT_OF_RANGE",
+              "UNIMPLEMENTED",
+              "INTERNAL",
+              "UNAVAILABLE",
+              "DATA_LOSS",
+              "UNAUTHENTICATED"
+            ]
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoogleRpcErrorInfo"
+            }
+          }
+        }
+      },
+      "GoogleApiError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleRpcStatus"
+          }
+        }
+      }
+    }
+  }
+}
