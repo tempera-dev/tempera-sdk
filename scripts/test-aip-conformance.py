@@ -329,6 +329,42 @@ class AipConformanceTest(unittest.TestCase):
             violations,
         )
 
+    def test_route_manifest_wire_fields_and_error_types_are_inspected(self) -> None:
+        manifest = {
+            "contract_kind": "http-route-manifest",
+            "error_shape": {
+                "fields": [
+                    "error.code",
+                    "error.status",
+                    "error.message",
+                    "error.details",
+                ],
+                "field_types": {
+                    "error.code": "integer",
+                    "error.status": "string",
+                    "error.message": "string",
+                    "error.details": "array",
+                },
+            },
+            "endpoints": [
+                {
+                    "operation": "createWidget",
+                    "method": "POST",
+                    "path": "/v1/widgets",
+                    "request_fields": ["display_name"],
+                }
+            ],
+        }
+        violations = MODULE.discover_violations({"test": manifest})
+        json_key = (
+            "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
+        )
+        self.assertEqual(violations[json_key]["observed"], ["display_name"])
+        self.assertNotIn(
+            "test|POST|/v1/widgets|aip-193-standard-errors",
+            violations,
+        )
+
     def test_stale_protocol_exceptions_are_rejected(self) -> None:
         failures = MODULE.validate_protocol_exceptions(
             {

@@ -316,14 +316,24 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
         manifest_error_fields = set(
             (spec.get("error_shape") or {}).get("fields") or []
         )
+        manifest_error_types = (
+            (spec.get("error_shape") or {}).get("field_types") or {}
+        )
         manifest_error_issues = []
-        if "error.code" not in manifest_error_fields:
-            manifest_error_issues.append("manifest:error.code")
-        else:
-            manifest_error_issues.append("manifest:error.code:string")
-        for field in ("error.status", "error.details"):
+        for field, expected_type in {
+            "error.code": "integer",
+            "error.status": "string",
+            "error.message": "string",
+            "error.details": "array",
+        }.items():
             if field not in manifest_error_fields:
                 manifest_error_issues.append(f"manifest:{field}")
+                continue
+            actual_type = manifest_error_types.get(field)
+            if actual_type != expected_type:
+                manifest_error_issues.append(
+                    f"manifest:{field}:{actual_type or 'unspecified'}"
+                )
         rows: list[dict[str, Any]] = []
         for endpoint in spec.get("endpoints") or []:
             if not isinstance(endpoint, dict):
@@ -346,7 +356,11 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                         "parameters": parameters,
                         "json_fields": [
                             name
-                            for field in ("body_fields", "response_fields")
+                            for field in (
+                                "request_fields",
+                                "body_fields",
+                                "response_fields",
+                            )
                             for name in endpoint.get(field) or []
                             if isinstance(name, str)
                         ],
