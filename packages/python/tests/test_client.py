@@ -22,6 +22,7 @@ PRODUCT_ATTRS = {
     "temperaLlm": "tempera_llm",
     "temperaWorkflows": "tempera_workflows",
     "temperaGym": "tempera_gym",
+    "temperaBio": "tempera_bio",
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
@@ -76,6 +77,7 @@ def make_client(**overrides):
             "tempera_llm": "https://llm.example.test",
             "tempera_workflows": "https://workflows.example.test",
             "tempera_gym": "https://gym.example.test",
+            "tempera_bio": "https://bio.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
@@ -225,6 +227,45 @@ class DispatchTest(unittest.TestCase):
             transport.calls[-1]["body"],
             {"environmentId": "env-1", "seed": 42},
         )
+
+        client.tempera_bio.verify_measurement(
+            {
+                "candidate": {"candidateId": "candidate-1"},
+                "experimentProposal": {"proposalId": "proposal-1"},
+                "hypothesis": {"hypothesisId": "hypothesis-1"},
+                "identitySignature": {
+                    "keyId": "key-1",
+                    "signature": "c2lnbmF0dXJl",
+                },
+                "program": {"programId": "program-1"},
+                "rawMeasurementBase64": "eyJyZXBsaWNhdGVzIjpbMS4wXX0=",
+            }
+        )
+        self.assertEqual(
+            transport.calls[-1]["path"], "/v1/measurements:verify"
+        )
+        self.assertEqual(
+            transport.calls[-1]["headers"]["authorization"],
+            "Bearer tp_key_1",
+        )
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {
+                "candidate": {"candidateId": "candidate-1"},
+                "experimentProposal": {"proposalId": "proposal-1"},
+                "hypothesis": {"hypothesisId": "hypothesis-1"},
+                "identitySignature": {
+                    "keyId": "key-1",
+                    "signature": "c2lnbmF0dXJl",
+                },
+                "program": {"programId": "program-1"},
+                "rawMeasurementBase64": "eyJyZXBsaWNhdGVzIjpbMS4wXX0=",
+            },
+        )
+        self.assertNotIn(
+            "raw_measurement_base64", transport.calls[-1]["body"]
+        )
+        self.assertNotIn("identity_signature", transport.calls[-1]["body"])
 
         workflow_list_calls = (
             (

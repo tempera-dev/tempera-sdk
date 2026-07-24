@@ -42,10 +42,11 @@ a live hosted service, or an undocumented endpoint.
 |---|---|---|---|
 | `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 18 | `cradle` |
 | `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 5 | `tempera-llm` |
-| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 15 | `tempera-workflows` |
-| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, synchronous rollouts, trajectory-v1 runs) | 5 | `tempera-gym` |
-| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 14 | `remi` |
-| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 53 | `data-engine` |
+| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, runs; run SSE events via passthrough) | 16 | `tempera-workflows` |
+| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack (catalog, rollouts, episodes, sealed evaluation) | 20 | `tempera-gym` |
+| `temperaBio` / `tempera_bio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) — evidence-class-aware discovery derivation from provenance-bound inputs; no physical execution or release persistence | 8 | `tempera-bio` |
+| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |
+| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 55 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
 
 The aggregate Palette client covers all 61 ordinary JSON operations in the
@@ -63,7 +64,7 @@ repo does not publish and were removed in `0.10.0`.
 Your provisioned control-plane URL is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
 RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
-`remi`, `human-data`, `data-engine`, `tempera-mcp` registered). One account mints one token
+`remi`, `human-data`, `data-engine`, `tempera-bio`, `tempera-mcp` registered). One account mints one token
 per product audience, and control-plane API keys (`tp_...`) work as bearers
 at every product via central introspection.
 

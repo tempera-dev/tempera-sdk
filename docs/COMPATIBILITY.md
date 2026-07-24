@@ -1,5 +1,33 @@
 # SDK compatibility ledger
 
+## 2026-07-24 — Tempera Bio discovery client v1
+
+- Owner: Contract Spine consuming the merged Tempera Bio REST/OpenAPI boundary.
+- Compatibility class: additive SDK product and operation family; package
+  `0.11.0`, surface version `5`.
+- Producer: `tempera-dev/tempera-bio@af29cf6a487bc5e30795d8228031c0e42085c495`,
+  `openapi/tempera-bio-discovery-v1.openapi.json`.
+- Added: `temperaBio` / `tempera_bio` in TypeScript and Python and
+  `tempera_bio` in Rust, with eight exact operations for MaveDB source
+  ingestion, hypothesis/candidate/program/proposal derivation, signed
+  measurement verification, decision derivation, and release-manifest
+  preparation.
+- Authority: every generated operation carries the producer's
+  `tempera-bio` audience and one registered phase-specific Bio scope. The SDK
+  neither manufactures a measurement signature nor upgrades retrospective
+  evidence to prospective evidence.
+- Migration: none; this is a new typed family. Existing raw requests remain
+  available but should migrate to the generated methods for exact paths, body
+  fields, audience, and scope metadata.
+- Rollout: merge the SDK after exact-source and all-language gates, then
+  re-vendor the exact SDK surface in Workflows before publishing a sequential
+  Bio workflow template.
+- Rollback: revert this SDK release and its downstream exact-SHA locks
+  together; producer behavior and persisted data are unchanged.
+- Claims: contract conformance only. No hosted Bio deployment, physical
+  experiment, prospective result, efficacy, clinical conclusion, or SOTA
+  result is claimed.
+
 ## 2026-07-24 — org-wide current-head contract convergence
 
 - Owner: Contract Spine across the current producer default branches.

@@ -5,7 +5,7 @@
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio";
 export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -31,6 +31,7 @@ export type TemperaEnvironmentTargets = {
   paletteApiUrl: string;
   paletteMcpUrl: string;
   publicSiteUrl: string;
+  temperaBioApiUrl: string;
   temperaGymUrl: string;
   temperaLlmApiUrl: string;
   temperaWorkflowsApiUrl: string;
@@ -505,6 +506,25 @@ export interface TemperaGymClient extends TemperaProductClientBase {
   getSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Evaluate one frozen policy through its exact sealed adapter. */
   runSealedEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaBioClient extends TemperaProductClientBase {
+  /** Validate and seal caller-supplied discovery candidates without adding candidate or outcome data. */
+  prepareCandidateSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Derive a sealed dataset-release manifest from one verified decision and its exact verifier receipts. */
+  prepareDatasetReleaseManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Derive one evidence-class-preserving round decision from a sealed proposal and complete verifier receipts. */
+  deriveDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Select and seal one bounded experiment proposal from a supplied program and candidate set. */
+  prepareExperimentProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate and seal one caller-supplied falsifiable biological hypothesis. */
+  prepareHypothesis(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify one signed, provenance-bound real measurement batch against its exact program, hypothesis, candidate, and proposal. */
+  verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate and seal one evidence-class-aware discovery program without executing an experiment. */
+  prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch and seal one published, licensed MaveDB score set as public retrospective evidence. */
+  ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {

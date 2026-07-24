@@ -38,6 +38,7 @@ artifacts:
 | remi | `docs/public-http-contract.json` | `scripts/check-public-http-contract.py` |
 | data-engine | `api/openapi.yaml` (contract-first, committed) | route/auth coverage in `tests/test_mvp.py` |
 | tempera-gym | `contracts/gym-api.openapi.yaml` | producer contract tests plus generated-client drift |
+| tempera-bio | `openapi/tempera-bio-discovery-v1.openapi.json` | `python scripts/regen-openapi.py --check` plus REST/OpenAPI parity tests |
 | tempera-llm | `sdks/openapi/tempera-llm-api.json` | CI regenerates from handlers and rejects diff |
 | tempera-workflows | `sdks/openapi/tempera-workflows-api.json` | `scripts/check-contract-sync.sh` |
 

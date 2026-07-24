@@ -53,6 +53,7 @@ mod tests {
             "tempera_llm",
             "tempera_workflows",
             "tempera_gym",
+            "tempera_bio",
             "cradle",
             "remi",
             "data_engine",
@@ -98,6 +99,7 @@ mod tests {
             "https://workflows.tempera.dev"
         );
         assert_eq!(production.tempera_gym_url, "https://gym.tempera.dev");
+        assert_eq!(production.tempera_bio_api_url, "https://bio.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
 

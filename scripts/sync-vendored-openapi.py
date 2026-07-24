@@ -51,6 +51,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2",
         "transform": "yaml-json",
     },
+    "temperaBio": {
+        "source_repo": "tempera-dev/tempera-bio",
+        "source_branch": "main",
+        "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
+        "generated_path": "specs/tempera-bio-discovery-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "temperaLlm": {
         "source_repo": "tempera-dev/tempera-llm",
         "source_branch": "main",

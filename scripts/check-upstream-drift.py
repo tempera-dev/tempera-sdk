@@ -21,6 +21,7 @@ VENDORED_SPECS = {
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
+    "temperaBio": "tempera-bio-discovery-api.json",
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",

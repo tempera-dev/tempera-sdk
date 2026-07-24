@@ -1,0 +1,1037 @@
+{
+  "components": {
+    "schemas": {
+      "ArtifactResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "properties": {
+              "contentDigest": {
+                "pattern": "^sha256:[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "schemaVersion": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "schemaVersion",
+              "contentDigest"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "DeriveDecisionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateSet": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "experimentProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "verifierReceipts": {
+            "items": {
+              "$ref": "#/components/schemas/SealedArtifact"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "program",
+          "hypothesis",
+          "candidateSet",
+          "experimentProposal",
+          "verifierReceipts"
+        ],
+        "type": "object"
+      },
+      "GoogleRpcErrorInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "@type": {
+            "const": "type.googleapis.com/google.rpc.ErrorInfo",
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "@type",
+          "reason",
+          "domain",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "GoogleRpcErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleRpcStatus"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "GoogleRpcStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/GoogleRpcErrorInfo"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "status",
+          "details"
+        ],
+        "type": "object"
+      },
+      "IdentitySignature": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "keyId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "signature": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "algorithm",
+          "keyId",
+          "signature"
+        ],
+        "type": "object"
+      },
+      "IngestMaveDBScoreSetRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "scoreSetUrn": {
+            "pattern": "^urn:mavedb:[0-9]{8}-(?:[a-z]+|0)-[1-9][0-9]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scoreSetUrn"
+        ],
+        "type": "object"
+      },
+      "PrepareCandidateSetRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "items": {
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "candidates"
+        ],
+        "type": "object"
+      },
+      "PrepareDatasetReleaseManifestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "verifierReceipts": {
+            "items": {
+              "$ref": "#/components/schemas/SealedArtifact"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "program",
+          "decision",
+          "verifierReceipts"
+        ],
+        "type": "object"
+      },
+      "PrepareExperimentProposalRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateSet": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "selectedCandidates": {
+            "items": {
+              "$ref": "#/components/schemas/SealedArtifact"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "program",
+          "candidateSet",
+          "selectedCandidates"
+        ],
+        "type": "object"
+      },
+      "PrepareHypothesisRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "hypothesis": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "hypothesis"
+        ],
+        "type": "object"
+      },
+      "PrepareProgramRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateSet": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "configuration": {
+            "type": "object"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          }
+        },
+        "required": [
+          "configuration",
+          "hypothesis",
+          "candidateSet"
+        ],
+        "type": "object"
+      },
+      "SealedArtifact": {
+        "description": "LowerCamel REST projection of a sealed artifact. Exact closed internal schemas remain published in contracts/ and retain their canonical snake_case digest representation.",
+        "properties": {
+          "contentDigest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "contentDigest"
+        ],
+        "type": "object"
+      },
+      "VerifyMeasurementRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "experimentProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "identitySignature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "rawMeasurementBase64": {
+            "contentEncoding": "base64",
+            "type": "string"
+          }
+        },
+        "required": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "rawMeasurementBase64",
+          "identitySignature"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "Auth Hub access token or API key",
+        "description": "Opaque bearer verified through the Auth Hub /v1/oauth/introspect endpoint.",
+        "scheme": "bearer",
+        "type": "http",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-scopes-supported": [
+          "bio:decision:write",
+          "bio:measurement:verify",
+          "bio:proposal:write",
+          "bio:source:read"
+        ]
+      }
+    }
+  },
+  "info": {
+    "description": "Phase-specific biological discovery derivation. This API does not persist releases or execute physical experiments.",
+    "title": "Tempera Bio Discovery API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/candidateSets:prepare": {
+      "post": {
+        "operationId": "prepareCandidateSet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareCandidateSetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare candidate set",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/datasetReleaseManifests:prepare": {
+      "post": {
+        "operationId": "prepareDatasetReleaseManifest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareDatasetReleaseManifestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare dataset release manifest",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/decisions:derive": {
+      "post": {
+        "operationId": "deriveDecision",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeriveDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Derive decision",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:decision:write"
+      }
+    },
+    "/v1/experimentProposals:prepare": {
+      "post": {
+        "operationId": "prepareExperimentProposal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareExperimentProposalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare experiment proposal",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/hypotheses:prepare": {
+      "post": {
+        "operationId": "prepareHypothesis",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareHypothesisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare hypothesis",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/measurements:verify": {
+      "post": {
+        "operationId": "verifyMeasurement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyMeasurementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Verify measurement",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:measurement:verify"
+      }
+    },
+    "/v1/programs:prepare": {
+      "post": {
+        "operationId": "prepareProgram",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareProgramRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare program",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/sources/maveDbScoreSets:ingest": {
+      "post": {
+        "operationId": "ingestMaveDBScoreSet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngestMaveDBScoreSetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Ingest mave d b score set",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "network_read",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:source:read"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8789"
+    }
+  ]
+}

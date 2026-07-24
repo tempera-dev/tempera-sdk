@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
-  "version": 4,
+  "version": 5,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
     "authorizePath": "/oauth/authorize",
@@ -63,6 +63,7 @@
       "authJwksUrl": "http://localhost:8787/.well-known/jwks.json",
       "mcpGatewayUrl": "http://localhost:8787/mcp",
       "dataEngineApiUrl": "http://127.0.0.1:8090",
+      "temperaBioApiUrl": "http://127.0.0.1:8789",
       "temperaGymUrl": "http://127.0.0.1:8096",
       "cradleApiUrl": "http://127.0.0.1:8088",
       "temperaLlmApiUrl": "http://127.0.0.1:8080",
@@ -78,6 +79,7 @@
       "authJwksUrl": "https://preview-api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://preview-api.tempera.dev/mcp",
       "dataEngineApiUrl": "https://preview-data-engine.tempera.dev",
+      "temperaBioApiUrl": "https://preview-bio.tempera.dev",
       "temperaGymUrl": "https://preview-gym.tempera.dev",
       "cradleApiUrl": "https://preview-cradle.tempera.dev",
       "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
@@ -93,6 +95,7 @@
       "authJwksUrl": "https://staging-api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://staging-api.tempera.dev/mcp",
       "dataEngineApiUrl": "https://staging-data-engine.tempera.dev",
+      "temperaBioApiUrl": "https://staging-bio.tempera.dev",
       "temperaGymUrl": "https://staging-gym.tempera.dev",
       "cradleApiUrl": "https://staging-cradle.tempera.dev",
       "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
@@ -108,6 +111,7 @@
       "authJwksUrl": "https://api.tempera.dev/.well-known/jwks.json",
       "mcpGatewayUrl": "https://api.tempera.dev/mcp",
       "dataEngineApiUrl": "https://data-engine.tempera.dev",
+      "temperaBioApiUrl": "https://bio.tempera.dev",
       "temperaGymUrl": "https://gym.tempera.dev",
       "cradleApiUrl": "https://cradle.tempera.dev",
       "temperaLlmApiUrl": "https://llm.tempera.dev",
@@ -193,6 +197,14 @@
       "audience": "tempera-gym",
       "auth": "bearer minted for audience tempera-gym with dataset:read/eval:run, central tp_ API key, or the gym static token",
       "description": "RL environment pack service: environment catalog with implementation status, synchronous rollout execution, and persisted content-addressed trajectory-v1 runs."
+    },
+    "temperaBio": {
+      "name": "tempera-bio",
+      "repository": "https://github.com/tempera-dev/tempera-bio",
+      "envVar": "TEMPERA_BIO_URL",
+      "audience": "tempera-bio",
+      "auth": "bearer minted for audience tempera-bio with phase-specific source, proposal, measurement-verification, or decision scopes, or a central tp_ API key",
+      "description": "Evidence-class-aware biological discovery derivation over caller-supplied, provenance-bound source records; physical execution and release persistence remain outside this service."
     },
     "cradle": {
       "name": "cradle",
@@ -3511,6 +3523,166 @@
         ],
         "scope": "eval:run",
         "authAudience": "tempera-gym"
+      }
+    ],
+    "temperaBio": [
+      {
+        "id": "prepareCandidateSet",
+        "method": "POST",
+        "path": "/v1/candidateSets:prepare",
+        "auth": "oauthResource",
+        "description": "Validate and seal caller-supplied discovery candidates without adding candidate or outcome data.",
+        "upstreamOperationId": "prepareCandidateSet",
+        "body": [
+          "candidates"
+        ],
+        "requiredBody": [
+          "candidates"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "prepareDatasetReleaseManifest",
+        "method": "POST",
+        "path": "/v1/datasetReleaseManifests:prepare",
+        "auth": "oauthResource",
+        "description": "Derive a sealed dataset-release manifest from one verified decision and its exact verifier receipts.",
+        "upstreamOperationId": "prepareDatasetReleaseManifest",
+        "body": [
+          "decision",
+          "program",
+          "verifierReceipts"
+        ],
+        "requiredBody": [
+          "program",
+          "decision",
+          "verifierReceipts"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "deriveDecision",
+        "method": "POST",
+        "path": "/v1/decisions:derive",
+        "auth": "oauthResource",
+        "description": "Derive one evidence-class-preserving round decision from a sealed proposal and complete verifier receipts.",
+        "upstreamOperationId": "deriveDecision",
+        "body": [
+          "candidateSet",
+          "experimentProposal",
+          "hypothesis",
+          "program",
+          "verifierReceipts"
+        ],
+        "requiredBody": [
+          "program",
+          "hypothesis",
+          "candidateSet",
+          "experimentProposal",
+          "verifierReceipts"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:decision:write"
+      },
+      {
+        "id": "prepareExperimentProposal",
+        "method": "POST",
+        "path": "/v1/experimentProposals:prepare",
+        "auth": "oauthResource",
+        "description": "Select and seal one bounded experiment proposal from a supplied program and candidate set.",
+        "upstreamOperationId": "prepareExperimentProposal",
+        "body": [
+          "candidateSet",
+          "program",
+          "selectedCandidates"
+        ],
+        "requiredBody": [
+          "program",
+          "candidateSet",
+          "selectedCandidates"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "prepareHypothesis",
+        "method": "POST",
+        "path": "/v1/hypotheses:prepare",
+        "auth": "oauthResource",
+        "description": "Validate and seal one caller-supplied falsifiable biological hypothesis.",
+        "upstreamOperationId": "prepareHypothesis",
+        "body": [
+          "hypothesis"
+        ],
+        "requiredBody": [
+          "hypothesis"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyMeasurement",
+        "method": "POST",
+        "path": "/v1/measurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify one signed, provenance-bound real measurement batch against its exact program, hypothesis, candidate, and proposal.",
+        "upstreamOperationId": "verifyMeasurement",
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "identitySignature",
+          "program",
+          "rawMeasurementBase64"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "rawMeasurementBase64",
+          "identitySignature"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
+      },
+      {
+        "id": "prepareProgram",
+        "method": "POST",
+        "path": "/v1/programs:prepare",
+        "auth": "oauthResource",
+        "description": "Validate and seal one evidence-class-aware discovery program without executing an experiment.",
+        "upstreamOperationId": "prepareProgram",
+        "body": [
+          "candidateSet",
+          "configuration",
+          "hypothesis"
+        ],
+        "requiredBody": [
+          "configuration",
+          "hypothesis",
+          "candidateSet"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "ingestMaveDBScoreSet",
+        "method": "POST",
+        "path": "/v1/sources/maveDbScoreSets:ingest",
+        "auth": "oauthResource",
+        "description": "Fetch and seal one published, licensed MaveDB score set as public retrospective evidence.",
+        "upstreamOperationId": "ingestMaveDBScoreSet",
+        "body": [
+          "scoreSetUrn"
+        ],
+        "requiredBody": [
+          "scoreSetUrn"
+        ],
+        "authAudience": "tempera-bio",
+        "scope": "bio:source:read"
       }
     ],
     "cradle": [

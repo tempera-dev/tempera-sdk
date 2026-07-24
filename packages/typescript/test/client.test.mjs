@@ -30,6 +30,7 @@ function testClient(overrides = {}) {
       temperaLlm: "https://llm.example.test",
       temperaWorkflows: "https://workflows.example.test",
       temperaGym: "https://gym.example.test",
+      temperaBio: "https://bio.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
@@ -149,6 +150,27 @@ test("declared query and body parameters are routed to the right place", async (
     environmentId: "env-1",
     seed: 42,
   });
+
+  await client.temperaBio.verifyMeasurement({
+    candidate: { candidateId: "candidate-1" },
+    experimentProposal: { proposalId: "proposal-1" },
+    hypothesis: { hypothesisId: "hypothesis-1" },
+    identitySignature: { keyId: "key-1", signature: "c2lnbmF0dXJl" },
+    program: { programId: "program-1" },
+    rawMeasurementBase64: "eyJyZXBsaWNhdGVzIjpbMS4wXX0=",
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/measurements:verify");
+  assert.equal(calls.at(-1).options.headers.authorization, "Bearer tp_key_1");
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    candidate: { candidateId: "candidate-1" },
+    experimentProposal: { proposalId: "proposal-1" },
+    hypothesis: { hypothesisId: "hypothesis-1" },
+    identitySignature: { keyId: "key-1", signature: "c2lnbmF0dXJl" },
+    program: { programId: "program-1" },
+    rawMeasurementBase64: "eyJyZXBsaWNhdGVzIjpbMS4wXX0=",
+  });
+  assert.equal(calls.at(-1).options.body.includes("raw_measurement_base64"), false);
+  assert.equal(calls.at(-1).options.body.includes("identity_signature"), false);
 
   for (const [operation, params] of [
     ["listNodeTypes", { pageSize: 9, pageToken: "node-types-token" }],

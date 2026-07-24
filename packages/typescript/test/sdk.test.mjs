@@ -22,6 +22,7 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.temperaLlm.repository, "https://github.com/tempera-dev/tempera-llm");
   assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
   assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
+  assert.equal(TEMPERA_PRODUCTS.temperaBio.repository, "https://github.com/tempera-dev/tempera-bio");
   assert.equal(TEMPERA_PRODUCTS.cradle.repository, "https://github.com/tempera-dev/cradle");
   assert.equal(TEMPERA_PRODUCTS.remi.repository, "https://github.com/tempera-dev/remi");
   assert.equal(TEMPERA_PRODUCTS.dataEngine.repository, "https://github.com/tempera-dev/data-engine");
@@ -77,6 +78,7 @@ test("all four environments carry the same target keys", () => {
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaLlmApiUrl, "https://llm.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaWorkflowsApiUrl, "https://workflows.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaGymUrl, "https://gym.tempera.dev");
+  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaBioApiUrl, "https://bio.tempera.dev");
   // Deprecated alias points at the same object.
   assert.equal(TEMPERA_API_TARGETS, TEMPERA_ENVIRONMENTS);
 });

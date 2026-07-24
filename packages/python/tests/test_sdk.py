@@ -23,6 +23,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["temperaLlm"]["repository"], "https://github.com/tempera-dev/tempera-llm")
         self.assertEqual(PRODUCTS["temperaWorkflows"]["repository"], "https://github.com/tempera-dev/tempera-workflows")
         self.assertEqual(PRODUCTS["temperaGym"]["repository"], "https://github.com/tempera-dev/tempera-gym")
+        self.assertEqual(PRODUCTS["temperaBio"]["repository"], "https://github.com/tempera-dev/tempera-bio")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
         self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
@@ -73,6 +74,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(ENVIRONMENTS["production"]["temperaLlmApiUrl"], "https://llm.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaWorkflowsApiUrl"], "https://workflows.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaGymUrl"], "https://gym.tempera.dev")
+        self.assertEqual(ENVIRONMENTS["production"]["temperaBioApiUrl"], "https://bio.tempera.dev")
         # Deprecated alias points at the same object.
         self.assertIs(API_TARGETS, ENVIRONMENTS)
 

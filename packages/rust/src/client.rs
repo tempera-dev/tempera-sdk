@@ -1406,6 +1406,63 @@ mod tests {
             assert!(body.contains(expected), "body {body} missing {expected}");
         }
 
+        let measurement = client
+            .build_request(
+                "tempera_bio",
+                "verify_measurement",
+                &[
+                    (
+                        "candidate",
+                        ParamValue::RawJson("{\"candidateId\":\"candidate-1\"}".to_string()),
+                    ),
+                    (
+                        "experimentProposal",
+                        ParamValue::RawJson("{\"proposalId\":\"proposal-1\"}".to_string()),
+                    ),
+                    (
+                        "hypothesis",
+                        ParamValue::RawJson("{\"hypothesisId\":\"hypothesis-1\"}".to_string()),
+                    ),
+                    (
+                        "identitySignature",
+                        ParamValue::RawJson(
+                            "{\"keyId\":\"key-1\",\"signature\":\"c2lnbmF0dXJl\"}".to_string(),
+                        ),
+                    ),
+                    (
+                        "program",
+                        ParamValue::RawJson("{\"programId\":\"program-1\"}".to_string()),
+                    ),
+                    (
+                        "rawMeasurementBase64",
+                        "eyJyZXBsaWNhdGVzIjpbMS4wXX0=".into(),
+                    ),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            measurement.url,
+            "https://tempera_bio.example.test/v1/measurements:verify"
+        );
+        assert_eq!(
+            header(&measurement, "authorization"),
+            Some("Bearer tp_key_1")
+        );
+        let measurement_body = measurement.body_json.expect("measurement body");
+        for expected in [
+            "\"candidate\":{\"candidateId\":\"candidate-1\"}",
+            "\"experimentProposal\":{\"proposalId\":\"proposal-1\"}",
+            "\"identitySignature\":{\"keyId\":\"key-1\",\"signature\":\"c2lnbmF0dXJl\"}",
+            "\"rawMeasurementBase64\":\"eyJyZXBsaWNhdGVzIjpbMS4wXX0=\"",
+        ] {
+            assert!(
+                measurement_body.contains(expected),
+                "body {measurement_body} missing {expected}"
+            );
+        }
+        assert!(!measurement_body.contains("raw_measurement_base64"));
+        assert!(!measurement_body.contains("identity_signature"));
+
         // Colons inside a substituted path *value* are still encoded.
         let spec = client
             .build_request(

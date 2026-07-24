@@ -24,6 +24,7 @@ PRODUCT_SPECS = {
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
+    "temperaBio": "tempera-bio-discovery-api.json",
     "remi": "remi-http-contract.json",
     "tempo": "tempo-openapi.json",
 }
@@ -35,6 +36,7 @@ DEFAULT_AUTH = {
     "temperaLlm": "product",
     "temperaWorkflows": "product",
     "temperaGym": "product",
+    "temperaBio": "product",
     "remi": "product",
     "tempo": "product",
 }

@@ -67,6 +67,20 @@
         "packages/rust/src/client.rs"
       ],
       "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds merged Workflows main head 3c067298906b69de5a3481c897282b745a277d18; no hosted callback or external experiment result is claimed."
+    },
+    {
+      "integration_id": "bio-discovery-derivation-client",
+      "kind": "sdk",
+      "status": "partial",
+      "evidence_class": "synthetic_fixture",
+      "proof_refs": [
+        "surface.json",
+        "specs/tempera-bio-discovery-api.json.source",
+        "packages/typescript/test/client.test.mjs",
+        "packages/python/tests/test_client.py",
+        "packages/rust/src/client.rs"
+      ],
+      "notes": "Eight phase-specific Bio operations are generated from exact merged producer main af29cf6a487bc5e30795d8228031c0e42085c495 with producer-declared audience and scope metadata. The SDK transports caller-supplied evidence and detached signatures; it does not synthesize measurements or assert prospective execution."
     }
   ],
   "physical_execution": {
@@ -80,6 +94,7 @@
     "Canonical source locks prove exact contract provenance and generated-client parity; they do not prove that any hosted producer deployment has adopted those commits.",
     "Durable-signal client tests prove request construction and exact producer-contract parity; they do not prove receipt of a real provider callback or successful external execution.",
     "Authorization clients transport approvals and external secret references; they do not approve, resolve a secret, submit physical work, or prove provider execution without an authorized caller.",
+    "Bio discovery clients construct exact authenticated requests; they do not supply source records, detached measurement signatures, provider callbacks, or evidence-class upgrades.",
     "The SDK transports evidence contracts; it does not determine biological validity, experimental execution, production qualification, or dataset eligibility."
   ]
 }

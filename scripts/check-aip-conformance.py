@@ -31,6 +31,7 @@ SPECS = {
     "palette": "palette-api.json",
     "remi": "remi-http-contract.json",
     "temperaGym": "tempera-gym-api.json",
+    "temperaBio": "tempera-bio-discovery-api.json",
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "tempo": "tempo-openapi.json",
