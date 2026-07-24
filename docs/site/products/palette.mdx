@@ -56,7 +56,7 @@ let spec = client.build_request("palette", "health", &[])?;
 
 ### alertsEvaluate
 
-`POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook`
+`POST /v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook`
 
 Call POST /v1/alerts/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/webhook.
 
@@ -68,9 +68,9 @@ Call POST /v1/alerts/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/webhook.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -83,9 +83,9 @@ Call POST /v1/alerts/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/webhook.
 
 ```typescript TypeScript
 const result = await client.palette.alertsEvaluate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  trace_id: "<trace_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  traceId: "<traceId>",
   input: "<input>",
   policy: "<policy>",
 });
@@ -93,9 +93,9 @@ const result = await client.palette.alertsEvaluate({
 
 ```python Python
 result = client.palette.alerts_evaluate({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "trace_id": "<trace_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "traceId": "<traceId>",
     "input": "<input>",
     "policy": "<policy>",
 })
@@ -103,9 +103,9 @@ result = client.palette.alerts_evaluate({
 
 ```rust Rust
 let spec = client.build_request("palette", "alerts_evaluate", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("traceId", "<traceId>".into()),
     ("input", "<input>".into()),
     ("policy", "<policy>".into()),
 ])?;
@@ -117,7 +117,7 @@ let spec = client.build_request("palette", "alerts_evaluate", &[
 
 ### createApiKey
 
-`POST /v1/api-keys/{tenant_id}/{project_id}/{environment_id}`
+`POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}`
 
 Mint a palette-scoped API key; the secret is returned exactly once.
 
@@ -130,9 +130,9 @@ Mint a palette-scoped API key; the secret is returned exactly once.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `environment_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `environmentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -144,27 +144,27 @@ Mint a palette-scoped API key; the secret is returned exactly once.
 
 ```typescript TypeScript
 const result = await client.palette.createApiKey({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
   scopes: "<scopes>",
 });
 ```
 
 ```python Python
 result = client.palette.create_api_key({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
     "scopes": "<scopes>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "create_api_key", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
     ("scopes", "<scopes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -175,7 +175,7 @@ let spec = client.build_request("palette", "create_api_key", &[
 
 ### revokeApiKey
 
-`POST /v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke`
+`POST /v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke`
 
 Revoke a palette API key.
 
@@ -188,37 +188,37 @@ Revoke a palette API key.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `environment_id` | yes | Substituted into the URL path (percent-encoded). |
-| `api_key_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `environmentId` | yes | Substituted into the URL path (percent-encoded). |
+| `apiKeyId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.revokeApiKey({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
-  api_key_id: "<api_key_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  apiKeyId: "<apiKeyId>",
 });
 ```
 
 ```python Python
 result = client.palette.revoke_api_key({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
-    "api_key_id": "<api_key_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "apiKeyId": "<apiKeyId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "revoke_api_key", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
-    ("api_key_id", "<api_key_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("apiKeyId", "<apiKeyId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -228,7 +228,7 @@ let spec = client.build_request("palette", "revoke_api_key", &[
 
 ### archiveQuerySpans
 
-`GET /v1/archive/{tenant_id}/{project_id}/spans`
+`GET /v1/archive/{tenantId}/{projectId}/spans`
 
 Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
 
@@ -240,16 +240,16 @@ Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `environment_id` | no | — |
-| `trace_id` | no | — |
-| `span_id` | no | — |
+| `environmentId` | no | — |
+| `traceId` | no | — |
+| `spanId` | no | — |
 | `kind` | no | — |
 | `status` | no | — |
 | `pageSize` | no | — |
@@ -259,28 +259,28 @@ Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
 
 ```typescript TypeScript
 const result = await client.palette.archiveQuerySpans({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
-  trace_id: "<trace_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  traceId: "<traceId>",
 });
 ```
 
 ```python Python
 result = client.palette.archive_query_spans({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
-    "trace_id": "<trace_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "traceId": "<traceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "archive_query_spans", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -290,7 +290,7 @@ let spec = client.build_request("palette", "archive_query_spans", &[
 
 ### archiveTrace
 
-`POST /v1/archive/{tenant_id}/{project_id}/{trace_id}`
+`POST /v1/archive/{tenantId}/{projectId}/{traceId}`
 
 Archive a trace to Parquet and return the archive manifest.
 
@@ -303,33 +303,33 @@ Archive a trace to Parquet and return the archive manifest.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.archiveTrace({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  trace_id: "<trace_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  traceId: "<traceId>",
 });
 ```
 
 ```python Python
 result = client.palette.archive_trace({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "trace_id": "<trace_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "traceId": "<traceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "archive_trace", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -339,7 +339,7 @@ let spec = client.build_request("palette", "archive_trace", &[
 
 ### auditList
 
-`GET /v1/audit/{tenant_id}/{project_id}`
+`GET /v1/audit/{tenantId}/{projectId}`
 
 Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
 
@@ -351,8 +351,8 @@ Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -365,8 +365,8 @@ Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.auditList({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -374,8 +374,8 @@ const result = await client.palette.auditList({
 
 ```python Python
 result = client.palette.audit_list({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -383,8 +383,8 @@ result = client.palette.audit_list({
 
 ```rust Rust
 let spec = client.build_request("palette", "audit_list", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -396,7 +396,7 @@ let spec = client.build_request("palette", "audit_list", &[
 
 ### calibrationsRun
 
-`POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}`
+`POST /v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}`
 
 Call POST /v1/calibrations/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}.
 
@@ -408,54 +408,54 @@ Call POST /v1/calibrations/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
-| `version_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
+| `versionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `eval_report_id` | no | — |
-| `evaluator_version_id` | no | — |
-| `pass_threshold` | no | — |
+| `evalReportId` | no | — |
+| `evaluatorVersionId` | no | — |
+| `passThreshold` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.calibrationsRun({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  version_id: "<version_id>",
-  eval_report_id: "<eval_report_id>",
-  evaluator_version_id: "<evaluator_version_id>",
-  pass_threshold: "<pass_threshold>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  versionId: "<versionId>",
+  evalReportId: "<evalReportId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  passThreshold: "<passThreshold>",
 });
 ```
 
 ```python Python
 result = client.palette.calibrations_run({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "version_id": "<version_id>",
-    "eval_report_id": "<eval_report_id>",
-    "evaluator_version_id": "<evaluator_version_id>",
-    "pass_threshold": "<pass_threshold>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "versionId": "<versionId>",
+    "evalReportId": "<evalReportId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "passThreshold": "<passThreshold>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "calibrations_run", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("version_id", "<version_id>".into()),
-    ("eval_report_id", "<eval_report_id>".into()),
-    ("evaluator_version_id", "<evaluator_version_id>".into()),
-    ("pass_threshold", "<pass_threshold>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("versionId", "<versionId>".into()),
+    ("evalReportId", "<evalReportId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("passThreshold", "<passThreshold>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -465,7 +465,7 @@ let spec = client.build_request("palette", "calibrations_run", &[
 
 ### connectGetStatus
 
-`GET /v1/connect/status/{tenant_id}/{project_id}`
+`GET /v1/connect/status/{tenantId}/{projectId}`
 
 Call GET /v1/connect/status/\{tenant_id\}/\{project_id\}.
 
@@ -477,29 +477,29 @@ Call GET /v1/connect/status/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.connectGetStatus({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.connect_get_status({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "connect_get_status", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -509,7 +509,7 @@ let spec = client.build_request("palette", "connect_get_status", &[
 
 ### connectorsList
 
-`GET /v1/connectors/{tenant_id}/{project_id}`
+`GET /v1/connectors/{tenantId}/{projectId}`
 
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 
@@ -521,8 +521,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -535,8 +535,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsList({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -544,8 +544,8 @@ const result = await client.palette.connectorsList({
 
 ```python Python
 result = client.palette.connectors_list({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -553,8 +553,8 @@ result = client.palette.connectors_list({
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_list", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -566,7 +566,7 @@ let spec = client.build_request("palette", "connectors_list", &[
 
 ### connectorsConnect
 
-`POST /v1/connectors/{tenant_id}/{project_id}/connect`
+`POST /v1/connectors/{tenantId}/{projectId}/connect`
 
 Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/connect.
 
@@ -578,8 +578,8 @@ Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/connect.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -591,24 +591,24 @@ Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/connect.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsConnect({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   toolkit: "<toolkit>",
 });
 ```
 
 ```python Python
 result = client.palette.connectors_connect({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "toolkit": "<toolkit>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_connect", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("toolkit", "<toolkit>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -619,7 +619,7 @@ let spec = client.build_request("palette", "connectors_connect", &[
 
 ### connectorsInvokeTool
 
-`POST /v1/connectors/{tenant_id}/{project_id}/invoke`
+`POST /v1/connectors/{tenantId}/{projectId}/invoke`
 
 Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
 
@@ -631,8 +631,8 @@ Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -645,8 +645,8 @@ Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsInvokeTool({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   arguments: "<arguments>",
   tool: "<tool>",
 });
@@ -654,8 +654,8 @@ const result = await client.palette.connectorsInvokeTool({
 
 ```python Python
 result = client.palette.connectors_invoke_tool({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "arguments": "<arguments>",
     "tool": "<tool>",
 })
@@ -663,8 +663,8 @@ result = client.palette.connectors_invoke_tool({
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_invoke_tool", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("arguments", "<arguments>".into()),
     ("tool", "<tool>".into()),
 ])?;
@@ -676,7 +676,7 @@ let spec = client.build_request("palette", "connectors_invoke_tool", &[
 
 ### connectorsGetSkills
 
-`GET /v1/connectors/{tenant_id}/{project_id}/skills`
+`GET /v1/connectors/{tenantId}/{projectId}/skills`
 
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
 
@@ -688,8 +688,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -701,24 +701,24 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsGetSkills({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   toolkit: "<toolkit>",
 });
 ```
 
 ```python Python
 result = client.palette.connectors_get_skills({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "toolkit": "<toolkit>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_get_skills", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("toolkit", "<toolkit>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -729,7 +729,7 @@ let spec = client.build_request("palette", "connectors_get_skills", &[
 
 ### connectorsStatus
 
-`GET /v1/connectors/{tenant_id}/{project_id}/status`
+`GET /v1/connectors/{tenantId}/{projectId}/status`
 
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
 
@@ -741,8 +741,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -754,24 +754,24 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsStatus({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   toolkit: "<toolkit>",
 });
 ```
 
 ```python Python
 result = client.palette.connectors_status({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "toolkit": "<toolkit>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_status", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("toolkit", "<toolkit>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -782,7 +782,7 @@ let spec = client.build_request("palette", "connectors_status", &[
 
 ### connectorsListTools
 
-`GET /v1/connectors/{tenant_id}/{project_id}/tools`
+`GET /v1/connectors/{tenantId}/{projectId}/tools`
 
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 
@@ -794,8 +794,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -809,8 +809,8 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 
 ```typescript TypeScript
 const result = await client.palette.connectorsListTools({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   toolkit: "<toolkit>",
   pageSize: "<pageSize>",
 });
@@ -818,8 +818,8 @@ const result = await client.palette.connectorsListTools({
 
 ```python Python
 result = client.palette.connectors_list_tools({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "toolkit": "<toolkit>",
     "pageSize": "<pageSize>",
 })
@@ -827,8 +827,8 @@ result = client.palette.connectors_list_tools({
 
 ```rust Rust
 let spec = client.build_request("palette", "connectors_list_tools", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("toolkit", "<toolkit>".into()),
     ("pageSize", "<pageSize>".into()),
 ])?;
@@ -840,7 +840,7 @@ let spec = client.build_request("palette", "connectors_list_tools", &[
 
 ### createDataset
 
-`POST /v1/datasets/{tenant_id}/{project_id}`
+`POST /v1/datasets/{tenantId}/{projectId}`
 
 Create a dataset for curating cases from traces.
 
@@ -853,8 +853,8 @@ Create a dataset for curating cases from traces.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -866,24 +866,24 @@ Create a dataset for curating cases from traces.
 
 ```typescript TypeScript
 const result = await client.palette.createDataset({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   name: "<name>",
 });
 ```
 
 ```python Python
 result = client.palette.create_dataset({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "name": "<name>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "create_dataset", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("name", "<name>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -894,7 +894,7 @@ let spec = client.build_request("palette", "create_dataset", &[
 
 ### promoteTraceToCase
 
-`POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace`
+`POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace`
 
 Promote a trace (or one span of it) into a dataset case.
 
@@ -907,50 +907,50 @@ Promote a trace (or one span of it) into a dataset case.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
 | `reference` | no | — |
-| `span_id` | no | — |
-| `trace_id` | yes | — |
+| `spanId` | no | — |
+| `traceId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.promoteTraceToCase({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
   reference: "<reference>",
-  span_id: "<span_id>",
-  trace_id: "<trace_id>",
+  spanId: "<spanId>",
+  traceId: "<traceId>",
 });
 ```
 
 ```python Python
 result = client.palette.promote_trace_to_case({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
     "reference": "<reference>",
-    "span_id": "<span_id>",
-    "trace_id": "<trace_id>",
+    "spanId": "<spanId>",
+    "traceId": "<traceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "promote_trace_to_case", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
     ("reference", "<reference>".into()),
-    ("span_id", "<span_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("spanId", "<spanId>".into()),
+    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -960,7 +960,7 @@ let spec = client.build_request("palette", "promote_trace_to_case", &[
 
 ### createDatasetVersion
 
-`POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions`
+`POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions`
 
 Snapshot a dataset into an immutable version for evals and experiments.
 
@@ -973,42 +973,42 @@ Snapshot a dataset into an immutable version for evals and experiments.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `case_ids` | no | — |
+| `caseIds` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.createDatasetVersion({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  case_ids: "<case_ids>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  caseIds: "<caseIds>",
 });
 ```
 
 ```python Python
 result = client.palette.create_dataset_version({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "case_ids": "<case_ids>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "caseIds": "<caseIds>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "create_dataset_version", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("case_ids", "<case_ids>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("caseIds", "<caseIds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1018,7 +1018,7 @@ let spec = client.build_request("palette", "create_dataset_version", &[
 
 ### evalsRunDeterministic
 
-`POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic`
+`POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic`
 
 Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/deterministic.
 
@@ -1030,58 +1030,58 @@ Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{ve
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
-| `version_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
+| `versionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `agent_release_id` | yes | — |
-| `code_hash` | no | — |
-| `evaluator_id` | yes | — |
-| `evaluator_version_id` | yes | — |
+| `agentReleaseId` | yes | — |
+| `codeHash` | no | — |
+| `evaluatorId` | yes | — |
+| `evaluatorVersionId` | yes | — |
 | `kind` | yes | — |
-| `prompt_version_id` | no | — |
-| `wasm_hash` | no | — |
+| `promptVersionId` | no | — |
+| `wasmHash` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.evalsRunDeterministic({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  version_id: "<version_id>",
-  agent_release_id: "<agent_release_id>",
-  code_hash: "<code_hash>",
-  evaluator_id: "<evaluator_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  versionId: "<versionId>",
+  agentReleaseId: "<agentReleaseId>",
+  codeHash: "<codeHash>",
+  evaluatorId: "<evaluatorId>",
 });
 ```
 
 ```python Python
 result = client.palette.evals_run_deterministic({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "version_id": "<version_id>",
-    "agent_release_id": "<agent_release_id>",
-    "code_hash": "<code_hash>",
-    "evaluator_id": "<evaluator_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "versionId": "<versionId>",
+    "agentReleaseId": "<agentReleaseId>",
+    "codeHash": "<codeHash>",
+    "evaluatorId": "<evaluatorId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "evals_run_deterministic", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("version_id", "<version_id>".into()),
-    ("agent_release_id", "<agent_release_id>".into()),
-    ("code_hash", "<code_hash>".into()),
-    ("evaluator_id", "<evaluator_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("versionId", "<versionId>".into()),
+    ("agentReleaseId", "<agentReleaseId>".into()),
+    ("codeHash", "<codeHash>".into()),
+    ("evaluatorId", "<evaluatorId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1091,7 +1091,7 @@ let spec = client.build_request("palette", "evals_run_deterministic", &[
 
 ### evalsRunJudge
 
-`POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge`
+`POST /v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge`
 
 Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/judge.
 
@@ -1103,58 +1103,58 @@ Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{ve
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
-| `version_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
+| `versionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `agent_release_id` | yes | — |
-| `code_hash` | no | — |
-| `evaluator_id` | yes | — |
-| `evaluator_version_id` | yes | — |
+| `agentReleaseId` | yes | — |
+| `codeHash` | no | — |
+| `evaluatorId` | yes | — |
+| `evaluatorVersionId` | yes | — |
 | `kind` | yes | — |
-| `prompt_version_id` | no | — |
-| `provider_secret_id` | yes | — |
+| `promptVersionId` | no | — |
+| `providerSecretId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.evalsRunJudge({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  version_id: "<version_id>",
-  agent_release_id: "<agent_release_id>",
-  code_hash: "<code_hash>",
-  evaluator_id: "<evaluator_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  versionId: "<versionId>",
+  agentReleaseId: "<agentReleaseId>",
+  codeHash: "<codeHash>",
+  evaluatorId: "<evaluatorId>",
 });
 ```
 
 ```python Python
 result = client.palette.evals_run_judge({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "version_id": "<version_id>",
-    "agent_release_id": "<agent_release_id>",
-    "code_hash": "<code_hash>",
-    "evaluator_id": "<evaluator_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "versionId": "<versionId>",
+    "agentReleaseId": "<agentReleaseId>",
+    "codeHash": "<codeHash>",
+    "evaluatorId": "<evaluatorId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "evals_run_judge", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("version_id", "<version_id>".into()),
-    ("agent_release_id", "<agent_release_id>".into()),
-    ("code_hash", "<code_hash>".into()),
-    ("evaluator_id", "<evaluator_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("versionId", "<versionId>".into()),
+    ("agentReleaseId", "<agentReleaseId>".into()),
+    ("codeHash", "<codeHash>".into()),
+    ("evaluatorId", "<evaluatorId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1164,7 +1164,7 @@ let spec = client.build_request("palette", "evals_run_judge", &[
 
 ### importTemperaBundle
 
-`POST /v1/eval-results/{tenant_id}/{project_id}/tempera/bundles`
+`POST /v1/eval-results/{tenantId}/{projectId}/tempera/bundles`
 
 Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.
 
@@ -1177,46 +1177,46 @@ Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result b
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `canonical_json` | yes | — |
-| `public_key_pem` | yes | — |
-| `signature_base64` | yes | — |
+| `canonicalJson` | yes | — |
+| `publicKeyPem` | yes | — |
+| `signatureBase64` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.importTemperaBundle({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  canonical_json: "<canonical_json>",
-  public_key_pem: "<public_key_pem>",
-  signature_base64: "<signature_base64>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  canonicalJson: "<canonicalJson>",
+  publicKeyPem: "<publicKeyPem>",
+  signatureBase64: "<signatureBase64>",
 });
 ```
 
 ```python Python
 result = client.palette.import_tempera_bundle({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "canonical_json": "<canonical_json>",
-    "public_key_pem": "<public_key_pem>",
-    "signature_base64": "<signature_base64>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "canonicalJson": "<canonicalJson>",
+    "publicKeyPem": "<publicKeyPem>",
+    "signatureBase64": "<signatureBase64>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "import_tempera_bundle", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("canonical_json", "<canonical_json>".into()),
-    ("public_key_pem", "<public_key_pem>".into()),
-    ("signature_base64", "<signature_base64>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("canonicalJson", "<canonicalJson>".into()),
+    ("publicKeyPem", "<publicKeyPem>".into()),
+    ("signatureBase64", "<signatureBase64>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1226,7 +1226,7 @@ let spec = client.build_request("palette", "import_tempera_bundle", &[
 
 ### recordTemperaDecision
 
-`POST /v1/eval-results/{tenant_id}/{project_id}/tempera/decisions`
+`POST /v1/eval-results/{tenantId}/{projectId}/tempera/decisions`
 
 Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.
 
@@ -1239,46 +1239,46 @@ Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `canonical_json` | yes | — |
-| `public_key_pem` | yes | — |
-| `signature_base64` | yes | — |
+| `canonicalJson` | yes | — |
+| `publicKeyPem` | yes | — |
+| `signatureBase64` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.recordTemperaDecision({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  canonical_json: "<canonical_json>",
-  public_key_pem: "<public_key_pem>",
-  signature_base64: "<signature_base64>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  canonicalJson: "<canonicalJson>",
+  publicKeyPem: "<publicKeyPem>",
+  signatureBase64: "<signatureBase64>",
 });
 ```
 
 ```python Python
 result = client.palette.record_tempera_decision({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "canonical_json": "<canonical_json>",
-    "public_key_pem": "<public_key_pem>",
-    "signature_base64": "<signature_base64>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "canonicalJson": "<canonicalJson>",
+    "publicKeyPem": "<publicKeyPem>",
+    "signatureBase64": "<signatureBase64>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "record_tempera_decision", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("canonical_json", "<canonical_json>".into()),
-    ("public_key_pem", "<public_key_pem>".into()),
-    ("signature_base64", "<signature_base64>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("canonicalJson", "<canonicalJson>".into()),
+    ("publicKeyPem", "<publicKeyPem>".into()),
+    ("signatureBase64", "<signatureBase64>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1288,7 +1288,7 @@ let spec = client.build_request("palette", "record_tempera_decision", &[
 
 ### getTemperaEvidence
 
-`GET /v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}`
+`GET /v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}`
 
 Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.
 
@@ -1301,37 +1301,37 @@ Fetch one tenant/project-scoped Tempera evidence receipt without returning its r
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 | `kind` | yes | Substituted into the URL path (percent-encoded). |
-| `external_id` | yes | Substituted into the URL path (percent-encoded). |
+| `externalId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.getTemperaEvidence({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   kind: "<kind>",
-  external_id: "<external_id>",
+  externalId: "<externalId>",
 });
 ```
 
 ```python Python
 result = client.palette.get_tempera_evidence({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "kind": "<kind>",
-    "external_id": "<external_id>",
+    "externalId": "<externalId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "get_tempera_evidence", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("kind", "<kind>".into()),
-    ("external_id", "<external_id>".into()),
+    ("externalId", "<externalId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1341,7 +1341,7 @@ let spec = client.build_request("palette", "get_tempera_evidence", &[
 
 ### experimentsRunDeterministic
 
-`POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic`
+`POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic`
 
 Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/deterministic.
 
@@ -1353,59 +1353,59 @@ Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
-| `version_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
+| `versionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `baseline_outputs` | yes | — |
-| `baseline_release_id` | yes | — |
-| `candidate_outputs` | yes | — |
-| `candidate_release_id` | yes | — |
-| `evaluator_id` | yes | — |
-| `evaluator_version_id` | yes | — |
-| `gate_policy` | no | — |
+| `baselineOutputs` | yes | — |
+| `baselineReleaseId` | yes | — |
+| `candidateOutputs` | yes | — |
+| `candidateReleaseId` | yes | — |
+| `evaluatorId` | yes | — |
+| `evaluatorVersionId` | yes | — |
+| `gatePolicy` | no | — |
 | `kind` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.experimentsRunDeterministic({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  version_id: "<version_id>",
-  baseline_outputs: "<baseline_outputs>",
-  baseline_release_id: "<baseline_release_id>",
-  candidate_outputs: "<candidate_outputs>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  versionId: "<versionId>",
+  baselineOutputs: "<baselineOutputs>",
+  baselineReleaseId: "<baselineReleaseId>",
+  candidateOutputs: "<candidateOutputs>",
 });
 ```
 
 ```python Python
 result = client.palette.experiments_run_deterministic({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "version_id": "<version_id>",
-    "baseline_outputs": "<baseline_outputs>",
-    "baseline_release_id": "<baseline_release_id>",
-    "candidate_outputs": "<candidate_outputs>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "versionId": "<versionId>",
+    "baselineOutputs": "<baselineOutputs>",
+    "baselineReleaseId": "<baselineReleaseId>",
+    "candidateOutputs": "<candidateOutputs>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "experiments_run_deterministic", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("version_id", "<version_id>".into()),
-    ("baseline_outputs", "<baseline_outputs>".into()),
-    ("baseline_release_id", "<baseline_release_id>".into()),
-    ("candidate_outputs", "<candidate_outputs>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("versionId", "<versionId>".into()),
+    ("baselineOutputs", "<baselineOutputs>".into()),
+    ("baselineReleaseId", "<baselineReleaseId>".into()),
+    ("candidateOutputs", "<candidateOutputs>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1415,7 +1415,7 @@ let spec = client.build_request("palette", "experiments_run_deterministic", &[
 
 ### experimentsRunJudge
 
-`POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge`
+`POST /v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge`
 
 Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/judge.
 
@@ -1427,60 +1427,60 @@ Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `dataset_id` | yes | Substituted into the URL path (percent-encoded). |
-| `version_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `datasetId` | yes | Substituted into the URL path (percent-encoded). |
+| `versionId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `baseline_outputs` | yes | — |
-| `baseline_release_id` | yes | — |
-| `candidate_outputs` | yes | — |
-| `candidate_release_id` | yes | — |
-| `evaluator_id` | yes | — |
-| `evaluator_version_id` | yes | — |
-| `gate_policy` | no | — |
+| `baselineOutputs` | yes | — |
+| `baselineReleaseId` | yes | — |
+| `candidateOutputs` | yes | — |
+| `candidateReleaseId` | yes | — |
+| `evaluatorId` | yes | — |
+| `evaluatorVersionId` | yes | — |
+| `gatePolicy` | no | — |
 | `kind` | yes | — |
-| `provider_secret_id` | yes | — |
+| `providerSecretId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.experimentsRunJudge({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  version_id: "<version_id>",
-  baseline_outputs: "<baseline_outputs>",
-  baseline_release_id: "<baseline_release_id>",
-  candidate_outputs: "<candidate_outputs>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  versionId: "<versionId>",
+  baselineOutputs: "<baselineOutputs>",
+  baselineReleaseId: "<baselineReleaseId>",
+  candidateOutputs: "<candidateOutputs>",
 });
 ```
 
 ```python Python
 result = client.palette.experiments_run_judge({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "version_id": "<version_id>",
-    "baseline_outputs": "<baseline_outputs>",
-    "baseline_release_id": "<baseline_release_id>",
-    "candidate_outputs": "<candidate_outputs>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "versionId": "<versionId>",
+    "baselineOutputs": "<baselineOutputs>",
+    "baselineReleaseId": "<baselineReleaseId>",
+    "candidateOutputs": "<candidateOutputs>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "experiments_run_judge", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("version_id", "<version_id>".into()),
-    ("baseline_outputs", "<baseline_outputs>".into()),
-    ("baseline_release_id", "<baseline_release_id>".into()),
-    ("candidate_outputs", "<candidate_outputs>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("versionId", "<versionId>".into()),
+    ("baselineOutputs", "<baselineOutputs>".into()),
+    ("baselineReleaseId", "<baselineReleaseId>".into()),
+    ("candidateOutputs", "<candidateOutputs>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1490,7 +1490,7 @@ let spec = client.build_request("palette", "experiments_run_judge", &[
 
 ### gatesCreate
 
-`POST /v1/gates/{tenant_id}/{project_id}`
+`POST /v1/gates/{tenantId}/{projectId}`
 
 Call POST /v1/gates/\{tenant_id\}/\{project_id\}.
 
@@ -1502,48 +1502,48 @@ Call POST /v1/gates/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `dataset_id` | no | — |
-| `evaluator_version_id` | no | — |
-| `gate_id` | yes | — |
-| `inconclusive_policy` | no | — |
+| `datasetId` | no | — |
+| `evaluatorVersionId` | no | — |
+| `gateId` | yes | — |
+| `inconclusivePolicy` | no | — |
 | `name` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.gatesCreate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  dataset_id: "<dataset_id>",
-  evaluator_version_id: "<evaluator_version_id>",
-  gate_id: "<gate_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  datasetId: "<datasetId>",
+  evaluatorVersionId: "<evaluatorVersionId>",
+  gateId: "<gateId>",
 });
 ```
 
 ```python Python
 result = client.palette.gates_create({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "dataset_id": "<dataset_id>",
-    "evaluator_version_id": "<evaluator_version_id>",
-    "gate_id": "<gate_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "datasetId": "<datasetId>",
+    "evaluatorVersionId": "<evaluatorVersionId>",
+    "gateId": "<gateId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "gates_create", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
-    ("evaluator_version_id", "<evaluator_version_id>".into()),
-    ("gate_id", "<gate_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("datasetId", "<datasetId>".into()),
+    ("evaluatorVersionId", "<evaluatorVersionId>".into()),
+    ("gateId", "<gateId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1553,7 +1553,7 @@ let spec = client.build_request("palette", "gates_create", &[
 
 ### gatesRun
 
-`POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run`
+`POST /v1/gates/{tenantId}/{projectId}/{gateId}/run`
 
 Call POST /v1/gates/\{tenant_id\}/\{project_id\}/\{gate_id\}/run.
 
@@ -1565,42 +1565,42 @@ Call POST /v1/gates/\{tenant_id\}/\{project_id\}/\{gate_id\}/run.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `gate_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `gateId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `experiment_run_id` | no | — |
+| `experimentRunId` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.gatesRun({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  gate_id: "<gate_id>",
-  experiment_run_id: "<experiment_run_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  gateId: "<gateId>",
+  experimentRunId: "<experimentRunId>",
 });
 ```
 
 ```python Python
 result = client.palette.gates_run({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "gate_id": "<gate_id>",
-    "experiment_run_id": "<experiment_run_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "gateId": "<gateId>",
+    "experimentRunId": "<experimentRunId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "gates_run", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("gate_id", "<gate_id>".into()),
-    ("experiment_run_id", "<experiment_run_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("gateId", "<gateId>".into()),
+    ("experimentRunId", "<experimentRunId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1610,7 +1610,7 @@ let spec = client.build_request("palette", "gates_run", &[
 
 ### importSource
 
-`POST /v1/import/{tenant_id}/{project_id}/{environment_id}`
+`POST /v1/import/{tenantId}/{projectId}/{environmentId}`
 
 Import spans from a named external source payload.
 
@@ -1623,9 +1623,9 @@ Import spans from a named external source payload.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `environment_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `environmentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -1644,9 +1644,9 @@ Import spans from a named external source payload.
 
 ```typescript TypeScript
 const result = await client.palette.importSource({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
   payload: "<payload>",
   source: "<source>",
 });
@@ -1654,9 +1654,9 @@ const result = await client.palette.importSource({
 
 ```python Python
 result = client.palette.import_source({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
     "payload": "<payload>",
     "source": "<source>",
 })
@@ -1664,9 +1664,9 @@ result = client.palette.import_source({
 
 ```rust Rust
 let spec = client.build_request("palette", "import_source", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
     ("payload", "<payload>".into()),
     ("source", "<source>".into()),
 ])?;
@@ -1678,7 +1678,7 @@ let spec = client.build_request("palette", "import_source", &[
 
 ### ingestReplayDeadLetter
 
-`POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay`
+`POST /v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay`
 
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/dead-letters/\{message_id\}/replay.
 
@@ -1690,39 +1690,39 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/dead-letters/\{message_id\}/re
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `message_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `messageId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `reset_attempts` | no | — |
+| `resetAttempts` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.ingestReplayDeadLetter({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  message_id: "<message_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  messageId: "<messageId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_replay_dead_letter({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "message_id": "<message_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "messageId": "<messageId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_replay_dead_letter", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("message_id", "<message_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("messageId", "<messageId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1732,7 +1732,7 @@ let spec = client.build_request("palette", "ingest_replay_dead_letter", &[
 
 ### ingestGetQueueStatus
 
-`GET /v1/ingest/{tenant_id}/{project_id}/queue`
+`GET /v1/ingest/{tenantId}/{projectId}/queue`
 
 Call GET /v1/ingest/\{tenant_id\}/\{project_id\}/queue.
 
@@ -1744,29 +1744,29 @@ Call GET /v1/ingest/\{tenant_id\}/\{project_id\}/queue.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.ingestGetQueueStatus({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_get_queue_status({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_get_queue_status", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1776,7 +1776,7 @@ let spec = client.build_request("palette", "ingest_get_queue_status", &[
 
 ### ingestDrainTraceIngested
 
-`POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain`
+`POST /v1/ingest/{tenantId}/{projectId}/trace-ingested/drain`
 
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-ingested/drain.
 
@@ -1788,8 +1788,8 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-ingested/drain.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -1801,22 +1801,22 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-ingested/drain.
 
 ```typescript TypeScript
 const result = await client.palette.ingestDrainTraceIngested({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_drain_trace_ingested({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_drain_trace_ingested", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1826,7 +1826,7 @@ let spec = client.build_request("palette", "ingest_drain_trace_ingested", &[
 
 ### ingestDrainTraceWrites
 
-`POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain`
+`POST /v1/ingest/{tenantId}/{projectId}/trace-writes/drain`
 
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-writes/drain.
 
@@ -1838,8 +1838,8 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-writes/drain.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -1851,22 +1851,22 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-writes/drain.
 
 ```typescript TypeScript
 const result = await client.palette.ingestDrainTraceWrites({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_drain_trace_writes({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_drain_trace_writes", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1876,7 +1876,7 @@ let spec = client.build_request("palette", "ingest_drain_trace_writes", &[
 
 ### ingestReconcileTrace
 
-`POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile`
+`POST /v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile`
 
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/reconcile.
 
@@ -1888,33 +1888,33 @@ Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/reconcile.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.ingestReconcileTrace({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  trace_id: "<trace_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  traceId: "<traceId>",
 });
 ```
 
 ```python Python
 result = client.palette.ingest_reconcile_trace({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "trace_id": "<trace_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "traceId": "<traceId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "ingest_reconcile_trace", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("traceId", "<traceId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1924,7 +1924,7 @@ let spec = client.build_request("palette", "ingest_reconcile_trace", &[
 
 ### judgeEvaluate
 
-`POST /v1/judge/{tenant_id}/{project_id}/evaluate`
+`POST /v1/judge/{tenantId}/{projectId}/evaluate`
 
 Call POST /v1/judge/\{tenant_id\}/\{project_id\}/evaluate.
 
@@ -1936,25 +1936,25 @@ Call POST /v1/judge/\{tenant_id\}/\{project_id\}/evaluate.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `cache_namespace` | no | — |
+| `cacheNamespace` | no | — |
 | `case` | yes | — |
 | `evaluator` | yes | — |
-| `provider_secret_id` | yes | — |
+| `providerSecretId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.judgeEvaluate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  cache_namespace: "<cache_namespace>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  cacheNamespace: "<cacheNamespace>",
   case: "<case>",
   evaluator: "<evaluator>",
 });
@@ -1962,9 +1962,9 @@ const result = await client.palette.judgeEvaluate({
 
 ```python Python
 result = client.palette.judge_evaluate({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "cache_namespace": "<cache_namespace>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "cacheNamespace": "<cacheNamespace>",
     "case": "<case>",
     "evaluator": "<evaluator>",
 })
@@ -1972,9 +1972,9 @@ result = client.palette.judge_evaluate({
 
 ```rust Rust
 let spec = client.build_request("palette", "judge_evaluate", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("cache_namespace", "<cache_namespace>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("cacheNamespace", "<cacheNamespace>".into()),
     ("case", "<case>".into()),
     ("evaluator", "<evaluator>".into()),
 ])?;
@@ -1986,7 +1986,7 @@ let spec = client.build_request("palette", "judge_evaluate", &[
 
 ### judgeListLedger
 
-`GET /v1/judge/{tenant_id}/{project_id}/ledger`
+`GET /v1/judge/{tenantId}/{projectId}/ledger`
 
 Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
 
@@ -1998,8 +1998,8 @@ Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2012,8 +2012,8 @@ Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
 
 ```typescript TypeScript
 const result = await client.palette.judgeListLedger({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -2021,8 +2021,8 @@ const result = await client.palette.judgeListLedger({
 
 ```python Python
 result = client.palette.judge_list_ledger({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -2030,8 +2030,8 @@ result = client.palette.judge_list_ledger({
 
 ```rust Rust
 let spec = client.build_request("palette", "judge_list_ledger", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -2043,7 +2043,7 @@ let spec = client.build_request("palette", "judge_list_ledger", &[
 
 ### onlineDecideSampling
 
-`POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling`
+`POST /v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling`
 
 Call POST /v1/online/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/sampling.
 
@@ -2055,51 +2055,51 @@ Call POST /v1/online/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/sampling.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `high_cost_micros_threshold` | no | — |
-| `keep_errors` | yes | — |
-| `sample_rate_per_mille` | yes | — |
-| `slow_ms_threshold` | no | — |
+| `highCostMicrosThreshold` | no | — |
+| `keepErrors` | yes | — |
+| `sampleRatePerMille` | yes | — |
+| `slowMsThreshold` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.onlineDecideSampling({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  trace_id: "<trace_id>",
-  high_cost_micros_threshold: "<high_cost_micros_threshold>",
-  keep_errors: "<keep_errors>",
-  sample_rate_per_mille: "<sample_rate_per_mille>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  traceId: "<traceId>",
+  highCostMicrosThreshold: "<highCostMicrosThreshold>",
+  keepErrors: "<keepErrors>",
+  sampleRatePerMille: "<sampleRatePerMille>",
 });
 ```
 
 ```python Python
 result = client.palette.online_decide_sampling({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "trace_id": "<trace_id>",
-    "high_cost_micros_threshold": "<high_cost_micros_threshold>",
-    "keep_errors": "<keep_errors>",
-    "sample_rate_per_mille": "<sample_rate_per_mille>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "traceId": "<traceId>",
+    "highCostMicrosThreshold": "<highCostMicrosThreshold>",
+    "keepErrors": "<keepErrors>",
+    "sampleRatePerMille": "<sampleRatePerMille>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "online_decide_sampling", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("trace_id", "<trace_id>".into()),
-    ("high_cost_micros_threshold", "<high_cost_micros_threshold>".into()),
-    ("keep_errors", "<keep_errors>".into()),
-    ("sample_rate_per_mille", "<sample_rate_per_mille>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("traceId", "<traceId>".into()),
+    ("highCostMicrosThreshold", "<highCostMicrosThreshold>".into()),
+    ("keepErrors", "<keepErrors>".into()),
+    ("sampleRatePerMille", "<sampleRatePerMille>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2109,7 +2109,7 @@ let spec = client.build_request("palette", "online_decide_sampling", &[
 
 ### promptsList
 
-`GET /v1/prompts/{tenant_id}/{project_id}`
+`GET /v1/prompts/{tenantId}/{projectId}`
 
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
 
@@ -2121,8 +2121,8 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2135,8 +2135,8 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.promptsList({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -2144,8 +2144,8 @@ const result = await client.palette.promptsList({
 
 ```python Python
 result = client.palette.prompts_list({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -2153,8 +2153,8 @@ result = client.palette.prompts_list({
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_list", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -2166,7 +2166,7 @@ let spec = client.build_request("palette", "prompts_list", &[
 
 ### promptsCreate
 
-`POST /v1/prompts/{tenant_id}/{project_id}`
+`POST /v1/prompts/{tenantId}/{projectId}`
 
 Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
 
@@ -2178,14 +2178,14 @@ Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `created_by` | no | — |
+| `createdBy` | no | — |
 | `description` | no | — |
 | `message` | no | — |
 | `name` | yes | — |
@@ -2195,9 +2195,9 @@ Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.promptsCreate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  created_by: "<created_by>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  createdBy: "<createdBy>",
   description: "<description>",
   message: "<message>",
 });
@@ -2205,9 +2205,9 @@ const result = await client.palette.promptsCreate({
 
 ```python Python
 result = client.palette.prompts_create({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "created_by": "<created_by>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "createdBy": "<createdBy>",
     "description": "<description>",
     "message": "<message>",
 })
@@ -2215,9 +2215,9 @@ result = client.palette.prompts_create({
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_create", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("created_by", "<created_by>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("createdBy", "<createdBy>".into()),
     ("description", "<description>".into()),
     ("message", "<message>".into()),
 ])?;
@@ -2229,7 +2229,7 @@ let spec = client.build_request("palette", "prompts_create", &[
 
 ### promptsGet
 
-`GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}`
+`GET /v1/prompts/{tenantId}/{projectId}/{promptId}`
 
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}.
 
@@ -2241,33 +2241,33 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `prompt_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `promptId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.promptsGet({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  prompt_id: "<prompt_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  promptId: "<promptId>",
 });
 ```
 
 ```python Python
 result = client.palette.prompts_get({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "prompt_id": "<prompt_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "promptId": "<promptId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_get", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("prompt_id", "<prompt_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("promptId", "<promptId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2277,7 +2277,7 @@ let spec = client.build_request("palette", "prompts_get", &[
 
 ### promptsDiffVersions
 
-`GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff`
+`GET /v1/prompts/{tenantId}/{projectId}/{promptId}/diff`
 
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
 
@@ -2289,9 +2289,9 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `prompt_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `promptId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2304,9 +2304,9 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
 
 ```typescript TypeScript
 const result = await client.palette.promptsDiffVersions({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  prompt_id: "<prompt_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  promptId: "<promptId>",
   from: "<from>",
   to: "<to>",
 });
@@ -2314,9 +2314,9 @@ const result = await client.palette.promptsDiffVersions({
 
 ```python Python
 result = client.palette.prompts_diff_versions({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "prompt_id": "<prompt_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "promptId": "<promptId>",
     "from": "<from>",
     "to": "<to>",
 })
@@ -2324,9 +2324,9 @@ result = client.palette.prompts_diff_versions({
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_diff_versions", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("prompt_id", "<prompt_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("promptId", "<promptId>".into()),
     ("from", "<from>".into()),
     ("to", "<to>".into()),
 ])?;
@@ -2338,7 +2338,7 @@ let spec = client.build_request("palette", "prompts_diff_versions", &[
 
 ### promptsListVersions
 
-`GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions`
+`GET /v1/prompts/{tenantId}/{projectId}/{promptId}/versions`
 
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
@@ -2350,9 +2350,9 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `prompt_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `promptId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2365,9 +2365,9 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 ```typescript TypeScript
 const result = await client.palette.promptsListVersions({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  prompt_id: "<prompt_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  promptId: "<promptId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -2375,9 +2375,9 @@ const result = await client.palette.promptsListVersions({
 
 ```python Python
 result = client.palette.prompts_list_versions({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "prompt_id": "<prompt_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "promptId": "<promptId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -2385,9 +2385,9 @@ result = client.palette.prompts_list_versions({
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_list_versions", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("prompt_id", "<prompt_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("promptId", "<promptId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -2399,7 +2399,7 @@ let spec = client.build_request("palette", "prompts_list_versions", &[
 
 ### promptsAddVersion
 
-`POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions`
+`POST /v1/prompts/{tenantId}/{projectId}/{promptId}/versions`
 
 Call POST /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
@@ -2411,15 +2411,15 @@ Call POST /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `prompt_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `promptId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `created_by` | no | — |
+| `createdBy` | no | — |
 | `message` | no | — |
 | `template` | yes | — |
 
@@ -2427,10 +2427,10 @@ Call POST /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 ```typescript TypeScript
 const result = await client.palette.promptsAddVersion({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  prompt_id: "<prompt_id>",
-  created_by: "<created_by>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  promptId: "<promptId>",
+  createdBy: "<createdBy>",
   message: "<message>",
   template: "<template>",
 });
@@ -2438,10 +2438,10 @@ const result = await client.palette.promptsAddVersion({
 
 ```python Python
 result = client.palette.prompts_add_version({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "prompt_id": "<prompt_id>",
-    "created_by": "<created_by>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "promptId": "<promptId>",
+    "createdBy": "<createdBy>",
     "message": "<message>",
     "template": "<template>",
 })
@@ -2449,10 +2449,10 @@ result = client.palette.prompts_add_version({
 
 ```rust Rust
 let spec = client.build_request("palette", "prompts_add_version", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("prompt_id", "<prompt_id>".into()),
-    ("created_by", "<created_by>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("promptId", "<promptId>".into()),
+    ("createdBy", "<createdBy>".into()),
     ("message", "<message>".into()),
     ("template", "<template>".into()),
 ])?;
@@ -2464,7 +2464,7 @@ let spec = client.build_request("palette", "prompts_add_version", &[
 
 ### providerSecretsList
 
-`GET /v1/provider-secrets/{tenant_id}/{project_id}`
+`GET /v1/provider-secrets/{tenantId}/{projectId}`
 
 Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
@@ -2476,8 +2476,8 @@ Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2490,8 +2490,8 @@ Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.providerSecretsList({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -2499,8 +2499,8 @@ const result = await client.palette.providerSecretsList({
 
 ```python Python
 result = client.palette.provider_secrets_list({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -2508,8 +2508,8 @@ result = client.palette.provider_secrets_list({
 
 ```rust Rust
 let spec = client.build_request("palette", "provider_secrets_list", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -2521,7 +2521,7 @@ let spec = client.build_request("palette", "provider_secrets_list", &[
 
 ### providerSecretsCreate
 
-`POST /v1/provider-secrets/{tenant_id}/{project_id}`
+`POST /v1/provider-secrets/{tenantId}/{projectId}`
 
 Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
@@ -2533,46 +2533,46 @@ Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `display_name` | yes | — |
+| `displayName` | yes | — |
 | `provider` | yes | — |
-| `secret_value` | yes | — |
+| `secretValue` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.providerSecretsCreate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  display_name: "<display_name>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  displayName: "<displayName>",
   provider: "<provider>",
-  secret_value: "<secret_value>",
+  secretValue: "<secretValue>",
 });
 ```
 
 ```python Python
 result = client.palette.provider_secrets_create({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "display_name": "<display_name>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "displayName": "<displayName>",
     "provider": "<provider>",
-    "secret_value": "<secret_value>",
+    "secretValue": "<secretValue>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "provider_secrets_create", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("display_name", "<display_name>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("displayName", "<displayName>".into()),
     ("provider", "<provider>".into()),
-    ("secret_value", "<secret_value>".into()),
+    ("secretValue", "<secretValue>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2582,7 +2582,7 @@ let spec = client.build_request("palette", "provider_secrets_create", &[
 
 ### providerSecretsRevoke
 
-`POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke`
+`POST /v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke`
 
 Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}/\{provider_secret_id\}/revoke.
 
@@ -2594,33 +2594,33 @@ Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}/\{provider_secret_id
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `provider_secret_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `providerSecretId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.providerSecretsRevoke({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  provider_secret_id: "<provider_secret_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  providerSecretId: "<providerSecretId>",
 });
 ```
 
 ```python Python
 result = client.palette.provider_secrets_revoke({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "provider_secret_id": "<provider_secret_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "providerSecretId": "<providerSecretId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "provider_secrets_revoke", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("provider_secret_id", "<provider_secret_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("providerSecretId", "<providerSecretId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2630,7 +2630,7 @@ let spec = client.build_request("palette", "provider_secrets_revoke", &[
 
 ### reviewsCreateQueue
 
-`POST /v1/review-queues/{tenant_id}/{project_id}`
+`POST /v1/review-queues/{tenantId}/{projectId}`
 
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}.
 
@@ -2642,46 +2642,46 @@ Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `annotation_schema` | yes | — |
+| `annotationSchema` | yes | — |
 | `name` | yes | — |
-| `queue_id` | no | — |
+| `queueId` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.reviewsCreateQueue({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  annotation_schema: "<annotation_schema>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  annotationSchema: "<annotationSchema>",
   name: "<name>",
-  queue_id: "<queue_id>",
+  queueId: "<queueId>",
 });
 ```
 
 ```python Python
 result = client.palette.reviews_create_queue({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "annotation_schema": "<annotation_schema>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "annotationSchema": "<annotationSchema>",
     "name": "<name>",
-    "queue_id": "<queue_id>",
+    "queueId": "<queueId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "reviews_create_queue", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("annotation_schema", "<annotation_schema>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("annotationSchema", "<annotationSchema>".into()),
     ("name", "<name>".into()),
-    ("queue_id", "<queue_id>".into()),
+    ("queueId", "<queueId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2691,7 +2691,7 @@ let spec = client.build_request("palette", "reviews_create_queue", &[
 
 ### reviewsListTasks
 
-`GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks`
+`GET /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks`
 
 Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
 
@@ -2703,9 +2703,9 @@ Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `queue_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `queueId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2719,9 +2719,9 @@ Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
 
 ```typescript TypeScript
 const result = await client.palette.reviewsListTasks({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  queue_id: "<queue_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  queueId: "<queueId>",
   state: "<state>",
   pageSize: "<pageSize>",
 });
@@ -2729,9 +2729,9 @@ const result = await client.palette.reviewsListTasks({
 
 ```python Python
 result = client.palette.reviews_list_tasks({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "queue_id": "<queue_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "queueId": "<queueId>",
     "state": "<state>",
     "pageSize": "<pageSize>",
 })
@@ -2739,9 +2739,9 @@ result = client.palette.reviews_list_tasks({
 
 ```rust Rust
 let spec = client.build_request("palette", "reviews_list_tasks", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("queue_id", "<queue_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("queueId", "<queueId>".into()),
     ("state", "<state>".into()),
     ("pageSize", "<pageSize>".into()),
 ])?;
@@ -2753,7 +2753,7 @@ let spec = client.build_request("palette", "reviews_list_tasks", &[
 
 ### reviewsEnqueueTaskFromTrace
 
-`POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace`
+`POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace`
 
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/from-trace.
 
@@ -2765,52 +2765,52 @@ Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/from
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `queue_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `queueId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `dataset_case_id` | no | — |
-| `dataset_id` | no | — |
+| `datasetCaseId` | no | — |
+| `datasetId` | no | — |
 | `priority` | no | — |
-| `span_id` | no | — |
-| `task_id` | no | — |
-| `trace_id` | yes | — |
+| `spanId` | no | — |
+| `taskId` | no | — |
+| `traceId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.reviewsEnqueueTaskFromTrace({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  queue_id: "<queue_id>",
-  dataset_case_id: "<dataset_case_id>",
-  dataset_id: "<dataset_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  queueId: "<queueId>",
+  datasetCaseId: "<datasetCaseId>",
+  datasetId: "<datasetId>",
   priority: "<priority>",
 });
 ```
 
 ```python Python
 result = client.palette.reviews_enqueue_task_from_trace({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "queue_id": "<queue_id>",
-    "dataset_case_id": "<dataset_case_id>",
-    "dataset_id": "<dataset_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "queueId": "<queueId>",
+    "datasetCaseId": "<datasetCaseId>",
+    "datasetId": "<datasetId>",
     "priority": "<priority>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "reviews_enqueue_task_from_trace", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("queue_id", "<queue_id>".into()),
-    ("dataset_case_id", "<dataset_case_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("queueId", "<queueId>".into()),
+    ("datasetCaseId", "<datasetCaseId>".into()),
+    ("datasetId", "<datasetId>".into()),
     ("priority", "<priority>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -2821,7 +2821,7 @@ let spec = client.build_request("palette", "reviews_enqueue_task_from_trace", &[
 
 ### reviewsSubmitAnnotation
 
-`POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations`
+`POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations`
 
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations.
 
@@ -2833,55 +2833,55 @@ Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{ta
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `queue_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `queueId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `annotation_id` | no | — |
+| `annotationId` | no | — |
 | `payload` | yes | — |
-| `reviewer_id` | yes | — |
+| `reviewerId` | yes | — |
 | `verdict` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.reviewsSubmitAnnotation({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  queue_id: "<queue_id>",
-  task_id: "<task_id>",
-  annotation_id: "<annotation_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  queueId: "<queueId>",
+  taskId: "<taskId>",
+  annotationId: "<annotationId>",
   payload: "<payload>",
-  reviewer_id: "<reviewer_id>",
+  reviewerId: "<reviewerId>",
 });
 ```
 
 ```python Python
 result = client.palette.reviews_submit_annotation({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "queue_id": "<queue_id>",
-    "task_id": "<task_id>",
-    "annotation_id": "<annotation_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "queueId": "<queueId>",
+    "taskId": "<taskId>",
+    "annotationId": "<annotationId>",
     "payload": "<payload>",
-    "reviewer_id": "<reviewer_id>",
+    "reviewerId": "<reviewerId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "reviews_submit_annotation", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("queue_id", "<queue_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("annotation_id", "<annotation_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("queueId", "<queueId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("annotationId", "<annotationId>".into()),
     ("payload", "<payload>".into()),
-    ("reviewer_id", "<reviewer_id>".into()),
+    ("reviewerId", "<reviewerId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2891,7 +2891,7 @@ let spec = client.build_request("palette", "reviews_submit_annotation", &[
 
 ### reviewsPromoteAnnotation
 
-`POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote`
+`POST /v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote`
 
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations/\{annotation_id\}/promote.
 
@@ -2903,53 +2903,53 @@ Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{ta
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `queue_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
-| `annotation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `queueId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
+| `annotationId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `dataset_id` | yes | — |
+| `datasetId` | yes | — |
 | `reference` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.reviewsPromoteAnnotation({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  queue_id: "<queue_id>",
-  task_id: "<task_id>",
-  annotation_id: "<annotation_id>",
-  dataset_id: "<dataset_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  queueId: "<queueId>",
+  taskId: "<taskId>",
+  annotationId: "<annotationId>",
+  datasetId: "<datasetId>",
   reference: "<reference>",
 });
 ```
 
 ```python Python
 result = client.palette.reviews_promote_annotation({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "queue_id": "<queue_id>",
-    "task_id": "<task_id>",
-    "annotation_id": "<annotation_id>",
-    "dataset_id": "<dataset_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "queueId": "<queueId>",
+    "taskId": "<taskId>",
+    "annotationId": "<annotationId>",
+    "datasetId": "<datasetId>",
     "reference": "<reference>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "reviews_promote_annotation", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("queue_id", "<queue_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("annotation_id", "<annotation_id>".into()),
-    ("dataset_id", "<dataset_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("queueId", "<queueId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("annotationId", "<annotationId>".into()),
+    ("datasetId", "<datasetId>".into()),
     ("reference", "<reference>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -2960,7 +2960,7 @@ let spec = client.build_request("palette", "reviews_promote_annotation", &[
 
 ### scenariosList
 
-`GET /v1/scenarios/{tenant_id}/{project_id}`
+`GET /v1/scenarios/{tenantId}/{projectId}`
 
 Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
@@ -2972,8 +2972,8 @@ Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -2986,8 +2986,8 @@ Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 ```typescript TypeScript
 const result = await client.palette.scenariosList({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
   pageSize: "<pageSize>",
   pageToken: "<pageToken>",
 });
@@ -2995,8 +2995,8 @@ const result = await client.palette.scenariosList({
 
 ```python Python
 result = client.palette.scenarios_list({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
     "pageSize": "<pageSize>",
     "pageToken": "<pageToken>",
 })
@@ -3004,8 +3004,8 @@ result = client.palette.scenarios_list({
 
 ```rust Rust
 let spec = client.build_request("palette", "scenarios_list", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
     ("pageSize", "<pageSize>".into()),
     ("pageToken", "<pageToken>".into()),
 ])?;
@@ -3017,7 +3017,7 @@ let spec = client.build_request("palette", "scenarios_list", &[
 
 ### scenariosCreate
 
-`POST /v1/scenarios/{tenant_id}/{project_id}`
+`POST /v1/scenarios/{tenantId}/{projectId}`
 
 Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
@@ -3029,48 +3029,48 @@ Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `exemplar_trace_id` | no | — |
-| `expected_outcome` | no | — |
-| `failure_mode` | no | — |
-| `source_trace_ids` | yes | — |
+| `exemplarTraceId` | no | — |
+| `expectedOutcome` | no | — |
+| `failureMode` | no | — |
+| `sourceTraceIds` | yes | — |
 | `title` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.scenariosCreate({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  exemplar_trace_id: "<exemplar_trace_id>",
-  expected_outcome: "<expected_outcome>",
-  failure_mode: "<failure_mode>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  exemplarTraceId: "<exemplarTraceId>",
+  expectedOutcome: "<expectedOutcome>",
+  failureMode: "<failureMode>",
 });
 ```
 
 ```python Python
 result = client.palette.scenarios_create({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "exemplar_trace_id": "<exemplar_trace_id>",
-    "expected_outcome": "<expected_outcome>",
-    "failure_mode": "<failure_mode>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "exemplarTraceId": "<exemplarTraceId>",
+    "expectedOutcome": "<expectedOutcome>",
+    "failureMode": "<failureMode>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "scenarios_create", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("exemplar_trace_id", "<exemplar_trace_id>".into()),
-    ("expected_outcome", "<expected_outcome>".into()),
-    ("failure_mode", "<failure_mode>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("exemplarTraceId", "<exemplarTraceId>".into()),
+    ("expectedOutcome", "<expectedOutcome>".into()),
+    ("failureMode", "<failureMode>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3080,7 +3080,7 @@ let spec = client.build_request("palette", "scenarios_create", &[
 
 ### scenariosMine
 
-`POST /v1/scenarios/{tenant_id}/{project_id}/mine`
+`POST /v1/scenarios/{tenantId}/{projectId}/mine`
 
 Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}/mine.
 
@@ -3092,42 +3092,42 @@ Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}/mine.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `jaccard_threshold` | no | — |
-| `trace_ids` | yes | — |
+| `jaccardThreshold` | no | — |
+| `traceIds` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.scenariosMine({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  jaccard_threshold: "<jaccard_threshold>",
-  trace_ids: "<trace_ids>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  jaccardThreshold: "<jaccardThreshold>",
+  traceIds: "<traceIds>",
 });
 ```
 
 ```python Python
 result = client.palette.scenarios_mine({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "jaccard_threshold": "<jaccard_threshold>",
-    "trace_ids": "<trace_ids>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "jaccardThreshold": "<jaccardThreshold>",
+    "traceIds": "<traceIds>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "scenarios_mine", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("jaccard_threshold", "<jaccard_threshold>".into()),
-    ("trace_ids", "<trace_ids>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("jaccardThreshold", "<jaccardThreshold>".into()),
+    ("traceIds", "<traceIds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3137,7 +3137,7 @@ let spec = client.build_request("palette", "scenarios_mine", &[
 
 ### scenariosGet
 
-`GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}`
+`GET /v1/scenarios/{tenantId}/{projectId}/{scenarioId}`
 
 Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}/\{scenario_id\}.
 
@@ -3149,33 +3149,33 @@ Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}/\{scenario_id\}.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `scenario_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `scenarioId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.scenariosGet({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  scenario_id: "<scenario_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  scenarioId: "<scenarioId>",
 });
 ```
 
 ```python Python
 result = client.palette.scenarios_get({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "scenario_id": "<scenario_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "scenarioId": "<scenarioId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "scenarios_get", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("scenario_id", "<scenario_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("scenarioId", "<scenarioId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3185,7 +3185,7 @@ let spec = client.build_request("palette", "scenarios_get", &[
 
 ### searchSpans
 
-`GET /v1/search/{tenant_id}/spans`
+`GET /v1/search/{tenantId}/spans`
 
 Search spans by text query and facet filters.
 
@@ -3198,17 +3198,17 @@ Search spans by text query and facet filters.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
 | `q` | no | — |
-| `project_id` | no | — |
-| `environment_id` | no | — |
-| `trace_id` | no | — |
-| `span_id` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `traceId` | no | — |
+| `spanId` | no | — |
 | `kind` | no | — |
 | `status` | no | — |
 | `model` | no | — |
@@ -3220,25 +3220,25 @@ Search spans by text query and facet filters.
 
 ```typescript TypeScript
 const result = await client.palette.searchSpans({
-  tenant_id: "<tenant_id>",
+  tenantId: "<tenantId>",
   q: "<q>",
-  project_id: "<project_id>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.search_spans({
-    "tenant_id": "<tenant_id>",
+    "tenantId": "<tenantId>",
     "q": "<q>",
-    "project_id": "<project_id>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "search_spans", &[
-    ("tenant_id", "<tenant_id>".into()),
+    ("tenantId", "<tenantId>".into()),
     ("q", "<q>".into()),
-    ("project_id", "<project_id>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3248,7 +3248,7 @@ let spec = client.build_request("palette", "search_spans", &[
 
 ### getSpan
 
-`GET /v1/spans/{tenant_id}/{trace_id}/{span_id}`
+`GET /v1/spans/{tenantId}/{traceId}/{spanId}`
 
 Fetch one canonical span by trace and span id.
 
@@ -3261,9 +3261,9 @@ Fetch one canonical span by trace and span id.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `span_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
+| `spanId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -3276,9 +3276,9 @@ Fetch one canonical span by trace and span id.
 
 ```typescript TypeScript
 const result = await client.palette.getSpan({
-  tenant_id: "<tenant_id>",
-  trace_id: "<trace_id>",
-  span_id: "<span_id>",
+  tenantId: "<tenantId>",
+  traceId: "<traceId>",
+  spanId: "<spanId>",
   unmask: "<unmask>",
   reason: "<reason>",
 });
@@ -3286,9 +3286,9 @@ const result = await client.palette.getSpan({
 
 ```python Python
 result = client.palette.get_span({
-    "tenant_id": "<tenant_id>",
-    "trace_id": "<trace_id>",
-    "span_id": "<span_id>",
+    "tenantId": "<tenantId>",
+    "traceId": "<traceId>",
+    "spanId": "<spanId>",
     "unmask": "<unmask>",
     "reason": "<reason>",
 })
@@ -3296,9 +3296,9 @@ result = client.palette.get_span({
 
 ```rust Rust
 let spec = client.build_request("palette", "get_span", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("trace_id", "<trace_id>".into()),
-    ("span_id", "<span_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("traceId", "<traceId>".into()),
+    ("spanId", "<spanId>".into()),
     ("unmask", "<unmask>".into()),
     ("reason", "<reason>".into()),
 ])?;
@@ -3310,7 +3310,7 @@ let spec = client.build_request("palette", "get_span", &[
 
 ### getSpanIo
 
-`GET /v1/spans/{tenant_id}/{trace_id}/{span_id}/io`
+`GET /v1/spans/{tenantId}/{traceId}/{spanId}/io`
 
 Fetch a span's recorded input and output values.
 
@@ -3323,9 +3323,9 @@ Fetch a span's recorded input and output values.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `span_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
+| `spanId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -3338,9 +3338,9 @@ Fetch a span's recorded input and output values.
 
 ```typescript TypeScript
 const result = await client.palette.getSpanIo({
-  tenant_id: "<tenant_id>",
-  trace_id: "<trace_id>",
-  span_id: "<span_id>",
+  tenantId: "<tenantId>",
+  traceId: "<traceId>",
+  spanId: "<spanId>",
   unmask: "<unmask>",
   reason: "<reason>",
 });
@@ -3348,9 +3348,9 @@ const result = await client.palette.getSpanIo({
 
 ```python Python
 result = client.palette.get_span_io({
-    "tenant_id": "<tenant_id>",
-    "trace_id": "<trace_id>",
-    "span_id": "<span_id>",
+    "tenantId": "<tenantId>",
+    "traceId": "<traceId>",
+    "spanId": "<spanId>",
     "unmask": "<unmask>",
     "reason": "<reason>",
 })
@@ -3358,9 +3358,9 @@ result = client.palette.get_span_io({
 
 ```rust Rust
 let spec = client.build_request("palette", "get_span_io", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("trace_id", "<trace_id>".into()),
-    ("span_id", "<span_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("traceId", "<traceId>".into()),
+    ("spanId", "<spanId>".into()),
     ("unmask", "<unmask>".into()),
     ("reason", "<reason>".into()),
 ])?;
@@ -3392,31 +3392,31 @@ Ingest one native span; idempotent when an idempotency key is supplied.
 | Parameter | Required | Notes |
 |---|---|---|
 | `attributes` | yes | — |
-| `auth_context` | no | — |
+| `authContext` | no | — |
 | `cost` | no | — |
-| `end_time` | no | — |
-| `idempotency_key` | no | — |
+| `endTime` | no | — |
+| `idempotencyKey` | no | — |
 | `input` | no | — |
 | `kind` | yes | — |
 | `model` | no | — |
 | `name` | yes | — |
 | `output` | no | — |
-| `parent_span_id` | no | — |
-| `redaction_class` | yes | — |
+| `parentSpanId` | no | — |
+| `redactionClass` | yes | — |
 | `scope` | yes | — |
 | `seq` | yes | — |
-| `span_id` | yes | — |
-| `start_time` | no | — |
+| `spanId` | yes | — |
+| `startTime` | no | — |
 | `status` | yes | — |
 | `tokens` | no | — |
-| `trace_id` | yes | — |
+| `traceId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.ingestSpan({
   attributes: "<attributes>",
-  auth_context: "<auth_context>",
+  authContext: "<authContext>",
   cost: "<cost>",
 });
 ```
@@ -3424,7 +3424,7 @@ const result = await client.palette.ingestSpan({
 ```python Python
 result = client.palette.ingest_span({
     "attributes": "<attributes>",
-    "auth_context": "<auth_context>",
+    "authContext": "<authContext>",
     "cost": "<cost>",
 })
 ```
@@ -3432,7 +3432,7 @@ result = client.palette.ingest_span({
 ```rust Rust
 let spec = client.build_request("palette", "ingest_span", &[
     ("attributes", "<attributes>".into()),
-    ("auth_context", "<auth_context>".into()),
+    ("authContext", "<authContext>".into()),
     ("cost", "<cost>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -3443,7 +3443,7 @@ let spec = client.build_request("palette", "ingest_span", &[
 
 ### listTraces
 
-`GET /v1/traces/{tenant_id}`
+`GET /v1/traces/{tenantId}`
 
 List trace summaries for a tenant with filters and cursor pagination.
 
@@ -3456,25 +3456,25 @@ List trace summaries for a tenant with filters and cursor pagination.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | no | — |
-| `environment_id` | no | — |
-| `trace_id` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `traceId` | no | — |
 | `kind` | no | — |
 | `status` | no | — |
-| `started_after` | no | — |
-| `started_before` | no | — |
+| `startedAfter` | no | — |
+| `startedBefore` | no | — |
 | `model` | no | — |
 | `release` | no | — |
-| `min_cost_micros` | no | — |
-| `max_cost_micros` | no | — |
-| `min_latency_ms` | no | — |
-| `max_latency_ms` | no | — |
+| `minCostMicros` | no | — |
+| `maxCostMicros` | no | — |
+| `minLatencyMs` | no | — |
+| `maxLatencyMs` | no | — |
 | `pageSize` | no | — |
 | `pageToken` | no | — |
 
@@ -3482,25 +3482,25 @@ List trace summaries for a tenant with filters and cursor pagination.
 
 ```typescript TypeScript
 const result = await client.palette.listTraces({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.palette.list_traces({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "list_traces", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -3510,7 +3510,7 @@ let spec = client.build_request("palette", "list_traces", &[
 
 ### getTrace
 
-`GET /v1/traces/{tenant_id}/{trace_id}`
+`GET /v1/traces/{tenantId}/{traceId}`
 
 Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.
 
@@ -3523,8 +3523,8 @@ Fetch one full trace with all canonical spans; unmasking PII requires the pii:un
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `trace_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `traceId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
@@ -3537,8 +3537,8 @@ Fetch one full trace with all canonical spans; unmasking PII requires the pii:un
 
 ```typescript TypeScript
 const result = await client.palette.getTrace({
-  tenant_id: "<tenant_id>",
-  trace_id: "<trace_id>",
+  tenantId: "<tenantId>",
+  traceId: "<traceId>",
   unmask: "<unmask>",
   reason: "<reason>",
 });
@@ -3546,8 +3546,8 @@ const result = await client.palette.getTrace({
 
 ```python Python
 result = client.palette.get_trace({
-    "tenant_id": "<tenant_id>",
-    "trace_id": "<trace_id>",
+    "tenantId": "<tenantId>",
+    "traceId": "<traceId>",
     "unmask": "<unmask>",
     "reason": "<reason>",
 })
@@ -3555,8 +3555,8 @@ result = client.palette.get_trace({
 
 ```rust Rust
 let spec = client.build_request("palette", "get_trace", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("trace_id", "<trace_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("traceId", "<traceId>".into()),
     ("unmask", "<unmask>".into()),
     ("reason", "<reason>".into()),
 ])?;
@@ -3568,7 +3568,7 @@ let spec = client.build_request("palette", "get_trace", &[
 
 ### getUsageSummary
 
-`GET /v1/usage/{tenant_id}/{project_id}`
+`GET /v1/usage/{tenantId}/{projectId}`
 
 Fetch usage totals for a tenant project.
 
@@ -3581,29 +3581,29 @@ Fetch usage totals for a tenant project.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | Substituted into the URL path (percent-encoded). |
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `tenantId` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.palette.getUsageSummary({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
 });
 ```
 
 ```python Python
 result = client.palette.get_usage_summary({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("palette", "get_usage_summary", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

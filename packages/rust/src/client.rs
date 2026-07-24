@@ -4,8 +4,9 @@
 //! own HTTP client to send.
 //!
 //! Mirrors the TypeScript `createTemperaClient` dispatch semantics:
-//! - Typed operations by product key + snake_case operation id, with wire
-//!   (snake_case) parameter names.
+//! - Typed operations by product key + snake_case operation id. Parameters
+//!   accept canonical wire names and snake_case aliases; requests always emit
+//!   the producer's canonical wire names.
 //! - Declared query keys route to the query string; declared body keys plus
 //!   `body_defaults` form the JSON body.
 //! - Forward compatibility: undeclared parameters flow to the query string on
@@ -155,6 +156,18 @@ pub enum BuildError {
         /// Rejected parameter name.
         name: String,
     },
+    /// Both a canonical lowerCamel wire name and its snake_case alias were
+    /// supplied for the same declared parameter.
+    DuplicateParameterAlias {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Canonical producer wire name.
+        wire_name: String,
+        /// Language-idiomatic alias.
+        alias: String,
+    },
     /// The operation needs an account-session token and none is configured.
     MissingAccountToken {
         /// Product key of the operation.
@@ -219,6 +232,15 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: {name} is derived from the authenticated principal"
+            ),
+            BuildError::DuplicateParameterAlias {
+                product,
+                operation,
+                wire_name,
+                alias,
+            } => write!(
+                f,
+                "{product}.{operation}: pass either \"{wire_name}\" or its snake_case alias \"{alias}\", not both"
             ),
             BuildError::MissingAccountToken { product } => write!(
                 f,
@@ -308,11 +330,12 @@ impl TemperaClient {
     ///
     /// `product` is a snake_case product key and `operation` a snake_case
     /// operation id from the surface tables (e.g. `("palette", "get_trace")`).
-    /// Parameters use wire names (snake_case): path parameters substitute into
-    /// the URL (percent-encoded), declared query keys go to the query string,
-    /// declared body keys (plus the operation's `body_defaults`) form the JSON
-    /// body, and undeclared extras go to the query on GET/DELETE and to the
-    /// body otherwise.
+    /// Parameters accept canonical wire names or snake_case aliases. Path
+    /// parameters substitute into the URL (percent-encoded), declared query
+    /// keys go to the query string, declared body keys (plus the operation's
+    /// `body_defaults`) form the JSON body, and undeclared extras go to the
+    /// query on GET/DELETE and to the body otherwise. Emitted names are always
+    /// canonical producer wire names.
     pub fn build_request(
         &self,
         product: &str,
@@ -332,10 +355,8 @@ impl TemperaClient {
                 operation: operation.to_string(),
             })?;
 
-        let get_param = |name: &str| params.iter().find(|(key, _)| *key == name).map(|(_, v)| v);
-
         for name in op.forbidden_body {
-            if get_param(name).is_some() {
+            if declared_param(params, name, product, operation)?.is_some() {
                 return Err(BuildError::PrincipalDerivedParameter {
                     product: product.to_string(),
                     operation: operation.to_string(),
@@ -348,15 +369,23 @@ impl TemperaClient {
         // may declare an AIP resource pattern such as `projects/*`; its
         // structural slash is preserved only after exact template validation.
         let mut path = op.path.to_string();
+        let mut consumed: Vec<&str> = Vec::new();
         for name in op.path_params {
-            let value = get_param(name)
-                .map(ParamValue::as_plain_string)
-                .filter(|value| !value.is_empty())
+            let (input_name, value) = declared_param(params, name, product, operation)?
                 .ok_or_else(|| BuildError::MissingPathParam {
                     product: product.to_string(),
                     operation: operation.to_string(),
                     name: name.to_string(),
                 })?;
+            let value = value.as_plain_string();
+            if value.is_empty() {
+                return Err(BuildError::MissingPathParam {
+                    product: product.to_string(),
+                    operation: operation.to_string(),
+                    name: name.to_string(),
+                });
+            }
+            consumed.push(input_name);
             let resource_pattern = op
                 .path_param_templates
                 .iter()
@@ -377,14 +406,12 @@ impl TemperaClient {
             path = path.replace(&format!("{{{name}}}"), &replacement);
         }
 
-        let mut consumed: Vec<&str> = op.path_params.to_vec();
-
         // Declared query keys.
         let mut query: Vec<(String, String)> = Vec::new();
         for key in op.query {
-            if let Some(value) = get_param(key) {
+            if let Some((input_name, value)) = declared_param(params, key, product, operation)? {
                 query.push((key.to_string(), value.as_plain_string()));
-                consumed.push(key);
+                consumed.push(input_name);
             }
         }
 
@@ -396,9 +423,10 @@ impl TemperaClient {
                 members.push((key.to_string(), format!("\"{}\"", json_escape(value))));
             }
             for key in op.body {
-                if let Some(value) = get_param(key) {
+                if let Some((input_name, value)) = declared_param(params, key, product, operation)?
+                {
                     set_body_member(&mut members, key, value.to_json_fragment());
-                    consumed.push(key);
+                    consumed.push(input_name);
                 }
             }
             body = Some(members);
@@ -438,12 +466,12 @@ impl TemperaClient {
                     })?)
                 }
                 "oauthResource" => {
-                    let audience = op.auth_audience.ok_or_else(|| {
-                        BuildError::InvalidOperationContract {
-                            product: product.to_string(),
-                            operation: operation.to_string(),
-                        }
-                    })?;
+                    let audience =
+                        op.auth_audience
+                            .ok_or_else(|| BuildError::InvalidOperationContract {
+                                product: product.to_string(),
+                                operation: operation.to_string(),
+                            })?;
                     let missing = || BuildError::MissingCredential {
                         product: product.to_string(),
                         audience: audience.to_string(),
@@ -507,6 +535,50 @@ impl TemperaClient {
             body_json,
         })
     }
+}
+
+fn declared_param<'params, 'key>(
+    params: &'params [(&'key str, ParamValue)],
+    wire_name: &str,
+    product: &str,
+    operation: &str,
+) -> Result<Option<(&'key str, &'params ParamValue)>, BuildError> {
+    let alias = snake_case(wire_name);
+    let wire_value = params
+        .iter()
+        .find(|(key, _)| *key == wire_name)
+        .map(|(key, value)| (*key, value));
+    if alias == wire_name {
+        return Ok(wire_value);
+    }
+    let alias_value = params
+        .iter()
+        .find(|(key, _)| *key == alias)
+        .map(|(key, value)| (*key, value));
+    if wire_value.is_some() && alias_value.is_some() {
+        return Err(BuildError::DuplicateParameterAlias {
+            product: product.to_string(),
+            operation: operation.to_string(),
+            wire_name: wire_name.to_string(),
+            alias,
+        });
+    }
+    Ok(wire_value.or(alias_value))
+}
+
+fn snake_case(value: &str) -> String {
+    let mut output = String::with_capacity(value.len());
+    for character in value.chars() {
+        if character.is_ascii_uppercase() {
+            if !output.is_empty() {
+                output.push('_');
+            }
+            output.push(character.to_ascii_lowercase());
+        } else {
+            output.push(character);
+        }
+    }
+    output
 }
 
 fn expand_aip_path_param(value: &str, resource_pattern: &str) -> Option<String> {
@@ -710,6 +782,366 @@ mod tests {
     }
 
     #[test]
+    fn data_engine_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        for (operation, params) in [
+            (
+                "list_use_cases",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("pageSize", ParamValue::Int(2)),
+                    ("pageToken", "use-cases-token".into()),
+                ],
+            ),
+            (
+                "get_job_results",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("jobId", "job_1".into()),
+                    ("pageSize", ParamValue::Int(3)),
+                    ("pageToken", "results-token".into()),
+                ],
+            ),
+            (
+                "list_tools",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("pageSize", ParamValue::Int(4)),
+                    ("pageToken", "tools-token".into()),
+                ],
+            ),
+        ] {
+            let spec = client
+                .build_request("data_engine", operation, &params)
+                .unwrap();
+            assert!(spec.query.iter().any(|(name, _)| name == "pageSize"));
+            assert!(spec.query.iter().any(|(name, _)| name == "pageToken"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "page_size"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "page_token"));
+        }
+    }
+
+    #[test]
+    fn palette_scenarios_use_aip_pagination_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "palette",
+                "scenarios_list",
+                &[
+                    ("tenant_id", "tenant_1".into()),
+                    ("project_id", "project_1".into()),
+                    ("pageSize", ParamValue::Int(12)),
+                    ("pageToken", "scenarios-token".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://palette.example.test/v1/scenarios/tenant_1/project_1"
+        );
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "12".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "scenarios-token".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+        assert!(!spec.query.iter().any(|(name, _)| name == "cursor"));
+    }
+
+    #[test]
+    fn remi_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "remi",
+                "list_audit",
+                &[
+                    ("pageSize", ParamValue::Int(5)),
+                    ("pageToken", "audit-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "5".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "audit-token".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+    }
+
+    #[test]
+    fn llm_aip_pagination_uses_lower_camel_wire_names() {
+        let client = full_client();
+        let spec = client
+            .build_request(
+                "tempera_llm",
+                "list_models",
+                &[
+                    ("pageSize", ParamValue::Int(6)),
+                    ("pageToken", "models-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            spec.query
+                .contains(&("pageSize".to_string(), "6".to_string()))
+        );
+        assert!(
+            spec.query
+                .contains(&("pageToken".to_string(), "models-token".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+    }
+
+    #[test]
+    fn gym_aip_wire_names_cover_lists_and_rollouts() {
+        let client = full_client();
+        let environments = client
+            .build_request(
+                "tempera_gym",
+                "list_environments",
+                &[
+                    ("pageSize", ParamValue::Int(7)),
+                    ("pageToken", "environments-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            environments
+                .query
+                .contains(&("pageSize".to_string(), "7".to_string()))
+        );
+        assert!(
+            environments
+                .query
+                .contains(&("pageToken".to_string(), "environments-token".to_string()))
+        );
+        assert!(!environments.query.iter().any(|(name, _)| name == "limit"));
+
+        let runs = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environmentId", "env-1".into()),
+                    ("pageSize", ParamValue::Int(8)),
+                    ("pageToken", "runs-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            runs.query
+                .contains(&("environmentId".to_string(), "env-1".to_string()))
+        );
+        assert!(runs.query.iter().any(|(name, _)| name == "pageSize"));
+        assert!(runs.query.iter().any(|(name, _)| name == "pageToken"));
+        assert!(!runs.query.iter().any(|(name, _)| name == "environment_id"));
+
+        let rollout = client
+            .build_request(
+                "tempera_gym",
+                "create_rollout",
+                &[
+                    ("environmentId", "env-1".into()),
+                    ("seed", ParamValue::Int(42)),
+                ],
+            )
+            .unwrap();
+        let body = rollout.body_json.unwrap();
+        assert!(body.contains("\"environmentId\":\"env-1\""));
+        assert!(body.contains("\"seed\":42"));
+        assert!(!body.contains("\"environment_id\""));
+    }
+
+    #[test]
+    fn snake_case_parameter_aliases_emit_only_lower_camel_wire_names() {
+        let client = full_client();
+        let runs = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("page_size", ParamValue::Int(8)),
+                    ("page_token", "runs-token".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            runs.query
+                .contains(&("environmentId".to_string(), "env-1".to_string()))
+        );
+        assert!(
+            runs.query
+                .contains(&("pageSize".to_string(), "8".to_string()))
+        );
+        assert!(
+            runs.query
+                .contains(&("pageToken".to_string(), "runs-token".to_string()))
+        );
+        assert!(!runs.query.iter().any(|(name, _)| name.contains('_')));
+
+        let rollout = client
+            .build_request(
+                "tempera_gym",
+                "create_rollout",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("seed", ParamValue::Int(42)),
+                ],
+            )
+            .unwrap();
+        let body = rollout.body_json.unwrap();
+        assert!(body.contains("\"environmentId\":\"env-1\""));
+        assert!(!body.contains("\"environment_id\""));
+    }
+
+    #[test]
+    fn canonical_and_snake_case_spellings_cannot_both_be_supplied() {
+        let client = full_client();
+        let error = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("pageSize", ParamValue::Int(8)),
+                    ("page_size", ParamValue::Int(9)),
+                ],
+            )
+            .unwrap_err();
+        assert!(matches!(error, BuildError::DuplicateParameterAlias { .. }));
+        assert!(
+            error.to_string().contains(
+                "pass either \"pageSize\" or its snake_case alias \"page_size\", not both"
+            )
+        );
+    }
+
+    #[test]
+    fn workflows_aip_wire_names_cover_lists_and_patch_updates() {
+        let client = full_client();
+        for (operation, params) in [
+            (
+                "list_node_types",
+                vec![
+                    ("pageSize", ParamValue::Int(9)),
+                    ("pageToken", "node-types-token".into()),
+                ],
+            ),
+            (
+                "list_workflows",
+                vec![
+                    ("pageSize", ParamValue::Int(10)),
+                    ("pageToken", "workflows-token".into()),
+                ],
+            ),
+            (
+                "list_runs",
+                vec![
+                    ("workflowId", "workflow-1".into()),
+                    ("pageSize", ParamValue::Int(11)),
+                    ("pageToken", "workflow-runs-token".into()),
+                ],
+            ),
+        ] {
+            let spec = client
+                .build_request("tempera_workflows", operation, &params)
+                .unwrap();
+            assert!(spec.query.iter().any(|(name, _)| name == "pageSize"));
+            assert!(spec.query.iter().any(|(name, _)| name == "pageToken"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "limit"));
+            assert!(!spec.query.iter().any(|(name, _)| name == "cursor"));
+        }
+
+        let update = client
+            .build_request(
+                "tempera_workflows",
+                "update_workflow",
+                &[
+                    ("workflowId", "workflow-1".into()),
+                    ("updateMask", "definition".into()),
+                    ("contractVersion", "v1".into()),
+                    ("id", "workflow-1".into()),
+                    ("name", "Smoke".into()),
+                    ("nodes", ParamValue::RawJson("[]".to_string())),
+                    ("edges", ParamValue::RawJson("[]".to_string())),
+                ],
+            )
+            .unwrap();
+        assert_eq!(update.method, "PATCH");
+        assert!(
+            update
+                .query
+                .contains(&("updateMask".to_string(), "definition".to_string()))
+        );
+    }
+
+    #[test]
+    fn data_engine_aip_custom_verbs_use_lower_camel_paths() {
+        let client = full_client();
+        for (operation, params, expected_path) in [
+            (
+                "run_use_case",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("use_case", "smoke".into()),
+                ],
+                "/v1/projects/project_1/pipelines:runUseCase",
+            ),
+            (
+                "save_expert_task_draft",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    ("expertTaskId", "task_1".into()),
+                    ("idempotency_key", "idem_1".into()),
+                    ("lease_token", "lease_1".into()),
+                    ("draft", ParamValue::RawJson("{}".to_string())),
+                    ("expected_version", ParamValue::Int(1)),
+                ],
+                "/v1/projects/project_1/expert-tasks/task_1:saveDraft",
+            ),
+            (
+                "check_product_leakage",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    (
+                        "product_ids",
+                        ParamValue::RawJson("[\"products/a\",\"products/b\"]".to_string()),
+                    ),
+                ],
+                "/v1/projects/project_1/products:checkLeakage",
+            ),
+            (
+                "emit_eval",
+                vec![
+                    ("parent", "projects/project_1".into()),
+                    (
+                        "artifact_ids",
+                        ParamValue::RawJson("[\"artifacts/a\"]".to_string()),
+                    ),
+                    ("job", ParamValue::RawJson("{}".to_string())),
+                ],
+                "/v1/projects/project_1/products:emitEval",
+            ),
+        ] {
+            let spec = client
+                .build_request("data_engine", operation, &params)
+                .unwrap();
+            assert_eq!(
+                spec.url,
+                format!("https://data_engine.example.test{expected_path}")
+            );
+        }
+    }
+
+    #[test]
     fn forward_compat_extras_go_to_query_on_get_and_body_on_post() {
         let client = full_client();
 
@@ -762,7 +1194,7 @@ mod tests {
             .build_request(
                 "tempo",
                 "adopt_session",
-                &[("session_id", "sess_1".into()), ("surface", "ui".into())],
+                &[("sessionId", "sess_1".into()), ("surface", "ui".into())],
             )
             .unwrap();
         assert_eq!(spec.body_json.as_deref(), Some("{\"surface\":\"ui\"}"));
@@ -780,13 +1212,13 @@ mod tests {
             BuildError::MissingPathParam {
                 product: "palette".to_string(),
                 operation: "get_trace".to_string(),
-                name: "trace_id".to_string(),
+                name: "traceId".to_string(),
             }
         );
         assert!(
             error
                 .to_string()
-                .contains("missing required path parameter \"trace_id\"")
+                .contains("missing required path parameter \"traceId\"")
         );
 
         // Empty values count as missing, mirroring the TypeScript client.
@@ -797,7 +1229,7 @@ mod tests {
                 &[("tenant_id", "tenant_1".into()), ("trace_id", "".into())],
             )
             .unwrap_err();
-        assert!(matches!(error, BuildError::MissingPathParam { name, .. } if name == "trace_id"));
+        assert!(matches!(error, BuildError::MissingPathParam { name, .. } if name == "traceId"));
     }
 
     #[test]

@@ -5,10 +5,15 @@ import {
   TEMPERA_API_TARGETS,
   TEMPERA_AUDIENCES,
   TEMPERA_ENVIRONMENTS,
+  TEMPERA_ISSUER_PATHS,
   TEMPERA_OPERATIONS,
   TEMPERA_PRODUCTS,
   TEMPERA_SCOPES,
 } from "../src/index.js";
+
+test("issuer protocol paths match the canonical Auth Hub runtime", () => {
+  assert.equal(TEMPERA_ISSUER_PATHS.introspect, "/v1/oauth/introspect");
+});
 
 test("the product registry covers every Tempera product with palette included", () => {
   assert.equal(TEMPERA_PRODUCTS.controlPlane.repository, "https://github.com/tempera-dev/auth-hub");

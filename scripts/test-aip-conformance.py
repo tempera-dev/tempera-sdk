@@ -65,12 +65,214 @@ class AipConformanceTest(unittest.TestCase):
                 "aip-136-lower-camel-custom-verb",
                 "aip-158-list-pagination",
                 "aip-161-update-mask",
+                "aip-193-standard-errors",
             },
+        )
+
+    def test_discovers_lower_camel_json_fields_through_local_refs(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "components": {
+                "schemas": {
+                    "Widget": {
+                        "type": "object",
+                        "properties": {
+                            "display_name": {"type": "string"},
+                            "nestedValue": {
+                                "type": "object",
+                                "properties": {
+                                    "created_at": {"type": "string"},
+                                },
+                            },
+                        },
+                    }
+                }
+            },
+            "paths": {
+                "/v1/widgets": {
+                    "post": {
+                        "operationId": "createWidget",
+                        "requestBody": {
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Widget"
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/Widget"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        key = "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
+        self.assertEqual(
+            violations[key]["observed"],
+            ["created_at", "display_name"],
+        )
+
+    def test_protocol_routes_exempt_json_field_names(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/oauth/token": {
+                    "post": {
+                        "operationId": "oauthToken",
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"controlPlane": spec})
+        self.assertNotIn(
+            "controlPlane|POST|/oauth/token|aip-127-lower-camel-json-fields",
+            violations,
+        )
+        self.assertNotIn(
+            "controlPlane|POST|/oauth/token|aip-193-standard-errors",
+            violations,
+        )
+
+    def test_discovers_non_standard_error_schemas(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/widgets/{name}": {
+                    "get": {
+                        "operationId": "getWidget",
+                        "parameters": [{"name": "name", "in": "path"}],
+                        "responses": {
+                            "404": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "error": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string"
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        key = "test|GET|/v1/widgets/{name}|aip-193-standard-errors"
+        self.assertEqual(
+            violations[key]["observed"],
+            [
+                "404:error.code:string",
+                "404:error.details",
+                "404:error.status",
+            ],
+        )
+
+    def test_accepts_google_rpc_status_compatible_error_schema(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/widgets/{name}": {
+                    "get": {
+                        "operationId": "getWidget",
+                        "parameters": [{"name": "name", "in": "path"}],
+                        "responses": {
+                            "404": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "error": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "integer"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                        "details": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            },
+                                                        },
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"test": spec})
+        self.assertNotIn(
+            "test|GET|/v1/widgets/{name}|aip-193-standard-errors",
+            violations,
         )
 
     def test_protocol_routes_are_explicitly_exempt(self) -> None:
         self.assertTrue(MODULE.is_protocol_exception("tempo", "/mcp"))
+        self.assertTrue(
+            MODULE.is_protocol_exception("controlPlane", "/github/callback")
+        )
+        self.assertTrue(
+            MODULE.is_protocol_exception("tempo", "/.well-known/agent-card.json")
+        )
         self.assertTrue(MODULE.is_protocol_exception("remi", "/readyz"))
+        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/readyz"))
+        self.assertTrue(
+            MODULE.is_protocol_exception("temperaLlm", "/v1/chat/completions")
+        )
+        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/v1/models"))
+        self.assertTrue(
+            MODULE.is_protocol_exception("temperaLlm", "/v1/responses")
+        )
         self.assertTrue(
             MODULE.is_protocol_exception("palette", "/v1/otlp/t/p/e/v1/traces")
         )
@@ -82,9 +284,15 @@ class AipConformanceTest(unittest.TestCase):
                 self.assertTrue(MODULE.is_list_operation(operation_id))
         self.assertFalse(MODULE.is_list_operation("getWidget"))
 
-    def test_list_pagination_resolves_component_parameter_references(self) -> None:
+    def test_resolves_referenced_pagination_parameters(self) -> None:
         spec = {
             "openapi": "3.1.0",
+            "components": {
+                "parameters": {
+                    "PageSize": {"name": "pageSize", "in": "query"},
+                    "PageToken": {"name": "pageToken", "in": "query"},
+                }
+            },
             "paths": {
                 "/v1/widgets": {
                     "get": {
@@ -96,18 +304,64 @@ class AipConformanceTest(unittest.TestCase):
                     }
                 }
             },
-            "components": {
-                "parameters": {
-                    "PageSize": {"name": "pageSize", "in": "query"},
-                    "PageToken": {"name": "pageToken", "in": "query"},
-                }
-            },
         }
-
         violations = MODULE.discover_violations({"test": spec})
-
         self.assertNotIn(
             "test|GET|/v1/widgets|aip-158-list-pagination",
+            violations,
+        )
+
+    def test_route_manifest_query_fields_are_inspected(self) -> None:
+        manifest = {
+            "contract_kind": "http-route-manifest",
+            "endpoints": [
+                {
+                    "operation": "widgets.list",
+                    "method": "GET",
+                    "path": "/v1/widgets",
+                    "query_fields": ["pageSize", "pageToken"],
+                }
+            ],
+        }
+        violations = MODULE.discover_violations({"test": manifest})
+        self.assertNotIn(
+            "test|GET|/v1/widgets|aip-158-list-pagination",
+            violations,
+        )
+
+    def test_route_manifest_wire_fields_and_error_types_are_inspected(self) -> None:
+        manifest = {
+            "contract_kind": "http-route-manifest",
+            "error_shape": {
+                "fields": [
+                    "error.code",
+                    "error.status",
+                    "error.message",
+                    "error.details",
+                ],
+                "field_types": {
+                    "error.code": "integer",
+                    "error.status": "string",
+                    "error.message": "string",
+                    "error.details": "array",
+                },
+            },
+            "endpoints": [
+                {
+                    "operation": "createWidget",
+                    "method": "POST",
+                    "path": "/v1/widgets",
+                    "request_fields": ["display_name"],
+                }
+            ],
+        }
+        violations = MODULE.discover_violations({"test": manifest})
+        json_key = (
+            "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
+        )
+        self.assertEqual(violations[json_key]["observed"], ["display_name"])
+        self.assertNotIn(
+            "test|POST|/v1/widgets|aip-193-standard-errors",
             violations,
         )
 
@@ -120,6 +374,80 @@ class AipConformanceTest(unittest.TestCase):
         )
         self.assertTrue(
             any("stale exact protocol exception" in failure for failure in failures)
+        )
+
+    def test_exact_oauth_introspection_operation_is_protocol_native(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/oauth/introspect": {
+                    "post": {
+                        "operationId": "introspectOAuthToken",
+                        "requestBody": {
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "token_type_hint": {"type": "string"}
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token_type": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        self.assertEqual(MODULE.discover_violations({"controlPlane": spec}), {})
+
+    def test_embedded_oauth_response_only_exempts_json_spelling(self) -> None:
+        spec = {
+            "openapi": "3.1.0",
+            "paths": {
+                "/v1/sessions": {
+                    "post": {
+                        "operationId": "createHostedSession",
+                        "responses": {
+                            "200": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "access_token": {"type": "string"}
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    }
+                }
+            },
+        }
+        violations = MODULE.discover_violations({"controlPlane": spec})
+        self.assertNotIn(
+            "controlPlane|POST|/v1/sessions|aip-127-lower-camel-json-fields",
+            violations,
+        )
+        self.assertIn(
+            "controlPlane|POST|/v1/sessions|aip-193-standard-errors",
+            violations,
         )
 
 

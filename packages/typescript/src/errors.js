@@ -47,16 +47,29 @@ export class TemperaMcpError extends TemperaSdkError {
  * Wire shapes handled (see surface.json errorContract.wireShapes):
  * - control plane / palette: {"error": "<code>", "message": "<text>"}
  * - tempo:                    {"error": "<human message>"}
- * - cradle / remi / data-engine: {"error": {"code", "message", "request_id"?, ...}}
+ * - canonical REST status: {"error": {"code": 400, "status":
+ *   "INVALID_ARGUMENT", "message": "...", "details": []}}
+ * - legacy cradle / remi / data-engine: {"error": {"code", "message",
+ *   "request_id"?, ...}}
  */
 export function normalizeErrorBody(body, statusText = "") {
   if (body && typeof body === "object") {
     const error = body.error;
     if (error && typeof error === "object") {
       return {
-        code: typeof error.code === "string" ? error.code : null,
+        code:
+          typeof error.status === "string"
+            ? error.status
+            : typeof error.code === "string"
+              ? error.code
+              : null,
         message: typeof error.message === "string" ? error.message : statusText,
-        requestId: typeof error.request_id === "string" ? error.request_id : null,
+        requestId:
+          typeof error.requestId === "string"
+            ? error.requestId
+            : typeof error.request_id === "string"
+              ? error.request_id
+              : null,
       };
     }
     if (typeof error === "string") {

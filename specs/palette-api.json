@@ -30,7 +30,7 @@
         }
       }
     },
-    "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook": {
+    "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook": {
       "post": {
         "tags": [
           "alerts"
@@ -38,7 +38,7 @@
         "operationId": "alerts.evaluate",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -47,7 +47,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -56,7 +56,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -167,7 +167,7 @@
         }
       }
     },
-    "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}": {
+    "/v1/api-keys/{tenantId}/{projectId}/{environmentId}": {
       "post": {
         "tags": [
           "apiKeys"
@@ -175,7 +175,7 @@
         "operationId": "apiKeys.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -184,7 +184,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -193,7 +193,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "path",
             "description": "environment_id",
             "required": true,
@@ -304,7 +304,7 @@
         }
       }
     },
-    "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke": {
+    "/v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke": {
       "post": {
         "tags": [
           "apiKeys"
@@ -312,7 +312,7 @@
         "operationId": "apiKeys.revoke",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -321,7 +321,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -330,7 +330,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "path",
             "description": "environment_id",
             "required": true,
@@ -339,7 +339,7 @@
             }
           },
           {
-            "name": "api_key_id",
+            "name": "apiKeyId",
             "in": "path",
             "description": "api_key_id",
             "required": true,
@@ -450,7 +450,7 @@
         }
       }
     },
-    "/v1/archive/{tenant_id}/{project_id}/spans": {
+    "/v1/archive/{tenantId}/{projectId}/spans": {
       "get": {
         "tags": [
           "archive"
@@ -458,7 +458,7 @@
         "operationId": "archive.querySpans",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -467,7 +467,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -476,7 +476,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "query",
             "required": false,
             "schema": {
@@ -484,7 +484,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "query",
             "required": false,
             "schema": {
@@ -492,7 +492,7 @@
             }
           },
           {
-            "name": "span_id",
+            "name": "spanId",
             "in": "query",
             "required": false,
             "schema": {
@@ -626,7 +626,7 @@
         }
       }
     },
-    "/v1/archive/{tenant_id}/{project_id}/{trace_id}": {
+    "/v1/archive/{tenantId}/{projectId}/{traceId}": {
       "post": {
         "tags": [
           "archive"
@@ -634,7 +634,7 @@
         "operationId": "archive.archiveTrace",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -643,7 +643,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -652,7 +652,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -763,7 +763,7 @@
         }
       }
     },
-    "/v1/audit/{tenant_id}/{project_id}": {
+    "/v1/audit/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "audit"
@@ -771,7 +771,7 @@
         "operationId": "audit.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -780,7 +780,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -901,7 +901,7 @@
         }
       }
     },
-    "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}": {
+    "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}": {
       "post": {
         "tags": [
           "calibrations"
@@ -909,7 +909,7 @@
         "operationId": "calibrations.run",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -918,7 +918,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -927,7 +927,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -936,7 +936,7 @@
             }
           },
           {
-            "name": "version_id",
+            "name": "versionId",
             "in": "path",
             "description": "version_id",
             "required": true,
@@ -1057,7 +1057,7 @@
         }
       }
     },
-    "/v1/connect/status/{tenant_id}/{project_id}": {
+    "/v1/connect/status/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "connect"
@@ -1065,7 +1065,7 @@
         "operationId": "connect.getStatus",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1074,7 +1074,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1175,7 +1175,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}": {
+    "/v1/connectors/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "connectors"
@@ -1183,7 +1183,7 @@
         "operationId": "connectors.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1192,7 +1192,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1323,7 +1323,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}/connect": {
+    "/v1/connectors/{tenantId}/{projectId}/connect": {
       "post": {
         "tags": [
           "connectors"
@@ -1331,7 +1331,7 @@
         "operationId": "connectors.connect",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1340,7 +1340,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1461,7 +1461,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}/invoke": {
+    "/v1/connectors/{tenantId}/{projectId}/invoke": {
       "post": {
         "tags": [
           "connectors"
@@ -1469,7 +1469,7 @@
         "operationId": "connectors.invokeTool",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1478,7 +1478,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1599,7 +1599,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}/skills": {
+    "/v1/connectors/{tenantId}/{projectId}/skills": {
       "get": {
         "tags": [
           "connectors"
@@ -1607,7 +1607,7 @@
         "operationId": "connectors.getSkills",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1616,7 +1616,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1736,7 +1736,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}/status": {
+    "/v1/connectors/{tenantId}/{projectId}/status": {
       "get": {
         "tags": [
           "connectors"
@@ -1744,7 +1744,7 @@
         "operationId": "connectors.status",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1753,7 +1753,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -1873,7 +1873,7 @@
         }
       }
     },
-    "/v1/connectors/{tenant_id}/{project_id}/tools": {
+    "/v1/connectors/{tenantId}/{projectId}/tools": {
       "get": {
         "tags": [
           "connectors"
@@ -1881,7 +1881,7 @@
         "operationId": "connectors.listTools",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -1890,7 +1890,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2030,7 +2030,7 @@
         }
       }
     },
-    "/v1/datasets/{tenant_id}/{project_id}": {
+    "/v1/datasets/{tenantId}/{projectId}": {
       "post": {
         "tags": [
           "datasets"
@@ -2038,7 +2038,7 @@
         "operationId": "datasets.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2047,7 +2047,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2158,7 +2158,7 @@
         }
       }
     },
-    "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace": {
+    "/v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace": {
       "post": {
         "tags": [
           "datasets"
@@ -2166,7 +2166,7 @@
         "operationId": "datasets.promoteCaseFromTrace",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2175,7 +2175,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2184,7 +2184,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -2305,7 +2305,7 @@
         }
       }
     },
-    "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions": {
+    "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions": {
       "post": {
         "tags": [
           "datasets"
@@ -2313,7 +2313,7 @@
         "operationId": "datasets.createVersion",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2322,7 +2322,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2331,7 +2331,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -2452,7 +2452,7 @@
         }
       }
     },
-    "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic": {
+    "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic": {
       "post": {
         "tags": [
           "evals"
@@ -2460,7 +2460,7 @@
         "operationId": "evals.runDeterministic",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2469,7 +2469,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2478,7 +2478,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -2487,7 +2487,7 @@
             }
           },
           {
-            "name": "version_id",
+            "name": "versionId",
             "in": "path",
             "description": "version_id",
             "required": true,
@@ -2608,7 +2608,7 @@
         }
       }
     },
-    "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge": {
+    "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge": {
       "post": {
         "tags": [
           "evals"
@@ -2616,7 +2616,7 @@
         "operationId": "evals.runJudge",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2625,7 +2625,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2634,7 +2634,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -2643,7 +2643,7 @@
             }
           },
           {
-            "name": "version_id",
+            "name": "versionId",
             "in": "path",
             "description": "version_id",
             "required": true,
@@ -2764,7 +2764,7 @@
         }
       }
     },
-    "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles": {
+    "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles": {
       "post": {
         "tags": [
           "evalResults"
@@ -2772,7 +2772,7 @@
         "operationId": "evalResults.importTemperaBundle",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2781,7 +2781,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -2932,7 +2932,7 @@
         }
       }
     },
-    "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions": {
+    "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions": {
       "post": {
         "tags": [
           "evalResults"
@@ -2940,7 +2940,7 @@
         "operationId": "evalResults.recordTemperaDecision",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -2949,7 +2949,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3100,7 +3100,7 @@
         }
       }
     },
-    "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}": {
+    "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}": {
       "get": {
         "tags": [
           "evalResults"
@@ -3108,7 +3108,7 @@
         "operationId": "evalResults.getTemperaEvidence",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3117,7 +3117,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3135,7 +3135,7 @@
             }
           },
           {
-            "name": "external_id",
+            "name": "externalId",
             "in": "path",
             "description": "Bundle or experiment id",
             "required": true,
@@ -3246,7 +3246,7 @@
         }
       }
     },
-    "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic": {
+    "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic": {
       "post": {
         "tags": [
           "experiments"
@@ -3254,7 +3254,7 @@
         "operationId": "experiments.runDeterministic",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3263,7 +3263,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3272,7 +3272,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -3281,7 +3281,7 @@
             }
           },
           {
-            "name": "version_id",
+            "name": "versionId",
             "in": "path",
             "description": "version_id",
             "required": true,
@@ -3402,7 +3402,7 @@
         }
       }
     },
-    "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge": {
+    "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge": {
       "post": {
         "tags": [
           "experiments"
@@ -3410,7 +3410,7 @@
         "operationId": "experiments.runJudge",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3419,7 +3419,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3428,7 +3428,7 @@
             }
           },
           {
-            "name": "dataset_id",
+            "name": "datasetId",
             "in": "path",
             "description": "dataset_id",
             "required": true,
@@ -3437,7 +3437,7 @@
             }
           },
           {
-            "name": "version_id",
+            "name": "versionId",
             "in": "path",
             "description": "version_id",
             "required": true,
@@ -3558,7 +3558,7 @@
         }
       }
     },
-    "/v1/gates/{tenant_id}/{project_id}": {
+    "/v1/gates/{tenantId}/{projectId}": {
       "post": {
         "tags": [
           "gates"
@@ -3566,7 +3566,7 @@
         "operationId": "gates.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3575,7 +3575,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3686,7 +3686,7 @@
         }
       }
     },
-    "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run": {
+    "/v1/gates/{tenantId}/{projectId}/{gateId}/run": {
       "post": {
         "tags": [
           "gates"
@@ -3694,7 +3694,7 @@
         "operationId": "gates.run",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3703,7 +3703,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3712,7 +3712,7 @@
             }
           },
           {
-            "name": "gate_id",
+            "name": "gateId",
             "in": "path",
             "description": "gate_id",
             "required": true,
@@ -3833,7 +3833,7 @@
         }
       }
     },
-    "/v1/import/{tenant_id}/{project_id}/{environment_id}": {
+    "/v1/import/{tenantId}/{projectId}/{environmentId}": {
       "post": {
         "tags": [
           "ingest"
@@ -3841,7 +3841,7 @@
         "operationId": "ingest.importSource",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3850,7 +3850,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -3859,7 +3859,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "path",
             "description": "environment_id",
             "required": true,
@@ -3974,7 +3974,7 @@
         }
       }
     },
-    "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay": {
+    "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay": {
       "post": {
         "tags": [
           "ingest"
@@ -3982,7 +3982,7 @@
         "operationId": "ingest.replayDeadLetter",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -3991,7 +3991,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4000,7 +4000,7 @@
             }
           },
           {
-            "name": "message_id",
+            "name": "messageId",
             "in": "path",
             "description": "message_id",
             "required": true,
@@ -4009,7 +4009,7 @@
             }
           },
           {
-            "name": "reset_attempts",
+            "name": "resetAttempts",
             "in": "query",
             "required": false,
             "schema": {
@@ -4119,7 +4119,7 @@
         }
       }
     },
-    "/v1/ingest/{tenant_id}/{project_id}/queue": {
+    "/v1/ingest/{tenantId}/{projectId}/queue": {
       "get": {
         "tags": [
           "ingest"
@@ -4127,7 +4127,7 @@
         "operationId": "ingest.getQueueStatus",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4136,7 +4136,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4237,7 +4237,7 @@
         }
       }
     },
-    "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain": {
+    "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain": {
       "post": {
         "tags": [
           "ingest"
@@ -4245,7 +4245,7 @@
         "operationId": "ingest.drainTraceIngested",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4254,7 +4254,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4322,7 +4322,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Drain pending trace-ingested events",
+            "description": "Drain pending trace-ingested events, including retry and dead-letter outcomes",
             "content": {
               "application/json": {
                 "schema": {
@@ -4360,21 +4360,11 @@
                 }
               }
             }
-          },
-          "422": {
-            "description": "Drained with dead-letters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraceIngestedDrainReport"
-                }
-              }
-            }
           }
         }
       }
     },
-    "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain": {
+    "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain": {
       "post": {
         "tags": [
           "ingest"
@@ -4382,7 +4372,7 @@
         "operationId": "ingest.drainTraceWrites",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4391,7 +4381,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4459,7 +4449,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Drain pending trace writes",
+            "description": "Drain pending trace writes, including retry and dead-letter outcomes",
             "content": {
               "application/json": {
                 "schema": {
@@ -4497,21 +4487,11 @@
                 }
               }
             }
-          },
-          "422": {
-            "description": "Drained with dead-letters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraceWriteDrainReport"
-                }
-              }
-            }
           }
         }
       }
     },
-    "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile": {
+    "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile": {
       "post": {
         "tags": [
           "ingest"
@@ -4519,7 +4499,7 @@
         "operationId": "ingest.reconcileTrace",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4528,7 +4508,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4537,7 +4517,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -4648,7 +4628,7 @@
         }
       }
     },
-    "/v1/judge/{tenant_id}/{project_id}/evaluate": {
+    "/v1/judge/{tenantId}/{projectId}/evaluate": {
       "post": {
         "tags": [
           "judge"
@@ -4656,7 +4636,7 @@
         "operationId": "judge.evaluate",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4665,7 +4645,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4776,7 +4756,7 @@
         }
       }
     },
-    "/v1/judge/{tenant_id}/{project_id}/ledger": {
+    "/v1/judge/{tenantId}/{projectId}/ledger": {
       "get": {
         "tags": [
           "judge"
@@ -4784,7 +4764,7 @@
         "operationId": "judge.listLedger",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4793,7 +4773,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4914,7 +4894,7 @@
         }
       }
     },
-    "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling": {
+    "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling": {
       "post": {
         "tags": [
           "online"
@@ -4922,7 +4902,7 @@
         "operationId": "online.decideSampling",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -4931,7 +4911,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -4940,7 +4920,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -5051,7 +5031,7 @@
         }
       }
     },
-    "/v1/otlp/{tenant_id}/{project_id}/{environment_id}/v1/traces": {
+    "/v1/otlp/{tenantId}/{projectId}/{environmentId}/v1/traces": {
       "post": {
         "tags": [
           "ingest"
@@ -5059,7 +5039,7 @@
         "operationId": "ingest.otlp",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5068,7 +5048,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5077,7 +5057,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "path",
             "description": "environment_id",
             "required": true,
@@ -5206,7 +5186,7 @@
         }
       }
     },
-    "/v1/prompts/{tenant_id}/{project_id}": {
+    "/v1/prompts/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "prompts"
@@ -5214,7 +5194,7 @@
         "operationId": "prompts.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5223,7 +5203,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5350,7 +5330,7 @@
         "operationId": "prompts.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5359,7 +5339,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5470,7 +5450,7 @@
         }
       }
     },
-    "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}": {
+    "/v1/prompts/{tenantId}/{projectId}/{promptId}": {
       "get": {
         "tags": [
           "prompts"
@@ -5478,7 +5458,7 @@
         "operationId": "prompts.get",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5487,7 +5467,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5496,7 +5476,7 @@
             }
           },
           {
-            "name": "prompt_id",
+            "name": "promptId",
             "in": "path",
             "description": "prompt_id",
             "required": true,
@@ -5607,7 +5587,7 @@
         }
       }
     },
-    "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff": {
+    "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff": {
       "get": {
         "tags": [
           "prompts"
@@ -5615,7 +5595,7 @@
         "operationId": "prompts.diffVersions",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5624,7 +5604,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5633,7 +5613,7 @@
             }
           },
           {
-            "name": "prompt_id",
+            "name": "promptId",
             "in": "path",
             "description": "prompt_id",
             "required": true,
@@ -5760,7 +5740,7 @@
         }
       }
     },
-    "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions": {
+    "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions": {
       "get": {
         "tags": [
           "prompts"
@@ -5768,7 +5748,7 @@
         "operationId": "prompts.listVersions",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5777,7 +5757,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5786,7 +5766,7 @@
             }
           },
           {
-            "name": "prompt_id",
+            "name": "promptId",
             "in": "path",
             "description": "prompt_id",
             "required": true,
@@ -5923,7 +5903,7 @@
         "operationId": "prompts.addVersion",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -5932,7 +5912,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -5941,7 +5921,7 @@
             }
           },
           {
-            "name": "prompt_id",
+            "name": "promptId",
             "in": "path",
             "description": "prompt_id",
             "required": true,
@@ -6062,7 +6042,7 @@
         }
       }
     },
-    "/v1/provider-secrets/{tenant_id}/{project_id}": {
+    "/v1/provider-secrets/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "providerSecrets"
@@ -6070,7 +6050,7 @@
         "operationId": "providerSecrets.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6079,7 +6059,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6206,7 +6186,7 @@
         "operationId": "providerSecrets.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6215,7 +6195,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6326,7 +6306,7 @@
         }
       }
     },
-    "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke": {
+    "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke": {
       "post": {
         "tags": [
           "providerSecrets"
@@ -6334,7 +6314,7 @@
         "operationId": "providerSecrets.revoke",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6343,7 +6323,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6352,7 +6332,7 @@
             }
           },
           {
-            "name": "provider_secret_id",
+            "name": "providerSecretId",
             "in": "path",
             "description": "provider_secret_id",
             "required": true,
@@ -6463,7 +6443,7 @@
         }
       }
     },
-    "/v1/review-queues/{tenant_id}/{project_id}": {
+    "/v1/review-queues/{tenantId}/{projectId}": {
       "post": {
         "tags": [
           "reviews"
@@ -6471,7 +6451,7 @@
         "operationId": "reviews.createQueue",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6480,7 +6460,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6591,7 +6571,7 @@
         }
       }
     },
-    "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks": {
+    "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks": {
       "get": {
         "tags": [
           "reviews"
@@ -6599,7 +6579,7 @@
         "operationId": "reviews.listTasks",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6608,7 +6588,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6617,7 +6597,7 @@
             }
           },
           {
-            "name": "queue_id",
+            "name": "queueId",
             "in": "path",
             "description": "queue_id",
             "required": true,
@@ -6756,7 +6736,7 @@
         }
       }
     },
-    "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace": {
+    "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace": {
       "post": {
         "tags": [
           "reviews"
@@ -6764,7 +6744,7 @@
         "operationId": "reviews.enqueueTaskFromTrace",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6773,7 +6753,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6782,7 +6762,7 @@
             }
           },
           {
-            "name": "queue_id",
+            "name": "queueId",
             "in": "path",
             "description": "queue_id",
             "required": true,
@@ -6903,7 +6883,7 @@
         }
       }
     },
-    "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations": {
+    "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations": {
       "post": {
         "tags": [
           "reviews"
@@ -6911,7 +6891,7 @@
         "operationId": "reviews.submitAnnotation",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -6920,7 +6900,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -6929,7 +6909,7 @@
             }
           },
           {
-            "name": "queue_id",
+            "name": "queueId",
             "in": "path",
             "description": "queue_id",
             "required": true,
@@ -6938,7 +6918,7 @@
             }
           },
           {
-            "name": "task_id",
+            "name": "taskId",
             "in": "path",
             "description": "task_id",
             "required": true,
@@ -7059,7 +7039,7 @@
         }
       }
     },
-    "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote": {
+    "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote": {
       "post": {
         "tags": [
           "reviews"
@@ -7067,7 +7047,7 @@
         "operationId": "reviews.promoteAnnotation",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7076,7 +7056,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -7085,7 +7065,7 @@
             }
           },
           {
-            "name": "queue_id",
+            "name": "queueId",
             "in": "path",
             "description": "queue_id",
             "required": true,
@@ -7094,7 +7074,7 @@
             }
           },
           {
-            "name": "task_id",
+            "name": "taskId",
             "in": "path",
             "description": "task_id",
             "required": true,
@@ -7103,7 +7083,7 @@
             }
           },
           {
-            "name": "annotation_id",
+            "name": "annotationId",
             "in": "path",
             "description": "annotation_id",
             "required": true,
@@ -7224,7 +7204,7 @@
         }
       }
     },
-    "/v1/scenarios/{tenant_id}/{project_id}": {
+    "/v1/scenarios/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "scenarios"
@@ -7232,7 +7212,7 @@
         "operationId": "scenarios.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7241,7 +7221,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -7368,7 +7348,7 @@
         "operationId": "scenarios.create",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7377,7 +7357,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -7488,7 +7468,7 @@
         }
       }
     },
-    "/v1/scenarios/{tenant_id}/{project_id}/mine": {
+    "/v1/scenarios/{tenantId}/{projectId}/mine": {
       "post": {
         "tags": [
           "scenarios"
@@ -7496,7 +7476,7 @@
         "operationId": "scenarios.mine",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7505,7 +7485,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -7626,7 +7606,7 @@
         }
       }
     },
-    "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}": {
+    "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}": {
       "get": {
         "tags": [
           "scenarios"
@@ -7634,7 +7614,7 @@
         "operationId": "scenarios.get",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7643,7 +7623,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -7652,7 +7632,7 @@
             }
           },
           {
-            "name": "scenario_id",
+            "name": "scenarioId",
             "in": "path",
             "description": "scenario_id",
             "required": true,
@@ -7763,7 +7743,7 @@
         }
       }
     },
-    "/v1/search/{tenant_id}/spans": {
+    "/v1/search/{tenantId}/spans": {
       "get": {
         "tags": [
           "search"
@@ -7771,7 +7751,7 @@
         "operationId": "search.spans",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7788,7 +7768,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "query",
             "required": false,
             "schema": {
@@ -7796,7 +7776,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "query",
             "required": false,
             "schema": {
@@ -7804,7 +7784,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "query",
             "required": false,
             "schema": {
@@ -7812,7 +7792,7 @@
             }
           },
           {
-            "name": "span_id",
+            "name": "spanId",
             "in": "query",
             "required": false,
             "schema": {
@@ -7962,7 +7942,7 @@
         }
       }
     },
-    "/v1/spans/{tenant_id}/{trace_id}/{span_id}": {
+    "/v1/spans/{tenantId}/{traceId}/{spanId}": {
       "get": {
         "tags": [
           "spans"
@@ -7970,7 +7950,7 @@
         "operationId": "spans.get",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -7979,7 +7959,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -7988,7 +7968,7 @@
             }
           },
           {
-            "name": "span_id",
+            "name": "spanId",
             "in": "path",
             "description": "span_id",
             "required": true,
@@ -8115,7 +8095,7 @@
         }
       }
     },
-    "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io": {
+    "/v1/spans/{tenantId}/{traceId}/{spanId}/io": {
       "get": {
         "tags": [
           "spans"
@@ -8123,7 +8103,7 @@
         "operationId": "spans.getIo",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -8132,7 +8112,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -8141,7 +8121,7 @@
             }
           },
           {
-            "name": "span_id",
+            "name": "spanId",
             "in": "path",
             "description": "span_id",
             "required": true,
@@ -8546,7 +8526,7 @@
         }
       }
     },
-    "/v1/traces/{tenant_id}": {
+    "/v1/traces/{tenantId}": {
       "get": {
         "tags": [
           "traces"
@@ -8554,7 +8534,7 @@
         "operationId": "traces.list",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -8563,7 +8543,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "query",
             "required": false,
             "schema": {
@@ -8571,7 +8551,7 @@
             }
           },
           {
-            "name": "environment_id",
+            "name": "environmentId",
             "in": "query",
             "required": false,
             "schema": {
@@ -8579,7 +8559,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "query",
             "required": false,
             "schema": {
@@ -8603,7 +8583,7 @@
             }
           },
           {
-            "name": "started_after",
+            "name": "startedAfter",
             "in": "query",
             "required": false,
             "schema": {
@@ -8611,7 +8591,7 @@
             }
           },
           {
-            "name": "started_before",
+            "name": "startedBefore",
             "in": "query",
             "required": false,
             "schema": {
@@ -8635,7 +8615,7 @@
             }
           },
           {
-            "name": "min_cost_micros",
+            "name": "minCostMicros",
             "in": "query",
             "required": false,
             "schema": {
@@ -8644,7 +8624,7 @@
             }
           },
           {
-            "name": "max_cost_micros",
+            "name": "maxCostMicros",
             "in": "query",
             "required": false,
             "schema": {
@@ -8653,7 +8633,7 @@
             }
           },
           {
-            "name": "min_latency_ms",
+            "name": "minLatencyMs",
             "in": "query",
             "required": false,
             "schema": {
@@ -8662,7 +8642,7 @@
             }
           },
           {
-            "name": "max_latency_ms",
+            "name": "maxLatencyMs",
             "in": "query",
             "required": false,
             "schema": {
@@ -8781,7 +8761,7 @@
         }
       }
     },
-    "/v1/traces/{tenant_id}/{trace_id}": {
+    "/v1/traces/{tenantId}/{traceId}": {
       "get": {
         "tags": [
           "traces"
@@ -8789,7 +8769,7 @@
         "operationId": "traces.get",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -8798,7 +8778,7 @@
             }
           },
           {
-            "name": "trace_id",
+            "name": "traceId",
             "in": "path",
             "description": "trace_id",
             "required": true,
@@ -8925,7 +8905,7 @@
         }
       }
     },
-    "/v1/usage/{tenant_id}/{project_id}": {
+    "/v1/usage/{tenantId}/{projectId}": {
       "get": {
         "tags": [
           "usage"
@@ -8933,7 +8913,7 @@
         "operationId": "usage.getSummary",
         "parameters": [
           {
-            "name": "tenant_id",
+            "name": "tenantId",
             "in": "path",
             "description": "tenant_id",
             "required": true,
@@ -8942,7 +8922,7 @@
             }
           },
           {
-            "name": "project_id",
+            "name": "projectId",
             "in": "path",
             "description": "project_id",
             "required": true,
@@ -9053,7 +9033,7 @@
           "template"
         ],
         "properties": {
-          "created_by": {
+          "createdBy": {
             "type": [
               "string",
               "null"
@@ -9099,7 +9079,7 @@
           "emitted": {
             "type": "boolean"
           },
-          "suppressed_reason": {
+          "suppressedReason": {
             "type": [
               "string",
               "null"
@@ -9110,24 +9090,24 @@
       "AlertInput": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "trace_id",
-          "group_key",
+          "tenantId",
+          "projectId",
+          "traceId",
+          "groupKey",
           "title",
           "score",
           "links",
           "now"
         ],
         "properties": {
-          "baseline_score": {
+          "baselineScore": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "group_key": {
+          "groupKey": {
             "type": "string"
           },
           "links": {
@@ -9137,20 +9117,20 @@
             "type": "string",
             "format": "date-time"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "score": {
             "type": "number",
             "format": "double"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "title": {
             "type": "string"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -9158,28 +9138,28 @@
       "AlertLinks": {
         "type": "object",
         "required": [
-          "trace_url"
+          "traceUrl"
         ],
         "properties": {
-          "cluster_url": {
+          "clusterUrl": {
             "type": [
               "string",
               "null"
             ]
           },
-          "dataset_url": {
+          "datasetUrl": {
             "type": [
               "string",
               "null"
             ]
           },
-          "gate_url": {
+          "gateUrl": {
             "type": [
               "string",
               "null"
             ]
           },
-          "trace_url": {
+          "traceUrl": {
             "type": "string"
           }
         }
@@ -9187,39 +9167,39 @@
       "AlertPolicy": {
         "type": "object",
         "required": [
-          "policy_id",
-          "endpoint_url",
-          "signing_secret",
+          "policyId",
+          "endpointUrl",
+          "signingSecret",
           "severity",
-          "fire_when_score_at_or_below",
-          "dedupe_window_seconds",
-          "maintenance_windows"
+          "fireWhenScoreAtOrBelow",
+          "dedupeWindowSeconds",
+          "maintenanceWindows"
         ],
         "properties": {
-          "dedupe_window_seconds": {
+          "dedupeWindowSeconds": {
             "type": "integer",
             "format": "int64"
           },
-          "endpoint_url": {
+          "endpointUrl": {
             "type": "string"
           },
-          "fire_when_score_at_or_below": {
+          "fireWhenScoreAtOrBelow": {
             "type": "number",
             "format": "double"
           },
-          "maintenance_windows": {
+          "maintenanceWindows": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MaintenanceWindow"
             }
           },
-          "policy_id": {
+          "policyId": {
             "type": "string"
           },
           "severity": {
             "$ref": "#/components/schemas/AlertSeverity"
           },
-          "signing_secret": {
+          "signingSecret": {
             "type": "string"
           }
         }
@@ -9238,30 +9218,30 @@
       "ApiKeyCreatedResponse": {
         "type": "object",
         "required": [
-          "api_key_id",
-          "tenant_id",
-          "project_id",
-          "environment_id",
+          "apiKeyId",
+          "tenantId",
+          "projectId",
+          "environmentId",
           "scopes",
           "active",
-          "created_at",
+          "createdAt",
           "secret"
         ],
         "properties": {
           "active": {
             "type": "boolean"
           },
-          "api_key_id": {
+          "apiKeyId": {
             "$ref": "#/components/schemas/ApiKeyId"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "environment_id": {
+          "environmentId": {
             "$ref": "#/components/schemas/EnvironmentId"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "scopes": {
@@ -9274,7 +9254,7 @@
           "secret": {
             "type": "string"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -9300,27 +9280,27 @@
         "type": "object",
         "required": [
           "path",
-          "span_count",
-          "tenant_id",
-          "project_id",
-          "created_at"
+          "spanCount",
+          "tenantId",
+          "projectId",
+          "createdAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "path": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "span_count": {
+          "spanCount": {
             "type": "integer",
             "minimum": 0
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -9348,52 +9328,52 @@
       "ArchivedSpanRow": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "environment_id",
-          "trace_id",
-          "span_id",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "traceId",
+          "spanId",
           "seq",
           "kind",
           "status",
           "name",
-          "start_time",
-          "attributes_json",
-          "unmapped_json",
-          "raw_uri"
+          "startTime",
+          "attributesJson",
+          "unmappedJson",
+          "rawUri"
         ],
         "properties": {
-          "attributes_json": {
+          "attributesJson": {
             "type": "string"
           },
-          "cost_amount_micros": {
+          "costAmountMicros": {
             "type": [
               "string",
               "null"
             ]
           },
-          "cost_currency": {
+          "costCurrency": {
             "type": [
               "string",
               "null"
             ]
           },
-          "end_time": {
+          "endTime": {
             "type": [
               "string",
               "null"
             ]
           },
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
-          "input_tokens": {
+          "inputTokens": {
             "type": [
               "string",
               "null"
             ]
           },
-          "input_uri": {
+          "inputUri": {
             "type": [
               "string",
               "null"
@@ -9402,13 +9382,13 @@
           "kind": {
             "type": "string"
           },
-          "model_name": {
+          "modelName": {
             "type": [
               "string",
               "null"
             ]
           },
-          "model_provider": {
+          "modelProvider": {
             "type": [
               "string",
               "null"
@@ -9417,31 +9397,31 @@
           "name": {
             "type": "string"
           },
-          "output_tokens": {
+          "outputTokens": {
             "type": [
               "string",
               "null"
             ]
           },
-          "output_uri": {
+          "outputUri": {
             "type": [
               "string",
               "null"
             ]
           },
-          "parent_span_id": {
+          "parentSpanId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
-          "raw_uri": {
+          "rawUri": {
             "type": "string"
           },
-          "reasoning_tokens": {
+          "reasoningTokens": {
             "type": [
               "string",
               "null"
@@ -9452,22 +9432,22 @@
             "format": "int64",
             "minimum": 0
           },
-          "span_id": {
+          "spanId": {
             "type": "string"
           },
-          "start_time": {
+          "startTime": {
             "type": "string"
           },
           "status": {
             "type": "string"
           },
-          "tenant_id": {
+          "tenantId": {
             "type": "string"
           },
-          "trace_id": {
+          "traceId": {
             "type": "string"
           },
-          "unmapped_json": {
+          "unmappedJson": {
             "type": "string"
           }
         }
@@ -9478,27 +9458,27 @@
       "ArtifactRef": {
         "type": "object",
         "required": [
-          "artifact_id",
+          "artifactId",
           "uri",
           "sha256",
-          "size_bytes",
-          "mime_type",
-          "redaction_class"
+          "sizeBytes",
+          "mimeType",
+          "redactionClass"
         ],
         "properties": {
-          "artifact_id": {
+          "artifactId": {
             "$ref": "#/components/schemas/ArtifactId"
           },
-          "mime_type": {
+          "mimeType": {
             "type": "string"
           },
-          "redaction_class": {
+          "redactionClass": {
             "$ref": "#/components/schemas/RedactionClass"
           },
           "sha256": {
             "$ref": "#/components/schemas/Sha256Hash"
           },
-          "size_bytes": {
+          "sizeBytes": {
             "type": "integer",
             "format": "int64",
             "minimum": 0
@@ -9522,21 +9502,21 @@
       "AuditEvent": {
         "type": "object",
         "required": [
-          "audit_event_id",
-          "tenant_id",
-          "project_id",
+          "auditEventId",
+          "tenantId",
+          "projectId",
           "action",
-          "resource_type",
-          "resource_id",
+          "resourceType",
+          "resourceId",
           "outcome",
           "attributes",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
           "action": {
             "$ref": "#/components/schemas/AuditAction"
           },
-          "actor_api_key_id": {
+          "actorApiKeyId": {
             "oneOf": [
               {
                 "type": "null"
@@ -9547,14 +9527,14 @@
             ]
           },
           "attributes": {},
-          "audit_event_id": {
+          "auditEventId": {
             "$ref": "#/components/schemas/AuditEventId"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "environment_id": {
+          "environmentId": {
             "oneOf": [
               {
                 "type": "null"
@@ -9567,7 +9547,7 @@
           "outcome": {
             "$ref": "#/components/schemas/AuditOutcome"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "reason": {
@@ -9576,13 +9556,13 @@
               "null"
             ]
           },
-          "resource_id": {
+          "resourceId": {
             "type": "string"
           },
-          "resource_type": {
+          "resourceType": {
             "type": "string"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -9623,7 +9603,7 @@
           "scopes"
         ],
         "properties": {
-          "api_key_id": {
+          "apiKeyId": {
             "oneOf": [
               {
                 "type": "null"
@@ -9645,15 +9625,15 @@
       "BusMessage": {
         "type": "object",
         "required": [
-          "message_id",
-          "tenant_id",
-          "project_id",
-          "idempotency_key",
+          "messageId",
+          "tenantId",
+          "projectId",
+          "idempotencyKey",
           "kind",
           "payload",
           "attempts",
-          "max_attempts",
-          "enqueued_at"
+          "maxAttempts",
+          "enqueuedAt"
         ],
         "properties": {
           "attempts": {
@@ -9661,22 +9641,22 @@
             "format": "int32",
             "minimum": 0
           },
-          "enqueued_at": {
+          "enqueuedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "$ref": "#/components/schemas/IdempotencyKey"
           },
           "kind": {
             "type": "string"
           },
-          "max_attempts": {
+          "maxAttempts": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
           },
-          "message_id": {
+          "messageId": {
             "type": "string"
           },
           "payload": {
@@ -9687,10 +9667,10 @@
               "minimum": 0
             }
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -9698,25 +9678,25 @@
       "CalibrationConfusion": {
         "type": "object",
         "required": [
-          "human_pass_judge_pass",
-          "human_pass_judge_fail",
-          "human_fail_judge_pass",
-          "human_fail_judge_fail"
+          "humanPassJudgePass",
+          "humanPassJudgeFail",
+          "humanFailJudgePass",
+          "humanFailJudgeFail"
         ],
         "properties": {
-          "human_fail_judge_fail": {
+          "humanFailJudgeFail": {
             "type": "integer",
             "minimum": 0
           },
-          "human_fail_judge_pass": {
+          "humanFailJudgePass": {
             "type": "integer",
             "minimum": 0
           },
-          "human_pass_judge_fail": {
+          "humanPassJudgeFail": {
             "type": "integer",
             "minimum": 0
           },
-          "human_pass_judge_pass": {
+          "humanPassJudgePass": {
             "type": "integer",
             "minimum": 0
           }
@@ -9725,10 +9705,10 @@
       "CalibrationItem": {
         "type": "object",
         "required": [
-          "dataset_case_id",
-          "human_label",
-          "judge_label",
-          "judge_score",
+          "datasetCaseId",
+          "humanLabel",
+          "judgeLabel",
+          "judgeScore",
           "agreed",
           "evidence"
         ],
@@ -9736,23 +9716,23 @@
           "agreed": {
             "type": "boolean"
           },
-          "dataset_case_id": {
+          "datasetCaseId": {
             "$ref": "#/components/schemas/DatasetCaseId"
           },
           "evidence": {},
-          "human_label": {
+          "humanLabel": {
             "$ref": "#/components/schemas/CalibrationLabel"
           },
-          "judge_label": {
+          "judgeLabel": {
             "$ref": "#/components/schemas/CalibrationLabel"
           },
-          "judge_result_label": {
+          "judgeResultLabel": {
             "type": [
               "string",
               "null"
             ]
           },
-          "judge_score": {
+          "judgeScore": {
             "type": "number",
             "format": "double"
           }
@@ -9768,10 +9748,10 @@
       "CalibrationPolicy": {
         "type": "object",
         "required": [
-          "pass_threshold"
+          "passThreshold"
         ],
         "properties": {
-          "pass_threshold": {
+          "passThreshold": {
             "type": "number",
             "format": "double"
           }
@@ -9780,45 +9760,45 @@
       "CalibrationReport": {
         "type": "object",
         "required": [
-          "calibration_report_id",
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "dataset_version_id",
-          "evaluator_version_id",
-          "eval_report_id",
+          "calibrationReportId",
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "datasetVersionId",
+          "evaluatorVersionId",
+          "evalReportId",
           "policy",
-          "sample_count",
-          "observed_agreement",
-          "expected_agreement",
-          "cohen_kappa",
-          "brier_score",
-          "expected_calibration_error",
-          "reliability_bins",
+          "sampleCount",
+          "observedAgreement",
+          "expectedAgreement",
+          "cohenKappa",
+          "brierScore",
+          "expectedCalibrationError",
+          "reliabilityBins",
           "confusion",
           "items",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "brier_score": {
+          "brierScore": {
             "type": "number",
             "format": "double"
           },
-          "calibration_report_id": {
+          "calibrationReportId": {
             "$ref": "#/components/schemas/CalibrationReportId"
           },
-          "cohen_kappa": {
+          "cohenKappa": {
             "type": "number",
             "format": "double"
           },
-          "cohen_kappa_ci_high": {
+          "cohenKappaCiHigh": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "cohen_kappa_ci_low": {
+          "cohenKappaCiLow": {
             "type": [
               "number",
               "null"
@@ -9829,27 +9809,27 @@
           "confusion": {
             "$ref": "#/components/schemas/CalibrationConfusion"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
-          "dataset_version_id": {
+          "datasetVersionId": {
             "$ref": "#/components/schemas/DatasetVersionId"
           },
-          "eval_report_id": {
+          "evalReportId": {
             "type": "string"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "$ref": "#/components/schemas/EvaluatorVersionId"
           },
-          "expected_agreement": {
+          "expectedAgreement": {
             "type": "number",
             "format": "double"
           },
-          "expected_calibration_error": {
+          "expectedCalibrationError": {
             "type": "number",
             "format": "double"
           },
@@ -9859,18 +9839,18 @@
               "$ref": "#/components/schemas/CalibrationItem"
             }
           },
-          "observed_agreement": {
+          "observedAgreement": {
             "type": "number",
             "format": "double"
           },
-          "observed_agreement_ci_high": {
+          "observedAgreementCiHigh": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "observed_agreement_ci_low": {
+          "observedAgreementCiLow": {
             "type": [
               "number",
               "null"
@@ -9881,20 +9861,20 @@
           "policy": {
             "$ref": "#/components/schemas/CalibrationPolicy"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "reliability_bins": {
+          "reliabilityBins": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ReliabilityBin"
             }
           },
-          "sample_count": {
+          "sampleCount": {
             "type": "integer",
             "minimum": 0
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -9905,21 +9885,21 @@
       "CanonicalSpan": {
         "type": "object",
         "required": [
-          "schema_version",
-          "normalizer_version",
-          "tenant_id",
-          "project_id",
-          "environment_id",
-          "trace_id",
-          "span_id",
+          "schemaVersion",
+          "normalizerVersion",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "traceId",
+          "spanId",
           "seq",
           "kind",
           "name",
           "status",
-          "start_time",
+          "startTime",
           "attributes",
-          "unmapped_attrs",
-          "raw_ref"
+          "unmappedAttrs",
+          "rawRef"
         ],
         "properties": {
           "attributes": {
@@ -9939,17 +9919,17 @@
               }
             ]
           },
-          "end_time": {
+          "endTime": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "environment_id": {
+          "environmentId": {
             "$ref": "#/components/schemas/EnvironmentId"
           },
-          "input_ref": {
+          "inputRef": {
             "oneOf": [
               {
                 "type": "null"
@@ -9975,10 +9955,10 @@
           "name": {
             "type": "string"
           },
-          "normalizer_version": {
+          "normalizerVersion": {
             "type": "string"
           },
-          "output_ref": {
+          "outputRef": {
             "oneOf": [
               {
                 "type": "null"
@@ -9988,7 +9968,7 @@
               }
             ]
           },
-          "parent_span_id": {
+          "parentSpanId": {
             "oneOf": [
               {
                 "type": "null"
@@ -9998,13 +9978,13 @@
               }
             ]
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "raw_ref": {
+          "rawRef": {
             "$ref": "#/components/schemas/ArtifactRef"
           },
-          "schema_version": {
+          "schemaVersion": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
@@ -10014,17 +9994,17 @@
             "format": "int64",
             "minimum": 0
           },
-          "span_id": {
+          "spanId": {
             "$ref": "#/components/schemas/SpanId"
           },
-          "start_time": {
+          "startTime": {
             "type": "string",
             "format": "date-time"
           },
           "status": {
             "$ref": "#/components/schemas/SpanStatus"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "tokens": {
@@ -10037,32 +10017,32 @@
               }
             ]
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           },
-          "unmapped_attrs": {}
+          "unmappedAttrs": {}
         }
       },
       "CaseExperimentScore": {
         "type": "object",
         "required": [
-          "case_id",
-          "baseline_output",
-          "candidate_output",
-          "baseline_score",
-          "candidate_score",
+          "caseId",
+          "baselineOutput",
+          "candidateOutput",
+          "baselineScore",
+          "candidateScore",
           "delta",
-          "baseline_evidence",
-          "candidate_evidence"
+          "baselineEvidence",
+          "candidateEvidence"
         ],
         "properties": {
-          "baseline_cached": {
+          "baselineCached": {
             "type": [
               "boolean",
               "null"
             ]
           },
-          "baseline_cost": {
+          "baselineCost": {
             "oneOf": [
               {
                 "type": "null"
@@ -10072,8 +10052,8 @@
               }
             ]
           },
-          "baseline_evidence": {},
-          "baseline_judge_call_id": {
+          "baselineEvidence": {},
+          "baselineJudgeCallId": {
             "oneOf": [
               {
                 "type": "null"
@@ -10083,19 +10063,19 @@
               }
             ]
           },
-          "baseline_output": {},
-          "baseline_score": {
+          "baselineOutput": {},
+          "baselineScore": {
             "type": "number",
             "format": "double"
           },
-          "baseline_trace": {},
-          "candidate_cached": {
+          "baselineTrace": {},
+          "candidateCached": {
             "type": [
               "boolean",
               "null"
             ]
           },
-          "candidate_cost": {
+          "candidateCost": {
             "oneOf": [
               {
                 "type": "null"
@@ -10105,8 +10085,8 @@
               }
             ]
           },
-          "candidate_evidence": {},
-          "candidate_judge_call_id": {
+          "candidateEvidence": {},
+          "candidateJudgeCallId": {
             "oneOf": [
               {
                 "type": "null"
@@ -10116,13 +10096,13 @@
               }
             ]
           },
-          "candidate_output": {},
-          "candidate_score": {
+          "candidateOutput": {},
+          "candidateScore": {
             "type": "number",
             "format": "double"
           },
-          "candidate_trace": {},
-          "case_id": {
+          "candidateTrace": {},
+          "caseId": {
             "$ref": "#/components/schemas/DatasetCaseId"
           },
           "delta": {
@@ -10135,11 +10115,11 @@
       "CaseOutputOverrideRequest": {
         "type": "object",
         "required": [
-          "case_id",
+          "caseId",
           "output"
         ],
         "properties": {
-          "case_id": {
+          "caseId": {
             "type": "string"
           },
           "output": {},
@@ -10162,22 +10142,22 @@
         "type": "object",
         "description": "One-time login link returned when initiating a managed-OAuth connection.",
         "required": [
-          "redirect_url",
-          "connected_account_id"
+          "redirectUrl",
+          "connectedAccountId"
         ],
         "properties": {
-          "connected_account_id": {
+          "connectedAccountId": {
             "type": "string",
             "description": "Composio connection id (`ca_…`) created for this handshake."
           },
-          "expires_at": {
+          "expiresAt": {
             "type": [
               "string",
               "null"
             ],
             "description": "When the link expires (RFC 3339), if provided."
           },
-          "redirect_url": {
+          "redirectUrl": {
             "type": "string",
             "description": "URL the end user opens once to authorize the app."
           }
@@ -10196,7 +10176,7 @@
             "type": "boolean",
             "description": "`true` only when an account exists and is `ACTIVE`."
           },
-          "connected_account_id": {
+          "connectedAccountId": {
             "type": [
               "string",
               "null"
@@ -10266,7 +10246,7 @@
             ],
             "description": "What the tool does."
           },
-          "input_schema": {
+          "inputSchema": {
             "type": [
               "object",
               "null"
@@ -10277,7 +10257,7 @@
             "type": "string",
             "description": "Human display name."
           },
-          "no_auth": {
+          "noAuth": {
             "type": "boolean",
             "description": "`true` when the tool executes without a connected account."
           },
@@ -10354,7 +10334,7 @@
       "CreateDatasetVersionRequest": {
         "type": "object",
         "properties": {
-          "case_ids": {
+          "caseIds": {
             "type": [
               "array",
               "null"
@@ -10368,26 +10348,26 @@
       "CreateGateRequest": {
         "type": "object",
         "required": [
-          "gate_id",
+          "gateId",
           "name"
         ],
         "properties": {
-          "dataset_id": {
+          "datasetId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "gate_id": {
+          "gateId": {
             "type": "string"
           },
-          "inconclusive_policy": {
+          "inconclusivePolicy": {
             "oneOf": [
               {
                 "type": "null"
@@ -10410,7 +10390,7 @@
           "template"
         ],
         "properties": {
-          "created_by": {
+          "createdBy": {
             "type": [
               "string",
               "null"
@@ -10440,17 +10420,17 @@
         "type": "object",
         "required": [
           "provider",
-          "display_name",
-          "secret_value"
+          "displayName",
+          "secretValue"
         ],
         "properties": {
-          "display_name": {
+          "displayName": {
             "type": "string"
           },
           "provider": {
             "type": "string"
           },
-          "secret_value": {
+          "secretValue": {
             "type": "string"
           }
         }
@@ -10459,14 +10439,14 @@
         "type": "object",
         "required": [
           "name",
-          "annotation_schema"
+          "annotationSchema"
         ],
         "properties": {
-          "annotation_schema": {},
+          "annotationSchema": {},
           "name": {
             "type": "string"
           },
-          "queue_id": {
+          "queueId": {
             "type": [
               "string",
               "null"
@@ -10478,22 +10458,22 @@
         "type": "object",
         "required": [
           "title",
-          "source_trace_ids"
+          "sourceTraceIds"
         ],
         "properties": {
-          "exemplar_trace_id": {
+          "exemplarTraceId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "expected_outcome": {
+          "expectedOutcome": {
             "type": [
               "string",
               "null"
             ]
           },
-          "failure_mode": {
+          "failureMode": {
             "oneOf": [
               {
                 "type": "null"
@@ -10503,7 +10483,7 @@
               }
             ]
           },
-          "source_trace_ids": {
+          "sourceTraceIds": {
             "type": "array",
             "items": {
               "type": "string"
@@ -10538,27 +10518,27 @@
       "Dataset": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
+          "tenantId",
+          "projectId",
+          "datasetId",
           "name",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
           "name": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -10566,61 +10546,61 @@
       "DatasetCase": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "case_id",
-          "source_trace_id",
-          "source_span_id",
-          "source_environment_id",
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "caseId",
+          "sourceTraceId",
+          "sourceSpanId",
+          "sourceEnvironmentId",
           "input",
           "output",
           "trace",
-          "normalizer_version",
-          "trace_schema_version",
-          "input_artifact_hashes",
-          "created_at"
+          "normalizerVersion",
+          "traceSchemaVersion",
+          "inputArtifactHashes",
+          "createdAt"
         ],
         "properties": {
-          "case_id": {
+          "caseId": {
             "$ref": "#/components/schemas/DatasetCaseId"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
           "input": {},
-          "input_artifact_hashes": {
+          "inputArtifactHashes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Sha256Hash"
             }
           },
-          "normalizer_version": {
+          "normalizerVersion": {
             "type": "string"
           },
           "output": {},
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "reference": {},
-          "source_environment_id": {
+          "sourceEnvironmentId": {
             "$ref": "#/components/schemas/EnvironmentId"
           },
-          "source_span_id": {
+          "sourceSpanId": {
             "$ref": "#/components/schemas/SpanId"
           },
-          "source_trace_id": {
+          "sourceTraceId": {
             "$ref": "#/components/schemas/TraceId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "trace": {},
-          "trace_schema_version": {
+          "traceSchemaVersion": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
@@ -10633,42 +10613,42 @@
       "DatasetEvalReport": {
         "type": "object",
         "required": [
-          "report_id",
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "dataset_version_id",
-          "evaluator_version_id",
-          "result_count",
-          "aggregate_score",
+          "reportId",
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "datasetVersionId",
+          "evaluatorVersionId",
+          "resultCount",
+          "aggregateScore",
           "results",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "aggregate_score": {
+          "aggregateScore": {
             "type": "number",
             "format": "double"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
-          "dataset_version_id": {
+          "datasetVersionId": {
             "$ref": "#/components/schemas/DatasetVersionId"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "$ref": "#/components/schemas/EvaluatorVersionId"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "report_id": {
+          "reportId": {
             "type": "string"
           },
-          "result_count": {
+          "resultCount": {
             "type": "integer",
             "minimum": 0
           },
@@ -10678,7 +10658,7 @@
               "$ref": "#/components/schemas/EvalResult"
             }
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -10692,13 +10672,13 @@
       "DatasetVersionSnapshot": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id",
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId",
           "cases",
-          "corpus_root",
-          "created_at"
+          "corpusRoot",
+          "createdAt"
         ],
         "properties": {
           "cases": {
@@ -10707,24 +10687,24 @@
               "$ref": "#/components/schemas/DatasetCase"
             }
           },
-          "corpus_root": {
+          "corpusRoot": {
             "$ref": "#/components/schemas/CorpusRoot",
             "description": "Content-addressed Merkle root naming the exact set of cases in this\nversion. History-independent: identical case sets produce identical\nroots regardless of case order, so the root lets a trace, eval, or\ncustomer-facing report cite the precise corpus it ran against and lets\ntwo parties confirm they hold the same data with one comparison."
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "version_id": {
+          "versionId": {
             "$ref": "#/components/schemas/DatasetVersionId"
           }
         }
@@ -10734,10 +10714,10 @@
         "required": [
           "message",
           "reason",
-          "failed_at"
+          "failedAt"
         ],
         "properties": {
-          "failed_at": {
+          "failedAt": {
             "type": "string",
             "format": "date-time"
           },
@@ -10752,26 +10732,26 @@
       "DeadLetterReplayReport": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "message_id",
-          "reset_attempts",
+          "tenantId",
+          "projectId",
+          "messageId",
+          "resetAttempts",
           "ack"
         ],
         "properties": {
           "ack": {
             "$ref": "#/components/schemas/PublishAck"
           },
-          "message_id": {
+          "messageId": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "reset_attempts": {
+          "resetAttempts": {
             "type": "boolean"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -10786,14 +10766,14 @@
           "kind": {
             "$ref": "#/components/schemas/DiffLineKind"
           },
-          "new_line": {
+          "newLine": {
             "type": [
               "integer",
               "null"
             ],
             "minimum": 0
           },
-          "old_line": {
+          "oldLine": {
             "type": [
               "integer",
               "null"
@@ -10816,16 +10796,16 @@
       "EnqueueReviewTaskFromTraceHttpRequest": {
         "type": "object",
         "required": [
-          "trace_id"
+          "traceId"
         ],
         "properties": {
-          "dataset_case_id": {
+          "datasetCaseId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "dataset_id": {
+          "datasetId": {
             "type": [
               "string",
               "null"
@@ -10838,19 +10818,19 @@
             ],
             "format": "int64"
           },
-          "span_id": {
+          "spanId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "task_id": {
+          "taskId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "trace_id": {
+          "traceId": {
             "type": "string"
           }
         }
@@ -10904,20 +10884,20 @@
       "EvalReproducibility": {
         "type": "object",
         "required": [
-          "dataset_version_id",
-          "dataset_case_id",
-          "agent_release_id",
-          "evaluator_version_id",
-          "judge_parameters",
-          "normalizer_version",
-          "trace_schema_version",
-          "input_artifact_hashes"
+          "datasetVersionId",
+          "datasetCaseId",
+          "agentReleaseId",
+          "evaluatorVersionId",
+          "judgeParameters",
+          "normalizerVersion",
+          "traceSchemaVersion",
+          "inputArtifactHashes"
         ],
         "properties": {
-          "agent_release_id": {
+          "agentReleaseId": {
             "$ref": "#/components/schemas/AgentReleaseId"
           },
-          "code_hash": {
+          "codeHash": {
             "oneOf": [
               {
                 "type": "null"
@@ -10927,41 +10907,41 @@
               }
             ]
           },
-          "dataset_case_id": {
+          "datasetCaseId": {
             "$ref": "#/components/schemas/DatasetCaseId"
           },
-          "dataset_version_id": {
+          "datasetVersionId": {
             "$ref": "#/components/schemas/DatasetVersionId"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "$ref": "#/components/schemas/EvaluatorVersionId"
           },
-          "input_artifact_hashes": {
+          "inputArtifactHashes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Sha256Hash"
             }
           },
-          "judge_model_id": {
+          "judgeModelId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "judge_parameters": {},
-          "judge_provider": {
+          "judgeParameters": {},
+          "judgeProvider": {
             "type": [
               "string",
               "null"
             ]
           },
-          "judge_rubric_version": {
+          "judgeRubricVersion": {
             "type": [
               "string",
               "null"
             ]
           },
-          "judge_seed": {
+          "judgeSeed": {
             "type": [
               "integer",
               "null"
@@ -10969,10 +10949,10 @@
             "format": "int64",
             "minimum": 0
           },
-          "normalizer_version": {
+          "normalizerVersion": {
             "type": "string"
           },
-          "prompt_version_id": {
+          "promptVersionId": {
             "oneOf": [
               {
                 "type": "null"
@@ -10982,18 +10962,18 @@
               }
             ]
           },
-          "trace_schema_version": {
+          "traceSchemaVersion": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
           },
-          "wasi_abi_version": {
+          "wasiAbiVersion": {
             "type": [
               "string",
               "null"
             ]
           },
-          "wasm_hash": {
+          "wasmHash": {
             "oneOf": [
               {
                 "type": "null"
@@ -11008,14 +10988,14 @@
       "EvalResult": {
         "type": "object",
         "required": [
-          "eval_result_id",
-          "tenant_id",
-          "project_id",
-          "trace_id",
+          "evalResultId",
+          "tenantId",
+          "projectId",
+          "traceId",
           "score",
           "evidence",
           "reproducibility",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
           "cost": {
@@ -11028,11 +11008,11 @@
               }
             ]
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "eval_result_id": {
+          "evalResultId": {
             "$ref": "#/components/schemas/EvalResultId"
           },
           "evidence": {},
@@ -11042,13 +11022,13 @@
               "null"
             ]
           },
-          "non_reproducible_reason": {
+          "nonReproducibleReason": {
             "type": [
               "string",
               "null"
             ]
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "reproducibility": {
@@ -11058,7 +11038,7 @@
             "type": "number",
             "format": "double"
           },
-          "span_id": {
+          "spanId": {
             "oneOf": [
               {
                 "type": "null"
@@ -11068,7 +11048,7 @@
               }
             ]
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "tokens": {
@@ -11081,7 +11061,7 @@
               }
             ]
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -11192,11 +11172,11 @@
           {
             "type": "object",
             "required": [
-              "max_micros",
+              "maxMicros",
               "type"
             ],
             "properties": {
-              "max_micros": {
+              "maxMicros": {
                 "type": "integer",
                 "format": "int64"
               },
@@ -11211,11 +11191,11 @@
           {
             "type": "object",
             "required": [
-              "max_ms",
+              "maxMs",
               "type"
             ],
             "properties": {
-              "max_ms": {
+              "maxMs": {
                 "type": "integer",
                 "format": "int64",
                 "minimum": 0
@@ -11257,7 +11237,7 @@
               "type"
             ],
             "properties": {
-              "dom_contains": {
+              "domContains": {
                 "type": [
                   "string",
                   "null"
@@ -11269,7 +11249,7 @@
                   "browser_task_success"
                 ]
               },
-              "url_contains": {
+              "urlContains": {
                 "type": [
                   "string",
                   "null"
@@ -11281,11 +11261,11 @@
             "type": "object",
             "description": "Browser step efficiency: passes when the run used at most `max_steps`\nbrowser steps (catches looping/backtracking). Reads `trace.browser_steps`.",
             "required": [
-              "max_steps",
+              "maxSteps",
               "type"
             ],
             "properties": {
-              "max_steps": {
+              "maxSteps": {
                 "type": "integer",
                 "format": "int64",
                 "minimum": 0
@@ -11302,11 +11282,11 @@
             "type": "object",
             "description": "Browser grounding: fraction of element-targeted steps that resolved to\ntheir intended element; score is the ratio, passes at `min_ratio`.",
             "required": [
-              "min_ratio",
+              "minRatio",
               "type"
             ],
             "properties": {
-              "min_ratio": {
+              "minRatio": {
                 "type": "number",
                 "format": "double"
               },
@@ -11369,35 +11349,35 @@
       "ExperimentComparison": {
         "type": "object",
         "required": [
-          "sample_size",
-          "baseline_mean",
-          "candidate_mean",
+          "sampleSize",
+          "baselineMean",
+          "candidateMean",
           "delta",
-          "ci_low",
-          "ci_high",
-          "p_value",
+          "ciLow",
+          "ciHigh",
+          "pValue",
           "decision",
           "test",
-          "adjusted_alpha"
+          "adjustedAlpha"
         ],
         "properties": {
-          "adjusted_alpha": {
+          "adjustedAlpha": {
             "type": "number",
             "format": "double"
           },
-          "baseline_mean": {
+          "baselineMean": {
             "type": "number",
             "format": "double"
           },
-          "candidate_mean": {
+          "candidateMean": {
             "type": "number",
             "format": "double"
           },
-          "ci_high": {
+          "ciHigh": {
             "type": "number",
             "format": "double"
           },
-          "ci_low": {
+          "ciLow": {
             "type": "number",
             "format": "double"
           },
@@ -11416,12 +11396,12 @@
             "format": "double",
             "description": "Minimum detectable effect at the current sample size, in the metric's own\nunits, at the gate's (adjusted) alpha and the standard power of 0.8\n(§10.3 #5). Populated only when `decision` is `Inconclusive` — the\ncomparison lacked the power to resolve the regression bound, and\nregressions smaller than this are invisible at this N. `None` on a\nconclusive decision (or when the paired differences have zero spread, so\nno effect-scale is defined). This replaces a bare \"underpowered\" flag with\nthe actionable \"how small an effect could we even have seen\" number."
           },
-          "p_value": {
+          "pValue": {
             "type": "number",
             "format": "double",
             "description": "Real two-sided p-value from `test`. The previous normal-approximation path\nreported no p-value at all."
           },
-          "required_n": {
+          "requiredN": {
             "type": [
               "integer",
               "null"
@@ -11429,7 +11409,7 @@
             "description": "Number of paired observations that would be required to detect the\n*observed* effect at the gate's (adjusted) alpha and power 0.8 (§10.3 #5).\nPopulated only when `decision` is `Inconclusive` and the observed effect is\nnon-degenerate (non-zero delta over non-zero difference spread). `None`\notherwise. This answers \"how many more cases would have made this\nconclusive?\".",
             "minimum": 0
           },
-          "sample_size": {
+          "sampleSize": {
             "type": "integer",
             "minimum": 0
           },
@@ -11444,27 +11424,27 @@
       "ExperimentRunReport": {
         "type": "object",
         "required": [
-          "experiment_run_id",
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "dataset_version_id",
-          "baseline_release_id",
-          "candidate_release_id",
-          "evaluator_version_id",
-          "case_scores",
+          "experimentRunId",
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "datasetVersionId",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "evaluatorVersionId",
+          "caseScores",
           "comparison",
           "decision",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "baseline_release_id": {
+          "baselineReleaseId": {
             "$ref": "#/components/schemas/AgentReleaseId"
           },
-          "candidate_release_id": {
+          "candidateReleaseId": {
             "$ref": "#/components/schemas/AgentReleaseId"
           },
-          "case_scores": {
+          "caseScores": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CaseExperimentScore"
@@ -11473,32 +11453,32 @@
           "comparison": {
             "$ref": "#/components/schemas/ExperimentComparison"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
-          "dataset_version_id": {
+          "datasetVersionId": {
             "$ref": "#/components/schemas/DatasetVersionId"
           },
           "decision": {
             "$ref": "#/components/schemas/GateDecision"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "$ref": "#/components/schemas/EvaluatorVersionId"
           },
-          "experiment_run_id": {
+          "experimentRunId": {
             "$ref": "#/components/schemas/ExperimentRunId"
           },
-          "gate_policy": {
+          "gatePolicy": {
             "$ref": "#/components/schemas/GatePolicy"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -11533,18 +11513,18 @@
       "GateDefinition": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "gate_id",
+          "tenantId",
+          "projectId",
+          "gateId",
           "name",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "oneOf": [
               {
                 "type": "null"
@@ -11554,7 +11534,7 @@
               }
             ]
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "oneOf": [
               {
                 "type": "null"
@@ -11564,19 +11544,19 @@
               }
             ]
           },
-          "gate_id": {
+          "gateId": {
             "$ref": "#/components/schemas/GateId"
           },
-          "inconclusive_policy": {
+          "inconclusivePolicy": {
             "$ref": "#/components/schemas/InconclusivePolicy"
           },
           "name": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -11587,25 +11567,25 @@
       "GatePolicy": {
         "type": "object",
         "required": [
-          "min_sample_size",
-          "max_regression",
+          "minSampleSize",
+          "maxRegression",
           "alpha",
-          "comparison_count"
+          "comparisonCount"
         ],
         "properties": {
           "alpha": {
             "type": "number",
             "format": "double"
           },
-          "comparison_count": {
+          "comparisonCount": {
             "type": "integer",
             "minimum": 0
           },
-          "max_regression": {
+          "maxRegression": {
             "type": "number",
             "format": "double"
           },
-          "min_sample_size": {
+          "minSampleSize": {
             "type": "integer",
             "minimum": 0
           }
@@ -11617,59 +11597,59 @@
       "GateRunReport": {
         "type": "object",
         "required": [
-          "gate_run_id",
-          "tenant_id",
-          "project_id",
-          "gate_id",
-          "gate_name",
-          "inconclusive_policy",
-          "experiment_run_id",
-          "dataset_id",
-          "evaluator_version_id",
-          "baseline_release_id",
-          "candidate_release_id",
-          "experiment_decision",
-          "experiment_gate_policy",
+          "gateRunId",
+          "tenantId",
+          "projectId",
+          "gateId",
+          "gateName",
+          "inconclusivePolicy",
+          "experimentRunId",
+          "datasetId",
+          "evaluatorVersionId",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "experimentDecision",
+          "experimentGatePolicy",
           "passed",
           "reason",
           "comparison",
-          "experiment_created_at",
-          "created_at"
+          "experimentCreatedAt",
+          "createdAt"
         ],
         "properties": {
-          "baseline_release_id": {
+          "baselineReleaseId": {
             "$ref": "#/components/schemas/AgentReleaseId"
           },
-          "candidate_release_id": {
+          "candidateReleaseId": {
             "$ref": "#/components/schemas/AgentReleaseId"
           },
           "comparison": {
             "$ref": "#/components/schemas/ExperimentComparison"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_id": {
+          "datasetId": {
             "$ref": "#/components/schemas/DatasetId"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "$ref": "#/components/schemas/EvaluatorVersionId"
           },
-          "experiment_created_at": {
+          "experimentCreatedAt": {
             "type": "string",
             "format": "date-time"
           },
-          "experiment_decision": {
+          "experimentDecision": {
             "$ref": "#/components/schemas/GateDecision"
           },
-          "experiment_gate_policy": {
+          "experimentGatePolicy": {
             "$ref": "#/components/schemas/GatePolicy"
           },
-          "experiment_run_id": {
+          "experimentRunId": {
             "$ref": "#/components/schemas/ExperimentRunId"
           },
-          "gate_dataset_id": {
+          "gateDatasetId": {
             "oneOf": [
               {
                 "type": "null"
@@ -11679,7 +11659,7 @@
               }
             ]
           },
-          "gate_evaluator_version_id": {
+          "gateEvaluatorVersionId": {
             "oneOf": [
               {
                 "type": "null"
@@ -11689,28 +11669,28 @@
               }
             ]
           },
-          "gate_id": {
+          "gateId": {
             "$ref": "#/components/schemas/GateId"
           },
-          "gate_name": {
+          "gateName": {
             "type": "string"
           },
-          "gate_run_id": {
+          "gateRunId": {
             "$ref": "#/components/schemas/GateRunId"
           },
-          "inconclusive_policy": {
+          "inconclusivePolicy": {
             "$ref": "#/components/schemas/InconclusivePolicy"
           },
           "passed": {
             "type": "boolean"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "reason": {
             "type": "string"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -11748,20 +11728,20 @@
       "ImportTemperaEvidenceRequest": {
         "type": "object",
         "required": [
-          "canonical_json",
-          "signature_base64",
-          "public_key_pem"
+          "canonicalJson",
+          "signatureBase64",
+          "publicKeyPem"
         ],
         "properties": {
-          "canonical_json": {
+          "canonicalJson": {
             "type": "string",
             "description": "Canonical compact JSON signed by the release/decision key. The endpoint\nrejects equivalent but non-canonical JSON so the verified bytes are\nunambiguous across SDKs."
           },
-          "public_key_pem": {
+          "publicKeyPem": {
             "type": "string",
             "description": "PEM SubjectPublicKeyInfo for the Ed25519 key whose exact byte digest is\npinned inside the signed payload."
           },
-          "signature_base64": {
+          "signatureBase64": {
             "type": "string",
             "description": "Standard-base64 detached Ed25519 signature over `canonical_json` bytes."
           }
@@ -11778,13 +11758,13 @@
         "type": "object",
         "required": [
           "ack",
-          "downstream_queued"
+          "downstreamQueued"
         ],
         "properties": {
           "ack": {
             "$ref": "#/components/schemas/WriteAck"
           },
-          "downstream_queued": {
+          "downstreamQueued": {
             "type": "boolean"
           }
         }
@@ -11792,35 +11772,35 @@
       "IngestQueueStatus": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "total_depth",
-          "trace_write_depth",
-          "trace_ingested_depth",
-          "dead_letters"
+          "tenantId",
+          "projectId",
+          "totalDepth",
+          "traceWriteDepth",
+          "traceIngestedDepth",
+          "deadLetters"
         ],
         "properties": {
-          "dead_letters": {
+          "deadLetters": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DeadLetter"
             }
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "total_depth": {
+          "totalDepth": {
             "type": "integer",
             "minimum": 0
           },
-          "trace_ingested_depth": {
+          "traceIngestedDepth": {
             "type": "integer",
             "minimum": 0
           },
-          "trace_write_depth": {
+          "traceWriteDepth": {
             "type": "integer",
             "minimum": 0
           }
@@ -11845,64 +11825,64 @@
       "JudgeAuditRecord": {
         "type": "object",
         "required": [
-          "judge_call_id",
-          "tenant_id",
-          "project_id",
-          "evaluator_id",
+          "judgeCallId",
+          "tenantId",
+          "projectId",
+          "evaluatorId",
           "provider",
-          "provider_secret_id",
+          "providerSecretId",
           "model",
-          "request_hash",
-          "response_hash",
+          "requestHash",
+          "responseHash",
           "score",
-          "provider_cost",
-          "charged_cost",
+          "providerCost",
+          "chargedCost",
           "cached",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
           "cached": {
             "type": "boolean"
           },
-          "charged_cost": {
+          "chargedCost": {
             "$ref": "#/components/schemas/Money"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "judge_call_id": {
+          "judgeCallId": {
             "$ref": "#/components/schemas/JudgeCallId"
           },
           "model": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "provider": {
             "type": "string"
           },
-          "provider_cost": {
+          "providerCost": {
             "$ref": "#/components/schemas/Money"
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           },
-          "request_hash": {
+          "requestHash": {
             "$ref": "#/components/schemas/Sha256Hash"
           },
-          "response_hash": {
+          "responseHash": {
             "$ref": "#/components/schemas/Sha256Hash"
           },
           "score": {
             "type": "number",
             "format": "double"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -11912,13 +11892,13 @@
         "required": [
           "result",
           "audit",
-          "remaining_budget"
+          "remainingBudget"
         ],
         "properties": {
           "audit": {
             "$ref": "#/components/schemas/JudgeAuditRecord"
           },
-          "remaining_budget": {
+          "remainingBudget": {
             "$ref": "#/components/schemas/Money"
           },
           "result": {
@@ -11972,15 +11952,15 @@
       "MaintenanceWindow": {
         "type": "object",
         "required": [
-          "starts_at",
-          "ends_at"
+          "startsAt",
+          "endsAt"
         ],
         "properties": {
-          "ends_at": {
+          "endsAt": {
             "type": "string",
             "format": "date-time"
           },
-          "starts_at": {
+          "startsAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -11989,17 +11969,17 @@
       "MineScenariosRequest": {
         "type": "object",
         "required": [
-          "trace_ids"
+          "traceIds"
         ],
         "properties": {
-          "jaccard_threshold": {
+          "jaccardThreshold": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "trace_ids": {
+          "traceIds": {
             "type": "array",
             "items": {
               "type": "string"
@@ -12039,11 +12019,11 @@
       "Money": {
         "type": "object",
         "required": [
-          "amount_micros",
+          "amountMicros",
           "currency"
         ],
         "properties": {
-          "amount_micros": {
+          "amountMicros": {
             "type": "integer",
             "format": "int64"
           },
@@ -12056,14 +12036,14 @@
         "type": "object",
         "required": [
           "scope",
-          "trace_id",
-          "span_id",
+          "traceId",
+          "spanId",
           "seq",
           "kind",
           "name",
           "status",
           "attributes",
-          "redaction_class"
+          "redactionClass"
         ],
         "properties": {
           "attributes": {
@@ -12073,7 +12053,7 @@
               "type": "string"
             }
           },
-          "auth_context": {
+          "authContext": {
             "oneOf": [
               {
                 "type": "null"
@@ -12093,14 +12073,14 @@
               }
             ]
           },
-          "end_time": {
+          "endTime": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "idempotency_key": {
+          "idempotencyKey": {
             "oneOf": [
               {
                 "type": "null"
@@ -12128,7 +12108,7 @@
             "type": "string"
           },
           "output": {},
-          "parent_span_id": {
+          "parentSpanId": {
             "oneOf": [
               {
                 "type": "null"
@@ -12138,7 +12118,7 @@
               }
             ]
           },
-          "redaction_class": {
+          "redactionClass": {
             "$ref": "#/components/schemas/RedactionClass"
           },
           "scope": {
@@ -12149,10 +12129,10 @@
             "format": "int64",
             "minimum": 0
           },
-          "span_id": {
+          "spanId": {
             "$ref": "#/components/schemas/SpanId"
           },
-          "start_time": {
+          "startTime": {
             "type": [
               "string",
               "null"
@@ -12172,7 +12152,7 @@
               }
             ]
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -12180,26 +12160,26 @@
       "OnlineSamplingPolicy": {
         "type": "object",
         "required": [
-          "sample_rate_per_mille",
-          "keep_errors"
+          "sampleRatePerMille",
+          "keepErrors"
         ],
         "properties": {
-          "high_cost_micros_threshold": {
+          "highCostMicrosThreshold": {
             "type": [
               "integer",
               "null"
             ],
             "format": "int64"
           },
-          "keep_errors": {
+          "keepErrors": {
             "type": "boolean"
           },
-          "sample_rate_per_mille": {
+          "sampleRatePerMille": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
           },
-          "slow_ms_threshold": {
+          "slowMsThreshold": {
             "type": [
               "integer",
               "null"
@@ -12212,29 +12192,29 @@
       "OtlpIngestOutcome": {
         "type": "object",
         "required": [
-          "accepted_raw",
-          "accepted_spans",
-          "duplicate_raw",
-          "duplicate_spans",
-          "downstream_queued"
+          "acceptedRaw",
+          "acceptedSpans",
+          "duplicateRaw",
+          "duplicateSpans",
+          "downstreamQueued"
         ],
         "properties": {
-          "accepted_raw": {
+          "acceptedRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "accepted_spans": {
+          "acceptedSpans": {
             "type": "integer",
             "minimum": 0
           },
-          "downstream_queued": {
+          "downstreamQueued": {
             "type": "boolean"
           },
-          "duplicate_raw": {
+          "duplicateRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "duplicate_spans": {
+          "duplicateSpans": {
             "type": "integer",
             "minimum": 0
           }
@@ -12252,32 +12232,32 @@
       "PaletteConnectStatusResponse": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
+          "tenantId",
+          "projectId",
           "ok",
           "status",
-          "usage_configured",
-          "first_trace_received",
-          "first_eval_run",
+          "usageConfigured",
+          "firstTraceReceived",
+          "firstEvalRun",
           "totals"
         ],
         "properties": {
-          "first_eval_run": {
+          "firstEvalRun": {
             "type": "boolean"
           },
-          "first_trace_received": {
+          "firstTraceReceived": {
             "type": "boolean"
           },
           "ok": {
             "type": "boolean"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "status": {
             "$ref": "#/components/schemas/PaletteConnectStatus"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "totals": {
@@ -12289,7 +12269,7 @@
               "type": "string"
             }
           },
-          "usage_configured": {
+          "usageConfigured": {
             "type": "boolean"
           }
         }
@@ -12298,27 +12278,27 @@
         "type": "object",
         "description": "Tunable knobs describing how a scenario may be perturbed during replay.",
         "required": [
-          "stale_source",
-          "contradictory_source",
-          "tool_schema_mismatch",
-          "auth_failure",
+          "staleSource",
+          "contradictorySource",
+          "toolSchemaMismatch",
+          "authFailure",
           "timeout",
-          "prompt_injection"
+          "promptInjection"
         ],
         "properties": {
-          "auth_failure": {
+          "authFailure": {
             "type": "boolean",
             "description": "Force an auth failure on a dependency."
           },
-          "contradictory_source": {
+          "contradictorySource": {
             "type": "boolean",
             "description": "Inject a contradictory context source."
           },
-          "prompt_injection": {
+          "promptInjection": {
             "type": "boolean",
             "description": "Attempt a prompt-injection payload."
           },
-          "stale_source": {
+          "staleSource": {
             "type": "boolean",
             "description": "Serve a stale version of a context source."
           },
@@ -12326,7 +12306,7 @@
             "type": "boolean",
             "description": "Force a timeout on a dependency."
           },
-          "tool_schema_mismatch": {
+          "toolSchemaMismatch": {
             "type": "boolean",
             "description": "Present a tool whose schema mismatches expectations."
           }
@@ -12338,10 +12318,10 @@
       "PromoteReviewAnnotationHttpRequest": {
         "type": "object",
         "required": [
-          "dataset_id"
+          "datasetId"
         ],
         "properties": {
-          "dataset_id": {
+          "datasetId": {
             "type": "string"
           },
           "reference": {}
@@ -12350,17 +12330,17 @@
       "PromoteTraceCaseRequest": {
         "type": "object",
         "required": [
-          "trace_id"
+          "traceId"
         ],
         "properties": {
           "reference": {},
-          "span_id": {
+          "spanId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "trace_id": {
+          "traceId": {
             "type": "string"
           }
         }
@@ -12368,15 +12348,15 @@
       "Prompt": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "prompt_id",
+          "tenantId",
+          "projectId",
+          "promptId",
           "name",
-          "created_at",
-          "updated_at"
+          "createdAt",
+          "updatedAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
@@ -12389,16 +12369,16 @@
           "name": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "prompt_id": {
+          "promptId": {
             "$ref": "#/components/schemas/PromptId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -12482,11 +12462,11 @@
       "PromptVersion": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "prompt_id",
-          "version_id",
-          "version_number",
+          "tenantId",
+          "projectId",
+          "promptId",
+          "versionId",
+          "versionNumber",
           "template",
           "metadata"
         ],
@@ -12494,22 +12474,22 @@
           "metadata": {
             "$ref": "#/components/schemas/PromptVersionMetadata"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "prompt_id": {
+          "promptId": {
             "$ref": "#/components/schemas/PromptId"
           },
           "template": {
             "$ref": "#/components/schemas/PromptTemplate"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "version_id": {
+          "versionId": {
             "$ref": "#/components/schemas/PromptVersionId"
           },
-          "version_number": {
+          "versionNumber": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
@@ -12519,12 +12499,12 @@
       "PromptVersionDiff": {
         "type": "object",
         "required": [
-          "from_version_id",
-          "to_version_id",
+          "fromVersionId",
+          "toVersionId",
           "lines"
         ],
         "properties": {
-          "from_version_id": {
+          "fromVersionId": {
             "$ref": "#/components/schemas/PromptVersionId"
           },
           "lines": {
@@ -12533,7 +12513,7 @@
               "$ref": "#/components/schemas/DiffLine"
             }
           },
-          "to_version_id": {
+          "toVersionId": {
             "$ref": "#/components/schemas/PromptVersionId"
           }
         }
@@ -12564,14 +12544,14 @@
       "PromptVersionMetadata": {
         "type": "object",
         "required": [
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "created_by": {
+          "createdBy": {
             "type": [
               "string",
               "null"
@@ -12611,42 +12591,42 @@
       "ProviderSecretMetadata": {
         "type": "object",
         "required": [
-          "provider_secret_id",
-          "tenant_id",
-          "project_id",
+          "providerSecretId",
+          "tenantId",
+          "projectId",
           "provider",
-          "display_name",
+          "displayName",
           "active",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
           "active": {
             "type": "boolean"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "display_name": {
+          "displayName": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
           "provider": {
             "type": "string"
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           },
-          "rotated_at": {
+          "rotatedAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -12655,52 +12635,52 @@
         "type": "object",
         "description": "Client-facing judge ledger row. The backing `provider`, the `provider_secret_id`,\nand our raw `provider_cost` are INTERNAL (staff-only) and must never reach a\ncustomer — exposing `provider_cost` alongside `charged_cost` would also leak our\nmargin (billing-credits-contract §11). Only customer-facing fields appear here,\nincluding `charged_cost` (the amount the customer actually pays).",
         "required": [
-          "judge_call_id",
-          "tenant_id",
-          "project_id",
-          "evaluator_id",
+          "judgeCallId",
+          "tenantId",
+          "projectId",
+          "evaluatorId",
           "model",
-          "request_hash",
-          "response_hash",
+          "requestHash",
+          "responseHash",
           "score",
-          "charged_cost",
+          "chargedCost",
           "cached",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
           "cached": {
             "type": "boolean"
           },
-          "charged_cost": {
+          "chargedCost": {
             "$ref": "#/components/schemas/Money"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "judge_call_id": {
+          "judgeCallId": {
             "$ref": "#/components/schemas/JudgeCallId"
           },
           "model": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "request_hash": {
+          "requestHash": {
             "$ref": "#/components/schemas/Sha256Hash"
           },
-          "response_hash": {
+          "responseHash": {
             "$ref": "#/components/schemas/Sha256Hash"
           },
           "score": {
             "type": "number",
             "format": "double"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -12723,18 +12703,18 @@
       "QueuedTraceWork": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "trace_id"
+          "tenantId",
+          "projectId",
+          "traceId"
         ],
         "properties": {
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -12751,10 +12731,10 @@
       "ReliabilityBin": {
         "type": "object",
         "required": [
-          "bin_index",
-          "lower_bound",
-          "upper_bound",
-          "sample_count"
+          "binIndex",
+          "lowerBound",
+          "upperBound",
+          "sampleCount"
         ],
         "properties": {
           "accuracy": {
@@ -12764,33 +12744,33 @@
             ],
             "format": "double"
           },
-          "bin_index": {
+          "binIndex": {
             "type": "integer",
             "minimum": 0
           },
-          "calibration_gap": {
+          "calibrationGap": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "lower_bound": {
+          "lowerBound": {
             "type": "number",
             "format": "double"
           },
-          "mean_confidence": {
+          "meanConfidence": {
             "type": [
               "number",
               "null"
             ],
             "format": "double"
           },
-          "sample_count": {
+          "sampleCount": {
             "type": "integer",
             "minimum": 0
           },
-          "upper_bound": {
+          "upperBound": {
             "type": "number",
             "format": "double"
           }
@@ -12799,38 +12779,38 @@
       "ReviewAnnotation": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "queue_id",
-          "task_id",
-          "annotation_id",
-          "reviewer_id",
+          "tenantId",
+          "projectId",
+          "queueId",
+          "taskId",
+          "annotationId",
+          "reviewerId",
           "verdict",
           "payload",
-          "created_at"
+          "createdAt"
         ],
         "properties": {
-          "annotation_id": {
+          "annotationId": {
             "$ref": "#/components/schemas/AnnotationId"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "payload": {},
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "queue_id": {
+          "queueId": {
             "$ref": "#/components/schemas/ReviewQueueId"
           },
-          "reviewer_id": {
+          "reviewerId": {
             "type": "string"
           },
-          "task_id": {
+          "taskId": {
             "$ref": "#/components/schemas/ReviewTaskId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "verdict": {
@@ -12841,29 +12821,29 @@
       "ReviewQueue": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "queue_id",
+          "tenantId",
+          "projectId",
+          "queueId",
           "name",
-          "annotation_schema",
-          "created_at"
+          "annotationSchema",
+          "createdAt"
         ],
         "properties": {
-          "annotation_schema": {},
-          "created_at": {
+          "annotationSchema": {},
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "name": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "queue_id": {
+          "queueId": {
             "$ref": "#/components/schemas/ReviewQueueId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -12874,22 +12854,22 @@
       "ReviewTask": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "queue_id",
-          "task_id",
-          "trace_id",
+          "tenantId",
+          "projectId",
+          "queueId",
+          "taskId",
+          "traceId",
           "priority",
           "state",
-          "created_at",
-          "updated_at"
+          "createdAt",
+          "updatedAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
-          "dataset_case_id": {
+          "datasetCaseId": {
             "oneOf": [
               {
                 "type": "null"
@@ -12899,7 +12879,7 @@
               }
             ]
           },
-          "dataset_id": {
+          "datasetId": {
             "oneOf": [
               {
                 "type": "null"
@@ -12913,13 +12893,13 @@
             "type": "integer",
             "format": "int64"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "queue_id": {
+          "queueId": {
             "$ref": "#/components/schemas/ReviewQueueId"
           },
-          "span_id": {
+          "spanId": {
             "oneOf": [
               {
                 "type": "null"
@@ -12932,16 +12912,16 @@
           "state": {
             "$ref": "#/components/schemas/ReviewTaskState"
           },
-          "task_id": {
+          "taskId": {
             "$ref": "#/components/schemas/ReviewTaskId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           },
-          "updated_at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -12990,18 +12970,18 @@
       "RevokedApiKey": {
         "type": "object",
         "required": [
-          "api_key_id",
+          "apiKeyId",
           "active",
-          "rotated_at"
+          "rotatedAt"
         ],
         "properties": {
           "active": {
             "type": "boolean"
           },
-          "api_key_id": {
+          "apiKeyId": {
             "$ref": "#/components/schemas/ApiKeyId"
           },
-          "rotated_at": {
+          "rotatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -13010,18 +12990,18 @@
       "RevokedProviderSecret": {
         "type": "object",
         "required": [
-          "provider_secret_id",
+          "providerSecretId",
           "active",
-          "rotated_at"
+          "rotatedAt"
         ],
         "properties": {
           "active": {
             "type": "boolean"
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           },
-          "rotated_at": {
+          "rotatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -13030,19 +13010,19 @@
       "RunCalibrationHttpRequest": {
         "type": "object",
         "properties": {
-          "eval_report_id": {
+          "evalReportId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "pass_threshold": {
+          "passThreshold": {
             "type": [
               "number",
               "null"
@@ -13054,37 +13034,37 @@
       "RunDeterministicEvalRequest": {
         "type": "object",
         "required": [
-          "evaluator_id",
-          "evaluator_version_id",
-          "agent_release_id",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "agentReleaseId",
           "kind"
         ],
         "properties": {
-          "agent_release_id": {
+          "agentReleaseId": {
             "type": "string"
           },
-          "code_hash": {
+          "codeHash": {
             "type": [
               "string",
               "null"
             ]
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": "string"
           },
           "kind": {
             "$ref": "#/components/schemas/EvaluatorKind"
           },
-          "prompt_version_id": {
+          "promptVersionId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "wasm_hash": {
+          "wasmHash": {
             "type": [
               "string",
               "null"
@@ -13095,40 +13075,40 @@
       "RunExperimentRequest": {
         "type": "object",
         "required": [
-          "baseline_release_id",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "baseline_outputs",
-          "candidate_outputs"
+          "baselineOutputs",
+          "candidateOutputs"
         ],
         "properties": {
-          "baseline_outputs": {
+          "baselineOutputs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CaseOutputOverrideRequest"
             }
           },
-          "baseline_release_id": {
+          "baselineReleaseId": {
             "type": "string"
           },
-          "candidate_outputs": {
+          "candidateOutputs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CaseOutputOverrideRequest"
             }
           },
-          "candidate_release_id": {
+          "candidateReleaseId": {
             "type": "string"
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": "string"
           },
-          "gate_policy": {
+          "gatePolicy": {
             "oneOf": [
               {
                 "type": "null"
@@ -13146,7 +13126,7 @@
       "RunGateRequest": {
         "type": "object",
         "properties": {
-          "experiment_run_id": {
+          "experimentRunId": {
             "type": [
               "string",
               "null"
@@ -13157,38 +13137,38 @@
       "RunJudgeDatasetEvalRequest": {
         "type": "object",
         "required": [
-          "evaluator_id",
-          "evaluator_version_id",
-          "agent_release_id",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "agentReleaseId",
           "kind",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "properties": {
-          "agent_release_id": {
+          "agentReleaseId": {
             "type": "string"
           },
-          "code_hash": {
+          "codeHash": {
             "type": [
               "string",
               "null"
             ]
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": "string"
           },
           "kind": {
             "$ref": "#/components/schemas/EvaluatorKind"
           },
-          "prompt_version_id": {
+          "promptVersionId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           }
         }
@@ -13198,10 +13178,10 @@
         "required": [
           "evaluator",
           "case",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "properties": {
-          "cache_namespace": {
+          "cacheNamespace": {
             "type": [
               "string",
               "null"
@@ -13214,7 +13194,7 @@
           "evaluator": {
             "$ref": "#/components/schemas/EvaluatorSpec"
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           }
         }
@@ -13222,41 +13202,41 @@
       "RunJudgeExperimentRequest": {
         "type": "object",
         "required": [
-          "baseline_release_id",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "baseline_outputs",
-          "candidate_outputs",
-          "provider_secret_id"
+          "baselineOutputs",
+          "candidateOutputs",
+          "providerSecretId"
         ],
         "properties": {
-          "baseline_outputs": {
+          "baselineOutputs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CaseOutputOverrideRequest"
             }
           },
-          "baseline_release_id": {
+          "baselineReleaseId": {
             "type": "string"
           },
-          "candidate_outputs": {
+          "candidateOutputs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CaseOutputOverrideRequest"
             }
           },
-          "candidate_release_id": {
+          "candidateReleaseId": {
             "type": "string"
           },
-          "evaluator_id": {
+          "evaluatorId": {
             "type": "string"
           },
-          "evaluator_version_id": {
+          "evaluatorVersionId": {
             "type": "string"
           },
-          "gate_policy": {
+          "gatePolicy": {
             "oneOf": [
               {
                 "type": "null"
@@ -13269,7 +13249,7 @@
           "kind": {
             "$ref": "#/components/schemas/EvaluatorKind"
           },
-          "provider_secret_id": {
+          "providerSecretId": {
             "$ref": "#/components/schemas/ProviderSecretId"
           }
         }
@@ -13277,32 +13257,32 @@
       "RunSummary": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "trace_id",
-          "first_span_name",
-          "span_count",
+          "tenantId",
+          "projectId",
+          "traceId",
+          "firstSpanName",
+          "spanCount",
           "status",
-          "started_at",
+          "startedAt",
           "models",
-          "release_ids"
+          "releaseIds"
         ],
         "properties": {
-          "duration_ms": {
+          "durationMs": {
             "type": [
               "integer",
               "null"
             ],
             "format": "int64"
           },
-          "ended_at": {
+          "endedAt": {
             "type": [
               "string",
               "null"
             ],
             "format": "date-time"
           },
-          "first_span_name": {
+          "firstSpanName": {
             "type": "string"
           },
           "models": {
@@ -13311,30 +13291,30 @@
               "$ref": "#/components/schemas/ModelRef"
             }
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "release_ids": {
+          "releaseIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "span_count": {
+          "spanCount": {
             "type": "integer",
             "minimum": 0
           },
-          "started_at": {
+          "startedAt": {
             "type": "string",
             "format": "date-time"
           },
           "status": {
             "$ref": "#/components/schemas/SpanStatus"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "total_cost": {
+          "totalCost": {
             "oneOf": [
               {
                 "type": "null"
@@ -13344,7 +13324,7 @@
               }
             ]
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -13354,7 +13334,7 @@
         "required": [
           "selected",
           "reason",
-          "stable_score_per_mille"
+          "stableScorePerMille"
         ],
         "properties": {
           "reason": {
@@ -13363,7 +13343,7 @@
           "selected": {
             "type": "boolean"
           },
-          "stable_score_per_mille": {
+          "stableScorePerMille": {
             "type": "integer",
             "format": "int32",
             "minimum": 0
@@ -13384,52 +13364,52 @@
         "type": "object",
         "description": "A reusable failure scenario mined from production traces.",
         "required": [
-          "scenario_id",
+          "scenarioId",
           "scope",
           "title",
-          "failure_mode",
-          "source_trace_ids",
-          "exemplar_trace_id",
-          "recurrence_count",
-          "perturbation_knobs",
-          "redaction_class",
-          "created_at"
+          "failureMode",
+          "sourceTraceIds",
+          "exemplarTraceId",
+          "recurrenceCount",
+          "perturbationKnobs",
+          "redactionClass",
+          "createdAt"
         ],
         "properties": {
-          "created_at": {
+          "createdAt": {
             "type": "string",
             "format": "date-time",
             "description": "When the scenario was created."
           },
-          "exemplar_trace_id": {
+          "exemplarTraceId": {
             "$ref": "#/components/schemas/TraceId",
             "description": "The representative trace."
           },
-          "expected_outcome": {
+          "expectedOutcome": {
             "type": [
               "string",
               "null"
             ],
             "description": "Expected outcome for replay assertions, if known."
           },
-          "failure_mode": {
+          "failureMode": {
             "$ref": "#/components/schemas/FailureMode",
             "description": "The dominant failure mode this scenario reproduces."
           },
-          "perturbation_knobs": {
+          "perturbationKnobs": {
             "$ref": "#/components/schemas/PerturbationKnobs",
             "description": "Suggested perturbation knobs for replay."
           },
-          "recurrence_count": {
+          "recurrenceCount": {
             "type": "integer",
             "description": "How many traces exhibited this scenario.",
             "minimum": 0
           },
-          "redaction_class": {
+          "redactionClass": {
             "$ref": "#/components/schemas/RedactionClass",
             "description": "Redaction classification of the scenario payload."
           },
-          "scenario_id": {
+          "scenarioId": {
             "type": "string",
             "description": "Stable, deterministic identifier for the scenario."
           },
@@ -13437,7 +13417,7 @@
             "$ref": "#/components/schemas/TenantScope",
             "description": "Tenant/project/environment scope this scenario belongs to."
           },
-          "source_trace_ids": {
+          "sourceTraceIds": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TraceId"
@@ -13455,21 +13435,21 @@
         "description": "A cluster of failing traces that share a similar failure signature.",
         "required": [
           "signature",
-          "member_trace_ids",
-          "exemplar_trace_id",
+          "memberTraceIds",
+          "exemplarTraceId",
           "size",
-          "dominant_failure_mode"
+          "dominantFailureMode"
         ],
         "properties": {
-          "dominant_failure_mode": {
+          "dominantFailureMode": {
             "$ref": "#/components/schemas/FailureMode",
             "description": "The most common failure mode across members."
           },
-          "exemplar_trace_id": {
+          "exemplarTraceId": {
             "$ref": "#/components/schemas/TraceId",
             "description": "The representative trace for the cluster."
           },
-          "member_trace_ids": {
+          "memberTraceIds": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TraceId"
@@ -13511,11 +13491,11 @@
         "type": "object",
         "required": [
           "score",
-          "tenant_id",
-          "project_id",
-          "environment_id",
-          "trace_id",
-          "span_id",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "traceId",
+          "spanId",
           "kind",
           "status",
           "name",
@@ -13523,7 +13503,7 @@
           "tool"
         ],
         "properties": {
-          "environment_id": {
+          "environmentId": {
             "type": "string"
           },
           "kind": {
@@ -13535,26 +13515,26 @@
           "name": {
             "type": "string"
           },
-          "project_id": {
+          "projectId": {
             "type": "string"
           },
           "score": {
             "type": "number",
             "format": "float"
           },
-          "span_id": {
+          "spanId": {
             "type": "string"
           },
           "status": {
             "type": "string"
           },
-          "tenant_id": {
+          "tenantId": {
             "type": "string"
           },
           "tool": {
             "type": "string"
           },
-          "trace_id": {
+          "traceId": {
             "type": "string"
           }
         }
@@ -13609,9 +13589,9 @@
       "SpanIoResponse": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "trace_id",
-          "span_id",
+          "tenantId",
+          "traceId",
+          "spanId",
           "input",
           "output"
         ],
@@ -13622,13 +13602,13 @@
           "output": {
             "$ref": "#/components/schemas/SpanIoValue"
           },
-          "span_id": {
+          "spanId": {
             "$ref": "#/components/schemas/SpanId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -13654,11 +13634,11 @@
           {
             "type": "object",
             "required": [
-              "artifact_ref",
+              "artifactRef",
               "kind"
             ],
             "properties": {
-              "artifact_ref": {
+              "artifactRef": {
                 "$ref": "#/components/schemas/ArtifactRef"
               },
               "kind": {
@@ -13726,19 +13706,19 @@
       "SubmitReviewAnnotationHttpRequest": {
         "type": "object",
         "required": [
-          "reviewer_id",
+          "reviewerId",
           "verdict",
           "payload"
         ],
         "properties": {
-          "annotation_id": {
+          "annotationId": {
             "type": [
               "string",
               "null"
             ]
           },
           "payload": {},
-          "reviewer_id": {
+          "reviewerId": {
             "type": "string"
           },
           "verdict": {
@@ -13749,59 +13729,59 @@
       "TemperaEvidenceReceipt": {
         "type": "object",
         "required": [
-          "schema_version",
-          "tenant_id",
-          "project_id",
+          "schemaVersion",
+          "tenantId",
+          "projectId",
           "kind",
-          "external_id",
-          "source_schema_version",
-          "declared_content_sha256",
-          "signed_payload_sha256",
-          "signature_sha256",
-          "public_key_sha256",
+          "externalId",
+          "sourceSchemaVersion",
+          "declaredContentSha256",
+          "signedPayloadSha256",
+          "signatureSha256",
+          "publicKeySha256",
           "summary",
-          "stored_at",
+          "storedAt",
           "created"
         ],
         "properties": {
           "created": {
             "type": "boolean"
           },
-          "declared_content_sha256": {
+          "declaredContentSha256": {
             "type": "string"
           },
-          "external_id": {
+          "externalId": {
             "type": "string"
           },
           "kind": {
             "$ref": "#/components/schemas/ExternalEvalEvidenceKind"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "public_key_sha256": {
+          "publicKeySha256": {
             "type": "string"
           },
-          "schema_version": {
+          "schemaVersion": {
             "type": "string"
           },
-          "signature_sha256": {
+          "signatureSha256": {
             "type": "string"
           },
-          "signed_payload_sha256": {
+          "signedPayloadSha256": {
             "type": "string"
           },
-          "source_schema_version": {
+          "sourceSchemaVersion": {
             "type": "string"
           },
-          "stored_at": {
+          "storedAt": {
             "type": "string",
             "format": "date-time"
           },
           "summary": {
             "$ref": "#/components/schemas/TemperaEvidenceSummary"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -13809,13 +13789,13 @@
       "TemperaEvidenceSummary": {
         "type": "object",
         "properties": {
-          "experiment_id": {
+          "experimentId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "run_id": {
+          "runId": {
             "type": [
               "string",
               "null"
@@ -13827,13 +13807,13 @@
               "null"
             ]
           },
-          "suite_id": {
+          "suiteId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "suite_version": {
+          "suiteVersion": {
             "type": [
               "string",
               "null"
@@ -13853,18 +13833,18 @@
       "TenantScope": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "environment_id"
+          "tenantId",
+          "projectId",
+          "environmentId"
         ],
         "properties": {
-          "environment_id": {
+          "environmentId": {
             "$ref": "#/components/schemas/EnvironmentId"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
         }
@@ -13875,10 +13855,10 @@
           "input",
           "output",
           "reasoning",
-          "cache_read"
+          "cacheRead"
         ],
         "properties": {
-          "cache_read": {
+          "cacheRead": {
             "type": "integer",
             "format": "int64",
             "minimum": 0
@@ -13918,7 +13898,7 @@
             ],
             "description": "Error message when `successful` is false."
           },
-          "log_id": {
+          "logId": {
             "type": [
               "string",
               "null"
@@ -13939,7 +13919,7 @@
           "name"
         ],
         "properties": {
-          "auth_schemes": {
+          "authSchemes": {
             "type": "array",
             "items": {
               "type": "string"
@@ -13957,7 +13937,7 @@
             "type": "string",
             "description": "Human display name."
           },
-          "no_auth": {
+          "noAuth": {
             "type": "boolean",
             "description": "`true` when the toolkit needs no OAuth/connection to execute."
           },
@@ -13965,7 +13945,7 @@
             "type": "string",
             "description": "Stable slug used everywhere else (e.g. `github`, `gmail`)."
           },
-          "tools_count": {
+          "toolsCount": {
             "type": [
               "integer",
               "null"
@@ -13985,10 +13965,10 @@
           "consumed",
           "completed",
           "retried",
-          "dead_lettered",
-          "invalid_messages",
-          "failed_work",
-          "trace_refs"
+          "deadLettered",
+          "invalidMessages",
+          "failedWork",
+          "traceRefs"
         ],
         "properties": {
           "completed": {
@@ -13999,15 +13979,15 @@
             "type": "integer",
             "minimum": 0
           },
-          "dead_lettered": {
+          "deadLettered": {
             "type": "integer",
             "minimum": 0
           },
-          "failed_work": {
+          "failedWork": {
             "type": "integer",
             "minimum": 0
           },
-          "invalid_messages": {
+          "invalidMessages": {
             "type": "integer",
             "minimum": 0
           },
@@ -14015,7 +13995,7 @@
             "type": "integer",
             "minimum": 0
           },
-          "trace_refs": {
+          "traceRefs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/QueuedTraceWork"
@@ -14026,37 +14006,37 @@
       "TraceIngestedReconcileReport": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
-          "trace_id",
-          "span_count",
-          "downstream_accepted",
-          "downstream_duplicate",
-          "downstream_queued"
+          "tenantId",
+          "projectId",
+          "traceId",
+          "spanCount",
+          "downstreamAccepted",
+          "downstreamDuplicate",
+          "downstreamQueued"
         ],
         "properties": {
-          "downstream_accepted": {
+          "downstreamAccepted": {
             "type": "integer",
             "minimum": 0
           },
-          "downstream_duplicate": {
+          "downstreamDuplicate": {
             "type": "integer",
             "minimum": 0
           },
-          "downstream_queued": {
+          "downstreamQueued": {
             "type": "boolean"
           },
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "span_count": {
+          "spanCount": {
             "type": "integer",
             "minimum": 0
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -14084,8 +14064,8 @@
       "TraceView": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "trace_id",
+          "tenantId",
+          "traceId",
           "spans"
         ],
         "properties": {
@@ -14095,10 +14075,10 @@
               "$ref": "#/components/schemas/CanonicalSpan"
             }
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
-          "trace_id": {
+          "traceId": {
             "$ref": "#/components/schemas/TraceId"
           }
         }
@@ -14107,49 +14087,49 @@
         "type": "object",
         "required": [
           "consumed",
-          "written_raw",
-          "written_spans",
-          "duplicate_raw",
-          "duplicate_spans",
-          "downstream_published",
+          "writtenRaw",
+          "writtenSpans",
+          "duplicateRaw",
+          "duplicateSpans",
+          "downstreamPublished",
           "retried",
-          "dead_lettered",
-          "invalid_messages",
-          "failed_writes",
-          "failed_downstream_publishes",
-          "trace_refs",
-          "trace_ids"
+          "deadLettered",
+          "invalidMessages",
+          "failedWrites",
+          "failedDownstreamPublishes",
+          "traceRefs",
+          "traceIds"
         ],
         "properties": {
           "consumed": {
             "type": "integer",
             "minimum": 0
           },
-          "dead_lettered": {
+          "deadLettered": {
             "type": "integer",
             "minimum": 0
           },
-          "downstream_published": {
+          "downstreamPublished": {
             "type": "integer",
             "minimum": 0
           },
-          "duplicate_raw": {
+          "duplicateRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "duplicate_spans": {
+          "duplicateSpans": {
             "type": "integer",
             "minimum": 0
           },
-          "failed_downstream_publishes": {
+          "failedDownstreamPublishes": {
             "type": "integer",
             "minimum": 0
           },
-          "failed_writes": {
+          "failedWrites": {
             "type": "integer",
             "minimum": 0
           },
-          "invalid_messages": {
+          "invalidMessages": {
             "type": "integer",
             "minimum": 0
           },
@@ -14157,23 +14137,23 @@
             "type": "integer",
             "minimum": 0
           },
-          "trace_ids": {
+          "traceIds": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TraceId"
             }
           },
-          "trace_refs": {
+          "traceRefs": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/QueuedTraceWork"
             }
           },
-          "written_raw": {
+          "writtenRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "written_spans": {
+          "writtenSpans": {
             "type": "integer",
             "minimum": 0
           }
@@ -14182,15 +14162,15 @@
       "UsageSummary": {
         "type": "object",
         "required": [
-          "tenant_id",
-          "project_id",
+          "tenantId",
+          "projectId",
           "totals"
         ],
         "properties": {
-          "project_id": {
+          "projectId": {
             "$ref": "#/components/schemas/ProjectId"
           },
-          "tenant_id": {
+          "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           },
           "totals": {
@@ -14223,13 +14203,13 @@
       "WebhookDelivery": {
         "type": "object",
         "required": [
-          "endpoint_url",
+          "endpointUrl",
           "headers",
           "body"
         ],
         "properties": {
           "body": {},
-          "endpoint_url": {
+          "endpointUrl": {
             "type": "string"
           },
           "headers": {
@@ -14246,25 +14226,25 @@
       "WriteAck": {
         "type": "object",
         "required": [
-          "accepted_raw",
-          "accepted_spans",
-          "duplicate_raw",
-          "duplicate_spans"
+          "acceptedRaw",
+          "acceptedSpans",
+          "duplicateRaw",
+          "duplicateSpans"
         ],
         "properties": {
-          "accepted_raw": {
+          "acceptedRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "accepted_spans": {
+          "acceptedSpans": {
             "type": "integer",
             "minimum": 0
           },
-          "duplicate_raw": {
+          "duplicateRaw": {
             "type": "integer",
             "minimum": 0
           },
-          "duplicate_spans": {
+          "duplicateSpans": {
             "type": "integer",
             "minimum": 0
           }

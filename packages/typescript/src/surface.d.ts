@@ -364,8 +364,6 @@ export interface TempoClient extends TemperaProductClientBase {
   agentCard(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /.well-known/agent.json. */
   agentJson(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call POST /drain. */
-  drain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Check tempod liveness; returns {ok: true}. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /metrics. */
@@ -374,14 +372,16 @@ export interface TempoClient extends TemperaProductClientBase {
   openapi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Check tempod readiness, including engine attachment, drain state, and session capacity. */
   ready(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /drain. */
+  drain(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List agent runs, optionally filtered to one session. */
   listRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch one agent run with its state. */
   getRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Cancel an agent run. */
-  cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /runs/{run_id}/events. */
   runEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel an agent run. */
+  cancelRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resume an agent run after a human handoff completes. */
   resumeRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List browser sessions with their state and creation time. */
@@ -390,28 +390,28 @@ export interface TempoClient extends TemperaProductClientBase {
   createSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Close a browser session and release its engine resources. */
   closeSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision. */
-  actBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Let a human surface take write ownership of the session and receive an adoption lease. */
-  adoptSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Grant a pending policy confirmation and receive a single-use grant token. */
   grantConfirmation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the session's event window after a sequence number. */
   sessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Return write ownership of the session to the agent plane. */
-  handoffSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /sessions/{session_id}/manager. */
   managerSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch the session's compiled structured observation (ranked, stably-identified elements). */
-  observe(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Start an agent run against the session with a goal, action budget, and round limit. */
   createRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Capture a PNG screenshot of the session, optionally annotated with set-of-marks. */
-  screenshot(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /sessions/{session_id}/surfaces. */
   registerSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call DELETE /sessions/{session_id}/surfaces/{surface_id}. */
   removeSessionSurface(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision. */
+  actBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Let a human surface take write ownership of the session and receive an adoption lease. */
+  adoptSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Return write ownership of the session to the agent plane. */
+  handoffSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch the session's compiled structured observation (ranked, stably-identified elements). */
+  observe(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Capture a PNG screenshot of the session, optionally annotated with set-of-marks. */
+  screenshot(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /sessions/{session_id}/transform. */
   transformSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
@@ -534,10 +534,10 @@ export interface CradleClient extends TemperaProductClientBase {
   getIntegrationContract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Submit an asynchronous sandbox job; returns an operation handle to poll. */
   createJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Fetch a sandbox job's status and result. */
-  getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel a queued or running sandbox job (idempotent for already-cancelled jobs). */
   cancelJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Fetch a sandbox job's status and result. */
+  getJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/modules. */
   projectsModulesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/modules/{sha256}. */

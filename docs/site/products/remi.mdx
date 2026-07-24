@@ -211,25 +211,29 @@ List recent service audit events (default 100, maximum 500).
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `limit` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.remi.listAudit({
-  limit: "<limit>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.remi.list_audit({
-    "limit": "<limit>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "list_audit", &[
-    ("limit", "<limit>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -251,37 +255,37 @@ Write one memory event into the tenant and project ledger.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
-| `project_id` | yes | — |
-| `environment_id` | no | — |
+| `tenantId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | no | — |
 | `kind` | yes | — |
 | `text` | yes | — |
-| `idempotency_key` | no | — |
+| `idempotencyKey` | no | — |
 | `project` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.remi.remember({
-  tenant_id: "<tenant_id>",
-  project_id: "<project_id>",
-  environment_id: "<environment_id>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
 });
 ```
 
 ```python Python
 result = client.remi.remember({
-    "tenant_id": "<tenant_id>",
-    "project_id": "<project_id>",
-    "environment_id": "<environment_id>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "remember", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("environment_id", "<environment_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -345,12 +349,12 @@ Answer a scoped memory question with evidence and reconstruction metadata.
 |---|---|---|
 | `question` | yes | — |
 | `scope` | yes | — |
-| `max_tokens` | no | — |
-| `require_fresh` | no | — |
+| `maxTokens` | no | — |
+| `requireFresh` | no | — |
 | `modes` | no | — |
-| `reconstruction_mode` | no | — |
-| `max_reconstruction_steps` | no | — |
-| `max_reconstruction_tokens` | no | — |
+| `reconstructionMode` | no | — |
+| `maxReconstructionSteps` | no | — |
+| `maxReconstructionTokens` | no | — |
 
 <CodeGroup>
 
@@ -358,7 +362,7 @@ Answer a scoped memory question with evidence and reconstruction metadata.
 const result = await client.remi.query({
   question: "<question>",
   scope: "<scope>",
-  max_tokens: "<max_tokens>",
+  maxTokens: "<maxTokens>",
 });
 ```
 
@@ -366,7 +370,7 @@ const result = await client.remi.query({
 result = client.remi.query({
     "question": "<question>",
     "scope": "<scope>",
-    "max_tokens": "<max_tokens>",
+    "maxTokens": "<maxTokens>",
 })
 ```
 
@@ -374,7 +378,7 @@ result = client.remi.query({
 let spec = client.build_request("remi", "query", &[
     ("question", "<question>".into()),
     ("scope", "<scope>".into()),
-    ("max_tokens", "<max_tokens>".into()),
+    ("maxTokens", "<maxTokens>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -397,33 +401,33 @@ Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orpha
 | Parameter | Required | Notes |
 |---|---|---|
 | `vacuum` | no | — |
-| `repair_orphans` | no | — |
-| `prune_audit_before_unix_ms` | no | — |
-| `retain_latest_audit_events` | no | — |
+| `repairOrphans` | no | — |
+| `pruneAuditBeforeUnixMs` | no | — |
+| `retainLatestAuditEvents` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.remi.maintenance({
   vacuum: "<vacuum>",
-  repair_orphans: "<repair_orphans>",
-  prune_audit_before_unix_ms: "<prune_audit_before_unix_ms>",
+  repairOrphans: "<repairOrphans>",
+  pruneAuditBeforeUnixMs: "<pruneAuditBeforeUnixMs>",
 });
 ```
 
 ```python Python
 result = client.remi.maintenance({
     "vacuum": "<vacuum>",
-    "repair_orphans": "<repair_orphans>",
-    "prune_audit_before_unix_ms": "<prune_audit_before_unix_ms>",
+    "repairOrphans": "<repairOrphans>",
+    "pruneAuditBeforeUnixMs": "<pruneAuditBeforeUnixMs>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("remi", "maintenance", &[
     ("vacuum", "<vacuum>".into()),
-    ("repair_orphans", "<repair_orphans>".into()),
-    ("prune_audit_before_unix_ms", "<prune_audit_before_unix_ms>".into()),
+    ("repairOrphans", "<repairOrphans>".into()),
+    ("pruneAuditBeforeUnixMs", "<pruneAuditBeforeUnixMs>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

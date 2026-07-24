@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempo-openapi.json",
-  "generated_sha256": "ece777bc7c7066eb27582d1bbf7845635856b3bc8a15b8877617cc46ad94f7c3",
+  "generated_sha256": "658b2c646644e274a9fea5f2a39c786806f5e24555291fdf4da1e8fca412b189",
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "7c5265932272f29870995a319b12ab5346ee24e5",
+  "source_blob_sha": "ed3c8fb2bf148e60864c837c634b4aca6ba2b74e",
   "source_branch": "main",
-  "source_commit": "864af49a34741224704c471b24cf920e03f7f932",
+  "source_commit": "cc9629102c48d4a2939170ad1be9f1cf1d1e0c12",
   "source_mode": "100644",
   "source_path": "api/openapi.json",
   "source_repo": "tempera-dev/tempo",
-  "source_sha256": "ece777bc7c7066eb27582d1bbf7845635856b3bc8a15b8877617cc46ad94f7c3"
+  "source_sha256": "658b2c646644e274a9fea5f2a39c786806f5e24555291fdf4da1e8fca412b189"
 }

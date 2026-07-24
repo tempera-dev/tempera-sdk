@@ -97,11 +97,125 @@ test("declared query and body parameters are routed to the right place", async (
   assert.equal(calls[0].url.searchParams.get("cursor"), "abc");
   assert.equal(calls[0].options.body, undefined);
 
-  await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
-  const body = JSON.parse(calls[1].options.body);
-  assert.deepEqual(body, {
+  await client.palette.scenariosList({
     tenant_id: "t1",
     project_id: "p1",
+    pageSize: 12,
+    pageToken: "scenarios-token",
+  });
+  assert.equal(calls.at(-1).url.pathname, "/v1/scenarios/t1/p1");
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "12");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "scenarios-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+  assert.equal(calls.at(-1).url.searchParams.get("cursor"), null);
+
+  for (const [operation, params] of [
+    ["listUseCases", { parent: "projects/p1", pageSize: 2, pageToken: "use-cases-token" }],
+    ["getJobResults", { parent: "projects/p1", jobId: "job-1", pageSize: 3, pageToken: "results-token" }],
+    ["listTools", { parent: "projects/p1", pageSize: 4, pageToken: "tools-token" }],
+  ]) {
+    await client.dataEngine[operation](params);
+    const url = calls.at(-1).url;
+    assert.equal(url.searchParams.get("pageSize"), String(params.pageSize), operation);
+    assert.equal(url.searchParams.get("pageToken"), params.pageToken, operation);
+    assert.equal(url.searchParams.get("page_size"), null, operation);
+    assert.equal(url.searchParams.get("page_token"), null, operation);
+  }
+  await client.remi.listAudit({ pageSize: 5, pageToken: "audit-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "5");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "audit-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+
+  await client.temperaLlm.listModels({ pageSize: 6, pageToken: "models-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "6");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "models-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+
+  await client.temperaGym.listEnvironments({ pageSize: 7, pageToken: "environments-token" });
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "7");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "environments-token");
+  assert.equal(calls.at(-1).url.searchParams.get("limit"), null);
+  await client.temperaGym.listRuns({
+    environmentId: "env-1",
+    pageSize: 8,
+    pageToken: "runs-token",
+  });
+  assert.equal(calls.at(-1).url.searchParams.get("environmentId"), "env-1");
+  assert.equal(calls.at(-1).url.searchParams.get("pageSize"), "8");
+  assert.equal(calls.at(-1).url.searchParams.get("pageToken"), "runs-token");
+  assert.equal(calls.at(-1).url.searchParams.get("environment_id"), null);
+  await client.temperaGym.createRollout({ environmentId: "env-1", seed: 42 });
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    environmentId: "env-1",
+    seed: 42,
+  });
+
+  for (const [operation, params] of [
+    ["listNodeTypes", { pageSize: 9, pageToken: "node-types-token" }],
+    ["listWorkflows", { pageSize: 10, pageToken: "workflows-token" }],
+    [
+      "listRuns",
+      {
+        workflowId: "workflow-1",
+        pageSize: 11,
+        pageToken: "workflow-runs-token",
+      },
+    ],
+  ]) {
+    await client.temperaWorkflows[operation](params);
+    const url = calls.at(-1).url;
+    assert.equal(url.searchParams.get("pageSize"), String(params.pageSize), operation);
+    assert.equal(url.searchParams.get("pageToken"), params.pageToken, operation);
+    assert.equal(url.searchParams.get("limit"), null, operation);
+    assert.equal(url.searchParams.get("cursor"), null, operation);
+  }
+  assert.equal(calls.at(-1).url.searchParams.get("workflowId"), "workflow-1");
+  await client.temperaWorkflows.updateWorkflow({
+    workflowId: "workflow-1",
+    updateMask: "definition",
+    contractVersion: "v1",
+    id: "workflow-1",
+    name: "Smoke",
+    nodes: [],
+    edges: [],
+  });
+  assert.equal(calls.at(-1).options.method, "PATCH");
+  assert.equal(calls.at(-1).url.searchParams.get("updateMask"), "definition");
+
+  for (const [operation, params, expectedPath] of [
+    ["runUseCase", { parent: "projects/p1", use_case: "smoke" }, "/v1/projects/p1/pipelines:runUseCase"],
+    [
+      "saveExpertTaskDraft",
+      {
+        parent: "projects/p1",
+        expertTaskId: "task-1",
+        idempotency_key: "idem-1",
+        lease_token: "lease-1",
+        draft: {},
+        expected_version: 1,
+      },
+      "/v1/projects/p1/expert-tasks/task-1:saveDraft",
+    ],
+    [
+      "checkProductLeakage",
+      { parent: "projects/p1", product_ids: ["products/a", "products/b"] },
+      "/v1/projects/p1/products:checkLeakage",
+    ],
+    [
+      "emitEval",
+      { parent: "projects/p1", artifact_ids: ["artifacts/a"], job: {} },
+      "/v1/projects/p1/products:emitEval",
+    ],
+  ]) {
+    await client.dataEngine[operation](params);
+    assert.equal(calls.at(-1).url.pathname, expectedPath, operation);
+  }
+
+  await client.remi.remember({ tenant_id: "t1", project_id: "p1", kind: "fact", text: "hello" });
+  const body = JSON.parse(calls.at(-1).options.body);
+  assert.deepEqual(body, {
+    tenantId: "t1",
+    projectId: "p1",
     kind: "fact",
     text: "hello",
   });
@@ -119,7 +233,46 @@ test("declared query and body parameters are routed to the right place", async (
     reconstruction_mode: "off",
   };
   await client.remi.query(query);
-  assert.deepEqual(JSON.parse(calls.at(-1).options.body), query);
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    question: query.question,
+    scope: query.scope,
+    maxTokens: 600,
+    requireFresh: true,
+    modes: query.modes,
+    reconstructionMode: "off",
+  });
+});
+
+test("snake_case parameter aliases emit only canonical lowerCamel wire names", async () => {
+  const { client, calls } = testClient();
+  await client.temperaGym.listRuns({
+    environment_id: "env-1",
+    page_size: 8,
+    page_token: "runs-token",
+  });
+  const query = calls.at(-1).url.searchParams;
+  assert.equal(query.get("environmentId"), "env-1");
+  assert.equal(query.get("pageSize"), "8");
+  assert.equal(query.get("pageToken"), "runs-token");
+  assert.equal(query.get("environment_id"), null);
+  assert.equal(query.get("page_size"), null);
+  assert.equal(query.get("page_token"), null);
+
+  await client.temperaGym.createRollout({ environment_id: "env-1", seed: 42 });
+  assert.deepEqual(JSON.parse(calls.at(-1).options.body), {
+    environmentId: "env-1",
+    seed: 42,
+  });
+});
+
+test("canonical and snake_case spellings cannot both be supplied", async () => {
+  const { client } = testClient();
+  await assert.rejects(
+    () => client.temperaGym.listRuns({ pageSize: 8, page_size: 9 }),
+    (error) =>
+      error instanceof TemperaSdkError &&
+      error.message.includes('pass either "pageSize" or its snake_case alias "page_size", not both'),
+  );
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {
@@ -154,7 +307,7 @@ test("missing path parameters fail fast with a clear message", async () => {
   await assert.rejects(
     () => client.palette.getTrace({ tenant_id: "t1" }),
     (error) =>
-      error instanceof TemperaSdkError && error.message.includes('missing required path parameter "trace_id"'),
+      error instanceof TemperaSdkError && error.message.includes('missing required path parameter "traceId"'),
   );
 });
 
@@ -273,10 +426,10 @@ test("HTTP errors normalize every fleet wire shape into TemperaApiError", async 
       message: "Bad body.",
       requestId: "req-123",
     },
-    // data-engine: same nested rich shape, uppercase codes + details array
+    // canonical google.rpc.Status REST mapping
     {
       body: {
-        error: { code: "INVALID_ARGUMENT", message: "Bad envelope.", status: 400, request_id: "req-de-1", retryable: false, details: [] },
+        error: { code: 400, status: "INVALID_ARGUMENT", message: "Bad envelope.", requestId: "req-de-1", details: [] },
       },
       code: "INVALID_ARGUMENT",
       message: "Bad envelope.",

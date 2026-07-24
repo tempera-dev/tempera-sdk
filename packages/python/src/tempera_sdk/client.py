@@ -6,7 +6,8 @@ operation names, the same descriptions, and the same error shape.
 
 - Typed operations: ``client.palette.get_trace({"tenant_id": ..., "trace_id": ...})``
   — every operation in surface.json becomes a method on its product client.
-  Parameters use wire names (snake_case) in every language.
+  Parameters accept canonical wire names and snake_case aliases; requests
+  always emit the producer's canonical wire names.
 - Passthrough: ``client.tempo.request("/custom", method="POST", body=...)``
   for endpoints the surface tables don't cover yet.
 - Auth: audience products resolve their bearer through TemperaAuth (per-
@@ -28,6 +29,36 @@ from urllib import parse as urllib_parse
 
 def _snake_case(key: str) -> str:
     return re.sub(r"([a-z0-9])([A-Z]+)", r"\1_\2", key).lower()
+
+
+def _normalize_declared_params(
+    product_key: str,
+    op: Mapping[str, Any],
+    params: Mapping[str, Any],
+) -> tuple[dict[str, Any], set[str]]:
+    normalized = dict(params)
+    consumed_aliases: set[str] = set()
+    declared = {
+        *op.get("path_params", []),
+        *op.get("query", []),
+        *op.get("body", []),
+        *op.get("forbidden_body", []),
+    }
+    for wire_name in declared:
+        alias = _snake_case(wire_name)
+        if alias == wire_name:
+            continue
+        has_wire_name = wire_name in params
+        has_alias = alias in params
+        if has_wire_name and has_alias:
+            raise TemperaSdkError(
+                f"{PRODUCT_ATTRS[product_key]}.{op['id']}: pass either "
+                f"{wire_name!r} or its snake_case alias {alias!r}, not both"
+            )
+        if has_alias:
+            normalized[wire_name] = params[alias]
+            consumed_aliases.add(alias)
+    return normalized, consumed_aliases
 
 
 # camelCase registry key (surface.json) <-> snake_case client attribute.
@@ -291,30 +322,33 @@ class TemperaClient:
         bearer: str | None = None,
         headers: Mapping[str, str] | None = None,
     ) -> Any:
+        wire_params, consumed_aliases = _normalize_declared_params(
+            product_key, op, params
+        )
         for key in op.get("forbidden_body", []):
-            if key in params:
+            if key in wire_params:
                 raise TemperaSdkError(
                     f"{product_key}.{op['id']}: {key} is derived from the authenticated principal"
                 )
         path = self._substitute_path(
             op["path"],
-            params,
+            wire_params,
             product_key,
             op["id"],
             op.get("path_param_templates"),
         )
-        consumed = set(op["path_params"])
+        consumed = set(op["path_params"]) | consumed_aliases
         query: dict[str, Any] = {}
         for key in op["query"]:
-            if key in params:
-                query[key] = params[key]
+            if key in wire_params:
+                query[key] = wire_params[key]
                 consumed.add(key)
         body: dict[str, Any] | None = None
         if op["body"] or op["body_defaults"]:
             body = dict(op["body_defaults"])
             for key in op["body"]:
-                if key in params:
-                    body[key] = params[key]
+                if key in wire_params:
+                    body[key] = wire_params[key]
                     consumed.add(key)
         # Forward-compatibility: undeclared parameters flow to the query string
         # on GET/DELETE and into the JSON body otherwise, so a new server field

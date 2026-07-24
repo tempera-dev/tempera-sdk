@@ -5,6 +5,7 @@ from tempera_sdk import (
     AUDIENCES,
     DEFAULT_AUDIENCE,
     ENVIRONMENTS,
+    ISSUER_PATHS,
     OPERATIONS,
     PRODUCTS,
     SCOPES,
@@ -12,6 +13,9 @@ from tempera_sdk import (
 
 
 class TemperaSdkTest(unittest.TestCase):
+    def test_issuer_protocol_paths_match_the_canonical_auth_hub_runtime(self):
+        self.assertEqual(ISSUER_PATHS["introspect"], "/v1/oauth/introspect")
+
     def test_product_registry_covers_every_product_with_palette_included(self):
         self.assertEqual(PRODUCTS["controlPlane"]["repository"], "https://github.com/tempera-dev/auth-hub")
         self.assertEqual(PRODUCTS["palette"]["repository"], "https://github.com/tempera-dev/palette")

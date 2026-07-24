@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/cradle-openapi.json",
-  "generated_sha256": "6a207e8b410047fb8cbb117cdda1e9e46363938dc5f9e89f29f13dcdd7f3a7b2",
+  "generated_sha256": "119d30f81eb77a85e2f76646d23224efb748a9e8e4535b1baf812cbf6dac2feb",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "c921dbb9f040bc26c78ef887f6249fd42cd081d6",
+  "source_blob_sha": "8b5463456de6fbed7b279a59ab5268b396e3f063",
   "source_branch": "main",
-  "source_commit": "71cd4bc8e1ff07123b01be9834c1510213a10385",
+  "source_commit": "bb1a7337d274d6d564bc155b22c16b6a17f816b7",
   "source_mode": "100644",
   "source_path": "sdks/openapi.json",
   "source_repo": "tempera-dev/cradle",
-  "source_sha256": "6a207e8b410047fb8cbb117cdda1e9e46363938dc5f9e89f29f13dcdd7f3a7b2"
+  "source_sha256": "119d30f81eb77a85e2f76646d23224efb748a9e8e4535b1baf812cbf6dac2feb"
 }

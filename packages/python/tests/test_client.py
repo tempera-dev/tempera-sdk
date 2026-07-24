@@ -136,6 +136,178 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["cursor"], "abc")
         self.assertIsNone(transport.calls[0]["data"])
 
+        client.palette.scenarios_list(
+            {
+                "tenant_id": "t1",
+                "project_id": "p1",
+                "pageSize": 12,
+                "pageToken": "scenarios-token",
+            }
+        )
+        self.assertEqual(transport.calls[-1]["path"], "/v1/scenarios/t1/p1")
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "12")
+        self.assertEqual(query["pageToken"], "scenarios-token")
+        self.assertNotIn("limit", query)
+        self.assertNotIn("cursor", query)
+
+        pagination_calls = (
+            (
+                client.data_engine.list_use_cases,
+                {
+                    "parent": "projects/p1",
+                    "pageSize": 2,
+                    "pageToken": "use-cases-token",
+                },
+            ),
+            (
+                client.data_engine.get_job_results,
+                {
+                    "parent": "projects/p1",
+                    "jobId": "job-1",
+                    "pageSize": 3,
+                    "pageToken": "results-token",
+                },
+            ),
+            (
+                client.data_engine.list_tools,
+                {
+                    "parent": "projects/p1",
+                    "pageSize": 4,
+                    "pageToken": "tools-token",
+                },
+            ),
+        )
+        for operation, params in pagination_calls:
+            operation(params)
+            query = transport.calls[-1]["query"]
+            self.assertEqual(query["pageSize"], str(params["pageSize"]))
+            self.assertEqual(query["pageToken"], params["pageToken"])
+            self.assertNotIn("page_size", query)
+            self.assertNotIn("page_token", query)
+        client.remi.list_audit({"pageSize": 5, "pageToken": "audit-token"})
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "5")
+        self.assertEqual(query["pageToken"], "audit-token")
+        self.assertNotIn("limit", query)
+
+        client.tempera_llm.list_models(
+            {"pageSize": 6, "pageToken": "models-token"}
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "6")
+        self.assertEqual(query["pageToken"], "models-token")
+        self.assertNotIn("limit", query)
+
+        client.tempera_gym.list_environments(
+            {"pageSize": 7, "pageToken": "environments-token"}
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["pageSize"], "7")
+        self.assertEqual(query["pageToken"], "environments-token")
+        self.assertNotIn("limit", query)
+        client.tempera_gym.list_runs(
+            {
+                "environmentId": "env-1",
+                "pageSize": 8,
+                "pageToken": "runs-token",
+            }
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["environmentId"], "env-1")
+        self.assertEqual(query["pageSize"], "8")
+        self.assertEqual(query["pageToken"], "runs-token")
+        self.assertNotIn("environment_id", query)
+        client.tempera_gym.create_rollout(
+            {"environmentId": "env-1", "seed": 42}
+        )
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {"environmentId": "env-1", "seed": 42},
+        )
+
+        workflow_list_calls = (
+            (
+                client.tempera_workflows.list_node_types,
+                {"pageSize": 9, "pageToken": "node-types-token"},
+            ),
+            (
+                client.tempera_workflows.list_workflows,
+                {"pageSize": 10, "pageToken": "workflows-token"},
+            ),
+            (
+                client.tempera_workflows.list_runs,
+                {
+                    "workflowId": "workflow-1",
+                    "pageSize": 11,
+                    "pageToken": "workflow-runs-token",
+                },
+            ),
+        )
+        for operation, params in workflow_list_calls:
+            operation(params)
+            query = transport.calls[-1]["query"]
+            self.assertEqual(query["pageSize"], str(params["pageSize"]))
+            self.assertEqual(query["pageToken"], params["pageToken"])
+            self.assertNotIn("limit", query)
+            self.assertNotIn("cursor", query)
+        self.assertEqual(transport.calls[-1]["query"]["workflowId"], "workflow-1")
+        client.tempera_workflows.update_workflow(
+            {
+                "workflowId": "workflow-1",
+                "updateMask": "definition",
+                "contractVersion": "v1",
+                "id": "workflow-1",
+                "name": "Smoke",
+                "nodes": [],
+                "edges": [],
+            }
+        )
+        self.assertEqual(transport.calls[-1]["method"], "PATCH")
+        self.assertEqual(
+            transport.calls[-1]["query"]["updateMask"], "definition"
+        )
+
+        custom_verb_calls = (
+            (
+                client.data_engine.run_use_case,
+                {"parent": "projects/p1", "use_case": "smoke"},
+                "/v1/projects/p1/pipelines:runUseCase",
+            ),
+            (
+                client.data_engine.save_expert_task_draft,
+                {
+                    "parent": "projects/p1",
+                    "expertTaskId": "task-1",
+                    "idempotency_key": "idem-1",
+                    "lease_token": "lease-1",
+                    "draft": {},
+                    "expected_version": 1,
+                },
+                "/v1/projects/p1/expert-tasks/task-1:saveDraft",
+            ),
+            (
+                client.data_engine.check_product_leakage,
+                {
+                    "parent": "projects/p1",
+                    "product_ids": ["products/a", "products/b"],
+                },
+                "/v1/projects/p1/products:checkLeakage",
+            ),
+            (
+                client.data_engine.emit_eval,
+                {
+                    "parent": "projects/p1",
+                    "artifact_ids": ["artifacts/a"],
+                    "job": {},
+                },
+                "/v1/projects/p1/products:emitEval",
+            ),
+        )
+        for operation, params, expected_path in custom_verb_calls:
+            operation(params)
+            self.assertEqual(transport.calls[-1]["path"], expected_path)
+
         client.remi.remember(
             {
                 "tenant_id": "t1",
@@ -145,10 +317,10 @@ class DispatchTest(unittest.TestCase):
             }
         )
         self.assertEqual(
-            transport.calls[1]["body"],
+            transport.calls[-1]["body"],
             {
-                "tenant_id": "t1",
-                "project_id": "p1",
+                "tenantId": "t1",
+                "projectId": "p1",
                 "kind": "fact",
                 "text": "hello",
             },
@@ -167,7 +339,48 @@ class DispatchTest(unittest.TestCase):
             "reconstruction_mode": "off",
         }
         client.remi.query(query)
-        self.assertEqual(transport.calls[-1]["body"], query)
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {
+                "question": query["question"],
+                "scope": query["scope"],
+                "maxTokens": 600,
+                "requireFresh": True,
+                "modes": query["modes"],
+                "reconstructionMode": "off",
+            },
+        )
+
+    def test_snake_case_parameter_aliases_emit_only_lower_camel_wire_names(self):
+        client, transport = make_client()
+        client.tempera_gym.list_runs(
+            {
+                "environment_id": "env-1",
+                "page_size": 8,
+                "page_token": "runs-token",
+            }
+        )
+        query = transport.calls[-1]["query"]
+        self.assertEqual(query["environmentId"], "env-1")
+        self.assertEqual(query["pageSize"], "8")
+        self.assertEqual(query["pageToken"], "runs-token")
+        self.assertNotIn("environment_id", query)
+        self.assertNotIn("page_size", query)
+        self.assertNotIn("page_token", query)
+
+        client.tempera_gym.create_rollout({"environment_id": "env-1", "seed": 42})
+        self.assertEqual(
+            transport.calls[-1]["body"],
+            {"environmentId": "env-1", "seed": 42},
+        )
+
+    def test_canonical_and_snake_case_spellings_cannot_both_be_supplied(self):
+        client, _ = make_client()
+        with self.assertRaisesRegex(
+            TemperaSdkError,
+            r"pass either 'pageSize' or its snake_case alias 'page_size', not both",
+        ):
+            client.tempera_gym.list_runs({"pageSize": 8, "page_size": 9})
 
     def test_json_request_bodies_use_the_compact_wire_shape(self):
         client, transport = make_client()
@@ -210,7 +423,7 @@ class DispatchTest(unittest.TestCase):
         client, _ = make_client()
         with self.assertRaises(TemperaSdkError) as ctx:
             client.palette.get_trace({"tenant_id": "t1"})
-        self.assertIn('missing required path parameter "trace_id"', str(ctx.exception))
+        self.assertIn('missing required path parameter "traceId"', str(ctx.exception))
 
     def test_create_hosted_session_stores_the_account_token_for_later_calls(self):
         def responder(call):
@@ -330,15 +543,14 @@ class ErrorNormalizationTest(unittest.TestCase):
                 "message": "Bad body.",
                 "request_id": "req-123",
             },
-            # data-engine: same nested rich shape, uppercase codes + details array
+            # canonical google.rpc.Status REST mapping
             {
                 "body": {
                     "error": {
-                        "code": "INVALID_ARGUMENT",
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
                         "message": "Bad envelope.",
-                        "status": 400,
-                        "request_id": "req-de-1",
-                        "retryable": False,
+                        "requestId": "req-de-1",
                         "details": [],
                     }
                 },

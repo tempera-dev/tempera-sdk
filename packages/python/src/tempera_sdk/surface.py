@@ -11,7 +11,7 @@ AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 
 DEFAULT_AUDIENCE = 'palette'
 SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'pii:unmask', 'admin')
 
-ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/oauth/introspect', 'mcp': '/mcp'}
+ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
 ENVIRONMENTS = {
     "local": {
@@ -1760,13 +1760,13 @@ OPERATIONS = {
             "id": "alerts_evaluate",
             "upstream_operation_id": "alerts.evaluate",
             "method": "POST",
-            "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
+            "path": "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "trace_id"
+                "tenantId",
+                "projectId",
+                "traceId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1787,13 +1787,13 @@ OPERATIONS = {
             "id": "create_api_key",
             "upstream_operation_id": "apiKeys.create",
             "method": "POST",
-            "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
+            "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "environment_id"
+                "tenantId",
+                "projectId",
+                "environmentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1812,14 +1812,14 @@ OPERATIONS = {
             "id": "revoke_api_key",
             "upstream_operation_id": "apiKeys.revoke",
             "method": "POST",
-            "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
+            "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "environment_id",
-                "api_key_id"
+                "tenantId",
+                "projectId",
+                "environmentId",
+                "apiKeyId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1834,18 +1834,18 @@ OPERATIONS = {
             "id": "archive_query_spans",
             "upstream_operation_id": "archive.querySpans",
             "method": "GET",
-            "path": "/v1/archive/{tenant_id}/{project_id}/spans",
+            "path": "/v1/archive/{tenantId}/{projectId}/spans",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
-                "environment_id",
-                "trace_id",
-                "span_id",
+                "environmentId",
+                "traceId",
+                "spanId",
                 "kind",
                 "status",
                 "pageSize",
@@ -1862,13 +1862,13 @@ OPERATIONS = {
             "id": "archive_trace",
             "upstream_operation_id": "archive.archiveTrace",
             "method": "POST",
-            "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
+            "path": "/v1/archive/{tenantId}/{projectId}/{traceId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "trace_id"
+                "tenantId",
+                "projectId",
+                "traceId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1883,12 +1883,12 @@ OPERATIONS = {
             "id": "audit_list",
             "upstream_operation_id": "audit.list",
             "method": "GET",
-            "path": "/v1/audit/{tenant_id}/{project_id}",
+            "path": "/v1/audit/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -1906,21 +1906,21 @@ OPERATIONS = {
             "id": "calibrations_run",
             "upstream_operation_id": "calibrations.run",
             "method": "POST",
-            "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
+            "path": "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id",
-                "version_id"
+                "tenantId",
+                "projectId",
+                "datasetId",
+                "versionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "eval_report_id",
-                "evaluator_version_id",
-                "pass_threshold"
+                "evalReportId",
+                "evaluatorVersionId",
+                "passThreshold"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -1932,12 +1932,12 @@ OPERATIONS = {
             "id": "connect_get_status",
             "upstream_operation_id": "connect.getStatus",
             "method": "GET",
-            "path": "/v1/connect/status/{tenant_id}/{project_id}",
+            "path": "/v1/connect/status/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1952,12 +1952,12 @@ OPERATIONS = {
             "id": "connectors_list",
             "upstream_operation_id": "connectors.list",
             "method": "GET",
-            "path": "/v1/connectors/{tenant_id}/{project_id}",
+            "path": "/v1/connectors/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -1975,12 +1975,12 @@ OPERATIONS = {
             "id": "connectors_connect",
             "upstream_operation_id": "connectors.connect",
             "method": "POST",
-            "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
+            "path": "/v1/connectors/{tenantId}/{projectId}/connect",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -1999,12 +1999,12 @@ OPERATIONS = {
             "id": "connectors_invoke_tool",
             "upstream_operation_id": "connectors.invokeTool",
             "method": "POST",
-            "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
+            "path": "/v1/connectors/{tenantId}/{projectId}/invoke",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2024,12 +2024,12 @@ OPERATIONS = {
             "id": "connectors_get_skills",
             "upstream_operation_id": "connectors.getSkills",
             "method": "GET",
-            "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
+            "path": "/v1/connectors/{tenantId}/{projectId}/skills",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2046,12 +2046,12 @@ OPERATIONS = {
             "id": "connectors_status",
             "upstream_operation_id": "connectors.status",
             "method": "GET",
-            "path": "/v1/connectors/{tenant_id}/{project_id}/status",
+            "path": "/v1/connectors/{tenantId}/{projectId}/status",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2068,12 +2068,12 @@ OPERATIONS = {
             "id": "connectors_list_tools",
             "upstream_operation_id": "connectors.listTools",
             "method": "GET",
-            "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
+            "path": "/v1/connectors/{tenantId}/{projectId}/tools",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2092,12 +2092,12 @@ OPERATIONS = {
             "id": "create_dataset",
             "upstream_operation_id": "datasets.create",
             "method": "POST",
-            "path": "/v1/datasets/{tenant_id}/{project_id}",
+            "path": "/v1/datasets/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2116,24 +2116,24 @@ OPERATIONS = {
             "id": "promote_trace_to_case",
             "upstream_operation_id": "datasets.promoteCaseFromTrace",
             "method": "POST",
-            "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
+            "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id"
+                "tenantId",
+                "projectId",
+                "datasetId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
                 "reference",
-                "span_id",
-                "trace_id"
+                "spanId",
+                "traceId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "trace_id"
+                "traceId"
             ],
             "body_defaults": {},
             "scope": "dataset:write",
@@ -2143,18 +2143,18 @@ OPERATIONS = {
             "id": "create_dataset_version",
             "upstream_operation_id": "datasets.createVersion",
             "method": "POST",
-            "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
+            "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id"
+                "tenantId",
+                "projectId",
+                "datasetId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "case_ids"
+                "caseIds"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -2166,31 +2166,31 @@ OPERATIONS = {
             "id": "evals_run_deterministic",
             "upstream_operation_id": "evals.runDeterministic",
             "method": "POST",
-            "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
+            "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id",
-                "version_id"
+                "tenantId",
+                "projectId",
+                "datasetId",
+                "versionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "agent_release_id",
-                "code_hash",
-                "evaluator_id",
-                "evaluator_version_id",
+                "agentReleaseId",
+                "codeHash",
+                "evaluatorId",
+                "evaluatorVersionId",
                 "kind",
-                "prompt_version_id",
-                "wasm_hash"
+                "promptVersionId",
+                "wasmHash"
             ],
             "forbidden_body": [],
             "required_body": [
-                "evaluator_id",
-                "evaluator_version_id",
-                "agent_release_id",
+                "evaluatorId",
+                "evaluatorVersionId",
+                "agentReleaseId",
                 "kind"
             ],
             "body_defaults": {},
@@ -2201,33 +2201,33 @@ OPERATIONS = {
             "id": "evals_run_judge",
             "upstream_operation_id": "evals.runJudge",
             "method": "POST",
-            "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
+            "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id",
-                "version_id"
+                "tenantId",
+                "projectId",
+                "datasetId",
+                "versionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "agent_release_id",
-                "code_hash",
-                "evaluator_id",
-                "evaluator_version_id",
+                "agentReleaseId",
+                "codeHash",
+                "evaluatorId",
+                "evaluatorVersionId",
                 "kind",
-                "prompt_version_id",
-                "provider_secret_id"
+                "promptVersionId",
+                "providerSecretId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "evaluator_id",
-                "evaluator_version_id",
-                "agent_release_id",
+                "evaluatorId",
+                "evaluatorVersionId",
+                "agentReleaseId",
                 "kind",
-                "provider_secret_id"
+                "providerSecretId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2237,25 +2237,25 @@ OPERATIONS = {
             "id": "import_tempera_bundle",
             "upstream_operation_id": "evalResults.importTemperaBundle",
             "method": "POST",
-            "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+            "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "canonical_json",
-                "public_key_pem",
-                "signature_base64"
+                "canonicalJson",
+                "publicKeyPem",
+                "signatureBase64"
             ],
             "forbidden_body": [],
             "required_body": [
-                "canonical_json",
-                "signature_base64",
-                "public_key_pem"
+                "canonicalJson",
+                "signatureBase64",
+                "publicKeyPem"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -2265,25 +2265,25 @@ OPERATIONS = {
             "id": "record_tempera_decision",
             "upstream_operation_id": "evalResults.recordTemperaDecision",
             "method": "POST",
-            "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+            "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "canonical_json",
-                "public_key_pem",
-                "signature_base64"
+                "canonicalJson",
+                "publicKeyPem",
+                "signatureBase64"
             ],
             "forbidden_body": [],
             "required_body": [
-                "canonical_json",
-                "signature_base64",
-                "public_key_pem"
+                "canonicalJson",
+                "signatureBase64",
+                "publicKeyPem"
             ],
             "body_defaults": {},
             "scope": "eval:run",
@@ -2293,14 +2293,14 @@ OPERATIONS = {
             "id": "get_tempera_evidence",
             "upstream_operation_id": "evalResults.getTemperaEvidence",
             "method": "GET",
-            "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+            "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
+                "tenantId",
+                "projectId",
                 "kind",
-                "external_id"
+                "externalId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2315,36 +2315,36 @@ OPERATIONS = {
             "id": "experiments_run_deterministic",
             "upstream_operation_id": "experiments.runDeterministic",
             "method": "POST",
-            "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
+            "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id",
-                "version_id"
+                "tenantId",
+                "projectId",
+                "datasetId",
+                "versionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "baseline_outputs",
-                "baseline_release_id",
-                "candidate_outputs",
-                "candidate_release_id",
-                "evaluator_id",
-                "evaluator_version_id",
-                "gate_policy",
+                "baselineOutputs",
+                "baselineReleaseId",
+                "candidateOutputs",
+                "candidateReleaseId",
+                "evaluatorId",
+                "evaluatorVersionId",
+                "gatePolicy",
                 "kind"
             ],
             "forbidden_body": [],
             "required_body": [
-                "baseline_release_id",
-                "candidate_release_id",
-                "evaluator_id",
-                "evaluator_version_id",
+                "baselineReleaseId",
+                "candidateReleaseId",
+                "evaluatorId",
+                "evaluatorVersionId",
                 "kind",
-                "baseline_outputs",
-                "candidate_outputs"
+                "baselineOutputs",
+                "candidateOutputs"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2354,38 +2354,38 @@ OPERATIONS = {
             "id": "experiments_run_judge",
             "upstream_operation_id": "experiments.runJudge",
             "method": "POST",
-            "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
+            "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "dataset_id",
-                "version_id"
+                "tenantId",
+                "projectId",
+                "datasetId",
+                "versionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "baseline_outputs",
-                "baseline_release_id",
-                "candidate_outputs",
-                "candidate_release_id",
-                "evaluator_id",
-                "evaluator_version_id",
-                "gate_policy",
+                "baselineOutputs",
+                "baselineReleaseId",
+                "candidateOutputs",
+                "candidateReleaseId",
+                "evaluatorId",
+                "evaluatorVersionId",
+                "gatePolicy",
                 "kind",
-                "provider_secret_id"
+                "providerSecretId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "baseline_release_id",
-                "candidate_release_id",
-                "evaluator_id",
-                "evaluator_version_id",
+                "baselineReleaseId",
+                "candidateReleaseId",
+                "evaluatorId",
+                "evaluatorVersionId",
                 "kind",
-                "baseline_outputs",
-                "candidate_outputs",
-                "provider_secret_id"
+                "baselineOutputs",
+                "candidateOutputs",
+                "providerSecretId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2395,25 +2395,25 @@ OPERATIONS = {
             "id": "gates_create",
             "upstream_operation_id": "gates.create",
             "method": "POST",
-            "path": "/v1/gates/{tenant_id}/{project_id}",
+            "path": "/v1/gates/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "dataset_id",
-                "evaluator_version_id",
-                "gate_id",
-                "inconclusive_policy",
+                "datasetId",
+                "evaluatorVersionId",
+                "gateId",
+                "inconclusivePolicy",
                 "name"
             ],
             "forbidden_body": [],
             "required_body": [
-                "gate_id",
+                "gateId",
                 "name"
             ],
             "body_defaults": {},
@@ -2424,18 +2424,18 @@ OPERATIONS = {
             "id": "gates_run",
             "upstream_operation_id": "gates.run",
             "method": "POST",
-            "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
+            "path": "/v1/gates/{tenantId}/{projectId}/{gateId}/run",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "gate_id"
+                "tenantId",
+                "projectId",
+                "gateId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "experiment_run_id"
+                "experimentRunId"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -2447,13 +2447,13 @@ OPERATIONS = {
             "id": "import_source",
             "upstream_operation_id": "ingest.importSource",
             "method": "POST",
-            "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
+            "path": "/v1/import/{tenantId}/{projectId}/{environmentId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "environment_id"
+                "tenantId",
+                "projectId",
+                "environmentId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2475,17 +2475,17 @@ OPERATIONS = {
             "id": "ingest_replay_dead_letter",
             "upstream_operation_id": "ingest.replayDeadLetter",
             "method": "POST",
-            "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
+            "path": "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "message_id"
+                "tenantId",
+                "projectId",
+                "messageId"
             ],
             "path_param_templates": {},
             "query": [
-                "reset_attempts"
+                "resetAttempts"
             ],
             "body": [],
             "forbidden_body": [],
@@ -2498,12 +2498,12 @@ OPERATIONS = {
             "id": "ingest_get_queue_status",
             "upstream_operation_id": "ingest.getQueueStatus",
             "method": "GET",
-            "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
+            "path": "/v1/ingest/{tenantId}/{projectId}/queue",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2518,12 +2518,12 @@ OPERATIONS = {
             "id": "ingest_drain_trace_ingested",
             "upstream_operation_id": "ingest.drainTraceIngested",
             "method": "POST",
-            "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
+            "path": "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2540,12 +2540,12 @@ OPERATIONS = {
             "id": "ingest_drain_trace_writes",
             "upstream_operation_id": "ingest.drainTraceWrites",
             "method": "POST",
-            "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
+            "path": "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2562,13 +2562,13 @@ OPERATIONS = {
             "id": "ingest_reconcile_trace",
             "upstream_operation_id": "ingest.reconcileTrace",
             "method": "POST",
-            "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
+            "path": "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "trace_id"
+                "tenantId",
+                "projectId",
+                "traceId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2583,26 +2583,26 @@ OPERATIONS = {
             "id": "judge_evaluate",
             "upstream_operation_id": "judge.evaluate",
             "method": "POST",
-            "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
+            "path": "/v1/judge/{tenantId}/{projectId}/evaluate",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "cache_namespace",
+                "cacheNamespace",
                 "case",
                 "evaluator",
-                "provider_secret_id"
+                "providerSecretId"
             ],
             "forbidden_body": [],
             "required_body": [
                 "evaluator",
                 "case",
-                "provider_secret_id"
+                "providerSecretId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2612,12 +2612,12 @@ OPERATIONS = {
             "id": "judge_list_ledger",
             "upstream_operation_id": "judge.listLedger",
             "method": "GET",
-            "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
+            "path": "/v1/judge/{tenantId}/{projectId}/ledger",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2635,26 +2635,26 @@ OPERATIONS = {
             "id": "online_decide_sampling",
             "upstream_operation_id": "online.decideSampling",
             "method": "POST",
-            "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
+            "path": "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "trace_id"
+                "tenantId",
+                "projectId",
+                "traceId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "high_cost_micros_threshold",
-                "keep_errors",
-                "sample_rate_per_mille",
-                "slow_ms_threshold"
+                "highCostMicrosThreshold",
+                "keepErrors",
+                "sampleRatePerMille",
+                "slowMsThreshold"
             ],
             "forbidden_body": [],
             "required_body": [
-                "sample_rate_per_mille",
-                "keep_errors"
+                "sampleRatePerMille",
+                "keepErrors"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2664,12 +2664,12 @@ OPERATIONS = {
             "id": "prompts_list",
             "upstream_operation_id": "prompts.list",
             "method": "GET",
-            "path": "/v1/prompts/{tenant_id}/{project_id}",
+            "path": "/v1/prompts/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2687,17 +2687,17 @@ OPERATIONS = {
             "id": "prompts_create",
             "upstream_operation_id": "prompts.create",
             "method": "POST",
-            "path": "/v1/prompts/{tenant_id}/{project_id}",
+            "path": "/v1/prompts/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "created_by",
+                "createdBy",
                 "description",
                 "message",
                 "name",
@@ -2716,13 +2716,13 @@ OPERATIONS = {
             "id": "prompts_get",
             "upstream_operation_id": "prompts.get",
             "method": "GET",
-            "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
+            "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "prompt_id"
+                "tenantId",
+                "projectId",
+                "promptId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2737,13 +2737,13 @@ OPERATIONS = {
             "id": "prompts_diff_versions",
             "upstream_operation_id": "prompts.diffVersions",
             "method": "GET",
-            "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
+            "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "prompt_id"
+                "tenantId",
+                "projectId",
+                "promptId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2761,13 +2761,13 @@ OPERATIONS = {
             "id": "prompts_list_versions",
             "upstream_operation_id": "prompts.listVersions",
             "method": "GET",
-            "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+            "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "prompt_id"
+                "tenantId",
+                "projectId",
+                "promptId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2785,18 +2785,18 @@ OPERATIONS = {
             "id": "prompts_add_version",
             "upstream_operation_id": "prompts.addVersion",
             "method": "POST",
-            "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+            "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "prompt_id"
+                "tenantId",
+                "projectId",
+                "promptId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "created_by",
+                "createdBy",
                 "message",
                 "template"
             ],
@@ -2812,12 +2812,12 @@ OPERATIONS = {
             "id": "provider_secrets_list",
             "upstream_operation_id": "providerSecrets.list",
             "method": "GET",
-            "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+            "path": "/v1/provider-secrets/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2835,25 +2835,25 @@ OPERATIONS = {
             "id": "provider_secrets_create",
             "upstream_operation_id": "providerSecrets.create",
             "method": "POST",
-            "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+            "path": "/v1/provider-secrets/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "display_name",
+                "displayName",
                 "provider",
-                "secret_value"
+                "secretValue"
             ],
             "forbidden_body": [],
             "required_body": [
                 "provider",
-                "display_name",
-                "secret_value"
+                "displayName",
+                "secretValue"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2863,13 +2863,13 @@ OPERATIONS = {
             "id": "provider_secrets_revoke",
             "upstream_operation_id": "providerSecrets.revoke",
             "method": "POST",
-            "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
+            "path": "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "provider_secret_id"
+                "tenantId",
+                "projectId",
+                "providerSecretId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -2884,24 +2884,24 @@ OPERATIONS = {
             "id": "reviews_create_queue",
             "upstream_operation_id": "reviews.createQueue",
             "method": "POST",
-            "path": "/v1/review-queues/{tenant_id}/{project_id}",
+            "path": "/v1/review-queues/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "annotation_schema",
+                "annotationSchema",
                 "name",
-                "queue_id"
+                "queueId"
             ],
             "forbidden_body": [],
             "required_body": [
                 "name",
-                "annotation_schema"
+                "annotationSchema"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2911,13 +2911,13 @@ OPERATIONS = {
             "id": "reviews_list_tasks",
             "upstream_operation_id": "reviews.listTasks",
             "method": "GET",
-            "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
+            "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "queue_id"
+                "tenantId",
+                "projectId",
+                "queueId"
             ],
             "path_param_templates": {},
             "query": [
@@ -2936,27 +2936,27 @@ OPERATIONS = {
             "id": "reviews_enqueue_task_from_trace",
             "upstream_operation_id": "reviews.enqueueTaskFromTrace",
             "method": "POST",
-            "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
+            "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "queue_id"
+                "tenantId",
+                "projectId",
+                "queueId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "dataset_case_id",
-                "dataset_id",
+                "datasetCaseId",
+                "datasetId",
                 "priority",
-                "span_id",
-                "task_id",
-                "trace_id"
+                "spanId",
+                "taskId",
+                "traceId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "trace_id"
+                "traceId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -2966,26 +2966,26 @@ OPERATIONS = {
             "id": "reviews_submit_annotation",
             "upstream_operation_id": "reviews.submitAnnotation",
             "method": "POST",
-            "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
+            "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "queue_id",
-                "task_id"
+                "tenantId",
+                "projectId",
+                "queueId",
+                "taskId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "annotation_id",
+                "annotationId",
                 "payload",
-                "reviewer_id",
+                "reviewerId",
                 "verdict"
             ],
             "forbidden_body": [],
             "required_body": [
-                "reviewer_id",
+                "reviewerId",
                 "verdict",
                 "payload"
             ],
@@ -2997,25 +2997,25 @@ OPERATIONS = {
             "id": "reviews_promote_annotation",
             "upstream_operation_id": "reviews.promoteAnnotation",
             "method": "POST",
-            "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
+            "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "queue_id",
-                "task_id",
-                "annotation_id"
+                "tenantId",
+                "projectId",
+                "queueId",
+                "taskId",
+                "annotationId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "dataset_id",
+                "datasetId",
                 "reference"
             ],
             "forbidden_body": [],
             "required_body": [
-                "dataset_id"
+                "datasetId"
             ],
             "body_defaults": {},
             "scope": None,
@@ -3025,12 +3025,12 @@ OPERATIONS = {
             "id": "scenarios_list",
             "upstream_operation_id": "scenarios.list",
             "method": "GET",
-            "path": "/v1/scenarios/{tenant_id}/{project_id}",
+            "path": "/v1/scenarios/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [
@@ -3048,26 +3048,26 @@ OPERATIONS = {
             "id": "scenarios_create",
             "upstream_operation_id": "scenarios.create",
             "method": "POST",
-            "path": "/v1/scenarios/{tenant_id}/{project_id}",
+            "path": "/v1/scenarios/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "exemplar_trace_id",
-                "expected_outcome",
-                "failure_mode",
-                "source_trace_ids",
+                "exemplarTraceId",
+                "expectedOutcome",
+                "failureMode",
+                "sourceTraceIds",
                 "title"
             ],
             "forbidden_body": [],
             "required_body": [
                 "title",
-                "source_trace_ids"
+                "sourceTraceIds"
             ],
             "body_defaults": {},
             "scope": None,
@@ -3077,22 +3077,22 @@ OPERATIONS = {
             "id": "scenarios_mine",
             "upstream_operation_id": "scenarios.mine",
             "method": "POST",
-            "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
+            "path": "/v1/scenarios/{tenantId}/{projectId}/mine",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "jaccard_threshold",
-                "trace_ids"
+                "jaccardThreshold",
+                "traceIds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "trace_ids"
+                "traceIds"
             ],
             "body_defaults": {},
             "scope": None,
@@ -3102,13 +3102,13 @@ OPERATIONS = {
             "id": "scenarios_get",
             "upstream_operation_id": "scenarios.get",
             "method": "GET",
-            "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
+            "path": "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id",
-                "scenario_id"
+                "tenantId",
+                "projectId",
+                "scenarioId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3123,19 +3123,19 @@ OPERATIONS = {
             "id": "search_spans",
             "upstream_operation_id": "search.spans",
             "method": "GET",
-            "path": "/v1/search/{tenant_id}/spans",
+            "path": "/v1/search/{tenantId}/spans",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id"
+                "tenantId"
             ],
             "path_param_templates": {},
             "query": [
                 "q",
-                "project_id",
-                "environment_id",
-                "trace_id",
-                "span_id",
+                "projectId",
+                "environmentId",
+                "traceId",
+                "spanId",
                 "kind",
                 "status",
                 "model",
@@ -3154,13 +3154,13 @@ OPERATIONS = {
             "id": "get_span",
             "upstream_operation_id": "spans.get",
             "method": "GET",
-            "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
+            "path": "/v1/spans/{tenantId}/{traceId}/{spanId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "trace_id",
-                "span_id"
+                "tenantId",
+                "traceId",
+                "spanId"
             ],
             "path_param_templates": {},
             "query": [
@@ -3178,13 +3178,13 @@ OPERATIONS = {
             "id": "get_span_io",
             "upstream_operation_id": "spans.getIo",
             "method": "GET",
-            "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
+            "path": "/v1/spans/{tenantId}/{traceId}/{spanId}/io",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "trace_id",
-                "span_id"
+                "tenantId",
+                "traceId",
+                "spanId"
             ],
             "path_param_templates": {},
             "query": [
@@ -3212,36 +3212,36 @@ OPERATIONS = {
             ],
             "body": [
                 "attributes",
-                "auth_context",
+                "authContext",
                 "cost",
-                "end_time",
-                "idempotency_key",
+                "endTime",
+                "idempotencyKey",
                 "input",
                 "kind",
                 "model",
                 "name",
                 "output",
-                "parent_span_id",
-                "redaction_class",
+                "parentSpanId",
+                "redactionClass",
                 "scope",
                 "seq",
-                "span_id",
-                "start_time",
+                "spanId",
+                "startTime",
                 "status",
                 "tokens",
-                "trace_id"
+                "traceId"
             ],
             "forbidden_body": [],
             "required_body": [
                 "scope",
-                "trace_id",
-                "span_id",
+                "traceId",
+                "spanId",
                 "seq",
                 "kind",
                 "name",
                 "status",
                 "attributes",
-                "redaction_class"
+                "redactionClass"
             ],
             "body_defaults": {},
             "scope": "trace:write",
@@ -3251,27 +3251,27 @@ OPERATIONS = {
             "id": "list_traces",
             "upstream_operation_id": "traces.list",
             "method": "GET",
-            "path": "/v1/traces/{tenant_id}",
+            "path": "/v1/traces/{tenantId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id"
+                "tenantId"
             ],
             "path_param_templates": {},
             "query": [
-                "project_id",
-                "environment_id",
-                "trace_id",
+                "projectId",
+                "environmentId",
+                "traceId",
                 "kind",
                 "status",
-                "started_after",
-                "started_before",
+                "startedAfter",
+                "startedBefore",
                 "model",
                 "release",
-                "min_cost_micros",
-                "max_cost_micros",
-                "min_latency_ms",
-                "max_latency_ms",
+                "minCostMicros",
+                "maxCostMicros",
+                "minLatencyMs",
+                "maxLatencyMs",
                 "pageSize",
                 "pageToken"
             ],
@@ -3286,12 +3286,12 @@ OPERATIONS = {
             "id": "get_trace",
             "upstream_operation_id": "traces.get",
             "method": "GET",
-            "path": "/v1/traces/{tenant_id}/{trace_id}",
+            "path": "/v1/traces/{tenantId}/{traceId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "trace_id"
+                "tenantId",
+                "traceId"
             ],
             "path_param_templates": {},
             "query": [
@@ -3309,12 +3309,12 @@ OPERATIONS = {
             "id": "get_usage_summary",
             "upstream_operation_id": "usage.getSummary",
             "method": "GET",
-            "path": "/v1/usage/{tenant_id}/{project_id}",
+            "path": "/v1/usage/{tenantId}/{projectId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "tenant_id",
-                "project_id"
+                "tenantId",
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3360,23 +3360,6 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Call GET /.well-known/agent.json."
-        },
-        {
-            "id": "drain",
-            "upstream_operation_id": "drain",
-            "method": "POST",
-            "path": "/drain",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Call POST /drain."
         },
         {
             "id": "health",
@@ -3447,16 +3430,35 @@ OPERATIONS = {
             "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
         },
         {
+            "id": "drain",
+            "upstream_operation_id": "drain",
+            "method": "POST",
+            "path": "/v1/drain",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Call POST /drain."
+        },
+        {
             "id": "list_runs",
             "upstream_operation_id": "listRuns",
             "method": "GET",
-            "path": "/runs",
+            "path": "/v1/runs",
             "auth": "product",
             "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "session_id"
+                "sessionId",
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3469,11 +3471,11 @@ OPERATIONS = {
             "id": "get_run",
             "upstream_operation_id": "getRun",
             "method": "GET",
-            "path": "/runs/{run_id}",
+            "path": "/v1/runs/{runId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "run_id"
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3485,14 +3487,35 @@ OPERATIONS = {
             "description": "Fetch one agent run with its state."
         },
         {
-            "id": "cancel_run",
-            "upstream_operation_id": "cancelRun",
-            "method": "POST",
-            "path": "/runs/{run_id}/cancel",
+            "id": "run_events",
+            "upstream_operation_id": "runEvents",
+            "method": "GET",
+            "path": "/v1/runs/{runId}/events",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "run_id"
+                "runId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "afterSeq"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Call GET /runs/{run_id}/events."
+        },
+        {
+            "id": "cancel_run",
+            "upstream_operation_id": "cancelRun",
+            "method": "POST",
+            "path": "/v1/runs/{runId}:cancel",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3504,35 +3527,14 @@ OPERATIONS = {
             "description": "Cancel an agent run."
         },
         {
-            "id": "run_events",
-            "upstream_operation_id": "runEvents",
-            "method": "GET",
-            "path": "/runs/{run_id}/events",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "run_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after_seq"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Call GET /runs/{run_id}/events."
-        },
-        {
             "id": "resume_run",
             "upstream_operation_id": "resumeRun",
             "method": "POST",
-            "path": "/runs/{run_id}/resume",
+            "path": "/v1/runs/{runId}:resume",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "run_id"
+                "runId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3547,12 +3549,15 @@ OPERATIONS = {
             "id": "list_sessions",
             "upstream_operation_id": "listSessions",
             "method": "GET",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3564,7 +3569,7 @@ OPERATIONS = {
             "id": "create_session",
             "upstream_operation_id": "createSession",
             "method": "POST",
-            "path": "/sessions",
+            "path": "/v1/sessions",
             "auth": "product",
             "auth_audience": None,
             "path_params": [],
@@ -3586,11 +3591,11 @@ OPERATIONS = {
             "id": "close_session",
             "upstream_operation_id": "closeSession",
             "method": "DELETE",
-            "path": "/sessions/{session_id}",
+            "path": "/v1/sessions/{sessionId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3602,69 +3607,15 @@ OPERATIONS = {
             "description": "Close a browser session and release its engine resources."
         },
         {
-            "id": "act_batch",
-            "upstream_operation_id": "actBatchSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/act_batch",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [
-                "batch",
-                "confirmation_grant",
-                "confirmed",
-                "idempotency_key",
-                "input_tainted",
-                "payment_context"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "batch"
-            ],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
-        },
-        {
-            "id": "adopt_session",
-            "upstream_operation_id": "adoptSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/adopt",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [
-                "engine_tier",
-                "label",
-                "platform",
-                "profile_id",
-                "storage_continuity",
-                "surface_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
-        },
-        {
             "id": "grant_confirmation",
             "upstream_operation_id": "grantSessionConfirmation",
             "method": "POST",
-            "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
+            "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id",
-                "confirmation_id"
+                "sessionId",
+                "confirmationId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3679,15 +3630,15 @@ OPERATIONS = {
             "id": "session_events",
             "upstream_operation_id": "sessionEvents",
             "method": "GET",
-            "path": "/sessions/{session_id}/events",
+            "path": "/v1/sessions/{sessionId}/events",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [
-                "after_seq"
+                "afterSeq"
             ],
             "body": [],
             "forbidden_body": [],
@@ -3697,33 +3648,14 @@ OPERATIONS = {
             "description": "Fetch the session's event window after a sequence number."
         },
         {
-            "id": "handoff_session",
-            "upstream_operation_id": "handoffSession",
-            "method": "POST",
-            "path": "/sessions/{session_id}/handoff",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Return write ownership of the session to the agent plane."
-        },
-        {
             "id": "manager_session",
             "upstream_operation_id": "managerSession",
             "method": "GET",
-            "path": "/sessions/{session_id}/manager",
+            "path": "/v1/sessions/{sessionId}/manager",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3735,41 +3667,22 @@ OPERATIONS = {
             "description": "Call GET /sessions/{session_id}/manager."
         },
         {
-            "id": "observe",
-            "upstream_operation_id": "observeSession",
-            "method": "GET",
-            "path": "/sessions/{session_id}/observe",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
-        },
-        {
             "id": "create_run",
             "upstream_operation_id": "createSessionRun",
             "method": "POST",
-            "path": "/sessions/{session_id}/runs",
+            "path": "/v1/sessions/{sessionId}/runs",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
                 "actions",
                 "goal",
-                "max_rounds",
-                "token_budget"
+                "maxRounds",
+                "tokenBudget"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -3778,45 +3691,24 @@ OPERATIONS = {
             "description": "Start an agent run against the session with a goal, action budget, and round limit."
         },
         {
-            "id": "screenshot",
-            "upstream_operation_id": "screenshotSession",
-            "method": "GET",
-            "path": "/sessions/{session_id}/screenshot",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "set_of_marks"
-            ],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
-        },
-        {
             "id": "register_session_surface",
             "upstream_operation_id": "registerSessionSurface",
             "method": "POST",
-            "path": "/sessions/{session_id}/surfaces",
+            "path": "/v1/sessions/{sessionId}/surfaces",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
-                "engine_tier",
+                "engineTier",
                 "label",
                 "platform",
-                "profile_id",
-                "storage_continuity",
-                "surface_id"
+                "profileId",
+                "storageContinuity",
+                "surfaceId"
             ],
             "forbidden_body": [],
             "required_body": [],
@@ -3828,12 +3720,12 @@ OPERATIONS = {
             "id": "remove_session_surface",
             "upstream_operation_id": "removeSessionSurface",
             "method": "DELETE",
-            "path": "/sessions/{session_id}/surfaces/{surface_id}",
+            "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id",
-                "surface_id"
+                "sessionId",
+                "surfaceId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -3845,20 +3737,133 @@ OPERATIONS = {
             "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
         },
         {
-            "id": "transform_session",
-            "upstream_operation_id": "transformSession",
+            "id": "act_batch",
+            "upstream_operation_id": "actBatchSession",
             "method": "POST",
-            "path": "/sessions/{session_id}/transform",
+            "path": "/v1/sessions/{sessionId}:actBatch",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
-                "session_id"
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "batch",
+                "confirmationGrant",
+                "confirmed",
+                "idempotencyKey",
+                "inputTainted",
+                "paymentContext"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "batch"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
+        },
+        {
+            "id": "adopt_session",
+            "upstream_operation_id": "adoptSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:adopt",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "engineTier",
+                "label",
+                "platform",
+                "profileId",
+                "storageContinuity",
+                "surfaceId"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Let a human surface take write ownership of the session and receive an adoption lease."
+        },
+        {
+            "id": "handoff_session",
+            "upstream_operation_id": "handoffSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:handoff",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Return write ownership of the session to the agent plane."
+        },
+        {
+            "id": "observe",
+            "upstream_operation_id": "observeSession",
+            "method": "GET",
+            "path": "/v1/sessions/{sessionId}:observe",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
+        },
+        {
+            "id": "screenshot",
+            "upstream_operation_id": "screenshotSession",
+            "method": "GET",
+            "path": "/v1/sessions/{sessionId}:screenshot",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "setOfMarks"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
+        },
+        {
+            "id": "transform_session",
+            "upstream_operation_id": "transformSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:transform",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
             "body": [
                 "determinism",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "source",
@@ -4801,10 +4806,10 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "actor",
-                "adapter_id",
-                "sensitive_activity_mode",
+                "adapterId",
+                "sensitiveActivityMode",
                 "sensitivity",
-                "ttl_seconds"
+                "ttlSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -4826,28 +4831,28 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "adapter_id",
-                "contract_version",
-                "egress_log_sealed_or_discarded",
+                "adapterId",
+                "contractVersion",
+                "egressLogSealedOrDiscarded",
                 "notes",
-                "plaintext_artifacts_removed",
-                "process_terminated",
-                "proof_ids",
-                "request_id",
-                "sealed_artifact_handles",
-                "temporary_profile_removed"
+                "plaintextArtifactsRemoved",
+                "processTerminated",
+                "proofIds",
+                "requestId",
+                "sealedArtifactHandles",
+                "temporaryProfileRemoved"
             ],
             "forbidden_body": [],
             "required_body": [
-                "request_id",
-                "adapter_id",
-                "contract_version",
-                "process_terminated",
-                "temporary_profile_removed",
-                "plaintext_artifacts_removed",
-                "egress_log_sealed_or_discarded",
-                "sealed_artifact_handles",
-                "proof_ids",
+                "requestId",
+                "adapterId",
+                "contractVersion",
+                "processTerminated",
+                "temporaryProfileRemoved",
+                "plaintextArtifactsRemoved",
+                "egressLogSealedOrDiscarded",
+                "sealedArtifactHandles",
+                "proofIds",
                 "notes"
             ],
             "body_defaults": {},
@@ -4882,11 +4887,11 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "launch_request"
+                "launchRequest"
             ],
             "forbidden_body": [],
             "required_body": [
-                "launch_request"
+                "launchRequest"
             ],
             "body_defaults": {},
             "scope": None,
@@ -4905,11 +4910,11 @@ OPERATIONS = {
             "body": [
                 "admission",
                 "manifest",
-                "same_user_capability"
+                "sameUserCapability"
             ],
             "forbidden_body": [],
             "required_body": [
-                "same_user_capability",
+                "sameUserCapability",
                 "admission",
                 "manifest"
             ],
@@ -4930,14 +4935,14 @@ OPERATIONS = {
             "body": [
                 "actor",
                 "manifest",
-                "same_user_capability",
+                "sameUserCapability",
                 "sensitivity"
             ],
             "forbidden_body": [],
             "required_body": [
                 "actor",
                 "sensitivity",
-                "same_user_capability",
+                "sameUserCapability",
                 "manifest"
             ],
             "body_defaults": {},
@@ -4955,23 +4960,23 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "adapter_id",
-                "completion_proofs",
-                "contract_version",
-                "guard_fields",
-                "launch_endpoint",
-                "supported_controls",
-                "supported_levels"
+                "adapterId",
+                "completionProofs",
+                "contractVersion",
+                "guardFields",
+                "launchEndpoint",
+                "supportedControls",
+                "supportedLevels"
             ],
             "forbidden_body": [],
             "required_body": [
-                "adapter_id",
-                "contract_version",
-                "launch_endpoint",
-                "supported_levels",
-                "supported_controls",
-                "guard_fields",
-                "completion_proofs"
+                "adapterId",
+                "contractVersion",
+                "launchEndpoint",
+                "supportedLevels",
+                "supportedControls",
+                "guardFields",
+                "completionProofs"
             ],
             "body_defaults": {},
             "scope": None,
@@ -4989,19 +4994,19 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "actor",
-                "allow_downgrade",
-                "artifact_mode",
-                "credential_mode",
-                "requested_level",
-                "required_controls",
-                "sensitive_activity_mode",
+                "allowDowngrade",
+                "artifactMode",
+                "credentialMode",
+                "requestedLevel",
+                "requiredControls",
+                "sensitiveActivityMode",
                 "sensitivity",
-                "target_origins",
-                "task_label"
+                "targetOrigins",
+                "taskLabel"
             ],
             "forbidden_body": [],
             "required_body": [
-                "requested_level",
+                "requestedLevel",
                 "actor",
                 "sensitivity"
             ],
@@ -5055,7 +5060,7 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "entrypoint",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "policy",
@@ -5117,7 +5122,7 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "entrypoint",
-                "idempotency_key",
+                "idempotencyKey",
                 "input",
                 "lane",
                 "policy",
@@ -5132,25 +5137,6 @@ OPERATIONS = {
             "body_defaults": {},
             "scope": None,
             "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
-        },
-        {
-            "id": "get_job",
-            "upstream_operation_id": "projects.jobs.get",
-            "method": "GET",
-            "path": "/v1/jobs/{id}",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "scope": None,
-            "description": "Fetch a sandbox job's status and result."
         },
         {
             "id": "cancel_job",
@@ -5172,6 +5158,25 @@ OPERATIONS = {
             "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
         },
         {
+            "id": "get_job",
+            "upstream_operation_id": "projects.jobs.get",
+            "method": "GET",
+            "path": "/v1/jobs/{id}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Fetch a sandbox job's status and result."
+        },
+        {
             "id": "projects_modules_create",
             "upstream_operation_id": "projects.modules.create",
             "method": "POST",
@@ -5184,11 +5189,11 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "bytes_base64"
+                "bytesBase64"
             ],
             "forbidden_body": [],
             "required_body": [
-                "bytes_base64"
+                "bytesBase64"
             ],
             "body_defaults": {},
             "scope": None,
@@ -5328,7 +5333,8 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "body": [],
             "forbidden_body": [],
@@ -5348,18 +5354,18 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "body": [
-                "tenant_id",
-                "project_id",
-                "environment_id",
+                "tenantId",
+                "projectId",
+                "environmentId",
                 "kind",
                 "text",
-                "idempotency_key",
+                "idempotencyKey",
                 "project"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
-                "project_id",
+                "tenantId",
+                "projectId",
                 "kind",
                 "text"
             ],
@@ -5399,12 +5405,12 @@ OPERATIONS = {
             "body": [
                 "question",
                 "scope",
-                "max_tokens",
-                "require_fresh",
+                "maxTokens",
+                "requireFresh",
                 "modes",
-                "reconstruction_mode",
-                "max_reconstruction_steps",
-                "max_reconstruction_tokens"
+                "reconstructionMode",
+                "maxReconstructionSteps",
+                "maxReconstructionTokens"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -5427,9 +5433,9 @@ OPERATIONS = {
             "query": [],
             "body": [
                 "vacuum",
-                "repair_orphans",
-                "prune_audit_before_unix_ms",
-                "retain_latest_audit_events"
+                "repairOrphans",
+                "pruneAuditBeforeUnixMs",
+                "retainLatestAuditEvents"
             ],
             "forbidden_body": [],
             "required_body": [],

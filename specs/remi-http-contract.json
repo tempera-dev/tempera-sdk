@@ -28,21 +28,39 @@
     "schema": "ErrorBody",
     "fields": [
       "error.code",
-      "error.message"
+      "error.status",
+      "error.message",
+      "error.details"
     ],
+    "field_types": {
+      "error.code": "integer",
+      "error.status": "string",
+      "error.message": "string",
+      "error.details": "array"
+    },
+    "detail_type": "google.rpc.ErrorInfo",
+    "detail_domain": "remi.tempera.dev",
     "status_header_semantics": {
       "401": "WWW-Authenticate: Bearer",
       "429": "Retry-After",
       "503": "Retry-After",
       "504": "Retry-After"
     },
-    "codes": [
+    "reasons": [
       "unauthorized",
       "rate_limited",
       "service_busy",
       "service_timeout",
       "bad_request",
       "internal_error"
+    ],
+    "statuses": [
+      "INVALID_ARGUMENT",
+      "UNAUTHENTICATED",
+      "RESOURCE_EXHAUSTED",
+      "INTERNAL",
+      "UNAVAILABLE",
+      "DEADLINE_EXCEEDED"
     ]
   },
   "endpoints": [
@@ -51,35 +69,84 @@
       "method": "GET",
       "path": "/livez",
       "auth": "public",
-      "response_schema": "LiveResponse"
+      "response_schema": "LiveResponse",
+      "response_fields": [
+        "status"
+      ]
     },
     {
       "operation": "readyz",
       "method": "GET",
       "path": "/readyz",
       "auth": "public",
-      "response_schema": "ReadyResponse"
+      "response_schema": "ReadyResponse",
+      "response_fields": [
+        "status",
+        "database",
+        "message"
+      ]
     },
     {
       "operation": "health",
       "method": "GET",
       "path": "/v1/health",
       "auth": "bearer",
-      "response_schema": "StoreHealth"
+      "response_schema": "StoreHealth",
+      "response_fields": [
+        "applicationId",
+        "expectedApplicationId",
+        "schemaVersion",
+        "expectedSchemaVersion",
+        "integrityOk",
+        "integrityMessages",
+        "foreignKeyViolations",
+        "graphIntegrityOk",
+        "graphIntegrity",
+        "stats"
+      ]
     },
     {
       "operation": "getStats",
       "method": "GET",
       "path": "/v1/stats",
       "auth": "bearer",
-      "response_schema": "StoreStats"
+      "response_schema": "StoreStats",
+      "response_fields": [
+        "ledgerEvents",
+        "pendingEvents",
+        "nodes",
+        "activeNodes",
+        "edges",
+        "auditEvents"
+      ]
     },
     {
       "operation": "getMetrics",
       "method": "GET",
       "path": "/v1/metrics",
       "auth": "bearer",
-      "response_schema": "ServiceMetricsSnapshot"
+      "response_schema": "ServiceMetricsSnapshot",
+      "response_fields": [
+        "startedAtUnixMs",
+        "totalRequests",
+        "authorizedRequests",
+        "unauthorizedRequests",
+        "rateLimitedRequests",
+        "dbBusyRequests",
+        "dbTimeoutRequests",
+        "successfulRequests",
+        "failedRequests",
+        "liveRequests",
+        "readyRequests",
+        "healthRequests",
+        "statsRequests",
+        "rememberRequests",
+        "projectRequests",
+        "queryRequests",
+        "maintenanceRequests",
+        "metricsRequests",
+        "auditRequests"
+      ]
     },
     {
       "operation": "getPrometheusMetrics",
@@ -95,9 +162,14 @@
       "auth": "bearer",
       "query_schema": "AuditHttpQuery",
       "query_fields": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
-      "response_schema": "AuditHttpResponse"
+      "response_schema": "AuditHttpResponse",
+      "response_fields": [
+        "events",
+        "nextPageToken"
+      ]
     },
     {
       "operation": "remember",
@@ -106,22 +178,26 @@
       "auth": "bearer",
       "request_schema": "RememberHttpRequest",
       "request_fields": [
-        "tenant_id",
-        "project_id",
-        "environment_id",
+        "tenantId",
+        "projectId",
+        "environmentId",
         "kind",
         "text",
-        "idempotency_key",
+        "idempotencyKey",
         "project"
       ],
       "required_request_fields": [
-        "tenant_id",
-        "project_id",
+        "tenantId",
+        "projectId",
         "kind",
         "text"
       ],
       "response_schema": "RememberHttpResponse",
-      "idempotency_field": "idempotency_key",
+      "response_fields": [
+        "ingested",
+        "project"
+      ],
+      "idempotency_field": "idempotencyKey",
       "description": "Write one memory event into the tenant and project ledger."
     },
     {
@@ -134,7 +210,17 @@
         "limit"
       ],
       "required_request_fields": [],
-      "response_schema": "ProjectReport"
+      "response_schema": "ProjectReport",
+      "response_fields": [
+        "eventsSeen",
+        "eventsProjected",
+        "eventsSkipped",
+        "memoriesAdded",
+        "memoriesUpdated",
+        "memoriesInvalidated",
+        "memoriesNooped",
+        "edgesAdded"
+      ]
     },
     {
       "operation": "query",
@@ -145,18 +231,29 @@
       "request_fields": [
         "question",
         "scope",
-        "max_tokens",
-        "require_fresh",
+        "maxTokens",
+        "requireFresh",
         "modes",
-        "reconstruction_mode",
-        "max_reconstruction_steps",
-        "max_reconstruction_tokens"
+        "reconstructionMode",
+        "maxReconstructionSteps",
+        "maxReconstructionTokens"
       ],
       "required_request_fields": [
         "question",
         "scope"
       ],
       "response_schema": "MemoryAnswer",
+      "response_fields": [
+        "answer",
+        "evidence",
+        "citedSpans",
+        "contradictions",
+        "staleAssumptions",
+        "suggestedNextQueries",
+        "tokenEstimate",
+        "tierUsed",
+        "reconstruction"
+      ],
       "description": "Answer a scoped memory question with evidence and reconstruction metadata."
     },
     {
@@ -167,12 +264,25 @@
       "request_schema": "MaintenanceHttpRequest",
       "request_fields": [
         "vacuum",
-        "repair_orphans",
-        "prune_audit_before_unix_ms",
-        "retain_latest_audit_events"
+        "repairOrphans",
+        "pruneAuditBeforeUnixMs",
+        "retainLatestAuditEvents"
       ],
       "required_request_fields": [],
-      "response_schema": "MaintenanceReport"
+      "response_schema": "MaintenanceReport",
+      "response_fields": [
+        "optimized",
+        "walCheckpointBusy",
+        "walCheckpointLogFrames",
+        "walCheckpointCheckpointedFrames",
+        "vacuumed",
+        "repairedOrphans",
+        "prunedAuditEvents",
+        "graphIntegrityBefore",
+        "graphIntegrityAfter",
+        "graphRepair",
+        "auditPrune"
+      ]
     }
   ],
   "sdk": {

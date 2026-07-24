@@ -6,7 +6,7 @@
     "authorizePath": "/oauth/authorize",
     "tokenPath": "/oauth/token",
     "revokePath": "/oauth/revoke",
-    "introspectPath": "/oauth/introspect",
+    "introspectPath": "/v1/oauth/introspect",
     "mcpPath": "/mcp",
     "pkceMethod": "S256"
   },
@@ -1298,13 +1298,13 @@
       {
         "id": "alertsEvaluate",
         "method": "POST",
-        "path": "/v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook",
+        "path": "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook",
         "auth": "product",
         "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "trace_id"
+          "tenantId",
+          "projectId",
+          "traceId"
         ],
         "body": [
           "input",
@@ -1319,12 +1319,12 @@
       {
         "id": "createApiKey",
         "method": "POST",
-        "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}",
+        "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "environment_id"
+          "tenantId",
+          "projectId",
+          "environmentId"
         ],
         "body": [
           "scopes"
@@ -1339,13 +1339,13 @@
       {
         "id": "revokeApiKey",
         "method": "POST",
-        "path": "/v1/api-keys/{tenant_id}/{project_id}/{environment_id}/{api_key_id}/revoke",
+        "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "environment_id",
-          "api_key_id"
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "apiKeyId"
         ],
         "scope": "admin",
         "description": "Revoke a palette API key.",
@@ -1354,17 +1354,17 @@
       {
         "id": "archiveQuerySpans",
         "method": "GET",
-        "path": "/v1/archive/{tenant_id}/{project_id}/spans",
+        "path": "/v1/archive/{tenantId}/{projectId}/spans",
         "auth": "product",
         "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
-          "environment_id",
-          "trace_id",
-          "span_id",
+          "environmentId",
+          "traceId",
+          "spanId",
           "kind",
           "status",
           "pageSize",
@@ -1375,12 +1375,12 @@
       {
         "id": "archiveTrace",
         "method": "POST",
-        "path": "/v1/archive/{tenant_id}/{project_id}/{trace_id}",
+        "path": "/v1/archive/{tenantId}/{projectId}/{traceId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "trace_id"
+          "tenantId",
+          "projectId",
+          "traceId"
         ],
         "scope": "trace:read",
         "description": "Archive a trace to Parquet and return the archive manifest.",
@@ -1389,12 +1389,12 @@
       {
         "id": "auditList",
         "method": "GET",
-        "path": "/v1/audit/{tenant_id}/{project_id}",
+        "path": "/v1/audit/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/audit/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "audit.list",
         "query": [
@@ -1405,43 +1405,43 @@
       {
         "id": "calibrationsRun",
         "method": "POST",
-        "path": "/v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}",
+        "path": "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}",
         "auth": "product",
         "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id"
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId"
         ],
         "body": [
-          "eval_report_id",
-          "evaluator_version_id",
-          "pass_threshold"
+          "evalReportId",
+          "evaluatorVersionId",
+          "passThreshold"
         ],
         "upstreamOperationId": "calibrations.run"
       },
       {
         "id": "connectGetStatus",
         "method": "GET",
-        "path": "/v1/connect/status/{tenant_id}/{project_id}",
+        "path": "/v1/connect/status/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "connect.getStatus"
       },
       {
         "id": "connectorsList",
         "method": "GET",
-        "path": "/v1/connectors/{tenant_id}/{project_id}",
+        "path": "/v1/connectors/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "pageSize",
@@ -1452,12 +1452,12 @@
       {
         "id": "connectorsConnect",
         "method": "POST",
-        "path": "/v1/connectors/{tenant_id}/{project_id}/connect",
+        "path": "/v1/connectors/{tenantId}/{projectId}/connect",
         "auth": "product",
         "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
           "toolkit"
@@ -1470,12 +1470,12 @@
       {
         "id": "connectorsInvokeTool",
         "method": "POST",
-        "path": "/v1/connectors/{tenant_id}/{project_id}/invoke",
+        "path": "/v1/connectors/{tenantId}/{projectId}/invoke",
         "auth": "product",
         "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
           "arguments",
@@ -1489,12 +1489,12 @@
       {
         "id": "connectorsGetSkills",
         "method": "GET",
-        "path": "/v1/connectors/{tenant_id}/{project_id}/skills",
+        "path": "/v1/connectors/{tenantId}/{projectId}/skills",
         "auth": "product",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "toolkit"
@@ -1504,12 +1504,12 @@
       {
         "id": "connectorsStatus",
         "method": "GET",
-        "path": "/v1/connectors/{tenant_id}/{project_id}/status",
+        "path": "/v1/connectors/{tenantId}/{projectId}/status",
         "auth": "product",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "toolkit"
@@ -1519,12 +1519,12 @@
       {
         "id": "connectorsListTools",
         "method": "GET",
-        "path": "/v1/connectors/{tenant_id}/{project_id}/tools",
+        "path": "/v1/connectors/{tenantId}/{projectId}/tools",
         "auth": "product",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "toolkit",
@@ -1536,11 +1536,11 @@
       {
         "id": "createDataset",
         "method": "POST",
-        "path": "/v1/datasets/{tenant_id}/{project_id}",
+        "path": "/v1/datasets/{tenantId}/{projectId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
           "name"
@@ -1555,37 +1555,37 @@
       {
         "id": "promoteTraceToCase",
         "method": "POST",
-        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/cases/from-trace",
+        "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id"
+          "tenantId",
+          "projectId",
+          "datasetId"
         ],
         "body": [
           "reference",
-          "span_id",
-          "trace_id"
+          "spanId",
+          "traceId"
         ],
         "scope": "dataset:write",
         "description": "Promote a trace (or one span of it) into a dataset case.",
         "requiredBody": [
-          "trace_id"
+          "traceId"
         ],
         "upstreamOperationId": "datasets.promoteCaseFromTrace"
       },
       {
         "id": "createDatasetVersion",
         "method": "POST",
-        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions",
+        "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id"
+          "tenantId",
+          "projectId",
+          "datasetId"
         ],
         "body": [
-          "case_ids"
+          "caseIds"
         ],
         "scope": "dataset:write",
         "description": "Snapshot a dataset into an immutable version for evals and experiments.",
@@ -1594,28 +1594,28 @@
       {
         "id": "evalsRunDeterministic",
         "method": "POST",
-        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic",
+        "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic",
         "auth": "product",
         "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id"
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId"
         ],
         "body": [
-          "agent_release_id",
-          "code_hash",
-          "evaluator_id",
-          "evaluator_version_id",
+          "agentReleaseId",
+          "codeHash",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "prompt_version_id",
-          "wasm_hash"
+          "promptVersionId",
+          "wasmHash"
         ],
         "requiredBody": [
-          "evaluator_id",
-          "evaluator_version_id",
-          "agent_release_id",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "agentReleaseId",
           "kind"
         ],
         "upstreamOperationId": "evals.runDeterministic"
@@ -1623,51 +1623,51 @@
       {
         "id": "evalsRunJudge",
         "method": "POST",
-        "path": "/v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge",
+        "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge",
         "auth": "product",
         "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id"
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId"
         ],
         "body": [
-          "agent_release_id",
-          "code_hash",
-          "evaluator_id",
-          "evaluator_version_id",
+          "agentReleaseId",
+          "codeHash",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "prompt_version_id",
-          "provider_secret_id"
+          "promptVersionId",
+          "providerSecretId"
         ],
         "requiredBody": [
-          "evaluator_id",
-          "evaluator_version_id",
-          "agent_release_id",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "agentReleaseId",
           "kind",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "upstreamOperationId": "evals.runJudge"
       },
       {
         "id": "importTemperaBundle",
         "method": "POST",
-        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+        "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "canonical_json",
-          "public_key_pem",
-          "signature_base64"
+          "canonicalJson",
+          "publicKeyPem",
+          "signatureBase64"
         ],
         "requiredBody": [
-          "canonical_json",
-          "signature_base64",
-          "public_key_pem"
+          "canonicalJson",
+          "signatureBase64",
+          "publicKeyPem"
         ],
         "scope": "eval:run",
         "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
@@ -1676,21 +1676,21 @@
       {
         "id": "recordTemperaDecision",
         "method": "POST",
-        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+        "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "canonical_json",
-          "public_key_pem",
-          "signature_base64"
+          "canonicalJson",
+          "publicKeyPem",
+          "signatureBase64"
         ],
         "requiredBody": [
-          "canonical_json",
-          "signature_base64",
-          "public_key_pem"
+          "canonicalJson",
+          "signatureBase64",
+          "publicKeyPem"
         ],
         "scope": "eval:run",
         "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
@@ -1699,13 +1699,13 @@
       {
         "id": "getTemperaEvidence",
         "method": "GET",
-        "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+        "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
+          "tenantId",
+          "projectId",
           "kind",
-          "external_id"
+          "externalId"
         ],
         "scope": "eval:run",
         "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
@@ -1714,90 +1714,90 @@
       {
         "id": "experimentsRunDeterministic",
         "method": "POST",
-        "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic",
+        "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic",
         "auth": "product",
         "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id"
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId"
         ],
         "body": [
-          "baseline_outputs",
-          "baseline_release_id",
-          "candidate_outputs",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
-          "gate_policy",
+          "baselineOutputs",
+          "baselineReleaseId",
+          "candidateOutputs",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "gatePolicy",
           "kind"
         ],
         "requiredBody": [
-          "baseline_release_id",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "baseline_outputs",
-          "candidate_outputs"
+          "baselineOutputs",
+          "candidateOutputs"
         ],
         "upstreamOperationId": "experiments.runDeterministic"
       },
       {
         "id": "experimentsRunJudge",
         "method": "POST",
-        "path": "/v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge",
+        "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge",
         "auth": "product",
         "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "dataset_id",
-          "version_id"
+          "tenantId",
+          "projectId",
+          "datasetId",
+          "versionId"
         ],
         "body": [
-          "baseline_outputs",
-          "baseline_release_id",
-          "candidate_outputs",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
-          "gate_policy",
+          "baselineOutputs",
+          "baselineReleaseId",
+          "candidateOutputs",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
+          "gatePolicy",
           "kind",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "requiredBody": [
-          "baseline_release_id",
-          "candidate_release_id",
-          "evaluator_id",
-          "evaluator_version_id",
+          "baselineReleaseId",
+          "candidateReleaseId",
+          "evaluatorId",
+          "evaluatorVersionId",
           "kind",
-          "baseline_outputs",
-          "candidate_outputs",
-          "provider_secret_id"
+          "baselineOutputs",
+          "candidateOutputs",
+          "providerSecretId"
         ],
         "upstreamOperationId": "experiments.runJudge"
       },
       {
         "id": "gatesCreate",
         "method": "POST",
-        "path": "/v1/gates/{tenant_id}/{project_id}",
+        "path": "/v1/gates/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call POST /v1/gates/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "dataset_id",
-          "evaluator_version_id",
-          "gate_id",
-          "inconclusive_policy",
+          "datasetId",
+          "evaluatorVersionId",
+          "gateId",
+          "inconclusivePolicy",
           "name"
         ],
         "requiredBody": [
-          "gate_id",
+          "gateId",
           "name"
         ],
         "upstreamOperationId": "gates.create"
@@ -1805,28 +1805,28 @@
       {
         "id": "gatesRun",
         "method": "POST",
-        "path": "/v1/gates/{tenant_id}/{project_id}/{gate_id}/run",
+        "path": "/v1/gates/{tenantId}/{projectId}/{gateId}/run",
         "auth": "product",
         "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "gate_id"
+          "tenantId",
+          "projectId",
+          "gateId"
         ],
         "body": [
-          "experiment_run_id"
+          "experimentRunId"
         ],
         "upstreamOperationId": "gates.run"
       },
       {
         "id": "importSource",
         "method": "POST",
-        "path": "/v1/import/{tenant_id}/{project_id}/{environment_id}",
+        "path": "/v1/import/{tenantId}/{projectId}/{environmentId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "environment_id"
+          "tenantId",
+          "projectId",
+          "environmentId"
         ],
         "query": [
           "durability"
@@ -1845,40 +1845,40 @@
       {
         "id": "ingestReplayDeadLetter",
         "method": "POST",
-        "path": "/v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay",
+        "path": "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay",
         "auth": "product",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "message_id"
+          "tenantId",
+          "projectId",
+          "messageId"
         ],
         "query": [
-          "reset_attempts"
+          "resetAttempts"
         ],
         "upstreamOperationId": "ingest.replayDeadLetter"
       },
       {
         "id": "ingestGetQueueStatus",
         "method": "GET",
-        "path": "/v1/ingest/{tenant_id}/{project_id}/queue",
+        "path": "/v1/ingest/{tenantId}/{projectId}/queue",
         "auth": "product",
         "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "ingest.getQueueStatus"
       },
       {
         "id": "ingestDrainTraceIngested",
         "method": "POST",
-        "path": "/v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain",
+        "path": "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain",
         "auth": "product",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "limit"
@@ -1888,12 +1888,12 @@
       {
         "id": "ingestDrainTraceWrites",
         "method": "POST",
-        "path": "/v1/ingest/{tenant_id}/{project_id}/trace-writes/drain",
+        "path": "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain",
         "auth": "product",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "limit"
@@ -1903,48 +1903,48 @@
       {
         "id": "ingestReconcileTrace",
         "method": "POST",
-        "path": "/v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile",
+        "path": "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile",
         "auth": "product",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "trace_id"
+          "tenantId",
+          "projectId",
+          "traceId"
         ],
         "upstreamOperationId": "ingest.reconcileTrace"
       },
       {
         "id": "judgeEvaluate",
         "method": "POST",
-        "path": "/v1/judge/{tenant_id}/{project_id}/evaluate",
+        "path": "/v1/judge/{tenantId}/{projectId}/evaluate",
         "auth": "product",
         "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "cache_namespace",
+          "cacheNamespace",
           "case",
           "evaluator",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "requiredBody": [
           "evaluator",
           "case",
-          "provider_secret_id"
+          "providerSecretId"
         ],
         "upstreamOperationId": "judge.evaluate"
       },
       {
         "id": "judgeListLedger",
         "method": "GET",
-        "path": "/v1/judge/{tenant_id}/{project_id}/ledger",
+        "path": "/v1/judge/{tenantId}/{projectId}/ledger",
         "auth": "product",
         "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "judge.listLedger",
         "query": [
@@ -1955,35 +1955,35 @@
       {
         "id": "onlineDecideSampling",
         "method": "POST",
-        "path": "/v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling",
+        "path": "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling",
         "auth": "product",
         "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "trace_id"
+          "tenantId",
+          "projectId",
+          "traceId"
         ],
         "body": [
-          "high_cost_micros_threshold",
-          "keep_errors",
-          "sample_rate_per_mille",
-          "slow_ms_threshold"
+          "highCostMicrosThreshold",
+          "keepErrors",
+          "sampleRatePerMille",
+          "slowMsThreshold"
         ],
         "requiredBody": [
-          "sample_rate_per_mille",
-          "keep_errors"
+          "sampleRatePerMille",
+          "keepErrors"
         ],
         "upstreamOperationId": "online.decideSampling"
       },
       {
         "id": "promptsList",
         "method": "GET",
-        "path": "/v1/prompts/{tenant_id}/{project_id}",
+        "path": "/v1/prompts/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "prompts.list",
         "query": [
@@ -1994,15 +1994,15 @@
       {
         "id": "promptsCreate",
         "method": "POST",
-        "path": "/v1/prompts/{tenant_id}/{project_id}",
+        "path": "/v1/prompts/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call POST /v1/prompts/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "created_by",
+          "createdBy",
           "description",
           "message",
           "name",
@@ -2017,26 +2017,26 @@
       {
         "id": "promptsGet",
         "method": "GET",
-        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}",
+        "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}",
         "auth": "product",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "prompt_id"
+          "tenantId",
+          "projectId",
+          "promptId"
         ],
         "upstreamOperationId": "prompts.get"
       },
       {
         "id": "promptsDiffVersions",
         "method": "GET",
-        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff",
+        "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff",
         "auth": "product",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "prompt_id"
+          "tenantId",
+          "projectId",
+          "promptId"
         ],
         "query": [
           "from",
@@ -2047,13 +2047,13 @@
       {
         "id": "promptsListVersions",
         "method": "GET",
-        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+        "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
         "auth": "product",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "prompt_id"
+          "tenantId",
+          "projectId",
+          "promptId"
         ],
         "upstreamOperationId": "prompts.listVersions",
         "query": [
@@ -2064,16 +2064,16 @@
       {
         "id": "promptsAddVersion",
         "method": "POST",
-        "path": "/v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions",
+        "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
         "auth": "product",
         "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "prompt_id"
+          "tenantId",
+          "projectId",
+          "promptId"
         ],
         "body": [
-          "created_by",
+          "createdBy",
           "message",
           "template"
         ],
@@ -2085,12 +2085,12 @@
       {
         "id": "providerSecretsList",
         "method": "GET",
-        "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+        "path": "/v1/provider-secrets/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "upstreamOperationId": "providerSecrets.list",
         "query": [
@@ -2101,69 +2101,69 @@
       {
         "id": "providerSecretsCreate",
         "method": "POST",
-        "path": "/v1/provider-secrets/{tenant_id}/{project_id}",
+        "path": "/v1/provider-secrets/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "display_name",
+          "displayName",
           "provider",
-          "secret_value"
+          "secretValue"
         ],
         "requiredBody": [
           "provider",
-          "display_name",
-          "secret_value"
+          "displayName",
+          "secretValue"
         ],
         "upstreamOperationId": "providerSecrets.create"
       },
       {
         "id": "providerSecretsRevoke",
         "method": "POST",
-        "path": "/v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke",
+        "path": "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke",
         "auth": "product",
         "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "provider_secret_id"
+          "tenantId",
+          "projectId",
+          "providerSecretId"
         ],
         "upstreamOperationId": "providerSecrets.revoke"
       },
       {
         "id": "reviewsCreateQueue",
         "method": "POST",
-        "path": "/v1/review-queues/{tenant_id}/{project_id}",
+        "path": "/v1/review-queues/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "annotation_schema",
+          "annotationSchema",
           "name",
-          "queue_id"
+          "queueId"
         ],
         "requiredBody": [
           "name",
-          "annotation_schema"
+          "annotationSchema"
         ],
         "upstreamOperationId": "reviews.createQueue"
       },
       {
         "id": "reviewsListTasks",
         "method": "GET",
-        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks",
+        "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks",
         "auth": "product",
         "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "queue_id"
+          "tenantId",
+          "projectId",
+          "queueId"
         ],
         "query": [
           "state",
@@ -2175,47 +2175,47 @@
       {
         "id": "reviewsEnqueueTaskFromTrace",
         "method": "POST",
-        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace",
+        "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace",
         "auth": "product",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "queue_id"
+          "tenantId",
+          "projectId",
+          "queueId"
         ],
         "body": [
-          "dataset_case_id",
-          "dataset_id",
+          "datasetCaseId",
+          "datasetId",
           "priority",
-          "span_id",
-          "task_id",
-          "trace_id"
+          "spanId",
+          "taskId",
+          "traceId"
         ],
         "requiredBody": [
-          "trace_id"
+          "traceId"
         ],
         "upstreamOperationId": "reviews.enqueueTaskFromTrace"
       },
       {
         "id": "reviewsSubmitAnnotation",
         "method": "POST",
-        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations",
+        "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations",
         "auth": "product",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "queue_id",
-          "task_id"
+          "tenantId",
+          "projectId",
+          "queueId",
+          "taskId"
         ],
         "body": [
-          "annotation_id",
+          "annotationId",
           "payload",
-          "reviewer_id",
+          "reviewerId",
           "verdict"
         ],
         "requiredBody": [
-          "reviewer_id",
+          "reviewerId",
           "verdict",
           "payload"
         ],
@@ -2224,34 +2224,34 @@
       {
         "id": "reviewsPromoteAnnotation",
         "method": "POST",
-        "path": "/v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote",
+        "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote",
         "auth": "product",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "queue_id",
-          "task_id",
-          "annotation_id"
+          "tenantId",
+          "projectId",
+          "queueId",
+          "taskId",
+          "annotationId"
         ],
         "body": [
-          "dataset_id",
+          "datasetId",
           "reference"
         ],
         "requiredBody": [
-          "dataset_id"
+          "datasetId"
         ],
         "upstreamOperationId": "reviews.promoteAnnotation"
       },
       {
         "id": "scenariosList",
         "method": "GET",
-        "path": "/v1/scenarios/{tenant_id}/{project_id}",
+        "path": "/v1/scenarios/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "query": [
           "pageSize",
@@ -2262,72 +2262,72 @@
       {
         "id": "scenariosCreate",
         "method": "POST",
-        "path": "/v1/scenarios/{tenant_id}/{project_id}",
+        "path": "/v1/scenarios/{tenantId}/{projectId}",
         "auth": "product",
         "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "exemplar_trace_id",
-          "expected_outcome",
-          "failure_mode",
-          "source_trace_ids",
+          "exemplarTraceId",
+          "expectedOutcome",
+          "failureMode",
+          "sourceTraceIds",
           "title"
         ],
         "requiredBody": [
           "title",
-          "source_trace_ids"
+          "sourceTraceIds"
         ],
         "upstreamOperationId": "scenarios.create"
       },
       {
         "id": "scenariosMine",
         "method": "POST",
-        "path": "/v1/scenarios/{tenant_id}/{project_id}/mine",
+        "path": "/v1/scenarios/{tenantId}/{projectId}/mine",
         "auth": "product",
         "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "body": [
-          "jaccard_threshold",
-          "trace_ids"
+          "jaccardThreshold",
+          "traceIds"
         ],
         "requiredBody": [
-          "trace_ids"
+          "traceIds"
         ],
         "upstreamOperationId": "scenarios.mine"
       },
       {
         "id": "scenariosGet",
         "method": "GET",
-        "path": "/v1/scenarios/{tenant_id}/{project_id}/{scenario_id}",
+        "path": "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}",
         "auth": "product",
         "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
         "pathParams": [
-          "tenant_id",
-          "project_id",
-          "scenario_id"
+          "tenantId",
+          "projectId",
+          "scenarioId"
         ],
         "upstreamOperationId": "scenarios.get"
       },
       {
         "id": "searchSpans",
         "method": "GET",
-        "path": "/v1/search/{tenant_id}/spans",
+        "path": "/v1/search/{tenantId}/spans",
         "auth": "product",
         "pathParams": [
-          "tenant_id"
+          "tenantId"
         ],
         "query": [
           "q",
-          "project_id",
-          "environment_id",
-          "trace_id",
-          "span_id",
+          "projectId",
+          "environmentId",
+          "traceId",
+          "spanId",
           "kind",
           "status",
           "model",
@@ -2342,12 +2342,12 @@
       {
         "id": "getSpan",
         "method": "GET",
-        "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}",
+        "path": "/v1/spans/{tenantId}/{traceId}/{spanId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "trace_id",
-          "span_id"
+          "tenantId",
+          "traceId",
+          "spanId"
         ],
         "query": [
           "unmask",
@@ -2360,12 +2360,12 @@
       {
         "id": "getSpanIo",
         "method": "GET",
-        "path": "/v1/spans/{tenant_id}/{trace_id}/{span_id}/io",
+        "path": "/v1/spans/{tenantId}/{traceId}/{spanId}/io",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "trace_id",
-          "span_id"
+          "tenantId",
+          "traceId",
+          "spanId"
         ],
         "query": [
           "unmask",
@@ -2385,62 +2385,62 @@
         ],
         "body": [
           "attributes",
-          "auth_context",
+          "authContext",
           "cost",
-          "end_time",
-          "idempotency_key",
+          "endTime",
+          "idempotencyKey",
           "input",
           "kind",
           "model",
           "name",
           "output",
-          "parent_span_id",
-          "redaction_class",
+          "parentSpanId",
+          "redactionClass",
           "scope",
           "seq",
-          "span_id",
-          "start_time",
+          "spanId",
+          "startTime",
           "status",
           "tokens",
-          "trace_id"
+          "traceId"
         ],
         "scope": "trace:write",
         "description": "Ingest one native span; idempotent when an idempotency key is supplied.",
         "requiredBody": [
           "scope",
-          "trace_id",
-          "span_id",
+          "traceId",
+          "spanId",
           "seq",
           "kind",
           "name",
           "status",
           "attributes",
-          "redaction_class"
+          "redactionClass"
         ],
         "upstreamOperationId": "ingest.native"
       },
       {
         "id": "listTraces",
         "method": "GET",
-        "path": "/v1/traces/{tenant_id}",
+        "path": "/v1/traces/{tenantId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id"
+          "tenantId"
         ],
         "query": [
-          "project_id",
-          "environment_id",
-          "trace_id",
+          "projectId",
+          "environmentId",
+          "traceId",
           "kind",
           "status",
-          "started_after",
-          "started_before",
+          "startedAfter",
+          "startedBefore",
           "model",
           "release",
-          "min_cost_micros",
-          "max_cost_micros",
-          "min_latency_ms",
-          "max_latency_ms",
+          "minCostMicros",
+          "maxCostMicros",
+          "minLatencyMs",
+          "maxLatencyMs",
           "pageSize",
           "pageToken"
         ],
@@ -2451,11 +2451,11 @@
       {
         "id": "getTrace",
         "method": "GET",
-        "path": "/v1/traces/{tenant_id}/{trace_id}",
+        "path": "/v1/traces/{tenantId}/{traceId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "trace_id"
+          "tenantId",
+          "traceId"
         ],
         "query": [
           "unmask",
@@ -2468,11 +2468,11 @@
       {
         "id": "getUsageSummary",
         "method": "GET",
-        "path": "/v1/usage/{tenant_id}/{project_id}",
+        "path": "/v1/usage/{tenantId}/{projectId}",
         "auth": "product",
         "pathParams": [
-          "tenant_id",
-          "project_id"
+          "tenantId",
+          "projectId"
         ],
         "scope": "admin",
         "description": "Fetch usage totals for a tenant project.",
@@ -2495,14 +2495,6 @@
         "auth": "product",
         "description": "Call GET /.well-known/agent.json.",
         "upstreamOperationId": "agentJson"
-      },
-      {
-        "id": "drain",
-        "method": "POST",
-        "path": "/drain",
-        "auth": "product",
-        "description": "Call POST /drain.",
-        "upstreamOperationId": "drain"
       },
       {
         "id": "health",
@@ -2537,12 +2529,22 @@
         "upstreamOperationId": "ready"
       },
       {
+        "id": "drain",
+        "method": "POST",
+        "path": "/v1/drain",
+        "auth": "product",
+        "description": "Call POST /drain.",
+        "upstreamOperationId": "drain"
+      },
+      {
         "id": "listRuns",
         "method": "GET",
-        "path": "/runs",
+        "path": "/v1/runs",
         "auth": "product",
         "query": [
-          "session_id"
+          "sessionId",
+          "pageSize",
+          "pageToken"
         ],
         "description": "List agent runs, optionally filtered to one session.",
         "upstreamOperationId": "listRuns"
@@ -2550,46 +2552,46 @@
       {
         "id": "getRun",
         "method": "GET",
-        "path": "/runs/{run_id}",
+        "path": "/v1/runs/{runId}",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Fetch one agent run with its state.",
         "upstreamOperationId": "getRun"
       },
       {
+        "id": "runEvents",
+        "method": "GET",
+        "path": "/v1/runs/{runId}/events",
+        "auth": "product",
+        "description": "Call GET /runs/{run_id}/events.",
+        "upstreamOperationId": "runEvents",
+        "pathParams": [
+          "runId"
+        ],
+        "query": [
+          "afterSeq"
+        ]
+      },
+      {
         "id": "cancelRun",
         "method": "POST",
-        "path": "/runs/{run_id}/cancel",
+        "path": "/v1/runs/{runId}:cancel",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Cancel an agent run.",
         "upstreamOperationId": "cancelRun"
       },
       {
-        "id": "runEvents",
-        "method": "GET",
-        "path": "/runs/{run_id}/events",
-        "auth": "product",
-        "description": "Call GET /runs/{run_id}/events.",
-        "upstreamOperationId": "runEvents",
-        "pathParams": [
-          "run_id"
-        ],
-        "query": [
-          "after_seq"
-        ]
-      },
-      {
         "id": "resumeRun",
         "method": "POST",
-        "path": "/runs/{run_id}/resume",
+        "path": "/v1/runs/{runId}:resume",
         "auth": "product",
         "pathParams": [
-          "run_id"
+          "runId"
         ],
         "description": "Resume an agent run after a human handoff completes.",
         "upstreamOperationId": "resumeRun"
@@ -2597,15 +2599,19 @@
       {
         "id": "listSessions",
         "method": "GET",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "product",
         "description": "List browser sessions with their state and creation time.",
-        "upstreamOperationId": "listSessions"
+        "upstreamOperationId": "listSessions",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createSession",
         "method": "POST",
-        "path": "/sessions",
+        "path": "/v1/sessions",
         "auth": "product",
         "body": [
           "driverless",
@@ -2620,29 +2626,114 @@
       {
         "id": "closeSession",
         "method": "DELETE",
-        "path": "/sessions/{session_id}",
+        "path": "/v1/sessions/{sessionId}",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Close a browser session and release its engine resources.",
         "upstreamOperationId": "closeSession"
       },
       {
-        "id": "actBatch",
+        "id": "grantConfirmation",
         "method": "POST",
-        "path": "/sessions/{session_id}/act_batch",
+        "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId",
+          "confirmationId"
+        ],
+        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
+        "upstreamOperationId": "grantSessionConfirmation"
+      },
+      {
+        "id": "sessionEvents",
+        "method": "GET",
+        "path": "/v1/sessions/{sessionId}/events",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
+        ],
+        "query": [
+          "afterSeq"
+        ],
+        "description": "Fetch the session's event window after a sequence number.",
+        "upstreamOperationId": "sessionEvents"
+      },
+      {
+        "id": "managerSession",
+        "method": "GET",
+        "path": "/v1/sessions/{sessionId}/manager",
+        "auth": "product",
+        "description": "Call GET /sessions/{session_id}/manager.",
+        "upstreamOperationId": "managerSession",
+        "pathParams": [
+          "sessionId"
+        ]
+      },
+      {
+        "id": "createRun",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}/runs",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
+        ],
+        "body": [
+          "actions",
+          "goal",
+          "maxRounds",
+          "tokenBudget"
+        ],
+        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
+        "upstreamOperationId": "createSessionRun"
+      },
+      {
+        "id": "registerSessionSurface",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}/surfaces",
+        "auth": "product",
+        "description": "Call POST /sessions/{session_id}/surfaces.",
+        "upstreamOperationId": "registerSessionSurface",
+        "pathParams": [
+          "sessionId"
+        ],
+        "body": [
+          "engineTier",
+          "label",
+          "platform",
+          "profileId",
+          "storageContinuity",
+          "surfaceId"
+        ]
+      },
+      {
+        "id": "removeSessionSurface",
+        "method": "DELETE",
+        "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
+        "auth": "product",
+        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
+        "upstreamOperationId": "removeSessionSurface",
+        "pathParams": [
+          "sessionId",
+          "surfaceId"
+        ]
+      },
+      {
+        "id": "actBatch",
+        "method": "POST",
+        "path": "/v1/sessions/{sessionId}:actBatch",
+        "auth": "product",
+        "pathParams": [
+          "sessionId"
         ],
         "body": [
           "batch",
-          "confirmation_grant",
+          "confirmationGrant",
           "confirmed",
-          "idempotency_key",
-          "input_tainted",
-          "payment_context"
+          "idempotencyKey",
+          "inputTainted",
+          "paymentContext"
         ],
         "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
         "upstreamOperationId": "actBatchSession",
@@ -2653,156 +2744,71 @@
       {
         "id": "adoptSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/adopt",
+        "path": "/v1/sessions/{sessionId}:adopt",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Let a human surface take write ownership of the session and receive an adoption lease.",
         "upstreamOperationId": "adoptSession",
         "body": [
-          "engine_tier",
+          "engineTier",
           "label",
           "platform",
-          "profile_id",
-          "storage_continuity",
-          "surface_id"
+          "profileId",
+          "storageContinuity",
+          "surfaceId"
         ]
-      },
-      {
-        "id": "grantConfirmation",
-        "method": "POST",
-        "path": "/sessions/{session_id}/confirmations/{confirmation_id}",
-        "auth": "product",
-        "pathParams": [
-          "session_id",
-          "confirmation_id"
-        ],
-        "description": "Grant a pending policy confirmation and receive a single-use grant token.",
-        "upstreamOperationId": "grantSessionConfirmation"
-      },
-      {
-        "id": "sessionEvents",
-        "method": "GET",
-        "path": "/sessions/{session_id}/events",
-        "auth": "product",
-        "pathParams": [
-          "session_id"
-        ],
-        "query": [
-          "after_seq"
-        ],
-        "description": "Fetch the session's event window after a sequence number.",
-        "upstreamOperationId": "sessionEvents"
       },
       {
         "id": "handoffSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/handoff",
+        "path": "/v1/sessions/{sessionId}:handoff",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Return write ownership of the session to the agent plane.",
         "upstreamOperationId": "handoffSession"
       },
       {
-        "id": "managerSession",
-        "method": "GET",
-        "path": "/sessions/{session_id}/manager",
-        "auth": "product",
-        "description": "Call GET /sessions/{session_id}/manager.",
-        "upstreamOperationId": "managerSession",
-        "pathParams": [
-          "session_id"
-        ]
-      },
-      {
         "id": "observe",
         "method": "GET",
-        "path": "/sessions/{session_id}/observe",
+        "path": "/v1/sessions/{sessionId}:observe",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
         "upstreamOperationId": "observeSession"
       },
       {
-        "id": "createRun",
-        "method": "POST",
-        "path": "/sessions/{session_id}/runs",
-        "auth": "product",
-        "pathParams": [
-          "session_id"
-        ],
-        "body": [
-          "actions",
-          "goal",
-          "max_rounds",
-          "token_budget"
-        ],
-        "description": "Start an agent run against the session with a goal, action budget, and round limit.",
-        "upstreamOperationId": "createSessionRun"
-      },
-      {
         "id": "screenshot",
         "method": "GET",
-        "path": "/sessions/{session_id}/screenshot",
+        "path": "/v1/sessions/{sessionId}:screenshot",
         "auth": "product",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "query": [
-          "set_of_marks"
+          "setOfMarks"
         ],
         "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
         "upstreamOperationId": "screenshotSession"
       },
       {
-        "id": "registerSessionSurface",
-        "method": "POST",
-        "path": "/sessions/{session_id}/surfaces",
-        "auth": "product",
-        "description": "Call POST /sessions/{session_id}/surfaces.",
-        "upstreamOperationId": "registerSessionSurface",
-        "pathParams": [
-          "session_id"
-        ],
-        "body": [
-          "engine_tier",
-          "label",
-          "platform",
-          "profile_id",
-          "storage_continuity",
-          "surface_id"
-        ]
-      },
-      {
-        "id": "removeSessionSurface",
-        "method": "DELETE",
-        "path": "/sessions/{session_id}/surfaces/{surface_id}",
-        "auth": "product",
-        "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
-        "upstreamOperationId": "removeSessionSurface",
-        "pathParams": [
-          "session_id",
-          "surface_id"
-        ]
-      },
-      {
         "id": "transformSession",
         "method": "POST",
-        "path": "/sessions/{session_id}/transform",
+        "path": "/v1/sessions/{sessionId}:transform",
         "auth": "product",
         "description": "Call POST /sessions/{session_id}/transform.",
         "upstreamOperationId": "transformSession",
         "pathParams": [
-          "session_id"
+          "sessionId"
         ],
         "body": [
           "determinism",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "source",
@@ -3493,10 +3499,10 @@
         "description": "Call POST /v1/browser/adapter/capability.",
         "body": [
           "actor",
-          "adapter_id",
-          "sensitive_activity_mode",
+          "adapterId",
+          "sensitiveActivityMode",
           "sensitivity",
-          "ttl_seconds"
+          "ttlSeconds"
         ],
         "requiredBody": [
           "actor",
@@ -3511,27 +3517,27 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/completion/validate.",
         "body": [
-          "adapter_id",
-          "contract_version",
-          "egress_log_sealed_or_discarded",
+          "adapterId",
+          "contractVersion",
+          "egressLogSealedOrDiscarded",
           "notes",
-          "plaintext_artifacts_removed",
-          "process_terminated",
-          "proof_ids",
-          "request_id",
-          "sealed_artifact_handles",
-          "temporary_profile_removed"
+          "plaintextArtifactsRemoved",
+          "processTerminated",
+          "proofIds",
+          "requestId",
+          "sealedArtifactHandles",
+          "temporaryProfileRemoved"
         ],
         "requiredBody": [
-          "request_id",
-          "adapter_id",
-          "contract_version",
-          "process_terminated",
-          "temporary_profile_removed",
-          "plaintext_artifacts_removed",
-          "egress_log_sealed_or_discarded",
-          "sealed_artifact_handles",
-          "proof_ids",
+          "requestId",
+          "adapterId",
+          "contractVersion",
+          "processTerminated",
+          "temporaryProfileRemoved",
+          "plaintextArtifactsRemoved",
+          "egressLogSealedOrDiscarded",
+          "sealedArtifactHandles",
+          "proofIds",
           "notes"
         ],
         "upstreamOperationId": "projects.browserAdapters.validateCompletion"
@@ -3551,10 +3557,10 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/launch/claim.",
         "body": [
-          "launch_request"
+          "launchRequest"
         ],
         "requiredBody": [
-          "launch_request"
+          "launchRequest"
         ],
         "upstreamOperationId": "projects.browserAdapters.claimLaunch"
       },
@@ -3567,10 +3573,10 @@
         "body": [
           "admission",
           "manifest",
-          "same_user_capability"
+          "sameUserCapability"
         ],
         "requiredBody": [
-          "same_user_capability",
+          "sameUserCapability",
           "admission",
           "manifest"
         ],
@@ -3585,13 +3591,13 @@
         "body": [
           "actor",
           "manifest",
-          "same_user_capability",
+          "sameUserCapability",
           "sensitivity"
         ],
         "requiredBody": [
           "actor",
           "sensitivity",
-          "same_user_capability",
+          "sameUserCapability",
           "manifest"
         ],
         "upstreamOperationId": "projects.browserAdapters.register"
@@ -3603,22 +3609,22 @@
         "auth": "product",
         "description": "Call POST /v1/browser/adapter/validate.",
         "body": [
-          "adapter_id",
-          "completion_proofs",
-          "contract_version",
-          "guard_fields",
-          "launch_endpoint",
-          "supported_controls",
-          "supported_levels"
+          "adapterId",
+          "completionProofs",
+          "contractVersion",
+          "guardFields",
+          "launchEndpoint",
+          "supportedControls",
+          "supportedLevels"
         ],
         "requiredBody": [
-          "adapter_id",
-          "contract_version",
-          "launch_endpoint",
-          "supported_levels",
-          "supported_controls",
-          "guard_fields",
-          "completion_proofs"
+          "adapterId",
+          "contractVersion",
+          "launchEndpoint",
+          "supportedLevels",
+          "supportedControls",
+          "guardFields",
+          "completionProofs"
         ],
         "upstreamOperationId": "projects.browserAdapters.validate"
       },
@@ -3629,19 +3635,19 @@
         "auth": "product",
         "body": [
           "actor",
-          "allow_downgrade",
-          "artifact_mode",
-          "credential_mode",
-          "requested_level",
-          "required_controls",
-          "sensitive_activity_mode",
+          "allowDowngrade",
+          "artifactMode",
+          "credentialMode",
+          "requestedLevel",
+          "requiredControls",
+          "sensitiveActivityMode",
           "sensitivity",
-          "target_origins",
-          "task_label"
+          "targetOrigins",
+          "taskLabel"
         ],
         "description": "Request admission for a browser session at a sandbox level and receive the guard plan.",
         "requiredBody": [
-          "requested_level",
+          "requestedLevel",
           "actor",
           "sensitivity"
         ],
@@ -3670,7 +3676,7 @@
         "auth": "product",
         "body": [
           "entrypoint",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "policy",
@@ -3707,7 +3713,7 @@
         "auth": "product",
         "body": [
           "entrypoint",
-          "idempotency_key",
+          "idempotencyKey",
           "input",
           "lane",
           "policy",
@@ -3722,17 +3728,6 @@
         "upstreamOperationId": "projects.jobs.create"
       },
       {
-        "id": "getJob",
-        "method": "GET",
-        "path": "/v1/jobs/{id}",
-        "auth": "product",
-        "pathParams": [
-          "id"
-        ],
-        "description": "Fetch a sandbox job's status and result.",
-        "upstreamOperationId": "projects.jobs.get"
-      },
-      {
         "id": "cancelJob",
         "method": "DELETE",
         "path": "/v1/jobs/{id}",
@@ -3744,6 +3739,17 @@
         "upstreamOperationId": "projects.jobs.cancel"
       },
       {
+        "id": "getJob",
+        "method": "GET",
+        "path": "/v1/jobs/{id}",
+        "auth": "product",
+        "pathParams": [
+          "id"
+        ],
+        "description": "Fetch a sandbox job's status and result.",
+        "upstreamOperationId": "projects.jobs.get"
+      },
+      {
         "id": "projectsModulesCreate",
         "method": "POST",
         "path": "/v1/projects/{project}/modules",
@@ -3753,10 +3759,10 @@
           "project"
         ],
         "body": [
-          "bytes_base64"
+          "bytesBase64"
         ],
         "requiredBody": [
-          "bytes_base64"
+          "bytesBase64"
         ],
         "upstreamOperationId": "projects.modules.create"
       },
@@ -3828,7 +3834,8 @@
         "path": "/v1/audit",
         "auth": "product",
         "query": [
-          "limit"
+          "pageSize",
+          "pageToken"
         ],
         "description": "List recent service audit events (default 100, maximum 500).",
         "upstreamOperationId": "listAudit"
@@ -3839,19 +3846,19 @@
         "path": "/v1/remember",
         "auth": "product",
         "body": [
-          "tenant_id",
-          "project_id",
-          "environment_id",
+          "tenantId",
+          "projectId",
+          "environmentId",
           "kind",
           "text",
-          "idempotency_key",
+          "idempotencyKey",
           "project"
         ],
         "description": "Write one memory event into the tenant and project ledger.",
         "upstreamOperationId": "remember",
         "requiredBody": [
-          "tenant_id",
-          "project_id",
+          "tenantId",
+          "projectId",
           "kind",
           "text"
         ]
@@ -3875,12 +3882,12 @@
         "body": [
           "question",
           "scope",
-          "max_tokens",
-          "require_fresh",
+          "maxTokens",
+          "requireFresh",
           "modes",
-          "reconstruction_mode",
-          "max_reconstruction_steps",
-          "max_reconstruction_tokens"
+          "reconstructionMode",
+          "maxReconstructionSteps",
+          "maxReconstructionTokens"
         ],
         "description": "Answer a scoped memory question with evidence and reconstruction metadata.",
         "upstreamOperationId": "query",
@@ -3896,9 +3903,9 @@
         "auth": "product",
         "body": [
           "vacuum",
-          "repair_orphans",
-          "prune_audit_before_unix_ms",
-          "retain_latest_audit_events"
+          "repairOrphans",
+          "pruneAuditBeforeUnixMs",
+          "retainLatestAuditEvents"
         ],
         "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
         "upstreamOperationId": "maintenance"

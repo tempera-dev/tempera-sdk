@@ -12,9 +12,14 @@ producer contract and fails when:
 - an unreviewed resource route lives outside `/v1`;
 - an ordinary resource method uses `PUT`;
 - path or query parameters are not lowerCamelCase;
+- JSON request or response fields reachable from an ordinary resource method
+  are not lowerCamelCase;
 - a colon custom verb is not lowerCamelCase;
 - a List method omits `pageSize` or `pageToken`;
 - a PATCH method omits `updateMask`;
+- an ordinary resource operation omits a `google.rpc.Status`-compatible JSON
+  error envelope with numeric `error.code`, string `error.status` and
+  `error.message`, and array `error.details`;
 - a recorded violation disappears without removing its stale exception; or
 - the baseline review date expires.
 
@@ -59,8 +64,18 @@ This order avoids cosmetic renames that leave runtime behavior non-conformant.
 
 MCP/JSON-RPC, OAuth form and redirect routes, OTLP collectors, inbound
 webhooks, WebSocket/BiDi, SSE, well-known metadata, health, readiness, and
-metrics endpoints retain their native protocol semantics. Their exact paths
-are recorded in the baseline and do not authorize new resource-API exceptions.
+metrics endpoints retain their native protocol semantics. Tempera LLM's
+`/v1/chat/completions`, `/v1/responses`, and `/v1/models` routes likewise
+retain the OpenAI-compatible JSON field names required by existing clients.
+OAuth introspection retains the RFC 7662 wire contract even at its exact
+versioned Auth Hub operation. Auth Hub's session, workspace-selection,
+staff-step-up, and OAuth-grant management operations retain embedded OAuth
+token/grant response vocabulary while their resource paths, parameters,
+pagination, and AIP-193 errors remain governed by the resource rules.
+
+Exact path, operation, and JSON-only exceptions are recorded separately in the
+baseline. This prevents a protocol response from exempting unrelated methods or
+other AIP rules and does not authorize new resource-API exceptions.
 
 Reference policy:
 

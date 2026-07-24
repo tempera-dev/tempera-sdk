@@ -3,21 +3,21 @@
   "operations": [
     {
       "body": [
-        "canonical_json",
-        "public_key_pem",
-        "signature_base64"
+        "canonicalJson",
+        "publicKeyPem",
+        "signatureBase64"
       ],
       "method": "POST",
       "operationId": "evalResults.importTemperaBundle",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/bundles",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
+        "canonicalJson",
+        "signatureBase64",
+        "publicKeyPem"
       ],
       "responseCodes": [
         "200",
@@ -33,21 +33,21 @@
     },
     {
       "body": [
-        "canonical_json",
-        "public_key_pem",
-        "signature_base64"
+        "canonicalJson",
+        "publicKeyPem",
+        "signatureBase64"
       ],
       "method": "POST",
       "operationId": "evalResults.recordTemperaDecision",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/decisions",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
       "pathParams": [
-        "tenant_id",
-        "project_id"
+        "tenantId",
+        "projectId"
       ],
       "requiredBody": [
-        "canonical_json",
-        "signature_base64",
-        "public_key_pem"
+        "canonicalJson",
+        "signatureBase64",
+        "publicKeyPem"
       ],
       "responseCodes": [
         "200",
@@ -65,12 +65,12 @@
       "body": [],
       "method": "GET",
       "operationId": "evalResults.getTemperaEvidence",
-      "path": "/v1/eval-results/{tenant_id}/{project_id}/tempera/{kind}/{external_id}",
+      "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}",
       "pathParams": [
-        "tenant_id",
-        "project_id",
+        "tenantId",
+        "projectId",
         "kind",
-        "external_id"
+        "externalId"
       ],
       "requiredBody": [],
       "responseCodes": [
@@ -87,10 +87,10 @@
   "repository": "https://github.com/tempera-dev/palette",
   "requestSchema": "#/components/schemas/ImportTemperaEvidenceRequest",
   "requiredScope": "eval:run",
-  "reviewUrl": "https://github.com/tempera-dev/palette/pull/22",
-  "revision": "55532b2cf3fb1b228b4d6620a3aa88899c262f12",
+  "reviewUrl": "https://github.com/tempera-dev/palette/pull/23",
+  "revision": "332a6ea6baafbf19511dc6dee5077dd62cc9b0ad",
   "schemaVersion": 1,
-  "sourceBlob": "32e5aed508a963fdd4e7af153c81190475beeac8",
+  "sourceBlob": "ef6ccc33b3dad70c15d89c89190b877e8c342746",
   "sourcePath": "sdks/openapi/palette-api.json",
-  "sourceSha256": "sha256:18942d5e2c26332b40050cda5a882540f14d914d717d5b94342a0afb72001dd0"
+  "sourceSha256": "sha256:136074a04219ea2bb96a70674afdbad4eec142c971f7c100ae0ab9db212fc5b7"
 }

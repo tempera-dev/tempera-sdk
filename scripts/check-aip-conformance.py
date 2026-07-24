@@ -59,7 +59,13 @@ PROTOCOL_EXCEPTIONS = {
     ("remi", "/livez"),
     ("remi", "/readyz"),
     ("temperaGym", "/healthz"),
+    # These routes intentionally implement OpenAI's public wire contract so
+    # existing OpenAI-compatible clients can use Tempera LLM unchanged.
+    ("temperaLlm", "/v1/chat/completions"),
+    ("temperaLlm", "/v1/models"),
+    ("temperaLlm", "/v1/responses"),
     ("temperaLlm", "/healthz"),
+    ("temperaLlm", "/readyz"),
     ("temperaWorkflows", "/healthz"),
     ("tempo", "/health"),
     ("tempo", "/ready"),
@@ -71,10 +77,25 @@ PROTOCOL_EXCEPTIONS = {
 PROTOCOL_PREFIX_EXCEPTIONS = {
     ("controlPlane", "/.well-known/"),
     ("palette", "/v1/otlp/"),
+    ("tempo", "/.well-known/"),
 }
 PROTOCOL_SUFFIX_EXCEPTIONS = {
     ("temperaWorkflows", "/events"),
     ("tempo", "/bidi"),
+}
+# Exact operations that implement an externally defined protocol even though
+# they live below a versioned product path. OAuth token introspection is defined
+# by RFC 7662, including its snake_case members and inactive-token response.
+PROTOCOL_OPERATION_EXCEPTIONS = {
+    ("controlPlane", "POST", "/v1/oauth/introspect"),
+}
+# Resource operations may deliberately return an embedded protocol payload.
+# Continue checking their path, parameters, pagination, and AIP-193 errors, but
+# do not reinterpret the OAuth token vocabulary as resource-message debt.
+PROTOCOL_JSON_EXCEPTIONS = {
+    ("controlPlane", "POST", "/v1/admin/step-up"),
+    ("controlPlane", "POST", "/v1/sessions"),
+    ("controlPlane", "POST", "/v1/workspace/select"),
 }
 
 RULES = {
@@ -90,6 +111,10 @@ RULES = {
         "aip": "https://google.aip.dev/127",
         "summary": "Public path and query parameter names use lowerCamelCase.",
     },
+    "aip-127-lower-camel-json-fields": {
+        "aip": "https://google.aip.dev/127",
+        "summary": "Public request and response JSON field names use lowerCamelCase.",
+    },
     "aip-136-lower-camel-custom-verb": {
         "aip": "https://google.aip.dev/136",
         "summary": "Colon custom verbs use lowerCamelCase.",
@@ -101,6 +126,10 @@ RULES = {
     "aip-161-update-mask": {
         "aip": "https://google.aip.dev/161",
         "summary": "PATCH update methods accept updateMask.",
+    },
+    "aip-193-standard-errors": {
+        "aip": "https://google.aip.dev/193",
+        "summary": "HTTP errors use google.rpc.Status-compatible JSON semantics.",
     },
 }
 
@@ -119,23 +148,206 @@ def is_protocol_exception(product: str, path: str) -> bool:
     )
 
 
-def resolve_local_reference(
-    value: dict[str, Any], document: dict[str, Any]
+def resolve_parameter(
+    parameter: dict[str, Any], spec: dict[str, Any]
 ) -> dict[str, Any]:
+    """Resolve local OpenAPI component parameter references for inspection."""
+    reference = parameter.get("$ref")
+    if not isinstance(reference, str):
+        return parameter
+    prefix = "#/components/parameters/"
+    if not reference.startswith(prefix):
+        return parameter
+    name = reference.removeprefix(prefix).replace("~1", "/").replace("~0", "~")
+    resolved = ((spec.get("components") or {}).get("parameters") or {}).get(name)
+    return resolved if isinstance(resolved, dict) else parameter
+
+
+def resolve_local_reference(
+    value: dict[str, Any], spec: dict[str, Any]
+) -> tuple[dict[str, Any], str | None]:
+    """Resolve a local JSON Pointer reference and return its stable identity."""
     reference = value.get("$ref")
     if not isinstance(reference, str) or not reference.startswith("#/"):
-        return value
-    resolved: Any = document
+        return value, None
+    resolved: Any = spec
     try:
         for token in reference[2:].split("/"):
             resolved = resolved[token.replace("~1", "/").replace("~0", "~")]
     except (KeyError, TypeError):
-        return value
-    return resolved if isinstance(resolved, dict) else value
+        return value, None
+    return (resolved, reference) if isinstance(resolved, dict) else (value, None)
+
+
+def schema_property_names(
+    schema: dict[str, Any],
+    spec: dict[str, Any],
+    seen_references: set[str] | None = None,
+) -> set[str]:
+    """Collect JSON property names recursively from an OpenAPI schema."""
+    seen = set() if seen_references is None else seen_references
+    resolved, reference = resolve_local_reference(schema, spec)
+    if reference is not None:
+        if reference in seen:
+            return set()
+        seen.add(reference)
+
+    names = {
+        name
+        for name in (resolved.get("properties") or {})
+        if isinstance(name, str)
+    }
+    for child in (resolved.get("properties") or {}).values():
+        if isinstance(child, dict):
+            names.update(schema_property_names(child, spec, seen))
+    items = resolved.get("items")
+    if isinstance(items, dict):
+        names.update(schema_property_names(items, spec, seen))
+    additional = resolved.get("additionalProperties")
+    if isinstance(additional, dict):
+        names.update(schema_property_names(additional, spec, seen))
+    for keyword in ("allOf", "anyOf", "oneOf"):
+        for child in resolved.get(keyword) or []:
+            if isinstance(child, dict):
+                names.update(schema_property_names(child, spec, seen))
+    return names
+
+
+def operation_json_property_names(
+    operation: dict[str, Any], spec: dict[str, Any]
+) -> set[str]:
+    """Collect wire JSON fields reachable from request and response bodies."""
+    names: set[str] = set()
+    body_containers: list[dict[str, Any]] = []
+    request_body = operation.get("requestBody")
+    if isinstance(request_body, dict):
+        resolved, _ = resolve_local_reference(request_body, spec)
+        body_containers.append(resolved)
+    for response in (operation.get("responses") or {}).values():
+        if isinstance(response, dict):
+            resolved, _ = resolve_local_reference(response, spec)
+            body_containers.append(resolved)
+
+    for container in body_containers:
+        for media_type in (container.get("content") or {}).values():
+            if not isinstance(media_type, dict):
+                continue
+            schema = media_type.get("schema")
+            if isinstance(schema, dict):
+                names.update(schema_property_names(schema, spec))
+    return names
+
+
+def schema_properties(
+    schema: dict[str, Any],
+    spec: dict[str, Any],
+    seen_references: set[str] | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Return properties declared by a schema and its composed parents."""
+    seen = set() if seen_references is None else seen_references
+    resolved, reference = resolve_local_reference(schema, spec)
+    if reference is not None:
+        if reference in seen:
+            return {}
+        seen.add(reference)
+    properties = {
+        name: value
+        for name, value in (resolved.get("properties") or {}).items()
+        if isinstance(name, str) and isinstance(value, dict)
+    }
+    for keyword in ("allOf", "anyOf", "oneOf"):
+        for child in resolved.get(keyword) or []:
+            if isinstance(child, dict):
+                properties.update(schema_properties(child, spec, seen))
+    return properties
+
+
+def google_rpc_error_schema_issues(
+    schema: dict[str, Any], spec: dict[str, Any]
+) -> list[str]:
+    """Validate the REST JSON wrapper for a google.rpc.Status error."""
+    wrapper = schema_properties(schema, spec)
+    error_schema = wrapper.get("error")
+    if error_schema is None:
+        return ["error"]
+    error = schema_properties(error_schema, spec)
+    issues: list[str] = []
+    expected_types = {
+        "code": "integer",
+        "status": "string",
+        "message": "string",
+        "details": "array",
+    }
+    for name, expected_type in expected_types.items():
+        value = error.get(name)
+        if value is None:
+            issues.append(f"error.{name}")
+            continue
+        resolved, _ = resolve_local_reference(value, spec)
+        actual_type = resolved.get("type")
+        if actual_type != expected_type:
+            issues.append(
+                f"error.{name}:{actual_type or 'unspecified'}"
+            )
+    return issues
+
+
+def operation_standard_error_issues(
+    operation: dict[str, Any], spec: dict[str, Any]
+) -> list[str]:
+    """Return non-conformant HTTP error response codes and schema details."""
+    responses = operation.get("responses") or {}
+    error_responses = {
+        str(status): response
+        for status, response in responses.items()
+        if str(status) == "default"
+        or re.fullmatch(r"[45](?:[0-9]{2}|XX)", str(status), re.IGNORECASE)
+    }
+    if not error_responses:
+        return ["missing-error-response"]
+
+    issues: list[str] = []
+    for status, response in sorted(error_responses.items()):
+        if not isinstance(response, dict):
+            issues.append(f"{status}:response")
+            continue
+        resolved, _ = resolve_local_reference(response, spec)
+        media_type = (resolved.get("content") or {}).get("application/json")
+        if not isinstance(media_type, dict):
+            issues.append(f"{status}:application/json")
+            continue
+        schema = media_type.get("schema")
+        if not isinstance(schema, dict):
+            issues.append(f"{status}:schema")
+            continue
+        for issue in google_rpc_error_schema_issues(schema, spec):
+            issues.append(f"{status}:{issue}")
+    return issues
 
 
 def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     if spec.get("contract_kind") == "http-route-manifest":
+        manifest_error_fields = set(
+            (spec.get("error_shape") or {}).get("fields") or []
+        )
+        manifest_error_types = (
+            (spec.get("error_shape") or {}).get("field_types") or {}
+        )
+        manifest_error_issues = []
+        for field, expected_type in {
+            "error.code": "integer",
+            "error.status": "string",
+            "error.message": "string",
+            "error.details": "array",
+        }.items():
+            if field not in manifest_error_fields:
+                manifest_error_issues.append(f"manifest:{field}")
+                continue
+            actual_type = manifest_error_types.get(field)
+            if actual_type != expected_type:
+                manifest_error_issues.append(
+                    f"manifest:{field}:{actual_type or 'unspecified'}"
+                )
         rows: list[dict[str, Any]] = []
         for endpoint in spec.get("endpoints") or []:
             if not isinstance(endpoint, dict):
@@ -144,13 +356,29 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
             path = endpoint.get("path")
             operation_id = endpoint.get("operation")
             if all(isinstance(value, str) and value for value in (method, path, operation_id)):
+                parameters = [
+                    {"name": name, "in": "query"}
+                    for name in endpoint.get("query_fields") or []
+                    if isinstance(name, str)
+                ]
                 rows.append(
                     {
                         "product": product,
                         "method": method.upper(),
                         "path": path,
                         "operation_id": operation_id,
-                        "parameters": [],
+                        "parameters": parameters,
+                        "json_fields": [
+                            name
+                            for field in (
+                                "request_fields",
+                                "body_fields",
+                                "response_fields",
+                            )
+                            for name in endpoint.get(field) or []
+                            if isinstance(name, str)
+                        ],
+                        "standard_error_issues": manifest_error_issues,
                     }
                 )
         return rows
@@ -160,7 +388,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
         if not isinstance(path, str) or not isinstance(path_item, dict):
             continue
         inherited_parameters = [
-            resolve_local_reference(value, spec)
+            resolve_parameter(value, spec)
             for value in path_item.get("parameters", [])
             if isinstance(value, dict)
         ]
@@ -168,7 +396,7 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
             if method.lower() not in HTTP_METHODS or not isinstance(operation, dict):
                 continue
             parameters = inherited_parameters + [
-                resolve_local_reference(value, spec)
+                resolve_parameter(value, spec)
                 for value in operation.get("parameters", [])
                 if isinstance(value, dict)
             ]
@@ -179,6 +407,12 @@ def operation_rows(product: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
                     "path": path,
                     "operation_id": operation.get("operationId", ""),
                     "parameters": parameters,
+                    "json_fields": sorted(
+                        operation_json_property_names(operation, spec)
+                    ),
+                    "standard_error_issues": operation_standard_error_issues(
+                        operation, spec
+                    ),
                 }
             )
     return rows
@@ -221,6 +455,9 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
             path = row["path"]
             if is_protocol_exception(product, path):
                 continue
+            operation_key = (product, row["method"], path)
+            if operation_key in PROTOCOL_OPERATION_EXCEPTIONS:
+                continue
             if not (path == "/v1" or path.startswith("/v1/")):
                 add(row, "aip-127-versioned-path", [path])
             if row["method"] == "PUT":
@@ -239,6 +476,21 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
             )
             if non_camel:
                 add(row, "aip-127-lower-camel-parameters", non_camel)
+
+            non_camel_json_fields = sorted(
+                name
+                for name in row.get("json_fields") or []
+                if name != "@type" and not is_lower_camel(name)
+            )
+            if (
+                non_camel_json_fields
+                and operation_key not in PROTOCOL_JSON_EXCEPTIONS
+            ):
+                add(
+                    row,
+                    "aip-127-lower-camel-json-fields",
+                    non_camel_json_fields,
+                )
 
             for custom_verb in re.findall(r":([^/{}]+)", path):
                 if not is_lower_camel(custom_verb):
@@ -259,6 +511,10 @@ def discover_violations(specs: dict[str, dict[str, Any]]) -> dict[str, dict[str,
 
             if row["method"] == "PATCH" and "updateMask" not in parameter_names:
                 add(row, "aip-161-update-mask", ["updateMask"])
+
+            error_issues = row.get("standard_error_issues") or []
+            if error_issues:
+                add(row, "aip-193-standard-errors", error_issues)
     return violations
 
 
@@ -275,9 +531,22 @@ def load_baseline() -> dict[str, Any]:
 
 
 def validate_protocol_exceptions(specs: dict[str, dict[str, Any]]) -> list[str]:
-    paths = {
-        product: {row["path"] for row in operation_rows(product, spec)}
+    rows = {
+        product: operation_rows(product, spec)
         for product, spec in specs.items()
+    }
+    paths = {
+        product: {row["path"] for row in product_rows}
+        for product, product_rows in rows.items()
+    }
+    operations = {
+        (
+            product,
+            row["method"],
+            row["path"],
+        )
+        for product, product_rows in rows.items()
+        for row in product_rows
     }
     failures: list[str] = []
     for product, path in sorted(PROTOCOL_EXCEPTIONS):
@@ -289,6 +558,16 @@ def validate_protocol_exceptions(specs: dict[str, dict[str, Any]]) -> list[str]:
     for product, suffix in sorted(PROTOCOL_SUFFIX_EXCEPTIONS):
         if not any(path.endswith(suffix) for path in paths.get(product, set())):
             failures.append(f"stale protocol suffix exception: {product}|{suffix}")
+    for exception in sorted(PROTOCOL_OPERATION_EXCEPTIONS):
+        if exception not in operations:
+            failures.append(
+                "stale protocol operation exception: " + "|".join(exception)
+            )
+    for exception in sorted(PROTOCOL_JSON_EXCEPTIONS):
+        if exception not in operations:
+            failures.append(
+                "stale protocol JSON exception: " + "|".join(exception)
+            )
     return failures
 
 
@@ -310,6 +589,14 @@ def validate_baseline_shape(baseline: dict[str, Any]) -> list[str]:
         f"{product}|{path}" for product, path in PROTOCOL_SUFFIX_EXCEPTIONS
     ):
         failures.append("baseline protocol suffix exceptions are stale")
+    if baseline.get("protocol_operation_exceptions") != sorted(
+        "|".join(exception) for exception in PROTOCOL_OPERATION_EXCEPTIONS
+    ):
+        failures.append("baseline protocol operation exceptions are stale")
+    if baseline.get("protocol_json_exceptions") != sorted(
+        "|".join(exception) for exception in PROTOCOL_JSON_EXCEPTIONS
+    ):
+        failures.append("baseline protocol JSON exceptions are stale")
     try:
         review_after = date.fromisoformat(baseline["review_after"])
         if review_after < date.today():
@@ -344,6 +631,12 @@ def rendered_baseline(
         ),
         "protocol_suffix_exceptions": sorted(
             f"{product}|{path}" for product, path in PROTOCOL_SUFFIX_EXCEPTIONS
+        ),
+        "protocol_operation_exceptions": sorted(
+            "|".join(exception) for exception in PROTOCOL_OPERATION_EXCEPTIONS
+        ),
+        "protocol_json_exceptions": sorted(
+            "|".join(exception) for exception in PROTOCOL_JSON_EXCEPTIONS
         ),
         "accepted_violations": sorted(violations),
         "design_migrations": previous.get("design_migrations", []),

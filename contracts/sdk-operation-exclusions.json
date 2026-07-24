@@ -172,7 +172,7 @@
       "migration": "Keep session-bound WebSocket upgrade, framing, and command correlation in the dedicated Tempo BiDi client.",
       "operation_id": "bidiWebSocketSession",
       "owner": "tempo",
-      "path": "/sessions/{session_id}/bidi",
+      "path": "/v1/sessions/{sessionId}/bidi",
       "product": "tempo",
       "rationale": "The route upgrades a session-bound connection to a WebSocket and cannot use the aggregate buffered request contract.",
       "review_after": "2026-10-01"
@@ -183,7 +183,7 @@
       "migration": "Keep session-bound BiDi command envelopes in the dedicated Tempo transport until a cross-language protocol primitive exists.",
       "operation_id": "bidiPostSession",
       "owner": "tempo",
-      "path": "/sessions/{session_id}/bidi",
+      "path": "/v1/sessions/{sessionId}/bidi",
       "product": "tempo",
       "rationale": "The route carries session-bound BiDi protocol commands rather than an ordinary documented JSON domain request.",
       "review_after": "2026-10-01"
@@ -216,7 +216,7 @@
       "migration": "Continue routing session-bound JSON-RPC calls through Tempo's dedicated MCP client and payment-aware transport.",
       "operation_id": "mcpPostSession",
       "owner": "tempo",
-      "path": "/sessions/{session_id}/mcp",
+      "path": "/v1/sessions/{sessionId}/mcp",
       "product": "tempo",
       "rationale": "The route combines MCP protocol semantics with session binding and payment headers that the aggregate dispatcher does not model.",
       "review_after": "2026-10-01"
@@ -227,7 +227,7 @@
       "migration": "Add one reviewed SSE primitive with cancellation and reconnect semantics in TypeScript, Python, and Rust before generating this operation.",
       "operation_id": "streamSessionEvents",
       "owner": "tempo",
-      "path": "/sessions/{session_id}/events/stream",
+      "path": "/v1/sessions/{sessionId}/events:stream",
       "product": "tempo",
       "rationale": "The endpoint is an unbounded server-sent event stream while aggregate SDK operations return buffered responses.",
       "review_after": "2026-10-01"
