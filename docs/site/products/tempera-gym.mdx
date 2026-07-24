@@ -561,36 +561,36 @@ Retain a completed Gym episode and trajectory in Data Engine.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `context_evidence_ref` | yes | — |
-| `verifier_receipt_artifact_ref` | no | — |
-| `request_id` | no | — |
+| `contextEvidenceRef` | yes | — |
+| `verifierReceiptArtifactRef` | no | — |
+| `requestId` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaGym.exportEpisode({
   episode: "<episode>",
-  context_evidence_ref: "<context_evidence_ref>",
-  verifier_receipt_artifact_ref: "<verifier_receipt_artifact_ref>",
-  request_id: "<request_id>",
+  contextEvidenceRef: "<contextEvidenceRef>",
+  verifierReceiptArtifactRef: "<verifierReceiptArtifactRef>",
+  requestId: "<requestId>",
 });
 ```
 
 ```python Python
 result = client.tempera_gym.export_episode({
     "episode": "<episode>",
-    "context_evidence_ref": "<context_evidence_ref>",
-    "verifier_receipt_artifact_ref": "<verifier_receipt_artifact_ref>",
-    "request_id": "<request_id>",
+    "contextEvidenceRef": "<contextEvidenceRef>",
+    "verifierReceiptArtifactRef": "<verifierReceiptArtifactRef>",
+    "requestId": "<requestId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_gym", "export_episode", &[
     ("episode", "<episode>".into()),
-    ("context_evidence_ref", "<context_evidence_ref>".into()),
-    ("verifier_receipt_artifact_ref", "<verifier_receipt_artifact_ref>".into()),
-    ("request_id", "<request_id>".into()),
+    ("contextEvidenceRef", "<contextEvidenceRef>".into()),
+    ("verifierReceiptArtifactRef", "<verifierReceiptArtifactRef>".into()),
+    ("requestId", "<requestId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -844,7 +844,7 @@ Persist an opaque sealed-suite commitment before policy freeze.
 | Parameter | Required | Notes |
 |---|---|---|
 | `evaluator` | yes | — |
-| `qualification_policy` | yes | — |
+| `qualificationPolicy` | yes | — |
 | `suite` | yes | — |
 | `trainer` | yes | — |
 
@@ -853,7 +853,7 @@ Persist an opaque sealed-suite commitment before policy freeze.
 ```typescript TypeScript
 const result = await client.temperaGym.precommitSealedEvaluation({
   evaluator: "<evaluator>",
-  qualification_policy: "<qualification_policy>",
+  qualificationPolicy: "<qualificationPolicy>",
   suite: "<suite>",
 });
 ```
@@ -861,7 +861,7 @@ const result = await client.temperaGym.precommitSealedEvaluation({
 ```python Python
 result = client.tempera_gym.precommit_sealed_evaluation({
     "evaluator": "<evaluator>",
-    "qualification_policy": "<qualification_policy>",
+    "qualificationPolicy": "<qualificationPolicy>",
     "suite": "<suite>",
 })
 ```
@@ -869,7 +869,7 @@ result = client.tempera_gym.precommit_sealed_evaluation({
 ```rust Rust
 let spec = client.build_request("tempera_gym", "precommit_sealed_evaluation", &[
     ("evaluator", "<evaluator>".into()),
-    ("qualification_policy", "<qualification_policy>".into()),
+    ("qualificationPolicy", "<qualificationPolicy>".into()),
     ("suite", "<suite>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -940,32 +940,32 @@ Evaluate one frozen policy through its exact sealed adapter.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `policy_submission` | yes | — |
-| `training_report` | yes | — |
+| `policySubmission` | yes | — |
+| `trainingReport` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaGym.runSealedEvaluation({
   evaluation: "<evaluation>",
-  policy_submission: "<policy_submission>",
-  training_report: "<training_report>",
+  policySubmission: "<policySubmission>",
+  trainingReport: "<trainingReport>",
 });
 ```
 
 ```python Python
 result = client.tempera_gym.run_sealed_evaluation({
     "evaluation": "<evaluation>",
-    "policy_submission": "<policy_submission>",
-    "training_report": "<training_report>",
+    "policySubmission": "<policySubmission>",
+    "trainingReport": "<trainingReport>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_gym", "run_sealed_evaluation", &[
     ("evaluation", "<evaluation>".into()),
-    ("policy_submission", "<policy_submission>".into()),
-    ("training_report", "<training_report>".into()),
+    ("policySubmission", "<policySubmission>".into()),
+    ("trainingReport", "<trainingReport>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

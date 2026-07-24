@@ -3344,12 +3344,12 @@
           "episode"
         ],
         "body": [
-          "context_evidence_ref",
-          "verifier_receipt_artifact_ref",
-          "request_id"
+          "contextEvidenceRef",
+          "verifierReceiptArtifactRef",
+          "requestId"
         ],
         "requiredBody": [
-          "context_evidence_ref"
+          "contextEvidenceRef"
         ],
         "scope": "eval:run",
         "authAudience": "tempera-gym"
@@ -3442,13 +3442,13 @@
         "upstreamOperationId": "sealedEvaluations.precommit",
         "body": [
           "evaluator",
-          "qualification_policy",
+          "qualificationPolicy",
           "suite",
           "trainer"
         ],
         "requiredBody": [
           "evaluator",
-          "qualification_policy",
+          "qualificationPolicy",
           "suite",
           "trainer"
         ],
@@ -3479,12 +3479,12 @@
           "evaluation"
         ],
         "body": [
-          "policy_submission",
-          "training_report"
+          "policySubmission",
+          "trainingReport"
         ],
         "requiredBody": [
-          "policy_submission",
-          "training_report"
+          "policySubmission",
+          "trainingReport"
         ],
         "scope": "eval:run",
         "authAudience": "tempera-gym"
