@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "tempera-gym API",
-    "version": "0.2.1",
-    "description": "Minimal read/execute surface over the tempera-gym pack: environment catalog, persisted rollout runs, and synchronous rollout execution. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Errors use the canonical Tempera envelope {\"error\": {code, message, status, retryable}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "version": "0.3.0",
+    "description": "Minimal read/execute surface over the tempera-gym pack: environment catalog, persisted rollout runs, and synchronous rollout execution. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -87,7 +87,7 @@
                       "required": [
                         "id",
                         "version",
-                        "contract_version"
+                        "contractVersion"
                       ],
                       "properties": {
                         "id": {
@@ -96,7 +96,7 @@
                         "version": {
                           "type": "string"
                         },
-                        "contract_version": {
+                        "contractVersion": {
                           "type": "string",
                           "enum": [
                             "tempera.gym-pack/v1"
@@ -278,7 +278,7 @@
                     "type": "integer",
                     "minimum": 0
                   },
-                  "max_steps": {
+                  "maxSteps": {
                     "type": "integer",
                     "minimum": 1,
                     "description": "Capped by the environment's manifest max_steps."
@@ -288,11 +288,11 @@
                     "default": "gpt-4o-mini",
                     "description": "tempera-llm model id; only used when policy is llm."
                   },
-                  "data_engine_product_id": {
+                  "dataEngineProductId": {
                     "type": "string",
                     "description": "Data Engine product id for a manifest-bound PUBLIC Risk RLVR rollout. Only valid with risk-normalization-verification-v1; the service project and credentials are deployment config. Centrally introspected callers need dataset:read and eval:run, plus org/project/environment/sub claims bound to that config."
                   },
-                  "data_engine_max_records": {
+                  "dataEngineMaxRecords": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 256,
@@ -374,11 +374,11 @@
         "required": [
           "id",
           "library",
-          "task_family",
+          "taskFamily",
           "license",
           "deterministic",
           "network",
-          "max_steps",
+          "maxSteps",
           "status"
         ],
         "properties": {
@@ -388,7 +388,7 @@
           "library": {
             "type": "string"
           },
-          "task_family": {
+          "taskFamily": {
             "type": "string"
           },
           "license": {
@@ -400,7 +400,7 @@
           "network": {
             "type": "boolean"
           },
-          "max_steps": {
+          "maxSteps": {
             "type": "integer"
           },
           "status": {
@@ -410,19 +410,19 @@
               "planned"
             ]
           },
-          "image_digest": {
+          "imageDigest": {
             "type": "string",
             "nullable": true
           },
-          "resource_limits": {
+          "resourceLimits": {
             "type": "object",
             "nullable": true
           },
-          "observation_schema": {
+          "observationSchema": {
             "type": "object",
             "nullable": true
           },
-          "action_schema": {
+          "actionSchema": {
             "type": "object",
             "nullable": true
           }
@@ -430,18 +430,18 @@
       },
       "RunRecord": {
         "type": "object",
-        "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, total_reward, terminal_reason, duration_ms) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
+        "description": "Index record enriched with server-side verification state. `verify` reports the store's content-hash re-derivation for the record's envelope (verification canonicalization lives server-side; clients must not re-implement it). The summary fields (steps, totalReward, terminalReason, durationMs) are present only when verify is \"verified\"; a tampered or missing envelope marks the record instead of failing the listing.",
         "required": [
-          "run_id",
+          "runId",
           "environmentId",
           "seed",
-          "created_at",
-          "content_hash",
+          "createdAt",
+          "contentHash",
           "policy",
           "verify"
         ],
         "properties": {
-          "run_id": {
+          "runId": {
             "type": "string"
           },
           "environmentId": {
@@ -450,10 +450,10 @@
           "seed": {
             "type": "integer"
           },
-          "created_at": {
+          "createdAt": {
             "type": "string"
           },
-          "content_hash": {
+          "contentHash": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$"
           },
@@ -471,14 +471,14 @@
           "steps": {
             "type": "integer"
           },
-          "total_reward": {
+          "totalReward": {
             "type": "number"
           },
-          "terminal_reason": {
+          "terminalReason": {
             "type": "string",
             "nullable": true
           },
-          "duration_ms": {
+          "durationMs": {
             "type": "number",
             "nullable": true
           }
@@ -504,42 +504,47 @@
           "metadata": {
             "type": "object",
             "properties": {
-              "target_resource": {
+              "targetResource": {
                 "type": "string"
               },
-              "create_time": {
+              "createTime": {
                 "type": "string"
               },
-              "progress_ratio": {
+              "progressRatio": {
                 "type": "number"
               },
-              "current_stage": {
+              "currentStage": {
                 "type": "string"
               }
             }
           }
         }
       },
-      "ErrorBody": {
+      "GoogleRpcStatus": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "code",
           "message",
           "status",
-          "retryable"
+          "details"
         ],
         "properties": {
           "code": {
-            "type": "string"
+            "type": "integer"
           },
           "message": {
             "type": "string"
           },
           "status": {
-            "type": "integer"
+            "type": "string"
           },
-          "retryable": {
-            "type": "boolean"
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           }
         }
       },
@@ -550,7 +555,7 @@
         ],
         "properties": {
           "error": {
-            "$ref": "#/components/schemas/ErrorBody"
+            "$ref": "#/components/schemas/GoogleRpcStatus"
           }
         }
       }

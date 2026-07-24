@@ -3998,10 +3998,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "environmentId",
         "policy",
         "seed",
-        "max_steps",
+        "maxSteps",
         "model",
-        "data_engine_product_id",
-        "data_engine_max_records"
+        "dataEngineProductId",
+        "dataEngineMaxRecords"
       ],
       "forbiddenBody": [],
       "requiredBody": [
