@@ -52,7 +52,7 @@
         "packages/python/src/tempera_sdk/surface.py",
         "packages/rust/src/surface.rs"
       ],
-      "notes": "The canonical source lock and generated methods bind merged Gym main head e14c198811943c414e7a9b6de64b8e79af013dfa for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
+      "notes": "The canonical source lock and generated methods bind merged Gym main head b5d8369824cfdeae1a0cbbeb882af6fa19258cb2 for task, trainer, episode, and sealed-evaluation contracts; no external sealed result is claimed."
     },
     {
       "integration_id": "workflows-durable-signal-client",
@@ -66,7 +66,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds merged Workflows main head 3c067298906b69de5a3481c897282b745a277d18; no hosted callback or external experiment result is claimed."
+      "notes": "All three generated clients expose runs.signal with the exact run path, digest-bound callback body, and literal custom-method colon. Canonical provenance binds merged Workflows main head a581e2ca71048f654d49cb0aeb0fe9309ccdf4b2; no hosted callback or external experiment result is claimed."
     },
     {
       "integration_id": "bio-discovery-derivation-client",
