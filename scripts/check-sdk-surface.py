@@ -438,8 +438,13 @@ def main() -> int:
         ["git", "ls-files"], capture_output=True, text=True, cwd=ROOT
     ).stdout.splitlines()
     for tracked_path in tracked:
-        if tracked_path == "scripts/check-sdk-surface.py":
-            continue  # this file necessarily spells the denied pattern
+        if tracked_path in {
+            "scripts/check-sdk-surface.py",
+            # Immutable producer artifact: Remi's current crate and source paths
+            # still use the legacy name. Generated SDK/code/docs remain gated.
+            "specs/remi-http-contract.json",
+        }:
+            continue  # These exact files necessarily spell the denied pattern.
         path = ROOT / tracked_path
         try:
             text = path.read_text()

@@ -261,6 +261,11 @@ the committed site is always current thanks to the drift gate).
   turning REST coverage into model exposure.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
+- `contracts/sdk-exact-source-gaps.json` records expiring hosted-verification
+  blockers for private producers where the least-privilege Contract Reader App
+  is not installed. Those jobs are labeled source gates and validate the exact
+  vendored SHA plus producer-side hosted CI; they are not reported as hosted
+  exact-source reproduction until the App installation exists.
 - The endpoint-change rollout process is documented in
   [`docs/ROLLOUT.md`](./docs/ROLLOUT.md).
 
@@ -275,6 +280,7 @@ or individually:
 ```sh
 python3 scripts/check-sdk-surface.py
 python3 scripts/check-aip-conformance.py
+python3 scripts/check-exact-source-gaps.py
 python3 scripts/sync-data-engine-openapi.py --check \
   --source ../data-engine/api/openapi.yaml \
   --source-repo tempera-dev/data-engine --source-branch main \

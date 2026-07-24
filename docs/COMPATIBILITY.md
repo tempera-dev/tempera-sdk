@@ -28,7 +28,11 @@
   warning-tier coverage migrations are removed. The Google Cloud AIP ratchet
   also rejects new or stale path-version, PUT, parameter-casing, custom-verb,
   pagination, and update-mask violations while resource/error/LRO migrations
-  remain explicit producer-owned breaking work.
+  remain explicit producer-owned breaking work. Remi and Tempo have
+  producer-side hosted green receipts and locally reproduced exact locks, but
+  SDK-hosted cross-repository checkout remains an explicit expiring gap until
+  the Tempera Contract Reader GitHub App is installed on those two private
+  repositories.
 - Rollback: revert the SDK release and all dependent exact-SHA pins together;
   do not restore phantom routes or weaken current-head drift checks.
 
