@@ -471,6 +471,56 @@ test("Gym Bio proposal preserves the outcome-blind wire and auth contract", asyn
   });
 });
 
+test("Bio materializes a Gym batch through the exact sealed bridge contract", async () => {
+  const operation = TEMPERA_OPERATIONS.temperaBio.find(
+    (candidate) => candidate.id === "prepareExperimentProposalFromGymBatch",
+  );
+  assert.ok(operation);
+  assert.equal(
+    operation.upstreamOperationId,
+    "prepareExperimentProposalFromGymBatch",
+  );
+  assert.equal(operation.method, "POST");
+  assert.equal(
+    operation.path,
+    "/v1/experimentProposals:prepareFromGymBatch",
+  );
+  assert.equal(operation.auth, "oauthResource");
+  assert.equal(operation.authAudience, "tempera-bio");
+  assert.equal(operation.scope, "bio:proposal:write");
+
+  const program = { contentDigest: `sha256:${"1".repeat(64)}` };
+  const candidateSet = { contentDigest: `sha256:${"2".repeat(64)}` };
+  const campaignContext = { contentDigest: `sha256:${"3".repeat(64)}` };
+  const batchProposal = { contentDigest: `sha256:${"4".repeat(64)}` };
+  const { client, calls } = testClient({
+    auth: new TemperaAuth({
+      issuerUrl: "https://api.tempera.dev",
+      tokens: { "tempera-bio": { accessToken: "at_bio_proposer" } },
+    }),
+  });
+  const result =
+    await client.temperaBio.prepareExperimentProposalFromGymBatch({
+      program,
+      candidate_set: candidateSet,
+      campaign_context: campaignContext,
+      batch_proposal: batchProposal,
+    });
+  assert.deepEqual(result, { ok: true });
+  assert.equal(
+    calls[0].url.pathname,
+    "/v1/experimentProposals:prepareFromGymBatch",
+  );
+  assert.ok(!calls[0].url.toString().includes("%3A"));
+  assert.equal(calls[0].options.headers.authorization, "Bearer at_bio_proposer");
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    batchProposal,
+    campaignContext,
+    candidateSet,
+    program,
+  });
+});
+
 test("missing path parameters fail fast with a clear message", async () => {
   const { client } = testClient();
   await assert.rejects(

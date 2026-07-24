@@ -21,7 +21,7 @@ Fail-closed computational-biology artifact pipeline for source ingestion, propos
 | Audience | `tempera-bio` |
 | Auth | bearer minted for audience tempera-bio with the operation's bio scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaBio` · Python `client.tempera_bio` · Rust `build_request("tempera_bio", ...)` |
-| Typed operations | 9 |
+| Typed operations | 10 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaBio.request(path, options)` (TypeScript) /
@@ -271,6 +271,59 @@ let spec = client.build_request("tempera_bio", "prepare_experiment_proposal", &[
     ("candidateSet", "<candidateSet>".into()),
     ("program", "<program>".into()),
     ("selectedCandidates", "<selectedCandidates>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### prepareExperimentProposalFromGymBatch
+
+`POST /v1/experimentProposals:prepareFromGymBatch`
+
+Prepare experiment proposal from gym batch.
+
+- **Producer operationId:** `prepareExperimentProposalFromGymBatch`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:proposal:write`
+- **Call as:** TypeScript `client.temperaBio.prepareExperimentProposalFromGymBatch()` · Python `client.tempera_bio.prepare_experiment_proposal_from_gym_batch()` · Rust `build_request("tempera_bio", "prepare_experiment_proposal_from_gym_batch", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `batchProposal` | yes | — |
+| `campaignContext` | yes | — |
+| `candidateSet` | yes | — |
+| `program` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.prepareExperimentProposalFromGymBatch({
+  batchProposal: "<batchProposal>",
+  campaignContext: "<campaignContext>",
+  candidateSet: "<candidateSet>",
+  program: "<program>",
+});
+```
+
+```python Python
+result = client.tempera_bio.prepare_experiment_proposal_from_gym_batch({
+    "batchProposal": "<batchProposal>",
+    "campaignContext": "<campaignContext>",
+    "candidateSet": "<candidateSet>",
+    "program": "<program>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "prepare_experiment_proposal_from_gym_batch", &[
+    ("batchProposal", "<batchProposal>".into()),
+    ("campaignContext", "<campaignContext>".into()),
+    ("candidateSet", "<candidateSet>".into()),
+    ("program", "<program>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

@@ -1661,6 +1661,94 @@ mod tests {
     }
 
     #[test]
+    fn bio_materializes_gym_batch_through_exact_sealed_bridge() {
+        let operation = crate::surface::find_operation(
+            "tempera_bio",
+            "prepare_experiment_proposal_from_gym_batch",
+        )
+        .unwrap();
+        assert_eq!(
+            operation.upstream_operation_id,
+            "prepareExperimentProposalFromGymBatch"
+        );
+        assert_eq!(operation.method, "POST");
+        assert_eq!(
+            operation.path,
+            "/v1/experimentProposals:prepareFromGymBatch"
+        );
+        assert_eq!(operation.auth, "oauthResource");
+        assert_eq!(operation.auth_audience, Some("tempera-bio"));
+        assert_eq!(operation.scope, Some("bio:proposal:write"));
+
+        let auth = TemperaAuth::new("https://api.tempera.dev").with_tokens(
+            "tempera-bio",
+            TokenSet {
+                access_token: "at_bio_proposer".into(),
+                ..TokenSet::default()
+            },
+        );
+        let spec = TemperaClient::new()
+            .with_auth(auth)
+            .with_base_url("tempera_bio", base_url_for("tempera_bio"))
+            .build_request(
+                "tempera_bio",
+                "prepare_experiment_proposal_from_gym_batch",
+                &[
+                    (
+                        "program",
+                        ParamValue::RawJson(format!(
+                            r#"{{"contentDigest":"sha256:{}"}}"#,
+                            "1".repeat(64)
+                        )),
+                    ),
+                    (
+                        "candidate_set",
+                        ParamValue::RawJson(format!(
+                            r#"{{"contentDigest":"sha256:{}"}}"#,
+                            "2".repeat(64)
+                        )),
+                    ),
+                    (
+                        "campaign_context",
+                        ParamValue::RawJson(format!(
+                            r#"{{"contentDigest":"sha256:{}"}}"#,
+                            "3".repeat(64)
+                        )),
+                    ),
+                    (
+                        "batch_proposal",
+                        ParamValue::RawJson(format!(
+                            r#"{{"contentDigest":"sha256:{}"}}"#,
+                            "4".repeat(64)
+                        )),
+                    ),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            spec.url,
+            "https://tempera_bio.example.test/v1/experimentProposals:prepareFromGymBatch"
+        );
+        assert!(!spec.full_url().contains("%3A"));
+        assert_eq!(
+            header(&spec, "authorization"),
+            Some("Bearer at_bio_proposer")
+        );
+        let body = spec.body_json.unwrap();
+        for expected in [
+            r#""batchProposal":{"contentDigest":"sha256:4444444444444444444444444444444444444444444444444444444444444444"}"#,
+            r#""campaignContext":{"contentDigest":"sha256:3333333333333333333333333333333333333333333333333333333333333333"}"#,
+            r#""candidateSet":{"contentDigest":"sha256:2222222222222222222222222222222222222222222222222222222222222222"}"#,
+            r#""program":{"contentDigest":"sha256:1111111111111111111111111111111111111111111111111111111111111111"}"#,
+        ] {
+            assert!(body.contains(expected), "body {body} missing {expected}");
+        }
+        assert!(!body.contains("batch_proposal"));
+        assert!(!body.contains("campaign_context"));
+        assert!(!body.contains("candidate_set"));
+    }
+
+    #[test]
     fn path_params_are_percent_encoded() {
         let client = full_client();
         let spec = client

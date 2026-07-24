@@ -70,7 +70,7 @@
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
       ],
-      "notes": "All three generated clients expose deriveCampaignState with the exact lowerCamel wire body and bio:decision:write scope. Canonical provenance binds merged Bio main head 35f3d5d2c1cf7025e5b7795a7a4a2728a6743cd8; the SDK transports replay inputs but does not derive biology, run a campaign, or claim physical evidence."
+      "notes": "All three generated clients expose deriveCampaignState and prepareExperimentProposalFromGymBatch with exact lowerCamel wire bodies, literal custom-method colons, and their producer-declared Bio scopes. Canonical provenance binds merged Bio main head 9eb36c8cf260d79b5d70839d21788bab5c82228f; the SDK transports sealed Gym and Bio artifacts but does not derive biology, run a campaign, or claim physical evidence."
     },
     {
       "integration_id": "workflows-durable-signal-client",
