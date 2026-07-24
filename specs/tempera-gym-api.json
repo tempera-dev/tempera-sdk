@@ -19,7 +19,7 @@
     "/healthz": {
       "get": {
         "operationId": "health.get",
-        "x-tempera-audience": null,
+        "x-tempera-auth-audience": null,
         "x-tempera-required-scope": null,
         "summary": "Liveness probe (unauthenticated)",
         "security": [],
@@ -62,7 +62,7 @@
     "/v1/environments": {
       "get": {
         "operationId": "environments.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Built-in and boot-trusted versioned environment catalog",
         "responses": {
@@ -126,9 +126,17 @@
     "/v1/domains": {
       "get": {
         "operationId": "domains.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Domain capabilities represented in the versioned task catalog",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Content-addressed domain catalog",
@@ -176,6 +184,9 @@
                           }
                         }
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -194,7 +205,7 @@
     "/v1/tasks": {
       "get": {
         "operationId": "tasks.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List versioned task definitions without agent inputs",
         "parameters": [
@@ -211,6 +222,12 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -233,6 +250,9 @@
                       "items": {
                         "$ref": "#/components/schemas/Task"
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -254,7 +274,7 @@
     "/v1/tasks/{task}": {
       "get": {
         "operationId": "tasks.get",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable task definition including its agent-visible input",
         "parameters": [
@@ -302,7 +322,7 @@
     "/v1/tasks/{task}:evaluate": {
       "post": {
         "operationId": "tasks.evaluate",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Deterministically verify one candidate without creating an episode",
         "parameters": [
@@ -386,9 +406,17 @@
     "/v1/verifiers": {
       "get": {
         "operationId": "verifiers.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List verifier identities and bound tasks without grader content",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Immutable verifier references",
@@ -405,6 +433,9 @@
                       "items": {
                         "$ref": "#/components/schemas/VerifierIdentity"
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -423,7 +454,7 @@
     "/v1/episodes": {
       "get": {
         "operationId": "episodes.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List durable episode snapshots, newest first",
         "parameters": [
@@ -448,12 +479,20 @@
           {
             "name": "limit",
             "in": "query",
+            "deprecated": true,
+            "description": "Legacy alias for page_size; cannot be combined with page_size.",
             "schema": {
               "type": "integer",
               "minimum": 1,
               "maximum": 1000,
               "default": 100
             }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -472,6 +511,9 @@
                       "items": {
                         "$ref": "#/components/schemas/Episode"
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -491,7 +533,7 @@
       },
       "post": {
         "operationId": "episodes.create",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Reset a versioned task into a durable episode",
         "requestBody": {
@@ -560,7 +602,7 @@
     "/v1/episodes/{episode}": {
       "get": {
         "operationId": "episodes.get",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Read and content-verify one durable episode snapshot",
         "parameters": [
@@ -602,7 +644,7 @@
     "/v1/episodes/{episode}:step": {
       "post": {
         "operationId": "episodes.step",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Apply one schema-validated action and persist the transition",
         "parameters": [
@@ -692,7 +734,7 @@
     "/v1/episodes/{episode}:export": {
       "post": {
         "operationId": "episodes.export",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Retain a completed Gym episode and trajectory in Data Engine",
         "description": "Requires configured Data Engine service credentials. The context EvidenceRecord and PASS verifier receipt artifact must already exist in the configured project. Centrally authenticated callers require both eval:run and dataset:write.",
@@ -781,7 +823,7 @@
     "/v1/runs": {
       "get": {
         "operationId": "runs.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Persisted-run index, newest first",
         "parameters": [
@@ -844,7 +886,7 @@
     "/v1/runs/{run}": {
       "get": {
         "operationId": "runs.get",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Full trajectory envelope (incl. metadata.timing) for one run",
         "parameters": [
@@ -901,7 +943,7 @@
     "/v1/rollouts": {
       "post": {
         "operationId": "rollouts.create",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Execute one rollout synchronously, store it, return the summary",
         "requestBody": {
@@ -996,10 +1038,18 @@
     "/v1/sealed-evaluators": {
       "get": {
         "operationId": "sealedEvaluators.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Discover boot-trusted exact sealed-evaluator identities",
         "description": "Returns only evaluator and immutable qualification-policy identities. Executable adapters remain process-local and cannot be registered over HTTP.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Boot-frozen evaluator registry",
@@ -1017,6 +1067,9 @@
                       "items": {
                         "$ref": "#/components/schemas/SealedEvaluator"
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -1035,7 +1088,7 @@
     "/v1/sealed-evaluations": {
       "get": {
         "operationId": "sealedEvaluations.list",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List persisted sealed-evaluation precommits and results",
         "parameters": [
@@ -1043,12 +1096,20 @@
             "name": "limit",
             "in": "query",
             "required": false,
+            "deprecated": true,
+            "description": "Legacy alias for page_size; cannot be combined with page_size.",
             "schema": {
               "type": "integer",
               "minimum": 1,
               "maximum": 1000,
               "default": 100
             }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
           }
         ],
         "responses": {
@@ -1068,6 +1129,9 @@
                       "items": {
                         "$ref": "#/components/schemas/SealedEvaluationRecord"
                       }
+                    },
+                    "next_page_token": {
+                      "type": "string"
                     }
                   }
                 }
@@ -1092,7 +1156,7 @@
     "/v1/sealed-evaluations:precommit": {
       "post": {
         "operationId": "sealedEvaluations.precommit",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Persist an opaque sealed-suite commitment before policy freeze",
         "description": "Binds exact evaluator, qualification policy, suite commitment, and trainer identities. The request contains no policy, cases, seeds, rows, or labels. A missing exact boot-trusted evaluator fails with 412.",
@@ -1165,7 +1229,7 @@
     "/v1/sealed-evaluations/{evaluation}": {
       "get": {
         "operationId": "sealedEvaluations.get",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Read one verified precommit and aggregate sealed result",
         "parameters": [
@@ -1211,7 +1275,7 @@
     "/v1/sealed-evaluations/{evaluation}:run": {
       "post": {
         "operationId": "sealedEvaluations.run",
-        "x-tempera-audience": "tempera-gym",
+        "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Evaluate one frozen policy through its exact sealed adapter",
         "description": "Accepts only opaque frozen-policy and training-report identities. Gym verifies precommit-before-freeze ordering, invokes the boot-trusted adapter, validates aggregate-only output and required receipts, derives distinct official, production-qualification, and improvement claims, then hashes and persists the result. Exact replay is idempotent.",
@@ -1287,6 +1351,29 @@
   },
   "components": {
     "parameters": {
+      "PageSize": {
+        "name": "page_size",
+        "in": "query",
+        "required": false,
+        "description": "Maximum resources to return; defaults to 100 and is capped at 1000.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100
+        }
+      },
+      "PageToken": {
+        "name": "page_token",
+        "in": "query",
+        "required": false,
+        "description": "Opaque continuation token returned by the preceding list response.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      },
       "TaskId": {
         "name": "task",
         "in": "path",

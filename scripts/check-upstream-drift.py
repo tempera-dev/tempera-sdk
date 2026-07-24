@@ -219,7 +219,9 @@ def gym_auth_metadata_errors(
             if item is None:
                 continue
             operation_id = operation.get("operationId", identity)
-            audience = operation.get("x-tempera-audience", "__missing__")
+            audience = operation.get(
+                "x-tempera-auth-audience", "__missing__"
+            )
             scope = operation.get("x-tempera-required-scope", "__missing__")
             if audience == "__missing__" or scope == "__missing__":
                 errors.append(
