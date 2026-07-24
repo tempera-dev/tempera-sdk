@@ -5528,8 +5528,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "artifactType",
         "source",
-        "external_id",
-        "raw_body",
+        "externalId",
+        "rawBody",
         "metadata"
       ],
       "forbiddenBody": [],
@@ -5557,7 +5557,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "artifactType",
         "timeoutSeconds",
         "maxBytes",
-        "producer_version",
+        "producerVersion",
         "metadata"
       ],
       "forbiddenBody": [],
@@ -5583,16 +5583,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "task_family",
-        "target_accuracy",
-        "budget_cents",
+        "taskFamily",
+        "targetAccuracy",
+        "budgetCents",
         "rubric",
-        "skill_tags",
-        "required_reviews",
-        "qualification_policy",
-        "routing_policy",
-        "annotation_schema",
-        "idempotency_key"
+        "skillTags",
+        "requiredReviews",
+        "qualificationPolicy",
+        "routingPolicy",
+        "annotationSchema",
+        "idempotencyKey"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5640,13 +5640,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "target_status",
-        "idempotency_key"
+        "targetStatus",
+        "idempotencyKey"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "target_status",
-        "idempotency_key"
+        "targetStatus",
+        "idempotencyKey"
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -5689,19 +5689,19 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "use_case",
+        "useCase",
         "verifier",
-        "budget_cents",
-        "target_accuracy",
+        "budgetCents",
+        "targetAccuracy",
         "rubric",
-        "skill_tags",
-        "required_reviews",
+        "skillTags",
+        "requiredReviews",
         "urls",
         "artifacts"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "use_case"
+        "useCase"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -5748,17 +5748,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "source_expert_task_name",
-        "expected_label",
+        "sourceExpertTaskName",
+        "expectedLabel",
         "mode",
-        "feedback_policy",
-        "idempotency_key"
+        "feedbackPolicy",
+        "idempotencyKey"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "source_expert_task_name",
-        "expected_label",
-        "idempotency_key"
+        "sourceExpertTaskName",
+        "expectedLabel",
+        "idempotencyKey"
       ],
       "bodyDefaults": {},
       "scope": "review:gold:manage",
@@ -5786,16 +5786,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "rationale",
         "evidence",
         "annotation",
-        "annotator_id",
-        "idempotency_key",
-        "lease_token",
-        "review_context"
+        "annotatorId",
+        "idempotencyKey",
+        "leaseToken",
+        "reviewContext"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "label",
-        "idempotency_key",
-        "review_context"
+        "idempotencyKey",
+        "reviewContext"
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
@@ -5817,14 +5817,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "idempotency_key",
-        "lease_token",
-        "lease_duration_seconds"
+        "idempotencyKey",
+        "leaseToken",
+        "leaseDurationSeconds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "idempotency_key",
-        "lease_token"
+        "idempotencyKey",
+        "leaseToken"
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
@@ -5846,14 +5846,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "idempotency_key",
-        "lease_token",
-        "lease_duration_seconds"
+        "idempotencyKey",
+        "leaseToken",
+        "leaseDurationSeconds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "idempotency_key",
-        "lease_token"
+        "idempotencyKey",
+        "leaseToken"
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
@@ -5875,13 +5875,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "idempotency_key",
-        "lease_token"
+        "idempotencyKey",
+        "leaseToken"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "idempotency_key",
-        "lease_token"
+        "idempotencyKey",
+        "leaseToken"
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
@@ -5903,17 +5903,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "idempotency_key",
-        "lease_token",
+        "idempotencyKey",
+        "leaseToken",
         "draft",
-        "expected_version"
+        "expectedVersion"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "idempotency_key",
-        "lease_token",
+        "idempotencyKey",
+        "leaseToken",
         "draft",
-        "expected_version"
+        "expectedVersion"
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
@@ -6095,8 +6095,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "artifact_ids",
-        "artifact_type"
+        "artifactIds",
+        "artifactType"
       ],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6119,17 +6119,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "artifact_ids",
-        "task_family",
+        "artifactIds",
+        "taskFamily",
         "campaign",
-        "target_accuracy",
-        "idempotency_key",
+        "targetAccuracy",
+        "idempotencyKey",
         "verifier"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "artifact_ids",
-        "task_family"
+        "artifactIds",
+        "taskFamily"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -6241,11 +6241,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "product_ids"
+        "productIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "product_ids"
+        "productIds"
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
@@ -6288,15 +6288,15 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "training_product_id",
-        "heldout_product_id",
-        "idempotency_key"
+        "trainingProductId",
+        "heldoutProductId",
+        "idempotencyKey"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "training_product_id",
-        "heldout_product_id",
-        "idempotency_key"
+        "trainingProductId",
+        "heldoutProductId",
+        "idempotencyKey"
       ],
       "bodyDefaults": {},
       "scope": "training:publish",
@@ -6341,11 +6341,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [],
       "body": [
         "format",
-        "train_fraction",
-        "include_raw",
-        "page_size",
-        "page_token",
-        "pair_sources"
+        "trainFraction",
+        "includeRaw",
+        "pageSize",
+        "pageToken",
+        "pairSources"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -6370,12 +6370,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "artifact_ids",
+        "artifactIds",
         "job"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "artifact_ids",
+        "artifactIds",
         "job"
       ],
       "bodyDefaults": {},
@@ -6401,13 +6401,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "bucket",
         "prefix",
         "key",
-        "max_objects",
-        "max_bytes",
+        "maxObjects",
+        "maxBytes",
         "statement",
         "limit",
         "soql",
-        "max_pages",
-        "artifact_type",
+        "maxPages",
+        "artifactType",
         "source",
         "ingest",
         "metadata"
@@ -6461,10 +6461,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "name",
         "description",
-        "input_schema",
+        "inputSchema",
         "kind",
         "implementation",
-        "created_by"
+        "createdBy"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -6584,31 +6584,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "schema_version",
-        "request_id",
-        "release_id",
-        "release_kind",
-        "evidence_class",
-        "claim_class",
+        "schemaVersion",
+        "requestId",
+        "releaseId",
+        "releaseKind",
+        "evidenceClass",
+        "claimClass",
         "bindings",
-        "lineage_edges",
+        "lineageEdges",
         "budget",
         "eligibility",
-        "prospective_execution"
+        "prospectiveExecution"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "schema_version",
-        "request_id",
-        "release_id",
-        "release_kind",
-        "evidence_class",
-        "claim_class",
+        "schemaVersion",
+        "requestId",
+        "releaseId",
+        "releaseKind",
+        "evidenceClass",
+        "claimClass",
         "bindings",
-        "lineage_edges",
+        "lineageEdges",
         "budget",
         "eligibility",
-        "prospective_execution"
+        "prospectiveExecution"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -6651,27 +6651,27 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "schema_version",
+        "schemaVersion",
         "domain",
-        "evidence_type",
-        "payload_schema",
+        "evidenceType",
+        "payloadSchema",
         "payload",
-        "source_artifact_refs",
-        "artifact_refs",
-        "verification_state",
-        "verifier_receipt_artifact_refs",
-        "quality_flags",
+        "sourceArtifactRefs",
+        "artifactRefs",
+        "verificationState",
+        "verifierReceiptArtifactRefs",
+        "qualityFlags",
         "provenance"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "schema_version",
+        "schemaVersion",
         "domain",
-        "evidence_type",
-        "payload_schema",
+        "evidenceType",
+        "payloadSchema",
         "payload",
-        "source_artifact_refs",
-        "verification_state"
+        "sourceArtifactRefs",
+        "verificationState"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
@@ -6739,33 +6739,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       },
       "query": [],
       "body": [
-        "schema_version",
+        "schemaVersion",
         "domain",
-        "context_evidence_ref",
-        "environment_ref",
+        "contextEvidenceRef",
+        "environmentRef",
         "seed",
         "observations",
-        "tool_calls",
-        "measured_outcomes",
-        "verifier_results",
-        "reward_components",
-        "terminal_reason",
+        "toolCalls",
+        "measuredOutcomes",
+        "verifierResults",
+        "rewardComponents",
+        "terminalReason",
         "uncertainty",
         "provenance",
-        "safety_events"
+        "safetyEvents"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "schema_version",
+        "schemaVersion",
         "domain",
-        "context_evidence_ref",
-        "environment_ref",
+        "contextEvidenceRef",
+        "environmentRef",
         "seed",
         "observations",
-        "measured_outcomes",
-        "verifier_results",
-        "reward_components",
-        "terminal_reason"
+        "measuredOutcomes",
+        "verifierResults",
+        "rewardComponents",
+        "terminalReason"
       ],
       "bodyDefaults": {},
       "scope": "eval:run",

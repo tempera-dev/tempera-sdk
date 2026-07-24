@@ -3959,8 +3959,8 @@
         "body": [
           "artifactType",
           "source",
-          "external_id",
-          "raw_body",
+          "externalId",
+          "rawBody",
           "metadata"
         ],
         "scope": "dataset:write",
@@ -3983,7 +3983,7 @@
           "artifactType",
           "timeoutSeconds",
           "maxBytes",
-          "producer_version",
+          "producerVersion",
           "metadata"
         ],
         "scope": "dataset:write",
@@ -4005,16 +4005,16 @@
           "parent"
         ],
         "body": [
-          "task_family",
-          "target_accuracy",
-          "budget_cents",
+          "taskFamily",
+          "targetAccuracy",
+          "budgetCents",
           "rubric",
-          "skill_tags",
-          "required_reviews",
-          "qualification_policy",
-          "routing_policy",
-          "annotation_schema",
-          "idempotency_key"
+          "skillTags",
+          "requiredReviews",
+          "qualificationPolicy",
+          "routingPolicy",
+          "annotationSchema",
+          "idempotencyKey"
         ],
         "scope": "dataset:write",
         "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags.",
@@ -4052,12 +4052,12 @@
           "campaignId"
         ],
         "body": [
-          "target_status",
-          "idempotency_key"
+          "targetStatus",
+          "idempotencyKey"
         ],
         "requiredBody": [
-          "target_status",
-          "idempotency_key"
+          "targetStatus",
+          "idempotencyKey"
         ],
         "scope": "dataset:write",
         "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.",
@@ -4091,20 +4091,20 @@
           "parent"
         ],
         "body": [
-          "use_case",
+          "useCase",
           "verifier",
-          "budget_cents",
-          "target_accuracy",
+          "budgetCents",
+          "targetAccuracy",
           "rubric",
-          "skill_tags",
-          "required_reviews",
+          "skillTags",
+          "requiredReviews",
           "urls",
           "artifacts"
         ],
         "scope": "eval:run",
         "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.",
         "requiredBody": [
-          "use_case"
+          "useCase"
         ],
         "upstreamOperationId": "projects.pipelines.runUseCase",
         "pathParamTemplates": {
@@ -4141,16 +4141,16 @@
           "parent"
         ],
         "body": [
-          "source_expert_task_name",
-          "expected_label",
+          "sourceExpertTaskName",
+          "expectedLabel",
           "mode",
-          "feedback_policy",
-          "idempotency_key"
+          "feedbackPolicy",
+          "idempotencyKey"
         ],
         "requiredBody": [
-          "source_expert_task_name",
-          "expected_label",
-          "idempotency_key"
+          "sourceExpertTaskName",
+          "expectedLabel",
+          "idempotencyKey"
         ],
         "scope": "review:gold:manage",
         "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
@@ -4175,15 +4175,15 @@
           "rationale",
           "evidence",
           "annotation",
-          "annotator_id",
-          "idempotency_key",
-          "lease_token",
-          "review_context"
+          "annotatorId",
+          "idempotencyKey",
+          "leaseToken",
+          "reviewContext"
         ],
         "requiredBody": [
           "label",
-          "idempotency_key",
-          "review_context"
+          "idempotencyKey",
+          "reviewContext"
         ],
         "scope": "review:resolve",
         "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
@@ -4202,13 +4202,13 @@
           "expertTaskId"
         ],
         "body": [
-          "idempotency_key",
-          "lease_token",
-          "lease_duration_seconds"
+          "idempotencyKey",
+          "leaseToken",
+          "leaseDurationSeconds"
         ],
         "requiredBody": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "scope": "review:resolve",
         "description": "Atomically claim one open expert task with an exclusive renewable lease.",
@@ -4227,13 +4227,13 @@
           "expertTaskId"
         ],
         "body": [
-          "idempotency_key",
-          "lease_token",
-          "lease_duration_seconds"
+          "idempotencyKey",
+          "leaseToken",
+          "leaseDurationSeconds"
         ],
         "requiredBody": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "scope": "review:resolve",
         "description": "Renew the authenticated reviewer's active expert-task lease.",
@@ -4252,12 +4252,12 @@
           "expertTaskId"
         ],
         "body": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "requiredBody": [
-          "idempotency_key",
-          "lease_token"
+          "idempotencyKey",
+          "leaseToken"
         ],
         "scope": "review:resolve",
         "description": "Release the authenticated reviewer's active expert-task lease for reassignment.",
@@ -4276,16 +4276,16 @@
           "expertTaskId"
         ],
         "body": [
-          "idempotency_key",
-          "lease_token",
+          "idempotencyKey",
+          "leaseToken",
           "draft",
-          "expected_version"
+          "expectedVersion"
         ],
         "requiredBody": [
-          "idempotency_key",
-          "lease_token",
+          "idempotencyKey",
+          "leaseToken",
           "draft",
-          "expected_version"
+          "expectedVersion"
         ],
         "scope": "review:resolve",
         "description": "Autosave a version-checked draft under the active reviewer lease.",
@@ -4426,8 +4426,8 @@
           "parent"
         ],
         "body": [
-          "artifact_ids",
-          "artifact_type"
+          "artifactIds",
+          "artifactType"
         ],
         "scope": "dataset:write",
         "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions.",
@@ -4445,18 +4445,18 @@
           "parent"
         ],
         "body": [
-          "artifact_ids",
-          "task_family",
+          "artifactIds",
+          "taskFamily",
           "campaign",
-          "target_accuracy",
-          "idempotency_key",
+          "targetAccuracy",
+          "idempotencyKey",
           "verifier"
         ],
         "scope": "eval:run",
         "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.",
         "requiredBody": [
-          "artifact_ids",
-          "task_family"
+          "artifactIds",
+          "taskFamily"
         ],
         "upstreamOperationId": "projects.jobs.create",
         "pathParamTemplates": {
@@ -4540,10 +4540,10 @@
           "parent"
         ],
         "body": [
-          "product_ids"
+          "productIds"
         ],
         "requiredBody": [
-          "product_ids"
+          "productIds"
         ],
         "scope": "dataset:write",
         "description": "Check raw-hash leakage between exactly two product bundles.",
@@ -4577,14 +4577,14 @@
           "parent"
         ],
         "body": [
-          "training_product_id",
-          "heldout_product_id",
-          "idempotency_key"
+          "trainingProductId",
+          "heldoutProductId",
+          "idempotencyKey"
         ],
         "requiredBody": [
-          "training_product_id",
-          "heldout_product_id",
-          "idempotency_key"
+          "trainingProductId",
+          "heldoutProductId",
+          "idempotencyKey"
         ],
         "scope": "training:publish",
         "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.",
@@ -4620,11 +4620,11 @@
         ],
         "body": [
           "format",
-          "train_fraction",
-          "include_raw",
-          "page_size",
-          "page_token",
-          "pair_sources"
+          "trainFraction",
+          "includeRaw",
+          "pageSize",
+          "pageToken",
+          "pairSources"
         ],
         "scope": "eval:run",
         "description": "Derive a deterministic post-training bundle from a ready product.",
@@ -4645,13 +4645,13 @@
           "parent"
         ],
         "body": [
-          "artifact_ids",
+          "artifactIds",
           "job"
         ],
         "scope": "eval:run",
         "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
         "requiredBody": [
-          "artifact_ids",
+          "artifactIds",
           "job"
         ],
         "upstreamOperationId": "projects.products.emitEval",
@@ -4672,13 +4672,13 @@
           "bucket",
           "prefix",
           "key",
-          "max_objects",
-          "max_bytes",
+          "maxObjects",
+          "maxBytes",
           "statement",
           "limit",
           "soql",
-          "max_pages",
-          "artifact_type",
+          "maxPages",
+          "artifactType",
           "source",
           "ingest",
           "metadata"
@@ -4723,10 +4723,10 @@
         "body": [
           "name",
           "description",
-          "input_schema",
+          "inputSchema",
           "kind",
           "implementation",
-          "created_by"
+          "createdBy"
         ],
         "requiredBody": [
           "name",
@@ -4825,30 +4825,30 @@
           "parent": "projects/*"
         },
         "body": [
-          "schema_version",
-          "request_id",
-          "release_id",
-          "release_kind",
-          "evidence_class",
-          "claim_class",
+          "schemaVersion",
+          "requestId",
+          "releaseId",
+          "releaseKind",
+          "evidenceClass",
+          "claimClass",
           "bindings",
-          "lineage_edges",
+          "lineageEdges",
           "budget",
           "eligibility",
-          "prospective_execution"
+          "prospectiveExecution"
         ],
         "requiredBody": [
-          "schema_version",
-          "request_id",
-          "release_id",
-          "release_kind",
-          "evidence_class",
-          "claim_class",
+          "schemaVersion",
+          "requestId",
+          "releaseId",
+          "releaseKind",
+          "evidenceClass",
+          "claimClass",
           "bindings",
-          "lineage_edges",
+          "lineageEdges",
           "budget",
           "eligibility",
-          "prospective_execution"
+          "prospectiveExecution"
         ],
         "scope": "eval:run"
       },
@@ -4877,26 +4877,26 @@
           "parent"
         ],
         "body": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "evidence_type",
-          "payload_schema",
+          "evidenceType",
+          "payloadSchema",
           "payload",
-          "source_artifact_refs",
-          "artifact_refs",
-          "verification_state",
-          "verifier_receipt_artifact_refs",
-          "quality_flags",
+          "sourceArtifactRefs",
+          "artifactRefs",
+          "verificationState",
+          "verifierReceiptArtifactRefs",
+          "qualityFlags",
           "provenance"
         ],
         "requiredBody": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "evidence_type",
-          "payload_schema",
+          "evidenceType",
+          "payloadSchema",
           "payload",
-          "source_artifact_refs",
-          "verification_state"
+          "sourceArtifactRefs",
+          "verificationState"
         ],
         "scope": "eval:run",
         "description": "Create an immutable shared evidence record by canonical content hash.",
@@ -4950,32 +4950,32 @@
           "parent"
         ],
         "body": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "context_evidence_ref",
-          "environment_ref",
+          "contextEvidenceRef",
+          "environmentRef",
           "seed",
           "observations",
-          "tool_calls",
-          "measured_outcomes",
-          "verifier_results",
-          "reward_components",
-          "terminal_reason",
+          "toolCalls",
+          "measuredOutcomes",
+          "verifierResults",
+          "rewardComponents",
+          "terminalReason",
           "uncertainty",
           "provenance",
-          "safety_events"
+          "safetyEvents"
         ],
         "requiredBody": [
-          "schema_version",
+          "schemaVersion",
           "domain",
-          "context_evidence_ref",
-          "environment_ref",
+          "contextEvidenceRef",
+          "environmentRef",
           "seed",
           "observations",
-          "measured_outcomes",
-          "verifier_results",
-          "reward_components",
-          "terminal_reason"
+          "measuredOutcomes",
+          "verifierResults",
+          "rewardComponents",
+          "terminalReason"
         ],
         "scope": "eval:run",
         "description": "Create an immutable shared episode by canonical content hash.",
