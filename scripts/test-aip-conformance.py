@@ -259,6 +259,9 @@ class AipConformanceTest(unittest.TestCase):
     def test_protocol_routes_are_explicitly_exempt(self) -> None:
         self.assertTrue(MODULE.is_protocol_exception("tempo", "/mcp"))
         self.assertTrue(
+            MODULE.is_protocol_exception("controlPlane", "/github/callback")
+        )
+        self.assertTrue(
             MODULE.is_protocol_exception("tempo", "/.well-known/agent-card.json")
         )
         self.assertTrue(MODULE.is_protocol_exception("remi", "/readyz"))

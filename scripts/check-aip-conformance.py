@@ -47,6 +47,7 @@ PROTOCOL_EXCEPTIONS = {
     ("controlPlane", "/billing/webhook"),
     ("controlPlane", "/billing/rails/coinbase/webhook"),
     ("controlPlane", "/billing/rails/paypal/webhook"),
+    ("controlPlane", "/github/callback"),
     ("controlPlane", "/github/webhook"),
     ("controlPlane", "/readyz"),
     ("cradle", "/v1/health"),
