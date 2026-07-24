@@ -4089,6 +4089,35 @@ OPERATIONS = {
             "description": "Cancel a queued or running workflow run."
         },
         {
+            "id": "runs_signal",
+            "upstream_operation_id": "runs.signal",
+            "method": "POST",
+            "path": "/v1/runs/{runId}:signal",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "runId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "idempotencyKey",
+                "payload",
+                "payloadDigest",
+                "signalName"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "signalName",
+                "idempotencyKey",
+                "payload",
+                "payloadDigest"
+            ],
+            "body_defaults": {},
+            "scope": None,
+            "description": "Consume a durable external callback and resume a waiting run."
+        },
+        {
             "id": "list_workflows",
             "upstream_operation_id": "workflows.list",
             "method": "GET",

@@ -289,9 +289,24 @@ test("action-suffix paths keep the literal colon un-encoded", async () => {
   assert.equal(calls[0].url.pathname, "/v1/projects/p1/artifacts:ingest");
   assert.ok(calls[0].url.toString().endsWith("/v1/projects/p1/artifacts:ingest"));
   assert.ok(!calls[0].url.toString().includes("%3A"), "colon must not be percent-encoded");
+  await client.temperaWorkflows.runsSignal({
+    runId: "run/1",
+    signalName: "provider.completed",
+    idempotencyKey: "callback-1",
+    payload: { resultRef: "sha256:abc" },
+    payloadDigest: "sha256:def",
+  });
+  assert.equal(calls[1].url.pathname, "/v1/runs/run%2F1:signal");
+  assert.ok(!calls[1].url.toString().includes("%3A"), "action colon must remain literal");
+  assert.deepEqual(JSON.parse(calls[1].options.body), {
+    idempotencyKey: "callback-1",
+    payload: { resultRef: "sha256:abc" },
+    payloadDigest: "sha256:def",
+    signalName: "provider.completed",
+  });
   // Colons inside a substituted path *value* are still encoded.
   await client.dataEngine.getJob({ parent: "projects/p1", jobId: "job:1" });
-  assert.equal(calls[1].url.pathname, "/v1/projects/p1/jobs/job%3A1");
+  assert.equal(calls[2].url.pathname, "/v1/projects/p1/jobs/job%3A1");
   await assert.rejects(
     () => client.dataEngine.ingestArtifact({ parent: "projects/../secrets" }),
     /must match AIP resource pattern "projects\/\*"/,
