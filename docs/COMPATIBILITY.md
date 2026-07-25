@@ -1,5 +1,38 @@
 # SDK compatibility ledger
 
+## 2026-07-24 — physical experiment provider boundary
+
+- Owner: Discovery release train across Tempera Workflows, SDK, MCP, Auth Hub,
+  and Bio.
+- Compatibility class: additive endpoints plus pre-1.0 operation-metadata
+  extension; package `0.12.0`, surface version `6`.
+- Producer: `tempera-dev/tempera-workflows@7f929443d3cb5b4f534cb1b3aba16d227665995e`.
+  The source lock and vendored OpenAPI are exact, immutable copies of that
+  merged `main` contract.
+- Added: `createExperimentSubmission`, `getExperimentSubmission`, and
+  `reconcileExperimentSubmission` in TypeScript, Python, and Rust.
+  `createExperimentSubmission` preserves the producer's
+  `bio:experiment:submit` scope, `tempera-workflows` audience, complete sealed
+  Bio proposal/protocol and MCP receipt fields, and durable idempotency key.
+- Physical-action semantics: every generated operation now exposes
+  `physicalAction` and `prepareCommitRequired`. Workflows must explicitly
+  declare both OpenAPI extensions on every operation; missing, non-boolean, or
+  internally inconsistent metadata fails synchronization. Only create is a
+  physical action and requires prepare/commit. Get and reconcile are
+  non-physical; reconcile invokes provider lookup only and cannot redispatch.
+- Compatibility note: adding fields to Rust's public `OperationSpec` can break
+  downstream struct-literal construction. Consumers should obtain operation
+  metadata through `find_operation`; direct construction was never required
+  for request dispatch.
+- Claims boundary: the SDK transports authorization and evidence references.
+  It does not claim a provider is configured, an experiment ran, or a signed
+  result exists. Those statuses remain runtime evidence.
+- Rollout: merge this exact SDK head, then regenerate the curated MCP surface
+  from its source lock and preserve prepare/commit admission for the sole
+  physical operation.
+- Rollback: revert the SDK and downstream MCP pin together. Do not retain the
+  physical endpoint while dropping its action metadata.
+
 ## 2026-07-24 — org-wide current-head contract convergence
 
 - Owner: Contract Spine across the current producer default branches.

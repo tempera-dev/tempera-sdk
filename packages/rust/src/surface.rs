@@ -3,7 +3,7 @@
 // the error contract, and every typed operation, shared verbatim with
 // the TypeScript and Python packages.
 
-pub const SURFACE_VERSION: u32 = 5;
+pub const SURFACE_VERSION: u32 = 6;
 
 pub const AUDIENCES: &[&str] = &[
     "palette",
@@ -283,6 +283,8 @@ pub struct OperationSpec {
     pub required_body: &'static [&'static str],
     pub body_defaults: &'static [(&'static str, &'static str)],
     pub scope: Option<&'static str>,
+    pub physical_action: bool,
+    pub prepare_commit_required: bool,
     pub description: &'static str,
 }
 
@@ -303,6 +305,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check control-plane liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -321,6 +325,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Readiness probe for durable control-plane storage.",
     },
     OperationSpec {
@@ -339,6 +345,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the authenticated user's identity, active workspace, and roles.",
     },
     OperationSpec {
@@ -357,6 +365,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the organizations the authenticated user belongs to.",
     },
     OperationSpec {
@@ -375,6 +385,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["name"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an organization; the caller becomes its owner.",
     },
     OperationSpec {
@@ -393,6 +405,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the user's active account sessions.",
     },
     OperationSpec {
@@ -411,6 +425,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["email", "password"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a first-party hosted account session from email/password login or signup.",
     },
     OperationSpec {
@@ -429,6 +445,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke an account session and its tokens immediately (idempotent).",
     },
     OperationSpec {
@@ -447,6 +465,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Switch the active workspace and receive a token pair scoped to it.",
     },
     OperationSpec {
@@ -465,6 +485,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List team members of the active organization.",
     },
     OperationSpec {
@@ -483,6 +505,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["role"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Change a team member's role (requires an org admin role; at least one owner must remain).",
     },
     OperationSpec {
@@ -501,6 +525,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Remove a team member from the active organization (idempotent).",
     },
     OperationSpec {
@@ -519,6 +545,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List invites for the active organization, newest first.",
     },
     OperationSpec {
@@ -537,6 +565,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["email", "role"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Invite a user to the active organization; the accept URL is returned once.",
     },
     OperationSpec {
@@ -555,6 +585,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Cancel a pending invite (idempotent).",
     },
     OperationSpec {
@@ -573,6 +605,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List projects across every organization the user belongs to.",
     },
     OperationSpec {
@@ -591,6 +625,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "name"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a project in an organization (requires an org admin role).",
     },
     OperationSpec {
@@ -609,6 +645,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List environments across every project the user can access.",
     },
     OperationSpec {
@@ -627,6 +665,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["projectId", "name"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an environment in a project (requires an org admin role).",
     },
     OperationSpec {
@@ -645,6 +685,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List API keys in the active workspace; secrets are never returned.",
     },
     OperationSpec {
@@ -671,6 +713,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId", "scopes"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.",
     },
     OperationSpec {
@@ -689,6 +733,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke an API key (idempotent).",
     },
     OperationSpec {
@@ -707,6 +753,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Rotate an API key's secret; the new secret is returned exactly once.",
     },
     OperationSpec {
@@ -725,6 +773,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
     },
     OperationSpec {
@@ -758,6 +808,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a tenant-scoped provider connection using only an external secret reference.",
     },
     OperationSpec {
@@ -776,6 +828,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
     },
     OperationSpec {
@@ -794,6 +848,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["secretRef"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Replace a connection secret reference and increment its revision without exposing the reference.",
     },
     OperationSpec {
@@ -812,6 +868,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId", "usageDelegation"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
     },
     OperationSpec {
@@ -830,6 +888,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List external experiment-provider metadata. Secret references and values are never returned.",
     },
     OperationSpec {
@@ -866,6 +926,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Register a tenant-scoped experiment provider using only an external secret reference.",
     },
     OperationSpec {
@@ -884,6 +946,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke an experiment-provider connection. An unknown id is a no-op.",
     },
     OperationSpec {
@@ -922,6 +986,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("bio:experiment:submit"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.",
     },
     OperationSpec {
@@ -940,6 +1006,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("bio:signer:manage"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List versioned public Ed25519 verifier keys for an authorized human administrator.",
     },
     OperationSpec {
@@ -958,6 +1026,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId", "keyId", "publicJwk"],
         body_defaults: &[],
         scope: Some("bio:signer:manage"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Register or rotate a public Ed25519 verifier key. Private key material is rejected.",
     },
     OperationSpec {
@@ -976,6 +1046,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("bio:signer:manage"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke a public verifier key while retaining its history.",
     },
     OperationSpec {
@@ -994,6 +1066,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("bio:experiment:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List exact, single-use experiment approvals for an authorized human approver.",
     },
     OperationSpec {
@@ -1030,6 +1104,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("bio:experiment:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.",
     },
     OperationSpec {
@@ -1048,6 +1124,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("bio:experiment:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke an unused experiment approval. Consumed approvals remain immutable.",
     },
     OperationSpec {
@@ -1066,6 +1144,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List recent audit-log events for the user and active organization (up to 50, newest first).",
     },
     OperationSpec {
@@ -1084,6 +1164,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the connector catalog (MCP clients, editors, and API surfaces).",
     },
     OperationSpec {
@@ -1102,6 +1184,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one connector's connection status for the active workspace.",
     },
     OperationSpec {
@@ -1120,6 +1204,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the product catalog with default scopes and setup paths.",
     },
     OperationSpec {
@@ -1138,6 +1224,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one product's activation status, entitlements, signals, and usage meters.",
     },
     OperationSpec {
@@ -1156,6 +1244,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
     },
     OperationSpec {
@@ -1174,6 +1264,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
     },
     OperationSpec {
@@ -1192,6 +1284,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the billing-portal URL for the organization (requires a billing role).",
     },
     OperationSpec {
@@ -1210,6 +1304,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
     },
     OperationSpec {
@@ -1228,6 +1324,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("model:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
     },
     OperationSpec {
@@ -1254,6 +1352,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId", "metric"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
     },
     OperationSpec {
@@ -1294,6 +1394,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Atomically reserve the maximum model cost before starting a provider request.",
     },
     OperationSpec {
@@ -1312,6 +1414,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId", "configId", "cost"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Commit exact provider usage against an admitted reservation and release unused capacity.",
     },
     OperationSpec {
@@ -1330,6 +1434,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "projectId", "environmentId"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Release unused capacity after provider failure or cancellation.",
     },
     OperationSpec {
@@ -1364,6 +1470,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
     },
     OperationSpec {
@@ -1382,6 +1490,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the OAuth grants the user has approved in the active workspace.",
     },
     OperationSpec {
@@ -1400,6 +1510,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke an OAuth grant and every refresh token issued under it.",
     },
     OperationSpec {
@@ -1418,6 +1530,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["token"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid.",
     },
     OperationSpec {
@@ -1436,6 +1550,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch OAuth 2.1 authorization-server metadata for the issuer.",
     },
     OperationSpec {
@@ -1454,6 +1570,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "OAuth protected resource discovery metadata for MCP/resource clients.",
     },
     OperationSpec {
@@ -1472,6 +1590,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch OAuth protected-resource metadata for one registered audience.",
     },
     OperationSpec {
@@ -1490,6 +1610,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the JSON Web Key Set used to verify control-plane access tokens.",
     },
     OperationSpec {
@@ -1508,6 +1630,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
     },
     OperationSpec {
@@ -1526,6 +1650,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["password"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
     },
     OperationSpec {
@@ -1544,6 +1670,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["orgId", "creditMicros"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
     },
     OperationSpec {
@@ -1562,6 +1690,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
     },
     OperationSpec {
@@ -1580,6 +1710,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a one-time CSRF-bound GitHub App installation session.",
     },
     OperationSpec {
@@ -1598,6 +1730,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Bind a GitHub installation callback to its authenticated workspace.",
     },
     OperationSpec {
@@ -1616,6 +1750,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List active GitHub App installations for the organization.",
     },
     OperationSpec {
@@ -1634,6 +1770,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Disconnect a GitHub App installation from the workspace.",
     },
     OperationSpec {
@@ -1652,6 +1790,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List repository metadata received for a GitHub installation.",
     },
     OperationSpec {
@@ -1670,6 +1810,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.",
     },
     OperationSpec {
@@ -1688,6 +1830,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Accept a signed, replay-deduplicated GitHub webhook.",
     },
     OperationSpec {
@@ -1706,6 +1850,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check palette API liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -1724,6 +1870,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["policy", "input"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
     },
     OperationSpec {
@@ -1742,6 +1890,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["scopes"],
         body_defaults: &[],
         scope: Some("admin"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Mint a palette-scoped API key; the secret is returned exactly once.",
     },
     OperationSpec {
@@ -1760,6 +1910,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("admin"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revoke a palette API key.",
     },
     OperationSpec {
@@ -1786,6 +1938,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
     },
     OperationSpec {
@@ -1804,6 +1958,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Archive a trace to Parquet and return the archive manifest.",
     },
     OperationSpec {
@@ -1822,6 +1978,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/audit/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -1840,6 +1998,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
     },
     OperationSpec {
@@ -1858,6 +2018,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -1876,6 +2038,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -1894,6 +2058,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["toolkit"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
     },
     OperationSpec {
@@ -1912,6 +2078,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["tool"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
     },
     OperationSpec {
@@ -1930,6 +2098,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
     },
     OperationSpec {
@@ -1948,6 +2118,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
     },
     OperationSpec {
@@ -1966,6 +2138,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
     },
     OperationSpec {
@@ -1984,6 +2158,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["name"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a dataset for curating cases from traces.",
     },
     OperationSpec {
@@ -2002,6 +2178,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["traceId"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Promote a trace (or one span of it) into a dataset case.",
     },
     OperationSpec {
@@ -2020,6 +2198,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Snapshot a dataset into an immutable version for evals and experiments.",
     },
     OperationSpec {
@@ -2051,6 +2231,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
     },
     OperationSpec {
@@ -2083,6 +2265,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
     },
     OperationSpec {
@@ -2101,6 +2285,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["canonicalJson", "signatureBase64", "publicKeyPem"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
     },
     OperationSpec {
@@ -2119,6 +2305,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["canonicalJson", "signatureBase64", "publicKeyPem"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
     },
     OperationSpec {
@@ -2137,6 +2325,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
     },
     OperationSpec {
@@ -2172,6 +2362,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
     },
     OperationSpec {
@@ -2209,6 +2401,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
     },
     OperationSpec {
@@ -2233,6 +2427,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["gateId", "name"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/gates/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2251,6 +2447,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
     },
     OperationSpec {
@@ -2269,6 +2467,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["source"],
         body_defaults: &[],
         scope: Some("trace:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Import spans from a named external source payload.",
     },
     OperationSpec {
@@ -2287,6 +2487,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
     },
     OperationSpec {
@@ -2305,6 +2507,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
     },
     OperationSpec {
@@ -2323,6 +2527,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
     },
     OperationSpec {
@@ -2341,6 +2547,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
     },
     OperationSpec {
@@ -2359,6 +2567,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
     },
     OperationSpec {
@@ -2377,6 +2587,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["evaluator", "case", "providerSecretId"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
     },
     OperationSpec {
@@ -2395,6 +2607,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
     },
     OperationSpec {
@@ -2418,6 +2632,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["sampleRatePerMille", "keepErrors"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
     },
     OperationSpec {
@@ -2436,6 +2652,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2454,6 +2672,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["name", "template"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/prompts/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2472,6 +2692,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
     },
     OperationSpec {
@@ -2490,6 +2712,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
     },
     OperationSpec {
@@ -2508,6 +2732,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
     },
     OperationSpec {
@@ -2526,6 +2752,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["template"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
     },
     OperationSpec {
@@ -2544,6 +2772,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2562,6 +2792,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["provider", "displayName", "secretValue"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2580,6 +2812,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
     },
     OperationSpec {
@@ -2598,6 +2832,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["name", "annotationSchema"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2616,6 +2852,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
     },
     OperationSpec {
@@ -2641,6 +2879,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["traceId"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
     },
     OperationSpec {
@@ -2659,6 +2899,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["reviewerId", "verdict", "payload"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
     },
     OperationSpec {
@@ -2677,6 +2919,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["datasetId"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
     },
     OperationSpec {
@@ -2695,6 +2939,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2719,6 +2965,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["title", "sourceTraceIds"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -2737,6 +2985,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["traceIds"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
     },
     OperationSpec {
@@ -2755,6 +3005,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
     },
     OperationSpec {
@@ -2785,6 +3037,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Search spans by text query and facet filters.",
     },
     OperationSpec {
@@ -2803,6 +3057,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one canonical span by trace and span id.",
     },
     OperationSpec {
@@ -2821,6 +3077,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch a span's recorded input and output values.",
     },
     OperationSpec {
@@ -2869,6 +3127,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("trace:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Ingest one native span; idempotent when an idempotency key is supplied.",
     },
     OperationSpec {
@@ -2903,6 +3163,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List trace summaries for a tenant with filters and cursor pagination.",
     },
     OperationSpec {
@@ -2921,6 +3183,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("trace:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
     },
     OperationSpec {
@@ -2939,6 +3203,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("admin"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch usage totals for a tenant project.",
     },
     OperationSpec {
@@ -2957,6 +3223,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /.well-known/agent-card.json.",
     },
     OperationSpec {
@@ -2975,6 +3243,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /.well-known/agent.json.",
     },
     OperationSpec {
@@ -2993,6 +3263,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check tempod liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -3011,6 +3283,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /metrics.",
     },
     OperationSpec {
@@ -3029,6 +3303,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch tempod's OpenAPI document, generated at runtime for this host.",
     },
     OperationSpec {
@@ -3047,6 +3323,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check tempod readiness, including engine attachment, drain state, and session capacity.",
     },
     OperationSpec {
@@ -3065,6 +3343,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /drain.",
     },
     OperationSpec {
@@ -3083,6 +3363,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List agent runs, optionally filtered to one session.",
     },
     OperationSpec {
@@ -3101,6 +3383,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one agent run with its state.",
     },
     OperationSpec {
@@ -3119,6 +3403,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /runs/{run_id}/events.",
     },
     OperationSpec {
@@ -3137,6 +3423,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Cancel an agent run.",
     },
     OperationSpec {
@@ -3155,6 +3443,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Resume an agent run after a human handoff completes.",
     },
     OperationSpec {
@@ -3173,6 +3463,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List browser sessions with their state and creation time.",
     },
     OperationSpec {
@@ -3191,6 +3483,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["url"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Open a browser session at a URL; driverless sessions skip engine attachment.",
     },
     OperationSpec {
@@ -3209,6 +3503,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Close a browser session and release its engine resources.",
     },
     OperationSpec {
@@ -3227,6 +3523,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Grant a pending policy confirmation and receive a single-use grant token.",
     },
     OperationSpec {
@@ -3245,6 +3543,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the session's event window after a sequence number.",
     },
     OperationSpec {
@@ -3263,6 +3563,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /sessions/{session_id}/manager.",
     },
     OperationSpec {
@@ -3281,6 +3583,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Start an agent run against the session with a goal, action budget, and round limit.",
     },
     OperationSpec {
@@ -3306,6 +3610,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /sessions/{session_id}/surfaces.",
     },
     OperationSpec {
@@ -3324,6 +3630,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
     },
     OperationSpec {
@@ -3349,6 +3657,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["batch"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
     },
     OperationSpec {
@@ -3374,6 +3684,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Let a human surface take write ownership of the session and receive an adoption lease.",
     },
     OperationSpec {
@@ -3392,6 +3704,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Return write ownership of the session to the agent plane.",
     },
     OperationSpec {
@@ -3410,6 +3724,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
     },
     OperationSpec {
@@ -3428,6 +3744,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
     },
     OperationSpec {
@@ -3453,6 +3771,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["lane", "source"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /sessions/{session_id}/transform.",
     },
     OperationSpec {
@@ -3471,6 +3791,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check tempera-llm gateway liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -3489,6 +3811,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /readyz.",
     },
     OperationSpec {
@@ -3515,6 +3839,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["model", "messages", "max_tokens"],
         body_defaults: &[],
         scope: Some("model:invoke"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
     },
     OperationSpec {
@@ -3533,6 +3859,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("model:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the configured model catalog the gateway can route to.",
     },
     OperationSpec {
@@ -3557,6 +3885,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["model", "input", "max_output_tokens"],
         body_defaults: &[],
         scope: Some("model:invoke"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
     },
     OperationSpec {
@@ -3575,7 +3905,85 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check tempera-workflows engine liveness.",
+    },
+    OperationSpec {
+        product: "tempera_workflows",
+        id: "create_experiment_submission",
+        upstream_operation_id: "experimentSubmissions.create",
+        method: "POST",
+        path: "/v1/experimentSubmissions",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-workflows"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        body: &[
+            "approvalId",
+            "connectionId",
+            "experimentProposal",
+            "mcpCommitReceiptDigest",
+            "mcpPrepareReceiptDigest",
+            "prospectiveProtocol",
+            "submissionIdempotencyKey",
+        ],
+        forbidden_body: &[],
+        required_body: &[
+            "prospectiveProtocol",
+            "experimentProposal",
+            "connectionId",
+            "approvalId",
+            "mcpPrepareReceiptDigest",
+            "mcpCommitReceiptDigest",
+            "submissionIdempotencyKey",
+        ],
+        body_defaults: &[],
+        scope: Some("bio:experiment:submit"),
+        physical_action: true,
+        prepare_commit_required: true,
+        description: "Authorize and durably submit one preregistered prospective Bio experiment.",
+    },
+    OperationSpec {
+        product: "tempera_workflows",
+        id: "get_experiment_submission",
+        upstream_operation_id: "experimentSubmissions.get",
+        method: "GET",
+        path: "/v1/experimentSubmissions/{submissionId}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-workflows"),
+        path_params: &["submissionId"],
+        path_param_templates: &[],
+        query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        description: "Get a credential-free durable view of one experiment submission.",
+    },
+    OperationSpec {
+        product: "tempera_workflows",
+        id: "reconcile_experiment_submission",
+        upstream_operation_id: "experimentSubmissions.reconcile",
+        method: "POST",
+        path: "/v1/experimentSubmissions/{submissionId}:reconcile",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-workflows"),
+        path_params: &["submissionId"],
+        path_param_templates: &[],
+        query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        scope: Some("bio:experiment:submit"),
+        physical_action: false,
+        prepare_commit_required: false,
+        description: "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order.",
     },
     OperationSpec {
         product: "tempera_workflows",
@@ -3593,6 +4001,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
     },
     OperationSpec {
@@ -3611,6 +4021,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List workflow runs, optionally filtered to one workflow.",
     },
     OperationSpec {
@@ -3629,6 +4041,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
     },
     OperationSpec {
@@ -3647,6 +4061,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Cancel a queued or running workflow run.",
     },
     OperationSpec {
@@ -3665,6 +4081,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["signalName", "idempotencyKey", "payload", "payloadDigest"],
         body_defaults: &[],
         scope: Some("workflow:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Consume a durable external callback and resume a waiting run.",
     },
     OperationSpec {
@@ -3683,6 +4101,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List stored workflow definitions, newest first.",
     },
     OperationSpec {
@@ -3709,6 +4129,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["contractVersion", "id", "name", "nodes", "edges"],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
     },
     OperationSpec {
@@ -3727,6 +4149,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Delete a stored workflow definition.",
     },
     OperationSpec {
@@ -3745,6 +4169,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one stored workflow definition.",
     },
     OperationSpec {
@@ -3771,6 +4197,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["contractVersion", "id", "name", "nodes", "edges"],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Replace a stored workflow definition with a new validated revision.",
     },
     OperationSpec {
@@ -3796,6 +4224,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Start a run of a stored workflow with an optional input document and idempotency key.",
     },
     OperationSpec {
@@ -3822,6 +4252,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Run a workflow to completion and return its output in a single call.",
     },
     OperationSpec {
@@ -3846,6 +4278,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
     },
     OperationSpec {
@@ -3864,6 +4298,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["prompt"],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
     },
     OperationSpec {
@@ -3889,6 +4325,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["mode", "purpose", "expectedRoot"],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
     },
     OperationSpec {
@@ -3915,6 +4353,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["contractVersion", "id", "name", "nodes", "edges"],
         body_defaults: &[],
         scope: Some("workflow:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Validate a workflow definition without storing it; returns the full diagnostic list.",
     },
     OperationSpec {
@@ -3933,6 +4373,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check tempera-gym service liveness.",
     },
     OperationSpec {
@@ -3951,6 +4393,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
     },
     OperationSpec {
@@ -3969,6 +4413,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Domain capabilities represented in the versioned task catalog.",
     },
     OperationSpec {
@@ -3987,6 +4433,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List versioned task definitions without agent inputs.",
     },
     OperationSpec {
@@ -4005,6 +4453,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Get one immutable task definition including its agent-visible input.",
     },
     OperationSpec {
@@ -4023,6 +4473,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["candidate"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Deterministically verify one candidate without creating an episode.",
     },
     OperationSpec {
@@ -4041,6 +4493,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List verifier identities and bound tasks without grader content.",
     },
     OperationSpec {
@@ -4059,6 +4513,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List durable episode snapshots, newest first.",
     },
     OperationSpec {
@@ -4077,6 +4533,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["task", "seed"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Reset a versioned task into a durable episode.",
     },
     OperationSpec {
@@ -4095,6 +4553,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Read and content-verify one durable episode snapshot.",
     },
     OperationSpec {
@@ -4113,6 +4573,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["action"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Apply one schema-validated action and persist the transition.",
     },
     OperationSpec {
@@ -4135,6 +4597,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["contextEvidenceRef"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Retain a completed Gym episode and trajectory in Data Engine.",
     },
     OperationSpec {
@@ -4153,6 +4617,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List persisted rollout run index records, newest first.",
     },
     OperationSpec {
@@ -4171,6 +4637,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
     },
     OperationSpec {
@@ -4197,6 +4665,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["environmentId", "seed"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
     },
     OperationSpec {
@@ -4215,6 +4685,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Discover the four frozen outcome-blind Bio proposal policies.",
     },
     OperationSpec {
@@ -4255,6 +4727,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Propose one constrained Bio candidate batch without outcome access.",
     },
     OperationSpec {
@@ -4273,6 +4747,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Discover boot-trusted exact sealed-evaluator identities.",
     },
     OperationSpec {
@@ -4291,6 +4767,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List persisted sealed-evaluation precommits and results.",
     },
     OperationSpec {
@@ -4309,6 +4787,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["evaluator", "qualificationPolicy", "suite", "trainer"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Persist an opaque sealed-suite commitment before policy freeze.",
     },
     OperationSpec {
@@ -4327,6 +4807,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Read one verified precommit and aggregate sealed result.",
     },
     OperationSpec {
@@ -4345,6 +4827,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["policySubmission", "trainingReport"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Evaluate one frozen policy through its exact sealed adapter.",
     },
     OperationSpec {
@@ -4363,6 +4847,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["program", "hypothesis", "candidateSet", "rounds"],
         body_defaults: &[],
         scope: Some("bio:decision:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Derive campaign state.",
     },
     OperationSpec {
@@ -4381,6 +4867,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["candidates"],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare candidate set.",
     },
     OperationSpec {
@@ -4399,6 +4887,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["program", "decision", "verifierReceipts"],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare dataset release manifest.",
     },
     OperationSpec {
@@ -4429,6 +4919,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("bio:decision:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Derive decision.",
     },
     OperationSpec {
@@ -4447,6 +4939,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["program", "candidateSet", "selectedCandidates"],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare experiment proposal.",
     },
     OperationSpec {
@@ -4475,6 +4969,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare experiment proposal from gym batch.",
     },
     OperationSpec {
@@ -4493,6 +4989,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["hypothesis"],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare hypothesis.",
     },
     OperationSpec {
@@ -4525,6 +5023,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("bio:measurement:verify"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Verify measurement.",
     },
     OperationSpec {
@@ -4543,6 +5043,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["configuration", "hypothesis", "candidateSet"],
         body_defaults: &[],
         scope: Some("bio:proposal:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Prepare program.",
     },
     OperationSpec {
@@ -4561,6 +5063,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["scoreSetUrn"],
         body_defaults: &[],
         scope: Some("bio:source:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Ingest mave d b score set.",
     },
     OperationSpec {
@@ -4585,6 +5089,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["actor", "sensitivity"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/capability.",
     },
     OperationSpec {
@@ -4625,6 +5131,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/completion/validate.",
     },
     OperationSpec {
@@ -4643,6 +5151,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the browser adapter contract, required controls, and conformance profile.",
     },
     OperationSpec {
@@ -4661,6 +5171,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["launchRequest"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/launch/claim.",
     },
     OperationSpec {
@@ -4679,6 +5191,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["sameUserCapability", "admission", "manifest"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/launch/plan.",
     },
     OperationSpec {
@@ -4697,6 +5211,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["actor", "sensitivity", "sameUserCapability", "manifest"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/register.",
     },
     OperationSpec {
@@ -4731,6 +5247,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/browser/adapter/validate.",
     },
     OperationSpec {
@@ -4760,6 +5278,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["requestedLevel", "actor", "sensitivity"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Request admission for a browser session at a sandbox level and receive the guard plan.",
     },
     OperationSpec {
@@ -4778,6 +5298,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
     },
     OperationSpec {
@@ -4796,6 +5318,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
     },
     OperationSpec {
@@ -4822,6 +5346,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["lane", "source"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Execute source synchronously in a sandbox lane and return the result with metrics.",
     },
     OperationSpec {
@@ -4840,6 +5366,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check sandbox-daemon liveness; returns status, version, and uptime.",
     },
     OperationSpec {
@@ -4858,6 +5386,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the ecosystem integration contract this daemon implements.",
     },
     OperationSpec {
@@ -4884,6 +5414,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["lane", "source"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Submit an asynchronous sandbox job; returns an operation handle to poll.",
     },
     OperationSpec {
@@ -4902,6 +5434,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
     },
     OperationSpec {
@@ -4920,6 +5454,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch a sandbox job's status and result.",
     },
     OperationSpec {
@@ -4938,6 +5474,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["bytesBase64"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call POST /v1/projects/{project}/modules.",
     },
     OperationSpec {
@@ -4956,6 +5494,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Call GET /v1/projects/{project}/modules/{sha256}.",
     },
     OperationSpec {
@@ -4974,6 +5514,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check memory-server liveness.",
     },
     OperationSpec {
@@ -4992,6 +5534,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check memory-server readiness, including database health.",
     },
     OperationSpec {
@@ -5010,6 +5554,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch deep store health: schema version, integrity checks, and graph consistency.",
     },
     OperationSpec {
@@ -5028,6 +5574,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch memory-store statistics: ledger events, nodes, and token counts by kind.",
     },
     OperationSpec {
@@ -5046,6 +5594,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch service metrics as JSON, including per-route counters and query-tier latencies.",
     },
     OperationSpec {
@@ -5064,6 +5614,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring.",
     },
     OperationSpec {
@@ -5082,6 +5634,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List recent service audit events (default 100, maximum 500).",
     },
     OperationSpec {
@@ -5108,6 +5662,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["tenantId", "projectId", "kind", "text"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Write one memory event into the tenant and project ledger.",
     },
     OperationSpec {
@@ -5126,6 +5682,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Project pending ledger events into the memory graph and return the projection report.",
     },
     OperationSpec {
@@ -5153,6 +5711,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["question", "scope"],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Answer a scoped memory question with evidence and reconstruction metadata.",
     },
     OperationSpec {
@@ -5176,6 +5736,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
     },
     OperationSpec {
@@ -5194,6 +5756,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check data-engine liveness; returns the service status.",
     },
     OperationSpec {
@@ -5212,6 +5776,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the MVP use-case templates (data products and pipeline templates) for a project.",
     },
     OperationSpec {
@@ -5230,6 +5796,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.",
     },
     OperationSpec {
@@ -5254,6 +5822,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Ingest one artifact deterministically into the project; returns an async operation handle.",
     },
     OperationSpec {
@@ -5279,6 +5849,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["url"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.",
     },
     OperationSpec {
@@ -5308,6 +5880,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create a data campaign with a rubric, budget, target accuracy, and skill tags.",
     },
     OperationSpec {
@@ -5326,6 +5900,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List a project's data campaigns with pagination.",
     },
     OperationSpec {
@@ -5344,6 +5920,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["targetStatus", "idempotencyKey"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.",
     },
     OperationSpec {
@@ -5362,6 +5940,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
     },
     OperationSpec {
@@ -5390,6 +5970,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["useCase"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.",
     },
     OperationSpec {
@@ -5408,6 +5990,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List human residual review tasks, optionally filtered by status and campaign.",
     },
     OperationSpec {
@@ -5432,6 +6016,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["sourceExpertTaskName", "expectedLabel", "idempotencyKey"],
         body_defaults: &[],
         scope: Some("review:gold:manage"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
     },
     OperationSpec {
@@ -5461,6 +6047,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["label", "idempotencyKey", "reviewContext"],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
     },
     OperationSpec {
@@ -5479,6 +6067,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["idempotencyKey", "leaseToken"],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Atomically claim one open expert task with an exclusive renewable lease.",
     },
     OperationSpec {
@@ -5497,6 +6087,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["idempotencyKey", "leaseToken"],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Renew the authenticated reviewer's active expert-task lease.",
     },
     OperationSpec {
@@ -5515,6 +6107,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["idempotencyKey", "leaseToken"],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Release the authenticated reviewer's active expert-task lease for reassignment.",
     },
     OperationSpec {
@@ -5533,6 +6127,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["idempotencyKey", "leaseToken", "draft", "expectedVersion"],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Autosave a version-checked draft under the active reviewer lease.",
     },
     OperationSpec {
@@ -5551,6 +6147,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("review:resolve"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
     },
     OperationSpec {
@@ -5569,6 +6167,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch data-engine usage and quality metrics for a project.",
     },
     OperationSpec {
@@ -5587,6 +6187,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch the project label-quality report and unresolved expert backlog.",
     },
     OperationSpec {
@@ -5605,6 +6207,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch public-site and ecosystem readiness signals for a project.",
     },
     OperationSpec {
@@ -5623,6 +6227,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).",
     },
     OperationSpec {
@@ -5641,6 +6247,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one artifact, expanded to the requested view (BASIC or FULL).",
     },
     OperationSpec {
@@ -5659,6 +6267,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the labels attached to one artifact.",
     },
     OperationSpec {
@@ -5677,6 +6287,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Profile dataset quality before export, including duplicates, label coverage, and distributions.",
     },
     OperationSpec {
@@ -5702,6 +6314,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["artifactIds", "taskFamily"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.",
     },
     OperationSpec {
@@ -5720,6 +6334,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one labeling job with its state and progress.",
     },
     OperationSpec {
@@ -5738,6 +6354,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List the deterministic label results a job produced.",
     },
     OperationSpec {
@@ -5756,6 +6374,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one emitted product bundle with its status and manifest URL.",
     },
     OperationSpec {
@@ -5774,6 +6394,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Validate an emitted product bundle's referential integrity and hygiene.",
     },
     OperationSpec {
@@ -5792,6 +6414,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["productIds"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Check raw-hash leakage between exactly two product bundles.",
     },
     OperationSpec {
@@ -5810,6 +6434,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch an integrity-checked, bounded manifest for an emitted eval product.",
     },
     OperationSpec {
@@ -5828,6 +6454,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["trainingProductId", "heldoutProductId", "idempotencyKey"],
         body_defaults: &[],
         scope: Some("training:publish"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.",
     },
     OperationSpec {
@@ -5846,6 +6474,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("training:publish"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Revalidate and fetch one training release, including any durable stale state.",
     },
     OperationSpec {
@@ -5871,6 +6501,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["format"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Derive a deterministic post-training bundle from a ready product.",
     },
     OperationSpec {
@@ -5889,6 +6521,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["artifactIds", "job"],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
     },
     OperationSpec {
@@ -5922,6 +6556,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["connector"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Extract bounded objects or records from a configured source connector.",
     },
     OperationSpec {
@@ -5940,6 +6576,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List registered source connectors for a project.",
     },
     OperationSpec {
@@ -5965,6 +6603,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["name", "description", "kind", "implementation"],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create or version-bump a stored custom tool.",
     },
     OperationSpec {
@@ -5983,6 +6623,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List stored custom tools and their usage statistics.",
     },
     OperationSpec {
@@ -6001,6 +6643,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one stored custom tool and its usage statistics.",
     },
     OperationSpec {
@@ -6019,6 +6663,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Delete a stored custom tool and every retained version.",
     },
     OperationSpec {
@@ -6037,6 +6683,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Invoke a stored custom tool through its configured execution boundary.",
     },
     OperationSpec {
@@ -6079,6 +6727,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Atomically commit an immutable discovery release graph.",
     },
     OperationSpec {
@@ -6097,6 +6747,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Get one immutable discovery release.",
     },
     OperationSpec {
@@ -6135,6 +6787,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an immutable shared evidence record by canonical content hash.",
     },
     OperationSpec {
@@ -6153,6 +6807,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List immutable shared evidence records with bounded cursor pagination.",
     },
     OperationSpec {
@@ -6171,6 +6827,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one immutable shared evidence record by its platform digest.",
     },
     OperationSpec {
@@ -6215,6 +6873,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("eval:run"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an immutable shared episode by canonical content hash.",
     },
     OperationSpec {
@@ -6233,6 +6893,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List immutable shared episodes with bounded cursor pagination.",
     },
     OperationSpec {
@@ -6251,6 +6913,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one immutable shared episode by its platform digest.",
     },
     OperationSpec {
@@ -6280,6 +6944,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &["contractVersion", "requestId", "obligation", "limit"],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Retrieve deterministic candidates for one exact canonical typed research obligation.",
     },
     OperationSpec {
@@ -6312,6 +6978,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         ],
         body_defaults: &[],
         scope: Some("dataset:write"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Create an immutable executable research catalog entry by canonical content hash.",
     },
     OperationSpec {
@@ -6330,6 +6998,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "List immutable executable research catalog entries with bounded pagination.",
     },
     OperationSpec {
@@ -6348,6 +7018,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: Some("dataset:read"),
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Fetch one immutable executable research catalog entry by content hash.",
     },
     OperationSpec {
@@ -6366,6 +7038,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[],
         body_defaults: &[],
         scope: None,
+        physical_action: false,
+        prepare_commit_required: false,
         description: "Compute live qualification evidence.",
     },
 ];

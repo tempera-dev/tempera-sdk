@@ -1556,6 +1556,103 @@ mod tests {
     }
 
     #[test]
+    fn physical_experiment_submission_preserves_exact_workflows_contract() {
+        let create = crate::surface::find_operation(
+            "tempera_workflows",
+            "create_experiment_submission",
+        )
+        .unwrap();
+        let get = crate::surface::find_operation(
+            "tempera_workflows",
+            "get_experiment_submission",
+        )
+        .unwrap();
+        let reconcile = crate::surface::find_operation(
+            "tempera_workflows",
+            "reconcile_experiment_submission",
+        )
+        .unwrap();
+        assert_eq!(
+            create.upstream_operation_id,
+            "experimentSubmissions.create"
+        );
+        assert_eq!(create.auth_audience, Some("tempera-workflows"));
+        assert_eq!(create.scope, Some("bio:experiment:submit"));
+        assert!(create.physical_action);
+        assert!(create.prepare_commit_required);
+        assert!(!get.physical_action);
+        assert!(!get.prepare_commit_required);
+        assert!(!reconcile.physical_action);
+        assert!(!reconcile.prepare_commit_required);
+
+        let create_request = full_client()
+            .build_request(
+                "tempera_workflows",
+                "create_experiment_submission",
+                &[
+                    (
+                        "prospective_protocol",
+                        ParamValue::RawJson(
+                            r#"{"schemaVersion":"tempera.bio-prospective-experiment-protocol/v1"}"#
+                                .to_string(),
+                        ),
+                    ),
+                    (
+                        "experiment_proposal",
+                        ParamValue::RawJson(
+                            r#"{"schemaVersion":"tempera.bio-experiment-proposal/v1"}"#
+                                .to_string(),
+                        ),
+                    ),
+                    ("connection_id", "epc_1".into()),
+                    ("approval_id", "exa_1".into()),
+                    (
+                        "mcp_prepare_receipt_digest",
+                        format!("sha256:{}", "1".repeat(64)).into(),
+                    ),
+                    (
+                        "mcp_commit_receipt_digest",
+                        format!("sha256:{}", "2".repeat(64)).into(),
+                    ),
+                    ("submission_idempotency_key", "submit-1".into()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            create_request.url,
+            "https://tempera_workflows.example.test/v1/experimentSubmissions"
+        );
+        let create_body = create_request.body_json.unwrap();
+        for expected in [
+            r#""approvalId":"exa_1""#,
+            r#""connectionId":"epc_1""#,
+            r#""experimentProposal":{"schemaVersion":"tempera.bio-experiment-proposal/v1"}"#,
+            r#""mcpCommitReceiptDigest":"sha256:2222222222222222222222222222222222222222222222222222222222222222""#,
+            r#""mcpPrepareReceiptDigest":"sha256:1111111111111111111111111111111111111111111111111111111111111111""#,
+            r#""prospectiveProtocol":{"schemaVersion":"tempera.bio-prospective-experiment-protocol/v1"}"#,
+            r#""submissionIdempotencyKey":"submit-1""#,
+        ] {
+            assert!(
+                create_body.contains(expected),
+                "body {create_body} missing {expected}"
+            );
+        }
+
+        let reconcile_request = full_client()
+            .build_request(
+                "tempera_workflows",
+                "reconcile_experiment_submission",
+                &[("submission_id", "submission/1".into())],
+            )
+            .unwrap();
+        assert_eq!(
+            reconcile_request.url,
+            "https://tempera_workflows.example.test/v1/experimentSubmissions/submission%2F1:reconcile"
+        );
+        assert!(reconcile_request.body_json.is_none());
+    }
+
+    #[test]
     fn gym_bio_proposal_preserves_outcome_blind_wire_and_auth_contract() {
         let policy_operation =
             crate::surface::find_operation("tempera_gym", "bio_proposal_policies_list").unwrap();

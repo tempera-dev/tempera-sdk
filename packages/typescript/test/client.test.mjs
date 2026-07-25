@@ -386,6 +386,62 @@ test("Bio campaign compiler preserves the exact Workflows wire and auth contract
   });
 });
 
+test("physical experiment submission is explicit, prepare/commit-gated metadata", async () => {
+  const create = TEMPERA_OPERATIONS.temperaWorkflows.find(
+    (candidate) => candidate.id === "createExperimentSubmission",
+  );
+  const get = TEMPERA_OPERATIONS.temperaWorkflows.find(
+    (candidate) => candidate.id === "getExperimentSubmission",
+  );
+  const reconcile = TEMPERA_OPERATIONS.temperaWorkflows.find(
+    (candidate) => candidate.id === "reconcileExperimentSubmission",
+  );
+  assert.ok(create);
+  assert.ok(get);
+  assert.ok(reconcile);
+  assert.equal(create.upstreamOperationId, "experimentSubmissions.create");
+  assert.equal(create.authAudience, "tempera-workflows");
+  assert.equal(create.scope, "bio:experiment:submit");
+  assert.equal(create.physicalAction, true);
+  assert.equal(create.prepareCommitRequired, true);
+  assert.equal(get.physicalAction, false);
+  assert.equal(get.prepareCommitRequired, false);
+  assert.equal(reconcile.physicalAction, false);
+  assert.equal(reconcile.prepareCommitRequired, false);
+
+  const { client, calls } = testClient();
+  await client.temperaWorkflows.createExperimentSubmission({
+    prospectiveProtocol: { schemaVersion: "tempera.bio-prospective-experiment-protocol/v1" },
+    experimentProposal: { schemaVersion: "tempera.bio-experiment-proposal/v1" },
+    connectionId: "epc_1",
+    approvalId: "exa_1",
+    mcpPrepareReceiptDigest: `sha256:${"1".repeat(64)}`,
+    mcpCommitReceiptDigest: `sha256:${"2".repeat(64)}`,
+    submissionIdempotencyKey: "submit-1",
+  });
+  assert.equal(calls[0].url.pathname, "/v1/experimentSubmissions");
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    approvalId: "exa_1",
+    connectionId: "epc_1",
+    experimentProposal: { schemaVersion: "tempera.bio-experiment-proposal/v1" },
+    mcpCommitReceiptDigest: `sha256:${"2".repeat(64)}`,
+    mcpPrepareReceiptDigest: `sha256:${"1".repeat(64)}`,
+    prospectiveProtocol: {
+      schemaVersion: "tempera.bio-prospective-experiment-protocol/v1",
+    },
+    submissionIdempotencyKey: "submit-1",
+  });
+
+  await client.temperaWorkflows.reconcileExperimentSubmission({
+    submissionId: "submission/1",
+  });
+  assert.equal(
+    calls[1].url.pathname,
+    "/v1/experimentSubmissions/submission%2F1:reconcile",
+  );
+  assert.equal(calls[1].options.body, undefined);
+});
+
 test("Gym Bio proposal preserves the outcome-blind wire and auth contract", async () => {
   const policyOperation = TEMPERA_OPERATIONS.temperaGym.find(
     (candidate) => candidate.id === "bioProposalPoliciesList",

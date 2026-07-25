@@ -21,7 +21,7 @@ Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of ty
 | Audience | `tempera-workflows` |
 | Auth | bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key |
 | Client | TypeScript `client.temperaWorkflows` · Python `client.tempera_workflows` · Rust `build_request("tempera_workflows", ...)` |
-| Typed operations | 17 |
+| Typed operations | 20 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaWorkflows.request(path, options)` (TypeScript) /
@@ -51,6 +51,155 @@ result = client.tempera_workflows.health()
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createExperimentSubmission
+
+`POST /v1/experimentSubmissions`
+
+Authorize and durably submit one preregistered prospective Bio experiment.
+
+- **Producer operationId:** `experimentSubmissions.create`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
+- **Prepare/commit:** Required. Obtain a valid prepare receipt and commit authorization before invoking it.
+- **Scope:** `bio:experiment:submit`
+- **Call as:** TypeScript `client.temperaWorkflows.createExperimentSubmission()` · Python `client.tempera_workflows.create_experiment_submission()` · Rust `build_request("tempera_workflows", "create_experiment_submission", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `approvalId` | yes | — |
+| `connectionId` | yes | — |
+| `experimentProposal` | yes | — |
+| `mcpCommitReceiptDigest` | yes | — |
+| `mcpPrepareReceiptDigest` | yes | — |
+| `prospectiveProtocol` | yes | — |
+| `submissionIdempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.createExperimentSubmission({
+  approvalId: "<approvalId>",
+  connectionId: "<connectionId>",
+  experimentProposal: "<experimentProposal>",
+  mcpCommitReceiptDigest: "<mcpCommitReceiptDigest>",
+  mcpPrepareReceiptDigest: "<mcpPrepareReceiptDigest>",
+  prospectiveProtocol: "<prospectiveProtocol>",
+  submissionIdempotencyKey: "<submissionIdempotencyKey>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.create_experiment_submission({
+    "approvalId": "<approvalId>",
+    "connectionId": "<connectionId>",
+    "experimentProposal": "<experimentProposal>",
+    "mcpCommitReceiptDigest": "<mcpCommitReceiptDigest>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "prospectiveProtocol": "<prospectiveProtocol>",
+    "submissionIdempotencyKey": "<submissionIdempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "create_experiment_submission", &[
+    ("approvalId", "<approvalId>".into()),
+    ("connectionId", "<connectionId>".into()),
+    ("experimentProposal", "<experimentProposal>".into()),
+    ("mcpCommitReceiptDigest", "<mcpCommitReceiptDigest>".into()),
+    ("mcpPrepareReceiptDigest", "<mcpPrepareReceiptDigest>".into()),
+    ("prospectiveProtocol", "<prospectiveProtocol>".into()),
+    ("submissionIdempotencyKey", "<submissionIdempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getExperimentSubmission
+
+`GET /v1/experimentSubmissions/{submissionId}`
+
+Get a credential-free durable view of one experiment submission.
+
+- **Producer operationId:** `experimentSubmissions.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `workflow:read`
+- **Call as:** TypeScript `client.temperaWorkflows.getExperimentSubmission()` · Python `client.tempera_workflows.get_experiment_submission()` · Rust `build_request("tempera_workflows", "get_experiment_submission", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `submissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.getExperimentSubmission({
+  submissionId: "<submissionId>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.get_experiment_submission({
+    "submissionId": "<submissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "get_experiment_submission", &[
+    ("submissionId", "<submissionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### reconcileExperimentSubmission
+
+`POST /v1/experimentSubmissions/{submissionId}:reconcile`
+
+Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order.
+
+- **Producer operationId:** `experimentSubmissions.reconcile`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `bio:experiment:submit`
+- **Call as:** TypeScript `client.temperaWorkflows.reconcileExperimentSubmission()` · Python `client.tempera_workflows.reconcile_experiment_submission()` · Rust `build_request("tempera_workflows", "reconcile_experiment_submission", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `submissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.reconcileExperimentSubmission({
+  submissionId: "<submissionId>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.reconcile_experiment_submission({
+    "submissionId": "<submissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "reconcile_experiment_submission", &[
+    ("submissionId", "<submissionId>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

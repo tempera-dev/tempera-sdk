@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
-  "version": 5,
+  "version": 6,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
     "authorizePath": "/oauth/authorize",
@@ -2911,7 +2911,69 @@
         "path": "/healthz",
         "auth": "none",
         "description": "Check tempera-workflows engine liveness.",
-        "upstreamOperationId": "healthz"
+        "upstreamOperationId": "healthz",
+        "physicalAction": false,
+        "prepareCommitRequired": false
+      },
+      {
+        "id": "createExperimentSubmission",
+        "method": "POST",
+        "path": "/v1/experimentSubmissions",
+        "auth": "oauthResource",
+        "description": "Authorize and durably submit one preregistered prospective Bio experiment.",
+        "upstreamOperationId": "experimentSubmissions.create",
+        "physicalAction": true,
+        "prepareCommitRequired": true,
+        "body": [
+          "approvalId",
+          "connectionId",
+          "experimentProposal",
+          "mcpCommitReceiptDigest",
+          "mcpPrepareReceiptDigest",
+          "prospectiveProtocol",
+          "submissionIdempotencyKey"
+        ],
+        "requiredBody": [
+          "prospectiveProtocol",
+          "experimentProposal",
+          "connectionId",
+          "approvalId",
+          "mcpPrepareReceiptDigest",
+          "mcpCommitReceiptDigest",
+          "submissionIdempotencyKey"
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "bio:experiment:submit"
+      },
+      {
+        "id": "getExperimentSubmission",
+        "method": "GET",
+        "path": "/v1/experimentSubmissions/{submissionId}",
+        "auth": "oauthResource",
+        "description": "Get a credential-free durable view of one experiment submission.",
+        "upstreamOperationId": "experimentSubmissions.get",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "submissionId"
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:read"
+      },
+      {
+        "id": "reconcileExperimentSubmission",
+        "method": "POST",
+        "path": "/v1/experimentSubmissions/{submissionId}:reconcile",
+        "auth": "oauthResource",
+        "description": "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order.",
+        "upstreamOperationId": "experimentSubmissions.reconcile",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "submissionId"
+        ],
+        "authAudience": "tempera-workflows",
+        "scope": "bio:experiment:submit"
       },
       {
         "id": "listNodeTypes",
@@ -2925,7 +2987,9 @@
           "pageSize",
           "pageToken"
         ],
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "listRuns",
@@ -2940,7 +3004,9 @@
         "scope": "workflow:read",
         "description": "List workflow runs, optionally filtered to one workflow.",
         "upstreamOperationId": "runs.list",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "getRun",
@@ -2953,7 +3019,9 @@
         "scope": "workflow:read",
         "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
         "upstreamOperationId": "runs.get",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "cancelRun",
@@ -2966,7 +3034,9 @@
         "scope": "workflow:run",
         "description": "Cancel a queued or running workflow run.",
         "upstreamOperationId": "runs.cancel",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "runsSignal",
@@ -2991,7 +3061,9 @@
           "payloadDigest"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "workflow:run"
+        "scope": "workflow:run",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "listWorkflows",
@@ -3005,7 +3077,9 @@
         "scope": "workflow:read",
         "description": "List stored workflow definitions, newest first.",
         "upstreamOperationId": "workflows.list",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "createWorkflow",
@@ -3031,7 +3105,9 @@
         "scope": "workflow:write",
         "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
         "upstreamOperationId": "workflows.create",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "deleteWorkflow",
@@ -3044,7 +3120,9 @@
         "scope": "workflow:write",
         "description": "Delete a stored workflow definition.",
         "upstreamOperationId": "workflows.delete",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "getWorkflow",
@@ -3057,7 +3135,9 @@
         "scope": "workflow:read",
         "description": "Fetch one stored workflow definition.",
         "upstreamOperationId": "workflows.get",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "updateWorkflow",
@@ -3089,7 +3169,9 @@
         "query": [
           "updateMask"
         ],
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "createRun",
@@ -3110,7 +3192,9 @@
         "scope": "workflow:run",
         "description": "Start a run of a stored workflow with an optional input document and idempotency key.",
         "upstreamOperationId": "runs.create",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "callWorkflow",
@@ -3132,7 +3216,9 @@
         "scope": "workflow:run",
         "description": "Run a workflow to completion and return its output in a single call.",
         "upstreamOperationId": "workflows.call",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "compileBioCampaign",
@@ -3152,7 +3238,9 @@
           "signalPrefix"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "workflow:write"
+        "scope": "workflow:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "composeWorkflow",
@@ -3175,7 +3263,9 @@
         "scope": "workflow:write",
         "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
         "upstreamOperationId": "workflows.compose",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "assistJson",
@@ -3198,7 +3288,9 @@
         "scope": "workflow:write",
         "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
         "upstreamOperationId": "workflows.assistJson",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "validateWorkflow",
@@ -3224,7 +3316,9 @@
         "scope": "workflow:write",
         "description": "Validate a workflow definition without storing it; returns the full diagnostic list.",
         "upstreamOperationId": "workflows.validate",
-        "authAudience": "tempera-workflows"
+        "authAudience": "tempera-workflows",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       }
     ],
     "temperaGym": [
@@ -3627,7 +3721,9 @@
           "rounds"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:decision:write"
+        "scope": "bio:decision:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareCandidateSet",
@@ -3643,7 +3739,9 @@
           "candidates"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareDatasetReleaseManifest",
@@ -3663,7 +3761,9 @@
           "verifierReceipts"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "deriveDecision",
@@ -3687,7 +3787,9 @@
           "verifierReceipts"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:decision:write"
+        "scope": "bio:decision:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareExperimentProposal",
@@ -3707,7 +3809,9 @@
           "selectedCandidates"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareExperimentProposalFromGymBatch",
@@ -3729,7 +3833,9 @@
           "batchProposal"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareHypothesis",
@@ -3745,7 +3851,9 @@
           "hypothesis"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "verifyMeasurement",
@@ -3771,7 +3879,9 @@
           "identitySignature"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:measurement:verify"
+        "scope": "bio:measurement:verify",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "prepareProgram",
@@ -3791,7 +3901,9 @@
           "candidateSet"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:proposal:write"
+        "scope": "bio:proposal:write",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       },
       {
         "id": "ingestMaveDBScoreSet",
@@ -3807,7 +3919,9 @@
           "scoreSetUrn"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:source:read"
+        "scope": "bio:source:read",
+        "physicalAction": false,
+        "prepareCommitRequired": false
       }
     ],
     "cradle": [

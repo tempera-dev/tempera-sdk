@@ -219,6 +219,10 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     lines.append("")
     lines.append(f"- **Producer operationId:** `{op['upstreamOperationId']}`")
     lines.append(f"- **Auth:** {auth_label(surface, product_key, op)}")
+    if op.get("physicalAction"):
+        lines.append("- **Physical action:** Yes. This operation may cause an external real-world action.")
+    if op.get("prepareCommitRequired"):
+        lines.append("- **Prepare/commit:** Required. Obtain a valid prepare receipt and commit authorization before invoking it.")
     if op.get("pathParamTemplates"):
         rendered_templates = ", ".join(
             f"`{name}={template}`"

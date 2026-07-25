@@ -205,7 +205,7 @@ is the default when none is specified.
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask` |
 | `review:resolve` | data-engine: `claimExpertTask`, `getReviewOperations`, `getReviewerQualification`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
-| `workflow:read` | tempera-workflows: `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
+| `workflow:read` | tempera-workflows: `getExperimentSubmission`, `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `compileBioCampaign`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun`, `runsSignal` |
 | `bio:source:read` | tempera-bio: `ingestMaveDBScoreSet` |
@@ -213,7 +213,7 @@ is the default when none is specified.
 | `bio:measurement:verify` | tempera-bio: `verifyMeasurement` |
 | `bio:decision:write` | tempera-bio: `deriveCampaignState`, `deriveDecision` |
 | `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
-| `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection` |
+| `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection`; tempera-workflows: `createExperimentSubmission`, `reconcileExperimentSubmission` |
 | `bio:signer:manage` | auth-hub: `createBioSignerKey`, `listBioSignerKeys`, `revokeBioSignerKey` |
 | `model:read` | auth-hub: `getModelCatalog`; tempera-llm: `listModels` |
 | `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
