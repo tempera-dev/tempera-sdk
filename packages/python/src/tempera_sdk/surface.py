@@ -5,7 +5,7 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 5
+SURFACE_VERSION = 6
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio')
 DEFAULT_AUDIENCE = 'palette'
@@ -194,6 +194,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check control-plane liveness; returns {ok: True}."
         },
         {
@@ -211,6 +213,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Readiness probe for durable control-plane storage."
         },
         {
@@ -228,6 +232,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the authenticated user's identity, active workspace, and roles."
         },
         {
@@ -248,6 +254,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the organizations the authenticated user belongs to."
         },
         {
@@ -269,6 +277,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an organization; the caller becomes its owner."
         },
         {
@@ -289,6 +299,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the user's active account sessions."
         },
         {
@@ -315,6 +327,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a first-party hosted account session from email/password login or signup."
         },
         {
@@ -334,6 +348,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke an account session and its tokens immediately (idempotent)."
         },
         {
@@ -359,6 +375,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Switch the active workspace and receive a token pair scoped to it."
         },
         {
@@ -379,6 +397,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List team members of the active organization."
         },
         {
@@ -404,6 +424,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
         },
         {
@@ -423,6 +445,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Remove a team member from the active organization (idempotent)."
         },
         {
@@ -443,6 +467,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List invites for the active organization, newest first."
         },
         {
@@ -466,6 +492,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Invite a user to the active organization; the accept URL is returned once."
         },
         {
@@ -485,6 +513,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Cancel a pending invite (idempotent)."
         },
         {
@@ -505,6 +535,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List projects across every organization the user belongs to."
         },
         {
@@ -528,6 +560,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a project in an organization (requires an org admin role)."
         },
         {
@@ -548,6 +582,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List environments across every project the user can access."
         },
         {
@@ -571,6 +607,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an environment in a project (requires an org admin role)."
         },
         {
@@ -591,6 +629,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List API keys in the active workspace; secrets are never returned."
         },
         {
@@ -621,6 +661,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
         },
         {
@@ -640,6 +682,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke an API key (idempotent)."
         },
         {
@@ -659,6 +703,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Rotate an API key's secret; the new secret is returned exactly once."
         },
         {
@@ -679,6 +725,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned."
         },
         {
@@ -711,6 +759,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a tenant-scoped provider connection using only an external secret reference."
         },
         {
@@ -730,6 +780,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op."
         },
         {
@@ -754,6 +806,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Replace a connection secret reference and increment its revision without exposing the reference."
         },
         {
@@ -783,6 +837,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
         },
         {
@@ -803,6 +859,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List external experiment-provider metadata. Secret references and values are never returned."
         },
         {
@@ -838,6 +896,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Register a tenant-scoped experiment provider using only an external secret reference."
         },
         {
@@ -857,6 +917,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
         },
         {
@@ -896,6 +958,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:experiment:submit",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
         },
         {
@@ -916,6 +980,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "bio:signer:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
         },
         {
@@ -945,6 +1011,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:signer:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
         },
         {
@@ -964,6 +1032,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "bio:signer:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke a public verifier key while retaining its history."
         },
         {
@@ -984,6 +1054,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "bio:experiment:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List exact, single-use experiment approvals for an authorized human approver."
         },
         {
@@ -1019,6 +1091,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:experiment:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
         },
         {
@@ -1038,6 +1112,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "bio:experiment:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
         },
         {
@@ -1058,6 +1134,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
         },
         {
@@ -1078,6 +1156,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
         },
         {
@@ -1097,6 +1177,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one connector's connection status for the active workspace."
         },
         {
@@ -1117,6 +1199,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the product catalog with default scopes and setup paths."
         },
         {
@@ -1136,6 +1220,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
         },
         {
@@ -1153,6 +1239,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
         },
         {
@@ -1177,6 +1265,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
         },
         {
@@ -1194,6 +1284,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
         },
         {
@@ -1211,6 +1303,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
         },
         {
@@ -1228,6 +1322,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
         },
         {
@@ -1258,6 +1354,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
         },
         {
@@ -1297,6 +1395,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Atomically reserve the maximum model cost before starting a provider request."
         },
         {
@@ -1328,6 +1428,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Commit exact provider usage against an admitted reservation and release unused capacity."
         },
         {
@@ -1355,6 +1457,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Release unused capacity after provider failure or cancellation."
         },
         {
@@ -1390,6 +1494,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable."
         },
         {
@@ -1410,6 +1516,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the OAuth grants the user has approved in the active workspace."
         },
         {
@@ -1429,6 +1537,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke an OAuth grant and every refresh token issued under it."
         },
         {
@@ -1451,6 +1561,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: False} for anything invalid."
         },
         {
@@ -1468,6 +1580,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
         },
         {
@@ -1485,6 +1599,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "OAuth protected resource discovery metadata for MCP/resource clients."
         },
         {
@@ -1504,6 +1620,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch OAuth protected-resource metadata for one registered audience."
         },
         {
@@ -1521,6 +1639,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
         },
         {
@@ -1538,6 +1658,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session."
         },
         {
@@ -1559,6 +1681,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations."
         },
         {
@@ -1584,6 +1708,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference."
         },
         {
@@ -1601,6 +1727,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics."
         },
         {
@@ -1622,6 +1750,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a one-time CSRF-bound GitHub App installation session."
         },
         {
@@ -1642,6 +1772,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Bind a GitHub installation callback to its authenticated workspace."
         },
         {
@@ -1662,6 +1794,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List active GitHub App installations for the organization."
         },
         {
@@ -1681,6 +1815,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Disconnect a GitHub App installation from the workspace."
         },
         {
@@ -1703,6 +1839,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List repository metadata received for a GitHub installation."
         },
         {
@@ -1725,6 +1863,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace."
         },
         {
@@ -1742,6 +1882,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Accept a signed, replay-deduplicated GitHub webhook."
         }
     ],
@@ -1761,6 +1903,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check palette API liveness; returns {ok: True}."
         },
         {
@@ -1788,6 +1932,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook."
         },
         {
@@ -1813,6 +1959,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "admin",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Mint a palette-scoped API key; the secret is returned exactly once."
         },
         {
@@ -1835,6 +1983,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revoke a palette API key."
         },
         {
@@ -1863,6 +2013,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans."
         },
         {
@@ -1884,6 +2036,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Archive a trace to Parquet and return the archive manifest."
         },
         {
@@ -1907,6 +2061,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/audit/{tenant_id}/{project_id}."
         },
         {
@@ -1933,6 +2089,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}."
         },
         {
@@ -1953,6 +2111,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}."
         },
         {
@@ -1976,6 +2136,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/connectors/{tenant_id}/{project_id}."
         },
         {
@@ -2000,6 +2162,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect."
         },
         {
@@ -2025,6 +2189,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke."
         },
         {
@@ -2047,6 +2213,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills."
         },
         {
@@ -2069,6 +2237,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status."
         },
         {
@@ -2093,6 +2263,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools."
         },
         {
@@ -2117,6 +2289,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a dataset for curating cases from traces."
         },
         {
@@ -2144,6 +2318,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Promote a trace (or one span of it) into a dataset case."
         },
         {
@@ -2167,6 +2343,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Snapshot a dataset into an immutable version for evals and experiments."
         },
         {
@@ -2202,6 +2380,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic."
         },
         {
@@ -2238,6 +2418,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge."
         },
         {
@@ -2266,6 +2448,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
         },
         {
@@ -2294,6 +2478,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
         },
         {
@@ -2316,6 +2502,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
         },
         {
@@ -2355,6 +2543,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic."
         },
         {
@@ -2396,6 +2586,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge."
         },
         {
@@ -2425,6 +2617,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/gates/{tenant_id}/{project_id}."
         },
         {
@@ -2448,6 +2642,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run."
         },
         {
@@ -2476,6 +2672,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "trace:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Import spans from a named external source payload."
         },
         {
@@ -2499,6 +2697,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay."
         },
         {
@@ -2519,6 +2719,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue."
         },
         {
@@ -2541,6 +2743,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain."
         },
         {
@@ -2563,6 +2767,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain."
         },
         {
@@ -2584,6 +2790,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile."
         },
         {
@@ -2613,6 +2821,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate."
         },
         {
@@ -2636,6 +2846,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger."
         },
         {
@@ -2665,6 +2877,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling."
         },
         {
@@ -2688,6 +2902,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/prompts/{tenant_id}/{project_id}."
         },
         {
@@ -2717,6 +2933,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/prompts/{tenant_id}/{project_id}."
         },
         {
@@ -2738,6 +2956,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}."
         },
         {
@@ -2762,6 +2982,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff."
         },
         {
@@ -2786,6 +3008,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
         },
         {
@@ -2813,6 +3037,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
         },
         {
@@ -2836,6 +3062,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}."
         },
         {
@@ -2864,6 +3092,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}."
         },
         {
@@ -2885,6 +3115,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke."
         },
         {
@@ -2912,6 +3144,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}."
         },
         {
@@ -2937,6 +3171,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks."
         },
         {
@@ -2967,6 +3203,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace."
         },
         {
@@ -2998,6 +3236,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations."
         },
         {
@@ -3026,6 +3266,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote."
         },
         {
@@ -3049,6 +3291,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}."
         },
         {
@@ -3078,6 +3322,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}."
         },
         {
@@ -3103,6 +3349,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine."
         },
         {
@@ -3124,6 +3372,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}."
         },
         {
@@ -3155,6 +3405,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Search spans by text query and facet filters."
         },
         {
@@ -3179,6 +3431,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one canonical span by trace and span id."
         },
         {
@@ -3203,6 +3457,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch a span's recorded input and output values."
         },
         {
@@ -3252,6 +3508,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "trace:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Ingest one native span; idempotent when an idempotency key is supplied."
         },
         {
@@ -3287,6 +3545,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List trace summaries for a tenant with filters and cursor pagination."
         },
         {
@@ -3310,6 +3570,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "trace:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
         },
         {
@@ -3330,6 +3592,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "admin",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch usage totals for a tenant project."
         }
     ],
@@ -3349,6 +3613,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /.well-known/agent-card.json."
         },
         {
@@ -3366,6 +3632,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /.well-known/agent.json."
         },
         {
@@ -3383,6 +3651,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check tempod liveness; returns {ok: True}."
         },
         {
@@ -3400,6 +3670,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /metrics."
         },
         {
@@ -3417,6 +3689,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
         },
         {
@@ -3434,6 +3708,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
         },
         {
@@ -3451,6 +3727,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /drain."
         },
         {
@@ -3472,6 +3750,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List agent runs, optionally filtered to one session."
         },
         {
@@ -3491,6 +3771,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one agent run with its state."
         },
         {
@@ -3512,6 +3794,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /runs/{run_id}/events."
         },
         {
@@ -3531,6 +3815,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Cancel an agent run."
         },
         {
@@ -3550,6 +3836,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Resume an agent run after a human handoff completes."
         },
         {
@@ -3570,6 +3858,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List browser sessions with their state and creation time."
         },
         {
@@ -3592,6 +3882,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
         },
         {
@@ -3611,6 +3903,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Close a browser session and release its engine resources."
         },
         {
@@ -3631,6 +3925,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Grant a pending policy confirmation and receive a single-use grant token."
         },
         {
@@ -3652,6 +3948,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the session's event window after a sequence number."
         },
         {
@@ -3671,6 +3969,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /sessions/{session_id}/manager."
         },
         {
@@ -3695,6 +3995,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Start an agent run against the session with a goal, action budget, and round limit."
         },
         {
@@ -3721,6 +4023,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /sessions/{session_id}/surfaces."
         },
         {
@@ -3741,6 +4045,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
         },
         {
@@ -3769,6 +4075,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
         },
         {
@@ -3795,6 +4103,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Let a human surface take write ownership of the session and receive an adoption lease."
         },
         {
@@ -3814,6 +4124,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Return write ownership of the session to the agent plane."
         },
         {
@@ -3833,6 +4145,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
         },
         {
@@ -3854,6 +4168,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
         },
         {
@@ -3883,6 +4199,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /sessions/{session_id}/transform."
         }
     ],
@@ -3902,6 +4220,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check tempera-llm gateway liveness; returns {ok: True}."
         },
         {
@@ -3919,6 +4239,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /readyz."
         },
         {
@@ -3948,6 +4270,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "model:invoke",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
         },
         {
@@ -3968,6 +4292,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "model:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the configured model catalog the gateway can route to."
         },
         {
@@ -3995,6 +4321,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "model:invoke",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
         }
     ],
@@ -4014,7 +4342,86 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check tempera-workflows engine liveness."
+        },
+        {
+            "id": "create_experiment_submission",
+            "upstream_operation_id": "experimentSubmissions.create",
+            "method": "POST",
+            "path": "/v1/experimentSubmissions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "approvalId",
+                "connectionId",
+                "experimentProposal",
+                "mcpCommitReceiptDigest",
+                "mcpPrepareReceiptDigest",
+                "prospectiveProtocol",
+                "submissionIdempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "prospectiveProtocol",
+                "experimentProposal",
+                "connectionId",
+                "approvalId",
+                "mcpPrepareReceiptDigest",
+                "mcpCommitReceiptDigest",
+                "submissionIdempotencyKey"
+            ],
+            "body_defaults": {},
+            "scope": "bio:experiment:submit",
+            "physical_action": True,
+            "prepare_commit_required": True,
+            "description": "Authorize and durably submit one preregistered prospective Bio experiment."
+        },
+        {
+            "id": "get_experiment_submission",
+            "upstream_operation_id": "experimentSubmissions.get",
+            "method": "GET",
+            "path": "/v1/experimentSubmissions/{submissionId}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "submissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get a credential-free durable view of one experiment submission."
+        },
+        {
+            "id": "reconcile_experiment_submission",
+            "upstream_operation_id": "experimentSubmissions.reconcile",
+            "method": "POST",
+            "path": "/v1/experimentSubmissions/{submissionId}:reconcile",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [
+                "submissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "scope": "bio:experiment:submit",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order."
         },
         {
             "id": "list_node_types",
@@ -4034,6 +4441,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
         },
         {
@@ -4055,6 +4464,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List workflow runs, optionally filtered to one workflow."
         },
         {
@@ -4074,6 +4485,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
         },
         {
@@ -4093,6 +4506,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Cancel a queued or running workflow run."
         },
         {
@@ -4122,6 +4537,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Consume a durable external callback and resume a waiting run."
         },
         {
@@ -4142,6 +4559,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List stored workflow definitions, newest first."
         },
         {
@@ -4173,6 +4592,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
         },
         {
@@ -4192,6 +4613,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Delete a stored workflow definition."
         },
         {
@@ -4211,6 +4634,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one stored workflow definition."
         },
         {
@@ -4246,6 +4671,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Replace a stored workflow definition with a new validated revision."
         },
         {
@@ -4272,6 +4699,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Start a run of a stored workflow with an optional input document and idempotency key."
         },
         {
@@ -4299,6 +4728,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Run a workflow to completion and return its output in a single call."
         },
         {
@@ -4324,6 +4755,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
         },
         {
@@ -4351,6 +4784,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
         },
         {
@@ -4379,6 +4814,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
         },
         {
@@ -4410,6 +4847,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "workflow:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
         }
     ],
@@ -4429,6 +4868,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check tempera-gym service liveness."
         },
         {
@@ -4449,6 +4890,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
         },
         {
@@ -4469,6 +4912,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Domain capabilities represented in the versioned task catalog."
         },
         {
@@ -4491,6 +4936,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List versioned task definitions without agent inputs."
         },
         {
@@ -4512,6 +4959,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Get one immutable task definition including its agent-visible input."
         },
         {
@@ -4539,6 +4988,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Deterministically verify one candidate without creating an episode."
         },
         {
@@ -4559,6 +5010,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List verifier identities and bound tasks without grader content."
         },
         {
@@ -4581,6 +5034,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List durable episode snapshots, newest first."
         },
         {
@@ -4604,6 +5059,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Reset a versioned task into a durable episode."
         },
         {
@@ -4623,6 +5080,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Read and content-verify one durable episode snapshot."
         },
         {
@@ -4647,6 +5106,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Apply one schema-validated action and persist the transition."
         },
         {
@@ -4672,6 +5133,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Retain a completed Gym episode and trajectory in Data Engine."
         },
         {
@@ -4693,6 +5156,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List persisted rollout run index records, newest first."
         },
         {
@@ -4712,6 +5177,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
         },
         {
@@ -4740,6 +5207,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
         },
         {
@@ -4760,6 +5229,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Discover the four frozen outcome-blind Bio proposal policies."
         },
         {
@@ -4799,6 +5270,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Propose one constrained Bio candidate batch without outcome access."
         },
         {
@@ -4819,6 +5292,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Discover boot-trusted exact sealed-evaluator identities."
         },
         {
@@ -4839,6 +5314,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List persisted sealed-evaluation precommits and results."
         },
         {
@@ -4866,6 +5343,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Persist an opaque sealed-suite commitment before policy freeze."
         },
         {
@@ -4885,6 +5364,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Read one verified precommit and aggregate sealed result."
         },
         {
@@ -4910,6 +5391,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Evaluate one frozen policy through its exact sealed adapter."
         }
     ],
@@ -4939,6 +5422,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:decision:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Derive campaign state."
         },
         {
@@ -4960,6 +5445,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare candidate set."
         },
         {
@@ -4985,6 +5472,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare dataset release manifest."
         },
         {
@@ -5014,6 +5503,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:decision:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Derive decision."
         },
         {
@@ -5039,6 +5530,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare experiment proposal."
         },
         {
@@ -5066,6 +5559,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare experiment proposal from gym batch."
         },
         {
@@ -5087,6 +5582,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare hypothesis."
         },
         {
@@ -5118,6 +5615,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:measurement:verify",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Verify measurement."
         },
         {
@@ -5143,6 +5642,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Prepare program."
         },
         {
@@ -5164,6 +5665,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "bio:source:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Ingest mave d b score set."
         }
     ],
@@ -5192,6 +5695,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/capability."
         },
         {
@@ -5231,6 +5736,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/completion/validate."
         },
         {
@@ -5248,6 +5755,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the browser adapter contract, required controls, and conformance profile."
         },
         {
@@ -5269,6 +5778,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/launch/claim."
         },
         {
@@ -5294,6 +5805,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/launch/plan."
         },
         {
@@ -5321,6 +5834,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/register."
         },
         {
@@ -5354,6 +5869,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/browser/adapter/validate."
         },
         {
@@ -5386,6 +5903,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
         },
         {
@@ -5403,6 +5922,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
         },
         {
@@ -5420,6 +5941,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
         },
         {
@@ -5448,6 +5971,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
         },
         {
@@ -5465,6 +5990,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
         },
         {
@@ -5482,6 +6009,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the ecosystem integration contract this daemon implements."
         },
         {
@@ -5510,6 +6039,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
         },
         {
@@ -5529,6 +6060,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
         },
         {
@@ -5548,6 +6081,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch a sandbox job's status and result."
         },
         {
@@ -5571,6 +6106,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call POST /v1/projects/{project}/modules."
         },
         {
@@ -5591,6 +6128,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Call GET /v1/projects/{project}/modules/{sha256}."
         }
     ],
@@ -5610,6 +6149,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check memory-server liveness."
         },
         {
@@ -5627,6 +6168,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check memory-server readiness, including database health."
         },
         {
@@ -5644,6 +6187,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch deep store health: schema version, integrity checks, and graph consistency."
         },
         {
@@ -5661,6 +6206,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
         },
         {
@@ -5678,6 +6225,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
         },
         {
@@ -5695,6 +6244,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
         },
         {
@@ -5715,6 +6266,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List recent service audit events (default 100, maximum 500)."
         },
         {
@@ -5745,6 +6298,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Write one memory event into the tenant and project ledger."
         },
         {
@@ -5764,6 +6319,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Project pending ledger events into the memory graph and return the projection report."
         },
         {
@@ -5793,6 +6350,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Answer a scoped memory question with evidence and reconstruction metadata."
         },
         {
@@ -5815,6 +6374,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
         }
     ],
@@ -5834,6 +6395,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check data-engine liveness; returns the service status."
         },
         {
@@ -5858,6 +6421,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
         },
         {
@@ -5880,6 +6445,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
         },
         {
@@ -5907,6 +6474,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
         },
         {
@@ -5937,6 +6506,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
         },
         {
@@ -5969,6 +6540,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
         },
         {
@@ -5993,6 +6566,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List a project's data campaigns with pagination."
         },
         {
@@ -6021,6 +6596,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
         },
         {
@@ -6043,6 +6620,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
         },
         {
@@ -6076,6 +6655,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
         },
         {
@@ -6102,6 +6683,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List human residual review tasks, optionally filtered by status and campaign."
         },
         {
@@ -6133,6 +6716,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:gold:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
         },
         {
@@ -6170,6 +6755,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
         },
         {
@@ -6199,6 +6786,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Atomically claim one open expert task with an exclusive renewable lease."
         },
         {
@@ -6228,6 +6817,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Renew the authenticated reviewer's active expert-task lease."
         },
         {
@@ -6256,6 +6847,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
         },
         {
@@ -6288,6 +6881,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Autosave a version-checked draft under the active reviewer lease."
         },
         {
@@ -6312,6 +6907,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
         },
         {
@@ -6333,6 +6930,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch data-engine usage and quality metrics for a project."
         },
         {
@@ -6354,6 +6953,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch the project label-quality report and unresolved expert backlog."
         },
         {
@@ -6375,6 +6976,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch public-site and ecosystem readiness signals for a project."
         },
         {
@@ -6400,6 +7003,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
         },
         {
@@ -6424,6 +7029,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
         },
         {
@@ -6449,6 +7056,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the labels attached to one artifact."
         },
         {
@@ -6473,6 +7082,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
         },
         {
@@ -6504,6 +7115,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
         },
         {
@@ -6526,6 +7139,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one labeling job with its state and progress."
         },
         {
@@ -6551,6 +7166,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List the deterministic label results a job produced."
         },
         {
@@ -6573,6 +7190,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one emitted product bundle with its status and manifest URL."
         },
         {
@@ -6595,6 +7214,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Validate an emitted product bundle's referential integrity and hygiene."
         },
         {
@@ -6620,6 +7241,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Check raw-hash leakage between exactly two product bundles."
         },
         {
@@ -6642,6 +7265,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
         },
         {
@@ -6671,6 +7296,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "training:publish",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints."
         },
         {
@@ -6693,6 +7320,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "training:publish",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Revalidate and fetch one training release, including any durable stale state."
         },
         {
@@ -6724,6 +7353,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Derive a deterministic post-training bundle from a ready product."
         },
         {
@@ -6751,6 +7382,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
         },
         {
@@ -6789,6 +7422,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Extract bounded objects or records from a configured source connector."
         },
         {
@@ -6813,6 +7448,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List registered source connectors for a project."
         },
         {
@@ -6846,6 +7483,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create or version-bump a stored custom tool."
         },
         {
@@ -6870,6 +7509,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List stored custom tools and their usage statistics."
         },
         {
@@ -6892,6 +7533,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one stored custom tool and its usage statistics."
         },
         {
@@ -6914,6 +7557,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Delete a stored custom tool and every retained version."
         },
         {
@@ -6938,6 +7583,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Invoke a stored custom tool through its configured execution boundary."
         },
         {
@@ -6983,6 +7630,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Atomically commit an immutable discovery release graph."
         },
         {
@@ -7005,6 +7654,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Get one immutable discovery release."
         },
         {
@@ -7046,6 +7697,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an immutable shared evidence record by canonical content hash."
         },
         {
@@ -7071,6 +7724,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List immutable shared evidence records with bounded cursor pagination."
         },
         {
@@ -7093,6 +7748,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one immutable shared evidence record by its platform digest."
         },
         {
@@ -7140,6 +7797,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an immutable shared episode by canonical content hash."
         },
         {
@@ -7165,6 +7824,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List immutable shared episodes with bounded cursor pagination."
         },
         {
@@ -7187,6 +7848,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one immutable shared episode by its platform digest."
         },
         {
@@ -7224,6 +7887,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Retrieve deterministic candidates for one exact canonical typed research obligation."
         },
         {
@@ -7259,6 +7924,8 @@ OPERATIONS = {
             ],
             "body_defaults": {},
             "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Create an immutable executable research catalog entry by canonical content hash."
         },
         {
@@ -7283,6 +7950,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "List immutable executable research catalog entries with bounded pagination."
         },
         {
@@ -7305,6 +7974,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": "dataset:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Fetch one immutable executable research catalog entry by content hash."
         }
     ],
@@ -7327,6 +7998,8 @@ OPERATIONS = {
             "required_body": [],
             "body_defaults": {},
             "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
             "description": "Compute live qualification evidence."
         }
     ]

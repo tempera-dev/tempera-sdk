@@ -3,7 +3,7 @@
 // the error contract, and every typed operation, shared verbatim with
 // the Python and Rust packages.
 
-export const TEMPERA_SURFACE_VERSION = 5;
+export const TEMPERA_SURFACE_VERSION = 6;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio"]);
 export const DEFAULT_AUDIENCE = "palette";
@@ -203,6 +203,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check control-plane liveness; returns {ok: true}."
     },
     {
@@ -220,6 +222,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Readiness probe for durable control-plane storage."
     },
     {
@@ -237,6 +241,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the authenticated user's identity, active workspace, and roles."
     },
     {
@@ -257,6 +263,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the organizations the authenticated user belongs to."
     },
     {
@@ -278,6 +286,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an organization; the caller becomes its owner."
     },
     {
@@ -298,6 +308,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the user's active account sessions."
     },
     {
@@ -324,6 +336,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a first-party hosted account session from email/password login or signup."
     },
     {
@@ -343,6 +357,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke an account session and its tokens immediately (idempotent)."
     },
     {
@@ -368,6 +384,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Switch the active workspace and receive a token pair scoped to it."
     },
     {
@@ -388,6 +406,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List team members of the active organization."
     },
     {
@@ -413,6 +433,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
     },
     {
@@ -432,6 +454,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Remove a team member from the active organization (idempotent)."
     },
     {
@@ -452,6 +476,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List invites for the active organization, newest first."
     },
     {
@@ -475,6 +501,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Invite a user to the active organization; the accept URL is returned once."
     },
     {
@@ -494,6 +522,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Cancel a pending invite (idempotent)."
     },
     {
@@ -514,6 +544,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List projects across every organization the user belongs to."
     },
     {
@@ -537,6 +569,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a project in an organization (requires an org admin role)."
     },
     {
@@ -557,6 +591,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List environments across every project the user can access."
     },
     {
@@ -580,6 +616,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an environment in a project (requires an org admin role)."
     },
     {
@@ -600,6 +638,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List API keys in the active workspace; secrets are never returned."
     },
     {
@@ -630,6 +670,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
     },
     {
@@ -649,6 +691,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke an API key (idempotent)."
     },
     {
@@ -668,6 +712,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Rotate an API key's secret; the new secret is returned exactly once."
     },
     {
@@ -688,6 +734,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned."
     },
     {
@@ -720,6 +768,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a tenant-scoped provider connection using only an external secret reference."
     },
     {
@@ -739,6 +789,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op."
     },
     {
@@ -763,6 +815,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Replace a connection secret reference and increment its revision without exposing the reference."
     },
     {
@@ -792,6 +846,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
     },
     {
@@ -812,6 +868,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List external experiment-provider metadata. Secret references and values are never returned."
     },
     {
@@ -847,6 +905,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Register a tenant-scoped experiment provider using only an external secret reference."
     },
     {
@@ -866,6 +926,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
     },
     {
@@ -905,6 +967,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:experiment:submit",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
     },
     {
@@ -925,6 +989,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "bio:signer:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
     },
     {
@@ -954,6 +1020,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:signer:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
     },
     {
@@ -973,6 +1041,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "bio:signer:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke a public verifier key while retaining its history."
     },
     {
@@ -993,6 +1063,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "bio:experiment:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List exact, single-use experiment approvals for an authorized human approver."
     },
     {
@@ -1028,6 +1100,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:experiment:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
     },
     {
@@ -1047,6 +1121,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "bio:experiment:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
     },
     {
@@ -1067,6 +1143,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
     },
     {
@@ -1087,6 +1165,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
     },
     {
@@ -1106,6 +1186,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one connector's connection status for the active workspace."
     },
     {
@@ -1126,6 +1208,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the product catalog with default scopes and setup paths."
     },
     {
@@ -1145,6 +1229,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
     },
     {
@@ -1162,6 +1248,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
     },
     {
@@ -1186,6 +1274,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
     },
     {
@@ -1203,6 +1293,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
     },
     {
@@ -1220,6 +1312,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
     },
     {
@@ -1237,6 +1331,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "model:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
     },
     {
@@ -1267,6 +1363,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
     },
     {
@@ -1306,6 +1404,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Atomically reserve the maximum model cost before starting a provider request."
     },
     {
@@ -1337,6 +1437,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Commit exact provider usage against an admitted reservation and release unused capacity."
     },
     {
@@ -1364,6 +1466,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Release unused capacity after provider failure or cancellation."
     },
     {
@@ -1399,6 +1503,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable."
     },
     {
@@ -1419,6 +1525,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the OAuth grants the user has approved in the active workspace."
     },
     {
@@ -1438,6 +1546,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke an OAuth grant and every refresh token issued under it."
     },
     {
@@ -1460,6 +1570,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid."
     },
     {
@@ -1477,6 +1589,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
     },
     {
@@ -1494,6 +1608,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "OAuth protected resource discovery metadata for MCP/resource clients."
     },
     {
@@ -1513,6 +1629,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch OAuth protected-resource metadata for one registered audience."
     },
     {
@@ -1530,6 +1648,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
     },
     {
@@ -1547,6 +1667,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session."
     },
     {
@@ -1568,6 +1690,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations."
     },
     {
@@ -1593,6 +1717,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference."
     },
     {
@@ -1610,6 +1736,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics."
     },
     {
@@ -1631,6 +1759,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a one-time CSRF-bound GitHub App installation session."
     },
     {
@@ -1651,6 +1781,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Bind a GitHub installation callback to its authenticated workspace."
     },
     {
@@ -1671,6 +1803,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List active GitHub App installations for the organization."
     },
     {
@@ -1690,6 +1824,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Disconnect a GitHub App installation from the workspace."
     },
     {
@@ -1712,6 +1848,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List repository metadata received for a GitHub installation."
     },
     {
@@ -1734,6 +1872,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace."
     },
     {
@@ -1751,6 +1891,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Accept a signed, replay-deduplicated GitHub webhook."
     }
   ],
@@ -1770,6 +1912,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check palette API liveness; returns {ok: true}."
     },
     {
@@ -1797,6 +1941,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook."
     },
     {
@@ -1822,6 +1968,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "admin",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Mint a palette-scoped API key; the secret is returned exactly once."
     },
     {
@@ -1844,6 +1992,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revoke a palette API key."
     },
     {
@@ -1872,6 +2022,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans."
     },
     {
@@ -1893,6 +2045,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Archive a trace to Parquet and return the archive manifest."
     },
     {
@@ -1916,6 +2070,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/audit/{tenant_id}/{project_id}."
     },
     {
@@ -1942,6 +2098,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}."
     },
     {
@@ -1962,6 +2120,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}."
     },
     {
@@ -1985,6 +2145,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}."
     },
     {
@@ -2009,6 +2171,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect."
     },
     {
@@ -2034,6 +2198,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke."
     },
     {
@@ -2056,6 +2222,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills."
     },
     {
@@ -2078,6 +2246,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status."
     },
     {
@@ -2102,6 +2272,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools."
     },
     {
@@ -2126,6 +2298,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a dataset for curating cases from traces."
     },
     {
@@ -2153,6 +2327,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Promote a trace (or one span of it) into a dataset case."
     },
     {
@@ -2176,6 +2352,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Snapshot a dataset into an immutable version for evals and experiments."
     },
     {
@@ -2211,6 +2389,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic."
     },
     {
@@ -2247,6 +2427,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge."
     },
     {
@@ -2275,6 +2457,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
     },
     {
@@ -2303,6 +2487,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
     },
     {
@@ -2325,6 +2511,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
     },
     {
@@ -2364,6 +2552,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic."
     },
     {
@@ -2405,6 +2595,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge."
     },
     {
@@ -2434,6 +2626,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/gates/{tenant_id}/{project_id}."
     },
     {
@@ -2457,6 +2651,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run."
     },
     {
@@ -2485,6 +2681,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "trace:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Import spans from a named external source payload."
     },
     {
@@ -2508,6 +2706,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay."
     },
     {
@@ -2528,6 +2728,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue."
     },
     {
@@ -2550,6 +2752,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain."
     },
     {
@@ -2572,6 +2776,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain."
     },
     {
@@ -2593,6 +2799,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile."
     },
     {
@@ -2622,6 +2830,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate."
     },
     {
@@ -2645,6 +2855,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger."
     },
     {
@@ -2674,6 +2886,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling."
     },
     {
@@ -2697,6 +2911,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}."
     },
     {
@@ -2726,6 +2942,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/prompts/{tenant_id}/{project_id}."
     },
     {
@@ -2747,6 +2965,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}."
     },
     {
@@ -2771,6 +2991,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff."
     },
     {
@@ -2795,6 +3017,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
     },
     {
@@ -2822,6 +3046,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
     },
     {
@@ -2845,6 +3071,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}."
     },
     {
@@ -2873,6 +3101,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}."
     },
     {
@@ -2894,6 +3124,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke."
     },
     {
@@ -2921,6 +3153,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}."
     },
     {
@@ -2946,6 +3180,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks."
     },
     {
@@ -2976,6 +3212,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace."
     },
     {
@@ -3007,6 +3245,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations."
     },
     {
@@ -3035,6 +3275,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote."
     },
     {
@@ -3058,6 +3300,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}."
     },
     {
@@ -3087,6 +3331,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}."
     },
     {
@@ -3112,6 +3358,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine."
     },
     {
@@ -3133,6 +3381,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}."
     },
     {
@@ -3164,6 +3414,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Search spans by text query and facet filters."
     },
     {
@@ -3188,6 +3440,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one canonical span by trace and span id."
     },
     {
@@ -3212,6 +3466,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch a span's recorded input and output values."
     },
     {
@@ -3261,6 +3517,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "trace:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Ingest one native span; idempotent when an idempotency key is supplied."
     },
     {
@@ -3296,6 +3554,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List trace summaries for a tenant with filters and cursor pagination."
     },
     {
@@ -3319,6 +3579,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "trace:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
     },
     {
@@ -3339,6 +3601,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "admin",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch usage totals for a tenant project."
     }
   ],
@@ -3358,6 +3622,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /.well-known/agent-card.json."
     },
     {
@@ -3375,6 +3641,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /.well-known/agent.json."
     },
     {
@@ -3392,6 +3660,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check tempod liveness; returns {ok: true}."
     },
     {
@@ -3409,6 +3679,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /metrics."
     },
     {
@@ -3426,6 +3698,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
     },
     {
@@ -3443,6 +3717,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
     },
     {
@@ -3460,6 +3736,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /drain."
     },
     {
@@ -3481,6 +3759,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List agent runs, optionally filtered to one session."
     },
     {
@@ -3500,6 +3780,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one agent run with its state."
     },
     {
@@ -3521,6 +3803,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /runs/{run_id}/events."
     },
     {
@@ -3540,6 +3824,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Cancel an agent run."
     },
     {
@@ -3559,6 +3845,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Resume an agent run after a human handoff completes."
     },
     {
@@ -3579,6 +3867,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List browser sessions with their state and creation time."
     },
     {
@@ -3601,6 +3891,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
     },
     {
@@ -3620,6 +3912,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Close a browser session and release its engine resources."
     },
     {
@@ -3640,6 +3934,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Grant a pending policy confirmation and receive a single-use grant token."
     },
     {
@@ -3661,6 +3957,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the session's event window after a sequence number."
     },
     {
@@ -3680,6 +3978,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /sessions/{session_id}/manager."
     },
     {
@@ -3704,6 +4004,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Start an agent run against the session with a goal, action budget, and round limit."
     },
     {
@@ -3730,6 +4032,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /sessions/{session_id}/surfaces."
     },
     {
@@ -3750,6 +4054,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
     },
     {
@@ -3778,6 +4084,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
     },
     {
@@ -3804,6 +4112,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Let a human surface take write ownership of the session and receive an adoption lease."
     },
     {
@@ -3823,6 +4133,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Return write ownership of the session to the agent plane."
     },
     {
@@ -3842,6 +4154,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
     },
     {
@@ -3863,6 +4177,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
     },
     {
@@ -3892,6 +4208,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /sessions/{session_id}/transform."
     }
   ],
@@ -3911,6 +4229,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check tempera-llm gateway liveness; returns {ok: true}."
     },
     {
@@ -3928,6 +4248,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /readyz."
     },
     {
@@ -3957,6 +4279,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "model:invoke",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
     },
     {
@@ -3977,6 +4301,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "model:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the configured model catalog the gateway can route to."
     },
     {
@@ -4004,6 +4330,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "model:invoke",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
     }
   ],
@@ -4023,7 +4351,86 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check tempera-workflows engine liveness."
+    },
+    {
+      "id": "createExperimentSubmission",
+      "upstreamOperationId": "experimentSubmissions.create",
+      "method": "POST",
+      "path": "/v1/experimentSubmissions",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "approvalId",
+        "connectionId",
+        "experimentProposal",
+        "mcpCommitReceiptDigest",
+        "mcpPrepareReceiptDigest",
+        "prospectiveProtocol",
+        "submissionIdempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "prospectiveProtocol",
+        "experimentProposal",
+        "connectionId",
+        "approvalId",
+        "mcpPrepareReceiptDigest",
+        "mcpCommitReceiptDigest",
+        "submissionIdempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "scope": "bio:experiment:submit",
+      "physicalAction": true,
+      "prepareCommitRequired": true,
+      "description": "Authorize and durably submit one preregistered prospective Bio experiment."
+    },
+    {
+      "id": "getExperimentSubmission",
+      "upstreamOperationId": "experimentSubmissions.get",
+      "method": "GET",
+      "path": "/v1/experimentSubmissions/{submissionId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [
+        "submissionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Get a credential-free durable view of one experiment submission."
+    },
+    {
+      "id": "reconcileExperimentSubmission",
+      "upstreamOperationId": "experimentSubmissions.reconcile",
+      "method": "POST",
+      "path": "/v1/experimentSubmissions/{submissionId}:reconcile",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [
+        "submissionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "scope": "bio:experiment:submit",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order."
     },
     {
       "id": "listNodeTypes",
@@ -4043,6 +4450,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
     },
     {
@@ -4064,6 +4473,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List workflow runs, optionally filtered to one workflow."
     },
     {
@@ -4083,6 +4494,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
     },
     {
@@ -4102,6 +4515,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Cancel a queued or running workflow run."
     },
     {
@@ -4131,6 +4546,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Consume a durable external callback and resume a waiting run."
     },
     {
@@ -4151,6 +4568,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List stored workflow definitions, newest first."
     },
     {
@@ -4182,6 +4601,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
     },
     {
@@ -4201,6 +4622,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Delete a stored workflow definition."
     },
     {
@@ -4220,6 +4643,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one stored workflow definition."
     },
     {
@@ -4255,6 +4680,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Replace a stored workflow definition with a new validated revision."
     },
     {
@@ -4281,6 +4708,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Start a run of a stored workflow with an optional input document and idempotency key."
     },
     {
@@ -4308,6 +4737,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Run a workflow to completion and return its output in a single call."
     },
     {
@@ -4333,6 +4764,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
     },
     {
@@ -4360,6 +4793,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
     },
     {
@@ -4388,6 +4823,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
     },
     {
@@ -4419,6 +4856,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "workflow:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
     }
   ],
@@ -4438,6 +4877,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check tempera-gym service liveness."
     },
     {
@@ -4458,6 +4899,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
     },
     {
@@ -4478,6 +4921,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Domain capabilities represented in the versioned task catalog."
     },
     {
@@ -4500,6 +4945,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List versioned task definitions without agent inputs."
     },
     {
@@ -4521,6 +4968,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Get one immutable task definition including its agent-visible input."
     },
     {
@@ -4548,6 +4997,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Deterministically verify one candidate without creating an episode."
     },
     {
@@ -4568,6 +5019,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List verifier identities and bound tasks without grader content."
     },
     {
@@ -4590,6 +5043,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List durable episode snapshots, newest first."
     },
     {
@@ -4613,6 +5068,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Reset a versioned task into a durable episode."
     },
     {
@@ -4632,6 +5089,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Read and content-verify one durable episode snapshot."
     },
     {
@@ -4656,6 +5115,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Apply one schema-validated action and persist the transition."
     },
     {
@@ -4681,6 +5142,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Retain a completed Gym episode and trajectory in Data Engine."
     },
     {
@@ -4702,6 +5165,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List persisted rollout run index records, newest first."
     },
     {
@@ -4721,6 +5186,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
     },
     {
@@ -4749,6 +5216,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
     },
     {
@@ -4769,6 +5238,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Discover the four frozen outcome-blind Bio proposal policies."
     },
     {
@@ -4808,6 +5279,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Propose one constrained Bio candidate batch without outcome access."
     },
     {
@@ -4828,6 +5301,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Discover boot-trusted exact sealed-evaluator identities."
     },
     {
@@ -4848,6 +5323,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List persisted sealed-evaluation precommits and results."
     },
     {
@@ -4875,6 +5352,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Persist an opaque sealed-suite commitment before policy freeze."
     },
     {
@@ -4894,6 +5373,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Read one verified precommit and aggregate sealed result."
     },
     {
@@ -4919,6 +5400,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Evaluate one frozen policy through its exact sealed adapter."
     }
   ],
@@ -4948,6 +5431,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:decision:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Derive campaign state."
     },
     {
@@ -4969,6 +5454,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare candidate set."
     },
     {
@@ -4994,6 +5481,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare dataset release manifest."
     },
     {
@@ -5023,6 +5512,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:decision:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Derive decision."
     },
     {
@@ -5048,6 +5539,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare experiment proposal."
     },
     {
@@ -5075,6 +5568,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare experiment proposal from gym batch."
     },
     {
@@ -5096,6 +5591,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare hypothesis."
     },
     {
@@ -5127,6 +5624,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:measurement:verify",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Verify measurement."
     },
     {
@@ -5152,6 +5651,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:proposal:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Prepare program."
     },
     {
@@ -5173,6 +5674,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "bio:source:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Ingest mave d b score set."
     }
   ],
@@ -5201,6 +5704,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/capability."
     },
     {
@@ -5240,6 +5745,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/completion/validate."
     },
     {
@@ -5257,6 +5764,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the browser adapter contract, required controls, and conformance profile."
     },
     {
@@ -5278,6 +5787,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/launch/claim."
     },
     {
@@ -5303,6 +5814,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/launch/plan."
     },
     {
@@ -5330,6 +5843,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/register."
     },
     {
@@ -5363,6 +5878,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/browser/adapter/validate."
     },
     {
@@ -5395,6 +5912,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
     },
     {
@@ -5412,6 +5931,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
     },
     {
@@ -5429,6 +5950,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
     },
     {
@@ -5457,6 +5980,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
     },
     {
@@ -5474,6 +5999,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
     },
     {
@@ -5491,6 +6018,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the ecosystem integration contract this daemon implements."
     },
     {
@@ -5519,6 +6048,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
     },
     {
@@ -5538,6 +6069,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
     },
     {
@@ -5557,6 +6090,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch a sandbox job's status and result."
     },
     {
@@ -5580,6 +6115,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call POST /v1/projects/{project}/modules."
     },
     {
@@ -5600,6 +6137,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Call GET /v1/projects/{project}/modules/{sha256}."
     }
   ],
@@ -5619,6 +6158,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check memory-server liveness."
     },
     {
@@ -5636,6 +6177,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check memory-server readiness, including database health."
     },
     {
@@ -5653,6 +6196,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch deep store health: schema version, integrity checks, and graph consistency."
     },
     {
@@ -5670,6 +6215,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
     },
     {
@@ -5687,6 +6234,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
     },
     {
@@ -5704,6 +6253,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
     },
     {
@@ -5724,6 +6275,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List recent service audit events (default 100, maximum 500)."
     },
     {
@@ -5754,6 +6307,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Write one memory event into the tenant and project ledger."
     },
     {
@@ -5773,6 +6328,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Project pending ledger events into the memory graph and return the projection report."
     },
     {
@@ -5802,6 +6359,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Answer a scoped memory question with evidence and reconstruction metadata."
     },
     {
@@ -5824,6 +6383,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
     }
   ],
@@ -5843,6 +6404,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check data-engine liveness; returns the service status."
     },
     {
@@ -5867,6 +6430,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
     },
     {
@@ -5889,6 +6454,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
     },
     {
@@ -5916,6 +6483,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
     },
     {
@@ -5946,6 +6515,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
     },
     {
@@ -5978,6 +6549,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
     },
     {
@@ -6002,6 +6575,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List a project's data campaigns with pagination."
     },
     {
@@ -6030,6 +6605,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
     },
     {
@@ -6052,6 +6629,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
     },
     {
@@ -6085,6 +6664,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
     },
     {
@@ -6111,6 +6692,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List human residual review tasks, optionally filtered by status and campaign."
     },
     {
@@ -6142,6 +6725,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:gold:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
     },
     {
@@ -6179,6 +6764,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
     },
     {
@@ -6208,6 +6795,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Atomically claim one open expert task with an exclusive renewable lease."
     },
     {
@@ -6237,6 +6826,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Renew the authenticated reviewer's active expert-task lease."
     },
     {
@@ -6265,6 +6856,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
     },
     {
@@ -6297,6 +6890,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Autosave a version-checked draft under the active reviewer lease."
     },
     {
@@ -6321,6 +6916,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
     },
     {
@@ -6342,6 +6939,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch data-engine usage and quality metrics for a project."
     },
     {
@@ -6363,6 +6962,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch the project label-quality report and unresolved expert backlog."
     },
     {
@@ -6384,6 +6985,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch public-site and ecosystem readiness signals for a project."
     },
     {
@@ -6409,6 +7012,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
     },
     {
@@ -6433,6 +7038,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
     },
     {
@@ -6458,6 +7065,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the labels attached to one artifact."
     },
     {
@@ -6482,6 +7091,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
     },
     {
@@ -6513,6 +7124,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
     },
     {
@@ -6535,6 +7148,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one labeling job with its state and progress."
     },
     {
@@ -6560,6 +7175,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List the deterministic label results a job produced."
     },
     {
@@ -6582,6 +7199,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one emitted product bundle with its status and manifest URL."
     },
     {
@@ -6604,6 +7223,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Validate an emitted product bundle's referential integrity and hygiene."
     },
     {
@@ -6629,6 +7250,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Check raw-hash leakage between exactly two product bundles."
     },
     {
@@ -6651,6 +7274,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
     },
     {
@@ -6680,6 +7305,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "training:publish",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints."
     },
     {
@@ -6702,6 +7329,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "training:publish",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Revalidate and fetch one training release, including any durable stale state."
     },
     {
@@ -6733,6 +7362,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Derive a deterministic post-training bundle from a ready product."
     },
     {
@@ -6760,6 +7391,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
     },
     {
@@ -6798,6 +7431,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Extract bounded objects or records from a configured source connector."
     },
     {
@@ -6822,6 +7457,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List registered source connectors for a project."
     },
     {
@@ -6855,6 +7492,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create or version-bump a stored custom tool."
     },
     {
@@ -6879,6 +7518,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List stored custom tools and their usage statistics."
     },
     {
@@ -6901,6 +7542,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one stored custom tool and its usage statistics."
     },
     {
@@ -6923,6 +7566,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Delete a stored custom tool and every retained version."
     },
     {
@@ -6947,6 +7592,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Invoke a stored custom tool through its configured execution boundary."
     },
     {
@@ -6992,6 +7639,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Atomically commit an immutable discovery release graph."
     },
     {
@@ -7014,6 +7663,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Get one immutable discovery release."
     },
     {
@@ -7055,6 +7706,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an immutable shared evidence record by canonical content hash."
     },
     {
@@ -7080,6 +7733,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List immutable shared evidence records with bounded cursor pagination."
     },
     {
@@ -7102,6 +7757,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one immutable shared evidence record by its platform digest."
     },
     {
@@ -7149,6 +7806,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an immutable shared episode by canonical content hash."
     },
     {
@@ -7174,6 +7833,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List immutable shared episodes with bounded cursor pagination."
     },
     {
@@ -7196,6 +7857,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one immutable shared episode by its platform digest."
     },
     {
@@ -7233,6 +7896,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Retrieve deterministic candidates for one exact canonical typed research obligation."
     },
     {
@@ -7268,6 +7933,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "bodyDefaults": {},
       "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Create an immutable executable research catalog entry by canonical content hash."
     },
     {
@@ -7292,6 +7959,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "List immutable executable research catalog entries with bounded pagination."
     },
     {
@@ -7314,6 +7983,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": "dataset:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Fetch one immutable executable research catalog entry by content hash."
     }
   ],
@@ -7336,6 +8007,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [],
       "bodyDefaults": {},
       "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
       "description": "Compute live qualification evidence."
     }
   ]

@@ -241,6 +241,164 @@
         ],
         "type": "object"
       },
+      "ExperimentSubmission": {
+        "description": "Safe public view of a durable submission. Secret references and secret\nvalues are intentionally absent.",
+        "properties": {
+          "approvalConsumptionDigest": {
+            "nullable": true,
+            "type": "string"
+          },
+          "approvalId": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "error": {
+            "nullable": true,
+            "type": "string"
+          },
+          "experimentProposalDigest": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "physicalAction": {
+            "type": "string"
+          },
+          "prospectiveProtocolDigest": {
+            "type": "string"
+          },
+          "providerConnection": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReceiptProviderConnection"
+              }
+            ],
+            "nullable": true
+          },
+          "providerOrderRef": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rawSubmissionReceiptBase64": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reconcileAfter": {
+            "description": "Earliest safe lookup time after a process disappears during dispatch.",
+            "nullable": true,
+            "type": "string"
+          },
+          "requestDigest": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ExperimentSubmissionStatus"
+          },
+          "submissionIdempotencyKey": {
+            "type": "string"
+          },
+          "submissionIdentitySignature": {
+            "description": "Exact Bio evidence object. Its nested `key_id` field intentionally\nretains the pinned Bio schema rather than adopting the REST casing.",
+            "type": "object"
+          },
+          "submissionReceipt": {
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "requestDigest",
+          "prospectiveProtocolDigest",
+          "experimentProposalDigest",
+          "connectionId",
+          "approvalId",
+          "submissionIdempotencyKey",
+          "physicalAction",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ExperimentSubmissionCreateRequest": {
+        "additionalProperties": false,
+        "description": "Exact request to the physical submission operation.",
+        "properties": {
+          "approvalId": {
+            "description": "Single-use human experiment approval id.",
+            "type": "string"
+          },
+          "connectionId": {
+            "description": "Active Auth Hub provider-connection id.",
+            "type": "string"
+          },
+          "experimentProposal": {
+            "description": "Exact sealed Bio proposal referenced by the protocol."
+          },
+          "mcpCommitReceiptDigest": {
+            "description": "Exact MCP commit receipt authorizing this submission attempt.",
+            "type": "string"
+          },
+          "mcpPrepareReceiptDigest": {
+            "description": "Exact MCP prepare receipt already bound into the approval.",
+            "type": "string"
+          },
+          "prospectiveProtocol": {
+            "description": "Sealed `tempera.bio-prospective-experiment-protocol/v1`."
+          },
+          "submissionIdempotencyKey": {
+            "description": "Stable key used for Auth Hub consumption and provider dispatch.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prospectiveProtocol",
+          "experimentProposal",
+          "connectionId",
+          "approvalId",
+          "mcpPrepareReceiptDigest",
+          "mcpCommitReceiptDigest",
+          "submissionIdempotencyKey"
+        ],
+        "type": "object"
+      },
+      "ExperimentSubmissionResponse": {
+        "description": "Response from create/reconcile, including exact replay status.",
+        "properties": {
+          "experimentSubmission": {
+            "$ref": "#/components/schemas/ExperimentSubmission"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "experimentSubmission",
+          "replayed"
+        ],
+        "type": "object"
+      },
+      "ExperimentSubmissionStatus": {
+        "description": "Durable Workflows state for one external submission.",
+        "enum": [
+          "authorizing",
+          "authorized",
+          "dispatching",
+          "reconciling",
+          "submitted",
+          "failed"
+        ],
+        "type": "string"
+      },
       "HealthResponse": {
         "description": "`GET /healthz` response.",
         "properties": {
@@ -255,6 +413,27 @@
         "required": [
           "status",
           "version"
+        ],
+        "type": "object"
+      },
+      "IdentitySignature": {
+        "additionalProperties": false,
+        "description": "Detached identity signature over the exact raw receipt bytes.",
+        "properties": {
+          "algorithm": {
+            "type": "string"
+          },
+          "key_id": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "algorithm",
+          "key_id",
+          "signature"
         ],
         "type": "object"
       },
@@ -638,6 +817,40 @@
         "required": [
           "x",
           "y"
+        ],
+        "type": "object"
+      },
+      "ReceiptProviderConnection": {
+        "additionalProperties": false,
+        "description": "Public, credential-free provider identity embedded in the Bio receipt.",
+        "properties": {
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "connectionId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "providerKind": {
+            "type": "string"
+          },
+          "revision": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "connectionId",
+          "revision",
+          "provider",
+          "providerKind",
+          "capabilities"
         ],
         "type": "object"
       },
@@ -1458,7 +1671,281 @@
         ],
         "x-tempera-auth-audience": null,
         "x-tempera-auth-kind": "none",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": null
+      }
+    },
+    "/v1/experimentSubmissions": {
+      "post": {
+        "description": "This is the only Workflows operation that can create an external physical\norder. It requires an exact consumed human approval plus MCP prepare and\ncommit receipts; a deployment without a qualified adapter fails closed.",
+        "operationId": "experimentSubmissions.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentSubmissionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentSubmissionResponse"
+                }
+              }
+            },
+            "description": "Exact idempotent replay of an accepted order"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentSubmissionResponse"
+                }
+              }
+            },
+            "description": "Provider accepted a newly created order"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentSubmissionResponse"
+                }
+              }
+            },
+            "description": "Dispatch outcome is ambiguous; reconcile by the same provider idempotency key"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed or unsealed Bio artifact"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing service scope or workspace identity"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Idempotency or approval binding conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Protocol, provider, or approval precondition failed"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Provider adapter, signer, secret backend, or Auth Hub unavailable"
+          }
+        },
+        "summary": "Authorize and durably submit one preregistered prospective Bio experiment.",
+        "tags": [
+          "experimentSubmissions"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": true,
+        "x-tempera-prepare-commit-required": true,
+        "x-tempera-required-scope": "bio:experiment:submit"
+      }
+    },
+    "/v1/experimentSubmissions/{submissionId}": {
+      "get": {
+        "operationId": "experimentSubmissions.get",
+        "parameters": [
+          {
+            "description": "Experiment submission id",
+            "in": "path",
+            "name": "submissionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentSubmission"
+                }
+              }
+            },
+            "description": "Durable submission state"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope or workspace identity"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found in this workspace"
+          }
+        },
+        "summary": "Get a credential-free durable view of one experiment submission.",
+        "tags": [
+          "experimentSubmissions"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
+        "x-tempera-required-scope": "workflow:read"
+      }
+    },
+    "/v1/experimentSubmissions/{submissionId}:reconcile": {
+      "post": {
+        "description": "operation cannot create a provider order.",
+        "operationId": "experimentSubmissions.reconcile",
+        "parameters": [
+          {
+            "description": "Experiment submission id",
+            "in": "path",
+            "name": "submissionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentSubmissionResponse"
+                }
+              }
+            },
+            "description": "Provider order found and signed receipt persisted, or reconciliation remains pending"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing service scope or workspace identity"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found in this workspace"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Submission is not reconcilable or provider reports no order"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Provider adapter or secret backend unavailable"
+          }
+        },
+        "summary": "Resolve an ambiguous physical dispatch with a provider-side lookup. This",
+        "tags": [
+          "experimentSubmissions"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
+        "x-tempera-required-scope": "bio:experiment:submit"
       }
     },
     "/v1/node-types": {
@@ -1525,6 +2012,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       }
     },
@@ -1602,6 +2091,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       }
     },
@@ -1667,6 +2158,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       }
     },
@@ -1744,6 +2237,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       }
     },
@@ -1830,6 +2325,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:run"
       }
     },
@@ -1936,6 +2433,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:run"
       }
     },
@@ -2003,6 +2502,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       },
       "post": {
@@ -2085,6 +2586,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     },
@@ -2143,6 +2646,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       },
       "get": {
@@ -2206,6 +2711,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:read"
       },
       "patch": {
@@ -2308,6 +2815,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     },
@@ -2404,6 +2913,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:run"
       }
     },
@@ -2490,6 +3001,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:run"
       }
     },
@@ -2586,6 +3099,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     },
@@ -2682,6 +3197,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     },
@@ -2767,6 +3284,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     },
@@ -2832,6 +3351,8 @@
         ],
         "x-tempera-auth-audience": "tempera-workflows",
         "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": "workflow:write"
       }
     }
@@ -2852,6 +3373,10 @@
     {
       "description": "Data-driven node catalog for the studio palette",
       "name": "nodeTypes"
+    },
+    {
+      "description": "Human-approved, durable, fail-closed physical experiment submission and reconciliation",
+      "name": "experimentSubmissions"
     }
   ]
 }

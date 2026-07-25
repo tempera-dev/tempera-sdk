@@ -119,6 +119,16 @@ def validate(surface: dict) -> list[str]:
             scope = op.get("scope")
             if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
                 problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
+            physical_action = op.get("physicalAction", False)
+            prepare_commit_required = op.get("prepareCommitRequired", False)
+            if not isinstance(physical_action, bool):
+                problems.append(f"{label}: physicalAction must be a boolean")
+            if not isinstance(prepare_commit_required, bool):
+                problems.append(f"{label}: prepareCommitRequired must be a boolean")
+            if prepare_commit_required and not physical_action:
+                problems.append(
+                    f"{label}: prepareCommitRequired requires physicalAction"
+                )
             required_body = set(op.get("requiredBody", []))
             body = set(op.get("body", []))
             if not required_body.issubset(body):
@@ -232,6 +242,8 @@ def render_typescript(surface: dict) -> str:
                 "requiredBody": op.get("requiredBody", []),
                 "bodyDefaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
+                "physicalAction": op.get("physicalAction", False),
+                "prepareCommitRequired": op.get("prepareCommitRequired", False),
                 "description": op["description"],
             }
             for op in ops
@@ -312,6 +324,8 @@ def render_typescript_dts(surface: dict) -> str:
         "  requiredBody: readonly string[];",
         "  bodyDefaults: Readonly<Record<string, unknown>>;",
         "  scope: TemperaScope | null;",
+        "  physicalAction: boolean;",
+        "  prepareCommitRequired: boolean;",
         "  description: string;",
         "};",
         "export declare const TEMPERA_OPERATIONS: Readonly<Record<TemperaProductKey, readonly TemperaOperationSpec[]>>;",
@@ -416,6 +430,8 @@ def render_python(surface: dict) -> str:
                 "required_body": op.get("requiredBody", []),
                 "body_defaults": op.get("bodyDefaults", {}),
                 "scope": op.get("scope"),
+                "physical_action": op.get("physicalAction", False),
+                "prepare_commit_required": op.get("prepareCommitRequired", False),
                 "description": op["description"],
             }
             for op in ops
@@ -534,6 +550,8 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub required_body: &'static [&'static str],")
     lines.append("    pub body_defaults: &'static [(&'static str, &'static str)],")
     lines.append("    pub scope: Option<&'static str>,")
+    lines.append("    pub physical_action: bool,")
+    lines.append("    pub prepare_commit_required: bool,")
     lines.append("    pub description: &'static str,")
     lines.append("}")
     lines.append("")
@@ -565,6 +583,13 @@ def render_rust(surface: dict) -> str:
             )
             lines.append(f"        body_defaults: &[{pairs}],")
             lines.append(f"        scope: {rust_str(op.get('scope'))},")
+            lines.append(
+                f"        physical_action: {str(op.get('physicalAction', False)).lower()},"
+            )
+            lines.append(
+                "        prepare_commit_required: "
+                f"{str(op.get('prepareCommitRequired', False)).lower()},"
+            )
             lines.append(f"        description: {json.dumps(op['description'])},")
             lines.append("    },")
     lines.append("];")

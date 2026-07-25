@@ -62,6 +62,8 @@ export type TemperaOperationSpec = {
   requiredBody: readonly string[];
   bodyDefaults: Readonly<Record<string, unknown>>;
   scope: TemperaScope | null;
+  physicalAction: boolean;
+  prepareCommitRequired: boolean;
   description: string;
 };
 export declare const TEMPERA_OPERATIONS: Readonly<Record<TemperaProductKey, readonly TemperaOperationSpec[]>>;
@@ -432,6 +434,12 @@ export interface TemperaLlmClient extends TemperaProductClientBase {
 export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   /** Check tempera-workflows engine liveness. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Authorize and durably submit one preregistered prospective Bio experiment. */
+  createExperimentSubmission(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get a credential-free durable view of one experiment submission. */
+  getExperimentSubmission(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order. */
+  reconcileExperimentSubmission(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface. */
   listNodeTypes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List workflow runs, optionally filtered to one workflow. */

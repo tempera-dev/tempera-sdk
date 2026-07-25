@@ -172,6 +172,71 @@ class DispatchTest(unittest.TestCase):
             },
         )
 
+    def test_physical_experiment_submission_preserves_exact_workflows_contract(self):
+        operations = {
+            item["id"]: item for item in OPERATIONS["temperaWorkflows"]
+        }
+        create = operations["create_experiment_submission"]
+        get = operations["get_experiment_submission"]
+        reconcile = operations["reconcile_experiment_submission"]
+        self.assertEqual(
+            create["upstream_operation_id"],
+            "experimentSubmissions.create",
+        )
+        self.assertEqual(create["auth_audience"], "tempera-workflows")
+        self.assertEqual(create["scope"], "bio:experiment:submit")
+        self.assertTrue(create["physical_action"])
+        self.assertTrue(create["prepare_commit_required"])
+        self.assertFalse(get["physical_action"])
+        self.assertFalse(get["prepare_commit_required"])
+        self.assertFalse(reconcile["physical_action"])
+        self.assertFalse(reconcile["prepare_commit_required"])
+
+        client, transport = make_client()
+        client.tempera_workflows.create_experiment_submission(
+            {
+                "prospective_protocol": {
+                    "schemaVersion": "tempera.bio-prospective-experiment-protocol/v1"
+                },
+                "experiment_proposal": {
+                    "schemaVersion": "tempera.bio-experiment-proposal/v1"
+                },
+                "connection_id": "epc_1",
+                "approval_id": "exa_1",
+                "mcp_prepare_receipt_digest": f"sha256:{'1' * 64}",
+                "mcp_commit_receipt_digest": f"sha256:{'2' * 64}",
+                "submission_idempotency_key": "submit-1",
+            }
+        )
+        self.assertEqual(
+            transport.calls[0]["path"], "/v1/experimentSubmissions"
+        )
+        self.assertEqual(
+            transport.calls[0]["body"],
+            {
+                "approvalId": "exa_1",
+                "connectionId": "epc_1",
+                "experimentProposal": {
+                    "schemaVersion": "tempera.bio-experiment-proposal/v1"
+                },
+                "mcpCommitReceiptDigest": f"sha256:{'2' * 64}",
+                "mcpPrepareReceiptDigest": f"sha256:{'1' * 64}",
+                "prospectiveProtocol": {
+                    "schemaVersion": "tempera.bio-prospective-experiment-protocol/v1"
+                },
+                "submissionIdempotencyKey": "submit-1",
+            },
+        )
+
+        client.tempera_workflows.reconcile_experiment_submission(
+            {"submission_id": "submission/1"}
+        )
+        self.assertEqual(
+            transport.calls[1]["path"],
+            "/v1/experimentSubmissions/submission%2F1:reconcile",
+        )
+        self.assertIsNone(transport.calls[1]["body"])
+
     def test_gym_bio_proposal_preserves_outcome_blind_wire_and_auth_contract(self):
         policy_operation = next(
             item

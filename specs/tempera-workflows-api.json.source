@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-workflows-api.json",
-  "generated_sha256": "0e0212b5c327775027d3d6cfa28b6e0035558a60d4475793b97deb1555f8eb3c",
+  "generated_sha256": "e812d72f9f635d915661c545825b72972a27ad162482ea30b59d0c6ad8be1bb6",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "6ce23b1cd152686c628e18e048940da37f2e935f",
+  "source_blob_sha": "a519d608916fd0d88a5c7f56903055b4db1cfdc6",
   "source_branch": "main",
-  "source_commit": "366c87d4588fb843bbdf38eeb75253cf905aea24",
+  "source_commit": "7f929443d3cb5b4f534cb1b3aba16d227665995e",
   "source_mode": "100644",
   "source_path": "sdks/openapi/tempera-workflows-api.json",
   "source_repo": "tempera-dev/tempera-workflows",
-  "source_sha256": "0e0212b5c327775027d3d6cfa28b6e0035558a60d4475793b97deb1555f8eb3c"
+  "source_sha256": "e812d72f9f635d915661c545825b72972a27ad162482ea30b59d0c6ad8be1bb6"
 }

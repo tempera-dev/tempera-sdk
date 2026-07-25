@@ -8,7 +8,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -179,6 +179,14 @@ def sdk_operation_id(operation_id: str) -> str:
 
 def sentence(operation: dict[str, Any], method: str, path: str) -> str:
     value = operation.get("summary") or operation.get("description")
+    description = operation.get("description")
+    if (
+        isinstance(value, str)
+        and value.rstrip().endswith(" This")
+        and isinstance(description, str)
+        and description.strip()
+    ):
+        value = f"{value} {description}"
     if not isinstance(value, str) or not value.strip():
         value = f"Call {method.upper()} {path}"
     value = " ".join(value.split())
@@ -186,6 +194,45 @@ def sentence(operation: dict[str, Any], method: str, path: str) -> str:
     if value[-1] not in ".!?":
         value += "."
     return value
+
+
+def physical_action_metadata(
+    product: str,
+    operation_id: str,
+    operation: Mapping[str, Any],
+) -> tuple[bool | None, bool | None]:
+    physical_key = "x-tempera-physical-action"
+    prepare_key = "x-tempera-prepare-commit-required"
+    if physical_key not in operation and prepare_key not in operation:
+        if product != "temperaWorkflows":
+            return None, None
+        raise ValueError(
+            f"{product} {operation_id} must explicitly declare "
+            f"{physical_key} and {prepare_key}"
+        )
+    if product == "temperaWorkflows" and (
+        physical_key not in operation or prepare_key not in operation
+    ):
+        raise ValueError(
+            f"{product} {operation_id} must explicitly declare "
+            f"{physical_key} and {prepare_key}"
+        )
+    physical_action = operation.get(physical_key, False)
+    prepare_commit_required = operation.get(prepare_key, False)
+    if not isinstance(physical_action, bool):
+        raise ValueError(
+            f"{product} {operation_id} has invalid {physical_key}"
+        )
+    if not isinstance(prepare_commit_required, bool):
+        raise ValueError(
+            f"{product} {operation_id} has invalid {prepare_key}"
+        )
+    if prepare_commit_required and not physical_action:
+        raise ValueError(
+            f"{product} {operation_id} cannot require prepare/commit "
+            "without being a physical action"
+        )
+    return physical_action, prepare_commit_required
 
 
 def load_exclusions() -> dict[str, set[Route]]:
@@ -405,6 +452,19 @@ def synchronize_product(
             item["method"] = method.upper()
             item["path"] = path
             item["upstreamOperationId"] = operation_id
+            if not item.get("description") or str(item["description"]).endswith(
+                " This."
+            ):
+                item["description"] = sentence(operation, method, path)
+            physical_action, prepare_commit_required = physical_action_metadata(
+                product, operation_id, operation
+            )
+            if physical_action is None:
+                item.pop("physicalAction", None)
+                item.pop("prepareCommitRequired", None)
+            else:
+                item["physicalAction"] = physical_action
+                item["prepareCommitRequired"] = prepare_commit_required
             override = overrides.get(identity)
             if override is not None:
                 if override["upstreamOperationId"] != operation_id:
