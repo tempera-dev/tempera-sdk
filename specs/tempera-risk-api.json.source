@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-risk-api.json",
+  "generated_sha256": "76779f1d12a314186e3795ab2215939447804c1f1dad6e01cca7dbb48c76a3e8",
+  "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
+  "schema_version": 1,
+  "source_blob_sha": "dad3dfef931221b80558f24a08b532138ee137cc",
+  "source_branch": "main",
+  "source_commit": "f08743dc1d5eed65ba6c7dacdc2b105af04e1ea7",
+  "source_mode": "100644",
+  "source_path": "api/openapi.yaml",
+  "source_repo": "tempera-dev/tempera-risk",
+  "source_sha256": "548548b32303bb4130acaa0473c3f345edc122187ea7636f42b83893ca52fa29"
+}

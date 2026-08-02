@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "pii:unmask" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-payments";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -33,6 +33,7 @@ export type TemperaEnvironmentTargets = {
   publicSiteUrl: string;
   temperaGymUrl: string;
   temperaLlmApiUrl: string;
+  temperaRiskApiUrl: string;
   temperaWorkflowsApiUrl: string;
   tempoApiUrl: string;
 };
@@ -433,6 +434,71 @@ export interface TemperaLlmClient extends TemperaProductClientBase {
   createResponse(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
+export interface TemperaRiskClient extends TemperaProductClientBase {
+  /** Call GET /healthz. */
+  health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /openapi.yaml. */
+  getOpenApi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Execute one principal-bound, signed, bounded graph read. */
+  executeGraphRead(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/subjects. */
+  createSubject(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/events:ingest. */
+  ingestEvent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/policies. */
+  registerPolicy(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register an immutable model artifact after dual human approval. */
+  registerModel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ingest a signed non-decisional score from an authenticated scorer workload. */
+  ingestModelScore(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/approvals. */
+  createApproval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/policyDeployments. */
+  deployPolicy(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/decisions. */
+  createDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/decisions/{decisionId}. */
+  getDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/outcomes. */
+  recordOutcome(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/screenings. */
+  createScreening(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/cases. */
+  listCases(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Open a governed multi-domain investigation case. */
+  createCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/cases/{caseId}. */
+  getCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read all completed non-decisional investigation dossiers for a case. */
+  getCaseDossier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access. */
+  createAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a sensitive investigation-data access grant. */
+  revokeAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ingest an evidence-backed bitemporal person or company profile. */
+  createPeopleDirectoryProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Find non-decisional identity-resolution candidates under an active case grant. */
+  searchPeople(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List declared non-runnable investigation source packs. */
+  listSourcePacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one declared non-runnable investigation source pack. */
+  getSourcePack(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/researchJobs. */
+  createResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/researchJobs/{jobId}. */
+  getResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read the cited, non-decisional result under the job's original access grant. */
+  getResearchJobResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read ordered non-decisional job events under the job's original access grant. */
+  listResearchJobEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel. */
+  cancelResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/projects/{project}/researchJobs/{jobId}:review. */
+  reviewResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/audit:export. */
+  exportAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
 export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   /** Check tempera-workflows engine liveness. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -666,8 +732,12 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label. */
   createReviewQualificationTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an immutable project-scoped reviewer revocation and terminate active assignments. */
+  createReviewerRevocation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision. */
   resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision. */
+  createExpertTaskAppeal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically claim one open expert task with an exclusive renewable lease. */
   claimExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Renew the authenticated reviewer's active expert-task lease. */
@@ -676,6 +746,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Autosave a version-checked draft under the active reviewer lease. */
   saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier. */
+  recordReviewerSessionEvent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations. */
   getReviewOperations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */

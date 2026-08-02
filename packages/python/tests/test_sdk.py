@@ -60,7 +60,10 @@ class TemperaSdkTest(unittest.TestCase):
                 "bio:measurement:verify", "bio:decision:write",
                 "bio:experiment:approve", "bio:experiment:submit",
                 "bio:signer:manage", "model:read", "model:invoke",
-                "usage:reserve", "document:read", "document:write", "pii:unmask", "admin",
+                "usage:reserve", "document:read", "document:write",
+                "risk:read", "risk:write", "risk:review", "pii:unmask",
+                "payments:intents:read", "payments:intents:write", "payments:receipts:read",
+                "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin",
             ],
         )
 

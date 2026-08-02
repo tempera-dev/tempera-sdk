@@ -24,6 +24,12 @@ visibility = "private"
 default_env = "TEMPERA_LLM_URL"
 scopes = ["model:read", "model:invoke"]
 
+[products.tempera_risk]
+name = "tempera-risk"
+repository = "https://github.com/tempera-dev/tempera-risk"
+visibility = "private"
+default_env = "TEMPERA_RISK_URL"
+
 [products.human_data]
 name = "human-data"
 repository = "https://github.com/tempera-dev/human-data"

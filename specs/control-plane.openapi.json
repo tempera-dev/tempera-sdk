@@ -3812,7 +3812,16 @@
           "usage:reserve",
           "document:read",
           "document:write",
+          "risk:read",
+          "risk:write",
+          "risk:review",
           "pii:unmask",
+          "payments:intents:read",
+          "payments:intents:write",
+          "payments:receipts:read",
+          "payments:webhooks:write",
+          "payments:refunds:write",
+          "payments:admin",
           "admin"
         ]
       },
@@ -3842,6 +3851,9 @@
           "usage:reserve",
           "document:read",
           "document:write",
+          "risk:read",
+          "risk:write",
+          "risk:review",
           "pii:unmask",
           "admin"
         ]
@@ -3861,8 +3873,10 @@
           "tempera-llm",
           "tempera-workflows",
           "tempera-gym",
-          "tempera-bio"
-          ,"tempera-document"
+          "tempera-bio",
+          "tempera-document",
+          "tempera-risk",
+          "tempera-payments"
         ]
       },
       "TokenClaims": {

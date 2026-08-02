@@ -171,6 +171,7 @@ class ProductBearerTest(unittest.TestCase):
                 "palette": ("palette", "TEMPERA_PALETTE_URL"),
                 "tempo": ("tempo", "TEMPERA_TEMPO_URL"),
                 "temperaLlm": ("tempera-llm", "TEMPERA_LLM_URL"),
+                "temperaRisk": ("tempera-risk", "TEMPERA_RISK_URL"),
                 "temperaWorkflows": ("tempera-workflows", "TEMPERA_WORKFLOWS_URL"),
                 "temperaGym": ("tempera-gym", "TEMPERA_GYM_URL"),
                 "temperaBio": ("tempera-bio", "TEMPERA_BIO_URL"),

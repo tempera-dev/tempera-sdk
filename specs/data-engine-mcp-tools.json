@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "10c0c76c6f9c9af736ead6ce5b393ac0b23bbdcc",
+    "commit": "1deb0d418b1a3c8a2e3f8e7cd3ce348f79428685",
     "files": [
       {
-        "git_blob": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
+        "git_blob": "1d0acbc378d432940aac61e508f8ea6b85be8795",
         "path": "api/openapi.yaml",
-        "sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd"
+        "sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "9dc0ad807024e9e402504dcb2d975b3ce27e4733",
+        "git_blob": "454c314d3ec09c88b76234b152fead6e20e2b91a",
         "path": "src/data_engine/app.py",
-        "sha256": "a2c47052632d9b799120ebf877cea5565d91b098c0c631f32b3826f0b2053dfa"
+        "sha256": "173beb096fc26468104f6adc22eac1be68a9d67c518c54be11fa64ef4b25cbbe"
       },
       {
-        "git_blob": "ff1024ca4671f81b1acfbc80acc539bdca49daa3",
+        "git_blob": "f930e96426af2edc7d88ffb609c66abc9e229a03",
         "path": "src/data_engine/mcp.py",
-        "sha256": "792c0859efe2073cc0f4b06696aa9dc1a723fc348f5c06c6fd7dc0a653b766e6"
+        "sha256": "b9454386556f6ab800d6866472c9f1272e32385a8d88439fdefb7b946b24029f"
       },
       {
-        "git_blob": "9c599001cb3de342adc679e88ddd0be38ef398bd",
+        "git_blob": "5a50d8273b747fbf47eb3de636f655032d1d7fe4",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "98a32246607b25f9ceeb77150a51bff91f01c8a656e8d631d19529d1e661b6a4"
+        "sha256": "3fb4160d2a3c89ce7491859b20ce3f0e5caed4759d1cf252efe7fba859a62c2c"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -960,7 +960,7 @@
         "openWorldHint": false,
         "readOnlyHint": false
       },
-      "description": "Ingest a raw artifact. Exact retries for the same project, source, and external_id return the existing artifact; different content for that identity returns ALREADY_EXISTS. AGENT_MEMORY_FEEDBACK uses the exact project-bound remi.memory_feedback.v1 contract; AGENT_TOOL_TRACE uses the exact data-engine.agent-tool-trace.v1 contract.",
+      "description": "Ingest a raw artifact. Exact retries for the same project, source, and external_id return the existing artifact; different content for that identity returns ALREADY_EXISTS. AGENT_MEMORY_FEEDBACK uses the exact project-bound remi.memory_feedback.v1 contract; AGENT_TOOL_TRACE uses the exact data-engine.agent-tool-trace.v1 contract; DOCUMENT_EVIDENCE uses the exact identity-addressed tempera.document-evidence.v1 contract.",
       "inputSchema": {
         "additionalProperties": false,
         "allOf": [
@@ -1427,6 +1427,495 @@
               "required": [
                 "artifactType",
                 "rawBody"
+              ]
+            }
+          },
+          {
+            "if": {
+              "anyOf": [
+                {
+                  "properties": {
+                    "artifactType": {
+                      "const": "DOCUMENT_EVIDENCE"
+                    }
+                  },
+                  "required": [
+                    "artifactType"
+                  ]
+                },
+                {
+                  "properties": {
+                    "source": {
+                      "const": "tempera-document"
+                    }
+                  },
+                  "required": [
+                    "source"
+                  ]
+                },
+                {
+                  "properties": {
+                    "externalId": {
+                      "pattern": "^document-evidence-v1:",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "externalId"
+                  ]
+                },
+                {
+                  "properties": {
+                    "rawBody": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": "tempera.document-evidence.v1"
+                        }
+                      },
+                      "required": [
+                        "schemaVersion"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "rawBody"
+                  ]
+                },
+                {
+                  "properties": {
+                    "metadata": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": "tempera.document-evidence.v1"
+                        }
+                      },
+                      "required": [
+                        "schemaVersion"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "metadata"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "properties": {
+                "artifactType": {
+                  "const": "DOCUMENT_EVIDENCE"
+                },
+                "externalId": {
+                  "pattern": "^document-evidence-v1:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "metadata": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "classification": {
+                      "enum": [
+                        "PUBLIC",
+                        "INTERNAL",
+                        "CONFIDENTIAL",
+                        "RESTRICTED"
+                      ],
+                      "type": "string"
+                    },
+                    "evidenceSha256": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "handlingTags": {
+                      "items": {
+                        "enum": [
+                          "PHI",
+                          "PII",
+                          "MALWARE",
+                          "DUAL_USE",
+                          "EXPORT_CONTROLLED",
+                          "LICENSE_RESTRICTED"
+                        ],
+                        "type": "string"
+                      },
+                      "maxItems": 32,
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "provenance": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evaluationOnly": {
+                          "type": "boolean"
+                        },
+                        "integrity": {
+                          "const": "RECEIVER_VERIFIED"
+                        },
+                        "origin": {
+                          "const": "CALLER_ASSERTED"
+                        },
+                        "trainingAllowed": {
+                          "const": false
+                        }
+                      },
+                      "required": [
+                        "origin",
+                        "integrity",
+                        "evaluationOnly",
+                        "trainingAllowed"
+                      ],
+                      "type": "object"
+                    },
+                    "schemaVersion": {
+                      "const": "tempera.document-evidence.v1"
+                    }
+                  },
+                  "required": [
+                    "schemaVersion",
+                    "evidenceSha256",
+                    "classification",
+                    "handlingTags",
+                    "provenance"
+                  ],
+                  "type": "object"
+                },
+                "rawBody": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "evidenceSha256": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "extraction": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "document": {
+                          "maxLength": 1024,
+                          "pattern": "^projects/[^/]{1,256}/documents/[^/]{1,256}$",
+                          "type": "string"
+                        },
+                        "documentVersion": {
+                          "maxLength": 2048,
+                          "type": "string"
+                        },
+                        "evidence": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "evidence": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "blockId": {
+                                    "maxLength": 1024,
+                                    "minLength": 1,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "charEnd": {
+                                    "maximum": 4294967295,
+                                    "minimum": 1,
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "charStart": {
+                                    "maximum": 4294967295,
+                                    "minimum": 0,
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "cropSha256": {
+                                    "pattern": "^[0-9a-f]{64}$",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "polygon": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "points": {
+                                        "items": {
+                                          "additionalProperties": false,
+                                          "properties": {
+                                            "x": {
+                                              "maximum": 1,
+                                              "minimum": 0,
+                                              "type": "number"
+                                            },
+                                            "y": {
+                                              "maximum": 1,
+                                              "minimum": 0,
+                                              "type": "number"
+                                            }
+                                          },
+                                          "required": [
+                                            "x",
+                                            "y"
+                                          ],
+                                          "type": "object"
+                                        },
+                                        "maxItems": 64,
+                                        "minItems": 3,
+                                        "type": "array"
+                                      }
+                                    },
+                                    "required": [
+                                      "points"
+                                    ],
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  },
+                                  "support": {
+                                    "const": "GROUNDED"
+                                  },
+                                  "timeRange": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "endMs": {
+                                        "maximum": 9223372036854775807,
+                                        "minimum": 1,
+                                        "type": "integer"
+                                      },
+                                      "startMs": {
+                                        "maximum": 9223372036854775807,
+                                        "minimum": 0,
+                                        "type": "integer"
+                                      }
+                                    },
+                                    "required": [
+                                      "startMs",
+                                      "endMs"
+                                    ],
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  },
+                                  "unitId": {
+                                    "maxLength": 1024,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "unitId",
+                                  "blockId",
+                                  "charStart",
+                                  "charEnd",
+                                  "polygon",
+                                  "timeRange",
+                                  "cropSha256",
+                                  "support"
+                                ],
+                                "type": "object"
+                              },
+                              "jsonPointer": {
+                                "maxLength": 4096,
+                                "minLength": 1,
+                                "pattern": "^/",
+                                "type": "string"
+                              },
+                              "quote": {
+                                "maxLength": 65536,
+                                "minLength": 1,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "jsonPointer",
+                              "quote",
+                              "evidence"
+                            ],
+                            "type": "object"
+                          },
+                          "maxItems": 8192,
+                          "type": "array"
+                        },
+                        "graphSha256": {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        "inputTokens": {
+                          "maximum": 9223372036854775807,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "locallyEnforcedConstraints": {
+                          "items": {
+                            "maxLength": 4096,
+                            "type": "string"
+                          },
+                          "maxItems": 4096,
+                          "type": "array"
+                        },
+                        "modelConformanceSha256": {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        "modelEndpoint": {
+                          "maxLength": 1024,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "modelProtocol": {
+                          "enum": [
+                            "OPEN_AI_RESPONSES",
+                            "OPEN_AI_CHAT_COMPLETIONS",
+                            "ANTHROPIC_MESSAGES"
+                          ],
+                          "type": "string"
+                        },
+                        "output": {
+                          "additionalProperties": true,
+                          "description": "Caller-defined JSON Schema output; member names are opaque.",
+                          "type": "object"
+                        },
+                        "outputTokens": {
+                          "maximum": 9223372036854775807,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "providerRequestId": {
+                          "maxLength": 1024,
+                          "minLength": 1,
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "providerResponseId": {
+                          "maxLength": 1024,
+                          "minLength": 1,
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "requestSha256": {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        "selectedUnitIndexes": {
+                          "items": {
+                            "maximum": 4294967295,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "maxItems": 10000,
+                          "minItems": 1,
+                          "type": "array",
+                          "uniqueItems": true
+                        },
+                        "selection": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "method": {
+                              "enum": [
+                                "EXPLICIT",
+                                "COMPLETE_DOCUMENT",
+                                "LEXICAL_BM25_V1"
+                              ],
+                              "type": "string"
+                            },
+                            "querySha256": {
+                              "pattern": "^[0-9a-f]{64}$",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "scannedUnitCount": {
+                              "maximum": 4294967295,
+                              "minimum": 1,
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "method",
+                            "scannedUnitCount",
+                            "querySha256"
+                          ],
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "document",
+                        "documentVersion",
+                        "graphSha256",
+                        "requestSha256",
+                        "modelEndpoint",
+                        "modelProtocol",
+                        "modelConformanceSha256",
+                        "selectedUnitIndexes",
+                        "selection",
+                        "output",
+                        "evidence",
+                        "providerResponseId",
+                        "providerRequestId",
+                        "inputTokens",
+                        "outputTokens",
+                        "locallyEnforcedConstraints"
+                      ],
+                      "type": "object"
+                    },
+                    "producer": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "commitSha": {
+                          "pattern": "^[0-9a-f]{40}$",
+                          "type": "string"
+                        },
+                        "openapiSha256": {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        "repository": {
+                          "const": "https://github.com/tempera-dev/tempera-document"
+                        }
+                      },
+                      "required": [
+                        "repository",
+                        "commitSha",
+                        "openapiSha256"
+                      ],
+                      "type": "object"
+                    },
+                    "schemaVersion": {
+                      "const": "tempera.document-evidence.v1"
+                    },
+                    "sourceSha256": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "schemaVersion",
+                    "sourceSha256",
+                    "extraction",
+                    "producer",
+                    "evidenceSha256"
+                  ],
+                  "type": "object"
+                },
+                "source": {
+                  "const": "tempera-document"
+                }
+              },
+              "required": [
+                "artifactType",
+                "source",
+                "externalId",
+                "rawBody",
+                "metadata"
               ]
             }
           }
@@ -2068,6 +2557,14 @@
                   "batchKey": {
                     "type": "string"
                   },
+                  "completedReviewCostCents": {
+                    "maximum": 1000000,
+                    "minimum": 0,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
                   "maxOpenTasks": {
                     "maximum": 100000,
                     "minimum": 0,
@@ -2088,7 +2585,8 @@
                   "priority",
                   "taskSlaSeconds",
                   "batchKey",
-                  "maxOpenTasks"
+                  "maxOpenTasks",
+                  "completedReviewCostCents"
                 ],
                 "type": "object"
               },
@@ -2641,6 +3139,14 @@
                 "maxLength": 256,
                 "type": "string"
               },
+              "completedReviewCostCents": {
+                "maximum": 1000000,
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
               "maxOpenTasks": {
                 "maximum": 100000,
                 "minimum": 0,
@@ -2747,6 +3253,14 @@
               "batchKey": {
                 "type": "string"
               },
+              "completedReviewCostCents": {
+                "maximum": 1000000,
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
               "maxOpenTasks": {
                 "maximum": 100000,
                 "minimum": 0,
@@ -2767,7 +3281,8 @@
               "priority",
               "taskSlaSeconds",
               "batchKey",
-              "maxOpenTasks"
+              "maxOpenTasks",
+              "completedReviewCostCents"
             ],
             "type": "object"
           },
@@ -3000,6 +3515,14 @@
                     "batchKey": {
                       "type": "string"
                     },
+                    "completedReviewCostCents": {
+                      "maximum": 1000000,
+                      "minimum": 0,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
                     "maxOpenTasks": {
                       "maximum": 100000,
                       "minimum": 0,
@@ -3020,7 +3543,8 @@
                     "priority",
                     "taskSlaSeconds",
                     "batchKey",
-                    "maxOpenTasks"
+                    "maxOpenTasks",
+                    "completedReviewCostCents"
                   ],
                   "type": "object"
                 },
@@ -3887,6 +4411,14 @@
           "campaignName": {
             "maxLength": 4096,
             "minLength": 1,
+            "type": "string"
+          },
+          "orderBy": {
+            "default": "CREATE_TIME_DESC",
+            "enum": [
+              "CREATE_TIME_DESC",
+              "ROUTING"
+            ],
             "type": "string"
           },
           "pageSize": {
