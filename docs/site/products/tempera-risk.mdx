@@ -21,7 +21,7 @@ Governed, non-decisional cross-domain investigation service. The trusted SDK sur
 | Audience | `tempera-risk` |
 | Auth | bearer minted for audience tempera-risk; Risk additionally enforces tenant, project, actor, case, access-grant, permissible-purpose, source-rights, and human-review boundaries. |
 | Client | TypeScript `client.temperaRisk` · Python `client.tempera_risk` · Rust `build_request("tempera_risk", ...)` |
-| Typed operations | 31 |
+| Typed operations | 34 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaRisk.request(path, options)` (TypeScript) /
@@ -191,6 +191,90 @@ let spec = client.build_request("tempera_risk", "create_subject", &[
     ("schema", "<schema>".into()),
     ("subject_id", "<subject_id>".into()),
     ("subject_type", "<subject_type>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listSubjects
+
+`GET /v1/projects/{project}/subjects`
+
+Call GET /v1/projects/\{project\}/subjects.
+
+- **Producer operationId:** `listSubjects`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.listSubjects()` · Python `client.tempera_risk.list_subjects()` · Rust `build_request("tempera_risk", "list_subjects", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.listSubjects({
+  project: "<project>",
+});
+```
+
+```python Python
+result = client.tempera_risk.list_subjects({
+    "project": "<project>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "list_subjects", &[
+    ("project", "<project>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getSubject
+
+`GET /v1/projects/{project}/subjects/{subjectId}`
+
+Call GET /v1/projects/\{project\}/subjects/\{subjectId\}.
+
+- **Producer operationId:** `getSubject`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.getSubject()` · Python `client.tempera_risk.get_subject()` · Rust `build_request("tempera_risk", "get_subject", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `subjectId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.getSubject({
+  project: "<project>",
+  subjectId: "<subjectId>",
+});
+```
+
+```python Python
+result = client.tempera_risk.get_subject({
+    "project": "<project>",
+    "subjectId": "<subjectId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "get_subject", &[
+    ("project", "<project>".into()),
+    ("subjectId", "<subjectId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1508,6 +1592,50 @@ result = client.tempera_risk.get_source_pack({
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "get_source_pack", &[
+    ("project", "<project>".into()),
+    ("sourcePackId", "<sourcePackId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getSourceCoverage
+
+`GET /v1/projects/{project}/sourceCoverage/{sourcePackId}`
+
+Read truthful admitted coverage for one source pack.
+
+- **Producer operationId:** `getSourceCoverage`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.getSourceCoverage()` · Python `client.tempera_risk.get_source_coverage()` · Rust `build_request("tempera_risk", "get_source_coverage", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `sourcePackId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.getSourceCoverage({
+  project: "<project>",
+  sourcePackId: "<sourcePackId>",
+});
+```
+
+```python Python
+result = client.tempera_risk.get_source_coverage({
+    "project": "<project>",
+    "sourcePackId": "<sourcePackId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "get_source_coverage", &[
     ("project", "<project>".into()),
     ("sourcePackId", "<sourcePackId>".into()),
 ])?;

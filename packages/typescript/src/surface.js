@@ -4787,6 +4787,53 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call POST /v1/projects/{project}/subjects."
     },
     {
+      "id": "listSubjects",
+      "upstreamOperationId": "listSubjects",
+      "method": "GET",
+      "path": "/v1/projects/{project}/subjects",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/subjects."
+    },
+    {
+      "id": "getSubject",
+      "upstreamOperationId": "getSubject",
+      "method": "GET",
+      "path": "/v1/projects/{project}/subjects/{subjectId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "subjectId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/subjects/{subjectId}."
+    },
+    {
       "id": "ingestEvent",
       "upstreamOperationId": "ingestEvent",
       "method": "POST",
@@ -5502,6 +5549,30 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Read one declared non-runnable investigation source pack."
+    },
+    {
+      "id": "getSourceCoverage",
+      "upstreamOperationId": "getSourceCoverage",
+      "method": "GET",
+      "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "sourcePackId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read truthful admitted coverage for one source pack."
     },
     {
       "id": "createResearchJob",
