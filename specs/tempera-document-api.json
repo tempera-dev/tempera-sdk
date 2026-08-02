@@ -2512,6 +2512,15 @@
             "$ref": "#/components/schemas/LogicalUnitKind",
             "description": "Unit kind."
           },
+          "page_number": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "One-based global source page number for page units.\n\nThis is serialized alongside `index` so ordinary graph-unit consumers\nnever need to infer page identity from a range-local position.",
+            "minimum": 0
+          },
           "quality": {
             "$ref": "#/components/schemas/UnitQuality",
             "description": "Unit-level quality."
