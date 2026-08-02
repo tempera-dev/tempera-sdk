@@ -22,7 +22,8 @@
     "tempera-llm",
     "tempera-workflows",
     "tempera-gym",
-    "tempera-bio"
+    "tempera-bio",
+    "tempera-document"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -51,6 +52,8 @@
     "model:read",
     "model:invoke",
     "usage:reserve",
+    "document:read",
+    "document:write",
     "pii:unmask",
     "admin"
   ],
@@ -203,6 +206,14 @@
       "auth": "bearer minted for audience tempera-bio with the operation's bio scope, or a central tp_ API key",
       "description": "Fail-closed computational-biology artifact pipeline for source ingestion, proposal preparation, measurement verification, and decision derivation."
     },
+    "temperaDocument": {
+      "name": "tempera-document",
+      "repository": "https://github.com/tempera-dev/tempera-document",
+      "envVar": "TEMPERA_DOCUMENT_URL",
+      "audience": "tempera-document",
+      "auth": "bearer minted for audience tempera-document with document:read/document:write, or a central tp_ API key",
+      "description": "Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered."
+    },
     "cradle": {
       "name": "cradle",
       "repository": "https://github.com/tempera-dev/cradle",
@@ -268,7 +279,8 @@
         "path": "/healthz",
         "auth": "none",
         "description": "Check control-plane liveness; returns {ok: true}.",
-        "upstreamOperationId": "getHealth"
+        "upstreamOperationId": "getHealth",
+        "requestBodyKind": "none"
       },
       {
         "id": "getReadiness",
@@ -276,7 +288,8 @@
         "path": "/readyz",
         "auth": "none",
         "description": "Readiness probe for durable control-plane storage.",
-        "upstreamOperationId": "getReadiness"
+        "upstreamOperationId": "getReadiness",
+        "requestBodyKind": "none"
       },
       {
         "id": "me",
@@ -284,7 +297,8 @@
         "path": "/v1/me",
         "auth": "account",
         "description": "Fetch the authenticated user's identity, active workspace, and roles.",
-        "upstreamOperationId": "getMe"
+        "upstreamOperationId": "getMe",
+        "requestBodyKind": "none"
       },
       {
         "id": "listOrgs",
@@ -296,7 +310,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createOrg",
@@ -310,7 +325,9 @@
         "requiredBody": [
           "name"
         ],
-        "upstreamOperationId": "createOrganization"
+        "upstreamOperationId": "createOrganization",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listSessions",
@@ -322,7 +339,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createHostedSession",
@@ -341,7 +359,9 @@
           "password"
         ],
         "description": "Create a first-party hosted account session from email/password login or signup.",
-        "upstreamOperationId": "createHostedSession"
+        "upstreamOperationId": "createHostedSession",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeSession",
@@ -352,7 +372,8 @@
           "id"
         ],
         "description": "Revoke an account session and its tokens immediately (idempotent).",
-        "upstreamOperationId": "revokeAccountSession"
+        "upstreamOperationId": "revokeAccountSession",
+        "requestBodyKind": "none"
       },
       {
         "id": "selectWorkspace",
@@ -370,7 +391,9 @@
           "projectId",
           "environmentId"
         ],
-        "upstreamOperationId": "selectWorkspace"
+        "upstreamOperationId": "selectWorkspace",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listTeamMembers",
@@ -382,7 +405,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "updateTeamMember",
@@ -402,7 +426,9 @@
         "upstreamOperationId": "updateTeamMember",
         "query": [
           "updateMask"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "removeTeamMember",
@@ -413,7 +439,8 @@
           "id"
         ],
         "description": "Remove a team member from the active organization (idempotent).",
-        "upstreamOperationId": "removeTeamMember"
+        "upstreamOperationId": "removeTeamMember",
+        "requestBodyKind": "none"
       },
       {
         "id": "listInvites",
@@ -425,7 +452,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createInvite",
@@ -441,7 +469,9 @@
           "email",
           "role"
         ],
-        "upstreamOperationId": "createInvite"
+        "upstreamOperationId": "createInvite",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "cancelInvite",
@@ -452,7 +482,8 @@
           "id"
         ],
         "description": "Cancel a pending invite (idempotent).",
-        "upstreamOperationId": "cancelInvite"
+        "upstreamOperationId": "cancelInvite",
+        "requestBodyKind": "none"
       },
       {
         "id": "listProjects",
@@ -464,7 +495,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createProject",
@@ -480,7 +512,9 @@
           "orgId",
           "name"
         ],
-        "upstreamOperationId": "createProject"
+        "upstreamOperationId": "createProject",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listEnvironments",
@@ -492,7 +526,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createEnvironment",
@@ -508,7 +543,9 @@
           "projectId",
           "name"
         ],
-        "upstreamOperationId": "createEnvironment"
+        "upstreamOperationId": "createEnvironment",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listApiKeys",
@@ -520,7 +557,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createApiKey",
@@ -543,7 +581,9 @@
           "environmentId",
           "scopes"
         ],
-        "upstreamOperationId": "createApiKey"
+        "upstreamOperationId": "createApiKey",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeApiKey",
@@ -554,7 +594,8 @@
           "id"
         ],
         "description": "Revoke an API key (idempotent).",
-        "upstreamOperationId": "revokeApiKey"
+        "upstreamOperationId": "revokeApiKey",
+        "requestBodyKind": "none"
       },
       {
         "id": "rotateApiKey",
@@ -565,7 +606,8 @@
           "id"
         ],
         "description": "Rotate an API key's secret; the new secret is returned exactly once.",
-        "upstreamOperationId": "rotateApiKey"
+        "upstreamOperationId": "rotateApiKey",
+        "requestBodyKind": "none"
       },
       {
         "id": "providerConnectionsList",
@@ -577,7 +619,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "providerConnectionsCreate",
@@ -602,7 +645,9 @@
           "name",
           "secretRef"
         ],
-        "upstreamOperationId": "providerConnections.create"
+        "upstreamOperationId": "providerConnections.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "providerConnectionsRevoke",
@@ -613,7 +658,8 @@
         "pathParams": [
           "id"
         ],
-        "upstreamOperationId": "providerConnections.revoke"
+        "upstreamOperationId": "providerConnections.revoke",
+        "requestBodyKind": "none"
       },
       {
         "id": "providerConnectionsRotate",
@@ -631,7 +677,9 @@
         "requiredBody": [
           "secretRef"
         ],
-        "upstreamOperationId": "providerConnections.rotate"
+        "upstreamOperationId": "providerConnections.rotate",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "providerConnectionsResolve",
@@ -654,7 +702,9 @@
           "environmentId",
           "usageDelegation"
         ],
-        "upstreamOperationId": "providerConnections.resolve"
+        "upstreamOperationId": "providerConnections.resolve",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listExperimentProviderConnections",
@@ -666,7 +716,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createExperimentProviderConnection",
@@ -694,7 +745,9 @@
           "name",
           "secretRef",
           "capabilities"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeExperimentProviderConnection",
@@ -705,7 +758,8 @@
         "upstreamOperationId": "experimentProviderConnections.revoke",
         "pathParams": [
           "id"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "resolveExperimentProviderConnection",
@@ -740,7 +794,9 @@
           "submissionIdempotencyKey"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "bio:experiment:submit"
+        "scope": "bio:experiment:submit",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listBioSignerKeys",
@@ -754,7 +810,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createBioSignerKey",
@@ -778,7 +835,9 @@
           "publicJwk"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:signer:manage"
+        "scope": "bio:signer:manage",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeBioSignerKey",
@@ -791,7 +850,8 @@
           "id"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:signer:manage"
+        "scope": "bio:signer:manage",
+        "requestBodyKind": "none"
       },
       {
         "id": "listExperimentApprovals",
@@ -805,7 +865,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createExperimentApproval",
@@ -835,7 +896,9 @@
           "expiresAt"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:experiment:approve"
+        "scope": "bio:experiment:approve",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeExperimentApproval",
@@ -848,7 +911,8 @@
           "id"
         ],
         "authAudience": "tempera-bio",
-        "scope": "bio:experiment:approve"
+        "scope": "bio:experiment:approve",
+        "requestBodyKind": "none"
       },
       {
         "id": "listAuditLog",
@@ -860,7 +924,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "listConnectors",
@@ -872,7 +937,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getConnectorStatus",
@@ -883,7 +949,8 @@
           "id"
         ],
         "description": "Fetch one connector's connection status for the active workspace.",
-        "upstreamOperationId": "getConnectorStatus"
+        "upstreamOperationId": "getConnectorStatus",
+        "requestBodyKind": "none"
       },
       {
         "id": "listProducts",
@@ -895,7 +962,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getProductStatus",
@@ -906,7 +974,8 @@
           "id"
         ],
         "description": "Fetch one product's activation status, entitlements, signals, and usage meters.",
-        "upstreamOperationId": "getProductStatus"
+        "upstreamOperationId": "getProductStatus",
+        "requestBodyKind": "none"
       },
       {
         "id": "getBillingStatus",
@@ -914,7 +983,8 @@
         "path": "/v1/billing/status",
         "auth": "account",
         "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
-        "upstreamOperationId": "getBillingStatus"
+        "upstreamOperationId": "getBillingStatus",
+        "requestBodyKind": "none"
       },
       {
         "id": "createBillingCheckout",
@@ -930,7 +1000,8 @@
           "network"
         ],
         "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
-        "upstreamOperationId": "createBillingCheckout"
+        "upstreamOperationId": "createBillingCheckout",
+        "requestBodyKind": "none"
       },
       {
         "id": "getBillingPortal",
@@ -938,7 +1009,8 @@
         "path": "/v1/billing/portal",
         "auth": "account",
         "description": "Fetch the billing-portal URL for the organization (requires a billing role).",
-        "upstreamOperationId": "createBillingPortal"
+        "upstreamOperationId": "createBillingPortal",
+        "requestBodyKind": "none"
       },
       {
         "id": "getBillingCredits",
@@ -946,7 +1018,8 @@
         "path": "/v1/billing/credits",
         "auth": "account",
         "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
-        "upstreamOperationId": "getBillingCredits"
+        "upstreamOperationId": "getBillingCredits",
+        "requestBodyKind": "none"
       },
       {
         "id": "getModelCatalog",
@@ -955,7 +1028,8 @@
         "auth": "account",
         "scope": "model:read",
         "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
-        "upstreamOperationId": "getModelCatalog"
+        "upstreamOperationId": "getModelCatalog",
+        "requestBodyKind": "none"
       },
       {
         "id": "recordUsage",
@@ -978,7 +1052,9 @@
           "environmentId",
           "metric"
         ],
-        "upstreamOperationId": "recordUsageEvent"
+        "upstreamOperationId": "recordUsageEvent",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "usageReservationsCreate",
@@ -1010,7 +1086,9 @@
           "byok",
           "maximumProviderCostMicros"
         ],
-        "upstreamOperationId": "usageReservations.create"
+        "upstreamOperationId": "usageReservations.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "usageReservationsCommit",
@@ -1035,7 +1113,9 @@
           "configId",
           "cost"
         ],
-        "upstreamOperationId": "usageReservations.commit"
+        "upstreamOperationId": "usageReservations.commit",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "usageReservationsRelease",
@@ -1056,7 +1136,9 @@
           "projectId",
           "environmentId"
         ],
-        "upstreamOperationId": "usageReservations.release"
+        "upstreamOperationId": "usageReservations.release",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "usageReservationsReconcile",
@@ -1085,7 +1167,9 @@
           "reason",
           "observedUsage"
         ],
-        "upstreamOperationId": "usageReservations.reconcile"
+        "upstreamOperationId": "usageReservations.reconcile",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listGrants",
@@ -1097,7 +1181,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "revokeGrant",
@@ -1108,7 +1193,8 @@
           "id"
         ],
         "description": "Revoke an OAuth grant and every refresh token issued under it.",
-        "upstreamOperationId": "revokeOAuthGrant"
+        "upstreamOperationId": "revokeOAuthGrant",
+        "requestBodyKind": "none"
       },
       {
         "id": "introspectToken",
@@ -1123,7 +1209,9 @@
         "requiredBody": [
           "token"
         ],
-        "upstreamOperationId": "introspectOAuthToken"
+        "upstreamOperationId": "introspectOAuthToken",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "discovery",
@@ -1131,7 +1219,8 @@
         "path": "/.well-known/oauth-authorization-server",
         "auth": "none",
         "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer.",
-        "upstreamOperationId": "getOAuthAuthorizationServerMetadata"
+        "upstreamOperationId": "getOAuthAuthorizationServerMetadata",
+        "requestBodyKind": "none"
       },
       {
         "id": "getOAuthProtectedResourceMetadata",
@@ -1139,7 +1228,8 @@
         "path": "/.well-known/oauth-protected-resource",
         "auth": "account",
         "description": "OAuth protected resource discovery metadata for MCP/resource clients.",
-        "upstreamOperationId": "getOAuthProtectedResourceMetadata"
+        "upstreamOperationId": "getOAuthProtectedResourceMetadata",
+        "requestBodyKind": "none"
       },
       {
         "id": "protectedResourceMetadata",
@@ -1150,7 +1240,8 @@
           "resource"
         ],
         "description": "Fetch OAuth protected-resource metadata for one registered audience.",
-        "upstreamOperationId": "getOAuthProtectedResourceMetadataForAudience"
+        "upstreamOperationId": "getOAuthProtectedResourceMetadataForAudience",
+        "requestBodyKind": "none"
       },
       {
         "id": "jwks",
@@ -1158,7 +1249,8 @@
         "path": "/.well-known/jwks.json",
         "auth": "none",
         "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens.",
-        "upstreamOperationId": "getJsonWebKeySet"
+        "upstreamOperationId": "getJsonWebKeySet",
+        "requestBodyKind": "none"
       },
       {
         "id": "adminOperationalProvenance",
@@ -1166,7 +1258,8 @@
         "path": "/v1/admin/operations/provenance",
         "auth": "account",
         "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
-        "upstreamOperationId": "adminOperationalProvenance"
+        "upstreamOperationId": "adminOperationalProvenance",
+        "requestBodyKind": "none"
       },
       {
         "id": "adminStepUp",
@@ -1180,7 +1273,9 @@
         "requiredBody": [
           "password"
         ],
-        "upstreamOperationId": "adminStepUp"
+        "upstreamOperationId": "adminStepUp",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "adminAdjustCredits",
@@ -1198,7 +1293,9 @@
           "orgId",
           "creditMicros"
         ],
-        "upstreamOperationId": "adminAdjustCredits"
+        "upstreamOperationId": "adminAdjustCredits",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "adminBillingOrgs",
@@ -1206,7 +1303,8 @@
         "path": "/v1/admin/billing/orgs",
         "auth": "account",
         "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
-        "upstreamOperationId": "adminBillingOrgs"
+        "upstreamOperationId": "adminBillingOrgs",
+        "requestBodyKind": "none"
       },
       {
         "id": "githubSetupSessionsCreate",
@@ -1219,7 +1317,9 @@
           "projectId",
           "environmentId",
           "returnUrl"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "githubSetupSessionsComplete",
@@ -1231,7 +1331,8 @@
         "query": [
           "state",
           "installation_id"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "githubInstallationsList",
@@ -1243,7 +1344,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "githubInstallationsDisconnect",
@@ -1254,7 +1356,8 @@
         "upstreamOperationId": "githubInstallations.disconnect",
         "pathParams": [
           "installationId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "githubInstallationRepositoriesList",
@@ -1269,7 +1372,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "githubRepositorySnapshotsCapture",
@@ -1284,7 +1388,9 @@
         ],
         "body": [
           "ref"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "githubWebhooksAccept",
@@ -1292,7 +1398,8 @@
         "path": "/github/webhook",
         "auth": "none",
         "description": "Accept a signed, replay-deduplicated GitHub webhook.",
-        "upstreamOperationId": "githubWebhooks.accept"
+        "upstreamOperationId": "githubWebhooks.accept",
+        "requestBodyKind": "none"
       }
     ],
     "palette": [
@@ -1302,7 +1409,8 @@
         "path": "/health",
         "auth": "none",
         "description": "Check palette API liveness; returns {ok: true}.",
-        "upstreamOperationId": "health.check"
+        "upstreamOperationId": "health.check",
+        "requestBodyKind": "none"
       },
       {
         "id": "alertsEvaluate",
@@ -1323,7 +1431,9 @@
           "policy",
           "input"
         ],
-        "upstreamOperationId": "alerts.evaluate"
+        "upstreamOperationId": "alerts.evaluate",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createApiKey",
@@ -1343,7 +1453,9 @@
         "requiredBody": [
           "scopes"
         ],
-        "upstreamOperationId": "apiKeys.create"
+        "upstreamOperationId": "apiKeys.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeApiKey",
@@ -1358,7 +1470,8 @@
         ],
         "scope": "admin",
         "description": "Revoke a palette API key.",
-        "upstreamOperationId": "apiKeys.revoke"
+        "upstreamOperationId": "apiKeys.revoke",
+        "requestBodyKind": "none"
       },
       {
         "id": "archiveQuerySpans",
@@ -1379,7 +1492,8 @@
           "pageSize",
           "pageToken"
         ],
-        "upstreamOperationId": "archive.querySpans"
+        "upstreamOperationId": "archive.querySpans",
+        "requestBodyKind": "none"
       },
       {
         "id": "archiveTrace",
@@ -1393,7 +1507,8 @@
         ],
         "scope": "trace:read",
         "description": "Archive a trace to Parquet and return the archive manifest.",
-        "upstreamOperationId": "archive.archiveTrace"
+        "upstreamOperationId": "archive.archiveTrace",
+        "requestBodyKind": "none"
       },
       {
         "id": "auditList",
@@ -1409,7 +1524,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "calibrationsRun",
@@ -1428,7 +1544,9 @@
           "evaluatorVersionId",
           "passThreshold"
         ],
-        "upstreamOperationId": "calibrations.run"
+        "upstreamOperationId": "calibrations.run",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "connectGetStatus",
@@ -1440,7 +1558,8 @@
           "tenantId",
           "projectId"
         ],
-        "upstreamOperationId": "connect.getStatus"
+        "upstreamOperationId": "connect.getStatus",
+        "requestBodyKind": "none"
       },
       {
         "id": "connectorsList",
@@ -1456,7 +1575,8 @@
           "pageSize",
           "pageToken"
         ],
-        "upstreamOperationId": "connectors.list"
+        "upstreamOperationId": "connectors.list",
+        "requestBodyKind": "none"
       },
       {
         "id": "connectorsConnect",
@@ -1474,7 +1594,9 @@
         "requiredBody": [
           "toolkit"
         ],
-        "upstreamOperationId": "connectors.connect"
+        "upstreamOperationId": "connectors.connect",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "connectorsInvokeTool",
@@ -1493,7 +1615,9 @@
         "requiredBody": [
           "tool"
         ],
-        "upstreamOperationId": "connectors.invokeTool"
+        "upstreamOperationId": "connectors.invokeTool",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "connectorsGetSkills",
@@ -1508,7 +1632,8 @@
         "query": [
           "toolkit"
         ],
-        "upstreamOperationId": "connectors.getSkills"
+        "upstreamOperationId": "connectors.getSkills",
+        "requestBodyKind": "none"
       },
       {
         "id": "connectorsStatus",
@@ -1523,7 +1648,8 @@
         "query": [
           "toolkit"
         ],
-        "upstreamOperationId": "connectors.status"
+        "upstreamOperationId": "connectors.status",
+        "requestBodyKind": "none"
       },
       {
         "id": "connectorsListTools",
@@ -1540,7 +1666,8 @@
           "pageSize",
           "pageToken"
         ],
-        "upstreamOperationId": "connectors.listTools"
+        "upstreamOperationId": "connectors.listTools",
+        "requestBodyKind": "none"
       },
       {
         "id": "createDataset",
@@ -1559,7 +1686,9 @@
         "requiredBody": [
           "name"
         ],
-        "upstreamOperationId": "datasets.create"
+        "upstreamOperationId": "datasets.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "promoteTraceToCase",
@@ -1581,7 +1710,9 @@
         "requiredBody": [
           "traceId"
         ],
-        "upstreamOperationId": "datasets.promoteCaseFromTrace"
+        "upstreamOperationId": "datasets.promoteCaseFromTrace",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createDatasetVersion",
@@ -1598,7 +1729,9 @@
         ],
         "scope": "dataset:write",
         "description": "Snapshot a dataset into an immutable version for evals and experiments.",
-        "upstreamOperationId": "datasets.createVersion"
+        "upstreamOperationId": "datasets.createVersion",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "evalsRunDeterministic",
@@ -1627,7 +1760,9 @@
           "agentReleaseId",
           "kind"
         ],
-        "upstreamOperationId": "evals.runDeterministic"
+        "upstreamOperationId": "evals.runDeterministic",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "evalsRunJudge",
@@ -1657,7 +1792,9 @@
           "kind",
           "providerSecretId"
         ],
-        "upstreamOperationId": "evals.runJudge"
+        "upstreamOperationId": "evals.runJudge",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "importTemperaBundle",
@@ -1680,7 +1817,9 @@
         ],
         "scope": "eval:run",
         "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
-        "upstreamOperationId": "evalResults.importTemperaBundle"
+        "upstreamOperationId": "evalResults.importTemperaBundle",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "recordTemperaDecision",
@@ -1703,7 +1842,9 @@
         ],
         "scope": "eval:run",
         "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
-        "upstreamOperationId": "evalResults.recordTemperaDecision"
+        "upstreamOperationId": "evalResults.recordTemperaDecision",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getTemperaEvidence",
@@ -1718,7 +1859,8 @@
         ],
         "scope": "eval:run",
         "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
-        "upstreamOperationId": "evalResults.getTemperaEvidence"
+        "upstreamOperationId": "evalResults.getTemperaEvidence",
+        "requestBodyKind": "none"
       },
       {
         "id": "experimentsRunDeterministic",
@@ -1751,7 +1893,9 @@
           "baselineOutputs",
           "candidateOutputs"
         ],
-        "upstreamOperationId": "experiments.runDeterministic"
+        "upstreamOperationId": "experiments.runDeterministic",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "experimentsRunJudge",
@@ -1786,7 +1930,9 @@
           "candidateOutputs",
           "providerSecretId"
         ],
-        "upstreamOperationId": "experiments.runJudge"
+        "upstreamOperationId": "experiments.runJudge",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "gatesCreate",
@@ -1809,7 +1955,9 @@
           "gateId",
           "name"
         ],
-        "upstreamOperationId": "gates.create"
+        "upstreamOperationId": "gates.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "gatesRun",
@@ -1825,7 +1973,9 @@
         "body": [
           "experimentRunId"
         ],
-        "upstreamOperationId": "gates.run"
+        "upstreamOperationId": "gates.run",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "importSource",
@@ -1849,7 +1999,9 @@
         "requiredBody": [
           "source"
         ],
-        "upstreamOperationId": "ingest.importSource"
+        "upstreamOperationId": "ingest.importSource",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "ingestReplayDeadLetter",
@@ -1865,7 +2017,8 @@
         "query": [
           "resetAttempts"
         ],
-        "upstreamOperationId": "ingest.replayDeadLetter"
+        "upstreamOperationId": "ingest.replayDeadLetter",
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestGetQueueStatus",
@@ -1877,7 +2030,8 @@
           "tenantId",
           "projectId"
         ],
-        "upstreamOperationId": "ingest.getQueueStatus"
+        "upstreamOperationId": "ingest.getQueueStatus",
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestDrainTraceIngested",
@@ -1892,7 +2046,8 @@
         "query": [
           "limit"
         ],
-        "upstreamOperationId": "ingest.drainTraceIngested"
+        "upstreamOperationId": "ingest.drainTraceIngested",
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestDrainTraceWrites",
@@ -1907,7 +2062,8 @@
         "query": [
           "limit"
         ],
-        "upstreamOperationId": "ingest.drainTraceWrites"
+        "upstreamOperationId": "ingest.drainTraceWrites",
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestReconcileTrace",
@@ -1920,7 +2076,8 @@
           "projectId",
           "traceId"
         ],
-        "upstreamOperationId": "ingest.reconcileTrace"
+        "upstreamOperationId": "ingest.reconcileTrace",
+        "requestBodyKind": "none"
       },
       {
         "id": "judgeEvaluate",
@@ -1943,7 +2100,9 @@
           "case",
           "providerSecretId"
         ],
-        "upstreamOperationId": "judge.evaluate"
+        "upstreamOperationId": "judge.evaluate",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "judgeListLedger",
@@ -1959,7 +2118,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "onlineDecideSampling",
@@ -1982,7 +2142,9 @@
           "sampleRatePerMille",
           "keepErrors"
         ],
-        "upstreamOperationId": "online.decideSampling"
+        "upstreamOperationId": "online.decideSampling",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "promptsList",
@@ -1998,7 +2160,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "promptsCreate",
@@ -2021,7 +2184,9 @@
           "name",
           "template"
         ],
-        "upstreamOperationId": "prompts.create"
+        "upstreamOperationId": "prompts.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "promptsGet",
@@ -2034,7 +2199,8 @@
           "projectId",
           "promptId"
         ],
-        "upstreamOperationId": "prompts.get"
+        "upstreamOperationId": "prompts.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "promptsDiffVersions",
@@ -2051,7 +2217,8 @@
           "from",
           "to"
         ],
-        "upstreamOperationId": "prompts.diffVersions"
+        "upstreamOperationId": "prompts.diffVersions",
+        "requestBodyKind": "none"
       },
       {
         "id": "promptsListVersions",
@@ -2068,7 +2235,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "promptsAddVersion",
@@ -2089,7 +2257,9 @@
         "requiredBody": [
           "template"
         ],
-        "upstreamOperationId": "prompts.addVersion"
+        "upstreamOperationId": "prompts.addVersion",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "providerSecretsList",
@@ -2105,7 +2275,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "providerSecretsCreate",
@@ -2127,7 +2298,9 @@
           "displayName",
           "secretValue"
         ],
-        "upstreamOperationId": "providerSecrets.create"
+        "upstreamOperationId": "providerSecrets.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "providerSecretsRevoke",
@@ -2140,7 +2313,8 @@
           "projectId",
           "providerSecretId"
         ],
-        "upstreamOperationId": "providerSecrets.revoke"
+        "upstreamOperationId": "providerSecrets.revoke",
+        "requestBodyKind": "none"
       },
       {
         "id": "reviewsCreateQueue",
@@ -2161,7 +2335,9 @@
           "name",
           "annotationSchema"
         ],
-        "upstreamOperationId": "reviews.createQueue"
+        "upstreamOperationId": "reviews.createQueue",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "reviewsListTasks",
@@ -2179,7 +2355,8 @@
           "pageSize",
           "pageToken"
         ],
-        "upstreamOperationId": "reviews.listTasks"
+        "upstreamOperationId": "reviews.listTasks",
+        "requestBodyKind": "none"
       },
       {
         "id": "reviewsEnqueueTaskFromTrace",
@@ -2203,7 +2380,9 @@
         "requiredBody": [
           "traceId"
         ],
-        "upstreamOperationId": "reviews.enqueueTaskFromTrace"
+        "upstreamOperationId": "reviews.enqueueTaskFromTrace",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "reviewsSubmitAnnotation",
@@ -2228,7 +2407,9 @@
           "verdict",
           "payload"
         ],
-        "upstreamOperationId": "reviews.submitAnnotation"
+        "upstreamOperationId": "reviews.submitAnnotation",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "reviewsPromoteAnnotation",
@@ -2250,7 +2431,9 @@
         "requiredBody": [
           "datasetId"
         ],
-        "upstreamOperationId": "reviews.promoteAnnotation"
+        "upstreamOperationId": "reviews.promoteAnnotation",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "scenariosList",
@@ -2266,7 +2449,8 @@
           "pageSize",
           "pageToken"
         ],
-        "upstreamOperationId": "scenarios.list"
+        "upstreamOperationId": "scenarios.list",
+        "requestBodyKind": "none"
       },
       {
         "id": "scenariosCreate",
@@ -2289,7 +2473,9 @@
           "title",
           "sourceTraceIds"
         ],
-        "upstreamOperationId": "scenarios.create"
+        "upstreamOperationId": "scenarios.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "scenariosMine",
@@ -2308,7 +2494,9 @@
         "requiredBody": [
           "traceIds"
         ],
-        "upstreamOperationId": "scenarios.mine"
+        "upstreamOperationId": "scenarios.mine",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "scenariosGet",
@@ -2321,7 +2509,8 @@
           "projectId",
           "scenarioId"
         ],
-        "upstreamOperationId": "scenarios.get"
+        "upstreamOperationId": "scenarios.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "searchSpans",
@@ -2346,7 +2535,8 @@
         ],
         "scope": "trace:read",
         "description": "Search spans by text query and facet filters.",
-        "upstreamOperationId": "search.spans"
+        "upstreamOperationId": "search.spans",
+        "requestBodyKind": "none"
       },
       {
         "id": "getSpan",
@@ -2364,7 +2554,8 @@
         ],
         "scope": "trace:read",
         "description": "Fetch one canonical span by trace and span id.",
-        "upstreamOperationId": "spans.get"
+        "upstreamOperationId": "spans.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "getSpanIo",
@@ -2382,7 +2573,8 @@
         ],
         "scope": "trace:read",
         "description": "Fetch a span's recorded input and output values.",
-        "upstreamOperationId": "spans.getIo"
+        "upstreamOperationId": "spans.getIo",
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestSpan",
@@ -2426,7 +2618,9 @@
           "attributes",
           "redactionClass"
         ],
-        "upstreamOperationId": "ingest.native"
+        "upstreamOperationId": "ingest.native",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listTraces",
@@ -2455,7 +2649,8 @@
         ],
         "scope": "trace:read",
         "description": "List trace summaries for a tenant with filters and cursor pagination.",
-        "upstreamOperationId": "traces.list"
+        "upstreamOperationId": "traces.list",
+        "requestBodyKind": "none"
       },
       {
         "id": "getTrace",
@@ -2472,7 +2667,8 @@
         ],
         "scope": "trace:read",
         "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
-        "upstreamOperationId": "traces.get"
+        "upstreamOperationId": "traces.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "getUsageSummary",
@@ -2485,7 +2681,8 @@
         ],
         "scope": "admin",
         "description": "Fetch usage totals for a tenant project.",
-        "upstreamOperationId": "usage.getSummary"
+        "upstreamOperationId": "usage.getSummary",
+        "requestBodyKind": "none"
       }
     ],
     "tempo": [
@@ -2495,7 +2692,8 @@
         "path": "/.well-known/agent-card.json",
         "auth": "product",
         "description": "Call GET /.well-known/agent-card.json.",
-        "upstreamOperationId": "agentCard"
+        "upstreamOperationId": "agentCard",
+        "requestBodyKind": "none"
       },
       {
         "id": "agentJson",
@@ -2503,7 +2701,8 @@
         "path": "/.well-known/agent.json",
         "auth": "product",
         "description": "Call GET /.well-known/agent.json.",
-        "upstreamOperationId": "agentJson"
+        "upstreamOperationId": "agentJson",
+        "requestBodyKind": "none"
       },
       {
         "id": "health",
@@ -2511,7 +2710,8 @@
         "path": "/health",
         "auth": "none",
         "description": "Check tempod liveness; returns {ok: true}.",
-        "upstreamOperationId": "health"
+        "upstreamOperationId": "health",
+        "requestBodyKind": "none"
       },
       {
         "id": "metrics",
@@ -2519,7 +2719,8 @@
         "path": "/metrics",
         "auth": "product",
         "description": "Call GET /metrics.",
-        "upstreamOperationId": "metrics"
+        "upstreamOperationId": "metrics",
+        "requestBodyKind": "none"
       },
       {
         "id": "openapi",
@@ -2527,7 +2728,8 @@
         "path": "/openapi.json",
         "auth": "none",
         "description": "Fetch tempod's OpenAPI document, generated at runtime for this host.",
-        "upstreamOperationId": "openapi"
+        "upstreamOperationId": "openapi",
+        "requestBodyKind": "none"
       },
       {
         "id": "ready",
@@ -2535,7 +2737,8 @@
         "path": "/ready",
         "auth": "product",
         "description": "Check tempod readiness, including engine attachment, drain state, and session capacity.",
-        "upstreamOperationId": "ready"
+        "upstreamOperationId": "ready",
+        "requestBodyKind": "none"
       },
       {
         "id": "drain",
@@ -2543,7 +2746,8 @@
         "path": "/v1/drain",
         "auth": "product",
         "description": "Call POST /drain.",
-        "upstreamOperationId": "drain"
+        "upstreamOperationId": "drain",
+        "requestBodyKind": "none"
       },
       {
         "id": "listRuns",
@@ -2556,7 +2760,8 @@
           "pageToken"
         ],
         "description": "List agent runs, optionally filtered to one session.",
-        "upstreamOperationId": "listRuns"
+        "upstreamOperationId": "listRuns",
+        "requestBodyKind": "none"
       },
       {
         "id": "getRun",
@@ -2567,7 +2772,8 @@
           "runId"
         ],
         "description": "Fetch one agent run with its state.",
-        "upstreamOperationId": "getRun"
+        "upstreamOperationId": "getRun",
+        "requestBodyKind": "none"
       },
       {
         "id": "runEvents",
@@ -2581,7 +2787,8 @@
         ],
         "query": [
           "afterSeq"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "cancelRun",
@@ -2592,7 +2799,8 @@
           "runId"
         ],
         "description": "Cancel an agent run.",
-        "upstreamOperationId": "cancelRun"
+        "upstreamOperationId": "cancelRun",
+        "requestBodyKind": "none"
       },
       {
         "id": "resumeRun",
@@ -2603,7 +2811,8 @@
           "runId"
         ],
         "description": "Resume an agent run after a human handoff completes.",
-        "upstreamOperationId": "resumeRun"
+        "upstreamOperationId": "resumeRun",
+        "requestBodyKind": "none"
       },
       {
         "id": "listSessions",
@@ -2615,7 +2824,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createSession",
@@ -2630,7 +2840,9 @@
         "upstreamOperationId": "createSession",
         "requiredBody": [
           "url"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "closeSession",
@@ -2641,7 +2853,8 @@
           "sessionId"
         ],
         "description": "Close a browser session and release its engine resources.",
-        "upstreamOperationId": "closeSession"
+        "upstreamOperationId": "closeSession",
+        "requestBodyKind": "none"
       },
       {
         "id": "grantConfirmation",
@@ -2653,7 +2866,8 @@
           "confirmationId"
         ],
         "description": "Grant a pending policy confirmation and receive a single-use grant token.",
-        "upstreamOperationId": "grantSessionConfirmation"
+        "upstreamOperationId": "grantSessionConfirmation",
+        "requestBodyKind": "none"
       },
       {
         "id": "sessionEvents",
@@ -2667,7 +2881,8 @@
           "afterSeq"
         ],
         "description": "Fetch the session's event window after a sequence number.",
-        "upstreamOperationId": "sessionEvents"
+        "upstreamOperationId": "sessionEvents",
+        "requestBodyKind": "none"
       },
       {
         "id": "managerSession",
@@ -2678,7 +2893,8 @@
         "upstreamOperationId": "managerSession",
         "pathParams": [
           "sessionId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createRun",
@@ -2695,7 +2911,9 @@
           "tokenBudget"
         ],
         "description": "Start an agent run against the session with a goal, action budget, and round limit.",
-        "upstreamOperationId": "createSessionRun"
+        "upstreamOperationId": "createSessionRun",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "registerSessionSurface",
@@ -2714,7 +2932,9 @@
           "profileId",
           "storageContinuity",
           "surfaceId"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "removeSessionSurface",
@@ -2726,7 +2946,8 @@
         "pathParams": [
           "sessionId",
           "surfaceId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "actBatch",
@@ -2748,7 +2969,9 @@
         "upstreamOperationId": "actBatchSession",
         "requiredBody": [
           "batch"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "adoptSession",
@@ -2767,7 +2990,9 @@
           "profileId",
           "storageContinuity",
           "surfaceId"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "handoffSession",
@@ -2778,7 +3003,8 @@
           "sessionId"
         ],
         "description": "Return write ownership of the session to the agent plane.",
-        "upstreamOperationId": "handoffSession"
+        "upstreamOperationId": "handoffSession",
+        "requestBodyKind": "none"
       },
       {
         "id": "observe",
@@ -2789,7 +3015,8 @@
           "sessionId"
         ],
         "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
-        "upstreamOperationId": "observeSession"
+        "upstreamOperationId": "observeSession",
+        "requestBodyKind": "none"
       },
       {
         "id": "screenshot",
@@ -2803,7 +3030,8 @@
           "setOfMarks"
         ],
         "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
-        "upstreamOperationId": "screenshotSession"
+        "upstreamOperationId": "screenshotSession",
+        "requestBodyKind": "none"
       },
       {
         "id": "transformSession",
@@ -2826,7 +3054,9 @@
         "requiredBody": [
           "lane",
           "source"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       }
     ],
     "temperaLlm": [
@@ -2836,7 +3066,8 @@
         "path": "/healthz",
         "auth": "none",
         "description": "Check tempera-llm gateway liveness; returns {ok: true}.",
-        "upstreamOperationId": "health.check"
+        "upstreamOperationId": "health.check",
+        "requestBodyKind": "none"
       },
       {
         "id": "readinessCheck",
@@ -2844,7 +3075,8 @@
         "path": "/readyz",
         "auth": "none",
         "description": "Call GET /readyz.",
-        "upstreamOperationId": "readiness.check"
+        "upstreamOperationId": "readiness.check",
+        "requestBodyKind": "none"
       },
       {
         "id": "createChatCompletion",
@@ -2867,7 +3099,9 @@
         ],
         "scope": "model:invoke",
         "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
-        "upstreamOperationId": "chatCompletions.create"
+        "upstreamOperationId": "chatCompletions.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listModels",
@@ -2880,7 +3114,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createResponse",
@@ -2901,7 +3136,9 @@
         ],
         "scope": "model:invoke",
         "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
-        "upstreamOperationId": "responses.create"
+        "upstreamOperationId": "responses.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       }
     ],
     "temperaWorkflows": [
@@ -2913,7 +3150,8 @@
         "description": "Check tempera-workflows engine liveness.",
         "upstreamOperationId": "healthz",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "createExperimentSubmission",
@@ -2943,7 +3181,9 @@
           "submissionIdempotencyKey"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "bio:experiment:submit"
+        "scope": "bio:experiment:submit",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getExperimentSubmission",
@@ -2958,7 +3198,8 @@
           "submissionId"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "workflow:read"
+        "scope": "workflow:read",
+        "requestBodyKind": "none"
       },
       {
         "id": "reconcileExperimentSubmission",
@@ -2973,7 +3214,8 @@
           "submissionId"
         ],
         "authAudience": "tempera-workflows",
-        "scope": "bio:experiment:submit"
+        "scope": "bio:experiment:submit",
+        "requestBodyKind": "none"
       },
       {
         "id": "listNodeTypes",
@@ -2989,7 +3231,8 @@
         ],
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "listRuns",
@@ -3006,7 +3249,8 @@
         "upstreamOperationId": "runs.list",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "getRun",
@@ -3021,7 +3265,8 @@
         "upstreamOperationId": "runs.get",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "cancelRun",
@@ -3036,7 +3281,8 @@
         "upstreamOperationId": "runs.cancel",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "runsSignal",
@@ -3063,7 +3309,9 @@
         "authAudience": "tempera-workflows",
         "scope": "workflow:run",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listWorkflows",
@@ -3079,7 +3327,8 @@
         "upstreamOperationId": "workflows.list",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "createWorkflow",
@@ -3107,7 +3356,9 @@
         "upstreamOperationId": "workflows.create",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "deleteWorkflow",
@@ -3122,7 +3373,8 @@
         "upstreamOperationId": "workflows.delete",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "getWorkflow",
@@ -3137,7 +3389,8 @@
         "upstreamOperationId": "workflows.get",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none"
       },
       {
         "id": "updateWorkflow",
@@ -3171,7 +3424,9 @@
         ],
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createRun",
@@ -3194,7 +3449,9 @@
         "upstreamOperationId": "runs.create",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "callWorkflow",
@@ -3218,7 +3475,9 @@
         "upstreamOperationId": "workflows.call",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "compileBioCampaign",
@@ -3240,7 +3499,9 @@
         "authAudience": "tempera-workflows",
         "scope": "workflow:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "composeWorkflow",
@@ -3265,7 +3526,9 @@
         "upstreamOperationId": "workflows.compose",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "assistJson",
@@ -3290,7 +3553,9 @@
         "upstreamOperationId": "workflows.assistJson",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "validateWorkflow",
@@ -3318,7 +3583,9 @@
         "upstreamOperationId": "workflows.validate",
         "authAudience": "tempera-workflows",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       }
     ],
     "temperaGym": [
@@ -3328,7 +3595,8 @@
         "path": "/healthz",
         "auth": "none",
         "description": "Check tempera-gym service liveness.",
-        "upstreamOperationId": "health.get"
+        "upstreamOperationId": "health.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "listEnvironments",
@@ -3342,7 +3610,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "listDomains",
@@ -3356,7 +3625,8 @@
           "pageSize",
           "pageToken"
         ],
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "listTasks",
@@ -3372,7 +3642,8 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "getTask",
@@ -3388,7 +3659,8 @@
           "version"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "evaluateTask",
@@ -3412,7 +3684,9 @@
           "candidate"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listVerifiers",
@@ -3426,7 +3700,8 @@
           "pageSize",
           "pageToken"
         ],
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "listEpisodes",
@@ -3442,7 +3717,8 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "createEpisode",
@@ -3460,7 +3736,9 @@
           "seed"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getEpisode",
@@ -3473,7 +3751,8 @@
           "episode"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "stepEpisode",
@@ -3493,7 +3772,9 @@
           "action"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "exportEpisode",
@@ -3514,7 +3795,9 @@
           "contextEvidenceRef"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listRuns",
@@ -3529,7 +3812,8 @@
         "scope": "dataset:read",
         "description": "List persisted rollout run index records, newest first.",
         "upstreamOperationId": "runs.list",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "getRun",
@@ -3542,7 +3826,8 @@
         "scope": "dataset:read",
         "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
         "upstreamOperationId": "runs.get",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "createRollout",
@@ -3565,7 +3850,9 @@
         "scope": "eval:run",
         "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
         "upstreamOperationId": "rollouts.create",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "bioProposalPoliciesList",
@@ -3579,7 +3866,8 @@
           "pageToken"
         ],
         "authAudience": "tempera-gym",
-        "scope": "dataset:read"
+        "scope": "dataset:read",
+        "requestBodyKind": "none"
       },
       {
         "id": "bioProposalsProposeBatch",
@@ -3613,7 +3901,9 @@
           "candidates"
         ],
         "authAudience": "tempera-gym",
-        "scope": "eval:run"
+        "scope": "eval:run",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listSealedEvaluators",
@@ -3627,7 +3917,8 @@
           "pageSize",
           "pageToken"
         ],
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "listSealedEvaluations",
@@ -3641,7 +3932,8 @@
           "pageToken"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "precommitSealedEvaluation",
@@ -3663,7 +3955,9 @@
           "trainer"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getSealedEvaluation",
@@ -3676,7 +3970,8 @@
           "evaluation"
         ],
         "scope": "dataset:read",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "none"
       },
       {
         "id": "runSealedEvaluation",
@@ -3697,7 +3992,9 @@
           "trainingReport"
         ],
         "scope": "eval:run",
-        "authAudience": "tempera-gym"
+        "authAudience": "tempera-gym",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       }
     ],
     "temperaBio": [
@@ -3723,7 +4020,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:decision:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareCandidateSet",
@@ -3741,7 +4040,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareDatasetReleaseManifest",
@@ -3763,7 +4064,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "deriveDecision",
@@ -3789,7 +4092,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:decision:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareExperimentProposal",
@@ -3811,7 +4116,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareExperimentProposalFromGymBatch",
@@ -3835,7 +4142,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareHypothesis",
@@ -3853,7 +4162,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "verifyMeasurement",
@@ -3881,7 +4192,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:measurement:verify",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "prepareProgram",
@@ -3903,7 +4216,9 @@
         "authAudience": "tempera-bio",
         "scope": "bio:proposal:write",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "ingestMaveDBScoreSet",
@@ -3921,7 +4236,272 @@
         "authAudience": "tempera-bio",
         "scope": "bio:source:read",
         "physicalAction": false,
-        "prepareCommitRequired": false
+        "prepareCommitRequired": false,
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      }
+    ],
+    "temperaDocument": [
+      {
+        "id": "healthGet",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "product",
+        "description": "Health check.",
+        "upstreamOperationId": "health.get",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "documentsCreate",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/documents",
+        "auth": "oauthResource",
+        "description": "Create an immutable document version from a completed upload.",
+        "upstreamOperationId": "documents.create",
+        "pathParams": [
+          "project_id"
+        ],
+        "body": [
+          "upload"
+        ],
+        "requiredBody": [
+          "upload"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "documentsGet",
+        "method": "GET",
+        "path": "/v1/projects/{project_id}/documents/{document_id}",
+        "auth": "oauthResource",
+        "description": "Get a document.",
+        "upstreamOperationId": "documents.get",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "documentsExtract",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/documents/{document_id}/extractions",
+        "auth": "oauthResource",
+        "description": "Extract one caller-schema object with exact source evidence.",
+        "upstreamOperationId": "documents.extract",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "body": [
+          "instructions",
+          "max_output_tokens",
+          "schema",
+          "schema_name",
+          "unit_indexes"
+        ],
+        "requiredBody": [
+          "schema_name",
+          "schema",
+          "instructions"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "documentsGetGraph",
+        "method": "GET",
+        "path": "/v1/projects/{project_id}/documents/{document_id}/graph",
+        "auth": "oauthResource",
+        "description": "Return the latest successful canonical document graph.",
+        "upstreamOperationId": "documents.getGraph",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "documentsPrepareRetrieval",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/documents/{document_id}/retrievalIndexes",
+        "auth": "oauthResource",
+        "description": "Build or reuse a qualified immutable hybrid-retrieval index.",
+        "upstreamOperationId": "documents.prepareRetrieval",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "body": [
+          "kind"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "documentsSearch",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/documents/{document_id}/searches",
+        "auth": "oauthResource",
+        "description": "Search the latest immutable graph and return grounded source excerpts.",
+        "upstreamOperationId": "documents.search",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "body": [
+          "query",
+          "strategy",
+          "top_k"
+        ],
+        "requiredBody": [
+          "query"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "documentUnitsList",
+        "method": "GET",
+        "path": "/v1/projects/{project_id}/documents/{document_id}/units",
+        "auth": "oauthResource",
+        "description": "List logical units without materializing the complete document graph.",
+        "upstreamOperationId": "documentUnits.list",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "query": [
+          "page_size",
+          "page_token"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "documentsProcess",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/documents/{document_id}:process",
+        "auth": "oauthResource",
+        "description": "Start an idempotent long-running processing operation.",
+        "upstreamOperationId": "documents.process",
+        "pathParams": [
+          "project_id",
+          "document_id"
+        ],
+        "body": [
+          "profile"
+        ],
+        "requiredBody": [
+          "profile"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "operationsGet",
+        "method": "GET",
+        "path": "/v1/projects/{project_id}/operations/{operation_id}",
+        "auth": "oauthResource",
+        "description": "Get a long-running operation.",
+        "upstreamOperationId": "operations.get",
+        "pathParams": [
+          "project_id",
+          "operation_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "uploadsCreate",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/uploads",
+        "auth": "oauthResource",
+        "description": "Create a resumable upload resource.",
+        "upstreamOperationId": "uploads.create",
+        "pathParams": [
+          "project_id"
+        ],
+        "body": [
+          "expected_byte_length",
+          "expected_sha256",
+          "media_type"
+        ],
+        "requiredBody": [
+          "media_type"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "uploadsGet",
+        "method": "GET",
+        "path": "/v1/projects/{project_id}/uploads/{upload_id}",
+        "auth": "oauthResource",
+        "description": "Get an upload.",
+        "upstreamOperationId": "uploads.get",
+        "pathParams": [
+          "project_id",
+          "upload_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-document",
+        "scope": "document:read"
+      },
+      {
+        "id": "uploadsWrite",
+        "method": "PUT",
+        "path": "/v1/projects/{project_id}/uploads/{upload_id}/content",
+        "auth": "oauthResource",
+        "description": "Stream source bytes to content-addressed storage.",
+        "upstreamOperationId": "uploads.write",
+        "pathParams": [
+          "project_id",
+          "upload_id"
+        ],
+        "requestBodyKind": "binary",
+        "requestContentType": "application/octet-stream",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
+      },
+      {
+        "id": "uploadsComplete",
+        "method": "POST",
+        "path": "/v1/projects/{project_id}/uploads/{upload_id}:complete",
+        "auth": "oauthResource",
+        "description": "Complete a streamed upload after digest assertions.",
+        "upstreamOperationId": "uploads.complete",
+        "pathParams": [
+          "project_id",
+          "upload_id"
+        ],
+        "body": [
+          "byte_length",
+          "sha256"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-document",
+        "scope": "document:write"
       }
     ],
     "cradle": [
@@ -3942,7 +4522,9 @@
           "actor",
           "sensitivity"
         ],
-        "upstreamOperationId": "projects.browserAdapters.issueCapability"
+        "upstreamOperationId": "projects.browserAdapters.issueCapability",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "projectsBrowserAdaptersValidateCompletion",
@@ -3974,7 +4556,9 @@
           "proofIds",
           "notes"
         ],
-        "upstreamOperationId": "projects.browserAdapters.validateCompletion"
+        "upstreamOperationId": "projects.browserAdapters.validateCompletion",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getBrowserAdapterContract",
@@ -3982,7 +4566,8 @@
         "path": "/v1/browser/adapter/contract",
         "auth": "product",
         "description": "Fetch the browser adapter contract, required controls, and conformance profile.",
-        "upstreamOperationId": "projects.browserAdapters.getContract"
+        "upstreamOperationId": "projects.browserAdapters.getContract",
+        "requestBodyKind": "none"
       },
       {
         "id": "projectsBrowserAdaptersClaimLaunch",
@@ -3996,7 +4581,9 @@
         "requiredBody": [
           "launchRequest"
         ],
-        "upstreamOperationId": "projects.browserAdapters.claimLaunch"
+        "upstreamOperationId": "projects.browserAdapters.claimLaunch",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "projectsBrowserAdaptersPlanLaunch",
@@ -4014,7 +4601,9 @@
           "admission",
           "manifest"
         ],
-        "upstreamOperationId": "projects.browserAdapters.planLaunch"
+        "upstreamOperationId": "projects.browserAdapters.planLaunch",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "projectsBrowserAdaptersRegister",
@@ -4034,7 +4623,9 @@
           "sameUserCapability",
           "manifest"
         ],
-        "upstreamOperationId": "projects.browserAdapters.register"
+        "upstreamOperationId": "projects.browserAdapters.register",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "projectsBrowserAdaptersValidate",
@@ -4060,7 +4651,9 @@
           "guardFields",
           "completionProofs"
         ],
-        "upstreamOperationId": "projects.browserAdapters.validate"
+        "upstreamOperationId": "projects.browserAdapters.validate",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "admitBrowserSession",
@@ -4085,7 +4678,9 @@
           "actor",
           "sensitivity"
         ],
-        "upstreamOperationId": "projects.browserSessions.admit"
+        "upstreamOperationId": "projects.browserSessions.admit",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getBrowserProfiles",
@@ -4093,7 +4688,8 @@
         "path": "/v1/browser/profiles",
         "auth": "product",
         "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
-        "upstreamOperationId": "projects.browserProfiles.get"
+        "upstreamOperationId": "projects.browserProfiles.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "getCapabilities",
@@ -4101,7 +4697,8 @@
         "path": "/v1/capabilities",
         "auth": "product",
         "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
-        "upstreamOperationId": "projects.capabilities.get"
+        "upstreamOperationId": "projects.capabilities.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "execute",
@@ -4122,7 +4719,9 @@
           "lane",
           "source"
         ],
-        "upstreamOperationId": "projects.executions.execute"
+        "upstreamOperationId": "projects.executions.execute",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "health",
@@ -4130,7 +4729,8 @@
         "path": "/v1/health",
         "auth": "none",
         "description": "Check sandbox-daemon liveness; returns status, version, and uptime.",
-        "upstreamOperationId": "health"
+        "upstreamOperationId": "health",
+        "requestBodyKind": "none"
       },
       {
         "id": "getIntegrationContract",
@@ -4138,7 +4738,8 @@
         "path": "/v1/integration",
         "auth": "product",
         "description": "Fetch the ecosystem integration contract this daemon implements.",
-        "upstreamOperationId": "projects.integration.get"
+        "upstreamOperationId": "projects.integration.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "createJob",
@@ -4159,7 +4760,9 @@
           "lane",
           "source"
         ],
-        "upstreamOperationId": "projects.jobs.create"
+        "upstreamOperationId": "projects.jobs.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "cancelJob",
@@ -4170,7 +4773,8 @@
           "id"
         ],
         "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
-        "upstreamOperationId": "projects.jobs.cancel"
+        "upstreamOperationId": "projects.jobs.cancel",
+        "requestBodyKind": "none"
       },
       {
         "id": "getJob",
@@ -4181,7 +4785,8 @@
           "id"
         ],
         "description": "Fetch a sandbox job's status and result.",
-        "upstreamOperationId": "projects.jobs.get"
+        "upstreamOperationId": "projects.jobs.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "projectsModulesCreate",
@@ -4198,7 +4803,9 @@
         "requiredBody": [
           "bytesBase64"
         ],
-        "upstreamOperationId": "projects.modules.create"
+        "upstreamOperationId": "projects.modules.create",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "projectsModulesGet",
@@ -4210,7 +4817,8 @@
           "project",
           "sha256"
         ],
-        "upstreamOperationId": "projects.modules.get"
+        "upstreamOperationId": "projects.modules.get",
+        "requestBodyKind": "none"
       }
     ],
     "remi": [
@@ -4352,7 +4960,8 @@
         "path": "/v1/health",
         "auth": "none",
         "description": "Check data-engine liveness; returns the service status.",
-        "upstreamOperationId": "health.get"
+        "upstreamOperationId": "health.get",
+        "requestBodyKind": "none"
       },
       {
         "id": "listUseCases",
@@ -4371,7 +4980,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getUseCase",
@@ -4387,7 +4997,8 @@
         "upstreamOperationId": "projects.useCases.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "ingestArtifact",
@@ -4409,7 +5020,9 @@
         "upstreamOperationId": "projects.artifacts.ingest",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "ingestWeb",
@@ -4435,7 +5048,9 @@
         "upstreamOperationId": "projects.web.ingest",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createCampaign",
@@ -4462,7 +5077,9 @@
         "upstreamOperationId": "projects.campaigns.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listCampaigns",
@@ -4481,7 +5098,8 @@
         "upstreamOperationId": "projects.campaigns.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "transitionCampaign",
@@ -4505,7 +5123,9 @@
         "upstreamOperationId": "projects.campaigns.transition",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getReviewerQualification",
@@ -4521,7 +5141,8 @@
         "upstreamOperationId": "projects.reviewerQualifications.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "runUseCase",
@@ -4550,7 +5171,9 @@
         "upstreamOperationId": "projects.pipelines.runUseCase",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listExpertTasks",
@@ -4571,7 +5194,8 @@
         "upstreamOperationId": "projects.expertTasks.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "createReviewQualificationTask",
@@ -4598,7 +5222,9 @@
         "upstreamOperationId": "projects.reviewQualificationTasks.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "resolveExpertTask",
@@ -4631,7 +5257,9 @@
         "upstreamOperationId": "projects.expertTasks.resolve",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "claimExpertTask",
@@ -4656,7 +5284,9 @@
         "upstreamOperationId": "projects.expertTaskAssignments.claim",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "renewExpertTaskAssignment",
@@ -4681,7 +5311,9 @@
         "upstreamOperationId": "projects.expertTaskAssignments.renew",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "releaseExpertTaskAssignment",
@@ -4705,7 +5337,9 @@
         "upstreamOperationId": "projects.expertTaskAssignments.release",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "saveExpertTaskDraft",
@@ -4733,7 +5367,9 @@
         "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getReviewOperations",
@@ -4752,7 +5388,8 @@
         "upstreamOperationId": "projects.reviewOperations.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getMetrics",
@@ -4767,7 +5404,8 @@
         "upstreamOperationId": "projects.metrics.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getLabelQuality",
@@ -4782,7 +5420,8 @@
         "upstreamOperationId": "projects.labelQuality.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getEcosystemReadiness",
@@ -4797,7 +5436,8 @@
         "upstreamOperationId": "projects.ecosystem.readiness.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "listArtifacts",
@@ -4817,7 +5457,8 @@
         "upstreamOperationId": "projects.artifacts.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getArtifact",
@@ -4836,7 +5477,8 @@
         "upstreamOperationId": "projects.artifacts.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "listArtifactLabels",
@@ -4856,7 +5498,8 @@
         "upstreamOperationId": "projects.artifacts.labels.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "profileDataset",
@@ -4875,7 +5518,9 @@
         "upstreamOperationId": "projects.datasets.profile",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createJob",
@@ -4902,7 +5547,9 @@
         "upstreamOperationId": "projects.jobs.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getJob",
@@ -4918,7 +5565,8 @@
         "upstreamOperationId": "projects.jobs.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getJobResults",
@@ -4938,7 +5586,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getProduct",
@@ -4954,7 +5603,8 @@
         "upstreamOperationId": "projects.products.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "validateProduct",
@@ -4970,7 +5620,8 @@
         "upstreamOperationId": "projects.products.validate",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "checkProductLeakage",
@@ -4991,7 +5642,9 @@
         "upstreamOperationId": "projects.products.checkLeakage",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getProductManifest",
@@ -5007,7 +5660,8 @@
         "upstreamOperationId": "projects.products.manifest.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "admitTrainingRelease",
@@ -5032,7 +5686,9 @@
         "upstreamOperationId": "projects.trainingReleases.admit",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getTrainingRelease",
@@ -5048,7 +5704,8 @@
         "upstreamOperationId": "projects.trainingReleases.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "deriveBundle",
@@ -5075,7 +5732,9 @@
         "upstreamOperationId": "projects.products.derive",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "emitEval",
@@ -5098,7 +5757,9 @@
         "upstreamOperationId": "projects.products.emitEval",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "extractSource",
@@ -5132,7 +5793,9 @@
         "upstreamOperationId": "projects.sources.extract",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listConnectors",
@@ -5151,7 +5814,8 @@
         "upstreamOperationId": "projects.connectors.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "createTool",
@@ -5180,7 +5844,9 @@
         "upstreamOperationId": "projects.tools.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listTools",
@@ -5199,7 +5865,8 @@
         "query": [
           "pageSize",
           "pageToken"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getTool",
@@ -5215,7 +5882,8 @@
         "upstreamOperationId": "projects.tools.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "deleteTool",
@@ -5231,7 +5899,8 @@
         "upstreamOperationId": "projects.tools.delete",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "invokeTool",
@@ -5250,7 +5919,9 @@
         "upstreamOperationId": "projects.tools.invoke",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "commitDiscoveryRelease",
@@ -5291,7 +5962,9 @@
           "eligibility",
           "prospectiveExecution"
         ],
-        "scope": "eval:run"
+        "scope": "eval:run",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getDiscoveryRelease",
@@ -5307,7 +5980,8 @@
         "pathParamTemplates": {
           "parent": "projects/*"
         },
-        "scope": "dataset:read"
+        "scope": "dataset:read",
+        "requestBodyKind": "none"
       },
       {
         "id": "createEvidenceRecord",
@@ -5344,7 +6018,9 @@
         "upstreamOperationId": "projects.evidenceRecords.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listEvidenceRecords",
@@ -5364,7 +6040,8 @@
         "upstreamOperationId": "projects.evidenceRecords.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getEvidenceRecord",
@@ -5380,7 +6057,8 @@
         "upstreamOperationId": "projects.evidenceRecords.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "createEpisode",
@@ -5423,7 +6101,9 @@
         "upstreamOperationId": "projects.episodes.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listEpisodes",
@@ -5443,7 +6123,8 @@
         "upstreamOperationId": "projects.episodes.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getEpisode",
@@ -5459,7 +6140,8 @@
         "upstreamOperationId": "projects.episodes.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "queryResearchRetrieval",
@@ -5492,7 +6174,9 @@
         "upstreamOperationId": "query_research_retrieval",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createResearchCatalogEntry",
@@ -5523,7 +6207,9 @@
         "upstreamOperationId": "projects.researchCatalogEntries.create",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listResearchCatalogEntries",
@@ -5542,7 +6228,8 @@
         "upstreamOperationId": "projects.researchCatalogEntries.list",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       },
       {
         "id": "getResearchCatalogEntry",
@@ -5558,7 +6245,8 @@
         "upstreamOperationId": "projects.researchCatalogEntries.get",
         "pathParamTemplates": {
           "parent": "projects/*"
-        }
+        },
+        "requestBodyKind": "none"
       }
     ],
     "humanData": [
@@ -5572,7 +6260,8 @@
         "query": [
           "productId",
           "releaseId"
-        ]
+        ],
+        "requestBodyKind": "none"
       }
     ]
   },

@@ -26,6 +26,7 @@ VENDORED_SPECS = {
     "palette": "palette-api.json",
     "controlPlane": "control-plane.openapi.json",
     "cradle": "cradle-openapi.json",
+    "temperaDocument": "tempera-document-api.json",
     "remi": "remi-http-contract.json",
     "tempo": "tempo-openapi.json",
 }

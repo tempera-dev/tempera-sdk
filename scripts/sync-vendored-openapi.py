@@ -51,6 +51,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
+    "temperaDocument": {
+        "source_repo": "tempera-dev/tempera-document",
+        "source_branch": "main",
+        "source_path": "sdks/openapi/tempera-document-api.json",
+        "generated_path": "specs/tempera-document-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "temperaGym": {
         "source_repo": "tempera-dev/tempera-gym",
         "source_branch": "main",

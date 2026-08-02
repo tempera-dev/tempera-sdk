@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "pii:unmask" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "pii:unmask" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -61,6 +61,8 @@ export type TemperaOperationSpec = {
   forbiddenBody: readonly string[];
   requiredBody: readonly string[];
   bodyDefaults: Readonly<Record<string, unknown>>;
+  requestBodyKind: "none" | "json" | "binary";
+  requestContentType: string | null;
   scope: TemperaScope | null;
   physicalAction: boolean;
   prepareCommitRequired: boolean;
@@ -542,6 +544,37 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaDocumentClient extends TemperaProductClientBase {
+  /** Health check. */
+  healthGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an immutable document version from a completed upload. */
+  documentsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get a document. */
+  documentsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Extract one caller-schema object with exact source evidence. */
+  documentsExtract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Return the latest successful canonical document graph. */
+  documentsGetGraph(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Build or reuse a qualified immutable hybrid-retrieval index. */
+  documentsPrepareRetrieval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Search the latest immutable graph and return grounded source excerpts. */
+  documentsSearch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List logical units without materializing the complete document graph. */
+  documentUnitsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start an idempotent long-running processing operation. */
+  documentsProcess(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get a long-running operation. */
+  operationsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a resumable upload resource. */
+  uploadsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get an upload. */
+  uploadsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Stream source bytes to content-addressed storage. */
+  uploadsWrite(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Complete a streamed upload after digest assertions. */
+  uploadsComplete(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {

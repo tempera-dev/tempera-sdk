@@ -8,3 +8,7 @@ description = "Generated contract client for authenticated Tempera product APIs"
 
 [lib]
 path = "src/lib.rs"
+
+# Keep this publishable SDK package independent of an unrelated parent Cargo
+# workspace when it is checked out inside a larger developer directory.
+[workspace]

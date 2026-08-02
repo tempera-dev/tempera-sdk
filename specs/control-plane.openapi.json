@@ -3810,6 +3810,8 @@
           "model:read",
           "model:invoke",
           "usage:reserve",
+          "document:read",
+          "document:write",
           "pii:unmask",
           "admin"
         ]
@@ -3838,6 +3840,8 @@
           "model:read",
           "model:invoke",
           "usage:reserve",
+          "document:read",
+          "document:write",
           "pii:unmask",
           "admin"
         ]
@@ -3858,6 +3862,7 @@
           "tempera-workflows",
           "tempera-gym",
           "tempera-bio"
+          ,"tempera-document"
         ]
       },
       "TokenClaims": {

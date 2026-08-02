@@ -128,6 +128,8 @@ class _ProductClient:
         *,
         method: str = "GET",
         body: Any = None,
+        binary: bool = False,
+        content_type: str | None = None,
         query: Mapping[str, Any] | None = None,
         headers: Mapping[str, str] | None = None,
         bearer: str | None = None,
@@ -244,6 +246,8 @@ class TemperaClient:
         *,
         method: str = "GET",
         body: Any = None,
+        binary: bool = False,
+        content_type: str | None = None,
         query: Mapping[str, Any] | None = None,
         headers: Mapping[str, str] | None = None,
         bearer: str | None = None,
@@ -255,12 +259,12 @@ class TemperaClient:
             url += ("&" if "?" in url else "?") + urllib_parse.urlencode(query_pairs)
         request_headers = {"accept": "application/json"}
         if body is not None:
-            request_headers["content-type"] = "application/json"
+            request_headers["content-type"] = content_type if binary else "application/json"
         if bearer:
             request_headers["authorization"] = f"Bearer {bearer}"
         if headers:
             request_headers.update(headers)
-        data = _encode_json(body) if body is not None else None
+        data = body if binary else (_encode_json(body) if body is not None else None)
         try:
             return self._transport(method, url, request_headers, data)
         except TemperaApiError as error:
@@ -344,8 +348,14 @@ class TemperaClient:
             if key in wire_params:
                 query[key] = wire_params[key]
                 consumed.add(key)
-        body: dict[str, Any] | None = None
-        if op["body"] or op["body_defaults"]:
+        binary = op.get("request_body_kind") == "binary"
+        body: Any = None
+        if binary:
+            body = wire_params.get("content")
+            consumed.add("content")
+            if body is None:
+                raise TemperaSdkError(f"{product_key}.{op['id']}: missing binary content")
+        if not binary and (op["body"] or op["body_defaults"]):
             body = dict(op["body_defaults"])
             for key in op["body"]:
                 if key in wire_params:
@@ -359,10 +369,15 @@ class TemperaClient:
                 continue
             if op["method"] in ("GET", "DELETE"):
                 query[key] = value
-            else:
+            elif not binary:
                 if body is None:
                     body = {}
                 body[key] = value
+            else:
+                raise TemperaSdkError(
+                    f"{product_key}.{op['id']}: binary operations only accept content "
+                    "plus declared path/query parameters"
+                )
         resolved_bearer = (
             bearer
             if bearer is not None
@@ -377,6 +392,8 @@ class TemperaClient:
             path,
             method=op["method"],
             body=body,
+            binary=binary,
+            content_type=op.get("request_content_type"),
             query=query,
             headers=headers,
             bearer=resolved_bearer,

@@ -23,6 +23,7 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
   assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
   assert.equal(TEMPERA_PRODUCTS.temperaBio.repository, "https://github.com/tempera-dev/tempera-bio");
+  assert.equal(TEMPERA_PRODUCTS.temperaDocument.repository, "https://github.com/tempera-dev/tempera-document");
   assert.equal(TEMPERA_PRODUCTS.cradle.repository, "https://github.com/tempera-dev/cradle");
   assert.equal(TEMPERA_PRODUCTS.remi.repository, "https://github.com/tempera-dev/remi");
   assert.equal(TEMPERA_PRODUCTS.dataEngine.repository, "https://github.com/tempera-dev/data-engine");
@@ -47,6 +48,7 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-workflows"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-gym"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-bio"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-document"));
 });
 
 test("scopes match the control-plane scope registry", () => {
@@ -60,7 +62,7 @@ test("scopes match the control-plane scope registry", () => {
       "bio:source:read", "bio:proposal:write", "bio:measurement:verify",
       "bio:decision:write", "bio:experiment:approve",
       "bio:experiment:submit", "bio:signer:manage",
-      "model:read", "model:invoke", "usage:reserve", "pii:unmask", "admin",
+      "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "pii:unmask", "admin",
     ],
   );
 });

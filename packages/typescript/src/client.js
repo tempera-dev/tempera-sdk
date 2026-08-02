@@ -177,7 +177,7 @@ export function createTemperaClient({
     return auth.bearerFor(audience);
   }
 
-  async function rawRequest(productKey, path, { method = "GET", body, query, headers = {}, bearer, operation } = {}) {
+  async function rawRequest(productKey, path, { method = "GET", body, binary = false, contentType, query, headers = {}, bearer, operation } = {}) {
     const url = new URL(baseUrlFor(productKey) + path);
     for (const [key, value] of Object.entries(query ?? {})) {
       if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
@@ -186,11 +186,11 @@ export function createTemperaClient({
       method,
       headers: {
         accept: "application/json",
-        ...(body !== undefined ? { "content-type": "application/json" } : {}),
+        ...(body !== undefined ? { "content-type": binary ? contentType : "application/json" } : {}),
         ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
         ...headers,
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? (binary ? body : JSON.stringify(body)) : undefined,
     });
     const parsed = await parseResponseBody(response);
     if (!response.ok) {
@@ -226,8 +226,14 @@ export function createTemperaClient({
         consumed.add(key);
       }
     }
+    const binary = op.requestBodyKind === "binary";
     let body;
-    if (op.body.length > 0 || Object.keys(op.bodyDefaults).length > 0) {
+    if (binary) {
+      body = normalized.content;
+      consumed.add("content");
+      if (body === undefined) throw new TemperaSdkError(`${productKey}.${op.id}: missing binary content`);
+    }
+    if (!binary && (op.body.length > 0 || Object.keys(op.bodyDefaults).length > 0)) {
       body = { ...op.bodyDefaults };
       for (const key of op.body) {
         if (normalized[key] !== undefined) {
@@ -242,13 +248,16 @@ export function createTemperaClient({
     for (const [key, value] of Object.entries(params)) {
       if (consumed.has(key) || value === undefined) continue;
       if (op.method === "GET" || op.method === "DELETE") query[key] = value;
-      else (body ??= {})[key] = value;
+      else if (!binary) (body ??= {})[key] = value;
+      else throw new TemperaSdkError(`${productKey}.${op.id}: binary operations only accept content plus declared path/query parameters`);
     }
     const bearer =
       options.bearer ?? bearerFor(productKey, op.auth, op.authAudience);
     return rawRequest(productKey, path, {
       method: op.method,
       body,
+      binary,
+      contentType: op.requestContentType,
       query,
       headers: options.headers ?? {},
       bearer,

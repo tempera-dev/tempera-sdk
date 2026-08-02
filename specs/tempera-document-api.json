@@ -1,0 +1,3715 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Document API",
+    "description": "Provenance-grounded, bounded document processing.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health check.",
+        "operationId": "health.get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/documents": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Create an immutable document version from a completed upload.",
+        "operationId": "documents.create",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Get a document.",
+        "operationId": "documents.get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}/extractions": {
+      "post": {
+        "tags": [
+          "extractions"
+        ],
+        "summary": "Extract one caller-schema object with exact source evidence.",
+        "operationId": "documents.extract",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractDocumentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractDocumentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}/graph": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Return the latest successful canonical document graph.",
+        "operationId": "documents.getGraph",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentGraphManifest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}/retrievalIndexes": {
+      "post": {
+        "tags": [
+          "retrieval"
+        ],
+        "summary": "Build or reuse a qualified immutable hybrid-retrieval index.",
+        "operationId": "documents.prepareRetrieval",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PrepareRetrievalRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}/searches": {
+      "post": {
+        "tags": [
+          "retrieval"
+        ],
+        "summary": "Search the latest immutable graph and return grounded source excerpts.",
+        "operationId": "documents.search",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchDocumentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchDocumentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}/units": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "List logical units without materializing the complete document graph.",
+        "operationId": "documentUnits.list",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Maximum units to return; defaults to 50 and is capped at 100.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "description": "Opaque continuation token.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentUnitsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/documents/{document_id}:process": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Start an idempotent long-running processing operation.",
+        "operationId": "documents.process",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessDocumentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/operations/{operation_id}": {
+      "get": {
+        "tags": [
+          "operations"
+        ],
+        "summary": "Get a long-running operation.",
+        "operationId": "operations.get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/uploads": {
+      "post": {
+        "tags": [
+          "uploads"
+        ],
+        "summary": "Create a resumable upload resource.",
+        "operationId": "uploads.create",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/uploads/{upload_id}": {
+      "get": {
+        "tags": [
+          "uploads"
+        ],
+        "summary": "Get an upload.",
+        "operationId": "uploads.get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "upload_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/uploads/{upload_id}/content": {
+      "put": {
+        "tags": [
+          "uploads"
+        ],
+        "summary": "Stream source bytes to content-addressed storage.",
+        "operationId": "uploads.write",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "upload_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/projects/{project_id}/uploads/{upload_id}:complete": {
+      "post": {
+        "tags": [
+          "uploads"
+        ],
+        "summary": "Complete a streamed upload after digest assertions.",
+        "operationId": "uploads.complete",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "upload_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteUploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "tempera_oauth": [
+              "document:write"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Block": {
+        "type": "object",
+        "description": "One canonical graph block.",
+        "required": [
+          "block_id",
+          "kind",
+          "reading_order",
+          "payload",
+          "evidence"
+        ],
+        "properties": {
+          "block_id": {
+            "type": "string",
+            "description": "Stable ID within a document version."
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSpan"
+            },
+            "description": "Evidence supporting the block."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/BlockKind",
+            "description": "Semantic block kind."
+          },
+          "payload": {
+            "description": "Type-specific structured data."
+          },
+          "polygon": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon",
+                "description": "Normalized source geometry."
+              }
+            ]
+          },
+          "reading_order": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Deterministic reading-order position.",
+            "minimum": 0
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Recognized or native text."
+          }
+        }
+      },
+      "BlockKind": {
+        "type": "string",
+        "description": "Canonical block kinds.",
+        "enum": [
+          "TITLE",
+          "TEXT",
+          "LIST",
+          "TABLE",
+          "TABLE_CELL",
+          "FIELD",
+          "CHECKBOX",
+          "FORMULA",
+          "FIGURE",
+          "CHART",
+          "CODE",
+          "HANDWRITING",
+          "SIGNATURE",
+          "SEAL",
+          "TRANSCRIPT"
+        ]
+      },
+      "BoundingBox": {
+        "type": "object",
+        "description": "Axis-aligned source geometry with an explicit coordinate convention.",
+        "required": [
+          "left",
+          "top",
+          "right",
+          "bottom"
+        ],
+        "properties": {
+          "bottom": {
+            "type": "number",
+            "format": "double",
+            "description": "Bottom edge."
+          },
+          "left": {
+            "type": "number",
+            "format": "double",
+            "description": "Left edge."
+          },
+          "right": {
+            "type": "number",
+            "format": "double",
+            "description": "Right edge."
+          },
+          "top": {
+            "type": "number",
+            "format": "double",
+            "description": "Top edge."
+          }
+        }
+      },
+      "Citation": {
+        "type": "object",
+        "description": "Client-friendly projection of graph evidence with global page semantics.",
+        "required": [
+          "document_id",
+          "unit_id",
+          "unit_index",
+          "coordinate_space",
+          "support"
+        ],
+        "properties": {
+          "bbox": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BoundingBox",
+                "description": "Enclosing bounding box when geometry is available."
+              }
+            ]
+          },
+          "block_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Referenced block identifier."
+          },
+          "char_end": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Exclusive referenced character range end.",
+            "minimum": 0
+          },
+          "char_start": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Referenced character range.",
+            "minimum": 0
+          },
+          "coordinate_space": {
+            "$ref": "#/components/schemas/CoordinateSpace",
+            "description": "Coordinate convention for the bounding box and polygon."
+          },
+          "crop_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Rendered crop digest when available."
+          },
+          "document_id": {
+            "type": "string",
+            "description": "Immutable document resource name."
+          },
+          "page_number": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "One-based global page number when the unit is a page.",
+            "minimum": 0
+          },
+          "polygon": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon",
+                "description": "Exact source polygon when available."
+              }
+            ]
+          },
+          "rendered_page_number": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Renderer-derived page number, never a source-native page claim.",
+            "minimum": 0
+          },
+          "renderer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RendererProvenance",
+                "description": "Renderer identity for renderer-derived geometry."
+              }
+            ]
+          },
+          "source_anchor": {
+            "description": "Source-native structural anchor, for example a DOCX XML path."
+          },
+          "support": {
+            "$ref": "#/components/schemas/SupportStatus",
+            "description": "Evidence support state."
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "Logical-unit identifier."
+          },
+          "unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Zero-based global source-unit index.",
+            "minimum": 0
+          }
+        }
+      },
+      "CompleteUploadRequest": {
+        "type": "object",
+        "description": "Complete an upload.",
+        "properties": {
+          "byte_length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Optional final length assertion.",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional final SHA-256 assertion."
+          }
+        }
+      },
+      "CoordinateSpace": {
+        "type": "string",
+        "description": "Coordinate convention used by a citation bounding box.",
+        "enum": [
+          "NORMALIZED_TOP_LEFT",
+          "PDF_POINTS_BOTTOM_LEFT",
+          "PIXELS_TOP_LEFT"
+        ]
+      },
+      "CreateDocumentRequest": {
+        "type": "object",
+        "description": "Create a document from a completed upload.",
+        "required": [
+          "upload"
+        ],
+        "properties": {
+          "upload": {
+            "type": "string",
+            "description": "Completed upload resource name."
+          }
+        }
+      },
+      "CreateUploadRequest": {
+        "type": "object",
+        "description": "Create an upload.",
+        "required": [
+          "media_type"
+        ],
+        "properties": {
+          "expected_byte_length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Optional expected byte length.",
+            "minimum": 0
+          },
+          "expected_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional expected lowercase SHA-256."
+          },
+          "media_type": {
+            "type": "string",
+            "description": "Declared source media type."
+          }
+        }
+      },
+      "DenseIndexManifest": {
+        "type": "object",
+        "description": "Immutable receipt and commit record for a grounded dense-text index.",
+        "required": [
+          "schema",
+          "index_key",
+          "algorithm",
+          "document",
+          "document_version",
+          "graph_sha256",
+          "endpoint",
+          "endpoint_conformance_sha256",
+          "model",
+          "dimensions",
+          "indexed_unit_count",
+          "indexed_item_count",
+          "input_tokens",
+          "data_sha256",
+          "data_byte_length"
+        ],
+        "properties": {
+          "algorithm": {
+            "type": "string",
+            "description": "Exact indexing algorithm revision."
+          },
+          "data_byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Exact immutable vector-data length.",
+            "minimum": 0
+          },
+          "data_sha256": {
+            "type": "string",
+            "description": "Content digest of immutable vector data."
+          },
+          "dimensions": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Exact vector dimensions.",
+            "minimum": 0
+          },
+          "document": {
+            "type": "string",
+            "description": "Immutable document resource."
+          },
+          "document_version": {
+            "type": "string",
+            "description": "Immutable document version."
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Qualified endpoint name."
+          },
+          "endpoint_conformance_sha256": {
+            "type": "string",
+            "description": "Qualified endpoint conformance digest."
+          },
+          "graph_sha256": {
+            "type": "string",
+            "description": "Canonical graph digest."
+          },
+          "index_key": {
+            "type": "string",
+            "description": "Digest of all immutable index inputs and settings."
+          },
+          "indexed_item_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Grounded text chunks represented by the index.",
+            "minimum": 0
+          },
+          "indexed_unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Grounded units represented by the index.",
+            "minimum": 0
+          },
+          "input_tokens": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Provider-reported indexing input tokens.",
+            "minimum": 0
+          },
+          "model": {
+            "type": "string",
+            "description": "Exact provider model identifier."
+          },
+          "schema": {
+            "type": "string",
+            "description": "Stable manifest schema."
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "description": "Immutable document resource.",
+        "required": [
+          "name",
+          "version",
+          "upload",
+          "media_type",
+          "source_sha256",
+          "source_byte_length",
+          "state",
+          "create_time",
+          "update_time"
+        ],
+        "properties": {
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time."
+          },
+          "media_type": {
+            "type": "string",
+            "description": "Detected/declared media type."
+          },
+          "name": {
+            "type": "string",
+            "description": "`projects/{project}/documents/{document}`."
+          },
+          "source_byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Source byte length.",
+            "minimum": 0
+          },
+          "source_sha256": {
+            "type": "string",
+            "description": "Source digest."
+          },
+          "state": {
+            "$ref": "#/components/schemas/DocumentState",
+            "description": "Current state."
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last state change."
+          },
+          "upload": {
+            "type": "string",
+            "description": "Source upload."
+          },
+          "version": {
+            "type": "string",
+            "description": "Immutable version resource."
+          }
+        }
+      },
+      "DocumentGraphManifest": {
+        "type": "object",
+        "description": "Root for a sharded logical document graph.",
+        "required": [
+          "schema",
+          "document_id",
+          "version_id",
+          "source",
+          "unit_count",
+          "shards",
+          "provenance"
+        ],
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Document resource name."
+          },
+          "provenance": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProvenanceRecord"
+            },
+            "description": "Global parser and model provenance."
+          },
+          "schema": {
+            "type": "string",
+            "description": "Always `tempera.document-graph-manifest.v1`."
+          },
+          "shards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GraphShardRef"
+            },
+            "description": "Ordered, non-overlapping shard references."
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceArtifact",
+            "description": "Immutable source metadata."
+          },
+          "unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total logical units.",
+            "minimum": 0
+          },
+          "version_id": {
+            "type": "string",
+            "description": "Immutable version resource name."
+          }
+        }
+      },
+      "DocumentState": {
+        "type": "string",
+        "description": "Document lifecycle.",
+        "enum": [
+          "READY",
+          "PROCESSING",
+          "SUCCEEDED",
+          "PARTIAL",
+          "FAILED",
+          "CANCELLED",
+          "NEEDS_PASSWORD"
+        ]
+      },
+      "ErrorBody": {
+        "type": "object",
+        "description": "Canonical error body.",
+        "required": [
+          "code",
+          "message",
+          "status",
+          "retryable",
+          "details"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Stable machine-readable code."
+          },
+          "details": {
+            "description": "Optional structured details."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable message without sensitive content."
+          },
+          "retryable": {
+            "type": "boolean",
+            "description": "Whether an unchanged request may be retried."
+          },
+          "status": {
+            "type": "string",
+            "description": "HTTP-style symbolic status."
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Canonical error response.",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody",
+            "description": "Error details."
+          }
+        }
+      },
+      "EvidenceSpan": {
+        "type": "object",
+        "description": "Exact provenance for a block or extracted value.",
+        "required": [
+          "unit_id",
+          "support"
+        ],
+        "properties": {
+          "block_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional referenced block."
+          },
+          "char_end": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Exclusive character end offset.",
+            "minimum": 0
+          },
+          "char_start": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Character start offset within referenced block text.",
+            "minimum": 0
+          },
+          "crop_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Digest of a rendered evidence crop."
+          },
+          "polygon": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon",
+                "description": "Pixel-space evidence normalized to the source unit."
+              }
+            ]
+          },
+          "support": {
+            "$ref": "#/components/schemas/SupportStatus",
+            "description": "Evidence support state."
+          },
+          "time_range": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TimeRange",
+                "description": "Time-space evidence for audio or video."
+              }
+            ]
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "Logical unit containing the evidence."
+          }
+        }
+      },
+      "ExtractDocumentRequest": {
+        "type": "object",
+        "description": "Extract a source-grounded object from selected document units.",
+        "required": [
+          "schema_name",
+          "schema",
+          "instructions"
+        ],
+        "properties": {
+          "instructions": {
+            "type": "string",
+            "description": "Task-specific extraction instructions."
+          },
+          "max_output_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Bounded model output token budget.",
+            "minimum": 0
+          },
+          "schema": {
+            "description": "Canonical JSON Schema 2020-12 object schema."
+          },
+          "schema_name": {
+            "type": "string",
+            "description": "Stable provider schema name."
+          },
+          "unit_indexes": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            },
+            "description": "Explicit zero-based units. Required when the document exceeds the server selection limit."
+          }
+        }
+      },
+      "ExtractDocumentResponse": {
+        "type": "object",
+        "description": "Locally validated, source-grounded structured extraction.",
+        "required": [
+          "document",
+          "document_version",
+          "graph_sha256",
+          "request_sha256",
+          "model_endpoint",
+          "model_protocol",
+          "model_conformance_sha256",
+          "selected_unit_indexes",
+          "selection",
+          "output",
+          "evidence",
+          "input_tokens",
+          "output_tokens",
+          "locally_enforced_constraints"
+        ],
+        "properties": {
+          "document": {
+            "type": "string",
+            "description": "Immutable source document."
+          },
+          "document_version": {
+            "type": "string",
+            "description": "Immutable document version."
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtractionEvidence"
+            },
+            "description": "Evidence covering every non-null scalar output."
+          },
+          "graph_sha256": {
+            "type": "string",
+            "description": "Canonical graph manifest SHA-256 used as context."
+          },
+          "input_tokens": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Provider input-token accounting.",
+            "minimum": 0
+          },
+          "locally_enforced_constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Schema constraints projected out of provider decoding and enforced locally."
+          },
+          "model_conformance_sha256": {
+            "type": "string",
+            "description": "Immutable endpoint/model conformance digest used in the cache identity."
+          },
+          "model_endpoint": {
+            "type": "string",
+            "description": "Qualified model endpoint configuration name."
+          },
+          "model_protocol": {
+            "$ref": "#/components/schemas/ModelProtocol",
+            "description": "Provider wire protocol."
+          },
+          "output": {
+            "description": "Caller-schema output after reserved evidence removal and local validation."
+          },
+          "output_tokens": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Provider output-token accounting.",
+            "minimum": 0
+          },
+          "provider_request_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Provider transport request identifier, when supplied."
+          },
+          "provider_response_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Provider response identifier, when supplied."
+          },
+          "request_sha256": {
+            "type": "string",
+            "description": "Canonical extraction request SHA-256 and cache key."
+          },
+          "selected_unit_indexes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            },
+            "description": "Exact zero-based graph units supplied to the model."
+          },
+          "selection": {
+            "$ref": "#/components/schemas/ExtractionSelection",
+            "description": "Auditable explanation of how those units were selected."
+          }
+        }
+      },
+      "ExtractionEvidence": {
+        "type": "object",
+        "description": "Exact source evidence for one extracted JSON value.",
+        "required": [
+          "json_pointer",
+          "quote",
+          "evidence"
+        ],
+        "properties": {
+          "evidence": {
+            "$ref": "#/components/schemas/EvidenceSpan",
+            "description": "Canonical graph evidence."
+          },
+          "json_pointer": {
+            "type": "string",
+            "description": "RFC 6901 pointer to the supported scalar in `output`."
+          },
+          "quote": {
+            "type": "string",
+            "description": "Exact source substring at the recorded character offsets."
+          }
+        }
+      },
+      "ExtractionSelection": {
+        "type": "object",
+        "description": "Auditable unit-selection receipt.",
+        "required": [
+          "method",
+          "scanned_unit_count"
+        ],
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/ExtractionSelectionMethod",
+            "description": "Deterministic selection algorithm."
+          },
+          "query_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SHA-256 of canonical query terms for automatic selection."
+          },
+          "scanned_unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total graph units inspected by the selector.",
+            "minimum": 0
+          }
+        }
+      },
+      "ExtractionSelectionMethod": {
+        "type": "string",
+        "description": "How graph units were selected for one extraction request.",
+        "enum": [
+          "EXPLICIT",
+          "COMPLETE_DOCUMENT",
+          "LEXICAL_BM25_V1"
+        ]
+      },
+      "GraphShard": {
+        "type": "object",
+        "description": "Independently content-addressed group of logical units.",
+        "required": [
+          "schema",
+          "document_id",
+          "version_id",
+          "start_unit_index",
+          "end_unit_index",
+          "units",
+          "relations"
+        ],
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Document resource name."
+          },
+          "end_unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Exclusive ending unit index.",
+            "minimum": 0
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Relation"
+            },
+            "description": "Relations whose endpoints are materialized in this shard."
+          },
+          "schema": {
+            "type": "string",
+            "description": "Always `tempera.document-graph-shard.v1`."
+          },
+          "start_unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "First included unit index.",
+            "minimum": 0
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogicalUnit"
+            },
+            "description": "Ordered units."
+          },
+          "version_id": {
+            "type": "string",
+            "description": "Immutable version resource name."
+          }
+        }
+      },
+      "GraphShardRef": {
+        "type": "object",
+        "description": "Content-addressed graph-shard reference.",
+        "required": [
+          "sha256",
+          "start_unit_index",
+          "end_unit_index",
+          "unit_count",
+          "byte_length"
+        ],
+        "properties": {
+          "byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Canonical compressed-independent shard length.",
+            "minimum": 0
+          },
+          "end_unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Exclusive ending unit index.",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Lowercase shard SHA-256."
+          },
+          "start_unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "First included unit index.",
+            "minimum": 0
+          },
+          "unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of included units.",
+            "minimum": 0
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "description": "Health response.",
+        "required": [
+          "status",
+          "version"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Service status."
+          },
+          "version": {
+            "type": "string",
+            "description": "Contract version."
+          }
+        }
+      },
+      "ListDocumentUnitsResponse": {
+        "type": "object",
+        "description": "One bounded page of logical units.",
+        "required": [
+          "units",
+          "total_size"
+        ],
+        "properties": {
+          "next_page_token": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Opaque continuation token."
+          },
+          "total_size": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total unit count.",
+            "minimum": 0
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogicalUnit"
+            },
+            "description": "Ordered logical units."
+          }
+        }
+      },
+      "LogicalUnit": {
+        "type": "object",
+        "description": "One page, slide, sheet, timed segment, frame, or message part.",
+        "required": [
+          "unit_id",
+          "index",
+          "kind",
+          "source_transform",
+          "blocks",
+          "quality"
+        ],
+        "properties": {
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Block"
+            },
+            "description": "Blocks in this unit."
+          },
+          "duration_ms": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Original duration where applicable.",
+            "minimum": 0
+          },
+          "height": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Original height where applicable.",
+            "minimum": 0
+          },
+          "index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Zero-based position in the source version.",
+            "minimum": 0
+          },
+          "kind": {
+            "$ref": "#/components/schemas/LogicalUnitKind",
+            "description": "Unit kind."
+          },
+          "quality": {
+            "$ref": "#/components/schemas/UnitQuality",
+            "description": "Unit-level quality."
+          },
+          "source_transform": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Row-major reversible source transform."
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "Stable unit ID."
+          },
+          "width": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Original width where applicable.",
+            "minimum": 0
+          }
+        }
+      },
+      "LogicalUnitKind": {
+        "type": "string",
+        "description": "Logical input unit.",
+        "enum": [
+          "PAGE",
+          "FLOW",
+          "SLIDE",
+          "SHEET",
+          "TIMED_SEGMENT",
+          "VIDEO_FRAME",
+          "EMAIL_PART"
+        ]
+      },
+      "ModelProtocol": {
+        "type": "string",
+        "description": "Supported provider wire protocols.",
+        "enum": [
+          "OPEN_AI_RESPONSES",
+          "OPEN_AI_CHAT_COMPLETIONS",
+          "ANTHROPIC_MESSAGES"
+        ]
+      },
+      "Operation": {
+        "type": "object",
+        "description": "AIP-style long-running operation.",
+        "required": [
+          "name",
+          "done",
+          "metadata"
+        ],
+        "properties": {
+          "done": {
+            "type": "boolean",
+            "description": "Completion flag."
+          },
+          "error": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ErrorResponse",
+                "description": "Canonical error returned on failure."
+              }
+            ]
+          },
+          "metadata": {
+            "description": "Operation metadata."
+          },
+          "name": {
+            "type": "string",
+            "description": "Operation resource name."
+          },
+          "response": {
+            "description": "Resource returned on success."
+          }
+        }
+      },
+      "Point": {
+        "type": "object",
+        "description": "A normalized two-dimensional point.",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double",
+            "description": "Horizontal coordinate in `[0, 1]`."
+          },
+          "y": {
+            "type": "number",
+            "format": "double",
+            "description": "Vertical coordinate in `[0, 1]`."
+          }
+        }
+      },
+      "Polygon": {
+        "type": "object",
+        "description": "A polygon expressed in normalized source-unit coordinates.",
+        "required": [
+          "points"
+        ],
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point"
+            },
+            "description": "Clockwise polygon vertices."
+          }
+        }
+      },
+      "PrepareRetrievalRequest": {
+        "type": "object",
+        "description": "Prepare one immutable retrieval index.",
+        "properties": {
+          "kind": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RetrievalIndexKind",
+                "description": "Index kind. Omission preserves the text-index default."
+              }
+            ]
+          }
+        }
+      },
+      "ProcessDocumentRequest": {
+        "type": "object",
+        "description": "Start document processing.",
+        "required": [
+          "profile"
+        ],
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/ProcessingProfile",
+            "description": "Processing profile."
+          }
+        }
+      },
+      "ProcessingProfile": {
+        "type": "string",
+        "description": "User-facing processing profile.",
+        "enum": [
+          "NATIVE",
+          "STRUCTURAL",
+          "LOCAL_ENHANCED",
+          "HOSTED_ENHANCED",
+          "AUTO",
+          "FAST",
+          "BALANCED",
+          "ACCURATE",
+          "LOCAL_ONLY",
+          "CUSTOM"
+        ]
+      },
+      "ProcessingRun": {
+        "type": "object",
+        "description": "Durable processing run.",
+        "required": [
+          "name",
+          "document",
+          "document_version",
+          "profile",
+          "state",
+          "units_discovered",
+          "units_accepted",
+          "create_time",
+          "update_time"
+        ],
+        "properties": {
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time."
+          },
+          "document": {
+            "type": "string",
+            "description": "Document resource."
+          },
+          "document_version": {
+            "type": "string",
+            "description": "Immutable document version."
+          },
+          "graph_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Graph digest."
+          },
+          "name": {
+            "type": "string",
+            "description": "Run resource name."
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ProcessingProfile",
+            "description": "Profile."
+          },
+          "receipt_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Parse receipt digest."
+          },
+          "state": {
+            "$ref": "#/components/schemas/ProcessingRunState",
+            "description": "State."
+          },
+          "units_accepted": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Units accepted.",
+            "minimum": 0
+          },
+          "units_discovered": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Units discovered.",
+            "minimum": 0
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update."
+          }
+        }
+      },
+      "ProcessingRunState": {
+        "type": "string",
+        "description": "Processing run lifecycle.",
+        "enum": [
+          "QUEUED",
+          "RUNNING",
+          "SUCCEEDED",
+          "PARTIAL",
+          "FAILED",
+          "CANCELLED"
+        ]
+      },
+      "ProvenanceRecord": {
+        "type": "object",
+        "description": "Parser and model provenance.",
+        "required": [
+          "engine",
+          "engine_version",
+          "implementation_digest",
+          "settings_digest",
+          "output_digest"
+        ],
+        "properties": {
+          "engine": {
+            "type": "string",
+            "description": "Engine identifier."
+          },
+          "engine_version": {
+            "type": "string",
+            "description": "Engine semantic version or model name."
+          },
+          "implementation_digest": {
+            "type": "string",
+            "description": "Immutable code, container, or model digest."
+          },
+          "output_digest": {
+            "type": "string",
+            "description": "Output digest."
+          },
+          "prompt_digest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional prompt digest."
+          },
+          "settings_digest": {
+            "type": "string",
+            "description": "Canonical settings digest."
+          }
+        }
+      },
+      "Relation": {
+        "type": "object",
+        "description": "Directed graph relation.",
+        "required": [
+          "relation_id",
+          "source_id",
+          "target_id",
+          "kind"
+        ],
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/RelationKind",
+            "description": "Relation type."
+          },
+          "relation_id": {
+            "type": "string",
+            "description": "Stable relation ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Source unit or block ID."
+          },
+          "target_id": {
+            "type": "string",
+            "description": "Target unit or block ID."
+          }
+        }
+      },
+      "RelationKind": {
+        "type": "string",
+        "description": "Relations between units and blocks.",
+        "enum": [
+          "CONTAINS",
+          "NEXT",
+          "CONTINUES_ON",
+          "CAPTION_OF",
+          "LABEL_FOR",
+          "REFERENCES",
+          "SAME_TEMPLATE"
+        ]
+      },
+      "RendererProvenance": {
+        "type": "object",
+        "description": "Renderer identity for non-source-native page geometry.",
+        "required": [
+          "name",
+          "version",
+          "implementation_digest"
+        ],
+        "properties": {
+          "implementation_digest": {
+            "type": "string",
+            "description": "Immutable renderer implementation digest."
+          },
+          "name": {
+            "type": "string",
+            "description": "Stable renderer name."
+          },
+          "version": {
+            "type": "string",
+            "description": "Pinned renderer version."
+          }
+        }
+      },
+      "RetrievalHit": {
+        "type": "object",
+        "description": "One source-grounded retrieval hit.",
+        "required": [
+          "rank",
+          "score_ppm",
+          "unit_index",
+          "unit_id",
+          "evidence"
+        ],
+        "properties": {
+          "block_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Canonical block identifier supporting the quote, when text grounds the hit."
+          },
+          "block_kind": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/BlockKind",
+                "description": "Semantic block kind, when text grounds the hit."
+              }
+            ]
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/EvidenceSpan",
+            "description": "Exact canonical source evidence for the quote."
+          },
+          "quote": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Exact bounded source substring, when available."
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32",
+            "description": "One-based stable rank.",
+            "minimum": 0
+          },
+          "render_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Exact rendered-unit digest used by visual retrieval, when applicable."
+          },
+          "score_ppm": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Score normalized relative to the best hit in parts per million.",
+            "minimum": 0
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "Canonical logical-unit identifier."
+          },
+          "unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Zero-based logical-unit index.",
+            "minimum": 0
+          }
+        }
+      },
+      "RetrievalIndexKind": {
+        "type": "string",
+        "description": "Retrieval index kind to prepare.",
+        "enum": [
+          "TEXT",
+          "VISUAL"
+        ]
+      },
+      "RetrievalMethod": {
+        "type": "string",
+        "description": "Algorithm used to rank immutable graph units.",
+        "enum": [
+          "LEXICAL_BM25_V1",
+          "HYBRID_TEXT_RRF_V1",
+          "VISUAL_MAX_SIM_V1",
+          "HYBRID_VISUAL_RRF_V1"
+        ]
+      },
+      "RetrievalReceipt": {
+        "type": "object",
+        "description": "Auditable receipt for one bounded retrieval operation.",
+        "required": [
+          "method",
+          "query_sha256",
+          "scanned_unit_count",
+          "scanned_text_block_count",
+          "lexical_candidate_count",
+          "dense_candidate_count",
+          "visual_candidate_count",
+          "visual_indexed_unit_count",
+          "visual_exact_candidate_count"
+        ],
+        "properties": {
+          "dense_candidate_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Unique dense unit candidates entering the bounded fusion stage.",
+            "minimum": 0
+          },
+          "dense_index_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Content digest of the immutable dense index, when used."
+          },
+          "embedding_conformance_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Qualified embedding endpoint conformance digest, when used."
+          },
+          "embedding_endpoint": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Qualified embedding endpoint name, when used."
+          },
+          "embedding_input_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Provider-reported query embedding input tokens.",
+            "minimum": 0
+          },
+          "embedding_model": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Exact embedding model identifier, when used."
+          },
+          "embedding_provider_request_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Provider request identifier for the query embedding call, when supplied."
+          },
+          "lexical_candidate_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Lexical unit candidates entering the bounded fusion stage.",
+            "minimum": 0
+          },
+          "method": {
+            "$ref": "#/components/schemas/RetrievalMethod",
+            "description": "Exact algorithm revision."
+          },
+          "query_sha256": {
+            "type": "string",
+            "description": "SHA-256 of the normalized bounded query vocabulary."
+          },
+          "scanned_text_block_count": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total textual blocks examined.",
+            "minimum": 0
+          },
+          "scanned_unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total logical units examined.",
+            "minimum": 0
+          },
+          "visual_attention_backend": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Qualified visual attention backend, when used."
+          },
+          "visual_candidate_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Unique visual unit candidates entering ranking or fusion.",
+            "minimum": 0
+          },
+          "visual_conformance_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Visual retrieval conformance digest, when used."
+          },
+          "visual_exact_candidate_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Centroid-prefilter candidates receiving exact patch-level `MaxSim`.",
+            "minimum": 0
+          },
+          "visual_index_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Digest of the canonical visual-index manifest, when used."
+          },
+          "visual_indexed_unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Units represented in the exact visual index used by this query.",
+            "minimum": 0
+          },
+          "visual_inference_device": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Qualified visual inference device, when used."
+          },
+          "visual_inference_dtype": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Qualified visual inference dtype, when used."
+          },
+          "visual_model": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Exact visual model ID, when used."
+          },
+          "visual_model_artifact_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Verified visual model artifact-manifest digest, when used."
+          },
+          "visual_model_revision": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Immutable visual model revision, when used."
+          },
+          "visual_query_elapsed_ms": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Worker-reported visual query embedding time.",
+            "minimum": 0
+          },
+          "visual_renderer_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Immutable renderer digest, when used."
+          }
+        }
+      },
+      "RetrievalStrategy": {
+        "type": "string",
+        "description": "Requested retrieval strategy.",
+        "enum": [
+          "AUTO",
+          "LEXICAL",
+          "HYBRID_TEXT",
+          "VISUAL",
+          "HYBRID_VISUAL"
+        ]
+      },
+      "SearchDocumentRequest": {
+        "type": "object",
+        "description": "Search the latest immutable document graph.",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Natural-language or keyword query, capped at 4 KiB."
+          },
+          "strategy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RetrievalStrategy",
+                "description": "Retrieval strategy. Visual late interaction is always explicit."
+              }
+            ]
+          },
+          "top_k": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Maximum grounded units to return; defaults to 10 and is capped at 100.",
+            "minimum": 0
+          }
+        }
+      },
+      "SearchDocumentResponse": {
+        "type": "object",
+        "description": "Grounded document-search response.",
+        "required": [
+          "document",
+          "document_version",
+          "graph_sha256",
+          "hits",
+          "receipt"
+        ],
+        "properties": {
+          "document": {
+            "type": "string",
+            "description": "Immutable document resource."
+          },
+          "document_version": {
+            "type": "string",
+            "description": "Immutable document version."
+          },
+          "graph_sha256": {
+            "type": "string",
+            "description": "Canonical graph manifest digest."
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RetrievalHit"
+            },
+            "description": "Deterministically ranked grounded hits."
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/RetrievalReceipt",
+            "description": "Reproducible retrieval receipt."
+          }
+        }
+      },
+      "SourceArtifact": {
+        "type": "object",
+        "description": "Immutable source metadata.",
+        "required": [
+          "sha256",
+          "media_type",
+          "byte_length"
+        ],
+        "properties": {
+          "byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Source length in bytes.",
+            "minimum": 0
+          },
+          "media_type": {
+            "type": "string",
+            "description": "Detected media type."
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Lowercase hexadecimal SHA-256 digest."
+          }
+        }
+      },
+      "SupportStatus": {
+        "type": "string",
+        "description": "Whether a value is directly supported by source evidence.",
+        "enum": [
+          "GROUNDED",
+          "SUPPORTED_INFERENCE",
+          "UNGROUNDED",
+          "UNRESOLVED",
+          "CONFLICTING",
+          "REDACTED"
+        ]
+      },
+      "TimeRange": {
+        "type": "object",
+        "description": "A half-open time interval for audio and video evidence.",
+        "required": [
+          "start_ms",
+          "end_ms"
+        ],
+        "properties": {
+          "end_ms": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Exclusive end time in milliseconds.",
+            "minimum": 0
+          },
+          "start_ms": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Inclusive start time in milliseconds.",
+            "minimum": 0
+          }
+        }
+      },
+      "UnitQuality": {
+        "type": "object",
+        "description": "Quality signals retained for routing and audits.",
+        "required": [
+          "truncated",
+          "warning_codes"
+        ],
+        "properties": {
+          "failure_probability_ppm": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Calibrated downstream failure probability in parts per million.",
+            "minimum": 0
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "Whether any engine truncated output."
+          },
+          "warning_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable warning codes."
+          }
+        }
+      },
+      "Upload": {
+        "type": "object",
+        "description": "Upload resource.",
+        "required": [
+          "name",
+          "media_type",
+          "state",
+          "content_path",
+          "create_time"
+        ],
+        "properties": {
+          "byte_length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Actual byte length after content upload.",
+            "minimum": 0
+          },
+          "content_path": {
+            "type": "string",
+            "description": "Relative data-plane content endpoint."
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time."
+          },
+          "expected_byte_length": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Expected byte length, when supplied.",
+            "minimum": 0
+          },
+          "expected_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Expected SHA-256, when supplied."
+          },
+          "media_type": {
+            "type": "string",
+            "description": "Declared media type."
+          },
+          "name": {
+            "type": "string",
+            "description": "`projects/{project}/uploads/{upload}`."
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Actual SHA-256 after content upload."
+          },
+          "state": {
+            "$ref": "#/components/schemas/UploadState",
+            "description": "Current state."
+          }
+        }
+      },
+      "UploadState": {
+        "type": "string",
+        "description": "Upload lifecycle.",
+        "enum": [
+          "CREATED",
+          "UPLOADED",
+          "COMPLETE"
+        ]
+      },
+      "VisualIndexEntry": {
+        "type": "object",
+        "description": "One immutable rendered-unit vector object.",
+        "required": [
+          "unit_index",
+          "unit_id",
+          "unit_kind",
+          "render_sha256",
+          "render_byte_length",
+          "render_width",
+          "render_height",
+          "vector_sha256",
+          "vector_byte_length",
+          "vector_count"
+        ],
+        "properties": {
+          "render_byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Exact encoded PNG length.",
+            "minimum": 0
+          },
+          "render_height": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Render height.",
+            "minimum": 0
+          },
+          "render_sha256": {
+            "type": "string",
+            "description": "SHA-256 of the exact PNG passed to the model."
+          },
+          "render_width": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Render width.",
+            "minimum": 0
+          },
+          "unit_id": {
+            "type": "string",
+            "description": "Canonical unit ID."
+          },
+          "unit_index": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Canonical zero-based unit index.",
+            "minimum": 0
+          },
+          "unit_kind": {
+            "$ref": "#/components/schemas/LogicalUnitKind",
+            "description": "Canonical unit kind."
+          },
+          "vector_byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Exact vector-object length.",
+            "minimum": 0
+          },
+          "vector_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Exact patch-vector count.",
+            "minimum": 0
+          },
+          "vector_sha256": {
+            "type": "string",
+            "description": "SHA-256 of row-major little-endian f16 patch vectors."
+          }
+        }
+      },
+      "VisualIndexManifest": {
+        "type": "object",
+        "description": "Immutable commit record for one grounded visual late-interaction index.",
+        "required": [
+          "schema",
+          "index_key",
+          "algorithm",
+          "document",
+          "document_version",
+          "source_sha256",
+          "graph_sha256",
+          "worker",
+          "protocol",
+          "worker_implementation_sha256",
+          "model",
+          "model_revision",
+          "model_artifact_sha256",
+          "model_license",
+          "conformance_sha256",
+          "inference_device",
+          "inference_dtype",
+          "attention_backend",
+          "renderer",
+          "renderer_sha256",
+          "dimensions",
+          "vector_encoding",
+          "pooling_algorithm",
+          "token_pool_factor",
+          "render_dpi",
+          "max_render_pixels",
+          "max_render_bytes",
+          "selection",
+          "centroid_segments",
+          "entries",
+          "skipped_supported_unit_count",
+          "total_vector_count",
+          "accounted_index_bytes",
+          "centroid_sha256",
+          "centroid_byte_length"
+        ],
+        "properties": {
+          "accounted_index_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total vector, render, centroid, and bounded filesystem overhead bytes.",
+            "minimum": 0
+          },
+          "algorithm": {
+            "type": "string",
+            "description": "Exact indexing and query algorithm revision."
+          },
+          "attention_backend": {
+            "type": "string",
+            "description": "Qualified attention implementation."
+          },
+          "centroid_byte_length": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Exact centroid data length.",
+            "minimum": 0
+          },
+          "centroid_segments": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of deterministic centroid segments per unit/query.",
+            "minimum": 0
+          },
+          "centroid_sha256": {
+            "type": "string",
+            "description": "Content digest of the compact centroid prefilter."
+          },
+          "conformance_sha256": {
+            "type": "string",
+            "description": "Exact qualification packet digest."
+          },
+          "dimensions": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Exact vector dimensions.",
+            "minimum": 0
+          },
+          "document": {
+            "type": "string",
+            "description": "Immutable document resource."
+          },
+          "document_version": {
+            "type": "string",
+            "description": "Immutable document version."
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VisualIndexEntry"
+            },
+            "description": "Ordered indexed-unit records."
+          },
+          "graph_sha256": {
+            "type": "string",
+            "description": "Canonical graph digest."
+          },
+          "index_key": {
+            "type": "string",
+            "description": "Digest of all immutable index inputs and settings."
+          },
+          "inference_device": {
+            "type": "string",
+            "description": "Qualified inference device."
+          },
+          "inference_dtype": {
+            "type": "string",
+            "description": "Qualified inference numeric dtype."
+          },
+          "max_render_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Maximum encoded render bytes.",
+            "minimum": 0
+          },
+          "max_render_pixels": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Maximum render pixels.",
+            "minimum": 0
+          },
+          "model": {
+            "type": "string",
+            "description": "Exact model ID."
+          },
+          "model_artifact_sha256": {
+            "type": "string",
+            "description": "Verified model-artifact manifest digest."
+          },
+          "model_license": {
+            "type": "string",
+            "description": "Recorded SPDX model-license expression."
+          },
+          "model_revision": {
+            "type": "string",
+            "description": "Immutable model revision."
+          },
+          "pooling_algorithm": {
+            "type": "string",
+            "description": "Stable pooling algorithm."
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Exact worker protocol revision."
+          },
+          "render_dpi": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Render DPI.",
+            "minimum": 0
+          },
+          "renderer": {
+            "type": "string",
+            "description": "Renderer implementation ID."
+          },
+          "renderer_sha256": {
+            "type": "string",
+            "description": "Renderer implementation digest."
+          },
+          "schema": {
+            "type": "string",
+            "description": "Stable manifest schema."
+          },
+          "selection": {
+            "$ref": "#/components/schemas/VisualIndexSelection",
+            "description": "Selection policy."
+          },
+          "skipped_supported_unit_count": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Supported units skipped by the selection policy.",
+            "minimum": 0
+          },
+          "source_sha256": {
+            "type": "string",
+            "description": "Source artifact digest."
+          },
+          "token_pool_factor": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Qualified pooling factor.",
+            "minimum": 0
+          },
+          "total_vector_count": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total stored document patch vectors.",
+            "minimum": 0
+          },
+          "vector_encoding": {
+            "type": "string",
+            "description": "Stable worker vector encoding."
+          },
+          "worker": {
+            "type": "string",
+            "description": "Worker implementation ID."
+          },
+          "worker_implementation_sha256": {
+            "type": "string",
+            "description": "Worker implementation digest."
+          }
+        }
+      },
+      "VisualIndexSelection": {
+        "type": "string",
+        "description": "Which supported graph units are rendered and embedded.",
+        "enum": [
+          "VISUAL_DEPENDENT",
+          "ALL_SUPPORTED"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "tempera_oauth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://api.tempera.dev/oauth/authorize",
+            "tokenUrl": "https://api.tempera.dev/oauth/token",
+            "scopes": {
+              "document:read": "Read document resources, graphs, operations, and extraction results.",
+              "document:write": "Upload sources, create/process documents, and run grounded extraction."
+            }
+          }
+        },
+        "description": "Auth Hub OAuth bearer tokens and Auth Hub-issued API keys for the `tempera-document` audience use the same Authorization header."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "health",
+      "description": "Service status"
+    },
+    {
+      "name": "uploads",
+      "description": "Streamed immutable source uploads"
+    },
+    {
+      "name": "documents",
+      "description": "Documents, runs, and canonical graphs"
+    },
+    {
+      "name": "extractions",
+      "description": "Schema-constrained grounded extraction"
+    },
+    {
+      "name": "retrieval",
+      "description": "Bounded source-grounded document retrieval"
+    },
+    {
+      "name": "operations",
+      "description": "Long-running operations"
+    }
+  ]
+}

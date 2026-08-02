@@ -133,6 +133,11 @@ def validate(surface: dict) -> list[str]:
             body = set(op.get("body", []))
             if not required_body.issubset(body):
                 problems.append(f"{label}: requiredBody must be a subset of body")
+            body_kind = op.get("requestBodyKind", "none")
+            if body_kind not in {"none", "json", "binary"}:
+                problems.append(f"{label}: invalid requestBodyKind {body_kind!r}")
+            if body_kind == "binary" and not op.get("requestContentType"):
+                problems.append(f"{label}: binary request needs requestContentType")
     for product_key, product in surface["products"].items():
         if not ID_RE.match(product_key):
             problems.append(f"product key {product_key!r} must be lowerCamelCase")
@@ -241,6 +246,8 @@ def render_typescript(surface: dict) -> str:
                 "forbiddenBody": op.get("forbiddenBody", []),
                 "requiredBody": op.get("requiredBody", []),
                 "bodyDefaults": op.get("bodyDefaults", {}),
+                "requestBodyKind": op.get("requestBodyKind", "none"),
+                "requestContentType": op.get("requestContentType"),
                 "scope": op.get("scope"),
                 "physicalAction": op.get("physicalAction", False),
                 "prepareCommitRequired": op.get("prepareCommitRequired", False),
@@ -323,6 +330,8 @@ def render_typescript_dts(surface: dict) -> str:
         "  forbiddenBody: readonly string[];",
         "  requiredBody: readonly string[];",
         "  bodyDefaults: Readonly<Record<string, unknown>>;",
+        "  requestBodyKind: \"none\" | \"json\" | \"binary\";",
+        "  requestContentType: string | null;",
         "  scope: TemperaScope | null;",
         "  physicalAction: boolean;",
         "  prepareCommitRequired: boolean;",
@@ -429,6 +438,8 @@ def render_python(surface: dict) -> str:
                 "forbidden_body": op.get("forbiddenBody", []),
                 "required_body": op.get("requiredBody", []),
                 "body_defaults": op.get("bodyDefaults", {}),
+                "request_body_kind": op.get("requestBodyKind", "none"),
+                "request_content_type": op.get("requestContentType"),
                 "scope": op.get("scope"),
                 "physical_action": op.get("physicalAction", False),
                 "prepare_commit_required": op.get("prepareCommitRequired", False),
@@ -549,6 +560,8 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub forbidden_body: &'static [&'static str],")
     lines.append("    pub required_body: &'static [&'static str],")
     lines.append("    pub body_defaults: &'static [(&'static str, &'static str)],")
+    lines.append("    pub request_body_kind: &'static str,")
+    lines.append("    pub request_content_type: Option<&'static str>,")
     lines.append("    pub scope: Option<&'static str>,")
     lines.append("    pub physical_action: bool,")
     lines.append("    pub prepare_commit_required: bool,")
@@ -582,6 +595,8 @@ def render_rust(surface: dict) -> str:
                 f"({json.dumps(key)}, {json.dumps(str(value))})" for key, value in defaults.items()
             )
             lines.append(f"        body_defaults: &[{pairs}],")
+            lines.append(f"        request_body_kind: {json.dumps(op.get('requestBodyKind', 'none'))},")
+            lines.append(f"        request_content_type: {rust_str(op.get('requestContentType'))},")
             lines.append(f"        scope: {rust_str(op.get('scope'))},")
             lines.append(
                 f"        physical_action: {str(op.get('physicalAction', False)).lower()},"
