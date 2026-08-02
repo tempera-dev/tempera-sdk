@@ -5651,6 +5651,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}."
     },
     {
+      "id": "streamResearchJobEvents",
+      "upstreamOperationId": "streamResearchJobEvents",
+      "method": "GET",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "afterSequence",
+        "pageSize"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence."
+    },
+    {
       "id": "getResearchJobResult",
       "upstreamOperationId": "getResearchJobResult",
       "method": "GET",
@@ -5686,7 +5713,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "jobId"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "afterSequence",
+        "pageSize"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],

@@ -1253,6 +1253,65 @@
         }
       }
     },
+    "/v1/projects/{project}/researchJobs/{jobId}/events:stream": {
+      "get": {
+        "operationId": "streamResearchJobEvents",
+        "summary": "Replay bounded authorized job events as SSE; reconnect with afterSequence",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "name": "afterSequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE replay page",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
     "/v1/projects/{project}/researchJobs/{jobId}/result": {
       "get": {
         "operationId": "getResearchJobResult",
@@ -1308,6 +1367,28 @@
           },
           {
             "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "name": "afterSequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
           }
         ],
         "responses": {
