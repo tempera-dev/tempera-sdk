@@ -2009,4 +2009,20 @@ mod tests {
         assert!(body.contains("\"tenant_id\":\"tenant_1\""));
         assert!(body.contains("\"modes\":[\"procedural\",\"gotcha\",\"state\"]"));
     }
+
+    #[test]
+    fn document_upload_uses_the_declared_binary_body_contract() {
+        let spec = full_client()
+            .build_binary(
+                "tempera_document",
+                "uploads_write",
+                &[("project_id", "project_1".into()), ("upload_id", "upload_1".into())],
+                vec![1, 2, 3],
+            )
+            .unwrap();
+        assert_eq!(spec.body_json, None);
+        assert_eq!(spec.body_bytes, Some(vec![1, 2, 3]));
+        assert_eq!(header(&spec, "content-type"), Some("application/octet-stream"));
+        assert_eq!(header(&spec, "authorization"), Some("Bearer tp_key_1"));
+    }
 }
