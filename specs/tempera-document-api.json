@@ -2094,6 +2094,9 @@
               }
             ]
           },
+          "source_anchor": {
+            "description": "Source-native structural anchor, for example a DOCX export pointer."
+          },
           "support": {
             "$ref": "#/components/schemas/SupportStatus",
             "description": "Evidence support state."
