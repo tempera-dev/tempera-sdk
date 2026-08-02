@@ -5268,55 +5268,10 @@ OPERATIONS = {
             "description": "Read all completed non-decisional investigation dossiers for a case."
         },
         {
-            "id": "create_people_case",
-            "upstream_operation_id": "createPeopleCase",
+            "id": "create_access_grant",
+            "upstream_operation_id": "createAccessGrant",
             "method": "POST",
-            "path": "/v1/projects/{project}/peopleCases",
-            "auth": "product",
-            "auth_audience": None,
-            "path_params": [
-                "project"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "body": [
-                "schema",
-                "case_id",
-                "case_type",
-                "state",
-                "subject_ids",
-                "alert_ids",
-                "assigned_to",
-                "disposition",
-                "evidence_refs",
-                "attributes"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "schema",
-                "case_id",
-                "case_type",
-                "state",
-                "subject_ids",
-                "alert_ids",
-                "assigned_to",
-                "disposition",
-                "evidence_refs",
-                "attributes"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": None,
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "description": "Open a governed case before sensitive people intelligence work."
-        },
-        {
-            "id": "create_people_access_grant",
-            "upstream_operation_id": "createPeopleAccessGrant",
-            "method": "POST",
-            "path": "/v1/projects/{project}/peopleAccessGrants",
+            "path": "/v1/projects/{project}/accessGrants",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
@@ -5363,13 +5318,13 @@ OPERATIONS = {
             "scope": None,
             "physical_action": False,
             "prepare_commit_required": False,
-            "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded access."
+            "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access."
         },
         {
-            "id": "revoke_people_access_grant",
-            "upstream_operation_id": "revokePeopleAccessGrant",
+            "id": "revoke_access_grant",
+            "upstream_operation_id": "revokeAccessGrant",
             "method": "POST",
-            "path": "/v1/projects/{project}/peopleAccessGrants/{grantId}/revoke",
+            "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
             "auth": "product",
             "auth_audience": None,
             "path_params": [
@@ -5391,7 +5346,7 @@ OPERATIONS = {
             "scope": None,
             "physical_action": False,
             "prepare_commit_required": False,
-            "description": "Revoke a sensitive people-data access grant."
+            "description": "Revoke a sensitive investigation-data access grant."
         },
         {
             "id": "create_people_directory_profile",

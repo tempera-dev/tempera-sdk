@@ -769,71 +769,10 @@
         }
       }
     },
-    "/v1/projects/{project}/peopleCases": {
+    "/v1/projects/{project}/accessGrants": {
       "post": {
-        "operationId": "createPeopleCase",
-        "summary": "Open a governed case before sensitive people intelligence work",
-        "x-tempera-effects": [
-          "sensitive_source",
-          "untrusted_input",
-          "external_sink",
-          "mutation"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Project"
-          },
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PeopleCase"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Case created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PeopleCase"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Idempotent replay",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PeopleCase"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          }
-        }
-      }
-    },
-    "/v1/projects/{project}/peopleAccessGrants": {
-      "post": {
-        "operationId": "createPeopleAccessGrant",
-        "summary": "Grant purpose, case, subject, actor, field, provider, and time-bounded access",
+        "operationId": "createAccessGrant",
+        "summary": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access",
         "x-tempera-effects": [
           "sensitive_source",
           "untrusted_input"
@@ -889,10 +828,10 @@
         }
       }
     },
-    "/v1/projects/{project}/peopleAccessGrants/{grantId}/revoke": {
+    "/v1/projects/{project}/accessGrants/{grantId}/revoke": {
       "post": {
-        "operationId": "revokePeopleAccessGrant",
-        "summary": "Revoke a sensitive people-data access grant",
+        "operationId": "revokeAccessGrant",
+        "summary": "Revoke a sensitive investigation-data access grant",
         "x-tempera-effects": [
           "sensitive_source",
           "untrusted_input"

@@ -3594,49 +3594,12 @@
         "requestBodyKind": "none"
       },
       {
-        "id": "createPeopleCase",
+        "id": "createAccessGrant",
         "method": "POST",
-        "path": "/v1/projects/{project}/peopleCases",
+        "path": "/v1/projects/{project}/accessGrants",
         "auth": "product",
-        "description": "Open a governed case before sensitive people intelligence work.",
-        "upstreamOperationId": "createPeopleCase",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "case_id",
-          "case_type",
-          "state",
-          "subject_ids",
-          "alert_ids",
-          "assigned_to",
-          "disposition",
-          "evidence_refs",
-          "attributes"
-        ],
-        "requiredBody": [
-          "schema",
-          "case_id",
-          "case_type",
-          "state",
-          "subject_ids",
-          "alert_ids",
-          "assigned_to",
-          "disposition",
-          "evidence_refs",
-          "attributes"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "createPeopleAccessGrant",
-        "method": "POST",
-        "path": "/v1/projects/{project}/peopleAccessGrants",
-        "auth": "product",
-        "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded access.",
-        "upstreamOperationId": "createPeopleAccessGrant",
+        "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.",
+        "upstreamOperationId": "createAccessGrant",
         "pathParams": [
           "project"
         ],
@@ -3676,12 +3639,12 @@
         "requestContentType": "application/json"
       },
       {
-        "id": "revokePeopleAccessGrant",
+        "id": "revokeAccessGrant",
         "method": "POST",
-        "path": "/v1/projects/{project}/peopleAccessGrants/{grantId}/revoke",
+        "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
         "auth": "product",
-        "description": "Revoke a sensitive people-data access grant.",
-        "upstreamOperationId": "revokePeopleAccessGrant",
+        "description": "Revoke a sensitive investigation-data access grant.",
+        "upstreamOperationId": "revokeAccessGrant",
         "pathParams": [
           "project",
           "grantId"

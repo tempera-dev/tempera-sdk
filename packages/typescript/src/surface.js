@@ -5277,55 +5277,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Read all completed non-decisional investigation dossiers for a case."
     },
     {
-      "id": "createPeopleCase",
-      "upstreamOperationId": "createPeopleCase",
+      "id": "createAccessGrant",
+      "upstreamOperationId": "createAccessGrant",
       "method": "POST",
-      "path": "/v1/projects/{project}/peopleCases",
-      "auth": "product",
-      "authAudience": null,
-      "pathParams": [
-        "project"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [
-        "schema",
-        "case_id",
-        "case_type",
-        "state",
-        "subject_ids",
-        "alert_ids",
-        "assigned_to",
-        "disposition",
-        "evidence_refs",
-        "attributes"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "schema",
-        "case_id",
-        "case_type",
-        "state",
-        "subject_ids",
-        "alert_ids",
-        "assigned_to",
-        "disposition",
-        "evidence_refs",
-        "attributes"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": null,
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "description": "Open a governed case before sensitive people intelligence work."
-    },
-    {
-      "id": "createPeopleAccessGrant",
-      "upstreamOperationId": "createPeopleAccessGrant",
-      "method": "POST",
-      "path": "/v1/projects/{project}/peopleAccessGrants",
+      "path": "/v1/projects/{project}/accessGrants",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
@@ -5372,13 +5327,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
-      "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded access."
+      "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access."
     },
     {
-      "id": "revokePeopleAccessGrant",
-      "upstreamOperationId": "revokePeopleAccessGrant",
+      "id": "revokeAccessGrant",
+      "upstreamOperationId": "revokeAccessGrant",
       "method": "POST",
-      "path": "/v1/projects/{project}/peopleAccessGrants/{grantId}/revoke",
+      "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
       "auth": "product",
       "authAudience": null,
       "pathParams": [
@@ -5400,7 +5355,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
-      "description": "Revoke a sensitive people-data access grant."
+      "description": "Revoke a sensitive investigation-data access grant."
     },
     {
       "id": "createPeopleDirectoryProfile",

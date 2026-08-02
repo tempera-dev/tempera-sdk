@@ -471,12 +471,10 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   getCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read all completed non-decisional investigation dossiers for a case. */
   getCaseDossier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Open a governed case before sensitive people intelligence work. */
-  createPeopleCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Grant purpose, case, subject, actor, field, provider, and time-bounded access. */
-  createPeopleAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Revoke a sensitive people-data access grant. */
-  revokePeopleAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access. */
+  createAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a sensitive investigation-data access grant. */
+  revokeAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest an evidence-backed bitemporal person or company profile. */
   createPeopleDirectoryProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Find non-decisional identity-resolution candidates under an active case grant. */

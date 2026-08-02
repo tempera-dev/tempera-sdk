@@ -21,7 +21,7 @@ Governed, non-decisional cross-domain investigation service. The trusted SDK sur
 | Audience | `tempera-risk` |
 | Auth | bearer minted for audience tempera-risk; Risk additionally enforces tenant, project, actor, case, access-grant, permissible-purpose, source-rights, and human-review boundaries. |
 | Client | TypeScript `client.temperaRisk` · Python `client.tempera_risk` · Rust `build_request("tempera_risk", ...)` |
-| Typed operations | 32 |
+| Typed operations | 31 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaRisk.request(path, options)` (TypeScript) /
@@ -1092,100 +1092,15 @@ let spec = client.build_request("tempera_risk", "get_case_dossier", &[
 
 </CodeGroup>
 
-### createPeopleCase
+### createAccessGrant
 
-`POST /v1/projects/{project}/peopleCases`
+`POST /v1/projects/{project}/accessGrants`
 
-Open a governed case before sensitive people intelligence work.
+Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.
 
-- **Producer operationId:** `createPeopleCase`
+- **Producer operationId:** `createAccessGrant`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createPeopleCase()` · Python `client.tempera_risk.create_people_case()` · Rust `build_request("tempera_risk", "create_people_case", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `schema` | yes | — |
-| `case_id` | yes | — |
-| `case_type` | yes | — |
-| `state` | yes | — |
-| `subject_ids` | yes | — |
-| `alert_ids` | yes | — |
-| `assigned_to` | yes | — |
-| `disposition` | yes | — |
-| `evidence_refs` | yes | — |
-| `attributes` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaRisk.createPeopleCase({
-  project: "<project>",
-  schema: "<schema>",
-  case_id: "<case_id>",
-  case_type: "<case_type>",
-  state: "<state>",
-  subject_ids: "<subject_ids>",
-  alert_ids: "<alert_ids>",
-  assigned_to: "<assigned_to>",
-  disposition: "<disposition>",
-  evidence_refs: "<evidence_refs>",
-  attributes: "<attributes>",
-});
-```
-
-```python Python
-result = client.tempera_risk.create_people_case({
-    "project": "<project>",
-    "schema": "<schema>",
-    "case_id": "<case_id>",
-    "case_type": "<case_type>",
-    "state": "<state>",
-    "subject_ids": "<subject_ids>",
-    "alert_ids": "<alert_ids>",
-    "assigned_to": "<assigned_to>",
-    "disposition": "<disposition>",
-    "evidence_refs": "<evidence_refs>",
-    "attributes": "<attributes>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_risk", "create_people_case", &[
-    ("project", "<project>".into()),
-    ("schema", "<schema>".into()),
-    ("case_id", "<case_id>".into()),
-    ("case_type", "<case_type>".into()),
-    ("state", "<state>".into()),
-    ("subject_ids", "<subject_ids>".into()),
-    ("alert_ids", "<alert_ids>".into()),
-    ("assigned_to", "<assigned_to>".into()),
-    ("disposition", "<disposition>".into()),
-    ("evidence_refs", "<evidence_refs>".into()),
-    ("attributes", "<attributes>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createPeopleAccessGrant
-
-`POST /v1/projects/{project}/peopleAccessGrants`
-
-Grant purpose, case, subject, actor, field, provider, and time-bounded access.
-
-- **Producer operationId:** `createPeopleAccessGrant`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createPeopleAccessGrant()` · Python `client.tempera_risk.create_people_access_grant()` · Rust `build_request("tempera_risk", "create_people_access_grant", params)`
+- **Call as:** TypeScript `client.temperaRisk.createAccessGrant()` · Python `client.tempera_risk.create_access_grant()` · Rust `build_request("tempera_risk", "create_access_grant", params)`
 
 **Path parameters**
 
@@ -1215,7 +1130,7 @@ Grant purpose, case, subject, actor, field, provider, and time-bounded access.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaRisk.createPeopleAccessGrant({
+const result = await client.temperaRisk.createAccessGrant({
   project: "<project>",
   schema: "<schema>",
   grant_id: "<grant_id>",
@@ -1235,7 +1150,7 @@ const result = await client.temperaRisk.createPeopleAccessGrant({
 ```
 
 ```python Python
-result = client.tempera_risk.create_people_access_grant({
+result = client.tempera_risk.create_access_grant({
     "project": "<project>",
     "schema": "<schema>",
     "grant_id": "<grant_id>",
@@ -1255,7 +1170,7 @@ result = client.tempera_risk.create_people_access_grant({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_risk", "create_people_access_grant", &[
+let spec = client.build_request("tempera_risk", "create_access_grant", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
     ("grant_id", "<grant_id>".into()),
@@ -1278,15 +1193,15 @@ let spec = client.build_request("tempera_risk", "create_people_access_grant", &[
 
 </CodeGroup>
 
-### revokePeopleAccessGrant
+### revokeAccessGrant
 
-`POST /v1/projects/{project}/peopleAccessGrants/{grantId}/revoke`
+`POST /v1/projects/{project}/accessGrants/{grantId}/revoke`
 
-Revoke a sensitive people-data access grant.
+Revoke a sensitive investigation-data access grant.
 
-- **Producer operationId:** `revokePeopleAccessGrant`
+- **Producer operationId:** `revokeAccessGrant`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.revokePeopleAccessGrant()` · Python `client.tempera_risk.revoke_people_access_grant()` · Rust `build_request("tempera_risk", "revoke_people_access_grant", params)`
+- **Call as:** TypeScript `client.temperaRisk.revokeAccessGrant()` · Python `client.tempera_risk.revoke_access_grant()` · Rust `build_request("tempera_risk", "revoke_access_grant", params)`
 
 **Path parameters**
 
@@ -1304,7 +1219,7 @@ Revoke a sensitive people-data access grant.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaRisk.revokePeopleAccessGrant({
+const result = await client.temperaRisk.revokeAccessGrant({
   project: "<project>",
   grantId: "<grantId>",
   reason: "<reason>",
@@ -1312,7 +1227,7 @@ const result = await client.temperaRisk.revokePeopleAccessGrant({
 ```
 
 ```python Python
-result = client.tempera_risk.revoke_people_access_grant({
+result = client.tempera_risk.revoke_access_grant({
     "project": "<project>",
     "grantId": "<grantId>",
     "reason": "<reason>",
@@ -1320,7 +1235,7 @@ result = client.tempera_risk.revoke_people_access_grant({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_risk", "revoke_people_access_grant", &[
+let spec = client.build_request("tempera_risk", "revoke_access_grant", &[
     ("project", "<project>".into()),
     ("grantId", "<grantId>".into()),
     ("reason", "<reason>".into()),
