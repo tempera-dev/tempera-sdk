@@ -23,6 +23,7 @@ PRODUCT_ATTRS = {
     "temperaWorkflows": "tempera_workflows",
     "temperaGym": "tempera_gym",
     "temperaBio": "tempera_bio",
+    "temperaDocument": "tempera_document",
     "cradle": "cradle",
     "remi": "remi",
     "dataEngine": "data_engine",
@@ -57,7 +58,7 @@ class FakeTransport:
             "query": dict(urllib_parse.parse_qsl(split.query)),
             "headers": headers,
             "data": data,
-            "body": json.loads(data) if data else None,
+            "body": json.loads(data) if data and data.startswith((b"{", b"[")) else None,
         }
         self.calls.append(call)
         return self.responder(call)
@@ -78,6 +79,7 @@ def make_client(**overrides):
             "tempera_workflows": "https://workflows.example.test",
             "tempera_gym": "https://gym.example.test",
             "tempera_bio": "https://bio.example.test",
+            "tempera_document": "https://document.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
@@ -104,11 +106,16 @@ class ConformanceTest(unittest.TestCase):
                     key: sample_path_param(op, key)
                     for key in op["path_params"]
                 }
+                if op["request_body_kind"] == "binary":
+                    params["content"] = b"\x01\x02\x03"
                 result = getattr(product, op["id"])(params)
                 self.assertEqual(result, {"ok": True}, f"{label} result")
                 self.assertEqual(len(transport.calls), 1, f"{label} made one request")
                 call = transport.calls[0]
                 self.assertEqual(call["method"], op["method"], f"{label} method")
+                if op["request_body_kind"] == "binary":
+                    self.assertEqual(call["headers"]["content-type"], op["request_content_type"])
+                    self.assertEqual(call["data"], b"\x01\x02\x03")
                 expected_path = re.sub(
                     r"\{([A-Za-z_][A-Za-z0-9_]*)\}",
                     lambda match: sample_path_param(op, match.group(1)),

@@ -188,6 +188,7 @@ is the default when none is specified.
 | `tempera-workflows` | tempera-workflows |
 | `tempera-gym` | tempera-gym |
 | `tempera-bio` | tempera-bio |
+| `tempera-document` | tempera-document |
 
 ## Scopes
 
@@ -218,6 +219,8 @@ is the default when none is specified.
 | `model:read` | auth-hub: `getModelCatalog`; tempera-llm: `listModels` |
 | `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
 | `usage:reserve` | No typed SDK operation declares it yet; enforced server-side. |
+| `document:read` | tempera-document: `documentUnitsList`, `documentsGet`, `documentsGetGraph`, `documentsSearch`, `operationsGet`, `uploadsGet` |
+| `document:write` | tempera-document: `documentsCreate`, `documentsExtract`, `documentsPrepareRetrieval`, `documentsProcess`, `uploadsComplete`, `uploadsCreate`, `uploadsWrite` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 

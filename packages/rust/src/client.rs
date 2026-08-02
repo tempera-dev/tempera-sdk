@@ -96,6 +96,9 @@ pub struct RequestSpec {
     pub headers: Vec<(String, String)>,
     /// Serialized JSON body, when the operation carries one.
     pub body_json: Option<String>,
+    /// Raw binary body for upload operations. The caller's HTTP adapter may
+    /// stream equivalent bytes instead of buffering them before transmission.
+    pub body_bytes: Option<Vec<u8>>,
 }
 
 impl RequestSpec {
@@ -533,7 +536,36 @@ impl TemperaClient {
             query,
             headers,
             body_json,
+            body_bytes: None,
         })
+    }
+
+    /// Build a binary request specification for a producer-declared upload operation.
+    pub fn build_binary(
+        &self,
+        product: &str,
+        operation: &str,
+        params: &[(&str, ParamValue)],
+        content: Vec<u8>,
+    ) -> Result<RequestSpec, BuildError> {
+        let op = surface::find_operation(product, operation).ok_or_else(|| {
+            BuildError::UnknownOperation {
+                product: product.to_string(),
+                operation: operation.to_string(),
+            }
+        })?;
+        if op.request_body_kind != "binary" {
+            return Err(BuildError::InvalidOperationContract {
+                product: product.to_string(),
+                operation: operation.to_string(),
+            });
+        }
+        let mut request = self.build_request(product, operation, params)?;
+        request.body_bytes = Some(content);
+        if let Some(content_type) = op.request_content_type {
+            request.headers.push(("content-type".to_string(), content_type.to_string()));
+        }
+        Ok(request)
     }
 }
 

@@ -22,6 +22,7 @@ PRODUCT_SPECS = {
     "controlPlane": "control-plane.openapi.json",
     "palette": "palette-api.json",
     "cradle": "cradle-openapi.json",
+    "temperaDocument": "tempera-document-api.json",
     "temperaLlm": "tempera-llm-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
@@ -35,6 +36,7 @@ DEFAULT_AUTH = {
     "controlPlane": "account",
     "palette": "product",
     "cradle": "product",
+    "temperaDocument": "product",
     "temperaLlm": "product",
     "temperaWorkflows": "product",
     "temperaGym": "product",
@@ -157,15 +159,46 @@ def parameters(
 
 def request_fields(
     document: dict[str, Any], operation: dict[str, Any]
-) -> tuple[list[str], list[str]]:
+) -> tuple[list[str], list[str], str, str | None]:
     request_body = dereference(document, operation.get("requestBody"))
     if not isinstance(request_body, dict):
-        return [], []
+        return [], [], "none", None
     content = request_body.get("content")
-    json_content = content.get("application/json") if isinstance(content, dict) else None
-    if not isinstance(json_content, dict):
-        return [], []
-    return schema_fields(document, json_content.get("schema"))
+    if not isinstance(content, dict) or not content:
+        return [], [], "none", None
+    json_content = content.get("application/json")
+    if isinstance(json_content, dict):
+        fields, required = schema_fields(document, json_content.get("schema"))
+        return fields, required, "json", "application/json"
+    if len(content) != 1:
+        raise ValueError("non-JSON request bodies must declare exactly one content type")
+    content_type, binary_content = next(iter(content.items()))
+    if not isinstance(content_type, str) or not content_type or not isinstance(binary_content, dict):
+        raise ValueError("request body content type is invalid")
+    return [], [], "binary", content_type
+
+
+def oauth_scope(operation: Mapping[str, Any]) -> str | None:
+    """Return the unambiguous OAuth scope declared by an OpenAPI operation."""
+
+    security = operation.get("security")
+    if not isinstance(security, list):
+        return None
+    scopes: set[str] = set()
+    for requirement in security:
+        if not isinstance(requirement, dict):
+            continue
+        declared = requirement.get("tempera_oauth")
+        if not isinstance(declared, list):
+            continue
+        if not all(isinstance(scope, str) and scope for scope in declared):
+            raise ValueError("tempera_oauth security scopes are invalid")
+        scopes.update(declared)
+    if not scopes:
+        return None
+    if len(scopes) != 1:
+        raise ValueError("SDK operations must declare at most one OAuth scope")
+    return next(iter(scopes))
 
 
 def sdk_operation_id(operation_id: str) -> str:
@@ -476,7 +509,9 @@ def synchronize_product(
             path_params, path_param_templates, query = parameters(
                 spec, path_item, operation
             )
-            body, required_body = request_fields(spec, operation)
+            body, required_body, request_body_kind, request_content_type = request_fields(
+                spec, operation
+            )
             for key, values in (
                 ("pathParams", path_params),
                 ("pathParamTemplates", path_param_templates),
@@ -488,6 +523,19 @@ def synchronize_product(
                     item[key] = values
                 else:
                     item.pop(key, None)
+            item["requestBodyKind"] = request_body_kind
+            if request_content_type is None:
+                item.pop("requestContentType", None)
+            else:
+                item["requestContentType"] = request_content_type
+            declared_scope = oauth_scope(operation)
+            if declared_scope is not None:
+                audience = surface["products"][product].get("audience")
+                if not isinstance(audience, str) or not audience:
+                    raise ValueError(f"{product} OAuth operation has no product audience")
+                item["auth"] = "oauthResource"
+                item["authAudience"] = audience
+                item["scope"] = declared_scope
             if "x-tempera-auth-kind" in operation:
                 auth_kind = operation["x-tempera-auth-kind"]
                 if auth_kind not in {

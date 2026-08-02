@@ -24,6 +24,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["temperaWorkflows"]["repository"], "https://github.com/tempera-dev/tempera-workflows")
         self.assertEqual(PRODUCTS["temperaGym"]["repository"], "https://github.com/tempera-dev/tempera-gym")
         self.assertEqual(PRODUCTS["temperaBio"]["repository"], "https://github.com/tempera-dev/tempera-bio")
+        self.assertEqual(PRODUCTS["temperaDocument"]["repository"], "https://github.com/tempera-dev/tempera-document")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
         self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
@@ -45,6 +46,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("tempera-workflows", AUDIENCES)
         self.assertIn("tempera-gym", AUDIENCES)
         self.assertIn("tempera-bio", AUDIENCES)
+        self.assertIn("tempera-document", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
@@ -58,7 +60,7 @@ class TemperaSdkTest(unittest.TestCase):
                 "bio:measurement:verify", "bio:decision:write",
                 "bio:experiment:approve", "bio:experiment:submit",
                 "bio:signer:manage", "model:read", "model:invoke",
-                "usage:reserve", "pii:unmask", "admin",
+                "usage:reserve", "document:read", "document:write", "pii:unmask", "admin",
             ],
         )
 

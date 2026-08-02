@@ -31,6 +31,7 @@ function testClient(overrides = {}) {
       temperaWorkflows: "https://workflows.example.test",
       temperaGym: "https://gym.example.test",
       temperaBio: "https://bio.example.test",
+      temperaDocument: "https://document.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
@@ -61,11 +62,16 @@ test("every surface operation dispatches its method, path, and auth header", asy
       calls.length = 0;
       const params = {};
       for (const key of op.pathParams) params[key] = samplePathParam(op, key);
+      if (op.requestBodyKind === "binary") params.content = new Uint8Array([1, 2, 3]);
       const result = await client[productKey][op.id](params);
       assert.deepEqual(result, { ok: true }, `${productKey}.${op.id} result`);
       assert.equal(calls.length, 1, `${productKey}.${op.id} made one request`);
       const { url, options } = calls[0];
       assert.equal(options.method, op.method, `${productKey}.${op.id} method`);
+      if (op.requestBodyKind === "binary") {
+        assert.equal(options.headers["content-type"], op.requestContentType);
+        assert.deepEqual(options.body, new Uint8Array([1, 2, 3]));
+      }
       const expectedPath = op.path.replace(
         /\{([A-Za-z_][A-Za-z0-9_]*)\}/g,
         (_, key) => samplePathParam(op, key),
