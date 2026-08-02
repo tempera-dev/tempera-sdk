@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "6fae78e21ac03ee3e466d47c9dd517b07a5c46ae",
+  "source_commit": "19a34d5d06dd6977887d45892ab84eef6786c637",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
-  "source_sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd",
+  "source_blob_sha": "1d0acbc378d432940aac61e508f8ea6b85be8795",
+  "source_sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "fc3429a0a421a267ba15d09e6dbf5a940e70387eef044d6e4e94b5045af9580b",
+  "generated_sha256": "b46d98b0eb87d3a7d1405c21ffd9fba819fbe31529084188cff0eb2654d9f331",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -106,10 +106,26 @@
       "requiredScope": "review:gold:manage"
     },
     {
+      "sdkOperationId": "createReviewerRevocation",
+      "operationId": "projects.reviewerRevocations.create",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-revocations",
+      "audience": "data-engine",
+      "requiredScope": "review:gold:manage"
+    },
+    {
       "sdkOperationId": "resolveExpertTask",
       "operationId": "projects.expertTasks.resolve",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "createExpertTaskAppeal",
+      "operationId": "projects.expertTasks.appeal",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },
@@ -142,6 +158,14 @@
       "operationId": "projects.expertTaskAssignments.saveDraft",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
+      "audience": "data-engine",
+      "requiredScope": "review:resolve"
+    },
+    {
+      "sdkOperationId": "recordReviewerSessionEvent",
+      "operationId": "projects.reviewerSessions.record",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-sessions:record",
       "audience": "data-engine",
       "requiredScope": "review:resolve"
     },

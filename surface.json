@@ -5987,7 +5987,8 @@
           "pageSize",
           "pageToken",
           "status",
-          "campaignName"
+          "campaignName",
+          "orderBy"
         ],
         "scope": "dataset:read",
         "description": "List human residual review tasks, optionally filtered by status and campaign.",
@@ -6027,6 +6028,33 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "createReviewerRevocation",
+        "method": "POST",
+        "path": "/v1/{parent}/reviewer-revocations",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "reviewerRef",
+          "reason",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "reviewerRef",
+          "reason",
+          "idempotencyKey"
+        ],
+        "scope": "review:gold:manage",
+        "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments.",
+        "upstreamOperationId": "projects.reviewerRevocations.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "resolveExpertTask",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
@@ -6055,6 +6083,33 @@
         "scope": "review:resolve",
         "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
         "upstreamOperationId": "projects.expertTasks.resolve",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createExpertTaskAppeal",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expertTaskId"
+        ],
+        "body": [
+          "rationale",
+          "evidence",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "rationale",
+          "idempotencyKey"
+        ],
+        "scope": "review:resolve",
+        "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision.",
+        "upstreamOperationId": "projects.expertTasks.appeal",
         "pathParamTemplates": {
           "parent": "projects/*"
         },
@@ -6165,6 +6220,31 @@
         "scope": "review:resolve",
         "description": "Autosave a version-checked draft under the active reviewer lease.",
         "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordReviewerSessionEvent",
+        "method": "POST",
+        "path": "/v1/{parent}/reviewer-sessions:record",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "event",
+          "sessionId"
+        ],
+        "requiredBody": [
+          "event",
+          "sessionId"
+        ],
+        "scope": "review:resolve",
+        "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier.",
+        "upstreamOperationId": "projects.reviewerSessions.record",
         "pathParamTemplates": {
           "parent": "projects/*"
         },

@@ -52,8 +52,8 @@
       "required_scope": "dataset:write",
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
-        "input_sha256": "5d39b4820476876e0c4670c7e0da68bddb4de3b2a34bfe2dc488265f59e8d60e",
-        "mcp_input_schema_sha256": "23cfe651f960831473d04f5788dbd8166e5f464c87fcafac5ceea1ee304f0938",
+        "input_sha256": "14e330e6f497d53186f21038b5780dd8c57ed7af509564d3fd9719a9935a8231",
+        "mcp_input_schema_sha256": "3b8c189ffc5ead0ffc9e31dfe12e2de7465890c0d417cdeab65edf00e40d6af9",
         "mcp_output_schema_sha256": "943ec0331ed081fc1f53451df8fdca14f8c414654fe76399ebbfa3e3458072cd",
         "output_sha256": "9b0548b4b6da37d5cefaab3e966f77737ec9931d05d6bc6df221c13ea3eacab4"
       }
@@ -140,8 +140,8 @@
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
         "input_sha256": "5553fd25ac32291b94a9553ec05f0af24db15d8398df274e955e8bec67669466",
-        "mcp_input_schema_sha256": "470813085778b10179ca218fcf5df8fb7d251ff19daf7347aafda988d1afd503",
-        "mcp_output_schema_sha256": "c32be8ea2a66c154545eb623320fa90b6f5cf4a754a4929a3adc5420aca4a8ae",
+        "mcp_input_schema_sha256": "2c5bac8015fb2e40c2a409179ce55dd3d3c7e7a3f1774b5f6d63e88900787abb",
+        "mcp_output_schema_sha256": "33698b7e673586dd0bbed5acf4dcf0e45962782260a784d16c4aad3590f0b3ce",
         "output_sha256": "8dcfc13b16a10553bead8dde011699a1b7e3534289a9e065224eb4cdc3fbbbcd"
       }
     },
@@ -170,7 +170,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "88f49fcf37b5ce9faf3a0dbba21d00ff624537b2fa0b7046552aeb1db2c3c42a",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
-        "mcp_output_schema_sha256": "d043f338abc951e08aea9cc49db9adf485d501d6aad1b79a56d8df2a1f3bd027",
+        "mcp_output_schema_sha256": "d62328b7e05585f220a5d500723cffbea09de8c42b79fb69bb6c9e516688bfc1",
         "output_sha256": "73fa1c4bcdfba25822662147601bc0c27c64587144d50ff7f7f1fd5cab5cf963"
       }
     },
@@ -568,6 +568,29 @@
       }
     },
     {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.expertTasks.appeal",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+      "reason": "Appeals are caller-bound human-review receipts and adjudication handoffs, not model tools.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "0d980bb6f9290f4f2b915474a56c41fae7f52cbbb3a31bff259d03022840b108",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "3736b1fb4bf9403934b2786b2e1e5d75f0b919f13d8ffb3934bd802efbf2976e"
+      }
+    },
+    {
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -590,8 +613,8 @@
       "required_scope": "dataset:read",
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
-        "input_sha256": "ffdda1834b99c3cff4c8c355f42a50f14a348e82ca5b45e8d21959bf38e2298c",
-        "mcp_input_schema_sha256": "f0c9be3ce3c7eb1fe499861aae5b2f89a8797650336d71c081c6dda9473dd6fd",
+        "input_sha256": "1da88bc20880c0719a63b6549e481a841a9e8addccb5e50467a29489f30bc514",
+        "mcp_input_schema_sha256": "9cbfb77bc1781fb12e05f346b5c3bf65c051f34177ea85d2850f24dc89e9712a",
         "mcp_output_schema_sha256": "7791afb60828f649aebe5455ad5dc6e52b8b38e3ecf8d36a05d8214aa291b09d",
         "output_sha256": "8c6f9abc1928c37c74332b4d283052eabe6a8d9b998891db896fbcc62f80647e"
       }
@@ -797,7 +820,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
         "mcp_input_schema_sha256": "6e6632bc06d9f81b43b96cccadb0e627ef55c84194b20aca169818cc89c20f83",
-        "mcp_output_schema_sha256": "e5fa90053709d97cada2b744e74fa1596aea1d84ad17a3dc3eac9aa357d77624",
+        "mcp_output_schema_sha256": "7b43771461c8130aafb969ebf56619e0de1abc4e7f547810f9d8224e7eaf2bd1",
         "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
       }
     },
@@ -1111,6 +1134,52 @@
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
         "output_sha256": "2fe56d5aa806aefb1f98436c54b806800921edad7e2fb7006bcdd95f6ed68b00"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.reviewerRevocations.create",
+      "path": "/v1/{parent}/reviewer-revocations",
+      "reason": "Reviewer revocation is a dedicated quality-operator control and remains REST-only.",
+      "required_scope": "review:gold:manage",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "cb8fb9643164d54f901d0146a6f1c896546b11f4a4d3bb1f096366bd83316766",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "3aed4ef1c0b9ce5f0874b4d8374be74c3a9badc0ea2300e0c192f42c510354d3"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.reviewerSessions.record",
+      "path": "/v1/{parent}/reviewer-sessions:record",
+      "reason": "Cookie-session evidence is human-review application telemetry, not a model tool.",
+      "required_scope": "review:resolve",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "7ae5be3cc1e930d7896668369a127be6e7fcdaeab99bcf54b9489e056eff1909",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "f469d1688aa9c6d40f62efeaaaca5b3ce87b1d0a492c7f756cb53cc440b1f4e4"
       }
     },
     {
@@ -1465,8 +1534,8 @@
     }
   ],
   "policy": {
-    "authenticated_operation_count": 54,
-    "denied_count": 18,
+    "authenticated_operation_count": 57,
+    "denied_count": 21,
     "excluded_transport_operations": [
       "health.get",
       "mcp.jsonrpc"
@@ -1474,19 +1543,19 @@
     "exposed_count": 36,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "d77fcbe95e862ad1026c34bbab0d0fa4508ecf834a2411a33bec2c33142ae5e4"
+      "sha256": "42b8ed99dd011649a98aafb563d69cdb8fec8d6875edf38c8ede8c2c40dc176f"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "10c0c76c6f9c9af736ead6ce5b393ac0b23bbdcc",
+    "commit": "1deb0d418b1a3c8a2e3f8e7cd3ce348f79428685",
     "files": [
       {
-        "git_blob": "967b4e348f4615bf3092f07da42fc7045ec5da5a",
+        "git_blob": "1d0acbc378d432940aac61e508f8ea6b85be8795",
         "path": "api/openapi.yaml",
-        "sha256": "3d3cfc06a3d77ab303b653b879201e2832a50bfb81a05f72f4da59fc32a880dd"
+        "sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1494,19 +1563,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "9dc0ad807024e9e402504dcb2d975b3ce27e4733",
+        "git_blob": "454c314d3ec09c88b76234b152fead6e20e2b91a",
         "path": "src/data_engine/app.py",
-        "sha256": "a2c47052632d9b799120ebf877cea5565d91b098c0c631f32b3826f0b2053dfa"
+        "sha256": "173beb096fc26468104f6adc22eac1be68a9d67c518c54be11fa64ef4b25cbbe"
       },
       {
-        "git_blob": "ff1024ca4671f81b1acfbc80acc539bdca49daa3",
+        "git_blob": "f930e96426af2edc7d88ffb609c66abc9e229a03",
         "path": "src/data_engine/mcp.py",
-        "sha256": "792c0859efe2073cc0f4b06696aa9dc1a723fc348f5c06c6fd7dc0a653b766e6"
+        "sha256": "b9454386556f6ab800d6866472c9f1272e32385a8d88439fdefb7b946b24029f"
       },
       {
-        "git_blob": "9c599001cb3de342adc679e88ddd0be38ef398bd",
+        "git_blob": "5a50d8273b747fbf47eb3de636f655032d1d7fe4",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "98a32246607b25f9ceeb77150a51bff91f01c8a656e8d631d19529d1e661b6a4"
+        "sha256": "3fb4160d2a3c89ce7491859b20ce3f0e5caed4759d1cf252efe7fba859a62c2c"
       }
     ],
     "repository": "tempera-dev/data-engine"

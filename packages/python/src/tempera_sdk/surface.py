@@ -8648,7 +8648,8 @@ OPERATIONS = {
                 "pageSize",
                 "pageToken",
                 "status",
-                "campaignName"
+                "campaignName",
+                "orderBy"
             ],
             "body": [],
             "forbidden_body": [],
@@ -8697,6 +8698,39 @@ OPERATIONS = {
             "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
         },
         {
+            "id": "create_reviewer_revocation",
+            "upstream_operation_id": "projects.reviewerRevocations.create",
+            "method": "POST",
+            "path": "/v1/{parent}/reviewer-revocations",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [
+                "reviewerRef",
+                "reason",
+                "idempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "reviewerRef",
+                "reason",
+                "idempotencyKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "review:gold:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments."
+        },
+        {
             "id": "resolve_expert_task",
             "upstream_operation_id": "projects.expertTasks.resolve",
             "method": "POST",
@@ -8736,6 +8770,39 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+        },
+        {
+            "id": "create_expert_task_appeal",
+            "upstream_operation_id": "projects.expertTasks.appeal",
+            "method": "POST",
+            "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "expertTaskId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [
+                "rationale",
+                "evidence",
+                "idempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "rationale",
+                "idempotencyKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision."
         },
         {
             "id": "claim_expert_task",
@@ -8870,6 +8937,37 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Autosave a version-checked draft under the active reviewer lease."
+        },
+        {
+            "id": "record_reviewer_session_event",
+            "upstream_operation_id": "projects.reviewerSessions.record",
+            "method": "POST",
+            "path": "/v1/{parent}/reviewer-sessions:record",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "body": [
+                "event",
+                "sessionId"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "event",
+                "sessionId"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "review:resolve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier."
         },
         {
             "id": "get_review_operations",

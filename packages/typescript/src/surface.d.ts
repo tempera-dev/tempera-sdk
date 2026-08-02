@@ -734,8 +734,12 @@ export interface DataEngineClient extends TemperaProductClientBase {
   listExpertTasks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label. */
   createReviewQualificationTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an immutable project-scoped reviewer revocation and terminate active assignments. */
+  createReviewerRevocation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision. */
   resolveExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision. */
+  createExpertTaskAppeal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically claim one open expert task with an exclusive renewable lease. */
   claimExpertTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Renew the authenticated reviewer's active expert-task lease. */
@@ -744,6 +748,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   releaseExpertTaskAssignment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Autosave a version-checked draft under the active reviewer lease. */
   saveExpertTaskDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier. */
+  recordReviewerSessionEvent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations. */
   getReviewOperations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch data-engine usage and quality metrics for a project. */

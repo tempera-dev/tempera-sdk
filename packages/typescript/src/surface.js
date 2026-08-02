@@ -8657,7 +8657,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken",
         "status",
-        "campaignName"
+        "campaignName",
+        "orderBy"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -8706,6 +8707,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
     },
     {
+      "id": "createReviewerRevocation",
+      "upstreamOperationId": "projects.reviewerRevocations.create",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-revocations",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "reviewerRef",
+        "reason",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "reviewerRef",
+        "reason",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:gold:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments."
+    },
+    {
       "id": "resolveExpertTask",
       "upstreamOperationId": "projects.expertTasks.resolve",
       "method": "POST",
@@ -8745,6 +8779,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+    },
+    {
+      "id": "createExpertTaskAppeal",
+      "upstreamOperationId": "projects.expertTasks.appeal",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent",
+        "expertTaskId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "rationale",
+        "evidence",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "rationale",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision."
     },
     {
       "id": "claimExpertTask",
@@ -8879,6 +8946,37 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Autosave a version-checked draft under the active reviewer lease."
+    },
+    {
+      "id": "recordReviewerSessionEvent",
+      "upstreamOperationId": "projects.reviewerSessions.record",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-sessions:record",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "event",
+        "sessionId"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "event",
+        "sessionId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier."
     },
     {
       "id": "getReviewOperations",
