@@ -19,6 +19,7 @@ Usage:
 """
 from __future__ import annotations
 
+import difflib
 import json
 import re
 import subprocess
@@ -684,12 +685,19 @@ def main() -> int:
         return 1
     check = "--check" in sys.argv
     stale: list[str] = []
+    stale_diff: tuple[str, str, str] | None = None
     for rel_path, renderer in TARGETS.items():
         rendered = renderer(surface)
         target = ROOT / rel_path
         if check:
             if not target.exists() or target.read_text() != rendered:
                 stale.append(rel_path)
+                if stale_diff is None:
+                    stale_diff = (
+                        rel_path,
+                        target.read_text() if target.exists() else "",
+                        rendered,
+                    )
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(rendered)
@@ -700,6 +708,21 @@ def main() -> int:
                 f"stale generated surface: {rel_path} (run python3 scripts/gen-sdk-surface.py)",
                 file=sys.stderr,
             )
+        if stale_diff is not None:
+            rel_path, actual, expected = stale_diff
+            diff = list(
+                difflib.unified_diff(
+                    actual.splitlines(),
+                    expected.splitlines(),
+                    fromfile=f"committed/{rel_path}",
+                    tofile=f"generated/{rel_path}",
+                    lineterm="",
+                )
+            )
+            for line in diff[:120]:
+                print(line, file=sys.stderr)
+            if len(diff) > 120:
+                print("... generated diff truncated ...", file=sys.stderr)
         return 1
     if check:
         print("generated surface tables are current")
