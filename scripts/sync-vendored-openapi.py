@@ -83,6 +83,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
+    "temperaRisk": {
+        "source_repo": "tempera-dev/tempera-risk",
+        "source_branch": "main",
+        "source_path": "api/openapi.yaml",
+        "generated_path": "specs/tempera-risk-api.json",
+        "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
+        "transform": "yaml-json",
+    },
     "temperaWorkflows": {
         "source_repo": "tempera-dev/tempera-workflows",
         "source_branch": "main",

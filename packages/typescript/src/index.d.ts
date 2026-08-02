@@ -12,6 +12,7 @@ import type {
   PassthroughClient,
   RemiClient,
   TemperaLlmClient,
+  TemperaRiskClient,
   TemperaWorkflowsClient,
   TemperaGymClient,
   TemperaDocumentClient,
@@ -136,6 +137,7 @@ export type TemperaClient = {
   palette: PaletteClient;
   tempo: TempoClient;
   temperaLlm: TemperaLlmClient;
+  temperaRisk: TemperaRiskClient;
   temperaWorkflows: TemperaWorkflowsClient;
   temperaGym: TemperaGymClient;
   temperaBio: TemperaBioClient;

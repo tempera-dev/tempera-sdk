@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 6
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-payments')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'pii:unmask', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -24,6 +24,7 @@ ENVIRONMENTS = {
         "temperaGymUrl": "http://127.0.0.1:8096",
         "cradleApiUrl": "http://127.0.0.1:8088",
         "temperaLlmApiUrl": "http://127.0.0.1:8080",
+        "temperaRiskApiUrl": "http://127.0.0.1:8097",
         "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
         "paletteApiUrl": "http://localhost:8080",
         "paletteMcpUrl": "http://localhost:8080/mcp",
@@ -39,6 +40,7 @@ ENVIRONMENTS = {
         "temperaGymUrl": "https://preview-gym.tempera.dev",
         "cradleApiUrl": "https://preview-cradle.tempera.dev",
         "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
+        "temperaRiskApiUrl": "https://preview-risk.tempera.dev",
         "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
         "paletteApiUrl": "https://preview-mcp.tempera.dev",
         "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
@@ -54,6 +56,7 @@ ENVIRONMENTS = {
         "temperaGymUrl": "https://staging-gym.tempera.dev",
         "cradleApiUrl": "https://staging-cradle.tempera.dev",
         "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
+        "temperaRiskApiUrl": "https://staging-risk.tempera.dev",
         "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
         "paletteApiUrl": "https://staging-mcp.tempera.dev",
         "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
@@ -69,6 +72,7 @@ ENVIRONMENTS = {
         "temperaGymUrl": "https://gym.tempera.dev",
         "cradleApiUrl": "https://cradle.tempera.dev",
         "temperaLlmApiUrl": "https://llm.tempera.dev",
+        "temperaRiskApiUrl": "https://risk.tempera.dev",
         "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
         "paletteApiUrl": "https://mcp.tempera.dev",
         "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
@@ -104,6 +108,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_LLM_URL",
         "audience": "tempera-llm",
         "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
+    },
+    "temperaRisk": {
+        "name": "tempera-risk",
+        "repository": "https://github.com/tempera-dev/tempera-risk",
+        "env_var": "TEMPERA_RISK_URL",
+        "audience": "tempera-risk",
+        "description": "Governed, non-decisional cross-domain investigation service. The trusted SDK surface manages cases, grants, research jobs, sources, and reviewed dossiers; the smaller MCP surface is separately curated."
     },
     "temperaWorkflows": {
         "name": "tempera-workflows",
@@ -4659,6 +4670,1079 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
+        }
+    ],
+    "temperaRisk": [
+        {
+            "id": "health",
+            "upstream_operation_id": "health",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /healthz."
+        },
+        {
+            "id": "get_open_api",
+            "upstream_operation_id": "getOpenApi",
+            "method": "GET",
+            "path": "/openapi.yaml",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /openapi.yaml."
+        },
+        {
+            "id": "execute_graph_read",
+            "upstream_operation_id": "executeGraphRead",
+            "method": "POST",
+            "path": "/v1/projects/{project}/graphReads/execute",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "request",
+                "people_binding"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "request"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Execute one principal-bound, signed, bounded graph read."
+        },
+        {
+            "id": "create_subject",
+            "upstream_operation_id": "createSubject",
+            "method": "POST",
+            "path": "/v1/projects/{project}/subjects",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "subject_id",
+                "subject_type",
+                "state",
+                "attributes",
+                "external_refs"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "subject_id",
+                "subject_type"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/subjects."
+        },
+        {
+            "id": "ingest_event",
+            "upstream_operation_id": "ingestEvent",
+            "method": "POST",
+            "path": "/v1/projects/{project}/events:ingest",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "event_id",
+                "event_type",
+                "subject_id",
+                "counterparty_id",
+                "device_id",
+                "amount",
+                "event_time",
+                "received_at",
+                "attributes",
+                "evidence_refs"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "event_id",
+                "event_type",
+                "subject_id",
+                "event_time",
+                "received_at"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/events:ingest."
+        },
+        {
+            "id": "register_policy",
+            "upstream_operation_id": "registerPolicy",
+            "method": "POST",
+            "path": "/v1/projects/{project}/policies",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "policy_id",
+                "version",
+                "use_case",
+                "segment",
+                "description",
+                "default_action",
+                "default_reason_code",
+                "missing_data_action",
+                "missing_data_reason_code",
+                "conflict_strategy",
+                "rules",
+                "model_dependencies",
+                "change_ticket",
+                "created_by"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "policy_id",
+                "version",
+                "use_case",
+                "default_action",
+                "default_reason_code",
+                "missing_data_action",
+                "missing_data_reason_code",
+                "conflict_strategy",
+                "rules",
+                "change_ticket",
+                "created_by"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/policies."
+        },
+        {
+            "id": "register_model",
+            "upstream_operation_id": "registerModel",
+            "method": "POST",
+            "path": "/v1/projects/{project}/models",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "model_id",
+                "version",
+                "state",
+                "artifact_sha256",
+                "runtime",
+                "input_features",
+                "output_feature",
+                "training_data_refs",
+                "validation_report_ref",
+                "calibration",
+                "limitations",
+                "created_at",
+                "approval_ids"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "model_id",
+                "version",
+                "state",
+                "artifact_sha256",
+                "runtime",
+                "input_features",
+                "output_feature",
+                "training_data_refs",
+                "validation_report_ref",
+                "calibration",
+                "limitations",
+                "created_at",
+                "approval_ids"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Register an immutable model artifact after dual human approval."
+        },
+        {
+            "id": "ingest_model_score",
+            "upstream_operation_id": "ingestModelScore",
+            "method": "POST",
+            "path": "/v1/projects/{project}/modelScores:ingest",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "algorithm",
+                "key_id",
+                "score",
+                "signature"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "algorithm",
+                "key_id",
+                "score",
+                "signature"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Ingest a signed non-decisional score from an authenticated scorer workload."
+        },
+        {
+            "id": "create_approval",
+            "upstream_operation_id": "createApproval",
+            "method": "POST",
+            "path": "/v1/projects/{project}/approvals",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "action",
+                "target"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "action",
+                "target"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/approvals."
+        },
+        {
+            "id": "deploy_policy",
+            "upstream_operation_id": "deployPolicy",
+            "method": "POST",
+            "path": "/v1/projects/{project}/policyDeployments",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "deployment_id",
+                "policy_id",
+                "policy_version",
+                "mode",
+                "traffic_percent",
+                "effective_at",
+                "approval_ids"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "deployment_id",
+                "policy_id",
+                "policy_version",
+                "mode",
+                "traffic_percent",
+                "effective_at",
+                "approval_ids"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/policyDeployments."
+        },
+        {
+            "id": "create_decision",
+            "upstream_operation_id": "createDecision",
+            "method": "POST",
+            "path": "/v1/projects/{project}/decisions",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "request_id",
+                "subject_id",
+                "event_id",
+                "use_case",
+                "segment",
+                "features",
+                "model_versions",
+                "evidence_refs",
+                "as_of",
+                "available_as_of",
+                "execution_mode"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "request_id",
+                "subject_id",
+                "use_case",
+                "as_of"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/decisions."
+        },
+        {
+            "id": "get_decision",
+            "upstream_operation_id": "getDecision",
+            "method": "GET",
+            "path": "/v1/projects/{project}/decisions/{decisionId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "decisionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/decisions/{decisionId}."
+        },
+        {
+            "id": "record_outcome",
+            "upstream_operation_id": "recordOutcome",
+            "method": "POST",
+            "path": "/v1/projects/{project}/outcomes",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/outcomes."
+        },
+        {
+            "id": "create_screening",
+            "upstream_operation_id": "createScreening",
+            "method": "POST",
+            "path": "/v1/projects/{project}/screenings",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "index_name",
+                "subject",
+                "permissible_purpose",
+                "case_id",
+                "threshold",
+                "max_candidates"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "index_name",
+                "subject",
+                "permissible_purpose",
+                "case_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/screenings."
+        },
+        {
+            "id": "list_cases",
+            "upstream_operation_id": "listCases",
+            "method": "GET",
+            "path": "/v1/projects/{project}/cases",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/cases."
+        },
+        {
+            "id": "create_case",
+            "upstream_operation_id": "createCase",
+            "method": "POST",
+            "path": "/v1/projects/{project}/cases",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "case_id",
+                "case_type",
+                "state",
+                "subject_ids",
+                "alert_ids",
+                "assigned_to",
+                "disposition",
+                "evidence_refs",
+                "attributes"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "case_id",
+                "case_type",
+                "state",
+                "subject_ids",
+                "alert_ids",
+                "assigned_to",
+                "disposition",
+                "evidence_refs",
+                "attributes"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Open a governed multi-domain investigation case."
+        },
+        {
+            "id": "get_case",
+            "upstream_operation_id": "getCase",
+            "method": "GET",
+            "path": "/v1/projects/{project}/cases/{caseId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/cases/{caseId}."
+        },
+        {
+            "id": "get_case_dossier",
+            "upstream_operation_id": "getCaseDossier",
+            "method": "GET",
+            "path": "/v1/projects/{project}/cases/{caseId}/dossier",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read all completed non-decisional investigation dossiers for a case."
+        },
+        {
+            "id": "create_people_case",
+            "upstream_operation_id": "createPeopleCase",
+            "method": "POST",
+            "path": "/v1/projects/{project}/peopleCases",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "case_id",
+                "case_type",
+                "state",
+                "subject_ids",
+                "alert_ids",
+                "assigned_to",
+                "disposition",
+                "evidence_refs",
+                "attributes"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "case_id",
+                "case_type",
+                "state",
+                "subject_ids",
+                "alert_ids",
+                "assigned_to",
+                "disposition",
+                "evidence_refs",
+                "attributes"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Open a governed case before sensitive people intelligence work."
+        },
+        {
+            "id": "create_people_access_grant",
+            "upstream_operation_id": "createPeopleAccessGrant",
+            "method": "POST",
+            "path": "/v1/projects/{project}/peopleAccessGrants",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "grant_id",
+                "case_id",
+                "subject_ids",
+                "actor_ids",
+                "permissible_purpose",
+                "allowed_fields",
+                "allowed_providers",
+                "third_party_disclosure_allowed",
+                "valid_from",
+                "expires_at",
+                "created_by",
+                "approval_ids",
+                "change_ticket"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "grant_id",
+                "case_id",
+                "subject_ids",
+                "actor_ids",
+                "permissible_purpose",
+                "allowed_fields",
+                "allowed_providers",
+                "third_party_disclosure_allowed",
+                "valid_from",
+                "expires_at",
+                "created_by",
+                "approval_ids",
+                "change_ticket"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded access."
+        },
+        {
+            "id": "revoke_people_access_grant",
+            "upstream_operation_id": "revokePeopleAccessGrant",
+            "method": "POST",
+            "path": "/v1/projects/{project}/peopleAccessGrants/{grantId}/revoke",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "grantId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "reason"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "reason"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Revoke a sensitive people-data access grant."
+        },
+        {
+            "id": "create_people_directory_profile",
+            "upstream_operation_id": "createPeopleDirectoryProfile",
+            "method": "POST",
+            "path": "/v1/projects/{project}/peopleDirectoryProfiles",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "profile_id",
+                "subject_id",
+                "entity_kind",
+                "anchors",
+                "attributes",
+                "source_ids",
+                "evidence_refs",
+                "valid_from",
+                "valid_to",
+                "recorded_at",
+                "retention_expires_at",
+                "non_decisional"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "profile_id",
+                "subject_id",
+                "entity_kind",
+                "anchors",
+                "attributes",
+                "source_ids",
+                "evidence_refs",
+                "valid_from",
+                "valid_to",
+                "recorded_at",
+                "retention_expires_at"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Ingest an evidence-backed bitemporal person or company profile."
+        },
+        {
+            "id": "search_people",
+            "upstream_operation_id": "searchPeople",
+            "method": "POST",
+            "path": "/v1/projects/{project}/people/search",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "schema",
+                "query_id",
+                "subject_id",
+                "access_grant_id",
+                "case_id",
+                "permissible_purpose",
+                "entity_kind",
+                "anchors",
+                "attributes",
+                "max_candidates",
+                "as_of",
+                "known_at"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "schema",
+                "query_id",
+                "subject_id",
+                "access_grant_id",
+                "case_id",
+                "permissible_purpose",
+                "entity_kind",
+                "anchors",
+                "attributes",
+                "max_candidates",
+                "as_of",
+                "known_at"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Find non-decisional identity-resolution candidates under an active case grant."
+        },
+        {
+            "id": "list_source_packs",
+            "upstream_operation_id": "listSourcePacks",
+            "method": "GET",
+            "path": "/v1/projects/{project}/sourcePacks",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List declared non-runnable investigation source packs."
+        },
+        {
+            "id": "get_source_pack",
+            "upstream_operation_id": "getSourcePack",
+            "method": "GET",
+            "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "sourcePackId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read one declared non-runnable investigation source pack."
+        },
+        {
+            "id": "create_research_job",
+            "upstream_operation_id": "createResearchJob",
+            "method": "POST",
+            "path": "/v1/projects/{project}/researchJobs",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "subject",
+                "question",
+                "purpose",
+                "permissible_purpose",
+                "output_schema",
+                "budgets",
+                "source_policy",
+                "case_id",
+                "access_grant_id",
+                "actor_id",
+                "retention_policy_id",
+                "human_review_required",
+                "candidate_binding",
+                "provider_plan",
+                "investigation_profile",
+                "source_pack_ids"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "subject",
+                "question",
+                "purpose",
+                "permissible_purpose",
+                "output_schema",
+                "budgets",
+                "source_policy",
+                "case_id",
+                "actor_id",
+                "retention_policy_id",
+                "human_review_required"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/researchJobs."
+        },
+        {
+            "id": "get_research_job",
+            "upstream_operation_id": "getResearchJob",
+            "method": "GET",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}."
+        },
+        {
+            "id": "get_research_job_result",
+            "upstream_operation_id": "getResearchJobResult",
+            "method": "GET",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read the cited, non-decisional result under the job's original access grant."
+        },
+        {
+            "id": "list_research_job_events",
+            "upstream_operation_id": "listResearchJobEvents",
+            "method": "GET",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read ordered non-decisional job events under the job's original access grant."
+        },
+        {
+            "id": "cancel_research_job",
+            "upstream_operation_id": "cancelResearchJob",
+            "method": "POST",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "reason"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "reason"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel."
+        },
+        {
+            "id": "review_research_job",
+            "upstream_operation_id": "reviewResearchJob",
+            "method": "POST",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "approved",
+                "reason"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "approved",
+                "reason"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
+        },
+        {
+            "id": "export_audit",
+            "upstream_operation_id": "exportAudit",
+            "method": "GET",
+            "path": "/v1/projects/{project}/audit:export",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/audit:export."
         }
     ],
     "temperaWorkflows": [
