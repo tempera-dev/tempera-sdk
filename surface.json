@@ -3230,6 +3230,31 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "listSubjects",
+        "method": "GET",
+        "path": "/v1/projects/{project}/subjects",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/subjects.",
+        "upstreamOperationId": "listSubjects",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getSubject",
+        "method": "GET",
+        "path": "/v1/projects/{project}/subjects/{subjectId}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/subjects/{subjectId}.",
+        "upstreamOperationId": "getSubject",
+        "pathParams": [
+          "project",
+          "subjectId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
         "id": "ingestEvent",
         "method": "POST",
         "path": "/v1/projects/{project}/events:ingest",
@@ -3760,6 +3785,19 @@
         "auth": "product",
         "description": "Read one declared non-runnable investigation source pack.",
         "upstreamOperationId": "getSourcePack",
+        "pathParams": [
+          "project",
+          "sourcePackId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getSourceCoverage",
+        "method": "GET",
+        "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
+        "auth": "product",
+        "description": "Read truthful admitted coverage for one source pack.",
+        "upstreamOperationId": "getSourceCoverage",
         "pathParams": [
           "project",
           "sourcePackId"

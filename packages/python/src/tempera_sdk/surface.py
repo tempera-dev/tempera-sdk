@@ -4778,6 +4778,53 @@ OPERATIONS = {
             "description": "Call POST /v1/projects/{project}/subjects."
         },
         {
+            "id": "list_subjects",
+            "upstream_operation_id": "listSubjects",
+            "method": "GET",
+            "path": "/v1/projects/{project}/subjects",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/subjects."
+        },
+        {
+            "id": "get_subject",
+            "upstream_operation_id": "getSubject",
+            "method": "GET",
+            "path": "/v1/projects/{project}/subjects/{subjectId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "subjectId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/projects/{project}/subjects/{subjectId}."
+        },
+        {
             "id": "ingest_event",
             "upstream_operation_id": "ingestEvent",
             "method": "POST",
@@ -5493,6 +5540,30 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Read one declared non-runnable investigation source pack."
+        },
+        {
+            "id": "get_source_coverage",
+            "upstream_operation_id": "getSourceCoverage",
+            "method": "GET",
+            "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "sourcePackId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read truthful admitted coverage for one source pack."
         },
         {
             "id": "create_research_job",

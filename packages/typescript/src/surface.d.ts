@@ -443,6 +443,10 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   executeGraphRead(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/subjects. */
   createSubject(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/subjects. */
+  listSubjects(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/projects/{project}/subjects/{subjectId}. */
+  getSubject(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/events:ingest. */
   ingestEvent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/policies. */
@@ -483,6 +487,8 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   listSourcePacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read one declared non-runnable investigation source pack. */
   getSourcePack(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read truthful admitted coverage for one source pack. */
+  getSourceCoverage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/researchJobs. */
   createResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/researchJobs/{jobId}. */
