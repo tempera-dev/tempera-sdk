@@ -3853,8 +3853,7 @@
             }
           },
           "continuation_of_job_id": {
-            "$ref": "#/components/schemas/ResourceId",
-            "description": "Prior stopped or terminal job; server validates fresh authorization, case, and subject."
+            "$ref": "#/components/schemas/ResourceId"
           }
         },
         "additionalProperties": false
