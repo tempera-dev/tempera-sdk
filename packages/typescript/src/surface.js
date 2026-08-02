@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 6;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-payments"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "pii:unmask", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -139,6 +139,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_DOCUMENT_URL",
     "audience": "tempera-document",
     "description": "Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered."
+  },
+  "temperaPayments": {
+    "name": "tempera-payments",
+    "repository": "https://github.com/tempera-dev/tempera-payments",
+    "envVar": "TEMPERA_PAYMENTS_URL",
+    "audience": "tempera-payments",
+    "description": "Provider-neutral fiat checkout and blockchain settlement platform. Typed operations await a source-locked producer OpenAPI contract."
   },
   "cradle": {
     "name": "cradle",
@@ -6489,6 +6496,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Complete a streamed upload after digest assertions."
     }
   ],
+  "temperaPayments": [],
   "cradle": [
     {
       "id": "projectsBrowserAdaptersIssueCapability",

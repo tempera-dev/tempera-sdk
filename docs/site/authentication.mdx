@@ -189,6 +189,7 @@ is the default when none is specified.
 | `tempera-gym` | tempera-gym |
 | `tempera-bio` | tempera-bio |
 | `tempera-document` | tempera-document |
+| `tempera-payments` | tempera-payments |
 
 ## Scopes
 
@@ -222,6 +223,12 @@ is the default when none is specified.
 | `document:read` | tempera-document: `documentUnitsList`, `documentsGet`, `documentsGetGraph`, `documentsSearch`, `operationsGet`, `uploadsGet` |
 | `document:write` | tempera-document: `documentsCreate`, `documentsExtract`, `documentsPrepareRetrieval`, `documentsProcess`, `uploadsComplete`, `uploadsCreate`, `uploadsWrite` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
+| `payments:intents:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:intents:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 
 ## Issuer endpoints

@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 6
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-payments')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'pii:unmask', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -132,6 +132,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_DOCUMENT_URL",
         "audience": "tempera-document",
         "description": "Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered."
+    },
+    "temperaPayments": {
+        "name": "tempera-payments",
+        "repository": "https://github.com/tempera-dev/tempera-payments",
+        "env_var": "TEMPERA_PAYMENTS_URL",
+        "audience": "tempera-payments",
+        "description": "Provider-neutral fiat checkout and blockchain settlement platform. Typed operations await a source-locked producer OpenAPI contract."
     },
     "cradle": {
         "name": "cradle",
@@ -6480,6 +6487,7 @@ OPERATIONS = {
             "description": "Complete a streamed upload after digest assertions."
         }
     ],
+    "temperaPayments": [],
     "cradle": [
         {
             "id": "projects_browser_adapters_issue_capability",

@@ -23,7 +23,8 @@
     "tempera-workflows",
     "tempera-gym",
     "tempera-bio",
-    "tempera-document"
+    "tempera-document",
+    "tempera-payments"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -55,6 +56,12 @@
     "document:read",
     "document:write",
     "pii:unmask",
+    "payments:intents:read",
+    "payments:intents:write",
+    "payments:receipts:read",
+    "payments:webhooks:write",
+    "payments:refunds:write",
+    "payments:admin",
     "admin"
   ],
   "scopeGaps": {},
@@ -213,6 +220,14 @@
       "audience": "tempera-document",
       "auth": "bearer minted for audience tempera-document with document:read/document:write, or a central tp_ API key",
       "description": "Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered."
+    },
+    "temperaPayments": {
+      "name": "tempera-payments",
+      "repository": "https://github.com/tempera-dev/tempera-payments",
+      "envVar": "TEMPERA_PAYMENTS_URL",
+      "audience": "tempera-payments",
+      "auth": "bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key",
+      "description": "Provider-neutral fiat checkout and blockchain settlement platform. Typed operations await a source-locked producer OpenAPI contract."
     },
     "cradle": {
       "name": "cradle",
@@ -4504,6 +4519,7 @@
         "scope": "document:write"
       }
     ],
+    "temperaPayments": [],
     "cradle": [
       {
         "id": "projectsBrowserAdaptersIssueCapability",

@@ -646,7 +646,15 @@ def render_rust(surface: dict) -> str:
     lines.append("")
     rendered = "\n".join(lines)
     formatted = subprocess.run(
-        ["rustfmt", "--emit", "stdout", "--edition", "2024"],
+        [
+            "rustfmt",
+            "--emit",
+            "stdout",
+            "--edition",
+            "2024",
+            "--config",
+            "style_edition=2024",
+        ],
         input=rendered,
         capture_output=True,
         text=True,
