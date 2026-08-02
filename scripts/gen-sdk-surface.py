@@ -658,6 +658,8 @@ def render_rust(surface: dict) -> str:
             "2024",
             "--config",
             "newline_style=Unix",
+            "--config-path",
+            str(ROOT / "scripts"),
         ],
         input=rendered,
         capture_output=True,
