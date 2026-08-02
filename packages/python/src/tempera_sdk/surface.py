@@ -5642,6 +5642,33 @@ OPERATIONS = {
             "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}."
         },
         {
+            "id": "stream_research_job_events",
+            "upstream_operation_id": "streamResearchJobEvents",
+            "method": "GET",
+            "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "jobId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "afterSequence",
+                "pageSize"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence."
+        },
+        {
             "id": "get_research_job_result",
             "upstream_operation_id": "getResearchJobResult",
             "method": "GET",
@@ -5677,7 +5704,10 @@ OPERATIONS = {
                 "jobId"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "afterSequence",
+                "pageSize"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],

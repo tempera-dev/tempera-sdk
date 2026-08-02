@@ -3862,6 +3862,23 @@
         "requestBodyKind": "none"
       },
       {
+        "id": "streamResearchJobEvents",
+        "method": "GET",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
+        "auth": "product",
+        "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence.",
+        "upstreamOperationId": "streamResearchJobEvents",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "query": [
+          "afterSequence",
+          "pageSize"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
         "id": "getResearchJobResult",
         "method": "GET",
         "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
@@ -3885,7 +3902,11 @@
           "project",
           "jobId"
         ],
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "query": [
+          "afterSequence",
+          "pageSize"
+        ]
       },
       {
         "id": "cancelResearchJob",

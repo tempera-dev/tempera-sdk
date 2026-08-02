@@ -493,6 +493,8 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   createResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/researchJobs/{jobId}. */
   getResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replay bounded authorized job events as SSE; reconnect with afterSequence. */
+  streamResearchJobEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read the cited, non-decisional result under the job's original access grant. */
   getResearchJobResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read ordered non-decisional job events under the job's original access grant. */
