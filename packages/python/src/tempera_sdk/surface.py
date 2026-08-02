@@ -5593,7 +5593,8 @@ OPERATIONS = {
                 "candidate_binding",
                 "provider_plan",
                 "investigation_profile",
-                "source_pack_ids"
+                "source_pack_ids",
+                "continuation_of_job_id"
             ],
             "forbidden_body": [],
             "required_body": [

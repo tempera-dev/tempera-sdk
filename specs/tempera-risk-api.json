@@ -1153,7 +1153,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SourceCoverage"
                 }
               }
             }
@@ -3851,6 +3851,10 @@
             "items": {
               "$ref": "#/components/schemas/ResourceId"
             }
+          },
+          "continuation_of_job_id": {
+            "$ref": "#/components/schemas/ResourceId",
+            "description": "Prior stopped or terminal job; server validates fresh authorization, case, and subject."
           }
         },
         "additionalProperties": false
@@ -3987,6 +3991,83 @@
             "maxItems": 64,
             "items": {
               "$ref": "#/components/schemas/SourcePack"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceCoverage": {
+        "type": "object",
+        "required": [
+          "schema",
+          "source_pack",
+          "admitted_source_count",
+          "coverage_state",
+          "admitted_sources",
+          "limitations",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.source-coverage/v1"
+          },
+          "source_pack": {
+            "$ref": "#/components/schemas/SourcePack"
+          },
+          "admitted_source_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "coverage_state": {
+            "enum": [
+              "DECLARED_ONLY",
+              "SHADOW",
+              "ACTIVE"
+            ]
+          },
+          "admitted_sources": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "source_id",
+                "publisher",
+                "execution_state",
+                "adapter"
+              ],
+              "properties": {
+                "source_id": {
+                  "$ref": "#/components/schemas/ResourceId"
+                },
+                "publisher": {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                "execution_state": {
+                  "enum": [
+                    "SHADOW",
+                    "ACTIVE"
+                  ]
+                },
+                "adapter": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 2048
             }
           },
           "non_decisional": {
