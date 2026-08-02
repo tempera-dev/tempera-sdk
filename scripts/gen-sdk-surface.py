@@ -645,8 +645,19 @@ def render_rust(surface: dict) -> str:
     lines.append("}")
     lines.append("")
     rendered = "\n".join(lines)
+    # Pin line endings explicitly: rustfmt otherwise follows the host default,
+    # which made the committed table non-reproducible between developer Macs
+    # and the Linux exact-source gate.
     formatted = subprocess.run(
-        ["rustfmt", "--emit", "stdout", "--edition", "2024"],
+        [
+            "rustfmt",
+            "--emit",
+            "stdout",
+            "--edition",
+            "2024",
+            "--config",
+            "newline_style=Unix",
+        ],
         input=rendered,
         capture_output=True,
         text=True,
