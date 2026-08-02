@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "dd4aba17178c1324da95d0ee398ea52f9a8e2f28",
   "source_branch": "main",
-  "source_commit": "02666d4682a62efe00a609756fb059159ebd9e77",
+  "source_commit": "788a8c93b7779aa0cb83191957ee8c37d317e112",
   "source_mode": "100644",
   "source_path": "sdks/openapi/tempera-document-api.json",
   "source_repo": "tempera-dev/tempera-document",
