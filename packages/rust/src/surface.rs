@@ -6606,6 +6606,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         body: &[
             "tenant_id",
             "merchant_id",
+            "risk_subject_id",
             "recipient",
             "asset",
             "amount",
@@ -6615,6 +6616,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         required_body: &[
             "tenant_id",
             "merchant_id",
+            "risk_subject_id",
             "recipient",
             "asset",
             "amount",

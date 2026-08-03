@@ -7301,6 +7301,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "tenant_id",
         "merchant_id",
+        "risk_subject_id",
         "recipient",
         "asset",
         "amount",
@@ -7310,6 +7311,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [
         "tenant_id",
         "merchant_id",
+        "risk_subject_id",
         "recipient",
         "asset",
         "amount",

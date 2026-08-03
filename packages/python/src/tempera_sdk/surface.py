@@ -7292,6 +7292,7 @@ OPERATIONS = {
             "body": [
                 "tenant_id",
                 "merchant_id",
+                "risk_subject_id",
                 "recipient",
                 "asset",
                 "amount",
@@ -7301,6 +7302,7 @@ OPERATIONS = {
             "required_body": [
                 "tenant_id",
                 "merchant_id",
+                "risk_subject_id",
                 "recipient",
                 "asset",
                 "amount",
