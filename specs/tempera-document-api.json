@@ -1897,6 +1897,13 @@
             "format": "date-time",
             "description": "Creation time."
           },
+          "graph_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Immutable canonical graph digest for the latest successful version."
+          },
           "media_type": {
             "type": "string",
             "description": "Detected/declared media type."
@@ -1904,6 +1911,13 @@
           "name": {
             "type": "string",
             "description": "`projects/{project}/documents/{document}`."
+          },
+          "receipt_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Immutable processing receipt digest paired with `graph_sha256`."
           },
           "source_byte_length": {
             "type": "integer",
@@ -2733,6 +2747,13 @@
           "profile": {
             "$ref": "#/components/schemas/ProcessingProfile",
             "description": "Profile."
+          },
+          "receipt_artifact_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Content-addressed serialized receipt artifact. This differs from the\nsigned receipt digest because the latter hashes the unsigned projection."
           },
           "receipt_sha256": {
             "type": [
