@@ -578,6 +578,14 @@ export interface TemperaDocumentClient extends TemperaProductClientBase {
 }
 
 export interface TemperaPaymentsClient extends TemperaProductClientBase {
+  /** Get payment service health. */
+  getPaymentsHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a canonical payment intent. */
+  createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a hosted Stripe Checkout session for a payment intent. */
+  createStripeCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and durably deduplicate a Stripe webhook using its raw body. */
+  receiveStripeWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface CradleClient extends TemperaProductClientBase {

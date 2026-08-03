@@ -227,7 +227,7 @@
       "envVar": "TEMPERA_PAYMENTS_URL",
       "audience": "tempera-payments",
       "auth": "bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key",
-      "description": "Provider-neutral fiat checkout and blockchain settlement platform. Typed operations await a source-locked producer OpenAPI contract."
+      "description": "Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations."
     },
     "cradle": {
       "name": "cradle",
@@ -4519,7 +4519,84 @@
         "scope": "document:write"
       }
     ],
-    "temperaPayments": [],
+    "temperaPayments": [
+      {
+        "id": "getPaymentsHealth",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "none",
+        "description": "Get payment service health.",
+        "upstreamOperationId": "getPaymentsHealth",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createPaymentIntent",
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "auth": "oauthResource",
+        "description": "Create a canonical payment intent.",
+        "upstreamOperationId": "createPaymentIntent",
+        "body": [
+          "tenant_id",
+          "merchant_id",
+          "recipient",
+          "asset",
+          "amount",
+          "expires_in_seconds"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "merchant_id",
+          "recipient",
+          "asset",
+          "amount",
+          "expires_in_seconds"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:write"
+      },
+      {
+        "id": "createStripeCheckout",
+        "method": "POST",
+        "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+        "auth": "oauthResource",
+        "description": "Create a hosted Stripe Checkout session for a payment intent.",
+        "upstreamOperationId": "createStripeCheckout",
+        "pathParams": [
+          "payment_intent_id"
+        ],
+        "body": [
+          "tenant_id",
+          "currency",
+          "product_name",
+          "success_url",
+          "cancel_url"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "currency",
+          "product_name",
+          "success_url",
+          "cancel_url"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:write"
+      },
+      {
+        "id": "receiveStripeWebhook",
+        "method": "POST",
+        "path": "/v1/webhooks/stripe",
+        "auth": "none",
+        "description": "Verify and durably deduplicate a Stripe webhook using its raw body.",
+        "upstreamOperationId": "receiveStripeWebhook",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      }
+    ],
     "cradle": [
       {
         "id": "projectsBrowserAdaptersIssueCapability",

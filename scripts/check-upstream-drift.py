@@ -17,6 +17,7 @@ SPECS_DIR = ROOT / "specs"
 EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 VENDORED_SPECS = {
+    "temperaPayments": "tempera-payments-api.json",
     "dataEngine": "data-engine-openapi.json",
     "humanData": "human-data-openapi.json",
     "temperaLlm": "tempera-llm-api.json",

@@ -1,0 +1,97 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Tempera Payments API",
+    "version": "0.1.0",
+    "description": "A noncustodial payment-intent API. Atomic amounts are base-10 integer strings; decimal and floating-point money values are invalid. This contract is the producer source for tempera-sdk integration."
+  },
+  "servers": [{ "url": "https://payments.tempera.dev" }],
+  "security": [{ "oauth2": ["payments:intents:write"] }],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getPaymentsHealth",
+        "security": [],
+        "responses": { "200": { "description": "Service is reachable" } }
+      }
+    },
+    "/v1/payment_intents": {
+      "post": {
+        "operationId": "createPaymentIntent",
+        "summary": "Create a canonical payment intent",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "parameters": [{
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+        }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreatePaymentIntent" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PaymentIntent" } } } },
+          "200": { "description": "Equivalent idempotent replay", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PaymentIntent" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/v1/payment_intents/{payment_intent_id}/stripe_checkout": {
+      "post": {
+        "operationId": "createStripeCheckout",
+        "summary": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "parameters": [
+          { "name": "payment_intent_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 255 } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateStripeCheckout" } } } },
+        "responses": {
+          "201": { "description": "Checkout session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StripeCheckout" } } } },
+          "200": { "description": "Equivalent idempotent replay", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StripeCheckout" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "404": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" },
+          "502": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/v1/webhooks/stripe": {
+      "post": {
+        "operationId": "receiveStripeWebhook",
+        "summary": "Verify and durably deduplicate a Stripe webhook using its raw body",
+        "security": [],
+        "parameters": [{ "name": "Stripe-Signature", "in": "header", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "Durably accepted or duplicate" }, "400": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": { "authorizationCode": { "authorizationUrl": "https://api.tempera.dev/oauth/authorize", "tokenUrl": "https://api.tempera.dev/oauth/token", "scopes": { "payments:intents:write": "Create payment intents", "payments:intents:read": "Read payment intents" } } }
+      }
+    },
+    "schemas": {
+      "AtomicAmount": { "type": "string", "pattern": "^[0-9]+$", "description": "Non-negative atomic integer. Never a decimal." },
+      "AssetId": { "type": "object", "required": ["network", "reference", "decimals"], "properties": { "network": { "type": "string", "examples": ["eip155:8453"] }, "reference": { "type": "string", "examples": ["0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"] }, "decimals": { "type": "integer", "minimum": 0, "maximum": 255 } } },
+      "CreatePaymentIntent": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "merchant_id", "recipient", "asset", "amount", "expires_in_seconds"], "properties": { "tenant_id": { "type": "string" }, "merchant_id": { "type": "string" }, "recipient": { "type": "string" }, "asset": { "$ref": "#/components/schemas/AssetId" }, "amount": { "$ref": "#/components/schemas/AtomicAmount" }, "expires_in_seconds": { "type": "integer", "minimum": 1, "maximum": 86400 } } },
+      "PaymentIntent": { "type": "object", "additionalProperties": false, "required": ["id", "tenant_id", "merchant_id", "recipient", "asset", "amount", "status", "version", "expires_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "tenant_id": { "type": "string" }, "merchant_id": { "type": "string" }, "recipient": { "type": "string" }, "asset": { "$ref": "#/components/schemas/AssetId" }, "amount": { "$ref": "#/components/schemas/AtomicAmount" }, "status": { "type": "string", "enum": ["CREATED", "RISK_PENDING", "AUTHORIZED", "PREPARED", "SIGNED", "BROADCAST", "OBSERVED", "CONFIRMED", "FINALIZED", "DENIED", "HELD", "REVIEW_REQUIRED", "FAILED", "EXPIRED", "REVERSED", "REFUND_PENDING", "REFUNDED"] }, "version": { "type": "integer", "minimum": 0 }, "expires_at": { "type": "string", "format": "date-time" } } },
+      "CreateStripeCheckout": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "currency", "product_name", "success_url", "cancel_url"], "properties": { "tenant_id": { "type": "string" }, "currency": { "type": "string", "pattern": "^[A-Za-z]{3}$", "examples": ["usd"] }, "product_name": { "type": "string", "minLength": 1, "maxLength": 255 }, "success_url": { "type": "string", "format": "uri", "pattern": "^https://" }, "cancel_url": { "type": "string", "format": "uri", "pattern": "^https://" } } },
+      "StripeCheckout": { "type": "object", "additionalProperties": false, "required": ["stripe_session_id", "checkout_url"], "properties": { "stripe_session_id": { "type": "string" }, "checkout_url": { "type": "string", "format": "uri" } } },
+      "Error": { "type": "object", "required": ["code", "message"], "properties": { "code": { "type": "string" }, "message": { "type": "string" } } }
+    },
+    "responses": { "ApiError": { "description": "Normalized API error", "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "$ref": "#/components/schemas/Error" } } } } } } }
+  }
+}

@@ -19,6 +19,14 @@ SOURCE_LOCK_SCRIPT = (
 )
 
 PRODUCTS: dict[str, dict[str, str]] = {
+    "temperaPayments": {
+        "source_repo": "tempera-dev/tempera-payments",
+        "source_branch": "main",
+        "source_path": "contracts/openapi/payments.openapi.json",
+        "generated_path": "specs/tempera-payments-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "dataEngine": {
         "source_repo": "tempera-dev/data-engine",
         "source_branch": "main",
