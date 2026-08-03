@@ -142,6 +142,7 @@ export type TemperaClient = {
   temperaGym: TemperaGymClient;
   temperaBio: TemperaBioClient;
   temperaDocument: TemperaDocumentClient;
+  temperaPayments: PassthroughClient;
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;

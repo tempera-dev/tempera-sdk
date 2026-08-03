@@ -5,7 +5,7 @@
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-payments";
 export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -618,6 +618,17 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaPaymentsClient extends TemperaProductClientBase {
+  /** Call GET /v1/health. */
+  getPaymentsHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a canonical payment intent. */
+  createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an idempotent hosted Stripe Checkout session for a fiat payment intent. */
+  createStripeCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and durably deduplicate a Stripe webhook using its raw body. */
+  receiveStripeWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaDocumentClient extends TemperaProductClientBase {

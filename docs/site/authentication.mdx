@@ -190,7 +190,7 @@ is the default when none is specified.
 | `tempera-bio` | tempera-bio |
 | `tempera-document` | tempera-document |
 | `tempera-risk` | tempera-risk |
-| `tempera-payments` | — |
+| `tempera-payments` | tempera-payments |
 
 ## Scopes
 
@@ -228,7 +228,7 @@ is the default when none is specified.
 | `risk:review` | No typed SDK operation declares it yet; enforced server-side. |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `payments:intents:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `payments:intents:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:intents:write` | tempera-payments: `createPaymentIntent`, `createStripeCheckout` |
 | `payments:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |

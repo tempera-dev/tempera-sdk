@@ -144,6 +144,13 @@ PRODUCTS = {
         "audience": "tempera-document",
         "description": "Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered."
     },
+    "temperaPayments": {
+        "name": "tempera-payments",
+        "repository": "https://github.com/tempera-dev/tempera-payments",
+        "env_var": "TEMPERA_PAYMENTS_URL",
+        "audience": "tempera-payments",
+        "description": "Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations."
+    },
     "cradle": {
         "name": "cradle",
         "repository": "https://github.com/tempera-dev/cradle",
@@ -7248,6 +7255,120 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Ingest mave d b score set."
+        }
+    ],
+    "temperaPayments": [
+        {
+            "id": "get_payments_health",
+            "upstream_operation_id": "getPaymentsHealth",
+            "method": "GET",
+            "path": "/v1/health",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Call GET /v1/health."
+        },
+        {
+            "id": "create_payment_intent",
+            "upstream_operation_id": "createPaymentIntent",
+            "method": "POST",
+            "path": "/v1/payment_intents",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "tenant_id",
+                "merchant_id",
+                "recipient",
+                "asset",
+                "amount",
+                "expires_in_seconds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id",
+                "merchant_id",
+                "recipient",
+                "asset",
+                "amount",
+                "expires_in_seconds"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:intents:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a canonical payment intent."
+        },
+        {
+            "id": "create_stripe_checkout",
+            "upstream_operation_id": "createStripeCheckout",
+            "method": "POST",
+            "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "payment_intent_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "body": [
+                "tenant_id",
+                "currency",
+                "product_name",
+                "success_url",
+                "cancel_url"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id",
+                "currency",
+                "product_name",
+                "success_url",
+                "cancel_url"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:intents:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
+        },
+        {
+            "id": "receive_stripe_webhook",
+            "upstream_operation_id": "receiveStripeWebhook",
+            "method": "POST",
+            "path": "/v1/webhooks/stripe",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
         }
     ],
     "temperaDocument": [
