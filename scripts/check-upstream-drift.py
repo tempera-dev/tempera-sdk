@@ -21,6 +21,7 @@ VENDORED_SPECS = {
     "dataEngine": "data-engine-openapi.json",
     "humanData": "human-data-openapi.json",
     "temperaLlm": "tempera-llm-api.json",
+    "temperaRisk": "tempera-risk-api.json",
     "temperaWorkflows": "tempera-workflows-api.json",
     "temperaGym": "tempera-gym-api.json",
     "temperaBio": "tempera-bio-api.json",

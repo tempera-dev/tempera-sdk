@@ -218,6 +218,9 @@
                   },
                   {
                     "$ref": "#/components/schemas/RemiMemoryFeedbackIngestRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DocumentEvidenceIngestRequest"
                   }
                 ]
               }
@@ -637,6 +640,20 @@
               "maxLength": 4096
             },
             "description": "Restrict tasks to one exact campaign resource name."
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CREATE_TIME_DESC",
+                "ROUTING"
+              ],
+              "default": "CREATE_TIME_DESC"
+            },
+            "description": "CREATE_TIME_DESC retains the legacy newest-first listing. ROUTING is an opt-in queue view ordered by priority descending, SLA deadline ascending (legacy no-deadline tasks last within a priority), then creation time and resource name ascending. Page tokens are bound to the selected ordering."
           }
         ],
         "responses": {
@@ -720,6 +737,60 @@
         }
       }
     },
+    "/v1/{parent}/reviewer-revocations": {
+      "post": {
+        "operationId": "projects.reviewerRevocations.create",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "review:gold:manage",
+        "summary": "Revoke one project-scoped reviewer pseudonym",
+        "description": "Records one immutable operator receipt and immediately terminates every active assignment held by the pseudonymous reviewer. It never changes a prior human decision and is deliberately REST-only, not an MCP tool.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewerRevocationCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Immutable reviewer revocation receipt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewerRevocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
     "/v1/{parent}/expert-tasks/{expertTaskId}:resolve": {
       "post": {
         "operationId": "projects.expertTasks.resolve",
@@ -755,6 +826,69 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExpertTaskResolution"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/expert-tasks/{expertTaskId}:appeal": {
+      "post": {
+        "operationId": "projects.expertTasks.appeal",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "review:resolve",
+        "summary": "Record an immutable reviewer appeal and open independent adjudication",
+        "description": "Appeals are project-bound and pseudonymous. They never overwrite the appealed decision; one accepted appeal opens one independent adjudication task for the source label. This operator/reviewer workflow is REST-only.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/ExpertTaskId"
+          },
+          {
+            "$ref": "#/components/parameters/RequestIdParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewAppealCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Immutable appeal receipt and the linked adjudication task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewAppeal"
                 }
               }
             }
@@ -1019,6 +1153,51 @@
           },
           "503": {
             "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/reviewer-sessions:record": {
+      "post": {
+        "operationId": "projects.reviewerSessions.record",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "review:resolve",
+        "summary": "Record a same-origin cookie reviewer-session lifecycle event",
+        "description": "Stores only a hash of a browser-generated opaque session identifier and the project-scoped reviewer pseudonym. This operational evidence never changes a review decision, routing, or release eligibility.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewerSessionEventRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotently recorded reviewer-session event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewerSessionEventResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
@@ -5014,7 +5193,7 @@
       },
       "ArtifactIngestRequest": {
         "type": "object",
-        "description": "Generic artifact input. remi.memory_feedback.v1 markers are excluded from this branch and must use RemiMemoryFeedbackIngestRequest's exact canonical wire shape.",
+        "description": "Generic artifact input. remi.memory_feedback.v1 and tempera.document-evidence.v1 markers are excluded from this branch and must use their exact canonical wire shapes.",
         "not": {
           "anyOf": [
             {
@@ -5104,6 +5283,80 @@
                   }
                 }
               }
+            },
+            {
+              "required": [
+                "artifactType"
+              ],
+              "properties": {
+                "artifactType": {
+                  "enum": [
+                    "DOCUMENT_EVIDENCE"
+                  ]
+                }
+              }
+            },
+            {
+              "required": [
+                "source"
+              ],
+              "properties": {
+                "source": {
+                  "enum": [
+                    "tempera-document"
+                  ]
+                }
+              }
+            },
+            {
+              "required": [
+                "externalId"
+              ],
+              "properties": {
+                "externalId": {
+                  "pattern": "^document-evidence-v1:"
+                }
+              }
+            },
+            {
+              "required": [
+                "rawBody"
+              ],
+              "properties": {
+                "rawBody": {
+                  "type": "object",
+                  "required": [
+                    "schemaVersion"
+                  ],
+                  "properties": {
+                    "schemaVersion": {
+                      "enum": [
+                        "tempera.document-evidence.v1"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "required": [
+                "metadata"
+              ],
+              "properties": {
+                "metadata": {
+                  "type": "object",
+                  "required": [
+                    "schemaVersion"
+                  ],
+                  "properties": {
+                    "schemaVersion": {
+                      "enum": [
+                        "tempera.document-evidence.v1"
+                      ]
+                    }
+                  }
+                }
+              }
             }
           ]
         },
@@ -5136,6 +5389,490 @@
             "type": "object",
             "additionalProperties": true,
             "description": "Producer metadata is retained and participates in immutable content identity."
+          }
+        }
+      },
+      "DocumentEvidenceIngestRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifactType",
+          "source",
+          "externalId",
+          "rawBody",
+          "metadata"
+        ],
+        "description": "Exact identity-addressed Tempera Document extraction-evidence handoff. The receiver recomputes the cross-language evidenceSha256 identity, binds it to externalId, independently content-hashes the complete stored envelope, accepts only grounded evidence, records producer origin as caller-asserted, and never treats v1 as training authority. The canonical artifact is capped at 8 MiB.",
+        "properties": {
+          "artifactType": {
+            "type": "string",
+            "enum": [
+              "DOCUMENT_EVIDENCE"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "tempera-document"
+            ]
+          },
+          "externalId": {
+            "type": "string",
+            "pattern": "^document-evidence-v1:[0-9a-f]{64}$"
+          },
+          "rawBody": {
+            "$ref": "#/components/schemas/DocumentEvidenceV1"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/DocumentEvidenceMetadataV1"
+          }
+        }
+      },
+      "DocumentEvidenceV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "sourceSha256",
+          "extraction",
+          "producer",
+          "evidenceSha256"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.document-evidence.v1"
+            ]
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "extraction": {
+            "$ref": "#/components/schemas/DocumentExtractionV1"
+          },
+          "producer": {
+            "$ref": "#/components/schemas/DocumentEvidenceProducerV1"
+          },
+          "evidenceSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "DocumentEvidenceProducerV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repository",
+          "commitSha",
+          "openapiSha256"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "enum": [
+              "https://github.com/tempera-dev/tempera-document"
+            ]
+          },
+          "commitSha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "openapiSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "DocumentEvidenceMetadataV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "evidenceSha256",
+          "classification",
+          "handlingTags",
+          "provenance"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "tempera.document-evidence.v1"
+            ]
+          },
+          "evidenceSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          },
+          "handlingTags": {
+            "type": "array",
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "PHI",
+                "PII",
+                "MALWARE",
+                "DUAL_USE",
+                "EXPORT_CONTROLLED",
+                "LICENSE_RESTRICTED"
+              ]
+            }
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/DocumentEvidenceProvenanceV1"
+          }
+        }
+      },
+      "DocumentEvidenceProvenanceV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "origin",
+          "integrity",
+          "evaluationOnly",
+          "trainingAllowed"
+        ],
+        "properties": {
+          "origin": {
+            "type": "string",
+            "enum": [
+              "CALLER_ASSERTED"
+            ]
+          },
+          "integrity": {
+            "type": "string",
+            "enum": [
+              "RECEIVER_VERIFIED"
+            ]
+          },
+          "evaluationOnly": {
+            "type": "boolean"
+          },
+          "trainingAllowed": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        }
+      },
+      "DocumentExtractionV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "document",
+          "documentVersion",
+          "graphSha256",
+          "requestSha256",
+          "modelEndpoint",
+          "modelProtocol",
+          "modelConformanceSha256",
+          "selectedUnitIndexes",
+          "selection",
+          "output",
+          "evidence",
+          "providerResponseId",
+          "providerRequestId",
+          "inputTokens",
+          "outputTokens",
+          "locallyEnforcedConstraints"
+        ],
+        "properties": {
+          "document": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^projects/[^/]{1,256}/documents/[^/]{1,256}$"
+          },
+          "documentVersion": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "graphSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "requestSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "modelEndpoint": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "modelProtocol": {
+            "type": "string",
+            "enum": [
+              "OPEN_AI_RESPONSES",
+              "OPEN_AI_CHAT_COMPLETIONS",
+              "ANTHROPIC_MESSAGES"
+            ]
+          },
+          "modelConformanceSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "selectedUnitIndexes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10000,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "selection": {
+            "$ref": "#/components/schemas/DocumentExtractionSelectionV1"
+          },
+          "output": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Caller-defined JSON Schema output; member names are opaque."
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 8192,
+            "items": {
+              "$ref": "#/components/schemas/DocumentExtractionEvidenceV1"
+            }
+          },
+          "providerResponseId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "providerRequestId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "inputTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "outputTokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "locallyEnforcedConstraints": {
+            "type": "array",
+            "maxItems": 4096,
+            "items": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          }
+        }
+      },
+      "DocumentExtractionSelectionV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method",
+          "scannedUnitCount",
+          "querySha256"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "EXPLICIT",
+              "COMPLETE_DOCUMENT",
+              "LEXICAL_BM25_V1"
+            ]
+          },
+          "scannedUnitCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4294967295
+          },
+          "querySha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "DocumentExtractionEvidenceV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "jsonPointer",
+          "quote",
+          "evidence"
+        ],
+        "properties": {
+          "jsonPointer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^/"
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 65536
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/DocumentEvidenceSpanV1"
+          }
+        }
+      },
+      "DocumentEvidenceSpanV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unitId",
+          "blockId",
+          "charStart",
+          "charEnd",
+          "polygon",
+          "timeRange",
+          "cropSha256",
+          "support"
+        ],
+        "properties": {
+          "unitId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "blockId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "charStart": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "charEnd": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 4294967295
+          },
+          "polygon": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentEvidencePolygonV1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timeRange": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DocumentEvidenceTimeRangeV1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cropSha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "support": {
+            "type": "string",
+            "enum": [
+              "GROUNDED"
+            ]
+          }
+        }
+      },
+      "DocumentEvidencePolygonV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "points"
+        ],
+        "properties": {
+          "points": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "x",
+                "y"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "DocumentEvidenceTimeRangeV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "startMs",
+          "endMs"
+        ],
+        "properties": {
+          "startMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9223372036854775807
+          },
+          "endMs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9223372036854775807
           }
         }
       },
@@ -6287,6 +7024,13 @@
             "maximum": 100000,
             "default": 100000,
             "description": "Maximum OPEN review tasks for this campaign; job admission reserves worst-case reviewer fanout before verifier work."
+          },
+          "completedReviewCostCents": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1000000,
+            "description": "Declared modeled cost per resolved review; not an invoice or payment record."
           }
         }
       },
@@ -6297,7 +7041,8 @@
           "priority",
           "taskSlaSeconds",
           "batchKey",
-          "maxOpenTasks"
+          "maxOpenTasks",
+          "completedReviewCostCents"
         ],
         "properties": {
           "priority": {
@@ -6318,6 +7063,12 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 100000
+          },
+          "completedReviewCostCents": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1000000
           }
         }
       },
@@ -7072,6 +7823,85 @@
           }
         }
       },
+      "ReviewAppealCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rationale",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Bounded caller-supplied appeal context retained with the immutable receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "description": "Hashed before persistence and bound to the normalized appeal payload."
+          }
+        }
+      },
+      "ReviewAppeal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "expertTaskName",
+          "sourceLabelName",
+          "requesterRef",
+          "rationale",
+          "evidence",
+          "status",
+          "adjudicationTaskName",
+          "createTime",
+          "updateTime"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "expertTaskName": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "sourceLabelName": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "requesterRef": {
+            "type": "string",
+            "pattern": "^hmac-sha256:v1:[0-9a-f]{64}$"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING_ADJUDICATION"
+            ]
+          },
+          "adjudicationTaskName": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "createTime": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "updateTime": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
       "ReviewQualificationTaskCreateRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -7160,6 +7990,67 @@
           }
         }
       },
+      "ReviewerRevocationCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reviewerRef",
+          "reason",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "reviewerRef": {
+            "type": "string",
+            "pattern": "^hmac-sha256:v1:[0-9a-f]{64}$",
+            "description": "Project-scoped reviewer pseudonym from an authorized operations surface."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        }
+      },
+      "ReviewerRevocation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "project",
+          "reviewerRef",
+          "reason",
+          "revokedAssignmentCount",
+          "createTime"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "data-engine.reviewer-revocation.v1"
+          },
+          "project": {
+            "type": "string"
+          },
+          "reviewerRef": {
+            "type": "string",
+            "description": "Project-scoped reviewer pseudonym; a clear identity is never returned."
+          },
+          "reason": {
+            "type": "string"
+          },
+          "revokedAssignmentCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "createTime": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
       "ReviewerQualification": {
         "type": "object",
         "additionalProperties": false,
@@ -7175,7 +8066,8 @@
           "goldAccuracy",
           "confidenceInterval95",
           "eligible",
-          "enforced"
+          "enforced",
+          "revoked"
         ],
         "properties": {
           "schema": {
@@ -7226,6 +8118,10 @@
           },
           "enforced": {
             "type": "boolean"
+          },
+          "revoked": {
+            "type": "boolean",
+            "description": "True when a quality operator has durably removed this pseudonym's project access."
           }
         }
       },
@@ -7362,6 +8258,7 @@
               "ACTIVE",
               "RELEASED",
               "EXPIRED",
+              "REVOKED",
               "COMPLETED"
             ]
           },
@@ -7450,6 +8347,7 @@
           "slaTargetSeconds",
           "queue",
           "throughput",
+          "reviewerSessionCompletion",
           "agreementByTaskFamily",
           "reviewerCalibration",
           "goldByTaskFamily",
@@ -7482,6 +8380,9 @@
           },
           "throughput": {
             "$ref": "#/components/schemas/ReviewOperationsThroughput"
+          },
+          "reviewerSessionCompletion": {
+            "$ref": "#/components/schemas/ReviewerSessionCompletion"
           },
           "agreementByTaskFamily": {
             "type": "array",
@@ -7584,6 +8485,84 @@
           },
           "draftsSaved": {
             "type": "integer"
+          }
+        }
+      },
+      "ReviewerSessionEventRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event",
+          "sessionId"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "STARTED",
+              "COMPLETED"
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9_-]{32,256}$",
+            "description": "Browser-generated opaque identifier; the producer retains only its SHA-256 hash."
+          }
+        }
+      },
+      "ReviewerSessionEventResponse": {
+        "type": "object",
+        "required": [
+          "schema",
+          "event"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "data-engine.reviewer-session.v1"
+          },
+          "event": {
+            "type": "string",
+            "enum": [
+              "STARTED",
+              "COMPLETED"
+            ]
+          }
+        }
+      },
+      "ReviewerSessionCompletion": {
+        "type": "object",
+        "required": [
+          "eligibleCookieSessions",
+          "completedCookieSessions",
+          "completionRate",
+          "targetCompletionRate",
+          "targetMet"
+        ],
+        "properties": {
+          "eligibleCookieSessions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "completedCookieSessions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "completionRate": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1
+          },
+          "targetCompletionRate": {
+            "type": "number",
+            "const": 0.95
+          },
+          "targetMet": {
+            "type": "boolean",
+            "description": "False when there are no eligible sessions; no success claim is inferred from an empty denominator."
           }
         }
       },
@@ -7781,6 +8760,8 @@
         "required": [
           "declaredCampaignBudgetCents",
           "activeCampaignCount",
+          "modeledCompletedReviewCostCents",
+          "modeledCostAvailable",
           "actualCostAvailable"
         ],
         "properties": {
@@ -7790,6 +8771,15 @@
           },
           "activeCampaignCount": {
             "type": "integer"
+          },
+          "modeledCompletedReviewCostCents": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "description": "Sum of declared unit costs for resolved non-qualification reviews in the requested window; null if any such review lacks a cost model."
+          },
+          "modeledCostAvailable": {
+            "type": "boolean"
           },
           "actualCostAvailable": {
             "type": "boolean",

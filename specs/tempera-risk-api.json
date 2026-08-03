@@ -1,0 +1,4351 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Risk API",
+    "version": "0.5.0-alpha",
+    "description": "Tenant-scoped deterministic risk decisioning and governed non-decisional research. LLMs are not called in the online decision path."
+  },
+  "servers": [
+    {
+      "url": "https://risk.example.invalid"
+    }
+  ],
+  "security": [
+    {
+      "bearerApiKey": []
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.yaml": {
+      "get": {
+        "operationId": "getOpenApi",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Committed OpenAPI contract",
+            "content": {
+              "application/yaml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/graphReads/execute": {
+      "post": {
+        "operationId": "executeGraphRead",
+        "summary": "Execute one principal-bound, signed, bounded graph read",
+        "description": "Issues and consumes a one-use Risk mandate, calls the separately authenticated Tempera Graph service, verifies the complete signed response, and records paired receipts. The result is non-decisional. This operation mutates replay and audit state and is therefore not declared read-only to MCP clients.",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "external_sink",
+          "mutation",
+          "untrusted_input"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphReadExecutionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified non-decisional graph result with signed mandate and paired receipts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphReadExecution"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/subjects": {
+      "post": {
+        "operationId": "createSubject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Subject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subject"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listSubjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subjects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/subjects/{subjectId}": {
+      "get": {
+        "operationId": "getSubject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "subjectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subject",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subject"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/events:ingest": {
+      "post": {
+        "operationId": "ingestEvent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ingested",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/policies": {
+      "post": {
+        "operationId": "registerPolicy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskPolicy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable policy registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/models": {
+      "post": {
+        "operationId": "registerModel",
+        "summary": "Register an immutable model artifact after dual human approval",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelRegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Immutable model version registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/modelScores:ingest": {
+      "post": {
+        "operationId": "ingestModelScore",
+        "summary": "Ingest a signed non-decisional score from an authenticated scorer workload",
+        "description": "Human identities are rejected. The score is verified against the configured Ed25519 issuer registry and cannot itself authorize an action.",
+        "x-tempera-effects": [
+          "mutation",
+          "untrusted_input"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelScoreEnvelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Verified score ingested",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Exact immutable replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/approvals": {
+      "post": {
+        "operationId": "createApproval",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "action",
+                  "target"
+                ],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "target": {}
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Human approval bound to exact target",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/policyDeployments": {
+      "post": {
+        "operationId": "deployPolicy",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deployment created after dual control",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/decisions": {
+      "post": {
+        "operationId": "createDecision",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deterministic decision created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Decision"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Exact replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Decision"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/decisions/{decisionId}": {
+      "get": {
+        "operationId": "getDecision",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "decisionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Decision"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/outcomes": {
+      "post": {
+        "operationId": "recordOutcome",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Outcome recorded"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/screenings": {
+      "post": {
+        "operationId": "createScreening",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreeningRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Non-decisional review candidates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreeningResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/cases": {
+      "get": {
+        "operationId": "listCases",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Governed cases",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCase",
+        "summary": "Open a governed multi-domain investigation case",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink",
+          "mutation"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Case"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Case created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/cases/{caseId}": {
+      "get": {
+        "operationId": "getCase",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/cases/{caseId}/dossier": {
+      "get": {
+        "operationId": "getCaseDossier",
+        "summary": "Read all completed non-decisional investigation dossiers for a case",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case dossier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseDossier"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/accessGrants": {
+      "post": {
+        "operationId": "createAccessGrant",
+        "summary": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessGrantRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Grant created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/accessGrants/{grantId}/revoke": {
+      "post": {
+        "operationId": "revokeAccessGrant",
+        "summary": "Revoke a sensitive investigation-data access grant",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/GrantId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Grant revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/peopleDirectoryProfiles": {
+      "post": {
+        "operationId": "createPeopleDirectoryProfile",
+        "summary": "Ingest an evidence-backed bitemporal person or company profile",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeopleDirectoryProfile"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Profile created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryProfile"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleDirectoryProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/people/search": {
+      "post": {
+        "operationId": "searchPeople",
+        "summary": "Find non-decisional identity-resolution candidates under an active case grant",
+        "description": "Returns evidence-linked candidates, explicit conflicts, limitations, and review requirements. It never declares an identity match or merges subjects.",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink",
+          "mutation"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeopleSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bounded candidate set",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleSearchResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/sourcePacks": {
+      "get": {
+        "operationId": "listSourcePacks",
+        "summary": "List declared non-runnable investigation source packs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Declared source-pack coverage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcePackList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/sourcePacks/{sourcePackId}": {
+      "get": {
+        "operationId": "getSourcePack",
+        "summary": "Read one declared non-runnable investigation source pack",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "sourcePackId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source-pack coverage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcePack"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/sourceCoverage/{sourcePackId}": {
+      "get": {
+        "operationId": "getSourceCoverage",
+        "summary": "Read truthful admitted coverage for one source pack",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "name": "sourcePackId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source coverage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceCoverage"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs": {
+      "post": {
+        "operationId": "createResearchJob",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink",
+          "mutation"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchJob"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}": {
+      "get": {
+        "operationId": "getResearchJob",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchJob"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}/events:stream": {
+      "get": {
+        "operationId": "streamResearchJobEvents",
+        "summary": "Replay bounded authorized job events as SSE; reconnect with afterSequence",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "name": "afterSequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE replay page",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}/result": {
+      "get": {
+        "operationId": "getResearchJobResult",
+        "summary": "Read the cited, non-decisional result under the job's original access grant",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cited, non-decisional investigation dossier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestigationDossier"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}/events": {
+      "get": {
+        "operationId": "listResearchJobEvents",
+        "summary": "Read ordered non-decisional job events under the job's original access grant",
+        "x-tempera-effects": [
+          "sensitive_source",
+          "untrusted_input",
+          "external_sink"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          },
+          {
+            "name": "afterSequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647,
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Research job events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchJobEventList"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}:cancel": {
+      "post": {
+        "operationId": "cancelResearchJob",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 1024
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cancellation requested"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/researchJobs/{jobId}:review": {
+      "post": {
+        "operationId": "reviewResearchJob",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "approved",
+                  "reason"
+                ],
+                "properties": {
+                  "approved": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 1024
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Human review completed"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/audit:export": {
+      "get": {
+        "operationId": "exportAudit",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hash-chained audit export and checkpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerApiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Tempera API key"
+      }
+    },
+    "parameters": {
+      "Project": {
+        "name": "project",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$"
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[!-~]+$"
+        }
+      },
+      "JobId": {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ResourceId"
+        }
+      },
+      "GrantId": {
+        "name": "grantId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ResourceId"
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Structured error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ResourceId": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+      },
+      "Timestamp": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "ModelRegistrationRequest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "model_id",
+          "version",
+          "state",
+          "artifact_sha256",
+          "runtime",
+          "input_features",
+          "output_feature",
+          "training_data_refs",
+          "validation_report_ref",
+          "calibration",
+          "limitations",
+          "created_at",
+          "approval_ids"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.model-version/v1"
+          },
+          "model_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "version": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "VALIDATED",
+              "SHADOW",
+              "CHALLENGER",
+              "CHAMPION",
+              "RETIRED"
+            ]
+          },
+          "artifact_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "runtime": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "input_features": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 512,
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "version"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_.]{0,127}$"
+                },
+                "version": {
+                  "$ref": "#/components/schemas/ResourceId"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "output_feature": {
+            "type": "string",
+            "pattern": "^model\\.[a-z0-9_.]{1,121}$"
+          },
+          "training_data_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 1024
+            }
+          },
+          "validation_report_ref": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "calibration": {
+            "type": "object"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 2048
+            }
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "approval_ids": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 16,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelScoreEnvelope": {
+        "type": "object",
+        "required": [
+          "schema",
+          "algorithm",
+          "key_id",
+          "score",
+          "signature"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.model-score-attestation-envelope/v1"
+          },
+          "algorithm": {
+            "const": "Ed25519"
+          },
+          "key_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "score": {
+            "$ref": "#/components/schemas/ModelScoreObservation"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{128}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelScoreObservation": {
+        "type": "object",
+        "required": [
+          "schema",
+          "score_id",
+          "tenant_id",
+          "project",
+          "model_id",
+          "model_version",
+          "model_digest",
+          "output_feature",
+          "subject_id",
+          "event_id",
+          "supersedes_score_id",
+          "score",
+          "feature_snapshot_digest",
+          "inference_request_digest",
+          "feature_known_at",
+          "scored_at",
+          "available_at",
+          "expires_at",
+          "evidence_refs",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.model-score-observation/v1"
+          },
+          "score_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "project": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,62}$"
+          },
+          "model_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "model_version": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "model_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "output_feature": {
+            "type": "string",
+            "pattern": "^model\\.[a-z0-9_.]{1,121}$"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "event_id": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supersedes_score_id": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "feature_snapshot_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "inference_request_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "feature_known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "scored_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "available_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 1024
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Subject": {
+        "type": "object",
+        "required": [
+          "schema",
+          "subject_id",
+          "subject_type"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.subject/v1"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_type": {
+            "enum": [
+              "PERSON",
+              "ORGANIZATION",
+              "ACCOUNT",
+              "DEVICE",
+              "WALLET",
+              "TRANSACTION",
+              "DOMAIN",
+              "VESSEL",
+              "AIRCRAFT",
+              "ASSET"
+            ]
+          },
+          "state": {
+            "enum": [
+              "ACTIVE",
+              "RESTRICTED",
+              "CLOSED"
+            ],
+            "default": "ACTIVE"
+          },
+          "attributes": {
+            "type": "object",
+            "maxProperties": 128
+          },
+          "external_refs": {
+            "type": "object",
+            "maxProperties": 64,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 512
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Money": {
+        "type": "object",
+        "required": [
+          "minor",
+          "currency"
+        ],
+        "properties": {
+          "minor": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Event": {
+        "type": "object",
+        "required": [
+          "schema",
+          "event_id",
+          "event_type",
+          "subject_id",
+          "event_time",
+          "received_at"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.event/v1"
+          },
+          "event_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "event_type": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "counterparty_id": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "device_id": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "amount": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "event_time": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "received_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "attributes": {
+            "type": "object",
+            "maxProperties": 128
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskPolicy": {
+        "type": "object",
+        "required": [
+          "schema",
+          "policy_id",
+          "version",
+          "use_case",
+          "default_action",
+          "default_reason_code",
+          "missing_data_action",
+          "missing_data_reason_code",
+          "conflict_strategy",
+          "rules",
+          "change_ticket",
+          "created_by"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.risk-policy/v1"
+          },
+          "policy_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "version": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "use_case": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "default_action": {
+            "$ref": "#/components/schemas/DecisionAction"
+          },
+          "default_reason_code": {
+            "type": "string"
+          },
+          "missing_data_action": {
+            "enum": [
+              "REVIEW",
+              "CHALLENGE",
+              "HOLD"
+            ]
+          },
+          "missing_data_reason_code": {
+            "type": "string"
+          },
+          "conflict_strategy": {
+            "enum": [
+              "HIGHEST_PRIORITY",
+              "MOST_RESTRICTIVE"
+            ]
+          },
+          "rules": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 512,
+            "items": {
+              "type": "object"
+            }
+          },
+          "model_dependencies": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object"
+            }
+          },
+          "change_ticket": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "created_by": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "additionalProperties": false
+      },
+      "PolicyDeploymentRequest": {
+        "type": "object",
+        "required": [
+          "deployment_id",
+          "policy_id",
+          "policy_version",
+          "mode",
+          "traffic_percent",
+          "effective_at",
+          "approval_ids"
+        ],
+        "properties": {
+          "deployment_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "policy_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "policy_version": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mode": {
+            "enum": [
+              "DRAFT",
+              "SHADOW",
+              "CANARY",
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "traffic_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "effective_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "approval_ids": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadQuotas": {
+        "type": "object",
+        "required": [
+          "max_hops",
+          "max_frontier_nodes",
+          "max_visited_nodes",
+          "max_scanned_edges",
+          "max_output_nodes",
+          "max_output_edges",
+          "max_output_paths",
+          "max_per_node_degree",
+          "max_output_bytes",
+          "max_wall_time_ms"
+        ],
+        "properties": {
+          "max_hops": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "max_frontier_nodes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "max_visited_nodes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "max_scanned_edges": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "max_output_nodes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "max_output_edges": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "max_output_paths": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "max_per_node_degree": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "max_output_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 524288
+          },
+          "max_wall_time_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30000
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphSnapshotResolve": {
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "properties": {
+          "mode": {
+            "const": "RESOLVE"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphSnapshotPinned": {
+        "type": "object",
+        "required": [
+          "mode",
+          "sequence",
+          "digest"
+        ],
+        "properties": {
+          "mode": {
+            "const": "PINNED"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadArgumentsResolve": {
+        "type": "object",
+        "maxProperties": 0,
+        "additionalProperties": false
+      },
+      "GraphReadArgumentsTraverse": {
+        "type": "object",
+        "required": [
+          "start_node_ids",
+          "direction"
+        ],
+        "properties": {
+          "start_node_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+            }
+          },
+          "direction": {
+            "enum": [
+              "IN",
+              "OUT",
+              "BOTH"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadArgumentsShortestPath": {
+        "type": "object",
+        "required": [
+          "source_node_id",
+          "target_node_id"
+        ],
+        "properties": {
+          "source_node_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "target_node_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadRequest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "operation",
+          "graph_id",
+          "planes",
+          "predicates",
+          "as_of",
+          "known_at",
+          "snapshot",
+          "arguments",
+          "quotas",
+          "deadline_at"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.graph-read-request/v1"
+          },
+          "operation": {
+            "enum": [
+              "resolveGraphSnapshot",
+              "traverseGraph",
+              "findGraphShortestPath"
+            ]
+          },
+          "graph_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "planes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "predicates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 256,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "snapshot": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GraphSnapshotResolve"
+              },
+              {
+                "$ref": "#/components/schemas/GraphSnapshotPinned"
+              }
+            ]
+          },
+          "arguments": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GraphReadArgumentsResolve"
+              },
+              {
+                "$ref": "#/components/schemas/GraphReadArgumentsTraverse"
+              },
+              {
+                "$ref": "#/components/schemas/GraphReadArgumentsShortestPath"
+              }
+            ]
+          },
+          "quotas": {
+            "$ref": "#/components/schemas/GraphReadQuotas"
+          },
+          "deadline_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadPeopleBinding": {
+        "type": "object",
+        "required": [
+          "case_id",
+          "grant_id",
+          "subject_id",
+          "permissible_purpose",
+          "candidate_binding"
+        ],
+        "properties": {
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "grant_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "permissible_purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "candidate_binding": {
+            "$ref": "#/components/schemas/CandidateBinding"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadExecutionRequest": {
+        "type": "object",
+        "required": [
+          "request"
+        ],
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/GraphReadRequest"
+          },
+          "people_binding": {
+            "$ref": "#/components/schemas/GraphReadPeopleBinding"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphDigest": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "GraphIdentifier": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+      },
+      "GraphReadOperation": {
+        "enum": [
+          "resolveGraphSnapshot",
+          "traverseGraph",
+          "findGraphShortestPath"
+        ]
+      },
+      "GraphMcpBinding": {
+        "type": "object",
+        "required": [
+          "generation",
+          "digest"
+        ],
+        "properties": {
+          "generation": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadCounters": {
+        "type": "object",
+        "required": [
+          "hops_traversed",
+          "frontier_peak",
+          "visited_nodes",
+          "scanned_edges",
+          "output_nodes",
+          "output_edges",
+          "output_paths",
+          "max_observed_degree",
+          "output_bytes",
+          "wall_time_ms"
+        ],
+        "properties": {
+          "hops_traversed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "frontier_peak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visited_nodes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "scanned_edges": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_nodes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_edges": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_paths": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_observed_degree": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 524288
+          },
+          "wall_time_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadResponseSnapshot": {
+        "type": "object",
+        "required": [
+          "sequence",
+          "digest"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphTraversalPath": {
+        "type": "object",
+        "required": [
+          "nodes",
+          "assertion_ids"
+        ],
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 100000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          },
+          "assertion_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphTraversalResultData": {
+        "type": "object",
+        "required": [
+          "nodes",
+          "assertion_ids",
+          "paths"
+        ],
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "maxItems": 100000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          },
+          "assertion_ids": {
+            "type": "array",
+            "maxItems": 1000000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          },
+          "paths": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "$ref": "#/components/schemas/GraphTraversalPath"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphSnapshotResultData": {
+        "type": "object",
+        "required": [
+          "as_of",
+          "known_at"
+        ],
+        "properties": {
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadResultData": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "nodes": {
+            "type": "array",
+            "maxItems": 100000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          },
+          "assertion_ids": {
+            "type": "array",
+            "maxItems": 1000000,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/GraphIdentifier"
+            }
+          },
+          "paths": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "$ref": "#/components/schemas/GraphTraversalPath"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GraphSnapshotResultData"
+          },
+          {
+            "$ref": "#/components/schemas/GraphTraversalResultData"
+          }
+        ]
+      },
+      "GraphReadResultSummary": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mandate_id",
+          "mandate_digest",
+          "preauthorization_receipt_id",
+          "preauthorization_receipt_digest",
+          "operation",
+          "request_digest",
+          "result_digest",
+          "snapshot",
+          "complete",
+          "truncated",
+          "truncation_reason",
+          "counters",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.graph-read-result-summary/v1"
+          },
+          "mandate_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mandate_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "preauthorization_receipt_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "preauthorization_receipt_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/GraphReadOperation"
+          },
+          "request_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "result_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/GraphReadResponseSnapshot"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "truncation_reason": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "counters": {
+            "$ref": "#/components/schemas/GraphReadCounters"
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphResultAttestationEnvelope": {
+        "type": "object",
+        "required": [
+          "schema",
+          "algorithm",
+          "key_id",
+          "summary",
+          "signature"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.graph-read-result-attestation-envelope/v1"
+          },
+          "algorithm": {
+            "const": "Ed25519"
+          },
+          "key_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/GraphReadResultSummary"
+          },
+          "signature": {
+            "type": "string",
+            "minLength": 128,
+            "maxLength": 128,
+            "pattern": "^[0-9a-f]{128}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadResponse": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mandate_id",
+          "mandate_digest",
+          "preauthorization_receipt_id",
+          "preauthorization_receipt_digest",
+          "operation",
+          "request_digest",
+          "result_digest",
+          "snapshot",
+          "complete",
+          "truncated",
+          "truncation_reason",
+          "counters",
+          "non_decisional",
+          "data",
+          "attestation"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.graph-read-response/v1"
+          },
+          "mandate_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mandate_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "preauthorization_receipt_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "preauthorization_receipt_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/GraphReadOperation"
+          },
+          "request_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "result_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/GraphReadResponseSnapshot"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "truncation_reason": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "counters": {
+            "$ref": "#/components/schemas/GraphReadCounters"
+          },
+          "non_decisional": {
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/GraphReadResultData"
+          },
+          "attestation": {
+            "$ref": "#/components/schemas/GraphResultAttestationEnvelope"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphReadExecution": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mandate",
+          "preauthorization_receipt",
+          "graph_response",
+          "post_result_receipt",
+          "operation",
+          "request_digest",
+          "mcp_graph",
+          "complete",
+          "truncated",
+          "non_decisional",
+          "execution_digest"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.graph-read-execution/v1"
+          },
+          "mandate": {
+            "type": "object"
+          },
+          "preauthorization_receipt": {
+            "type": "object"
+          },
+          "graph_response": {
+            "$ref": "#/components/schemas/GraphReadResponse"
+          },
+          "post_result_receipt": {
+            "type": "object"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/GraphReadOperation"
+          },
+          "request_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          },
+          "mcp_graph": {
+            "$ref": "#/components/schemas/GraphMcpBinding"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "non_decisional": {
+            "const": true
+          },
+          "execution_digest": {
+            "$ref": "#/components/schemas/GraphDigest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DecisionAction": {
+        "enum": [
+          "ALLOW",
+          "REVIEW",
+          "CHALLENGE",
+          "HOLD",
+          "DECLINE"
+        ]
+      },
+      "DecisionRequest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "request_id",
+          "subject_id",
+          "use_case",
+          "as_of"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.decision-request/v1"
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "event_id": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "use_case": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "maxProperties": 512
+          },
+          "model_versions": {
+            "type": "object",
+            "maxProperties": 64,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "available_as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "execution_mode": {
+            "enum": [
+              "ENFORCE",
+              "SHADOW"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "Decision": {
+        "type": "object",
+        "required": [
+          "schema",
+          "decision_id",
+          "decision_hash",
+          "requested_action",
+          "executed_action",
+          "deterministic",
+          "llm_in_decision_path"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.decision/v1"
+          },
+          "decision_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "decision_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "requested_action": {
+            "$ref": "#/components/schemas/DecisionAction"
+          },
+          "executed_action": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DecisionAction"
+              },
+              {
+                "const": "NOT_EXECUTED"
+              }
+            ]
+          },
+          "deterministic": {
+            "const": true
+          },
+          "llm_in_decision_path": {
+            "const": false
+          }
+        },
+        "additionalProperties": true
+      },
+      "ScreeningRequest": {
+        "type": "object",
+        "required": [
+          "index_name",
+          "subject",
+          "permissible_purpose",
+          "case_id"
+        ],
+        "properties": {
+          "index_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "subject": {
+            "type": "object"
+          },
+          "permissible_purpose": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "threshold": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 1
+          },
+          "max_candidates": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScreeningResult": {
+        "type": "object",
+        "required": [
+          "schema",
+          "candidates",
+          "non_decisional",
+          "automatic_disposition"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.screening-result/v1"
+          },
+          "candidates": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          },
+          "automatic_disposition": {
+            "type": "null"
+          }
+        },
+        "additionalProperties": true
+      },
+      "IdentityAnchor": {
+        "type": "object",
+        "required": [
+          "type",
+          "value",
+          "entity_kind"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "EMAIL",
+              "PHONE",
+              "DOMAIN",
+              "NAME",
+              "PROFESSIONAL_URL",
+              "COMPANY_REGISTRATION",
+              "LEI",
+              "USERNAME"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "entity_kind": {
+            "enum": [
+              "PERSON",
+              "COMPANY"
+            ]
+          },
+          "verified": {
+            "type": "boolean",
+            "default": false
+          },
+          "source_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Case": {
+        "type": "object",
+        "required": [
+          "schema",
+          "case_id",
+          "case_type",
+          "state",
+          "subject_ids",
+          "alert_ids",
+          "assigned_to",
+          "disposition",
+          "evidence_refs",
+          "attributes"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.case/v1"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "case_type": {
+            "enum": [
+              "people-intelligence",
+              "sanctions-review",
+              "fraud-investigation",
+              "legal-due-diligence",
+              "asset-recovery",
+              "security-incident",
+              "data-quality-review",
+              "KYC",
+              "KYB",
+              "CRYPTO",
+              "FRAUD",
+              "DILIGENCE",
+              "GENERAL_INVESTIGATION"
+            ]
+          },
+          "state": {
+            "enum": [
+              "OPEN",
+              "INVESTIGATING",
+              "PENDING_CUSTOMER"
+            ]
+          },
+          "subject_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "alert_ids": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "assigned_to": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "disposition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "maxProperties": 128
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleCase": {
+        "$ref": "#/components/schemas/Case"
+      },
+      "CaseList": {
+        "type": "object",
+        "required": [
+          "schema",
+          "cases",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.case-list/v1"
+          },
+          "cases": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/Case"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseDossier": {
+        "type": "object",
+        "required": [
+          "schema",
+          "case",
+          "dossiers",
+          "dossier_count",
+          "human_review_required",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.case-dossier/v1"
+          },
+          "case": {
+            "$ref": "#/components/schemas/Case"
+          },
+          "dossiers": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "type": "object"
+            }
+          },
+          "dossier_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "human_review_required": {
+            "const": true
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccessGrantRequest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "grant_id",
+          "case_id",
+          "subject_ids",
+          "actor_ids",
+          "permissible_purpose",
+          "allowed_fields",
+          "allowed_providers",
+          "third_party_disclosure_allowed",
+          "valid_from",
+          "expires_at",
+          "created_by",
+          "approval_ids",
+          "change_ticket"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.access-grant/v1"
+          },
+          "grant_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "actor_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "permissible_purpose": {
+            "enum": [
+              "AML_KYC_REVIEW",
+              "FRAUD_PREVENTION",
+              "SANCTIONS_REVIEW",
+              "SECURITY_INCIDENT",
+              "LEGAL_DUE_DILIGENCE",
+              "ASSET_RECOVERY",
+              "USER_AUTHORIZED_LOOKUP",
+              "DATA_QUALITY_REVIEW"
+            ]
+          },
+          "allowed_fields": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "allowed_providers": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "third_party_disclosure_allowed": {
+            "type": "boolean"
+          },
+          "valid_from": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "created_by": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "approval_ids": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 16,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "change_ticket": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleProfileAttributes": {
+        "type": "object",
+        "properties": {
+          "birth_dates": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "countries": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "incorporation_dates": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "jurisdictions": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleDirectoryProfile": {
+        "type": "object",
+        "required": [
+          "schema",
+          "profile_id",
+          "subject_id",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "source_ids",
+          "evidence_refs",
+          "valid_from",
+          "valid_to",
+          "recorded_at",
+          "retention_expires_at"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.people-directory-profile/v1"
+          },
+          "profile_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "entity_kind": {
+            "enum": [
+              "PERSON",
+              "COMPANY"
+            ]
+          },
+          "anchors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/IdentityAnchor"
+            }
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/PeopleProfileAttributes"
+          },
+          "source_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "valid_from": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "valid_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "recorded_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "retention_expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleSearchRequest": {
+        "type": "object",
+        "required": [
+          "schema",
+          "query_id",
+          "subject_id",
+          "access_grant_id",
+          "case_id",
+          "permissible_purpose",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "max_candidates",
+          "as_of",
+          "known_at"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.people-search-request/v1"
+          },
+          "query_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "access_grant_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "permissible_purpose": {
+            "enum": [
+              "AML_KYC_REVIEW",
+              "FRAUD_PREVENTION",
+              "SANCTIONS_REVIEW",
+              "SECURITY_INCIDENT",
+              "LEGAL_DUE_DILIGENCE",
+              "ASSET_RECOVERY",
+              "USER_AUTHORIZED_LOOKUP",
+              "DATA_QUALITY_REVIEW"
+            ]
+          },
+          "entity_kind": {
+            "enum": [
+              "PERSON",
+              "COMPANY"
+            ]
+          },
+          "anchors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "$ref": "#/components/schemas/IdentityAnchor"
+            }
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/PeopleProfileAttributes"
+          },
+          "max_candidates": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleSearchCandidate": {
+        "type": "object",
+        "required": [
+          "profile_id",
+          "candidate_digest",
+          "subject_id",
+          "entity_kind",
+          "candidate_tier",
+          "candidate_score",
+          "matched_identifier_types",
+          "conflicting_verified_identifier_types",
+          "positive_attribute_types",
+          "conflicting_attribute_types",
+          "name_similarity",
+          "source_ids",
+          "evidence_refs",
+          "requires_identity_resolution",
+          "auto_merge_permitted",
+          "non_decisional"
+        ],
+        "properties": {
+          "profile_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "candidate_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "entity_kind": {
+            "enum": [
+              "PERSON",
+              "COMPANY"
+            ]
+          },
+          "candidate_tier": {
+            "enum": [
+              "STRONG_CANDIDATE",
+              "CANDIDATE",
+              "WEAK_CANDIDATE",
+              "CONFLICTING_CANDIDATE"
+            ]
+          },
+          "candidate_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "matched_identifier_types": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string"
+            }
+          },
+          "conflicting_verified_identifier_types": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string"
+            }
+          },
+          "positive_attribute_types": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string"
+            }
+          },
+          "conflicting_attribute_types": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string"
+            }
+          },
+          "name_similarity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "source_ids": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "requires_identity_resolution": {
+            "const": true
+          },
+          "auto_merge_permitted": {
+            "const": false
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PeopleSearchResult": {
+        "type": "object",
+        "required": [
+          "schema",
+          "query_id",
+          "query_digest",
+          "subject_id",
+          "case_id",
+          "as_of",
+          "known_at",
+          "candidates",
+          "candidate_count",
+          "profiles_scanned",
+          "expired_profiles_ignored",
+          "complete",
+          "limitations",
+          "human_review_required",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.people-search-result/v1"
+          },
+          "query_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "query_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "known_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "candidates": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/PeopleSearchCandidate"
+            }
+          },
+          "candidate_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "profiles_scanned": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "expired_profiles_ignored": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "limitations": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "human_review_required": {
+            "const": true
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResearchJobRequest": {
+        "type": "object",
+        "required": [
+          "subject",
+          "question",
+          "purpose",
+          "permissible_purpose",
+          "output_schema",
+          "budgets",
+          "source_policy",
+          "case_id",
+          "actor_id",
+          "retention_policy_id",
+          "human_review_required"
+        ],
+        "properties": {
+          "subject": {
+            "type": "object"
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "permissible_purpose": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "output_schema": {
+            "type": "object"
+          },
+          "budgets": {
+            "$ref": "#/components/schemas/ResearchBudgets"
+          },
+          "source_policy": {
+            "type": "object"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "access_grant_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "actor_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "retention_policy_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "human_review_required": {
+            "const": true
+          },
+          "candidate_binding": {
+            "$ref": "#/components/schemas/CandidateBinding"
+          },
+          "provider_plan": {
+            "$ref": "#/components/schemas/ProviderDisclosurePlan"
+          },
+          "investigation_profile": {
+            "enum": [
+              "KYC",
+              "KYB",
+              "CRYPTO",
+              "FRAUD",
+              "DILIGENCE",
+              "GENERAL_INVESTIGATION"
+            ],
+            "default": "GENERAL_INVESTIGATION"
+          },
+          "source_pack_ids": {
+            "type": "array",
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "continuation_of_job_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResearchBudgets": {
+        "type": "object",
+        "required": [
+          "max_depth",
+          "max_cost_microusd",
+          "max_sources",
+          "max_duration_seconds"
+        ],
+        "properties": {
+          "max_depth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "max_turns": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 10
+          },
+          "max_tool_calls": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1024
+          },
+          "max_model_calls": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 128
+          },
+          "max_cost_microusd": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000000
+          },
+          "max_sources": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "max_entities": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "max_edges": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "max_capture_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483648
+          },
+          "max_model_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "max_duration_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourcePack": {
+        "type": "object",
+        "required": [
+          "schema",
+          "source_pack_id",
+          "title",
+          "profiles",
+          "coverage",
+          "execution_state",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.source-pack/v1"
+          },
+          "source_pack_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "profiles": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "items": {
+              "type": "string"
+            }
+          },
+          "coverage": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "execution_state": {
+            "const": "DECLARED"
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourcePackList": {
+        "type": "object",
+        "required": [
+          "schema",
+          "source_packs",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.source-pack-list/v1"
+          },
+          "source_packs": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/SourcePack"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceCoverage": {
+        "type": "object",
+        "required": [
+          "schema",
+          "source_pack",
+          "admitted_source_count",
+          "coverage_state",
+          "admitted_sources",
+          "limitations",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.source-coverage/v1"
+          },
+          "source_pack": {
+            "$ref": "#/components/schemas/SourcePack"
+          },
+          "admitted_source_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "coverage_state": {
+            "enum": [
+              "DECLARED_ONLY",
+              "SHADOW",
+              "ACTIVE"
+            ]
+          },
+          "admitted_sources": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "source_id",
+                "publisher",
+                "execution_state",
+                "adapter"
+              ],
+              "properties": {
+                "source_id": {
+                  "$ref": "#/components/schemas/ResourceId"
+                },
+                "publisher": {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                "execution_state": {
+                  "enum": [
+                    "SHADOW",
+                    "ACTIVE"
+                  ]
+                },
+                "adapter": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 2048
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CandidateBinding": {
+        "type": "object",
+        "required": [
+          "query_id",
+          "query_digest",
+          "profile_id",
+          "candidate_digest"
+        ],
+        "properties": {
+          "query_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "query_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "profile_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "candidate_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProviderDisclosurePlan": {
+        "type": "object",
+        "required": [
+          "schema",
+          "provider_id",
+          "operation",
+          "execution_mode",
+          "disclosed_anchor_types",
+          "requested_fields",
+          "terms_revision"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.provider-disclosure-plan/v1"
+          },
+          "provider_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "operation": {
+            "const": "SEARCH"
+          },
+          "execution_mode": {
+            "const": "OFFLINE_FIXTURE"
+          },
+          "disclosed_anchor_types": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "requested_fields": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "terms_revision": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResearchJob": {
+        "type": "object",
+        "required": [
+          "schema",
+          "job_id",
+          "state",
+          "stage",
+          "request_digest"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.research-job/v1"
+          },
+          "job_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "state": {
+            "enum": [
+              "QUEUED",
+              "RUNNING",
+              "REVIEW_REQUIRED",
+              "SUCCEEDED",
+              "PARTIAL",
+              "CANCELLED",
+              "FAILED",
+              "EXPIRED"
+            ]
+          },
+          "stage": {
+            "enum": [
+              "QUEUED",
+              "PLANNING",
+              "SEARCHING",
+              "CAPTURING",
+              "EXTRACTING",
+              "VALIDATING",
+              "REVIEWING",
+              "COMPLETE"
+            ]
+          },
+          "request_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ResearchResult": {
+        "type": "object",
+        "required": [
+          "schema",
+          "result_id",
+          "subject_id",
+          "structured_output",
+          "claims",
+          "evidence_ids",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.research-result/v1"
+          },
+          "result_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "structured_output": {},
+          "claims": {
+            "type": "array",
+            "maxItems": 1024,
+            "items": {
+              "type": "object"
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "InvestigationDossier": {
+        "type": "object",
+        "required": [
+          "schema",
+          "dossier_id",
+          "case_id",
+          "job_id",
+          "subject",
+          "claims",
+          "evidence",
+          "turns",
+          "human_review_required",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.investigation-dossier/v1"
+          },
+          "dossier_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "case_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "job_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "subject": {
+            "type": "object"
+          },
+          "claims": {
+            "type": "array",
+            "maxItems": 1024,
+            "items": {
+              "type": "object"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "object"
+            }
+          },
+          "turns": {
+            "type": "object"
+          },
+          "human_review_required": {
+            "const": true
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "ResearchJobEventList": {
+        "type": "object",
+        "required": [
+          "schema",
+          "job_id",
+          "events",
+          "non_decisional"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.research-job-event-list/v1"
+          },
+          "job_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "events": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "type": "object"
+            }
+          },
+          "non_decisional": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

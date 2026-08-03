@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 6;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-payments"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-payments"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "dataset:read", "dataset:write", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -29,6 +29,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "http://127.0.0.1:8096",
     "cradleApiUrl": "http://127.0.0.1:8088",
     "temperaLlmApiUrl": "http://127.0.0.1:8080",
+    "temperaRiskApiUrl": "http://127.0.0.1:8097",
     "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
     "paletteApiUrl": "http://localhost:8080",
     "paletteMcpUrl": "http://localhost:8080/mcp",
@@ -44,6 +45,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://preview-gym.tempera.dev",
     "cradleApiUrl": "https://preview-cradle.tempera.dev",
     "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
+    "temperaRiskApiUrl": "https://preview-risk.tempera.dev",
     "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
     "paletteApiUrl": "https://preview-mcp.tempera.dev",
     "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
@@ -59,6 +61,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://staging-gym.tempera.dev",
     "cradleApiUrl": "https://staging-cradle.tempera.dev",
     "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
+    "temperaRiskApiUrl": "https://staging-risk.tempera.dev",
     "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
     "paletteApiUrl": "https://staging-mcp.tempera.dev",
     "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
@@ -74,6 +77,7 @@ export const TEMPERA_ENVIRONMENTS = Object.freeze(
     "temperaGymUrl": "https://gym.tempera.dev",
     "cradleApiUrl": "https://cradle.tempera.dev",
     "temperaLlmApiUrl": "https://llm.tempera.dev",
+    "temperaRiskApiUrl": "https://risk.tempera.dev",
     "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
     "paletteApiUrl": "https://mcp.tempera.dev",
     "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
@@ -111,6 +115,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_LLM_URL",
     "audience": "tempera-llm",
     "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
+  },
+  "temperaRisk": {
+    "name": "tempera-risk",
+    "repository": "https://github.com/tempera-dev/tempera-risk",
+    "envVar": "TEMPERA_RISK_URL",
+    "audience": "tempera-risk",
+    "description": "Governed, non-decisional cross-domain investigation service. The trusted SDK surface manages cases, grants, research jobs, sources, and reviewed dossiers; the smaller MCP surface is separately curated."
   },
   "temperaWorkflows": {
     "name": "tempera-workflows",
@@ -4677,6 +4688,1136 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
     }
   ],
+  "temperaRisk": [
+    {
+      "id": "health",
+      "upstreamOperationId": "health",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /healthz."
+    },
+    {
+      "id": "getOpenApi",
+      "upstreamOperationId": "getOpenApi",
+      "method": "GET",
+      "path": "/openapi.yaml",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /openapi.yaml."
+    },
+    {
+      "id": "executeGraphRead",
+      "upstreamOperationId": "executeGraphRead",
+      "method": "POST",
+      "path": "/v1/projects/{project}/graphReads/execute",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "request",
+        "people_binding"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "request"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Execute one principal-bound, signed, bounded graph read."
+    },
+    {
+      "id": "createSubject",
+      "upstreamOperationId": "createSubject",
+      "method": "POST",
+      "path": "/v1/projects/{project}/subjects",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "subject_id",
+        "subject_type",
+        "state",
+        "attributes",
+        "external_refs"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "subject_id",
+        "subject_type"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/subjects."
+    },
+    {
+      "id": "listSubjects",
+      "upstreamOperationId": "listSubjects",
+      "method": "GET",
+      "path": "/v1/projects/{project}/subjects",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/subjects."
+    },
+    {
+      "id": "getSubject",
+      "upstreamOperationId": "getSubject",
+      "method": "GET",
+      "path": "/v1/projects/{project}/subjects/{subjectId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "subjectId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/subjects/{subjectId}."
+    },
+    {
+      "id": "ingestEvent",
+      "upstreamOperationId": "ingestEvent",
+      "method": "POST",
+      "path": "/v1/projects/{project}/events:ingest",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "event_id",
+        "event_type",
+        "subject_id",
+        "counterparty_id",
+        "device_id",
+        "amount",
+        "event_time",
+        "received_at",
+        "attributes",
+        "evidence_refs"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "event_id",
+        "event_type",
+        "subject_id",
+        "event_time",
+        "received_at"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/events:ingest."
+    },
+    {
+      "id": "registerPolicy",
+      "upstreamOperationId": "registerPolicy",
+      "method": "POST",
+      "path": "/v1/projects/{project}/policies",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "policy_id",
+        "version",
+        "use_case",
+        "segment",
+        "description",
+        "default_action",
+        "default_reason_code",
+        "missing_data_action",
+        "missing_data_reason_code",
+        "conflict_strategy",
+        "rules",
+        "model_dependencies",
+        "change_ticket",
+        "created_by"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "policy_id",
+        "version",
+        "use_case",
+        "default_action",
+        "default_reason_code",
+        "missing_data_action",
+        "missing_data_reason_code",
+        "conflict_strategy",
+        "rules",
+        "change_ticket",
+        "created_by"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/policies."
+    },
+    {
+      "id": "registerModel",
+      "upstreamOperationId": "registerModel",
+      "method": "POST",
+      "path": "/v1/projects/{project}/models",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "model_id",
+        "version",
+        "state",
+        "artifact_sha256",
+        "runtime",
+        "input_features",
+        "output_feature",
+        "training_data_refs",
+        "validation_report_ref",
+        "calibration",
+        "limitations",
+        "created_at",
+        "approval_ids"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "model_id",
+        "version",
+        "state",
+        "artifact_sha256",
+        "runtime",
+        "input_features",
+        "output_feature",
+        "training_data_refs",
+        "validation_report_ref",
+        "calibration",
+        "limitations",
+        "created_at",
+        "approval_ids"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Register an immutable model artifact after dual human approval."
+    },
+    {
+      "id": "ingestModelScore",
+      "upstreamOperationId": "ingestModelScore",
+      "method": "POST",
+      "path": "/v1/projects/{project}/modelScores:ingest",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "algorithm",
+        "key_id",
+        "score",
+        "signature"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "algorithm",
+        "key_id",
+        "score",
+        "signature"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Ingest a signed non-decisional score from an authenticated scorer workload."
+    },
+    {
+      "id": "createApproval",
+      "upstreamOperationId": "createApproval",
+      "method": "POST",
+      "path": "/v1/projects/{project}/approvals",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "action",
+        "target"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "action",
+        "target"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/approvals."
+    },
+    {
+      "id": "deployPolicy",
+      "upstreamOperationId": "deployPolicy",
+      "method": "POST",
+      "path": "/v1/projects/{project}/policyDeployments",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "deployment_id",
+        "policy_id",
+        "policy_version",
+        "mode",
+        "traffic_percent",
+        "effective_at",
+        "approval_ids"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "deployment_id",
+        "policy_id",
+        "policy_version",
+        "mode",
+        "traffic_percent",
+        "effective_at",
+        "approval_ids"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/policyDeployments."
+    },
+    {
+      "id": "createDecision",
+      "upstreamOperationId": "createDecision",
+      "method": "POST",
+      "path": "/v1/projects/{project}/decisions",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "request_id",
+        "subject_id",
+        "event_id",
+        "use_case",
+        "segment",
+        "features",
+        "model_versions",
+        "evidence_refs",
+        "as_of",
+        "available_as_of",
+        "execution_mode"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "request_id",
+        "subject_id",
+        "use_case",
+        "as_of"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/decisions."
+    },
+    {
+      "id": "getDecision",
+      "upstreamOperationId": "getDecision",
+      "method": "GET",
+      "path": "/v1/projects/{project}/decisions/{decisionId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "decisionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/decisions/{decisionId}."
+    },
+    {
+      "id": "recordOutcome",
+      "upstreamOperationId": "recordOutcome",
+      "method": "POST",
+      "path": "/v1/projects/{project}/outcomes",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/outcomes."
+    },
+    {
+      "id": "createScreening",
+      "upstreamOperationId": "createScreening",
+      "method": "POST",
+      "path": "/v1/projects/{project}/screenings",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "index_name",
+        "subject",
+        "permissible_purpose",
+        "case_id",
+        "threshold",
+        "max_candidates"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "index_name",
+        "subject",
+        "permissible_purpose",
+        "case_id"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/screenings."
+    },
+    {
+      "id": "listCases",
+      "upstreamOperationId": "listCases",
+      "method": "GET",
+      "path": "/v1/projects/{project}/cases",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/cases."
+    },
+    {
+      "id": "createCase",
+      "upstreamOperationId": "createCase",
+      "method": "POST",
+      "path": "/v1/projects/{project}/cases",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "case_id",
+        "case_type",
+        "state",
+        "subject_ids",
+        "alert_ids",
+        "assigned_to",
+        "disposition",
+        "evidence_refs",
+        "attributes"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "case_id",
+        "case_type",
+        "state",
+        "subject_ids",
+        "alert_ids",
+        "assigned_to",
+        "disposition",
+        "evidence_refs",
+        "attributes"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Open a governed multi-domain investigation case."
+    },
+    {
+      "id": "getCase",
+      "upstreamOperationId": "getCase",
+      "method": "GET",
+      "path": "/v1/projects/{project}/cases/{caseId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/cases/{caseId}."
+    },
+    {
+      "id": "getCaseDossier",
+      "upstreamOperationId": "getCaseDossier",
+      "method": "GET",
+      "path": "/v1/projects/{project}/cases/{caseId}/dossier",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read all completed non-decisional investigation dossiers for a case."
+    },
+    {
+      "id": "createAccessGrant",
+      "upstreamOperationId": "createAccessGrant",
+      "method": "POST",
+      "path": "/v1/projects/{project}/accessGrants",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "grant_id",
+        "case_id",
+        "subject_ids",
+        "actor_ids",
+        "permissible_purpose",
+        "allowed_fields",
+        "allowed_providers",
+        "third_party_disclosure_allowed",
+        "valid_from",
+        "expires_at",
+        "created_by",
+        "approval_ids",
+        "change_ticket"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "grant_id",
+        "case_id",
+        "subject_ids",
+        "actor_ids",
+        "permissible_purpose",
+        "allowed_fields",
+        "allowed_providers",
+        "third_party_disclosure_allowed",
+        "valid_from",
+        "expires_at",
+        "created_by",
+        "approval_ids",
+        "change_ticket"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access."
+    },
+    {
+      "id": "revokeAccessGrant",
+      "upstreamOperationId": "revokeAccessGrant",
+      "method": "POST",
+      "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "grantId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "reason"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "reason"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Revoke a sensitive investigation-data access grant."
+    },
+    {
+      "id": "createPeopleDirectoryProfile",
+      "upstreamOperationId": "createPeopleDirectoryProfile",
+      "method": "POST",
+      "path": "/v1/projects/{project}/peopleDirectoryProfiles",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "profile_id",
+        "subject_id",
+        "entity_kind",
+        "anchors",
+        "attributes",
+        "source_ids",
+        "evidence_refs",
+        "valid_from",
+        "valid_to",
+        "recorded_at",
+        "retention_expires_at",
+        "non_decisional"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "profile_id",
+        "subject_id",
+        "entity_kind",
+        "anchors",
+        "attributes",
+        "source_ids",
+        "evidence_refs",
+        "valid_from",
+        "valid_to",
+        "recorded_at",
+        "retention_expires_at"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Ingest an evidence-backed bitemporal person or company profile."
+    },
+    {
+      "id": "searchPeople",
+      "upstreamOperationId": "searchPeople",
+      "method": "POST",
+      "path": "/v1/projects/{project}/people/search",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "schema",
+        "query_id",
+        "subject_id",
+        "access_grant_id",
+        "case_id",
+        "permissible_purpose",
+        "entity_kind",
+        "anchors",
+        "attributes",
+        "max_candidates",
+        "as_of",
+        "known_at"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "schema",
+        "query_id",
+        "subject_id",
+        "access_grant_id",
+        "case_id",
+        "permissible_purpose",
+        "entity_kind",
+        "anchors",
+        "attributes",
+        "max_candidates",
+        "as_of",
+        "known_at"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Find non-decisional identity-resolution candidates under an active case grant."
+    },
+    {
+      "id": "listSourcePacks",
+      "upstreamOperationId": "listSourcePacks",
+      "method": "GET",
+      "path": "/v1/projects/{project}/sourcePacks",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "List declared non-runnable investigation source packs."
+    },
+    {
+      "id": "getSourcePack",
+      "upstreamOperationId": "getSourcePack",
+      "method": "GET",
+      "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "sourcePackId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read one declared non-runnable investigation source pack."
+    },
+    {
+      "id": "getSourceCoverage",
+      "upstreamOperationId": "getSourceCoverage",
+      "method": "GET",
+      "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "sourcePackId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read truthful admitted coverage for one source pack."
+    },
+    {
+      "id": "createResearchJob",
+      "upstreamOperationId": "createResearchJob",
+      "method": "POST",
+      "path": "/v1/projects/{project}/researchJobs",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "subject",
+        "question",
+        "purpose",
+        "permissible_purpose",
+        "output_schema",
+        "budgets",
+        "source_policy",
+        "case_id",
+        "access_grant_id",
+        "actor_id",
+        "retention_policy_id",
+        "human_review_required",
+        "candidate_binding",
+        "provider_plan",
+        "investigation_profile",
+        "source_pack_ids",
+        "continuation_of_job_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "subject",
+        "question",
+        "purpose",
+        "permissible_purpose",
+        "output_schema",
+        "budgets",
+        "source_policy",
+        "case_id",
+        "actor_id",
+        "retention_policy_id",
+        "human_review_required"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/researchJobs."
+    },
+    {
+      "id": "getResearchJob",
+      "upstreamOperationId": "getResearchJob",
+      "method": "GET",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}."
+    },
+    {
+      "id": "streamResearchJobEvents",
+      "upstreamOperationId": "streamResearchJobEvents",
+      "method": "GET",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "afterSequence",
+        "pageSize"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence."
+    },
+    {
+      "id": "getResearchJobResult",
+      "upstreamOperationId": "getResearchJobResult",
+      "method": "GET",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read the cited, non-decisional result under the job's original access grant."
+    },
+    {
+      "id": "listResearchJobEvents",
+      "upstreamOperationId": "listResearchJobEvents",
+      "method": "GET",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "afterSequence",
+        "pageSize"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read ordered non-decisional job events under the job's original access grant."
+    },
+    {
+      "id": "cancelResearchJob",
+      "upstreamOperationId": "cancelResearchJob",
+      "method": "POST",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "reason"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "reason"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel."
+    },
+    {
+      "id": "reviewResearchJob",
+      "upstreamOperationId": "reviewResearchJob",
+      "method": "POST",
+      "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "jobId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "approved",
+        "reason"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "approved",
+        "reason"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
+    },
+    {
+      "id": "exportAudit",
+      "upstreamOperationId": "exportAudit",
+      "method": "GET",
+      "path": "/v1/projects/{project}/audit:export",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/projects/{project}/audit:export."
+    }
+  ],
   "temperaWorkflows": [
     {
       "id": "health",
@@ -6125,6 +7266,120 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Ingest mave d b score set."
     }
   ],
+  "temperaPayments": [
+    {
+      "id": "getPaymentsHealth",
+      "upstreamOperationId": "getPaymentsHealth",
+      "method": "GET",
+      "path": "/v1/health",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Call GET /v1/health."
+    },
+    {
+      "id": "createPaymentIntent",
+      "upstreamOperationId": "createPaymentIntent",
+      "method": "POST",
+      "path": "/v1/payment_intents",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "tenant_id",
+        "merchant_id",
+        "recipient",
+        "asset",
+        "amount",
+        "expires_in_seconds"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id",
+        "merchant_id",
+        "recipient",
+        "asset",
+        "amount",
+        "expires_in_seconds"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:intents:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Create a canonical payment intent."
+    },
+    {
+      "id": "createStripeCheckout",
+      "upstreamOperationId": "createStripeCheckout",
+      "method": "POST",
+      "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "payment_intent_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [
+        "tenant_id",
+        "currency",
+        "product_name",
+        "success_url",
+        "cancel_url"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id",
+        "currency",
+        "product_name",
+        "success_url",
+        "cancel_url"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:intents:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
+    },
+    {
+      "id": "receiveStripeWebhook",
+      "upstreamOperationId": "receiveStripeWebhook",
+      "method": "POST",
+      "path": "/v1/webhooks/stripe",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
+    }
+  ],
   "temperaDocument": [
     {
       "id": "healthGet",
@@ -6494,120 +7749,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Complete a streamed upload after digest assertions."
-    }
-  ],
-  "temperaPayments": [
-    {
-      "id": "getPaymentsHealth",
-      "upstreamOperationId": "getPaymentsHealth",
-      "method": "GET",
-      "path": "/v1/health",
-      "auth": "none",
-      "authAudience": null,
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "description": "Get payment service health."
-    },
-    {
-      "id": "createPaymentIntent",
-      "upstreamOperationId": "createPaymentIntent",
-      "method": "POST",
-      "path": "/v1/payment_intents",
-      "auth": "oauthResource",
-      "authAudience": "tempera-payments",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [
-        "tenant_id",
-        "merchant_id",
-        "recipient",
-        "asset",
-        "amount",
-        "expires_in_seconds"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "tenant_id",
-        "merchant_id",
-        "recipient",
-        "asset",
-        "amount",
-        "expires_in_seconds"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "payments:intents:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "description": "Create a canonical payment intent."
-    },
-    {
-      "id": "createStripeCheckout",
-      "upstreamOperationId": "createStripeCheckout",
-      "method": "POST",
-      "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
-      "auth": "oauthResource",
-      "authAudience": "tempera-payments",
-      "pathParams": [
-        "payment_intent_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [
-        "tenant_id",
-        "currency",
-        "product_name",
-        "success_url",
-        "cancel_url"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "tenant_id",
-        "currency",
-        "product_name",
-        "success_url",
-        "cancel_url"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "payments:intents:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "description": "Create a hosted Stripe Checkout session for a payment intent."
-    },
-    {
-      "id": "receiveStripeWebhook",
-      "upstreamOperationId": "receiveStripeWebhook",
-      "method": "POST",
-      "path": "/v1/webhooks/stripe",
-      "auth": "none",
-      "authAudience": null,
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": null,
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
     }
   ],
   "cradle": [
@@ -7694,7 +8835,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken",
         "status",
-        "campaignName"
+        "campaignName",
+        "orderBy"
       ],
       "body": [],
       "forbiddenBody": [],
@@ -7743,6 +8885,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
     },
     {
+      "id": "createReviewerRevocation",
+      "upstreamOperationId": "projects.reviewerRevocations.create",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-revocations",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "reviewerRef",
+        "reason",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "reviewerRef",
+        "reason",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:gold:manage",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments."
+    },
+    {
       "id": "resolveExpertTask",
       "upstreamOperationId": "projects.expertTasks.resolve",
       "method": "POST",
@@ -7782,6 +8957,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
+    },
+    {
+      "id": "createExpertTaskAppeal",
+      "upstreamOperationId": "projects.expertTasks.appeal",
+      "method": "POST",
+      "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent",
+        "expertTaskId"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "rationale",
+        "evidence",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "rationale",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision."
     },
     {
       "id": "claimExpertTask",
@@ -7916,6 +9124,37 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Autosave a version-checked draft under the active reviewer lease."
+    },
+    {
+      "id": "recordReviewerSessionEvent",
+      "upstreamOperationId": "projects.reviewerSessions.record",
+      "method": "POST",
+      "path": "/v1/{parent}/reviewer-sessions:record",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "body": [
+        "event",
+        "sessionId"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "event",
+        "sessionId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "review:resolve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier."
     },
     {
       "id": "getReviewOperations",

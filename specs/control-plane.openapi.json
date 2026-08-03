@@ -3812,6 +3812,9 @@
           "usage:reserve",
           "document:read",
           "document:write",
+          "risk:read",
+          "risk:write",
+          "risk:review",
           "pii:unmask",
           "payments:intents:read",
           "payments:intents:write",
@@ -3848,6 +3851,9 @@
           "usage:reserve",
           "document:read",
           "document:write",
+          "risk:read",
+          "risk:write",
+          "risk:review",
           "pii:unmask",
           "admin"
         ]
@@ -3869,6 +3875,7 @@
           "tempera-gym",
           "tempera-bio",
           "tempera-document",
+          "tempera-risk",
           "tempera-payments"
         ]
       },

@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 55 |
+| Typed operations | 58 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -598,6 +598,7 @@ List human residual review tasks, optionally filtered by status and campaign.
 | `pageToken` | no | — |
 | `status` | no | — |
 | `campaignName` | no | — |
+| `orderBy` | no | — |
 
 <CodeGroup>
 
@@ -690,6 +691,65 @@ let spec = client.build_request("data_engine", "create_review_qualification_task
 
 </CodeGroup>
 
+### createReviewerRevocation
+
+`POST /v1/{parent}/reviewer-revocations`
+
+Record an immutable project-scoped reviewer revocation and terminate active assignments.
+
+- **Producer operationId:** `projects.reviewerRevocations.create`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `review:gold:manage`
+- **Call as:** TypeScript `client.dataEngine.createReviewerRevocation()` · Python `client.data_engine.create_reviewer_revocation()` · Rust `build_request("data_engine", "create_reviewer_revocation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reviewerRef` | yes | — |
+| `reason` | yes | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createReviewerRevocation({
+  parent: "<parent>",
+  reviewerRef: "<reviewerRef>",
+  reason: "<reason>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.data_engine.create_reviewer_revocation({
+    "parent": "<parent>",
+    "reviewerRef": "<reviewerRef>",
+    "reason": "<reason>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_reviewer_revocation", &[
+    ("parent", "<parent>".into()),
+    ("reviewerRef", "<reviewerRef>".into()),
+    ("reason", "<reason>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### resolveExpertTask
 
 `POST /v1/{parent}/expert-tasks/{expertTaskId}:resolve`
@@ -753,6 +813,69 @@ let spec = client.build_request("data_engine", "resolve_expert_task", &[
     ("label", "<label>".into()),
     ("idempotencyKey", "<idempotencyKey>".into()),
     ("reviewContext", "<reviewContext>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createExpertTaskAppeal
+
+`POST /v1/{parent}/expert-tasks/{expertTaskId}:appeal`
+
+Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision.
+
+- **Producer operationId:** `projects.expertTasks.appeal`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.createExpertTaskAppeal()` · Python `client.data_engine.create_expert_task_appeal()` · Rust `build_request("data_engine", "create_expert_task_appeal", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `expertTaskId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `rationale` | yes | — |
+| `evidence` | no | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.createExpertTaskAppeal({
+  parent: "<parent>",
+  expertTaskId: "<expertTaskId>",
+  rationale: "<rationale>",
+  idempotencyKey: "<idempotencyKey>",
+  evidence: "<evidence>",
+});
+```
+
+```python Python
+result = client.data_engine.create_expert_task_appeal({
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "rationale": "<rationale>",
+    "idempotencyKey": "<idempotencyKey>",
+    "evidence": "<evidence>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "create_expert_task_appeal", &[
+    ("parent", "<parent>".into()),
+    ("expertTaskId", "<expertTaskId>".into()),
+    ("rationale", "<rationale>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("evidence", "<evidence>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1005,6 +1128,61 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
     ("leaseToken", "<leaseToken>".into()),
     ("draft", "<draft>".into()),
     ("expectedVersion", "<expectedVersion>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### recordReviewerSessionEvent
+
+`POST /v1/{parent}/reviewer-sessions:record`
+
+Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier.
+
+- **Producer operationId:** `projects.reviewerSessions.record`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `review:resolve`
+- **Call as:** TypeScript `client.dataEngine.recordReviewerSessionEvent()` · Python `client.data_engine.record_reviewer_session_event()` · Rust `build_request("data_engine", "record_reviewer_session_event", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `event` | yes | — |
+| `sessionId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.recordReviewerSessionEvent({
+  parent: "<parent>",
+  event: "<event>",
+  sessionId: "<sessionId>",
+});
+```
+
+```python Python
+result = client.data_engine.record_reviewer_session_event({
+    "parent": "<parent>",
+    "event": "<event>",
+    "sessionId": "<sessionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "record_reviewer_session_event", &[
+    ("parent", "<parent>".into()),
+    ("event", "<event>".into()),
+    ("sessionId", "<sessionId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

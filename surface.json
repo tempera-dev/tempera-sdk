@@ -24,6 +24,7 @@
     "tempera-gym",
     "tempera-bio",
     "tempera-document",
+    "tempera-risk",
     "tempera-payments"
   ],
   "defaultAudience": "palette",
@@ -55,6 +56,9 @@
     "usage:reserve",
     "document:read",
     "document:write",
+    "risk:read",
+    "risk:write",
+    "risk:review",
     "pii:unmask",
     "payments:intents:read",
     "payments:intents:write",
@@ -76,6 +80,7 @@
       "temperaGymUrl": "http://127.0.0.1:8096",
       "cradleApiUrl": "http://127.0.0.1:8088",
       "temperaLlmApiUrl": "http://127.0.0.1:8080",
+      "temperaRiskApiUrl": "http://127.0.0.1:8097",
       "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
       "paletteApiUrl": "http://localhost:8080",
       "paletteMcpUrl": "http://localhost:8080/mcp",
@@ -91,6 +96,7 @@
       "temperaGymUrl": "https://preview-gym.tempera.dev",
       "cradleApiUrl": "https://preview-cradle.tempera.dev",
       "temperaLlmApiUrl": "https://preview-llm.tempera.dev",
+      "temperaRiskApiUrl": "https://preview-risk.tempera.dev",
       "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
       "paletteApiUrl": "https://preview-mcp.tempera.dev",
       "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
@@ -106,6 +112,7 @@
       "temperaGymUrl": "https://staging-gym.tempera.dev",
       "cradleApiUrl": "https://staging-cradle.tempera.dev",
       "temperaLlmApiUrl": "https://staging-llm.tempera.dev",
+      "temperaRiskApiUrl": "https://staging-risk.tempera.dev",
       "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
       "paletteApiUrl": "https://staging-mcp.tempera.dev",
       "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
@@ -121,6 +128,7 @@
       "temperaGymUrl": "https://gym.tempera.dev",
       "cradleApiUrl": "https://cradle.tempera.dev",
       "temperaLlmApiUrl": "https://llm.tempera.dev",
+      "temperaRiskApiUrl": "https://risk.tempera.dev",
       "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
       "paletteApiUrl": "https://mcp.tempera.dev",
       "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
@@ -188,6 +196,14 @@
       "audience": "tempera-llm",
       "auth": "bearer minted for audience tempera-llm with model:read/model:invoke, or a central tp_ API key",
       "description": "OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract."
+    },
+    "temperaRisk": {
+      "name": "tempera-risk",
+      "repository": "https://github.com/tempera-dev/tempera-risk",
+      "envVar": "TEMPERA_RISK_URL",
+      "audience": "tempera-risk",
+      "auth": "bearer minted for audience tempera-risk; Risk additionally enforces tenant, project, actor, case, access-grant, permissible-purpose, source-rights, and human-review boundaries.",
+      "description": "Governed, non-decisional cross-domain investigation service. The trusted SDK surface manages cases, grants, research jobs, sources, and reviewed dossiers; the smaller MCP surface is separately curated."
     },
     "temperaWorkflows": {
       "name": "tempera-workflows",
@@ -3156,6 +3172,806 @@
         "requestContentType": "application/json"
       }
     ],
+    "temperaRisk": [
+      {
+        "id": "health",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Call GET /healthz.",
+        "upstreamOperationId": "health",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getOpenApi",
+        "method": "GET",
+        "path": "/openapi.yaml",
+        "auth": "none",
+        "description": "Call GET /openapi.yaml.",
+        "upstreamOperationId": "getOpenApi",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "executeGraphRead",
+        "method": "POST",
+        "path": "/v1/projects/{project}/graphReads/execute",
+        "auth": "product",
+        "description": "Execute one principal-bound, signed, bounded graph read.",
+        "upstreamOperationId": "executeGraphRead",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "request",
+          "people_binding"
+        ],
+        "requiredBody": [
+          "request"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createSubject",
+        "method": "POST",
+        "path": "/v1/projects/{project}/subjects",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/subjects.",
+        "upstreamOperationId": "createSubject",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "subject_id",
+          "subject_type",
+          "state",
+          "attributes",
+          "external_refs"
+        ],
+        "requiredBody": [
+          "schema",
+          "subject_id",
+          "subject_type"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "listSubjects",
+        "method": "GET",
+        "path": "/v1/projects/{project}/subjects",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/subjects.",
+        "upstreamOperationId": "listSubjects",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getSubject",
+        "method": "GET",
+        "path": "/v1/projects/{project}/subjects/{subjectId}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/subjects/{subjectId}.",
+        "upstreamOperationId": "getSubject",
+        "pathParams": [
+          "project",
+          "subjectId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "ingestEvent",
+        "method": "POST",
+        "path": "/v1/projects/{project}/events:ingest",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/events:ingest.",
+        "upstreamOperationId": "ingestEvent",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "event_id",
+          "event_type",
+          "subject_id",
+          "counterparty_id",
+          "device_id",
+          "amount",
+          "event_time",
+          "received_at",
+          "attributes",
+          "evidence_refs"
+        ],
+        "requiredBody": [
+          "schema",
+          "event_id",
+          "event_type",
+          "subject_id",
+          "event_time",
+          "received_at"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "registerPolicy",
+        "method": "POST",
+        "path": "/v1/projects/{project}/policies",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/policies.",
+        "upstreamOperationId": "registerPolicy",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "policy_id",
+          "version",
+          "use_case",
+          "segment",
+          "description",
+          "default_action",
+          "default_reason_code",
+          "missing_data_action",
+          "missing_data_reason_code",
+          "conflict_strategy",
+          "rules",
+          "model_dependencies",
+          "change_ticket",
+          "created_by"
+        ],
+        "requiredBody": [
+          "schema",
+          "policy_id",
+          "version",
+          "use_case",
+          "default_action",
+          "default_reason_code",
+          "missing_data_action",
+          "missing_data_reason_code",
+          "conflict_strategy",
+          "rules",
+          "change_ticket",
+          "created_by"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "registerModel",
+        "method": "POST",
+        "path": "/v1/projects/{project}/models",
+        "auth": "product",
+        "description": "Register an immutable model artifact after dual human approval.",
+        "upstreamOperationId": "registerModel",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "model_id",
+          "version",
+          "state",
+          "artifact_sha256",
+          "runtime",
+          "input_features",
+          "output_feature",
+          "training_data_refs",
+          "validation_report_ref",
+          "calibration",
+          "limitations",
+          "created_at",
+          "approval_ids"
+        ],
+        "requiredBody": [
+          "schema",
+          "model_id",
+          "version",
+          "state",
+          "artifact_sha256",
+          "runtime",
+          "input_features",
+          "output_feature",
+          "training_data_refs",
+          "validation_report_ref",
+          "calibration",
+          "limitations",
+          "created_at",
+          "approval_ids"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "ingestModelScore",
+        "method": "POST",
+        "path": "/v1/projects/{project}/modelScores:ingest",
+        "auth": "product",
+        "description": "Ingest a signed non-decisional score from an authenticated scorer workload.",
+        "upstreamOperationId": "ingestModelScore",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "algorithm",
+          "key_id",
+          "score",
+          "signature"
+        ],
+        "requiredBody": [
+          "schema",
+          "algorithm",
+          "key_id",
+          "score",
+          "signature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createApproval",
+        "method": "POST",
+        "path": "/v1/projects/{project}/approvals",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/approvals.",
+        "upstreamOperationId": "createApproval",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "action",
+          "target"
+        ],
+        "requiredBody": [
+          "action",
+          "target"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "deployPolicy",
+        "method": "POST",
+        "path": "/v1/projects/{project}/policyDeployments",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/policyDeployments.",
+        "upstreamOperationId": "deployPolicy",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "deployment_id",
+          "policy_id",
+          "policy_version",
+          "mode",
+          "traffic_percent",
+          "effective_at",
+          "approval_ids"
+        ],
+        "requiredBody": [
+          "deployment_id",
+          "policy_id",
+          "policy_version",
+          "mode",
+          "traffic_percent",
+          "effective_at",
+          "approval_ids"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createDecision",
+        "method": "POST",
+        "path": "/v1/projects/{project}/decisions",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/decisions.",
+        "upstreamOperationId": "createDecision",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "request_id",
+          "subject_id",
+          "event_id",
+          "use_case",
+          "segment",
+          "features",
+          "model_versions",
+          "evidence_refs",
+          "as_of",
+          "available_as_of",
+          "execution_mode"
+        ],
+        "requiredBody": [
+          "schema",
+          "request_id",
+          "subject_id",
+          "use_case",
+          "as_of"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "getDecision",
+        "method": "GET",
+        "path": "/v1/projects/{project}/decisions/{decisionId}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/decisions/{decisionId}.",
+        "upstreamOperationId": "getDecision",
+        "pathParams": [
+          "project",
+          "decisionId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "recordOutcome",
+        "method": "POST",
+        "path": "/v1/projects/{project}/outcomes",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/outcomes.",
+        "upstreamOperationId": "recordOutcome",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createScreening",
+        "method": "POST",
+        "path": "/v1/projects/{project}/screenings",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/screenings.",
+        "upstreamOperationId": "createScreening",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "index_name",
+          "subject",
+          "permissible_purpose",
+          "case_id",
+          "threshold",
+          "max_candidates"
+        ],
+        "requiredBody": [
+          "index_name",
+          "subject",
+          "permissible_purpose",
+          "case_id"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "listCases",
+        "method": "GET",
+        "path": "/v1/projects/{project}/cases",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/cases.",
+        "upstreamOperationId": "listCases",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createCase",
+        "method": "POST",
+        "path": "/v1/projects/{project}/cases",
+        "auth": "product",
+        "description": "Open a governed multi-domain investigation case.",
+        "upstreamOperationId": "createCase",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "case_id",
+          "case_type",
+          "state",
+          "subject_ids",
+          "alert_ids",
+          "assigned_to",
+          "disposition",
+          "evidence_refs",
+          "attributes"
+        ],
+        "requiredBody": [
+          "schema",
+          "case_id",
+          "case_type",
+          "state",
+          "subject_ids",
+          "alert_ids",
+          "assigned_to",
+          "disposition",
+          "evidence_refs",
+          "attributes"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "getCase",
+        "method": "GET",
+        "path": "/v1/projects/{project}/cases/{caseId}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/cases/{caseId}.",
+        "upstreamOperationId": "getCase",
+        "pathParams": [
+          "project",
+          "caseId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getCaseDossier",
+        "method": "GET",
+        "path": "/v1/projects/{project}/cases/{caseId}/dossier",
+        "auth": "product",
+        "description": "Read all completed non-decisional investigation dossiers for a case.",
+        "upstreamOperationId": "getCaseDossier",
+        "pathParams": [
+          "project",
+          "caseId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createAccessGrant",
+        "method": "POST",
+        "path": "/v1/projects/{project}/accessGrants",
+        "auth": "product",
+        "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.",
+        "upstreamOperationId": "createAccessGrant",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "grant_id",
+          "case_id",
+          "subject_ids",
+          "actor_ids",
+          "permissible_purpose",
+          "allowed_fields",
+          "allowed_providers",
+          "third_party_disclosure_allowed",
+          "valid_from",
+          "expires_at",
+          "created_by",
+          "approval_ids",
+          "change_ticket"
+        ],
+        "requiredBody": [
+          "schema",
+          "grant_id",
+          "case_id",
+          "subject_ids",
+          "actor_ids",
+          "permissible_purpose",
+          "allowed_fields",
+          "allowed_providers",
+          "third_party_disclosure_allowed",
+          "valid_from",
+          "expires_at",
+          "created_by",
+          "approval_ids",
+          "change_ticket"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "revokeAccessGrant",
+        "method": "POST",
+        "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
+        "auth": "product",
+        "description": "Revoke a sensitive investigation-data access grant.",
+        "upstreamOperationId": "revokeAccessGrant",
+        "pathParams": [
+          "project",
+          "grantId"
+        ],
+        "body": [
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createPeopleDirectoryProfile",
+        "method": "POST",
+        "path": "/v1/projects/{project}/peopleDirectoryProfiles",
+        "auth": "product",
+        "description": "Ingest an evidence-backed bitemporal person or company profile.",
+        "upstreamOperationId": "createPeopleDirectoryProfile",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "profile_id",
+          "subject_id",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "source_ids",
+          "evidence_refs",
+          "valid_from",
+          "valid_to",
+          "recorded_at",
+          "retention_expires_at",
+          "non_decisional"
+        ],
+        "requiredBody": [
+          "schema",
+          "profile_id",
+          "subject_id",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "source_ids",
+          "evidence_refs",
+          "valid_from",
+          "valid_to",
+          "recorded_at",
+          "retention_expires_at"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "searchPeople",
+        "method": "POST",
+        "path": "/v1/projects/{project}/people/search",
+        "auth": "product",
+        "description": "Find non-decisional identity-resolution candidates under an active case grant.",
+        "upstreamOperationId": "searchPeople",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "schema",
+          "query_id",
+          "subject_id",
+          "access_grant_id",
+          "case_id",
+          "permissible_purpose",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "max_candidates",
+          "as_of",
+          "known_at"
+        ],
+        "requiredBody": [
+          "schema",
+          "query_id",
+          "subject_id",
+          "access_grant_id",
+          "case_id",
+          "permissible_purpose",
+          "entity_kind",
+          "anchors",
+          "attributes",
+          "max_candidates",
+          "as_of",
+          "known_at"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "listSourcePacks",
+        "method": "GET",
+        "path": "/v1/projects/{project}/sourcePacks",
+        "auth": "product",
+        "description": "List declared non-runnable investigation source packs.",
+        "upstreamOperationId": "listSourcePacks",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getSourcePack",
+        "method": "GET",
+        "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
+        "auth": "product",
+        "description": "Read one declared non-runnable investigation source pack.",
+        "upstreamOperationId": "getSourcePack",
+        "pathParams": [
+          "project",
+          "sourcePackId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getSourceCoverage",
+        "method": "GET",
+        "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
+        "auth": "product",
+        "description": "Read truthful admitted coverage for one source pack.",
+        "upstreamOperationId": "getSourceCoverage",
+        "pathParams": [
+          "project",
+          "sourcePackId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createResearchJob",
+        "method": "POST",
+        "path": "/v1/projects/{project}/researchJobs",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/researchJobs.",
+        "upstreamOperationId": "createResearchJob",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "subject",
+          "question",
+          "purpose",
+          "permissible_purpose",
+          "output_schema",
+          "budgets",
+          "source_policy",
+          "case_id",
+          "access_grant_id",
+          "actor_id",
+          "retention_policy_id",
+          "human_review_required",
+          "candidate_binding",
+          "provider_plan",
+          "investigation_profile",
+          "source_pack_ids",
+          "continuation_of_job_id"
+        ],
+        "requiredBody": [
+          "subject",
+          "question",
+          "purpose",
+          "permissible_purpose",
+          "output_schema",
+          "budgets",
+          "source_policy",
+          "case_id",
+          "actor_id",
+          "retention_policy_id",
+          "human_review_required"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "getResearchJob",
+        "method": "GET",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}.",
+        "upstreamOperationId": "getResearchJob",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "streamResearchJobEvents",
+        "method": "GET",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
+        "auth": "product",
+        "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence.",
+        "upstreamOperationId": "streamResearchJobEvents",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "query": [
+          "afterSequence",
+          "pageSize"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getResearchJobResult",
+        "method": "GET",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
+        "auth": "product",
+        "description": "Read the cited, non-decisional result under the job's original access grant.",
+        "upstreamOperationId": "getResearchJobResult",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "listResearchJobEvents",
+        "method": "GET",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
+        "auth": "product",
+        "description": "Read ordered non-decisional job events under the job's original access grant.",
+        "upstreamOperationId": "listResearchJobEvents",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "requestBodyKind": "none",
+        "query": [
+          "afterSequence",
+          "pageSize"
+        ]
+      },
+      {
+        "id": "cancelResearchJob",
+        "method": "POST",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel.",
+        "upstreamOperationId": "cancelResearchJob",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "body": [
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "reviewResearchJob",
+        "method": "POST",
+        "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
+        "auth": "product",
+        "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review.",
+        "upstreamOperationId": "reviewResearchJob",
+        "pathParams": [
+          "project",
+          "jobId"
+        ],
+        "body": [
+          "approved",
+          "reason"
+        ],
+        "requiredBody": [
+          "approved",
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "exportAudit",
+        "method": "GET",
+        "path": "/v1/projects/{project}/audit:export",
+        "auth": "product",
+        "description": "Call GET /v1/projects/{project}/audit:export.",
+        "upstreamOperationId": "exportAudit",
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none"
+      }
+    ],
     "temperaWorkflows": [
       {
         "id": "health",
@@ -4256,6 +5072,84 @@
         "requestContentType": "application/json"
       }
     ],
+    "temperaPayments": [
+      {
+        "id": "getPaymentsHealth",
+        "method": "GET",
+        "path": "/v1/health",
+        "auth": "none",
+        "description": "Call GET /v1/health.",
+        "upstreamOperationId": "getPaymentsHealth",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createPaymentIntent",
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "auth": "oauthResource",
+        "description": "Create a canonical payment intent.",
+        "upstreamOperationId": "createPaymentIntent",
+        "body": [
+          "tenant_id",
+          "merchant_id",
+          "recipient",
+          "asset",
+          "amount",
+          "expires_in_seconds"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "merchant_id",
+          "recipient",
+          "asset",
+          "amount",
+          "expires_in_seconds"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:write"
+      },
+      {
+        "id": "createStripeCheckout",
+        "method": "POST",
+        "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+        "auth": "oauthResource",
+        "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent.",
+        "upstreamOperationId": "createStripeCheckout",
+        "pathParams": [
+          "payment_intent_id"
+        ],
+        "body": [
+          "tenant_id",
+          "currency",
+          "product_name",
+          "success_url",
+          "cancel_url"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "currency",
+          "product_name",
+          "success_url",
+          "cancel_url"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:write"
+      },
+      {
+        "id": "receiveStripeWebhook",
+        "method": "POST",
+        "path": "/v1/webhooks/stripe",
+        "auth": "none",
+        "description": "Verify and durably deduplicate a Stripe webhook using its raw body.",
+        "upstreamOperationId": "receiveStripeWebhook",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      }
+    ],
     "temperaDocument": [
       {
         "id": "healthGet",
@@ -4517,84 +5411,6 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-document",
         "scope": "document:write"
-      }
-    ],
-    "temperaPayments": [
-      {
-        "id": "getPaymentsHealth",
-        "method": "GET",
-        "path": "/v1/health",
-        "auth": "none",
-        "description": "Get payment service health.",
-        "upstreamOperationId": "getPaymentsHealth",
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "createPaymentIntent",
-        "method": "POST",
-        "path": "/v1/payment_intents",
-        "auth": "oauthResource",
-        "description": "Create a canonical payment intent.",
-        "upstreamOperationId": "createPaymentIntent",
-        "body": [
-          "tenant_id",
-          "merchant_id",
-          "recipient",
-          "asset",
-          "amount",
-          "expires_in_seconds"
-        ],
-        "requiredBody": [
-          "tenant_id",
-          "merchant_id",
-          "recipient",
-          "asset",
-          "amount",
-          "expires_in_seconds"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json",
-        "authAudience": "tempera-payments",
-        "scope": "payments:intents:write"
-      },
-      {
-        "id": "createStripeCheckout",
-        "method": "POST",
-        "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
-        "auth": "oauthResource",
-        "description": "Create a hosted Stripe Checkout session for a payment intent.",
-        "upstreamOperationId": "createStripeCheckout",
-        "pathParams": [
-          "payment_intent_id"
-        ],
-        "body": [
-          "tenant_id",
-          "currency",
-          "product_name",
-          "success_url",
-          "cancel_url"
-        ],
-        "requiredBody": [
-          "tenant_id",
-          "currency",
-          "product_name",
-          "success_url",
-          "cancel_url"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json",
-        "authAudience": "tempera-payments",
-        "scope": "payments:intents:write"
-      },
-      {
-        "id": "receiveStripeWebhook",
-        "method": "POST",
-        "path": "/v1/webhooks/stripe",
-        "auth": "none",
-        "description": "Verify and durably deduplicate a Stripe webhook using its raw body.",
-        "upstreamOperationId": "receiveStripeWebhook",
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
       }
     ],
     "cradle": [
@@ -5280,7 +6096,8 @@
           "pageSize",
           "pageToken",
           "status",
-          "campaignName"
+          "campaignName",
+          "orderBy"
         ],
         "scope": "dataset:read",
         "description": "List human residual review tasks, optionally filtered by status and campaign.",
@@ -5320,6 +6137,33 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "createReviewerRevocation",
+        "method": "POST",
+        "path": "/v1/{parent}/reviewer-revocations",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "reviewerRef",
+          "reason",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "reviewerRef",
+          "reason",
+          "idempotencyKey"
+        ],
+        "scope": "review:gold:manage",
+        "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments.",
+        "upstreamOperationId": "projects.reviewerRevocations.create",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "resolveExpertTask",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
@@ -5348,6 +6192,33 @@
         "scope": "review:resolve",
         "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
         "upstreamOperationId": "projects.expertTasks.resolve",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "createExpertTaskAppeal",
+        "method": "POST",
+        "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
+        "auth": "product",
+        "pathParams": [
+          "parent",
+          "expertTaskId"
+        ],
+        "body": [
+          "rationale",
+          "evidence",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "rationale",
+          "idempotencyKey"
+        ],
+        "scope": "review:resolve",
+        "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision.",
+        "upstreamOperationId": "projects.expertTasks.appeal",
         "pathParamTemplates": {
           "parent": "projects/*"
         },
@@ -5458,6 +6329,31 @@
         "scope": "review:resolve",
         "description": "Autosave a version-checked draft under the active reviewer lease.",
         "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordReviewerSessionEvent",
+        "method": "POST",
+        "path": "/v1/{parent}/reviewer-sessions:record",
+        "auth": "product",
+        "pathParams": [
+          "parent"
+        ],
+        "body": [
+          "event",
+          "sessionId"
+        ],
+        "requiredBody": [
+          "event",
+          "sessionId"
+        ],
+        "scope": "review:resolve",
+        "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier.",
+        "upstreamOperationId": "projects.reviewerSessions.record",
         "pathParamTemplates": {
           "parent": "projects/*"
         },

@@ -20,11 +20,11 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.palette.repository, "https://github.com/tempera-dev/palette");
   assert.equal(TEMPERA_PRODUCTS.tempo.repository, "https://github.com/tempera-dev/tempo");
   assert.equal(TEMPERA_PRODUCTS.temperaLlm.repository, "https://github.com/tempera-dev/tempera-llm");
+  assert.equal(TEMPERA_PRODUCTS.temperaRisk.repository, "https://github.com/tempera-dev/tempera-risk");
   assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
   assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
   assert.equal(TEMPERA_PRODUCTS.temperaBio.repository, "https://github.com/tempera-dev/tempera-bio");
   assert.equal(TEMPERA_PRODUCTS.temperaDocument.repository, "https://github.com/tempera-dev/tempera-document");
-  assert.equal(TEMPERA_PRODUCTS.temperaPayments.repository, "https://github.com/tempera-dev/tempera-payments");
   assert.equal(TEMPERA_PRODUCTS.cradle.repository, "https://github.com/tempera-dev/cradle");
   assert.equal(TEMPERA_PRODUCTS.remi.repository, "https://github.com/tempera-dev/remi");
   assert.equal(TEMPERA_PRODUCTS.dataEngine.repository, "https://github.com/tempera-dev/data-engine");
@@ -46,11 +46,11 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes("data-engine"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-code"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-llm"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-risk"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-workflows"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-gym"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-bio"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-document"));
-  assert.ok(TEMPERA_AUDIENCES.includes("tempera-payments"));
 });
 
 test("scopes match the control-plane scope registry", () => {
@@ -64,7 +64,8 @@ test("scopes match the control-plane scope registry", () => {
       "bio:source:read", "bio:proposal:write", "bio:measurement:verify",
       "bio:decision:write", "bio:experiment:approve",
       "bio:experiment:submit", "bio:signer:manage",
-      "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "pii:unmask",
+      "model:read", "model:invoke", "usage:reserve", "document:read", "document:write",
+      "risk:read", "risk:write", "risk:review", "pii:unmask",
       "payments:intents:read", "payments:intents:write", "payments:receipts:read",
       "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin",
     ],
@@ -83,6 +84,7 @@ test("all four environments carry the same target keys", () => {
   assert.equal(TEMPERA_ENVIRONMENTS.production.paletteMcpUrl, "https://mcp.tempera.dev/mcp");
   assert.equal(TEMPERA_ENVIRONMENTS.production.tempoApiUrl, "https://tempo.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaLlmApiUrl, "https://llm.tempera.dev");
+  assert.equal(TEMPERA_ENVIRONMENTS.production.temperaRiskApiUrl, "https://risk.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaWorkflowsApiUrl, "https://workflows.tempera.dev");
   assert.equal(TEMPERA_ENVIRONMENTS.production.temperaGymUrl, "https://gym.tempera.dev");
   // Deprecated alias points at the same object.
