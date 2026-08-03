@@ -3631,774 +3631,6 @@
         "method": "POST",
         "path": "/v1/projects/{project}/accessGrants",
         "auth": "product",
-        "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.",
-        "upstreamOperationId": "createAccessGrant",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "grant_id",
-          "case_id",
-          "subject_ids",
-          "actor_ids",
-          "permissible_purpose",
-          "allowed_fields",
-          "allowed_providers",
-          "third_party_disclosure_allowed",
-          "valid_from",
-          "expires_at",
-          "created_by",
-          "approval_ids",
-          "change_ticket"
-        ],
-        "requiredBody": [
-          "schema",
-          "grant_id",
-          "case_id",
-          "subject_ids",
-          "actor_ids",
-          "permissible_purpose",
-          "allowed_fields",
-          "allowed_providers",
-          "third_party_disclosure_allowed",
-          "valid_from",
-          "expires_at",
-          "created_by",
-          "approval_ids",
-          "change_ticket"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "revokeAccessGrant",
-        "method": "POST",
-        "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
-        "auth": "product",
-        "description": "Revoke a sensitive investigation-data access grant.",
-        "upstreamOperationId": "revokeAccessGrant",
-        "pathParams": [
-          "project",
-          "grantId"
-        ],
-        "body": [
-          "reason"
-        ],
-        "requiredBody": [
-          "reason"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "createPeopleDirectoryProfile",
-        "method": "POST",
-        "path": "/v1/projects/{project}/peopleDirectoryProfiles",
-        "auth": "product",
-        "description": "Ingest an evidence-backed bitemporal person or company profile.",
-        "upstreamOperationId": "createPeopleDirectoryProfile",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "profile_id",
-          "subject_id",
-          "entity_kind",
-          "anchors",
-          "attributes",
-          "source_ids",
-          "evidence_refs",
-          "valid_from",
-          "valid_to",
-          "recorded_at",
-          "retention_expires_at",
-          "non_decisional"
-        ],
-        "requiredBody": [
-          "schema",
-          "profile_id",
-          "subject_id",
-          "entity_kind",
-          "anchors",
-          "attributes",
-          "source_ids",
-          "evidence_refs",
-          "valid_from",
-          "valid_to",
-          "recorded_at",
-          "retention_expires_at"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "searchPeople",
-        "method": "POST",
-        "path": "/v1/projects/{project}/people/search",
-        "auth": "product",
-        "description": "Find non-decisional identity-resolution candidates under an active case grant.",
-        "upstreamOperationId": "searchPeople",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "query_id",
-          "subject_id",
-          "access_grant_id",
-          "case_id",
-          "permissible_purpose",
-          "entity_kind",
-          "anchors",
-          "attributes",
-          "max_candidates",
-          "as_of",
-          "known_at"
-        ],
-        "requiredBody": [
-          "schema",
-          "query_id",
-          "subject_id",
-          "access_grant_id",
-          "case_id",
-          "permissible_purpose",
-          "entity_kind",
-          "anchors",
-          "attributes",
-          "max_candidates",
-          "as_of",
-          "known_at"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "listSourcePacks",
-        "method": "GET",
-        "path": "/v1/projects/{project}/sourcePacks",
-        "auth": "product",
-        "description": "List declared non-runnable investigation source packs.",
-        "upstreamOperationId": "listSourcePacks",
-        "pathParams": [
-          "project"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "getSourcePack",
-        "method": "GET",
-        "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
-        "auth": "product",
-        "description": "Read one declared non-runnable investigation source pack.",
-        "upstreamOperationId": "getSourcePack",
-        "pathParams": [
-          "project",
-          "sourcePackId"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "getSourceCoverage",
-        "method": "GET",
-        "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
-        "auth": "product",
-        "description": "Read truthful admitted coverage for one source pack.",
-        "upstreamOperationId": "getSourceCoverage",
-        "pathParams": [
-          "project",
-          "sourcePackId"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "createResearchJob",
-        "method": "POST",
-        "path": "/v1/projects/{project}/researchJobs",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/researchJobs.",
-        "upstreamOperationId": "createResearchJob",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "subject",
-          "question",
-          "purpose",
-          "permissible_purpose",
-          "output_schema",
-          "budgets",
-          "source_policy",
-          "case_id",
-          "access_grant_id",
-          "actor_id",
-          "retention_policy_id",
-          "human_review_required",
-          "candidate_binding",
-          "provider_plan",
-          "investigation_profile",
-          "source_pack_ids",
-          "continuation_of_job_id"
-        ],
-        "requiredBody": [
-          "subject",
-          "question",
-          "purpose",
-          "permissible_purpose",
-          "output_schema",
-          "budgets",
-          "source_policy",
-          "case_id",
-          "actor_id",
-          "retention_policy_id",
-          "human_review_required"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "getResearchJob",
-        "method": "GET",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}.",
-        "upstreamOperationId": "getResearchJob",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "streamResearchJobEvents",
-        "method": "GET",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
-        "auth": "product",
-        "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence.",
-        "upstreamOperationId": "streamResearchJobEvents",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "query": [
-          "afterSequence",
-          "pageSize"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "getResearchJobResult",
-        "method": "GET",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
-        "auth": "product",
-        "description": "Read the cited, non-decisional result under the job's original access grant.",
-        "upstreamOperationId": "getResearchJobResult",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "requestBodyKind": "none"
-      },
-      {
-        "id": "listResearchJobEvents",
-        "method": "GET",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
-        "auth": "product",
-        "description": "Read ordered non-decisional job events under the job's original access grant.",
-        "upstreamOperationId": "listResearchJobEvents",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "requestBodyKind": "none",
-        "query": [
-          "afterSequence",
-          "pageSize"
-        ]
-      },
-      {
-        "id": "cancelResearchJob",
-        "method": "POST",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel.",
-        "upstreamOperationId": "cancelResearchJob",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "body": [
-          "reason"
-        ],
-        "requiredBody": [
-          "reason"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "reviewResearchJob",
-        "method": "POST",
-        "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review.",
-        "upstreamOperationId": "reviewResearchJob",
-        "pathParams": [
-          "project",
-          "jobId"
-        ],
-        "body": [
-          "approved",
-          "reason"
-        ],
-        "requiredBody": [
-          "approved",
-          "reason"
-        ],
-        "requestBodyKind": "json",
-        "requestContentType": "application/json"
-      },
-      {
-        "id": "exportAudit",
-        "method": "GET",
-        "path": "/v1/projects/{project}/audit:export",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/audit:export.",
-        "upstreamOperationId": "exportAudit",
-        "pathParams": [
-          "project"
-        ],
-        "requestBodyKind": "none"
-      }
-    ],
-    "temperaRisk": [
-      {
-        "id": "health",
-        "method": "GET",
-        "path": "/healthz",
-        "auth": "none",
-        "description": "Call GET /healthz.",
-        "upstreamOperationId": "health"
-      },
-      {
-        "id": "getOpenApi",
-        "method": "GET",
-        "path": "/openapi.yaml",
-        "auth": "none",
-        "description": "Call GET /openapi.yaml.",
-        "upstreamOperationId": "getOpenApi"
-      },
-      {
-        "id": "executeGraphRead",
-        "method": "POST",
-        "path": "/v1/projects/{project}/graphReads/execute",
-        "auth": "product",
-        "description": "Execute one principal-bound, signed, bounded graph read.",
-        "upstreamOperationId": "executeGraphRead",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "request",
-          "people_binding"
-        ],
-        "requiredBody": [
-          "request"
-        ]
-      },
-      {
-        "id": "createSubject",
-        "method": "POST",
-        "path": "/v1/projects/{project}/subjects",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/subjects.",
-        "upstreamOperationId": "createSubject",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "subject_id",
-          "subject_type",
-          "state",
-          "attributes",
-          "external_refs"
-        ],
-        "requiredBody": [
-          "schema",
-          "subject_id",
-          "subject_type"
-        ]
-      },
-      {
-        "id": "listSubjects",
-        "method": "GET",
-        "path": "/v1/projects/{project}/subjects",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/subjects.",
-        "upstreamOperationId": "listSubjects",
-        "pathParams": [
-          "project"
-        ]
-      },
-      {
-        "id": "getSubject",
-        "method": "GET",
-        "path": "/v1/projects/{project}/subjects/{subjectId}",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/subjects/{subjectId}.",
-        "upstreamOperationId": "getSubject",
-        "pathParams": [
-          "project",
-          "subjectId"
-        ]
-      },
-      {
-        "id": "ingestEvent",
-        "method": "POST",
-        "path": "/v1/projects/{project}/events:ingest",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/events:ingest.",
-        "upstreamOperationId": "ingestEvent",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "event_id",
-          "event_type",
-          "subject_id",
-          "counterparty_id",
-          "device_id",
-          "amount",
-          "event_time",
-          "received_at",
-          "attributes",
-          "evidence_refs"
-        ],
-        "requiredBody": [
-          "schema",
-          "event_id",
-          "event_type",
-          "subject_id",
-          "event_time",
-          "received_at"
-        ]
-      },
-      {
-        "id": "registerPolicy",
-        "method": "POST",
-        "path": "/v1/projects/{project}/policies",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/policies.",
-        "upstreamOperationId": "registerPolicy",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "policy_id",
-          "version",
-          "use_case",
-          "segment",
-          "description",
-          "default_action",
-          "default_reason_code",
-          "missing_data_action",
-          "missing_data_reason_code",
-          "conflict_strategy",
-          "rules",
-          "model_dependencies",
-          "change_ticket",
-          "created_by"
-        ],
-        "requiredBody": [
-          "schema",
-          "policy_id",
-          "version",
-          "use_case",
-          "default_action",
-          "default_reason_code",
-          "missing_data_action",
-          "missing_data_reason_code",
-          "conflict_strategy",
-          "rules",
-          "change_ticket",
-          "created_by"
-        ]
-      },
-      {
-        "id": "registerModel",
-        "method": "POST",
-        "path": "/v1/projects/{project}/models",
-        "auth": "product",
-        "description": "Register an immutable model artifact after dual human approval.",
-        "upstreamOperationId": "registerModel",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "model_id",
-          "version",
-          "state",
-          "artifact_sha256",
-          "runtime",
-          "input_features",
-          "output_feature",
-          "training_data_refs",
-          "validation_report_ref",
-          "calibration",
-          "limitations",
-          "created_at",
-          "approval_ids"
-        ],
-        "requiredBody": [
-          "schema",
-          "model_id",
-          "version",
-          "state",
-          "artifact_sha256",
-          "runtime",
-          "input_features",
-          "output_feature",
-          "training_data_refs",
-          "validation_report_ref",
-          "calibration",
-          "limitations",
-          "created_at",
-          "approval_ids"
-        ]
-      },
-      {
-        "id": "ingestModelScore",
-        "method": "POST",
-        "path": "/v1/projects/{project}/modelScores:ingest",
-        "auth": "product",
-        "description": "Ingest a signed non-decisional score from an authenticated scorer workload.",
-        "upstreamOperationId": "ingestModelScore",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "algorithm",
-          "key_id",
-          "score",
-          "signature"
-        ],
-        "requiredBody": [
-          "schema",
-          "algorithm",
-          "key_id",
-          "score",
-          "signature"
-        ]
-      },
-      {
-        "id": "createApproval",
-        "method": "POST",
-        "path": "/v1/projects/{project}/approvals",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/approvals.",
-        "upstreamOperationId": "createApproval",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "action",
-          "target"
-        ],
-        "requiredBody": [
-          "action",
-          "target"
-        ]
-      },
-      {
-        "id": "deployPolicy",
-        "method": "POST",
-        "path": "/v1/projects/{project}/policyDeployments",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/policyDeployments.",
-        "upstreamOperationId": "deployPolicy",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "deployment_id",
-          "policy_id",
-          "policy_version",
-          "mode",
-          "traffic_percent",
-          "effective_at",
-          "approval_ids"
-        ],
-        "requiredBody": [
-          "deployment_id",
-          "policy_id",
-          "policy_version",
-          "mode",
-          "traffic_percent",
-          "effective_at",
-          "approval_ids"
-        ]
-      },
-      {
-        "id": "createDecision",
-        "method": "POST",
-        "path": "/v1/projects/{project}/decisions",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/decisions.",
-        "upstreamOperationId": "createDecision",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "request_id",
-          "subject_id",
-          "event_id",
-          "use_case",
-          "segment",
-          "features",
-          "model_versions",
-          "evidence_refs",
-          "as_of",
-          "available_as_of",
-          "execution_mode"
-        ],
-        "requiredBody": [
-          "schema",
-          "request_id",
-          "subject_id",
-          "use_case",
-          "as_of"
-        ]
-      },
-      {
-        "id": "getDecision",
-        "method": "GET",
-        "path": "/v1/projects/{project}/decisions/{decisionId}",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/decisions/{decisionId}.",
-        "upstreamOperationId": "getDecision",
-        "pathParams": [
-          "project",
-          "decisionId"
-        ]
-      },
-      {
-        "id": "recordOutcome",
-        "method": "POST",
-        "path": "/v1/projects/{project}/outcomes",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/outcomes.",
-        "upstreamOperationId": "recordOutcome",
-        "pathParams": [
-          "project"
-        ]
-      },
-      {
-        "id": "createScreening",
-        "method": "POST",
-        "path": "/v1/projects/{project}/screenings",
-        "auth": "product",
-        "description": "Call POST /v1/projects/{project}/screenings.",
-        "upstreamOperationId": "createScreening",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "index_name",
-          "subject",
-          "permissible_purpose",
-          "case_id",
-          "threshold",
-          "max_candidates"
-        ],
-        "requiredBody": [
-          "index_name",
-          "subject",
-          "permissible_purpose",
-          "case_id"
-        ]
-      },
-      {
-        "id": "listCases",
-        "method": "GET",
-        "path": "/v1/projects/{project}/cases",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/cases.",
-        "upstreamOperationId": "listCases",
-        "pathParams": [
-          "project"
-        ]
-      },
-      {
-        "id": "createCase",
-        "method": "POST",
-        "path": "/v1/projects/{project}/cases",
-        "auth": "product",
-        "description": "Open a governed multi-domain investigation case.",
-        "upstreamOperationId": "createCase",
-        "pathParams": [
-          "project"
-        ],
-        "body": [
-          "schema",
-          "case_id",
-          "case_type",
-          "state",
-          "subject_ids",
-          "alert_ids",
-          "assigned_to",
-          "disposition",
-          "evidence_refs",
-          "attributes"
-        ],
-        "requiredBody": [
-          "schema",
-          "case_id",
-          "case_type",
-          "state",
-          "subject_ids",
-          "alert_ids",
-          "assigned_to",
-          "disposition",
-          "evidence_refs",
-          "attributes"
-        ]
-      },
-      {
-        "id": "getCase",
-        "method": "GET",
-        "path": "/v1/projects/{project}/cases/{caseId}",
-        "auth": "product",
-        "description": "Call GET /v1/projects/{project}/cases/{caseId}.",
-        "upstreamOperationId": "getCase",
-        "pathParams": [
-          "project",
-          "caseId"
-        ]
-      },
-      {
-        "id": "getCaseDossier",
-        "method": "GET",
-        "path": "/v1/projects/{project}/cases/{caseId}/dossier",
-        "auth": "product",
-        "description": "Read all completed non-decisional investigation dossiers for a case.",
-        "upstreamOperationId": "getCaseDossier",
-        "pathParams": [
-          "project",
-          "caseId"
-        ]
-      },
-      {
-        "id": "createAccessGrant",
-        "method": "POST",
-        "path": "/v1/projects/{project}/accessGrants",
-        "auth": "product",
         "description": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access.",
         "upstreamOperationId": "createAccessGrant",
         "pathParams": [
@@ -4435,7 +3667,9 @@
           "created_by",
           "approval_ids",
           "change_ticket"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "revokeAccessGrant",
@@ -4453,7 +3687,9 @@
         ],
         "requiredBody": [
           "reason"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "createPeopleDirectoryProfile",
@@ -4493,7 +3729,9 @@
           "valid_to",
           "recorded_at",
           "retention_expires_at"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "searchPeople",
@@ -4532,7 +3770,9 @@
           "max_candidates",
           "as_of",
           "known_at"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "listSourcePacks",
@@ -4543,7 +3783,8 @@
         "upstreamOperationId": "listSourcePacks",
         "pathParams": [
           "project"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getSourcePack",
@@ -4555,7 +3796,8 @@
         "pathParams": [
           "project",
           "sourcePackId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getSourceCoverage",
@@ -4567,7 +3809,8 @@
         "pathParams": [
           "project",
           "sourcePackId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "createResearchJob",
@@ -4610,7 +3853,9 @@
           "actor_id",
           "retention_policy_id",
           "human_review_required"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getResearchJob",
@@ -4622,7 +3867,8 @@
         "pathParams": [
           "project",
           "jobId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "streamResearchJobEvents",
@@ -4638,7 +3884,8 @@
         "query": [
           "afterSequence",
           "pageSize"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "getResearchJobResult",
@@ -4650,7 +3897,8 @@
         "pathParams": [
           "project",
           "jobId"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "listResearchJobEvents",
@@ -4666,7 +3914,8 @@
         "query": [
           "afterSequence",
           "pageSize"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "cancelResearchJob",
@@ -4684,7 +3933,9 @@
         ],
         "requiredBody": [
           "reason"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "reviewResearchJob",
@@ -4704,7 +3955,9 @@
         "requiredBody": [
           "approved",
           "reason"
-        ]
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "exportAudit",
@@ -4715,7 +3968,8 @@
         "upstreamOperationId": "exportAudit",
         "pathParams": [
           "project"
-        ]
+        ],
+        "requestBodyKind": "none"
       }
     ],
     "temperaWorkflows": [

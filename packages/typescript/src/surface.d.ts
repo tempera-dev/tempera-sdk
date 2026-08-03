@@ -475,7 +475,7 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   getCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read all completed non-decisional investigation dossiers for a case. */
   getCaseDossier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access. */
+  /** Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access. */
   createAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke a sensitive investigation-data access grant. */
   revokeAccessGrant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;

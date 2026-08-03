@@ -5381,7 +5381,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
-      "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access."
+      "description": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access."
     },
     {
       "id": "revokeAccessGrant",
