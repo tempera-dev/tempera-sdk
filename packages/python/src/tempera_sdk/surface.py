@@ -5372,7 +5372,7 @@ OPERATIONS = {
             "scope": None,
             "physical_action": False,
             "prepare_commit_required": False,
-            "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access."
+            "description": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access."
         },
         {
             "id": "revoke_access_grant",

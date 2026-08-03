@@ -4895,7 +4895,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
-        description: "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.",
+        description: "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access.",
     },
     OperationSpec {
         product: "tempera_risk",

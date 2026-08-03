@@ -3631,7 +3631,7 @@
         "method": "POST",
         "path": "/v1/projects/{project}/accessGrants",
         "auth": "product",
-        "description": "Grant purpose, case, subject, actor, field, provider, and time-bounded investigation access.",
+        "description": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access.",
         "upstreamOperationId": "createAccessGrant",
         "pathParams": [
           "project"
@@ -3911,11 +3911,11 @@
           "project",
           "jobId"
         ],
-        "requestBodyKind": "none",
         "query": [
           "afterSequence",
           "pageSize"
-        ]
+        ],
+        "requestBodyKind": "none"
       },
       {
         "id": "cancelResearchJob",
