@@ -74,6 +74,7 @@ Create a canonical payment intent.
 |---|---|---|
 | `tenant_id` | yes | — |
 | `merchant_id` | yes | — |
+| `risk_subject_id` | yes | — |
 | `recipient` | yes | — |
 | `asset` | yes | — |
 | `amount` | yes | — |
@@ -85,6 +86,7 @@ Create a canonical payment intent.
 const result = await client.temperaPayments.createPaymentIntent({
   tenant_id: "<tenant_id>",
   merchant_id: "<merchant_id>",
+  risk_subject_id: "<risk_subject_id>",
   recipient: "<recipient>",
   asset: "<asset>",
   amount: "<amount>",
@@ -96,6 +98,7 @@ const result = await client.temperaPayments.createPaymentIntent({
 result = client.tempera_payments.create_payment_intent({
     "tenant_id": "<tenant_id>",
     "merchant_id": "<merchant_id>",
+    "risk_subject_id": "<risk_subject_id>",
     "recipient": "<recipient>",
     "asset": "<asset>",
     "amount": "<amount>",
@@ -107,6 +110,7 @@ result = client.tempera_payments.create_payment_intent({
 let spec = client.build_request("tempera_payments", "create_payment_intent", &[
     ("tenant_id", "<tenant_id>".into()),
     ("merchant_id", "<merchant_id>".into()),
+    ("risk_subject_id", "<risk_subject_id>".into()),
     ("recipient", "<recipient>".into()),
     ("asset", "<asset>".into()),
     ("amount", "<amount>".into()),
