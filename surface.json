@@ -5113,6 +5113,23 @@
         "scope": "payments:intents:write"
       },
       {
+        "id": "getPaymentIntent",
+        "method": "GET",
+        "path": "/v1/payment_intents/{payment_intent_id}",
+        "auth": "oauthResource",
+        "description": "Read the canonical payment-intent projection.",
+        "upstreamOperationId": "getPaymentIntent",
+        "pathParams": [
+          "payment_intent_id"
+        ],
+        "query": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:read"
+      },
+      {
         "id": "createStripeCheckout",
         "method": "POST",
         "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",

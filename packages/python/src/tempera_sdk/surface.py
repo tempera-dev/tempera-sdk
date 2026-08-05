@@ -7317,6 +7317,31 @@ OPERATIONS = {
             "description": "Create a canonical payment intent."
         },
         {
+            "id": "get_payment_intent",
+            "upstream_operation_id": "getPaymentIntent",
+            "method": "GET",
+            "path": "/v1/payment_intents/{payment_intent_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "payment_intent_id"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "tenant_id"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "payments:intents:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read the canonical payment-intent projection."
+        },
+        {
             "id": "create_stripe_checkout",
             "upstream_operation_id": "createStripeCheckout",
             "method": "POST",

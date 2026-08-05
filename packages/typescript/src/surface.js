@@ -7326,6 +7326,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Create a canonical payment intent."
     },
     {
+      "id": "getPaymentIntent",
+      "upstreamOperationId": "getPaymentIntent",
+      "method": "GET",
+      "path": "/v1/payment_intents/{payment_intent_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "payment_intent_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenant_id"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:intents:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read the canonical payment-intent projection."
+    },
+    {
       "id": "createStripeCheckout",
       "upstreamOperationId": "createStripeCheckout",
       "method": "POST",

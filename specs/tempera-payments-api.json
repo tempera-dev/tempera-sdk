@@ -41,6 +41,26 @@
         }
       }
     },
+    "/v1/payment_intents/{payment_intent_id}": {
+      "get": {
+        "operationId": "getPaymentIntent",
+        "summary": "Read the canonical payment-intent projection",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:read",
+        "parameters": [
+          { "name": "payment_intent_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "tenant_id", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1 } }
+        ],
+        "responses": {
+          "200": { "description": "Canonical current projection", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PaymentIntent" } } } },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "404": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
     "/v1/payment_intents/{payment_intent_id}/stripe_checkout": {
       "post": {
         "operationId": "createStripeCheckout",
