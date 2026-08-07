@@ -134,6 +134,10 @@ def validate(surface: dict) -> list[str]:
             body = set(op.get("body", []))
             if not required_body.issubset(body):
                 problems.append(f"{label}: requiredBody must be a subset of body")
+            required_query = set(op.get("requiredQuery", []))
+            query = set(op.get("query", []))
+            if not required_query.issubset(query):
+                problems.append(f"{label}: requiredQuery must be a subset of query")
             body_kind = op.get("requestBodyKind", "none")
             if body_kind not in {"none", "json", "binary"}:
                 problems.append(f"{label}: invalid requestBodyKind {body_kind!r}")
@@ -243,6 +247,7 @@ def render_typescript(surface: dict) -> str:
                 "pathParams": op.get("pathParams", []),
                 "pathParamTemplates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
+                "requiredQuery": op.get("requiredQuery", []),
                 "body": op.get("body", []),
                 "forbiddenBody": op.get("forbiddenBody", []),
                 "requiredBody": op.get("requiredBody", []),
@@ -327,6 +332,7 @@ def render_typescript_dts(surface: dict) -> str:
         "  pathParams: readonly string[];",
         "  pathParamTemplates: Readonly<Record<string, string>>;",
         "  query: readonly string[];",
+        "  requiredQuery: readonly string[];",
         "  body: readonly string[];",
         "  forbiddenBody: readonly string[];",
         "  requiredBody: readonly string[];",
@@ -435,6 +441,7 @@ def render_python(surface: dict) -> str:
                 "path_params": op.get("pathParams", []),
                 "path_param_templates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
+                "required_query": op.get("requiredQuery", []),
                 "body": op.get("body", []),
                 "forbidden_body": op.get("forbiddenBody", []),
                 "required_body": op.get("requiredBody", []),
@@ -557,6 +564,7 @@ def render_rust(surface: dict) -> str:
         "    pub path_param_templates: &'static [(&'static str, &'static str)],"
     )
     lines.append("    pub query: &'static [&'static str],")
+    lines.append("    pub required_query: &'static [&'static str],")
     lines.append("    pub body: &'static [&'static str],")
     lines.append("    pub forbidden_body: &'static [&'static str],")
     lines.append("    pub required_body: &'static [&'static str],")
@@ -588,6 +596,7 @@ def render_rust(surface: dict) -> str:
                 f"{rust_str_pairs(op.get('pathParamTemplates', {}))},"
             )
             lines.append(f"        query: {rust_str_slice(op.get('query', []))},")
+            lines.append(f"        required_query: {rust_str_slice(op.get('requiredQuery', []))},")
             lines.append(f"        body: {rust_str_slice(op.get('body', []))},")
             lines.append(f"        forbidden_body: {rust_str_slice(op.get('forbiddenBody', []))},")
             lines.append(f"        required_body: {rust_str_slice(op.get('requiredBody', []))},")

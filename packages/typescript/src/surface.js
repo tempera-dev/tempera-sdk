@@ -223,6 +223,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -244,6 +245,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -265,6 +267,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -289,6 +292,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -310,6 +314,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "name"
       ],
@@ -338,6 +343,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -359,6 +365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "mode",
         "email",
@@ -391,6 +398,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -412,6 +420,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -444,6 +453,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -467,6 +477,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
+        "updateMask"
+      ],
+      "requiredQuery": [
         "updateMask"
       ],
       "body": [
@@ -496,6 +509,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -520,6 +534,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -541,6 +556,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "email",
         "role"
@@ -570,6 +586,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -594,6 +611,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -615,6 +633,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "name"
@@ -645,6 +664,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -666,6 +686,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "projectId",
         "name"
@@ -696,6 +717,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -717,6 +739,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -753,6 +776,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -776,6 +800,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -800,6 +825,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -821,6 +847,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -859,6 +886,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -882,6 +910,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "secretRef",
         "allowedModels"
@@ -910,6 +939,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -944,6 +974,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -965,6 +996,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1006,6 +1038,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1029,6 +1062,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1073,6 +1107,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1094,6 +1129,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1129,6 +1165,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1153,6 +1190,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1174,6 +1212,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1215,6 +1254,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1239,6 +1279,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1263,6 +1304,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1286,6 +1328,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1310,6 +1353,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1333,6 +1377,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1354,6 +1399,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1382,6 +1428,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "currency",
         "network"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1403,6 +1450,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1424,6 +1472,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1445,6 +1494,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1466,6 +1516,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1500,6 +1551,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1545,6 +1597,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1580,6 +1633,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1611,6 +1665,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "projectId",
@@ -1651,6 +1706,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1674,6 +1730,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1695,6 +1752,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "token",
         "token_type_hint"
@@ -1721,6 +1779,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1742,6 +1801,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1765,6 +1825,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1786,6 +1847,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1807,6 +1869,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1828,6 +1891,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "password"
       ],
@@ -1853,6 +1917,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "orgId",
         "creditMicros",
@@ -1882,6 +1947,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1903,6 +1969,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "projectId",
         "environmentId",
@@ -1931,6 +1998,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "state",
         "installation_id"
       ],
+      "requiredQuery": [
+        "state",
+        "installation_id"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1955,6 +2026,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -1978,6 +2050,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2004,6 +2077,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2028,6 +2102,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "ref"
       ],
@@ -2051,6 +2126,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2074,6 +2150,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2099,6 +2176,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "input",
         "policy"
@@ -2130,6 +2208,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "scopes"
       ],
@@ -2160,6 +2239,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2192,6 +2272,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2217,6 +2298,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2244,6 +2326,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2270,6 +2353,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "evalReportId",
         "evaluatorVersionId",
@@ -2298,6 +2382,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2325,6 +2410,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2349,6 +2435,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "toolkit"
       ],
@@ -2377,6 +2464,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "arguments",
         "tool"
@@ -2408,6 +2496,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "toolkit"
       ],
+      "requiredQuery": [
+        "toolkit"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2432,6 +2523,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
+        "toolkit"
+      ],
+      "requiredQuery": [
         "toolkit"
       ],
       "body": [],
@@ -2462,6 +2556,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [
+        "toolkit"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2486,6 +2583,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "name"
       ],
@@ -2515,6 +2613,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "reference",
         "spanId",
@@ -2546,6 +2645,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "caseIds"
       ],
@@ -2574,6 +2674,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "agentReleaseId",
         "codeHash",
@@ -2613,6 +2714,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "agentReleaseId",
         "codeHash",
@@ -2651,6 +2753,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "canonicalJson",
         "publicKeyPem",
@@ -2683,6 +2786,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "canonicalJson",
         "publicKeyPem",
@@ -2717,6 +2821,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2743,6 +2848,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "baselineOutputs",
         "baselineReleaseId",
@@ -2786,6 +2892,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "baselineOutputs",
         "baselineReleaseId",
@@ -2829,6 +2936,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "datasetId",
         "evaluatorVersionId",
@@ -2863,6 +2971,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "experimentRunId"
       ],
@@ -2892,6 +3001,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "durability"
       ],
+      "requiredQuery": [],
       "body": [
         "payload",
         "source"
@@ -2924,6 +3034,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "resetAttempts"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2948,6 +3059,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -2974,6 +3086,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "limit"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3000,6 +3113,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "limit"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3025,6 +3139,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3049,6 +3164,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "cacheNamespace",
         "case",
@@ -3085,6 +3201,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3110,6 +3227,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "highCostMicrosThreshold",
         "keepErrors",
@@ -3145,6 +3263,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3169,6 +3288,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "createdBy",
         "description",
@@ -3203,6 +3323,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3228,6 +3349,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
+        "from",
+        "to"
+      ],
+      "requiredQuery": [
         "from",
         "to"
       ],
@@ -3259,6 +3384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3284,6 +3410,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "createdBy",
         "message",
@@ -3317,6 +3444,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3341,6 +3469,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "displayName",
         "provider",
@@ -3374,6 +3503,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3398,6 +3528,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "annotationSchema",
         "name",
@@ -3434,6 +3565,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3459,6 +3591,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "datasetCaseId",
         "datasetId",
@@ -3494,6 +3627,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "annotationId",
         "payload",
@@ -3530,6 +3664,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "datasetId",
         "reference"
@@ -3562,6 +3697,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3586,6 +3722,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "exemplarTraceId",
         "expectedOutcome",
@@ -3619,6 +3756,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "jaccardThreshold",
         "traceIds"
@@ -3649,6 +3787,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3684,6 +3823,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3712,6 +3852,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "unmask",
         "reason"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3740,6 +3881,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "unmask",
         "reason"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3763,6 +3905,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "durability"
       ],
+      "requiredQuery": [],
       "body": [
         "attributes",
         "authContext",
@@ -3832,6 +3975,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3859,6 +4003,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "unmask",
         "reason"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3883,6 +4028,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3906,6 +4052,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3927,6 +4074,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3948,6 +4096,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3969,6 +4118,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -3990,6 +4140,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4011,6 +4162,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4032,6 +4184,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4057,6 +4210,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4080,6 +4234,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4105,6 +4260,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "afterSeq"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4128,6 +4284,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4151,6 +4308,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4175,6 +4333,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4196,6 +4355,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "driverless",
         "url"
@@ -4224,6 +4384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4248,6 +4409,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4273,6 +4435,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "afterSeq"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4296,6 +4459,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4319,6 +4483,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "actions",
         "goal",
@@ -4347,6 +4512,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "engineTier",
         "label",
@@ -4378,6 +4544,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4401,6 +4568,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "batch",
         "confirmationGrant",
@@ -4433,6 +4601,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "engineTier",
         "label",
@@ -4463,6 +4632,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4486,6 +4656,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4511,6 +4682,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "setOfMarks"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4534,6 +4706,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "determinism",
         "idempotencyKey",
@@ -4567,6 +4740,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4588,6 +4762,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4609,6 +4784,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "byok",
         "max_tokens",
@@ -4645,6 +4821,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4666,6 +4843,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "byok",
         "input",
@@ -4699,6 +4877,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4720,6 +4899,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4743,6 +4923,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "request",
         "people_binding"
@@ -4771,6 +4952,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "subject_id",
@@ -4805,6 +4987,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4829,6 +5012,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -4852,6 +5036,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "event_id",
@@ -4894,6 +5079,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "policy_id",
@@ -4946,6 +5132,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "model_id",
@@ -4999,6 +5186,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "algorithm",
@@ -5034,6 +5222,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "action",
         "target"
@@ -5063,6 +5252,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "deployment_id",
         "policy_id",
@@ -5102,6 +5292,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "request_id",
@@ -5145,6 +5336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5168,6 +5360,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5191,6 +5384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "index_name",
         "subject",
@@ -5226,6 +5420,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5249,6 +5444,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "case_id",
@@ -5295,6 +5491,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5319,6 +5516,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5342,6 +5540,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "grant_id",
@@ -5396,6 +5595,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "reason"
       ],
@@ -5423,6 +5623,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "profile_id",
@@ -5473,6 +5674,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schema",
         "query_id",
@@ -5522,6 +5724,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5546,6 +5749,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5570,6 +5774,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5593,6 +5798,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "subject",
         "question",
@@ -5647,6 +5853,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5674,6 +5881,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "afterSequence",
         "pageSize"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5698,6 +5906,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5725,6 +5934,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "afterSequence",
         "pageSize"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5749,6 +5959,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "reason"
       ],
@@ -5777,6 +5988,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "approved",
         "reason"
@@ -5806,6 +6018,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5829,6 +6042,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5850,6 +6064,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "approvalId",
         "connectionId",
@@ -5889,6 +6104,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5912,6 +6128,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5936,6 +6153,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5961,6 +6179,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -5984,6 +6203,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6007,6 +6227,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6030,6 +6251,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "payload",
@@ -6064,6 +6286,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6085,6 +6308,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "contractVersion",
         "description",
@@ -6122,6 +6346,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6145,6 +6370,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6168,6 +6394,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
+        "updateMask"
+      ],
+      "requiredQuery": [
         "updateMask"
       ],
       "body": [
@@ -6207,6 +6436,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "input",
@@ -6237,6 +6467,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "input",
@@ -6268,6 +6499,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "deadlineMs",
         "maxRounds",
@@ -6297,6 +6529,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "attachments",
         "draft",
@@ -6326,6 +6559,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "context",
         "current",
@@ -6358,6 +6592,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "contractVersion",
         "description",
@@ -6395,6 +6630,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6419,6 +6655,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6443,6 +6680,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6469,6 +6707,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6494,6 +6733,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "version"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6519,6 +6759,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "version"
       ],
+      "requiredQuery": [],
       "body": [
         "candidate",
         "seed",
@@ -6549,6 +6790,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6575,6 +6817,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6596,6 +6839,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "task",
         "seed"
@@ -6625,6 +6869,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6648,6 +6893,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "action",
         "receipts"
@@ -6676,6 +6922,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "contextEvidenceRef",
         "verifierReceiptArtifactRef",
@@ -6707,6 +6954,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6730,6 +6978,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6751,6 +7000,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "environmentId",
         "policy",
@@ -6786,6 +7036,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6807,6 +7058,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schemaVersion",
         "campaignDigest",
@@ -6853,6 +7105,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6877,6 +7130,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6898,6 +7152,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "evaluator",
         "qualificationPolicy",
@@ -6931,6 +7186,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -6954,6 +7210,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "policySubmission",
         "trainingReport"
@@ -6983,6 +7240,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidateSet",
         "hypothesis",
@@ -7014,6 +7272,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidates"
       ],
@@ -7039,6 +7298,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "decision",
         "program",
@@ -7068,6 +7328,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidateSet",
         "experimentProposal",
@@ -7101,6 +7362,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidateSet",
         "program",
@@ -7130,6 +7392,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "batchProposal",
         "campaignContext",
@@ -7161,6 +7424,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "hypothesis"
       ],
@@ -7186,6 +7450,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidate",
         "experimentProposal",
@@ -7221,6 +7486,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "candidateSet",
         "configuration",
@@ -7250,6 +7516,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "scoreSetUrn"
       ],
@@ -7277,6 +7544,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7298,6 +7566,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "tenant_id",
         "merchant_id",
@@ -7339,6 +7608,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "tenant_id"
       ],
+      "requiredQuery": [
+        "tenant_id"
+      ],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7362,6 +7634,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "tenant_id",
         "currency",
@@ -7395,6 +7668,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7418,6 +7692,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7441,6 +7716,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "upload"
       ],
@@ -7469,6 +7745,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7493,6 +7770,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "instructions",
         "max_output_tokens",
@@ -7527,6 +7805,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7551,6 +7830,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "kind"
       ],
@@ -7577,6 +7857,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "query",
         "strategy",
@@ -7610,6 +7891,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "page_size",
         "page_token"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7634,6 +7916,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "profile"
       ],
@@ -7662,6 +7945,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7685,6 +7969,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "expected_byte_length",
         "expected_sha256",
@@ -7715,6 +8000,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7739,6 +8025,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7763,6 +8050,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "byte_length",
         "sha256"
@@ -7789,6 +8077,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "actor",
         "adapterId",
@@ -7819,6 +8108,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "adapterId",
         "contractVersion",
@@ -7862,6 +8152,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -7883,6 +8174,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "launchRequest"
       ],
@@ -7908,6 +8200,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "admission",
         "manifest",
@@ -7937,6 +8230,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "actor",
         "manifest",
@@ -7968,6 +8262,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "adapterId",
         "completionProofs",
@@ -8005,6 +8300,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "actor",
         "allowDowngrade",
@@ -8041,6 +8337,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8062,6 +8359,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8083,6 +8381,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "entrypoint",
         "idempotencyKey",
@@ -8115,6 +8414,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8136,6 +8436,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8157,6 +8458,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "entrypoint",
         "idempotencyKey",
@@ -8191,6 +8493,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8214,6 +8517,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8237,6 +8541,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "bytesBase64"
       ],
@@ -8265,6 +8570,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8288,6 +8594,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8309,6 +8616,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8330,6 +8638,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8351,6 +8660,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8372,6 +8682,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8393,6 +8704,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8417,6 +8729,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8438,6 +8751,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "tenantId",
         "projectId",
@@ -8472,6 +8786,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "limit"
       ],
@@ -8495,6 +8810,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "question",
         "scope",
@@ -8528,6 +8844,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [
         "vacuum",
         "repairOrphans",
@@ -8556,6 +8873,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8584,6 +8902,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8610,6 +8929,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8635,6 +8955,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "artifactType",
         "source",
@@ -8666,6 +8987,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "url",
         "artifactType",
@@ -8700,6 +9022,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "taskFamily",
         "targetAccuracy",
@@ -8739,6 +9062,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8765,6 +9089,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "targetStatus",
         "idempotencyKey"
@@ -8797,6 +9122,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8822,6 +9148,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "useCase",
         "verifier",
@@ -8865,6 +9192,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "campaignName",
         "orderBy"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -8890,6 +9218,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "sourceExpertTaskName",
         "expectedLabel",
@@ -8925,6 +9254,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "reviewerRef",
         "reason",
@@ -8959,6 +9289,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "label",
         "outcome",
@@ -9000,6 +9331,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "rationale",
         "evidence",
@@ -9033,6 +9365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "leaseToken",
@@ -9066,6 +9399,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "leaseToken",
@@ -9099,6 +9433,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "leaseToken"
@@ -9131,6 +9466,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "idempotencyKey",
         "leaseToken",
@@ -9166,6 +9502,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "event",
         "sessionId"
@@ -9200,6 +9537,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "windowSeconds",
         "slaTargetSeconds"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9225,6 +9563,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9250,6 +9589,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9275,6 +9615,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9304,6 +9645,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageToken",
         "view"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9332,6 +9674,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "query": [
         "view"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9361,6 +9704,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9386,6 +9730,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "artifactIds",
         "artifactType"
@@ -9414,6 +9759,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "artifactIds",
         "taskFamily",
@@ -9450,6 +9796,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9479,6 +9826,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9505,6 +9853,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9531,6 +9880,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9556,6 +9906,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "productIds"
       ],
@@ -9586,6 +9937,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9611,6 +9963,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "trainingProductId",
         "heldoutProductId",
@@ -9645,6 +9998,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9671,6 +10025,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "format",
         "trainFraction",
@@ -9705,6 +10060,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "artifactIds",
         "job"
@@ -9736,6 +10092,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "connector",
         "bucket",
@@ -9781,6 +10138,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9806,6 +10164,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "name",
         "description",
@@ -9846,6 +10205,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9872,6 +10232,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9898,6 +10259,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -9924,6 +10286,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "arguments"
       ],
@@ -9951,6 +10314,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schemaVersion",
         "requestId",
@@ -10001,6 +10365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10026,6 +10391,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schemaVersion",
         "domain",
@@ -10075,6 +10441,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageToken",
         "domain"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10101,6 +10468,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10126,6 +10494,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "schemaVersion",
         "domain",
@@ -10181,6 +10550,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageToken",
         "domain"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10207,6 +10577,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10232,6 +10603,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "contractVersion",
         "requestId",
@@ -10273,6 +10645,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [
         "kind",
         "version",
@@ -10315,6 +10688,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "pageSize",
         "pageToken"
       ],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10341,6 +10715,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "parent": "projects/*"
       },
       "query": [],
+      "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],
       "requiredBody": [],
@@ -10364,6 +10739,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
+        "productId",
+        "releaseId"
+      ],
+      "requiredQuery": [
         "productId",
         "releaseId"
       ],

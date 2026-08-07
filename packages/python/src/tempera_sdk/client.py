@@ -347,9 +347,16 @@ class TemperaClient:
         consumed = set(op["path_params"]) | consumed_aliases
         query: dict[str, Any] = {}
         for key in op["query"]:
-            if key in wire_params:
-                query[key] = wire_params[key]
-                consumed.add(key)
+            value = wire_params.get(key)
+            if value is None or value == "":
+                if key in op.get("required_query", []):
+                    raise TemperaSdkError(
+                        f'{PRODUCT_ATTRS[product_key]}.{op["id"]}: '
+                        f'missing required query parameter "{key}"'
+                    )
+                continue
+            query[key] = value
+            consumed.add(key)
         binary = op.get("request_body_kind") == "binary"
         body: Any = None
         if binary:

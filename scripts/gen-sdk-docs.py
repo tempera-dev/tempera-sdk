@@ -159,7 +159,10 @@ def example_param_names(op: dict) -> list[str]:
     every required body parameter, plus a readable optional sample."""
     names = list(op.get("pathParams", []))
     if op["method"] in ("GET", "DELETE"):
-        names += op.get("query", [])[:2]
+        query = op.get("query", [])
+        required_query = set(op.get("requiredQuery", []))
+        names += [name for name in query if name in required_query]
+        names += [name for name in query if name not in required_query][: max(0, 2 - len(required_query))]
     else:
         body = op.get("body", [])
         required = set(op.get("requiredBody", []))
@@ -247,7 +250,11 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
             [(name, "yes", "Substituted into the URL path (percent-encoded).") for name in op["pathParams"]],
         )
     if op.get("query"):
-        lines += param_table("Query parameters", [(name, "no", "") for name in op["query"]])
+        required_query = set(op.get("requiredQuery", []))
+        lines += param_table(
+            "Query parameters",
+            [(name, "yes" if name in required_query else "no", "") for name in op["query"]],
+        )
     body_rows: list[tuple[str, str, str]] = []
     required_body = set(op.get("requiredBody", []))
     for name in op.get("body", []):

@@ -136,10 +136,11 @@ def schema_fields(
 
 def parameters(
     document: dict[str, Any], path_item: dict[str, Any], operation: dict[str, Any]
-) -> tuple[list[str], dict[str, str], list[str]]:
+) -> tuple[list[str], dict[str, str], list[str], list[str]]:
     path_params: list[str] = []
     path_param_templates: dict[str, str] = {}
     query: list[str] = []
+    required_query: list[str] = []
     for candidate in [*(path_item.get("parameters") or []), *(operation.get("parameters") or [])]:
         parameter = dereference(document, candidate)
         if not isinstance(parameter, dict):
@@ -151,6 +152,8 @@ def parameters(
         destination = path_params if location == "path" else query if location == "query" else None
         if destination is not None and name not in destination:
             destination.append(name)
+        if location == "query" and parameter.get("required") is True and name not in required_query:
+            required_query.append(name)
         resource_pattern = parameter.get("x-tempera-resource-pattern")
         if location == "path" and resource_pattern is not None:
             if not isinstance(resource_pattern, str) or not resource_pattern:
@@ -158,7 +161,7 @@ def parameters(
                     f"path parameter {name!r} has an invalid x-tempera-resource-pattern"
                 )
             path_param_templates[name] = resource_pattern
-    return path_params, path_param_templates, query
+    return path_params, path_param_templates, query, required_query
 
 
 def request_fields(
@@ -510,7 +513,7 @@ def synchronize_product(
                     )
                 item["id"] = override["id"]
                 matched_overrides.add(identity)
-            path_params, path_param_templates, query = parameters(
+            path_params, path_param_templates, query, required_query = parameters(
                 spec, path_item, operation
             )
             body, required_body, request_body_kind, request_content_type = request_fields(
@@ -520,6 +523,7 @@ def synchronize_product(
                 ("pathParams", path_params),
                 ("pathParamTemplates", path_param_templates),
                 ("query", query),
+                ("requiredQuery", required_query),
                 ("body", body),
                 ("requiredBody", required_body),
             ):

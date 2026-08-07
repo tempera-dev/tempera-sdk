@@ -64,6 +64,7 @@ test("every surface operation dispatches its method, path, and auth header", asy
       calls.length = 0;
       const params = {};
       for (const key of op.pathParams) params[key] = samplePathParam(op, key);
+      for (const key of op.requiredQuery) params[key] = SAMPLE_PARAM_VALUE;
       if (op.requestBodyKind === "binary") params.content = new Uint8Array([1, 2, 3]);
       const result = await client[productKey][op.id](params);
       assert.deepEqual(result, { ok: true }, `${productKey}.${op.id} result`);
@@ -316,6 +317,24 @@ test("canonical and snake_case spellings cannot both be supplied", async () => {
       error instanceof TemperaSdkError &&
       error.message.includes('pass either "pageSize" or its snake_case alias "page_size", not both'),
   );
+});
+
+test("required query parameters fail fast and emit their canonical wire names", async () => {
+  const { client, calls } = testClient();
+  await assert.rejects(
+    () => client.temperaPayments.getPaymentIntent({ payment_intent_id: "pi_1" }),
+    (error) =>
+      error instanceof TemperaSdkError &&
+      error.message.includes('missing required query parameter "tenant_id"'),
+  );
+  assert.equal(calls.length, 0, "missing required query must not make a request");
+
+  await client.temperaPayments.getPaymentIntent({
+    payment_intent_id: "pi_1",
+    tenant_id: "tenant_1",
+  });
+  assert.equal(calls[0].url.searchParams.get("tenant_id"), "tenant_1");
+  assert.equal(calls[0].url.searchParams.get("tenantId"), null);
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {

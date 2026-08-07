@@ -110,6 +110,8 @@ class ConformanceTest(unittest.TestCase):
                     key: sample_path_param(op, key)
                     for key in op["path_params"]
                 }
+                for key in op["required_query"]:
+                    params[key] = SAMPLE_PARAM_VALUE
                 if op["request_body_kind"] == "binary":
                     params["content"] = b"\x01\x02\x03"
                 result = getattr(product, op["id"])(params)
@@ -796,6 +798,20 @@ class DispatchTest(unittest.TestCase):
         with self.assertRaises(TemperaSdkError) as ctx:
             client.palette.get_trace({"tenant_id": "t1"})
         self.assertIn('missing required path parameter "traceId"', str(ctx.exception))
+
+    def test_required_query_parameters_fail_fast_and_use_canonical_wire_names(self):
+        client, transport = make_client()
+        with self.assertRaisesRegex(
+            TemperaSdkError, r'missing required query parameter "tenant_id"'
+        ):
+            client.tempera_payments.get_payment_intent({"payment_intent_id": "pi_1"})
+        self.assertEqual(transport.calls, [])
+
+        client.tempera_payments.get_payment_intent(
+            {"payment_intent_id": "pi_1", "tenant_id": "tenant_1"}
+        )
+        self.assertEqual(transport.calls[0]["query"]["tenant_id"], "tenant_1")
+        self.assertNotIn("tenantId", transport.calls[0]["query"])
 
     def test_create_hosted_session_stores_the_account_token_for_later_calls(self):
         def responder(call):

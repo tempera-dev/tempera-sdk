@@ -459,7 +459,10 @@
           "updateMask"
         ],
         "requestBodyKind": "json",
-        "requestContentType": "application/json"
+        "requestContentType": "application/json",
+        "requiredQuery": [
+          "updateMask"
+        ]
       },
       {
         "id": "removeTeamMember",
@@ -1363,7 +1366,11 @@
           "state",
           "installation_id"
         ],
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "state",
+          "installation_id"
+        ]
       },
       {
         "id": "githubInstallationsList",
@@ -1664,7 +1671,10 @@
           "toolkit"
         ],
         "upstreamOperationId": "connectors.getSkills",
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "toolkit"
+        ]
       },
       {
         "id": "connectorsStatus",
@@ -1680,7 +1690,10 @@
           "toolkit"
         ],
         "upstreamOperationId": "connectors.status",
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "toolkit"
+        ]
       },
       {
         "id": "connectorsListTools",
@@ -1698,7 +1711,10 @@
           "pageToken"
         ],
         "upstreamOperationId": "connectors.listTools",
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "toolkit"
+        ]
       },
       {
         "id": "createDataset",
@@ -2249,7 +2265,11 @@
           "to"
         ],
         "upstreamOperationId": "prompts.diffVersions",
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "from",
+          "to"
+        ]
       },
       {
         "id": "promptsListVersions",
@@ -4257,7 +4277,10 @@
         "physicalAction": false,
         "prepareCommitRequired": false,
         "requestBodyKind": "json",
-        "requestContentType": "application/json"
+        "requestContentType": "application/json",
+        "requiredQuery": [
+          "updateMask"
+        ]
       },
       {
         "id": "createRun",
@@ -5127,7 +5150,10 @@
         ],
         "requestBodyKind": "none",
         "authAudience": "tempera-payments",
-        "scope": "payments:intents:read"
+        "scope": "payments:intents:read",
+        "requiredQuery": [
+          "tenant_id"
+        ]
       },
       {
         "id": "createStripeCheckout",
@@ -7269,7 +7295,11 @@
           "productId",
           "releaseId"
         ],
-        "requestBodyKind": "none"
+        "requestBodyKind": "none",
+        "requiredQuery": [
+          "productId",
+          "releaseId"
+        ]
       }
     ]
   },
