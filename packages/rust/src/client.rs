@@ -138,6 +138,15 @@ pub enum BuildError {
         /// Name of the missing path parameter.
         name: String,
     },
+    /// A producer-required query parameter was absent or empty.
+    MissingQueryParam {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Canonical producer query name.
+        name: String,
+    },
     /// A path parameter did not match its declared AIP resource-name pattern.
     InvalidPathParam {
         /// Product key of the operation.
@@ -218,6 +227,14 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: missing required path parameter \"{name}\""
+            ),
+            BuildError::MissingQueryParam {
+                product,
+                operation,
+                name,
+            } => write!(
+                f,
+                "{product}.{operation}: missing required query parameter \"{name}\""
             ),
             BuildError::InvalidPathParam {
                 product,
@@ -413,8 +430,22 @@ impl TemperaClient {
         let mut query: Vec<(String, String)> = Vec::new();
         for key in op.query {
             if let Some((input_name, value)) = declared_param(params, key, product, operation)? {
-                query.push((key.to_string(), value.as_plain_string()));
                 consumed.push(input_name);
+                let value = value.as_plain_string();
+                if value.is_empty() && op.required_query.contains(key) {
+                    return Err(BuildError::MissingQueryParam {
+                        product: product.to_string(),
+                        operation: operation.to_string(),
+                        name: key.to_string(),
+                    });
+                }
+                query.push((key.to_string(), value));
+            } else if op.required_query.contains(key) {
+                return Err(BuildError::MissingQueryParam {
+                    product: product.to_string(),
+                    operation: operation.to_string(),
+                    name: key.to_string(),
+                });
             }
         }
 
@@ -691,11 +722,16 @@ mod tests {
                 op.product,
                 op.id
             );
-            let params: Vec<(&str, ParamValue)> = op
+            let mut params: Vec<(&str, ParamValue)> = op
                 .path_params
                 .iter()
                 .map(|name| (*name, ParamValue::from(sample_path_param(op, name))))
                 .collect();
+            params.extend(
+                op.required_query
+                    .iter()
+                    .map(|name| (*name, ParamValue::from("sample-query"))),
+            );
             let spec = client
                 .build_request(op.product, op.id, &params)
                 .unwrap_or_else(|error| panic!("{}.{} failed: {error}", op.product, op.id));
@@ -743,7 +779,14 @@ mod tests {
                 }
                 assert_eq!(header(&spec, "content-type"), Some("application/json"));
             }
-            assert!(spec.query.is_empty(), "{}.{}", op.product, op.id);
+            for key in op.required_query {
+                assert!(
+                    spec.query.iter().any(|(name, _)| name == key),
+                    "{}.{} missing required query {key}",
+                    op.product,
+                    op.id
+                );
+            }
         }
     }
 
@@ -1019,6 +1062,24 @@ mod tests {
                 .contains(&("pageToken".to_string(), "runs-token".to_string()))
         );
         assert!(!runs.query.iter().any(|(name, _)| name.contains('_')));
+
+        let empty_alias = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("page_size", "".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            empty_alias
+                .query
+                .iter()
+                .any(|(name, value)| name == "pageSize" && value.is_empty())
+        );
+        assert!(!empty_alias.query.iter().any(|(name, _)| name == "page_size"));
 
         let rollout = client
             .build_request(
@@ -1348,6 +1409,44 @@ mod tests {
             )
             .unwrap_err();
         assert!(matches!(error, BuildError::MissingPathParam { name, .. } if name == "traceId"));
+    }
+
+    #[test]
+    fn required_query_params_fail_fast_and_use_canonical_wire_names() {
+        let client = full_client();
+        let error = client
+            .build_request(
+                "tempera_payments",
+                "get_payment_intent",
+                &[("payment_intent_id", "pi_1".into())],
+            )
+            .unwrap_err();
+        assert_eq!(
+            error,
+            BuildError::MissingQueryParam {
+                product: "tempera_payments".to_string(),
+                operation: "get_payment_intent".to_string(),
+                name: "tenant_id".to_string(),
+            }
+        );
+        assert!(
+            error
+                .to_string()
+                .contains("missing required query parameter \"tenant_id\"")
+        );
+
+        let spec = client
+            .build_request(
+                "tempera_payments",
+                "get_payment_intent",
+                &[("payment_intent_id", "pi_1".into()), ("tenant_id", "tenant_1".into())],
+            )
+            .unwrap();
+        assert!(
+            spec.query
+                .contains(&("tenant_id".to_string(), "tenant_1".to_string()))
+        );
+        assert!(!spec.query.iter().any(|(name, _)| name == "tenantId"));
     }
 
     #[test]

@@ -58,6 +58,7 @@ export type TemperaOperationSpec = {
   pathParams: readonly string[];
   pathParamTemplates: Readonly<Record<string, string>>;
   query: readonly string[];
+  requiredQuery: readonly string[];
   body: readonly string[];
   forbiddenBody: readonly string[];
   requiredBody: readonly string[];

@@ -200,6 +200,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: Tempera Payments
+            product: temperaPayments
+            repository: tempera-payments
+            source_branch: main
+            source_path: contracts/openapi/payments.openapi.json
+            lock: specs/tempera-payments-api.json.source
+            generated_path: specs/tempera-payments-api.json
+            generated_with: source_lock.py@1+verbatim-openapi-copy
+            transform: verbatim
           - name: Cradle
             product: cradle
             repository: cradle

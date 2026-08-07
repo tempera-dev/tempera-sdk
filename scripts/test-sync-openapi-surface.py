@@ -176,6 +176,31 @@ class SynchronizeProductTests(unittest.TestCase):
         self.assertEqual(operation["id"], "runUseCase")
         self.assertEqual(operation["path"], "/v1/{parent}/pipelines:runUseCase")
 
+    def test_required_query_parameters_are_preserved_from_openapi(self) -> None:
+        path = "/v1/payment_intents/{payment_intent_id}"
+        surface = {"operations": {"temperaPayments": []}}
+        producer = {
+            "paths": {
+                path: {
+                    "get": {
+                        "operationId": "getPaymentIntent",
+                        "summary": "Read a payment intent",
+                        "parameters": [
+                            {"name": "payment_intent_id", "in": "path", "required": True},
+                            {"name": "tenant_id", "in": "query", "required": True},
+                            {"name": "expand", "in": "query", "required": False},
+                        ],
+                    }
+                }
+            }
+        }
+
+        MODULE.synchronize_product(surface, "temperaPayments", producer, set(), {})
+
+        operation = surface["operations"]["temperaPayments"][0]
+        self.assertEqual(operation["query"], ["tenant_id", "expand"])
+        self.assertEqual(operation["requiredQuery"], ["tenant_id"])
+
     def test_still_rejects_unexplained_deleted_routes(self) -> None:
         surface = {
             "operations": {

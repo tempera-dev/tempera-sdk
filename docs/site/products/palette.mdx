@@ -695,7 +695,7 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `toolkit` | no | — |
+| `toolkit` | yes | — |
 
 <CodeGroup>
 
@@ -748,7 +748,7 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `toolkit` | no | — |
+| `toolkit` | yes | — |
 
 <CodeGroup>
 
@@ -801,7 +801,7 @@ Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `toolkit` | no | — |
+| `toolkit` | yes | — |
 | `pageSize` | no | — |
 | `pageToken` | no | — |
 
@@ -2333,8 +2333,8 @@ Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `from` | no | — |
-| `to` | no | — |
+| `from` | yes | — |
+| `to` | yes | — |
 
 <CodeGroup>
 
