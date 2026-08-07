@@ -223,11 +223,14 @@ export function createTemperaClient({
     const query = {};
     for (const key of op.query) {
       const value = normalized[key];
-      if (value === undefined || value === null || value === "") {
+      if (value === undefined || value === null) {
         if (op.requiredQuery?.includes(key)) {
           throw new TemperaSdkError(`${productKey}.${op.id}: missing required query parameter "${key}"`);
         }
         continue;
+      }
+      if (value === "" && op.requiredQuery?.includes(key)) {
+        throw new TemperaSdkError(`${productKey}.${op.id}: missing required query parameter "${key}"`);
       }
       query[key] = value;
       consumed.add(key);

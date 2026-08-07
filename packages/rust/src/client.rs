@@ -430,19 +430,16 @@ impl TemperaClient {
         let mut query: Vec<(String, String)> = Vec::new();
         for key in op.query {
             if let Some((input_name, value)) = declared_param(params, key, product, operation)? {
+                consumed.push(input_name);
                 let value = value.as_plain_string();
-                if value.is_empty() {
-                    if op.required_query.contains(key) {
-                        return Err(BuildError::MissingQueryParam {
-                            product: product.to_string(),
-                            operation: operation.to_string(),
-                            name: key.to_string(),
-                        });
-                    }
-                    continue;
+                if value.is_empty() && op.required_query.contains(key) {
+                    return Err(BuildError::MissingQueryParam {
+                        product: product.to_string(),
+                        operation: operation.to_string(),
+                        name: key.to_string(),
+                    });
                 }
                 query.push((key.to_string(), value));
-                consumed.push(input_name);
             } else if op.required_query.contains(key) {
                 return Err(BuildError::MissingQueryParam {
                     product: product.to_string(),
@@ -1066,6 +1063,24 @@ mod tests {
         );
         assert!(!runs.query.iter().any(|(name, _)| name.contains('_')));
 
+        let empty_alias = client
+            .build_request(
+                "tempera_gym",
+                "list_runs",
+                &[
+                    ("environment_id", "env-1".into()),
+                    ("page_size", "".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            empty_alias
+                .query
+                .iter()
+                .any(|(name, value)| name == "pageSize" && value.is_empty())
+        );
+        assert!(!empty_alias.query.iter().any(|(name, _)| name == "page_size"));
+
         let rollout = client
             .build_request(
                 "tempera_gym",
@@ -1400,7 +1415,11 @@ mod tests {
     fn required_query_params_fail_fast_and_use_canonical_wire_names() {
         let client = full_client();
         let error = client
-            .build_request("tempera_payments", "get_payment_intent", &[("payment_intent_id", "pi_1".into())])
+            .build_request(
+                "tempera_payments",
+                "get_payment_intent",
+                &[("payment_intent_id", "pi_1".into())],
+            )
             .unwrap_err();
         assert_eq!(
             error,

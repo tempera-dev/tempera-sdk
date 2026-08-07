@@ -348,13 +348,18 @@ class TemperaClient:
         query: dict[str, Any] = {}
         for key in op["query"]:
             value = wire_params.get(key)
-            if value is None or value == "":
+            if value is None:
                 if key in op.get("required_query", []):
                     raise TemperaSdkError(
                         f'{PRODUCT_ATTRS[product_key]}.{op["id"]}: '
                         f'missing required query parameter "{key}"'
                     )
                 continue
+            if value == "" and key in op.get("required_query", []):
+                raise TemperaSdkError(
+                    f'{PRODUCT_ATTRS[product_key]}.{op["id"]}: '
+                    f'missing required query parameter "{key}"'
+                )
             query[key] = value
             consumed.add(key)
         binary = op.get("request_body_kind") == "binary"

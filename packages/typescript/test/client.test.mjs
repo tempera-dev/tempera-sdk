@@ -335,6 +335,10 @@ test("required query parameters fail fast and emit their canonical wire names", 
   });
   assert.equal(calls[0].url.searchParams.get("tenant_id"), "tenant_1");
   assert.equal(calls[0].url.searchParams.get("tenantId"), null);
+
+  await client.temperaGym.listRuns({ environment_id: "env_1", page_size: "" });
+  assert.equal(calls[1].url.searchParams.get("pageSize"), "");
+  assert.equal(calls[1].url.searchParams.get("page_size"), null);
 });
 
 test("undeclared parameters pass through for forward compatibility", async () => {

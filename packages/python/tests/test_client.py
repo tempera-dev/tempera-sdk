@@ -813,6 +813,10 @@ class DispatchTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["query"]["tenant_id"], "tenant_1")
         self.assertNotIn("tenantId", transport.calls[0]["query"])
 
+        client.tempera_gym.list_runs({"environment_id": "env_1", "page_size": ""})
+        self.assertIn("pageSize=", transport.calls[1]["url"])
+        self.assertNotIn("page_size", transport.calls[1]["url"])
+
     def test_create_hosted_session_stores_the_account_token_for_later_calls(self):
         def responder(call):
             if len(transport.calls) == 1:
