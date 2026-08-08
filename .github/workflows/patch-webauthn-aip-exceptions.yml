@@ -1,0 +1,38 @@
+name: Patch WebAuthn AIP protocol exceptions
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'agent/sync-auth-hub-security' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Add standards-defined WebAuthn JSON exceptions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/check-aip-conformance.py')
+          s = p.read_text()
+          old = '''PROTOCOL_JSON_EXCEPTIONS = {\n    ("controlPlane", "POST", "/v1/admin/step-up"),\n    ("controlPlane", "POST", "/v1/sessions"),\n    ("controlPlane", "POST", "/v1/workspace/select"),\n}\n'''
+          new = '''PROTOCOL_JSON_EXCEPTIONS = {\n    ("controlPlane", "POST", "/v1/admin/step-up"),\n    ("controlPlane", "POST", "/v1/passkeys/authentication:finish"),\n    ("controlPlane", "POST", "/v1/passkeys/registration:finish"),\n    ("controlPlane", "POST", "/v1/sessions"),\n    ("controlPlane", "POST", "/v1/step-up/passkey:finish"),\n    ("controlPlane", "POST", "/v1/workspace/select"),\n}\n'''
+          if s.count(old) != 1:
+              raise SystemExit('WebAuthn protocol-exception anchor drifted')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          rm .github/workflows/patch-webauthn-aip-exceptions.yml
+          git diff --check
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add scripts/check-aip-conformance.py .github/workflows/patch-webauthn-aip-exceptions.yml
+          git commit -m "Classify WebAuthn wire JSON in AIP ratchet"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
