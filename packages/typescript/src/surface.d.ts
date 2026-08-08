@@ -238,6 +238,26 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   githubRepositorySnapshotsCapture(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Accept a signed, replay-deduplicated GitHub webhook. */
   githubWebhooksAccept(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch. */
+  sessionsRevokeAll(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List passkeys enrolled for the authenticated account. */
+  passkeysList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Begin passkey registration for the authenticated account. */
+  passkeysBeginRegistration(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and persist a passkey registration. */
+  passkeysFinishRegistration(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Begin discoverable passkey authentication. */
+  passkeysBeginAuthentication(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify a passkey assertion and create an AAL2 account session. */
+  passkeysFinishAuthentication(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Begin passkey step-up for a signed-in account session. */
+  passkeysBeginStepUp(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify passkey step-up and mint a short-lived AAL2 elevation token. */
+  passkeysFinishStepUp(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Consume a one-time recovery code, remove passkeys, and revoke all active account credentials. */
+  passkeysRecover(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete one passkey after recent AAL2 step-up. */
+  passkeysDelete(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {

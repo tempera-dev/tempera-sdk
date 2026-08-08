@@ -1438,6 +1438,140 @@
         "description": "Accept a signed, replay-deduplicated GitHub webhook.",
         "upstreamOperationId": "githubWebhooks.accept",
         "requestBodyKind": "none"
+      },
+      {
+        "id": "sessionsRevokeAll",
+        "method": "POST",
+        "path": "/v1/sessions:revokeAll",
+        "auth": "account",
+        "description": "Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch.",
+        "upstreamOperationId": "sessions.revokeAll",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "passkeysList",
+        "method": "GET",
+        "path": "/v1/passkeys",
+        "auth": "account",
+        "description": "List passkeys enrolled for the authenticated account.",
+        "upstreamOperationId": "passkeys.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "passkeysBeginRegistration",
+        "method": "POST",
+        "path": "/v1/passkeys/registration:begin",
+        "auth": "account",
+        "description": "Begin passkey registration for the authenticated account.",
+        "upstreamOperationId": "passkeys.beginRegistration",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "passkeysFinishRegistration",
+        "method": "POST",
+        "path": "/v1/passkeys/registration:finish",
+        "auth": "account",
+        "description": "Verify and persist a passkey registration.",
+        "upstreamOperationId": "passkeys.finishRegistration",
+        "body": [
+          "challengeId",
+          "response",
+          "name"
+        ],
+        "requiredBody": [
+          "challengeId",
+          "response"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "passkeysBeginAuthentication",
+        "method": "POST",
+        "path": "/v1/passkeys/authentication:begin",
+        "auth": "none",
+        "description": "Begin discoverable passkey authentication.",
+        "upstreamOperationId": "passkeys.beginAuthentication",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "passkeysFinishAuthentication",
+        "method": "POST",
+        "path": "/v1/passkeys/authentication:finish",
+        "auth": "none",
+        "description": "Verify a passkey assertion and create an AAL2 account session.",
+        "upstreamOperationId": "passkeys.finishAuthentication",
+        "body": [
+          "challengeId",
+          "response",
+          "name"
+        ],
+        "requiredBody": [
+          "challengeId",
+          "response"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "passkeysBeginStepUp",
+        "method": "POST",
+        "path": "/v1/step-up/passkey:begin",
+        "auth": "account",
+        "description": "Begin passkey step-up for a signed-in account session.",
+        "upstreamOperationId": "passkeys.beginStepUp",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "passkeysFinishStepUp",
+        "method": "POST",
+        "path": "/v1/step-up/passkey:finish",
+        "auth": "account",
+        "description": "Verify passkey step-up and mint a short-lived AAL2 elevation token.",
+        "upstreamOperationId": "passkeys.finishStepUp",
+        "body": [
+          "challengeId",
+          "response",
+          "name"
+        ],
+        "requiredBody": [
+          "challengeId",
+          "response"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "passkeysRecover",
+        "method": "POST",
+        "path": "/v1/passkeys:recover",
+        "auth": "account",
+        "description": "Consume a one-time recovery code, remove passkeys, and revoke all active account credentials.",
+        "upstreamOperationId": "passkeys.recover",
+        "body": [
+          "recoveryCode"
+        ],
+        "requiredBody": [
+          "recoveryCode"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "passkeysDelete",
+        "method": "DELETE",
+        "path": "/v1/passkeys/{credentialId}",
+        "auth": "account",
+        "description": "Delete one passkey after recent AAL2 step-up.",
+        "upstreamOperationId": "passkeys.delete",
+        "pathParams": [
+          "credentialId"
+        ],
+        "requestBodyKind": "none"
       }
     ],
     "palette": [

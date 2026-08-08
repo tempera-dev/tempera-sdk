@@ -3510,6 +3510,423 @@
           }
         }
       }
+    },
+    "/v1/sessions:revokeAll": {
+      "post": {
+        "operationId": "sessions.revokeAll",
+        "summary": "Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch.",
+        "responses": {
+          "204": {
+            "description": "All account security credentials revoked"
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys": {
+      "get": {
+        "operationId": "passkeys.list",
+        "summary": "List passkeys enrolled for the authenticated account.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "passkeys": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Passkey"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "passkeys",
+                    "nextPageToken"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
+      }
+    },
+    "/v1/passkeys/registration:begin": {
+      "post": {
+        "operationId": "passkeys.beginRegistration",
+        "summary": "Begin passkey registration for the authenticated account.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebAuthnBeginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys/registration:finish": {
+      "post": {
+        "operationId": "passkeys.finishRegistration",
+        "summary": "Verify and persist a passkey registration.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebAuthnFinishRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyRegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys/authentication:begin": {
+      "post": {
+        "operationId": "passkeys.beginAuthentication",
+        "summary": "Begin discoverable passkey authentication.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebAuthnBeginResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys/authentication:finish": {
+      "post": {
+        "operationId": "passkeys.finishAuthentication",
+        "summary": "Verify a passkey assertion and create an AAL2 account session.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebAuthnFinishRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/step-up/passkey:begin": {
+      "post": {
+        "operationId": "passkeys.beginStepUp",
+        "summary": "Begin passkey step-up for a signed-in account session.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebAuthnBeginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/step-up/passkey:finish": {
+      "post": {
+        "operationId": "passkeys.finishStepUp",
+        "summary": "Verify passkey step-up and mint a short-lived AAL2 elevation token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebAuthnFinishRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyStepUpResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys:recover": {
+      "post": {
+        "operationId": "passkeys.recover",
+        "summary": "Consume a one-time recovery code, remove passkeys, and revoke all active account credentials.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyRecoveryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Recovery completed; sign in again"
+          },
+          "400": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/passkeys/{credentialId}": {
+      "delete": {
+        "operationId": "passkeys.delete",
+        "summary": "Delete one passkey after recent AAL2 step-up.",
+        "parameters": [
+          {
+            "name": "credentialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Passkey deleted"
+          },
+          "401": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4736,9 +5153,15 @@
           "capabilities"
         ],
         "properties": {
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
           "provider": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
@@ -4746,7 +5169,11 @@
           "providerKind": {
             "$ref": "#/components/schemas/ExperimentProviderKind"
           },
-          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
           "secretRef": {
             "$ref": "#/components/schemas/ProviderConnectionSecretRef"
           },
@@ -4777,32 +5204,68 @@
           "revokedAt"
         ],
         "properties": {
-          "connectionId": { "type": "string" },
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
-          "provider": { "type": "string" },
+          "connectionId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
           "providerKind": {
             "$ref": "#/components/schemas/ExperimentProviderKind"
           },
-          "name": { "type": "string" },
+          "name": {
+            "type": "string"
+          },
           "secretBackend": {
             "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
           },
-          "secretConfigured": { "type": "boolean", "const": true },
+          "secretConfigured": {
+            "type": "boolean",
+            "const": true
+          },
           "capabilities": {
             "$ref": "#/components/schemas/ExperimentProviderCapabilities"
           },
-          "revision": { "type": "integer", "minimum": 1 },
-          "state": { "type": "string", "enum": ["active", "revoked"] },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "lastResolvedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "revokedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
@@ -4841,12 +5304,24 @@
           "submissionIdempotencyKey"
         ],
         "properties": {
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
-          "approvalId": { "type": "string" },
-          "proposalDigest": { "$ref": "#/components/schemas/ContentDigest" },
-          "protocolDigest": { "$ref": "#/components/schemas/ContentDigest" },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "approvalId": {
+            "type": "string"
+          },
+          "proposalDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "protocolDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
           "mcpPrepareReceiptDigest": {
             "$ref": "#/components/schemas/ContentDigest"
           },
@@ -4878,8 +5353,12 @@
           "replayed"
         ],
         "properties": {
-          "connectionId": { "type": "string" },
-          "provider": { "type": "string" },
+          "connectionId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
           "providerKind": {
             "$ref": "#/components/schemas/ExperimentProviderKind"
           },
@@ -4892,20 +5371,42 @@
           "capabilities": {
             "$ref": "#/components/schemas/ExperimentProviderCapabilities"
           },
-          "revision": { "type": "integer", "minimum": 1 },
-          "approvalId": { "type": "string" },
-          "approvalStatus": { "type": "string", "const": "consumed" },
-          "submissionIdempotencyKey": { "type": "string" },
-          "replayed": { "type": "boolean" }
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "approvalId": {
+            "type": "string"
+          },
+          "approvalStatus": {
+            "type": "string",
+            "const": "consumed"
+          },
+          "submissionIdempotencyKey": {
+            "type": "string"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
         }
       },
       "Ed25519PublicJwk": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kty", "crv", "x"],
+        "required": [
+          "kty",
+          "crv",
+          "x"
+        ],
         "properties": {
-          "kty": { "type": "string", "const": "OKP" },
-          "crv": { "type": "string", "const": "Ed25519" },
+          "kty": {
+            "type": "string",
+            "const": "OKP"
+          },
+          "crv": {
+            "type": "string",
+            "const": "Ed25519"
+          },
           "x": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{43}$"
@@ -4924,14 +5425,22 @@
           "publicJwk"
         ],
         "properties": {
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
           "keyId": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
           },
-          "publicJwk": { "$ref": "#/components/schemas/Ed25519PublicJwk" }
+          "publicJwk": {
+            "$ref": "#/components/schemas/Ed25519PublicJwk"
+          }
         }
       },
       "BioSignerKey": {
@@ -4951,18 +5460,48 @@
           "revokedAt"
         ],
         "properties": {
-          "signerKeyId": { "type": "string" },
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
-          "keyId": { "type": "string" },
-          "algorithm": { "type": "string", "const": "Ed25519" },
-          "publicJwk": { "$ref": "#/components/schemas/Ed25519PublicJwk" },
-          "revision": { "type": "integer", "minimum": 1 },
-          "state": { "type": "string", "enum": ["active", "revoked"] },
-          "createdAt": { "type": "string", "format": "date-time" },
+          "signerKeyId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "keyId": {
+            "type": "string"
+          },
+          "algorithm": {
+            "type": "string",
+            "const": "Ed25519"
+          },
+          "publicJwk": {
+            "$ref": "#/components/schemas/Ed25519PublicJwk"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "revokedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
@@ -5000,16 +5539,31 @@
           "expiresAt"
         ],
         "properties": {
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
-          "proposalDigest": { "$ref": "#/components/schemas/ContentDigest" },
-          "protocolDigest": { "$ref": "#/components/schemas/ContentDigest" },
-          "connectionId": { "type": "string" },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "proposalDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "protocolDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "connectionId": {
+            "type": "string"
+          },
           "mcpPrepareReceiptDigest": {
             "$ref": "#/components/schemas/ContentDigest"
           },
-          "expiresAt": { "type": "string", "format": "date-time" }
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "ExperimentApproval": {
@@ -5033,30 +5587,71 @@
           "revokedAt"
         ],
         "properties": {
-          "approvalId": { "type": "string" },
-          "orgId": { "type": "string" },
-          "projectId": { "type": "string" },
-          "environmentId": { "type": "string" },
-          "proposalDigest": { "$ref": "#/components/schemas/ContentDigest" },
-          "protocolDigest": { "$ref": "#/components/schemas/ContentDigest" },
-          "connectionId": { "type": "string" },
+          "approvalId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "proposalDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "protocolDigest": {
+            "$ref": "#/components/schemas/ContentDigest"
+          },
+          "connectionId": {
+            "type": "string"
+          },
           "mcpPrepareReceiptDigest": {
             "$ref": "#/components/schemas/ContentDigest"
           },
           "status": {
             "type": "string",
-            "enum": ["active", "consumed", "revoked", "expired"]
+            "enum": [
+              "active",
+              "consumed",
+              "revoked",
+              "expired"
+            ]
           },
-          "createdByUserId": { "type": ["string", "null"] },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "expiresAt": { "type": "string", "format": "date-time" },
-          "consumedBySubject": { "type": ["string", "null"] },
+          "createdByUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "consumedBySubject": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "consumedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           },
           "revokedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time"
           }
         }
@@ -7711,6 +8306,166 @@
           }
         },
         "additionalProperties": false
+      },
+      "Passkey": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "credentialId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 16
+          },
+          "deviceType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "backedUp": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUsedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "credentialId",
+          "name",
+          "transports",
+          "backedUp",
+          "createdAt",
+          "lastUsedAt"
+        ]
+      },
+      "WebAuthnBeginResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "challengeId",
+          "options"
+        ]
+      },
+      "WebAuthnFinishRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "challengeId",
+          "response"
+        ]
+      },
+      "PasskeyRegistrationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "passkey": {
+            "$ref": "#/components/schemas/Passkey"
+          },
+          "recoveryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128
+            },
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "passkey"
+        ]
+      },
+      "PasskeyRecoveryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recoveryCode": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "recoveryCode"
+        ]
+      },
+      "PasskeyStepUpResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tokenType": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 900
+          },
+          "assuranceLevel": {
+            "type": "integer",
+            "enum": [
+              2
+            ]
+          }
+        },
+        "required": [
+          "tokenType",
+          "accessToken",
+          "expiresIn",
+          "assuranceLevel"
+        ]
       }
     }
   }

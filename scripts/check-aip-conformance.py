@@ -96,7 +96,10 @@ PROTOCOL_OPERATION_EXCEPTIONS = {
 # do not reinterpret the OAuth token vocabulary as resource-message debt.
 PROTOCOL_JSON_EXCEPTIONS = {
     ("controlPlane", "POST", "/v1/admin/step-up"),
+    ("controlPlane", "POST", "/v1/passkeys/authentication:finish"),
+    ("controlPlane", "POST", "/v1/passkeys/registration:finish"),
     ("controlPlane", "POST", "/v1/sessions"),
+    ("controlPlane", "POST", "/v1/step-up/passkey:finish"),
     ("controlPlane", "POST", "/v1/workspace/select"),
 }
 
