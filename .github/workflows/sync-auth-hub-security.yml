@@ -1,0 +1,55 @@
+name: Sync hardened Auth Hub contract
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'agent/sync-auth-hub-security' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Mint Auth Hub contract reader
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: 7ae736f565da6a2ec9947520d4263640afd81a7a
+          fetch-depth: 0
+          path: .auth-hub-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Verify and synchronize exact Auth Hub source
+        run: |
+          git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .auth-hub-source rev-parse HEAD)" = "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)"
+          python3 scripts/sync-control-plane-openapi.py --source-repo-dir .auth-hub-source --source-commit 7ae736f565da6a2ec9947520d4263640afd81a7a
+          python3 scripts/sync-openapi-surface.py --product controlPlane
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-docs.py
+      - name: Validate SDK
+        run: |
+          npm test
+          git diff --check
+      - name: Remove one-shot workflow and source checkout
+        run: rm -rf .auth-hub-source .github/workflows/sync-auth-hub-security.yml
+      - name: Commit synchronized SDK surface
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "Sync SDK to hardened Auth Hub"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
