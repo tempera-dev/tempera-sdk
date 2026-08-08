@@ -50,6 +50,106 @@
         ],
         "type": "object"
       },
+      "ComputationalExperimentPlan": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/computational-experiment-plan-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "baselineManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "claimCeiling": {
+            "const": "contract_conformance"
+          },
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "discipline": {
+            "enum": [
+              "protein_variant_effect",
+              "stoichiometric_metabolism",
+              "neuronal_response"
+            ]
+          },
+          "domainTaskDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "execution": {
+            "additionalProperties": false,
+            "properties": {
+              "codeDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "environmentDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "randomnessDigest": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "codeDigest",
+              "environmentDigest",
+              "randomnessDigest"
+            ],
+            "type": "object"
+          },
+          "executionClass": {
+            "const": "compute_only"
+          },
+          "experimentId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "hiddenTargetCommitmentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "inputManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "metricDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-computational-experiment-plan/v1"
+          },
+          "sourceSnapshotDigests": {
+            "items": {
+              "$ref": "#/$defs/digest"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "splitDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "experimentId",
+          "discipline",
+          "domainTaskDigest",
+          "sourceSnapshotDigests",
+          "inputManifestDigest",
+          "hiddenTargetCommitmentDigest",
+          "splitDefinitionDigest",
+          "baselineManifestDigest",
+          "metricDefinitionDigest",
+          "execution",
+          "executionClass",
+          "claimCeiling",
+          "contentDigest"
+        ],
+        "title": "ComputationalExperimentPlan",
+        "type": "object"
+      },
       "DeriveCampaignStateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -214,6 +314,80 @@
         ],
         "type": "object"
       },
+      "NeuralResponseTask": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/neural-response-task-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "featureManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "groupKeys": {
+            "items": {
+              "enum": [
+                "cell_type",
+                "dataset",
+                "donor",
+                "stimulus_family"
+              ]
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "hiddenResponseCommitmentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "nwbSemanticsDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-neural-response-task/v1"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "stimulusProtocolDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "taskBoundary": {
+            "const": "ex_vivo_current_clamp_response_only"
+          },
+          "taskId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "nwbSemanticsDigest",
+          "featureManifestDigest",
+          "stimulusProtocolDigest",
+          "hiddenResponseCommitmentDigest",
+          "groupKeys",
+          "taskBoundary",
+          "physicalAction",
+          "contentDigest"
+        ],
+        "title": "NeuralResponseTask",
+        "type": "object"
+      },
       "PrepareCandidateSetRequest": {
         "additionalProperties": false,
         "properties": {
@@ -228,6 +402,111 @@
         "required": [
           "candidates"
         ],
+        "type": "object"
+      },
+      "PrepareComputationalExperimentPlanRequest": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/requests/computational-experiment-plan-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "baselineManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "claimCeiling": {
+            "const": "contract_conformance"
+          },
+          "discipline": {
+            "enum": [
+              "protein_variant_effect",
+              "stoichiometric_metabolism",
+              "neuronal_response"
+            ]
+          },
+          "domainTask": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProteinVariantTask"
+              },
+              {
+                "$ref": "#/components/schemas/NeuralResponseTask"
+              },
+              {
+                "$ref": "#/components/schemas/StoichiometricExperiment"
+              }
+            ]
+          },
+          "execution": {
+            "additionalProperties": false,
+            "properties": {
+              "codeDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "environmentDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "randomnessDigest": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "codeDigest",
+              "environmentDigest",
+              "randomnessDigest"
+            ],
+            "type": "object"
+          },
+          "executionClass": {
+            "const": "compute_only"
+          },
+          "experimentId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "hiddenTargetCommitmentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "inputManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "metricDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-computational-experiment-plan/v1"
+          },
+          "sourceSnapshots": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSnapshotManifest"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "splitDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "experimentId",
+          "discipline",
+          "inputManifestDigest",
+          "hiddenTargetCommitmentDigest",
+          "splitDefinitionDigest",
+          "baselineManifestDigest",
+          "metricDefinitionDigest",
+          "execution",
+          "executionClass",
+          "claimCeiling",
+          "domainTask",
+          "sourceSnapshots"
+        ],
+        "title": "PrepareComputationalExperimentPlanRequest",
         "type": "object"
       },
       "PrepareDatasetReleaseManifestRequest": {
@@ -302,6 +581,43 @@
         ],
         "type": "object"
       },
+      "PrepareGraphProjectionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "asOf": {
+            "format": "date-time",
+            "pattern": "Z$",
+            "type": "string"
+          },
+          "knownAt": {
+            "format": "date-time",
+            "pattern": "Z$",
+            "type": "string"
+          },
+          "scientificClaim": {
+            "$ref": "#/components/schemas/ScientificClaimPreparationInput"
+          },
+          "snapshotDigest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "sourceSnapshots": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSnapshotManifest"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "scientificClaim",
+          "sourceSnapshots",
+          "snapshotDigest",
+          "asOf",
+          "knownAt"
+        ],
+        "type": "object"
+      },
       "PrepareHypothesisRequest": {
         "additionalProperties": false,
         "properties": {
@@ -312,6 +628,76 @@
         "required": [
           "hypothesis"
         ],
+        "type": "object"
+      },
+      "PrepareNeuralResponseTaskRequest": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/requests/neural-response-task-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "featureManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "groupKeys": {
+            "items": {
+              "enum": [
+                "cell_type",
+                "dataset",
+                "donor",
+                "stimulus_family"
+              ]
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "hiddenResponseCommitmentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "nwbSemanticsDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-neural-response-task/v1"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "stimulusProtocolDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "taskBoundary": {
+            "const": "ex_vivo_current_clamp_response_only"
+          },
+          "taskId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "nwbSemanticsDigest",
+          "featureManifestDigest",
+          "stimulusProtocolDigest",
+          "hiddenResponseCommitmentDigest",
+          "groupKeys",
+          "taskBoundary",
+          "physicalAction"
+        ],
+        "title": "PrepareNeuralResponseTaskRequest",
         "type": "object"
       },
       "PrepareProgramRequest": {
@@ -334,6 +720,714 @@
         ],
         "type": "object"
       },
+      "PrepareProspectiveExperimentProtocolRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "configuration": {
+            "type": "object"
+          },
+          "experimentProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          }
+        },
+        "required": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "type": "object"
+      },
+      "PrepareProteinVariantTaskRequest": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/requests/protein-variant-task-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "assayContextDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "candidateManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-protein-variant-task/v1"
+          },
+          "sequenceManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "splitDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "taskBoundary": {
+            "const": "variant_effect_prediction_only"
+          },
+          "taskId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "sequenceManifestDigest",
+          "assayContextDigest",
+          "splitDefinitionDigest",
+          "candidateManifestDigest",
+          "taskBoundary",
+          "physicalAction"
+        ],
+        "title": "PrepareProteinVariantTaskRequest",
+        "type": "object"
+      },
+      "PrepareScientificClaimRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "scientificClaim": {
+            "$ref": "#/components/schemas/ScientificClaimPreparationInput"
+          },
+          "sourceSnapshots": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSnapshotManifest"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "scientificClaim",
+          "sourceSnapshots"
+        ],
+        "type": "object"
+      },
+      "PrepareStoichiometricExperimentRequest": {
+        "$defs": {
+          "bound": {
+            "additionalProperties": false,
+            "properties": {
+              "lower": {
+                "$ref": "#/$defs/rational"
+              },
+              "reactionId": {
+                "$ref": "#/$defs/id"
+              },
+              "upper": {
+                "$ref": "#/$defs/rational"
+              }
+            },
+            "required": [
+              "reactionId",
+              "lower",
+              "upper"
+            ],
+            "type": "object"
+          },
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "matrix_entry": {
+            "additionalProperties": false,
+            "properties": {
+              "coefficient": {
+                "$ref": "#/$defs/rational"
+              },
+              "metaboliteId": {
+                "$ref": "#/$defs/id"
+              },
+              "reactionId": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "required": [
+              "metaboliteId",
+              "reactionId",
+              "coefficient"
+            ],
+            "type": "object"
+          },
+          "rational": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/requests/stoichiometric-experiment-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "bounds": {
+            "items": {
+              "$ref": "#/$defs/bound"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "claimBoundary": {
+            "const": "model_conditional_in_silico_result"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/$defs/matrix_entry"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "experimentId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "metaboliteIds": {
+            "items": {
+              "$ref": "#/$defs/id"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "reactionIds": {
+            "items": {
+              "$ref": "#/$defs/id"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-stoichiometric-experiment/v1"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "experimentId",
+          "sourceSnapshotDigest",
+          "metaboliteIds",
+          "reactionIds",
+          "entries",
+          "bounds",
+          "claimBoundary",
+          "physicalAction"
+        ],
+        "title": "PrepareStoichiometricExperimentRequest",
+        "type": "object"
+      },
+      "PrepareStoichiometricFeasibilityReceiptRequest": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "flux": {
+            "additionalProperties": false,
+            "properties": {
+              "reactionId": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "value": {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "reactionId",
+              "value"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/requests/stoichiometric-feasibility-receipt-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "experiment": {
+            "$ref": "#/components/schemas/StoichiometricExperiment"
+          },
+          "flux": {
+            "items": {
+              "$ref": "#/$defs/flux"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-stoichiometric-feasibility-receipt/v1"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "flux",
+          "experiment"
+        ],
+        "title": "PrepareStoichiometricFeasibilityReceiptRequest",
+        "type": "object"
+      },
+      "ProteinVariantTask": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/protein-variant-task-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "assayContextDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "candidateManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-protein-variant-task/v1"
+          },
+          "sequenceManifestDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "splitDefinitionDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "taskBoundary": {
+            "const": "variant_effect_prediction_only"
+          },
+          "taskId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "sequenceManifestDigest",
+          "assayContextDigest",
+          "splitDefinitionDigest",
+          "candidateManifestDigest",
+          "taskBoundary",
+          "physicalAction",
+          "contentDigest"
+        ],
+        "title": "ProteinVariantTask",
+        "type": "object"
+      },
+      "ScientificClaimPreparationInput": {
+        "$defs": {
+          "classification": {
+            "enum": [
+              "PUBLIC",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          },
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "evidence": {
+            "additionalProperties": false,
+            "properties": {
+              "artifactDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "license": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "locator": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "recordDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "relation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "retrievedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "sourceUri": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "artifactDigest",
+              "recordDigest",
+              "locator",
+              "sourceUri",
+              "retrievedAt",
+              "license",
+              "relation"
+            ],
+            "type": "object"
+          },
+          "identity": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type"
+            ],
+            "type": "object"
+          },
+          "provenance": {
+            "additionalProperties": false,
+            "properties": {
+              "execution": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "extractionVersion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "model": {
+                "additionalProperties": false,
+                "properties": {
+                  "modelRef": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "parametersDigest": {
+                    "$ref": "#/$defs/digest"
+                  },
+                  "trainingSnapshotDigest": {
+                    "$ref": "#/$defs/digest"
+                  },
+                  "weightsDigest": {
+                    "$ref": "#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "modelRef",
+                  "weightsDigest",
+                  "trainingSnapshotDigest",
+                  "parametersDigest"
+                ],
+                "type": "object"
+              },
+              "parentClaimDigests": {
+                "items": {
+                  "$ref": "#/$defs/digest"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "processor": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "processorDigest": {
+                "$ref": "#/$defs/digest"
+              },
+              "sourceSnapshotDigest": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "processor",
+              "processorDigest",
+              "extractionVersion",
+              "sourceSnapshotDigest",
+              "parentClaimDigests",
+              "execution"
+            ],
+            "type": "object"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "pattern": "Z$",
+            "type": "string"
+          },
+          "value": {
+            "additionalProperties": false,
+            "properties": {
+              "unit": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "value": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "valueDigest": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "value",
+              "unit"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/scientific-claim-preparation-input-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claimId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "claimType": {
+            "enum": [
+              "source_assertion",
+              "relationship",
+              "hypothesis",
+              "prediction",
+              "candidate",
+              "measurement",
+              "decision",
+              "retraction"
+            ]
+          },
+          "epistemicClass": {
+            "enum": [
+              "ObservedFact",
+              "SourceClaim",
+              "DerivedAnalysis",
+              "ModelGeneratedCandidate",
+              "Hypothesis",
+              "PolicyDecision"
+            ]
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/evidence"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "governance": {
+            "additionalProperties": false,
+            "properties": {
+              "dataClassification": {
+                "$ref": "#/$defs/classification"
+              },
+              "dualUseScreening": {
+                "enum": [
+                  "not_required",
+                  "cleared",
+                  "requires_review",
+                  "prohibited"
+                ]
+              },
+              "purpose": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "retentionPolicy": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "synthetic": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "purpose",
+              "dataClassification",
+              "synthetic",
+              "dualUseScreening",
+              "retentionPolicy"
+            ],
+            "type": "object"
+          },
+          "history": {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "active",
+                  "corrects",
+                  "retracts"
+                ]
+              },
+              "supersedesClaimDigests": {
+                "items": {
+                  "$ref": "#/$defs/digest"
+                },
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "status",
+              "supersedesClaimDigests"
+            ],
+            "type": "object"
+          },
+          "object": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/identity"
+              },
+              {
+                "$ref": "#/$defs/value"
+              }
+            ]
+          },
+          "predicate": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          },
+          "schemaVersion": {
+            "const": "tempera.scientific-claim/v1"
+          },
+          "scope": {
+            "additionalProperties": false,
+            "properties": {
+              "classification": {
+                "$ref": "#/$defs/classification"
+              },
+              "graphId": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "tenantId": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "tenantId",
+              "graphId",
+              "classification"
+            ],
+            "type": "object"
+          },
+          "statement": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/$defs/identity"
+          },
+          "time": {
+            "additionalProperties": false,
+            "properties": {
+              "recordedAt": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "validFrom": {
+                "$ref": "#/$defs/timestamp"
+              },
+              "validTo": {
+                "$ref": "#/$defs/timestamp"
+              }
+            },
+            "required": [
+              "validFrom",
+              "validTo",
+              "recordedAt"
+            ],
+            "type": "object"
+          },
+          "uncertainty": {
+            "type": "object"
+          },
+          "verification": {
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "const": 0
+              },
+              "status": {
+                "const": "well_formed"
+              },
+              "verifierReceiptDigests": {
+                "items": {
+                  "$ref": "#/$defs/digest"
+                },
+                "maxItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "level",
+              "status",
+              "verifierReceiptDigests"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "claimId",
+          "claimType",
+          "epistemicClass",
+          "statement",
+          "subject",
+          "predicate",
+          "object",
+          "time",
+          "scope",
+          "evidence",
+          "provenance",
+          "uncertainty",
+          "verification",
+          "governance",
+          "history"
+        ],
+        "title": "ScientificClaimPreparationInput",
+        "type": "object"
+      },
       "SealedArtifact": {
         "description": "LowerCamel REST projection of a sealed artifact. Exact closed internal schemas remain published in contracts/ and retain their canonical snake_case digest representation.",
         "properties": {
@@ -348,6 +1442,314 @@
         "required": [
           "schemaVersion",
           "contentDigest"
+        ],
+        "type": "object"
+      },
+      "SourceSnapshotManifest": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/source-snapshot-manifest-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "artifacts": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "byteCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "mediaType": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "uri": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "uri",
+                "digest",
+                "byteCount",
+                "mediaType"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "classification": {
+            "enum": [
+              "PUBLIC",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          },
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "license": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "releaseId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "retrievedAt": {
+            "format": "date-time",
+            "pattern": "Z$",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "tempera.source-snapshot-manifest/v1"
+          },
+          "snapshotId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sourceId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "snapshotId",
+          "sourceId",
+          "releaseId",
+          "retrievedAt",
+          "license",
+          "classification",
+          "artifacts",
+          "contentDigest"
+        ],
+        "title": "SourceSnapshotManifest",
+        "type": "object"
+      },
+      "StoichiometricExperiment": {
+        "$defs": {
+          "bound": {
+            "additionalProperties": false,
+            "properties": {
+              "lower": {
+                "$ref": "#/$defs/rational"
+              },
+              "reactionId": {
+                "$ref": "#/$defs/id"
+              },
+              "upper": {
+                "$ref": "#/$defs/rational"
+              }
+            },
+            "required": [
+              "reactionId",
+              "lower",
+              "upper"
+            ],
+            "type": "object"
+          },
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "matrix_entry": {
+            "additionalProperties": false,
+            "properties": {
+              "coefficient": {
+                "$ref": "#/$defs/rational"
+              },
+              "metaboliteId": {
+                "$ref": "#/$defs/id"
+              },
+              "reactionId": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "required": [
+              "metaboliteId",
+              "reactionId",
+              "coefficient"
+            ],
+            "type": "object"
+          },
+          "rational": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/stoichiometric-experiment-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "bounds": {
+            "items": {
+              "$ref": "#/$defs/bound"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "claimBoundary": {
+            "const": "model_conditional_in_silico_result"
+          },
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/$defs/matrix_entry"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "experimentId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "metaboliteIds": {
+            "items": {
+              "$ref": "#/$defs/id"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "physicalAction": {
+            "const": false
+          },
+          "reactionIds": {
+            "items": {
+              "$ref": "#/$defs/id"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-stoichiometric-experiment/v1"
+          },
+          "sourceSnapshotDigest": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "experimentId",
+          "sourceSnapshotDigest",
+          "metaboliteIds",
+          "reactionIds",
+          "entries",
+          "bounds",
+          "claimBoundary",
+          "physicalAction",
+          "contentDigest"
+        ],
+        "title": "StoichiometricExperiment",
+        "type": "object"
+      },
+      "StoichiometricFeasibilityReceipt": {
+        "$defs": {
+          "digest": {
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "flux": {
+            "additionalProperties": false,
+            "properties": {
+              "reactionId": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "value": {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "reactionId",
+              "value"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://schemas.tempera.dev/tempera-bio/stoichiometric-feasibility-receipt-rest-v1.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "contentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "experimentDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "flux": {
+            "items": {
+              "$ref": "#/$defs/flux"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "residualDigest": {
+            "$ref": "#/$defs/digest"
+          },
+          "resultBoundary": {
+            "const": "model_conditional_in_silico_result"
+          },
+          "schemaVersion": {
+            "const": "tempera.bio-stoichiometric-feasibility-receipt/v1"
+          },
+          "status": {
+            "const": "feasible"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "experimentDigest",
+          "flux",
+          "residualDigest",
+          "status",
+          "resultBoundary",
+          "contentDigest"
+        ],
+        "title": "StoichiometricFeasibilityReceipt",
+        "type": "object"
+      },
+      "VerifyDomainMaterializationSubmissionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "materializationRequest": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "rawSubmissionReceiptBase64": {
+            "contentEncoding": "base64",
+            "type": "string"
+          },
+          "submissionIdentitySignature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          }
+        },
+        "required": [
+          "materializationRequest",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
         ],
         "type": "object"
       },
@@ -383,6 +1785,65 @@
           "identitySignature"
         ],
         "type": "object"
+      },
+      "VerifyProspectiveMeasurementRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "experimentProposal": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "hypothesis": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "measurementIdentitySignature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          },
+          "program": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "prospectiveProtocol": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "providerResultEnvelope": {
+            "$ref": "#/components/schemas/SealedArtifact"
+          },
+          "providerResultIdentitySignature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          },
+          "rawChainOfCustodyBase64": {
+            "contentEncoding": "base64",
+            "type": "string"
+          },
+          "rawMeasurementBase64": {
+            "contentEncoding": "base64",
+            "type": "string"
+          },
+          "rawSubmissionReceiptBase64": {
+            "contentEncoding": "base64",
+            "type": "string"
+          },
+          "submissionIdentitySignature": {
+            "$ref": "#/components/schemas/IdentitySignature"
+          }
+        },
+        "required": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -393,7 +1854,9 @@
         "type": "http",
         "x-tempera-auth-audience": "tempera-bio",
         "x-tempera-scopes-supported": [
+          "bio:claim:prepare",
           "bio:decision:write",
+          "bio:graph:project",
           "bio:measurement:verify",
           "bio:proposal:write",
           "bio:source:read"
@@ -402,9 +1865,9 @@
     }
   },
   "info": {
-    "description": "Phase-specific biological discovery derivation. This API does not persist releases or execute physical experiments.",
+    "description": "Phase-specific biological discovery derivation. This API does not persist releases, read hidden evaluation targets, execute models, promote proof, write Graph, or execute physical experiments.",
     "title": "Tempera Bio Discovery API",
-    "version": "1.1.0"
+    "version": "1.4.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -582,6 +2045,109 @@
         "x-tempera-required-scope": "bio:proposal:write"
       }
     },
+    "/v1/computationalExperimentPlans:prepare": {
+      "post": {
+        "description": "Canonicalizes caller-provided contract inputs only. It does not execute a model, read hidden targets, promote proof, write Graph, auto-admit MCP tools, or perform physical action.",
+        "operationId": "prepareComputationalExperimentPlan",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareComputationalExperimentPlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/ComputationalExperimentPlan"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A sealed level-zero compute-only contract artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare computational experiment plan",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-compute-only": true,
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-graph-write": false,
+        "x-tempera-hidden-target-access": false,
+        "x-tempera-mcp-auto-admission": false,
+        "x-tempera-model-execution": false,
+        "x-tempera-physical-action": false,
+        "x-tempera-proof-promotion": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
     "/v1/datasetReleaseManifests:prepare": {
       "post": {
         "operationId": "prepareDatasetReleaseManifest",
@@ -754,6 +2320,93 @@
         "x-tempera-effect": "derive_artifact",
         "x-tempera-physical-action": false,
         "x-tempera-required-scope": "bio:decision:write"
+      }
+    },
+    "/v1/domainMaterializations:verifySubmission": {
+      "post": {
+        "operationId": "verifyDomainMaterializationSubmission",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyDomainMaterializationSubmissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Verify domain materialization submission",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:measurement:verify"
       }
     },
     "/v1/experimentProposals:prepare": {
@@ -930,6 +2583,93 @@
         "x-tempera-required-scope": "bio:proposal:write"
       }
     },
+    "/v1/graphProjections:prepare": {
+      "post": {
+        "operationId": "prepareGraphProjection",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareGraphProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare graph projection",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:graph:project"
+      }
+    },
     "/v1/hypotheses:prepare": {
       "post": {
         "operationId": "prepareHypothesis",
@@ -1104,6 +2844,109 @@
         "x-tempera-required-scope": "bio:measurement:verify"
       }
     },
+    "/v1/neuralResponseTasks:prepare": {
+      "post": {
+        "description": "Canonicalizes caller-provided contract inputs only. It does not execute a model, read hidden targets, promote proof, write Graph, auto-admit MCP tools, or perform physical action.",
+        "operationId": "prepareNeuralResponseTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareNeuralResponseTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/NeuralResponseTask"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A sealed level-zero compute-only contract artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare neural response task",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-compute-only": true,
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-graph-write": false,
+        "x-tempera-hidden-target-access": false,
+        "x-tempera-mcp-auto-admission": false,
+        "x-tempera-model-execution": false,
+        "x-tempera-physical-action": false,
+        "x-tempera-proof-promotion": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
     "/v1/programs:prepare": {
       "post": {
         "operationId": "prepareProgram",
@@ -1191,6 +3034,370 @@
         "x-tempera-required-scope": "bio:proposal:write"
       }
     },
+    "/v1/prospectiveExperimentProtocols:prepare": {
+      "post": {
+        "operationId": "prepareProspectiveExperimentProtocol",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareProspectiveExperimentProtocolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare prospective experiment protocol",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/prospectiveMeasurements:verify": {
+      "post": {
+        "operationId": "verifyProspectiveMeasurement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyProspectiveMeasurementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Verify prospective measurement",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:measurement:verify"
+      }
+    },
+    "/v1/proteinVariantTasks:prepare": {
+      "post": {
+        "description": "Canonicalizes caller-provided contract inputs only. It does not execute a model, read hidden targets, promote proof, write Graph, auto-admit MCP tools, or perform physical action.",
+        "operationId": "prepareProteinVariantTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareProteinVariantTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/ProteinVariantTask"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A sealed level-zero compute-only contract artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare protein variant task",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-compute-only": true,
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-graph-write": false,
+        "x-tempera-hidden-target-access": false,
+        "x-tempera-mcp-auto-admission": false,
+        "x-tempera-model-execution": false,
+        "x-tempera-physical-action": false,
+        "x-tempera-proof-promotion": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/scientificClaims:prepare": {
+      "post": {
+        "operationId": "prepareScientificClaim",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareScientificClaimRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactResponse"
+                }
+              }
+            },
+            "description": "A sealed phase artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare scientific claim",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-physical-action": false,
+        "x-tempera-required-scope": "bio:claim:prepare"
+      }
+    },
     "/v1/sources/maveDbScoreSets:ingest": {
       "post": {
         "operationId": "ingestMaveDBScoreSet",
@@ -1276,6 +3483,212 @@
         "x-tempera-effect": "network_read",
         "x-tempera-physical-action": false,
         "x-tempera-required-scope": "bio:source:read"
+      }
+    },
+    "/v1/stoichiometricExperiments:prepare": {
+      "post": {
+        "description": "Canonicalizes caller-provided contract inputs only. It does not execute a model, read hidden targets, promote proof, write Graph, auto-admit MCP tools, or perform physical action.",
+        "operationId": "prepareStoichiometricExperiment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareStoichiometricExperimentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/StoichiometricExperiment"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A sealed level-zero compute-only contract artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare stoichiometric experiment",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-compute-only": true,
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-graph-write": false,
+        "x-tempera-hidden-target-access": false,
+        "x-tempera-mcp-auto-admission": false,
+        "x-tempera-model-execution": false,
+        "x-tempera-physical-action": false,
+        "x-tempera-proof-promotion": false,
+        "x-tempera-required-scope": "bio:proposal:write"
+      }
+    },
+    "/v1/stoichiometricFeasibilityReceipts:prepare": {
+      "post": {
+        "description": "Recomputes exact rational bounds and S*v=0 feasibility for the caller-declared stoichiometric model and flux only. It does not optimize, execute a biological system, establish biological truth, or promote scientific proof.",
+        "operationId": "prepareStoichiometricFeasibilityReceipt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareStoichiometricFeasibilityReceiptRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "result": {
+                      "$ref": "#/components/schemas/StoichiometricFeasibilityReceipt"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A sealed level-zero compute-only contract artifact."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "The request failed closed validation."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Authentication required."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Required Bio scope denied."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
+                }
+              }
+            },
+            "description": "Upstream Bio source unavailable."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Prepare stoichiometric feasibility receipt",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-compute-only": true,
+        "x-tempera-effect": "derive_artifact",
+        "x-tempera-graph-write": false,
+        "x-tempera-hidden-target-access": false,
+        "x-tempera-mcp-auto-admission": false,
+        "x-tempera-model-execution": false,
+        "x-tempera-physical-action": false,
+        "x-tempera-proof-promotion": false,
+        "x-tempera-required-scope": "bio:measurement:verify"
       }
     }
   },

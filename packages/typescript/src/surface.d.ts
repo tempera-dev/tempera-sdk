@@ -603,22 +603,42 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   deriveCampaignState(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare candidate set. */
   prepareCandidateSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare computational experiment plan. */
+  prepareComputationalExperimentPlan(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare dataset release manifest. */
   prepareDatasetReleaseManifest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Derive decision. */
   deriveDecision(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify domain materialization submission. */
+  verifyDomainMaterializationSubmission(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare experiment proposal. */
   prepareExperimentProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare experiment proposal from gym batch. */
   prepareExperimentProposalFromGymBatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare graph projection. */
+  prepareGraphProjection(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare hypothesis. */
   prepareHypothesis(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Verify measurement. */
   verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare neural response task. */
+  prepareNeuralResponseTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare program. */
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare prospective experiment protocol. */
+  prepareProspectiveExperimentProtocol(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify prospective measurement. */
+  verifyProspectiveMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare protein variant task. */
+  prepareProteinVariantTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare scientific claim. */
+  prepareScientificClaim(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare stoichiometric experiment. */
+  prepareStoichiometricExperiment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare stoichiometric feasibility receipt. */
+  prepareStoichiometricFeasibilityReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaPaymentsClient extends TemperaProductClientBase {
