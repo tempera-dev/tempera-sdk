@@ -212,8 +212,8 @@ is the default when none is specified.
 | `workflow:write` | tempera-workflows: `assistJson`, `compileBioCampaign`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun`, `runsSignal` |
 | `bio:source:read` | tempera-bio: `ingestMaveDBScoreSet` |
-| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareProgram` |
-| `bio:measurement:verify` | tempera-bio: `verifyMeasurement` |
+| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareComputationalExperimentPlan`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareNeuralResponseTask`, `prepareProgram`, `prepareProspectiveExperimentProtocol`, `prepareProteinVariantTask`, `prepareStoichiometricExperiment` |
+| `bio:measurement:verify` | tempera-bio: `prepareStoichiometricFeasibilityReceipt`, `verifyDomainMaterializationSubmission`, `verifyMeasurement`, `verifyProspectiveMeasurement` |
 | `bio:decision:write` | tempera-bio: `deriveCampaignState`, `deriveDecision` |
 | `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
 | `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection`; tempera-workflows: `createExperimentSubmission`, `reconcileExperimentSubmission` |
@@ -234,6 +234,23 @@ is the default when none is specified.
 | `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
+
+## Known scope gaps
+
+### `bio:claim:prepare`
+
+- **Status:** Producer-required Bio claim scope is not yet registered by the vendored Auth Hub contract..
+- **Owner:** tempera-dev/auth-hub maintainers.
+- **Reported:** 2026-08-08.
+- **Migration:** Register bio:claim:prepare in Auth Hub, re-vendor the control-plane contract, then remove this gap.
+
+### `bio:graph:project`
+
+- **Status:** Producer-required non-authoritative Graph projection scope is not yet registered by the vendored Auth Hub contract..
+- **Owner:** tempera-dev/auth-hub maintainers.
+- **Reported:** 2026-08-08.
+- **Migration:** Register bio:graph:project in Auth Hub, re-vendor the control-plane contract, then remove this gap.
+
 
 ## Issuer endpoints
 

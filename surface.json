@@ -68,7 +68,20 @@
     "payments:admin",
     "admin"
   ],
-  "scopeGaps": {},
+  "scopeGaps": {
+    "bio:claim:prepare": {
+      "owner": "tempera-dev/auth-hub maintainers",
+      "reportedDate": "2026-08-08",
+      "status": "Producer-required Bio claim scope is not yet registered by the vendored Auth Hub contract.",
+      "migration": "Register bio:claim:prepare in Auth Hub, re-vendor the control-plane contract, then remove this gap."
+    },
+    "bio:graph:project": {
+      "owner": "tempera-dev/auth-hub maintainers",
+      "reportedDate": "2026-08-08",
+      "status": "Producer-required non-authoritative Graph projection scope is not yet registered by the vendored Auth Hub contract.",
+      "migration": "Register bio:graph:project in Auth Hub, re-vendor the control-plane contract, then remove this gap."
+    }
+  },
   "environments": {
     "local": {
       "publicSiteUrl": "http://localhost:3000",
@@ -4899,6 +4912,50 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "prepareComputationalExperimentPlan",
+        "method": "POST",
+        "path": "/v1/computationalExperimentPlans:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare computational experiment plan.",
+        "upstreamOperationId": "prepareComputationalExperimentPlan",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "baselineManifestDigest",
+          "claimCeiling",
+          "discipline",
+          "domainTask",
+          "execution",
+          "executionClass",
+          "experimentId",
+          "hiddenTargetCommitmentDigest",
+          "inputManifestDigest",
+          "metricDefinitionDigest",
+          "schemaVersion",
+          "sourceSnapshots",
+          "splitDefinitionDigest"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "experimentId",
+          "discipline",
+          "inputManifestDigest",
+          "hiddenTargetCommitmentDigest",
+          "splitDefinitionDigest",
+          "baselineManifestDigest",
+          "metricDefinitionDigest",
+          "execution",
+          "executionClass",
+          "claimCeiling",
+          "domainTask",
+          "sourceSnapshots"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
         "id": "prepareDatasetReleaseManifest",
         "method": "POST",
         "path": "/v1/datasetReleaseManifests:prepare",
@@ -4951,6 +5008,30 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "verifyDomainMaterializationSubmission",
+        "method": "POST",
+        "path": "/v1/domainMaterializations:verifySubmission",
+        "auth": "oauthResource",
+        "description": "Verify domain materialization submission.",
+        "upstreamOperationId": "verifyDomainMaterializationSubmission",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "materializationRequest",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "materializationRequest",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
+      },
+      {
         "id": "prepareExperimentProposal",
         "method": "POST",
         "path": "/v1/experimentProposals:prepare",
@@ -4999,6 +5080,34 @@
         "prepareCommitRequired": false,
         "requestBodyKind": "json",
         "requestContentType": "application/json"
+      },
+      {
+        "id": "prepareGraphProjection",
+        "method": "POST",
+        "path": "/v1/graphProjections:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare graph projection.",
+        "upstreamOperationId": "prepareGraphProjection",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "asOf",
+          "knownAt",
+          "scientificClaim",
+          "snapshotDigest",
+          "sourceSnapshots"
+        ],
+        "requiredBody": [
+          "scientificClaim",
+          "sourceSnapshots",
+          "snapshotDigest",
+          "asOf",
+          "knownAt"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:graph:project"
       },
       {
         "id": "prepareHypothesis",
@@ -5051,6 +5160,44 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "prepareNeuralResponseTask",
+        "method": "POST",
+        "path": "/v1/neuralResponseTasks:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare neural response task.",
+        "upstreamOperationId": "prepareNeuralResponseTask",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "featureManifestDigest",
+          "groupKeys",
+          "hiddenResponseCommitmentDigest",
+          "nwbSemanticsDigest",
+          "physicalAction",
+          "schemaVersion",
+          "sourceSnapshotDigest",
+          "stimulusProtocolDigest",
+          "taskBoundary",
+          "taskId"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "nwbSemanticsDigest",
+          "featureManifestDigest",
+          "stimulusProtocolDigest",
+          "hiddenResponseCommitmentDigest",
+          "groupKeys",
+          "taskBoundary",
+          "physicalAction"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
         "id": "prepareProgram",
         "method": "POST",
         "path": "/v1/programs:prepare",
@@ -5075,6 +5222,130 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "prepareProspectiveExperimentProtocol",
+        "method": "POST",
+        "path": "/v1/prospectiveExperimentProtocols:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare prospective experiment protocol.",
+        "upstreamOperationId": "prepareProspectiveExperimentProtocol",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "configuration",
+          "experimentProposal",
+          "program"
+        ],
+        "requiredBody": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyProspectiveMeasurement",
+        "method": "POST",
+        "path": "/v1/prospectiveMeasurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify prospective measurement.",
+        "upstreamOperationId": "verifyProspectiveMeasurement",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "measurementIdentitySignature",
+          "program",
+          "prospectiveProtocol",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
+      },
+      {
+        "id": "prepareProteinVariantTask",
+        "method": "POST",
+        "path": "/v1/proteinVariantTasks:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare protein variant task.",
+        "upstreamOperationId": "prepareProteinVariantTask",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "assayContextDigest",
+          "candidateManifestDigest",
+          "physicalAction",
+          "schemaVersion",
+          "sequenceManifestDigest",
+          "sourceSnapshotDigest",
+          "splitDefinitionDigest",
+          "taskBoundary",
+          "taskId"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "taskId",
+          "sourceSnapshotDigest",
+          "sequenceManifestDigest",
+          "assayContextDigest",
+          "splitDefinitionDigest",
+          "candidateManifestDigest",
+          "taskBoundary",
+          "physicalAction"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "prepareScientificClaim",
+        "method": "POST",
+        "path": "/v1/scientificClaims:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare scientific claim.",
+        "upstreamOperationId": "prepareScientificClaim",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "scientificClaim",
+          "sourceSnapshots"
+        ],
+        "requiredBody": [
+          "scientificClaim",
+          "sourceSnapshots"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:claim:prepare"
+      },
+      {
         "id": "ingestMaveDBScoreSet",
         "method": "POST",
         "path": "/v1/sources/maveDbScoreSets:ingest",
@@ -5093,6 +5364,66 @@
         "prepareCommitRequired": false,
         "requestBodyKind": "json",
         "requestContentType": "application/json"
+      },
+      {
+        "id": "prepareStoichiometricExperiment",
+        "method": "POST",
+        "path": "/v1/stoichiometricExperiments:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare stoichiometric experiment.",
+        "upstreamOperationId": "prepareStoichiometricExperiment",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "bounds",
+          "claimBoundary",
+          "entries",
+          "experimentId",
+          "metaboliteIds",
+          "physicalAction",
+          "reactionIds",
+          "schemaVersion",
+          "sourceSnapshotDigest"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "experimentId",
+          "sourceSnapshotDigest",
+          "metaboliteIds",
+          "reactionIds",
+          "entries",
+          "bounds",
+          "claimBoundary",
+          "physicalAction"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "prepareStoichiometricFeasibilityReceipt",
+        "method": "POST",
+        "path": "/v1/stoichiometricFeasibilityReceipts:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare stoichiometric feasibility receipt.",
+        "upstreamOperationId": "prepareStoichiometricFeasibilityReceipt",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "experiment",
+          "flux",
+          "schemaVersion"
+        ],
+        "requiredBody": [
+          "schemaVersion",
+          "flux",
+          "experiment"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
       }
     ],
     "temperaPayments": [

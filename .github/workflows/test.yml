@@ -369,6 +369,7 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
       - run: python3 scripts/test-sync-vendored-openapi.py
+      - run: python3 scripts/test-tempera-bio-compute-surface.py
       - run: python3 scripts/test-upstream-drift.py
       - run: python3 scripts/test-sdk-names.py
       - run: python3 scripts/test-aip-conformance.py
