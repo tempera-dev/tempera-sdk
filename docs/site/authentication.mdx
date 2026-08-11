@@ -228,8 +228,8 @@ is the default when none is specified.
 | `risk:review` | No typed SDK operation declares it yet; enforced server-side. |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `payments:intents:read` | tempera-payments: `getPaymentIntent` |
-| `payments:intents:write` | tempera-payments: `createPaymentIntent`, `createStripeCheckout` |
-| `payments:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:intents:write` | tempera-payments: `createCardSession`, `createPaymentIntent`, `createStripeCheckout` |
+| `payments:receipts:read` | tempera-payments: `getPaymentSettlementReceipt` |
 | `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |

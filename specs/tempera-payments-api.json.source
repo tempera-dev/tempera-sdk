@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-payments-api.json",
-  "generated_sha256": "d90c48f0396c9889a4ed92048b13491e527bbf7f05442dfb733bfe66167934e1",
+  "generated_sha256": "e86f940e3dc3f14bccff04fba626dc165202443dc19cf0de7740cdcbb13902e3",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "8032e53c2aa8b0895d29d65adfa44356c5277bfb",
+  "source_blob_sha": "c2bc0a6450f4f754dd5076cdf82f34543788977f",
   "source_branch": "main",
-  "source_commit": "3d7c3db018e3730f50ac7e01caf56ba7f7ff0176",
+  "source_commit": "e1e9ca92bf64b00197bef4ee275aac560c5783e9",
   "source_mode": "100644",
   "source_path": "contracts/openapi/payments.openapi.json",
   "source_repo": "tempera-dev/tempera-payments",
-  "source_sha256": "d90c48f0396c9889a4ed92048b13491e527bbf7f05442dfb733bfe66167934e1"
+  "source_sha256": "e86f940e3dc3f14bccff04fba626dc165202443dc19cf0de7740cdcbb13902e3"
 }

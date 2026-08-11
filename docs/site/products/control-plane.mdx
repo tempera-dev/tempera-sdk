@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 71 |
+| Typed operations | 81 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -3185,6 +3185,386 @@ result = client.control_plane.github_webhooks_accept()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "github_webhooks_accept", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### sessionsRevokeAll
+
+`POST /v1/sessions:revokeAll`
+
+Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch.
+
+- **Producer operationId:** `sessions.revokeAll`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.sessionsRevokeAll()` · Python `client.control_plane.sessions_revoke_all()` · Rust `build_request("control_plane", "sessions_revoke_all", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.sessionsRevokeAll();
+```
+
+```python Python
+result = client.control_plane.sessions_revoke_all()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "sessions_revoke_all", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysList
+
+`GET /v1/passkeys`
+
+List passkeys enrolled for the authenticated account.
+
+- **Producer operationId:** `passkeys.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysList()` · Python `client.control_plane.passkeys_list()` · Rust `build_request("control_plane", "passkeys_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysBeginRegistration
+
+`POST /v1/passkeys/registration:begin`
+
+Begin passkey registration for the authenticated account.
+
+- **Producer operationId:** `passkeys.beginRegistration`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginRegistration()` · Python `client.control_plane.passkeys_begin_registration()` · Rust `build_request("control_plane", "passkeys_begin_registration", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysBeginRegistration();
+```
+
+```python Python
+result = client.control_plane.passkeys_begin_registration()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_begin_registration", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysFinishRegistration
+
+`POST /v1/passkeys/registration:finish`
+
+Verify and persist a passkey registration.
+
+- **Producer operationId:** `passkeys.finishRegistration`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishRegistration()` · Python `client.control_plane.passkeys_finish_registration()` · Rust `build_request("control_plane", "passkeys_finish_registration", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `challengeId` | yes | — |
+| `response` | yes | — |
+| `name` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysFinishRegistration({
+  challengeId: "<challengeId>",
+  response: "<response>",
+  name: "<name>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_finish_registration({
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_finish_registration", &[
+    ("challengeId", "<challengeId>".into()),
+    ("response", "<response>".into()),
+    ("name", "<name>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysBeginAuthentication
+
+`POST /v1/passkeys/authentication:begin`
+
+Begin discoverable passkey authentication.
+
+- **Producer operationId:** `passkeys.beginAuthentication`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginAuthentication()` · Python `client.control_plane.passkeys_begin_authentication()` · Rust `build_request("control_plane", "passkeys_begin_authentication", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysBeginAuthentication();
+```
+
+```python Python
+result = client.control_plane.passkeys_begin_authentication()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_begin_authentication", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysFinishAuthentication
+
+`POST /v1/passkeys/authentication:finish`
+
+Verify a passkey assertion and create an AAL2 account session.
+
+- **Producer operationId:** `passkeys.finishAuthentication`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishAuthentication()` · Python `client.control_plane.passkeys_finish_authentication()` · Rust `build_request("control_plane", "passkeys_finish_authentication", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `challengeId` | yes | — |
+| `response` | yes | — |
+| `name` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysFinishAuthentication({
+  challengeId: "<challengeId>",
+  response: "<response>",
+  name: "<name>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_finish_authentication({
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_finish_authentication", &[
+    ("challengeId", "<challengeId>".into()),
+    ("response", "<response>".into()),
+    ("name", "<name>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysBeginStepUp
+
+`POST /v1/step-up/passkey:begin`
+
+Begin passkey step-up for a signed-in account session.
+
+- **Producer operationId:** `passkeys.beginStepUp`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginStepUp()` · Python `client.control_plane.passkeys_begin_step_up()` · Rust `build_request("control_plane", "passkeys_begin_step_up", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysBeginStepUp();
+```
+
+```python Python
+result = client.control_plane.passkeys_begin_step_up()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_begin_step_up", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysFinishStepUp
+
+`POST /v1/step-up/passkey:finish`
+
+Verify passkey step-up and mint a short-lived AAL2 elevation token.
+
+- **Producer operationId:** `passkeys.finishStepUp`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishStepUp()` · Python `client.control_plane.passkeys_finish_step_up()` · Rust `build_request("control_plane", "passkeys_finish_step_up", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `challengeId` | yes | — |
+| `response` | yes | — |
+| `name` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysFinishStepUp({
+  challengeId: "<challengeId>",
+  response: "<response>",
+  name: "<name>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_finish_step_up({
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_finish_step_up", &[
+    ("challengeId", "<challengeId>".into()),
+    ("response", "<response>".into()),
+    ("name", "<name>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysRecover
+
+`POST /v1/passkeys:recover`
+
+Consume a one-time recovery code, remove passkeys, and revoke all active account credentials.
+
+- **Producer operationId:** `passkeys.recover`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysRecover()` · Python `client.control_plane.passkeys_recover()` · Rust `build_request("control_plane", "passkeys_recover", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `recoveryCode` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysRecover({
+  recoveryCode: "<recoveryCode>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_recover({
+    "recoveryCode": "<recoveryCode>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_recover", &[
+    ("recoveryCode", "<recoveryCode>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### passkeysDelete
+
+`DELETE /v1/passkeys/{credentialId}`
+
+Delete one passkey after recent AAL2 step-up.
+
+- **Producer operationId:** `passkeys.delete`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.passkeysDelete()` · Python `client.control_plane.passkeys_delete()` · Rust `build_request("control_plane", "passkeys_delete", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `credentialId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.passkeysDelete({
+  credentialId: "<credentialId>",
+});
+```
+
+```python Python
+result = client.control_plane.passkeys_delete({
+    "credentialId": "<credentialId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "passkeys_delete", &[
+    ("credentialId", "<credentialId>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

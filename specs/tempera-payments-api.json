@@ -61,6 +61,27 @@
         }
       }
     },
+    "/v1/payment_intents/{payment_intent_id}/receipt": {
+      "get": {
+        "operationId": "getPaymentSettlementReceipt",
+        "summary": "Read and cryptographically re-verify the canonical settlement receipt",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:receipts:read",
+        "parameters": [
+          { "name": "payment_intent_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "tenant_id", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1 } }
+        ],
+        "responses": {
+          "200": { "description": "Verified signed settlement receipt", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SignedSettlementReceipt" } } } },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "403": { "$ref": "#/components/responses/ApiError" },
+          "404": { "$ref": "#/components/responses/ApiError" },
+          "500": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
     "/v1/payment_intents/{payment_intent_id}/stripe_checkout": {
       "post": {
         "operationId": "createStripeCheckout",
@@ -85,6 +106,31 @@
         }
       }
     },
+    "/v1/payment_intents/{payment_intent_id}/card_session": {
+      "post": {
+        "operationId": "createCardSession",
+        "summary": "Create a hosted/tokenizing card session with the selected configured acquirer",
+        "description": "Routing occurs before provider tokenization. Tempera never accepts PAN or CVV in this API.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "parameters": [
+          { "name": "payment_intent_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 255 } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateCardCheckout" } } } },
+        "responses": {
+          "201": { "description": "Provider-hosted card session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CardSession" } } } },
+          "200": { "description": "Equivalent idempotent replay", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CardSession" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" },
+          "401": { "$ref": "#/components/responses/ApiError" },
+          "404": { "$ref": "#/components/responses/ApiError" },
+          "409": { "$ref": "#/components/responses/ApiError" },
+          "502": { "$ref": "#/components/responses/ApiError" },
+          "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
     "/v1/webhooks/stripe": {
       "post": {
         "operationId": "receiveStripeWebhook",
@@ -100,7 +146,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "flows": { "authorizationCode": { "authorizationUrl": "https://api.tempera.dev/oauth/authorize", "tokenUrl": "https://api.tempera.dev/oauth/token", "scopes": { "payments:intents:write": "Create payment intents", "payments:intents:read": "Read payment intents" } } }
+        "flows": { "authorizationCode": { "authorizationUrl": "https://api.tempera.dev/oauth/authorize", "tokenUrl": "https://api.tempera.dev/oauth/token", "scopes": { "payments:intents:write": "Create payment intents", "payments:intents:read": "Read payment intents", "payments:receipts:read": "Read verified payment settlement receipts" } } }
       }
     },
     "schemas": {
@@ -110,6 +156,71 @@
       "PaymentIntent": { "type": "object", "additionalProperties": false, "required": ["id", "tenant_id", "merchant_id", "recipient", "asset", "amount", "policy_decision_id", "status", "version", "expires_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "tenant_id": { "type": "string" }, "merchant_id": { "type": "string" }, "recipient": { "type": "string" }, "asset": { "$ref": "#/components/schemas/AssetId" }, "amount": { "$ref": "#/components/schemas/AtomicAmount" }, "policy_decision_id": { "type": "string" }, "status": { "type": "string", "enum": ["CREATED", "RISK_PENDING", "AUTHORIZED", "PREPARED", "SIGNED", "BROADCAST", "OBSERVED", "CONFIRMED", "FINALIZED", "DENIED", "HELD", "REVIEW_REQUIRED", "FAILED", "EXPIRED", "REVERSED", "REFUND_PENDING", "REFUNDED"] }, "version": { "type": "integer", "minimum": 0 }, "expires_at": { "type": "string", "format": "date-time" } } },
       "CreateStripeCheckout": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "currency", "product_name", "success_url", "cancel_url"], "properties": { "tenant_id": { "type": "string" }, "currency": { "type": "string", "pattern": "^[A-Za-z]{3}$", "examples": ["usd"] }, "product_name": { "type": "string", "minLength": 1, "maxLength": 255 }, "success_url": { "type": "string", "format": "uri", "pattern": "^https://" }, "cancel_url": { "type": "string", "format": "uri", "pattern": "^https://" } } },
       "StripeCheckout": { "type": "object", "additionalProperties": false, "required": ["stripe_session_id", "checkout_url"], "properties": { "stripe_session_id": { "type": "string" }, "checkout_url": { "type": "string", "format": "uri" } } },
+      "CardAcquirer": { "type": "string", "enum": ["adyen", "checkout_com"] },
+      "CardBillingAddress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["address_line1", "city", "zip", "country"],
+        "properties": {
+          "address_line1": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "city": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "state": { "type": ["string", "null"], "maxLength": 255 },
+          "zip": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "country": { "type": "string", "pattern": "^[A-Za-z]{2}$" }
+        }
+      },
+      "CreateCardCheckout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tenant_id", "acquirer", "success_url", "failure_url", "billing"],
+        "properties": {
+          "tenant_id": { "type": "string", "minLength": 1 },
+          "acquirer": { "$ref": "#/components/schemas/CardAcquirer" },
+          "success_url": { "type": "string", "format": "uri", "pattern": "^https://" },
+          "failure_url": { "type": "string", "format": "uri", "pattern": "^https://" },
+          "billing": { "$ref": "#/components/schemas/CardBillingAddress" }
+        }
+      },
+      "CardSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["acquirer", "provider_session_id", "client_payload"],
+        "properties": {
+          "acquirer": { "$ref": "#/components/schemas/CardAcquirer" },
+          "provider_session_id": { "type": "string", "minLength": 1 },
+          "client_payload": { "type": "object", "description": "Provider-issued payload passed to the selected provider's hosted/tokenizing frontend component. It contains no caller-supplied PAN/CVV fields." }
+        }
+      },
+      "SettlementEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "receipt_id", "payment_intent_id", "request_hash", "policy_decision_id", "asset", "amount", "recipient", "transaction_id", "finality", "observed_at", "key_id", "signature"],
+        "properties": {
+          "schema_version": { "type": "integer", "minimum": 1 },
+          "receipt_id": { "type": "string", "format": "uuid" },
+          "payment_intent_id": { "type": "string", "format": "uuid" },
+          "request_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "policy_decision_id": { "type": "string", "minLength": 1 },
+          "asset": { "$ref": "#/components/schemas/AssetId" },
+          "amount": { "$ref": "#/components/schemas/AtomicAmount" },
+          "recipient": { "type": "string", "minLength": 1 },
+          "transaction_id": { "type": "string", "minLength": 1 },
+          "finality": { "type": "string", "minLength": 1 },
+          "observed_at": { "type": "string", "format": "date-time" },
+          "key_id": { "type": "string", "minLength": 1 },
+          "signature": { "type": "string", "minLength": 1 }
+        }
+      },
+      "SignedSettlementReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence", "algorithm", "public_key_hex"],
+        "properties": {
+          "evidence": { "$ref": "#/components/schemas/SettlementEvidence" },
+          "algorithm": { "type": "string", "enum": ["Ed25519"] },
+          "public_key_hex": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      },
       "Error": { "type": "object", "required": ["code", "message"], "properties": { "code": { "type": "string" }, "message": { "type": "string" } } }
     },
     "responses": { "ApiError": { "description": "Normalized API error", "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "$ref": "#/components/schemas/Error" } } } } } } }
