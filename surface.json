@@ -5290,6 +5290,26 @@
         ]
       },
       {
+        "id": "getPaymentSettlementReceipt",
+        "method": "GET",
+        "path": "/v1/payment_intents/{payment_intent_id}/receipt",
+        "auth": "oauthResource",
+        "description": "Read and cryptographically re-verify the canonical settlement receipt.",
+        "upstreamOperationId": "getPaymentSettlementReceipt",
+        "pathParams": [
+          "payment_intent_id"
+        ],
+        "query": [
+          "tenant_id"
+        ],
+        "requiredQuery": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:receipts:read"
+      },
+      {
         "id": "createStripeCheckout",
         "method": "POST",
         "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
@@ -5312,6 +5332,35 @@
           "product_name",
           "success_url",
           "cancel_url"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:intents:write"
+      },
+      {
+        "id": "createCardSession",
+        "method": "POST",
+        "path": "/v1/payment_intents/{payment_intent_id}/card_session",
+        "auth": "oauthResource",
+        "description": "Create a hosted/tokenizing card session with the selected configured acquirer.",
+        "upstreamOperationId": "createCardSession",
+        "pathParams": [
+          "payment_intent_id"
+        ],
+        "body": [
+          "tenant_id",
+          "acquirer",
+          "success_url",
+          "failure_url",
+          "billing"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "acquirer",
+          "success_url",
+          "failure_url",
+          "billing"
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",

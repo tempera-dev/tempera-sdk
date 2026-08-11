@@ -648,8 +648,12 @@ export interface TemperaPaymentsClient extends TemperaProductClientBase {
   createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read the canonical payment-intent projection. */
   getPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read and cryptographically re-verify the canonical settlement receipt. */
+  getPaymentSettlementReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create an idempotent hosted Stripe Checkout session for a fiat payment intent. */
   createStripeCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a hosted/tokenizing card session with the selected configured acquirer. */
+  createCardSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Verify and durably deduplicate a Stripe webhook using its raw body. */
   receiveStripeWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

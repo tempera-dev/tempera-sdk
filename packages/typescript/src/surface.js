@@ -7873,6 +7873,34 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Read the canonical payment-intent projection."
     },
     {
+      "id": "getPaymentSettlementReceipt",
+      "upstreamOperationId": "getPaymentSettlementReceipt",
+      "method": "GET",
+      "path": "/v1/payment_intents/{payment_intent_id}/receipt",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "payment_intent_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenant_id"
+      ],
+      "requiredQuery": [
+        "tenant_id"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:receipts:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read and cryptographically re-verify the canonical settlement receipt."
+    },
+    {
       "id": "createStripeCheckout",
       "upstreamOperationId": "createStripeCheckout",
       "method": "POST",
@@ -7907,6 +7935,42 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
+    },
+    {
+      "id": "createCardSession",
+      "upstreamOperationId": "createCardSession",
+      "method": "POST",
+      "path": "/v1/payment_intents/{payment_intent_id}/card_session",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "payment_intent_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "tenant_id",
+        "acquirer",
+        "success_url",
+        "failure_url",
+        "billing"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id",
+        "acquirer",
+        "success_url",
+        "failure_url",
+        "billing"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:intents:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
     },
     {
       "id": "receiveStripeWebhook",

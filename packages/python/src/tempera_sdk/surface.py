@@ -7864,6 +7864,34 @@ OPERATIONS = {
             "description": "Read the canonical payment-intent projection."
         },
         {
+            "id": "get_payment_settlement_receipt",
+            "upstream_operation_id": "getPaymentSettlementReceipt",
+            "method": "GET",
+            "path": "/v1/payment_intents/{payment_intent_id}/receipt",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "payment_intent_id"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "tenant_id"
+            ],
+            "required_query": [
+                "tenant_id"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "payments:receipts:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read and cryptographically re-verify the canonical settlement receipt."
+        },
+        {
             "id": "create_stripe_checkout",
             "upstream_operation_id": "createStripeCheckout",
             "method": "POST",
@@ -7898,6 +7926,42 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
+        },
+        {
+            "id": "create_card_session",
+            "upstream_operation_id": "createCardSession",
+            "method": "POST",
+            "path": "/v1/payment_intents/{payment_intent_id}/card_session",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "payment_intent_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "tenant_id",
+                "acquirer",
+                "success_url",
+                "failure_url",
+                "billing"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id",
+                "acquirer",
+                "success_url",
+                "failure_url",
+                "billing"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:intents:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
         },
         {
             "id": "receive_stripe_webhook",
