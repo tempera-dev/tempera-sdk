@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
   DEFAULT_AUDIENCE,
@@ -20,6 +21,7 @@ test("the product registry covers every Tempera product with palette included", 
   assert.equal(TEMPERA_PRODUCTS.palette.repository, "https://github.com/tempera-dev/palette");
   assert.equal(TEMPERA_PRODUCTS.tempo.repository, "https://github.com/tempera-dev/tempo");
   assert.equal(TEMPERA_PRODUCTS.temperaLlm.repository, "https://github.com/tempera-dev/tempera-llm");
+  assert.equal(TEMPERA_PRODUCTS.temperaVoice.repository, "https://github.com/tempera-dev/tempera-voice");
   assert.equal(TEMPERA_PRODUCTS.temperaRisk.repository, "https://github.com/tempera-dev/tempera-risk");
   assert.equal(TEMPERA_PRODUCTS.temperaWorkflows.repository, "https://github.com/tempera-dev/tempera-workflows");
   assert.equal(TEMPERA_PRODUCTS.temperaGym.repository, "https://github.com/tempera-dev/tempera-gym");
@@ -46,6 +48,7 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes("data-engine"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-code"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-llm"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-voice"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-risk"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-workflows"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-gym"));
@@ -54,21 +57,15 @@ test("audience-bearing products map to registered audiences", () => {
 });
 
 test("scopes match the control-plane scope registry", () => {
+  const controlPlane = JSON.parse(
+    readFileSync(
+      new URL("../../../specs/control-plane.openapi.json", import.meta.url),
+      "utf8",
+    ),
+  );
   assert.deepEqual(
     [...TEMPERA_SCOPES],
-    [
-      "mcp:invoke", "memory:read", "memory:write", "memory:manage",
-      "trace:read", "trace:write", "dataset:read", "dataset:write",
-      "eval:run", "training:publish", "review:gold:manage", "review:resolve",
-      "workflow:read", "workflow:write", "workflow:run",
-      "bio:source:read", "bio:proposal:write", "bio:measurement:verify",
-      "bio:decision:write", "bio:experiment:approve",
-      "bio:experiment:submit", "bio:signer:manage",
-      "model:read", "model:invoke", "usage:reserve", "document:read", "document:write",
-      "risk:read", "risk:write", "risk:review", "pii:unmask",
-      "payments:intents:read", "payments:intents:write", "payments:receipts:read",
-      "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin",
-    ],
+    controlPlane.components.schemas.Scope.enum,
   );
 });
 

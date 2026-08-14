@@ -26,7 +26,8 @@
     "tempera-document",
     "tempera-risk",
     "tempera-payments",
-    "tempera-voice"
+    "tempera-voice",
+    "tempera-clearing"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -70,6 +71,12 @@
     "voice:read",
     "voice:write",
     "voice:stream",
+    "clearing:actions:read",
+    "clearing:actions:propose",
+    "clearing:actions:commit",
+    "clearing:actions:reconcile",
+    "clearing:receipts:read",
+    "clearing:actions:approve",
     "admin"
   ],
   "scopeGaps": {},

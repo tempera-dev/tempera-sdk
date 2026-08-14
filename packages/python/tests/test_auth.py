@@ -6,6 +6,7 @@ from tempera_sdk import (
     DEFAULT_AUDIENCE,
     ISSUER_PATHS,
     PRODUCT_AUDIENCES,
+    PRODUCTS,
     TemperaApiError,
     TemperaAuth,
     TemperaSdkError,
@@ -165,24 +166,17 @@ class ProductBearerTest(unittest.TestCase):
         self.assertIn("no credential", str(ctx.exception))
 
     def test_product_audiences_derive_from_the_surface_registry(self):
+        expected = {
+            key: (product["audience"], product["env_var"])
+            for key, product in PRODUCTS.items()
+            if product["audience"] is not None
+        }
+        self.assertEqual(PRODUCT_AUDIENCES, expected)
         self.assertEqual(
-            PRODUCT_AUDIENCES,
-            {
-                "palette": ("palette", "TEMPERA_PALETTE_URL"),
-                "tempo": ("tempo", "TEMPERA_TEMPO_URL"),
-                "temperaLlm": ("tempera-llm", "TEMPERA_LLM_URL"),
-                "temperaRisk": ("tempera-risk", "TEMPERA_RISK_URL"),
-                "temperaWorkflows": ("tempera-workflows", "TEMPERA_WORKFLOWS_URL"),
-                "temperaGym": ("tempera-gym", "TEMPERA_GYM_URL"),
-                "temperaBio": ("tempera-bio", "TEMPERA_BIO_URL"),
-                "temperaDocument": ("tempera-document", "TEMPERA_DOCUMENT_URL"),
-                "temperaPayments": ("tempera-payments", "TEMPERA_PAYMENTS_URL"),
-                "cradle": ("cradle", "TEMPERA_CRADLE_URL"),
-                "remi": ("remi", "TEMPERA_REMI_URL"),
-                "dataEngine": ("data-engine", "TEMPERA_DATA_ENGINE_URL"),
-                "humanData": ("human-data", "TEMPERA_HUMAN_DATA_URL"),
-            },
+            PRODUCT_AUDIENCES["temperaVoice"],
+            ("tempera-voice", "TEMPERA_VOICE_URL"),
         )
+
 
 
 if __name__ == "__main__":
