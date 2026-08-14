@@ -49,6 +49,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("tempera-bio", AUDIENCES)
         self.assertIn("tempera-document", AUDIENCES)
         self.assertIn("tempera-voice", AUDIENCES)
+        self.assertIn("tempera-clearing", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
@@ -66,7 +67,10 @@ class TemperaSdkTest(unittest.TestCase):
                 "risk:read", "risk:write", "risk:review", "pii:unmask",
                 "payments:intents:read", "payments:intents:write", "payments:receipts:read",
                 "payments:webhooks:write", "payments:refunds:write", "payments:admin",
-                "voice:read", "voice:write", "voice:stream", "admin",
+                "voice:read", "voice:write", "voice:stream",
+                "clearing:actions:read", "clearing:actions:propose",
+                "clearing:actions:commit", "clearing:actions:reconcile",
+                "clearing:receipts:read", "clearing:actions:approve", "admin",
             ],
         )
 
