@@ -1,0 +1,99 @@
+name: current-auth-hub-voice-sdk-publisher
+
+on:
+  push:
+    branches: [agent/register-tempera-voice-sdk]
+    paths:
+      - scripts/refresh-current-auth-hub-and-voice-tests.py
+      - .github/workflows/current-auth-hub-voice-sdk-publisher.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/register-tempera-voice-sdk
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+      - uses: dtolnay/rust-toolchain@032958afbdc797a9164d3bc0b56325c1308924a5
+        with:
+          toolchain: 1.97.1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+      - name: Mint exact-source reader
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: 93755981bb7ed3002b947be1889683e35846d9e1
+          fetch-depth: 0
+          path: .auth-hub-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - name: Verify current Auth Hub main
+        shell: bash
+        run: |
+          git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .auth-hub-source rev-parse HEAD)" = "93755981bb7ed3002b947be1889683e35846d9e1"
+          test "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)" = "93755981bb7ed3002b947be1889683e35846d9e1"
+          test -z "$(git -C .auth-hub-source status --porcelain)"
+      - name: Refresh Auth Hub and generated SDK surfaces
+        run: |
+          python scripts/refresh-current-auth-hub-and-voice-tests.py
+          python scripts/sync-control-plane-openapi.py \
+            --source-repo-dir .auth-hub-source \
+            --source-commit 93755981bb7ed3002b947be1889683e35846d9e1
+          python scripts/sync-openapi-surface.py --product controlPlane
+          python scripts/gen-sdk-surface.py
+          python scripts/gen-sdk-docs.py
+      - name: Validate every generated and language surface
+        run: |
+          python -m compileall -q scripts packages/python/src
+          python scripts/test-sync-data-engine-openapi.py
+          python scripts/test-sync-vendored-openapi.py
+          python scripts/test-upstream-drift.py
+          python scripts/test-sdk-names.py
+          python scripts/test-aip-conformance.py
+          python scripts/check-aip-conformance.py
+          python scripts/sync-control-plane-openapi.py \
+            --check \
+            --source-repo-dir .auth-hub-source \
+            --source-commit 93755981bb7ed3002b947be1889683e35846d9e1
+          python scripts/sync-openapi-surface.py --check
+          python scripts/check-upstream-drift.py
+          python scripts/check-sdk-surface.py
+          npm --prefix packages/typescript test
+          python -m unittest discover -s packages/python/tests
+          cargo test --manifest-path packages/rust/Cargo.toml
+          git diff --check
+      - name: Publish current Auth Hub and Voice SDK projection
+        run: |
+          if git diff --quiet; then
+            echo "Auth Hub and Voice SDK projection is already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            specs/control-plane.openapi.json \
+            specs/control-plane.openapi.json.source \
+            surface.json \
+            packages \
+            docs \
+            packages/typescript/test/client.test.mjs \
+            packages/typescript/test/sdk.test.mjs
+          git commit -m "Refresh SDK to current Auth Hub and optimized Voice"
+          git push origin HEAD:agent/register-tempera-voice-sdk
