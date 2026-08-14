@@ -1,0 +1,135 @@
+name: Publish exact Tempera Voice SDK surface
+
+on:
+  push:
+    branches: [agent/tempera-voice-sdk]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voice-sdk-publisher-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub,tempera-voice
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/auth-hub
+          ref: agent/tempera-voice-auth-contract
+          fetch-depth: 0
+          path: .auth-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/tempera-voice
+          ref: agent/full-stack-voice-api
+          fetch-depth: 0
+          path: .voice-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Stage aggregate product registry
+        run: python3 scripts/apply-tempera-voice-sdk.py
+      - name: Vendor exact producer contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH_COMMIT="$(git -C .auth-source rev-parse HEAD)"
+          VOICE_COMMIT="$(git -C .voice-source rev-parse HEAD)"
+          python3 scripts/sync-control-plane-openapi.py \
+            --source-repo-dir .auth-source \
+            --source-branch agent/tempera-voice-auth-contract \
+            --source-commit "$AUTH_COMMIT"
+          python3 scripts/sync-vendored-openapi.py \
+            --product temperaVoice \
+            --source-repo-dir .voice-source \
+            --source-branch agent/full-stack-voice-api \
+            --source-commit "$VOICE_COMMIT"
+      - name: Generate all language surfaces and docs
+        run: |
+          python3 scripts/sync-openapi-surface.py --product controlPlane --product temperaVoice
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-docs.py
+      - name: Verify staged exact producer source
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH_COMMIT="$(git -C .auth-source rev-parse HEAD)"
+          VOICE_COMMIT="$(git -C .voice-source rev-parse HEAD)"
+          python3 scripts/sync-control-plane-openapi.py --check \
+            --source-repo-dir .auth-source \
+            --source-branch agent/tempera-voice-auth-contract \
+            --source-commit "$AUTH_COMMIT"
+          python3 scripts/sync-vendored-openapi.py --check \
+            --product temperaVoice \
+            --source-repo-dir .voice-source \
+            --source-branch agent/full-stack-voice-api \
+            --source-commit "$VOICE_COMMIT"
+      - name: Verify generated contracts except mainline source promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/test-sync-data-engine-openapi.py
+          python3 scripts/test-sync-openapi-surface.py
+          python3 scripts/test-sdk-names.py
+          python3 scripts/test-aip-conformance.py
+          python3 scripts/check-aip-conformance.py
+          python3 scripts/check-exact-source-gaps.py
+          python3 scripts/check-upstream-drift.py
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/gen-sdk-docs.py --check
+          cp specs/control-plane.openapi.json.source /tmp/control-plane.source
+          cp specs/tempera-voice-api.json.source /tmp/voice.source
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ("control-plane.openapi.json.source", "tempera-voice-api.json.source"):
+              path = Path("specs") / name
+              value = json.loads(path.read_text(encoding="utf-8"))
+              value["source_branch"] = "main"
+              path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          PY
+          python3 scripts/check-sdk-surface.py
+          mv /tmp/control-plane.source specs/control-plane.openapi.json.source
+          mv /tmp/voice.source specs/tempera-voice-api.json.source
+      - name: Verify language clients
+        run: |
+          npm --prefix packages/typescript test
+          PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
+          cargo test --manifest-path packages/rust/Cargo.toml
+      - name: Remove one-shot publisher
+        run: |
+          rm scripts/apply-tempera-voice-sdk.py
+          rm .github/workflows/voice-sdk-publisher.yml
+      - name: Publish reviewed branch result
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .auth-source .voice-source
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Generate Tempera Voice SDK surface'
+          git push origin HEAD:${{ github.ref_name }}
