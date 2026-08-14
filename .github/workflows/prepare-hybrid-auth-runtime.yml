@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/prepare-hybrid-auth-runtime.yml"
       - "packages/auth-rust/**"
+      - "scripts/fix-hybrid-auth-runtime.py"
 
 permissions:
   contents: write
@@ -33,10 +34,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/fix-hybrid-auth-runtime.py
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo generate-lockfile --manifest-path packages/auth-rust/Cargo.toml
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --all-targets --all-features -- -D warnings
           cargo test --manifest-path packages/auth-rust/Cargo.toml
+          rm scripts/fix-hybrid-auth-runtime.py
           rm .github/workflows/prepare-hybrid-auth-runtime.yml
       - name: Commit reproducible source
         shell: bash
