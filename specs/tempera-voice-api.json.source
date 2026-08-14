@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-voice-api.json",
+  "generated_sha256": "344433fa6072ae2a579ab62b568362e62e8f1c249455a3c24136a57c00a7df16",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "43ca324dc117299cb2e6935d54d560ed922c9303",
+  "source_branch": "main",
+  "source_commit": "3a3e1219e5fe99d0de4da0a97ad3050b1b7e4ce1",
+  "source_mode": "100644",
+  "source_path": "contracts/voice-api.openapi.json",
+  "source_repo": "tempera-dev/tempera-voice",
+  "source_sha256": "344433fa6072ae2a579ab62b568362e62e8f1c249455a3c24136a57c00a7df16"
+}

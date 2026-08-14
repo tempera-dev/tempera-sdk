@@ -4239,12 +4239,21 @@
           "payments:webhooks:write",
           "payments:refunds:write",
           "payments:admin",
+          "voice:read",
+          "voice:write",
+          "voice:stream",
+          "clearing:actions:read",
+          "clearing:actions:propose",
+          "clearing:actions:commit",
+          "clearing:actions:reconcile",
+          "clearing:receipts:read",
+          "clearing:actions:approve",
           "admin"
         ]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, and bio:signer:manage are intentionally excluded.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, and clearing:actions:approve are intentionally excluded.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -4272,6 +4281,14 @@
           "risk:write",
           "risk:review",
           "pii:unmask",
+          "voice:read",
+          "voice:write",
+          "voice:stream",
+          "clearing:actions:read",
+          "clearing:actions:propose",
+          "clearing:actions:commit",
+          "clearing:actions:reconcile",
+          "clearing:receipts:read",
           "admin"
         ]
       },
@@ -4293,7 +4310,9 @@
           "tempera-bio",
           "tempera-document",
           "tempera-risk",
-          "tempera-payments"
+          "tempera-payments",
+          "tempera-voice",
+          "tempera-clearing"
         ]
       },
       "TokenClaims": {
