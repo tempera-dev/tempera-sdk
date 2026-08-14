@@ -33,7 +33,7 @@ use tokio::sync::Mutex;
 use url::Url;
 
 const DEFAULT_POSITIVE_CACHE_TTL: Duration = Duration::from_secs(5);
-const DEFAULT_JWKS_CACHE_TTL: Duration = Duration::from_secs(300);
+const DEFAULT_JWKS_CACHE_TTL: Duration = Duration::from_mins(5);
 const DEFAULT_JWKS_REFRESH_COOLDOWN: Duration = Duration::from_secs(2);
 const DEFAULT_MAX_CACHE_ENTRIES: usize = 8_192;
 const DEFAULT_MAX_TOKEN_BYTES: usize = 16 * 1024;
@@ -117,11 +117,7 @@ impl Config {
                 "audience must be a bounded URL-safe resource name".into(),
             ));
         }
-        if self
-            .required_scopes
-            .iter()
-            .any(|scope| !valid_scope(scope))
-        {
+        if self.required_scopes.iter().any(|scope| !valid_scope(scope)) {
             return Err(AuthError::InvalidConfiguration(
                 "required scopes contain an invalid OAuth scope token".into(),
             ));
@@ -129,7 +125,7 @@ impl Config {
         if self.positive_cache_ttl.is_zero()
             || self.positive_cache_ttl > Duration::from_secs(30)
             || self.jwks_cache_ttl < Duration::from_secs(30)
-            || self.jwks_cache_ttl > Duration::from_secs(86_400)
+            || self.jwks_cache_ttl > Duration::from_hours(24)
             || self.jwks_refresh_cooldown.is_zero()
             || self.jwks_refresh_cooldown > self.jwks_cache_ttl
             || !(1..=1_000_000).contains(&self.max_cache_entries)
@@ -316,10 +312,7 @@ impl AuthorityTransport for ReqwestAuthorityTransport {
         if let Some(secret) = secret.filter(|secret| !secret.is_empty()) {
             request = request.bearer_auth(secret);
         }
-        let response = request
-            .send()
-            .await
-            .map_err(|_| AuthError::Unavailable)?;
+        let response = request.send().await.map_err(|_| AuthError::Unavailable)?;
         let status = response.status();
         if status.is_server_error() || status == StatusCode::TOO_MANY_REQUESTS {
             return Err(AuthError::Unavailable);
@@ -447,19 +440,24 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
                 .clone()
         };
         let guard = flight.lock().await;
-        if let Some(principal) = self.cached(cache_key).await {
+        let result = if let Some(principal) = self.cached(cache_key).await {
             self.metrics.cache_hits.fetch_add(1, Ordering::Relaxed);
-            require_scopes(&principal, &self.config.required_scopes, required_scopes)?;
-            drop(guard);
-            self.remove_flight(cache_key, &flight).await;
-            return Ok(principal);
-        }
-
-        let result = self.authorize_uncached(token).await;
-        if let Ok(principal) = &result {
-            require_scopes(principal, &self.config.required_scopes, required_scopes)?;
-            self.store(cache_key, principal.clone()).await;
-        }
+            require_scopes(&principal, &self.config.required_scopes, required_scopes)
+                .map(|()| principal)
+        } else {
+            match self.authorize_uncached(token).await {
+                Ok(principal) => {
+                    // Cache the centrally confirmed authority even when this
+                    // particular operation lacks a scope. A later operation
+                    // still rechecks its own scope set against the cached
+                    // principal, and the cache remains bounded by freshness.
+                    self.store(cache_key, principal.clone()).await;
+                    require_scopes(&principal, &self.config.required_scopes, required_scopes)
+                        .map(|()| principal)
+                }
+                Err(error) => Err(error),
+            }
+        };
         drop(guard);
         self.remove_flight(cache_key, &flight).await;
         result
@@ -543,7 +541,7 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         validation.set_issuer(&[self.config.issuer_url.as_str()]);
         validation.set_audience(&[self.config.audience.as_str()]);
         let claims = decode::<Value>(token, &key, &validation)
-            .map_err(jwt_decode_failure)?
+            .map_err(|error| jwt_decode_failure(&error))?
             .claims;
         self.principal_from_claims(&claims, false)
     }
@@ -607,8 +605,8 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         let mut scopes = string_set(claims.get("scope"));
         scopes.extend(string_set(claims.get("scopes")));
         let subject = claim_string(claims, "sub").ok_or(AuthError::InvalidToken)?;
-        let token_type = claim_string(claims, "token_type")
-            .unwrap_or_else(|| "access_token".into());
+        let token_type =
+            claim_string(claims, "token_type").unwrap_or_else(|| "access_token".into());
         if token_type != "access_token" && token_type != "api_key" {
             return Err(AuthError::InvalidToken);
         }
@@ -618,8 +616,8 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             claim_string(claims, "jti")
         }
         .ok_or(AuthError::InvalidToken)?;
-        let organization_id = claim_string(claims, "org_id")
-            .or_else(|| claim_string(claims, "organization_id"));
+        let organization_id =
+            claim_string(claims, "org_id").or_else(|| claim_string(claims, "organization_id"));
         let project_id = claim_string(claims, "project_id");
         let environment_id = claim_string(claims, "environment_id");
         if self.config.require_workspace
@@ -678,7 +676,10 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             .map_or(self.config.positive_cache_ttl.as_secs(), |expiry| {
                 expiry.saturating_sub(now_epoch)
             });
-        let ttl = self.config.positive_cache_ttl.min(Duration::from_secs(token_ttl));
+        let ttl = self
+            .config
+            .positive_cache_ttl
+            .min(Duration::from_secs(token_ttl));
         if ttl.is_zero() {
             return;
         }
@@ -791,7 +792,9 @@ fn parse_jwks(document: Value) -> Result<HashMap<String, CachedJwk>, AuthError> 
         let key = DecodingKey::from_jwk(jwk).map_err(|_| AuthError::Unavailable)?;
         keys.insert(kid.to_owned(), CachedJwk { key });
     }
-    (!keys.is_empty()).then_some(keys).ok_or(AuthError::Unavailable)
+    (!keys.is_empty())
+        .then_some(keys)
+        .ok_or(AuthError::Unavailable)
 }
 
 fn validate_jwt_header(header: &Header) -> Result<(), AuthError> {
@@ -845,7 +848,7 @@ fn unverified_jwt_issuer(token: &str, max_bytes: usize) -> Result<String, AuthEr
     Ok(issuer.to_owned())
 }
 
-fn jwt_decode_failure(error: jsonwebtoken::errors::Error) -> AuthError {
+fn jwt_decode_failure(error: &jsonwebtoken::errors::Error) -> AuthError {
     match error.kind() {
         JwtErrorKind::InvalidAudience => AuthError::WrongAudience,
         JwtErrorKind::InvalidIssuer => AuthError::WrongIssuer,
@@ -883,11 +886,7 @@ fn jwt_shaped(token: &str) -> bool {
 }
 
 fn valid_key_id(value: &str) -> bool {
-    !value.is_empty()
-        && value.len() <= 128
-        && value
-            .bytes()
-            .all(|byte| matches!(byte, 0x21..=0x7e))
+    !value.is_empty() && value.len() <= 128 && value.bytes().all(|byte| matches!(byte, 0x21..=0x7e))
 }
 
 fn valid_audience(value: &str) -> bool {
@@ -907,10 +906,13 @@ fn valid_scope(value: &str) -> bool {
 }
 
 fn validate_authority_url(value: &str, allow_http: bool, name: &str) -> Result<(), AuthError> {
-    let url = Url::parse(value).map_err(|_| {
-        AuthError::InvalidConfiguration(format!("{name} must be an absolute URL"))
-    })?;
-    if url.username() != "" || url.password().is_some() || url.query().is_some() || url.fragment().is_some() {
+    let url = Url::parse(value)
+        .map_err(|_| AuthError::InvalidConfiguration(format!("{name} must be an absolute URL")))?;
+    if url.username() != ""
+        || url.password().is_some()
+        || url.query().is_some()
+        || url.fragment().is_some()
+    {
         return Err(AuthError::InvalidConfiguration(format!(
             "{name} must not contain credentials, query, or fragment"
         )));

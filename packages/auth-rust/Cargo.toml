@@ -26,6 +26,9 @@ tokio = { version = "1.47", features = ["sync", "time"] }
 url = "2.5"
 
 [dev-dependencies]
+# PEM decoding is needed only to mint deterministic JWT fixtures in tests. The
+# production dependency remains public-JWK/DER-only.
+jsonwebtoken = { version = "=10.4.0", default-features = false, features = ["aws_lc_rs", "use_pem"] }
 tokio = { version = "1.47", features = ["full"] }
 
 [lints.rust]

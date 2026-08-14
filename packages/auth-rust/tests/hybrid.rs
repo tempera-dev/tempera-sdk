@@ -1,3 +1,5 @@
+//! Adversarial hybrid authorization tests.
+
 use std::{
     collections::HashMap,
     sync::{
@@ -10,12 +12,10 @@ use std::{
 use async_trait::async_trait;
 use jsonwebtoken::{Algorithm, EncodingKey, Header, encode};
 use serde_json::{Value, json};
-use tempera_auth_runtime::{
-    AuthError, AuthorityTransport, Config, HybridAuthorizer, Principal,
-};
+use tempera_auth_runtime::{AuthError, AuthorityTransport, Config, HybridAuthorizer, Principal};
 use tokio::sync::Mutex;
 
-const PRIVATE_KEY: &str = r#"-----BEGIN PRIVATE KEY-----
+const PRIVATE_KEY: &str = r"-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDZsF3ktWlTVOg/
 ys+jzw3QWWS/lcthMdYEtUw8treTA9xWGh6tTXr7xOicgdBG/kFxu3/eHBSVwCFE
 +BNL0FwiFnMx6cgkV793lOAvLShj8FEqK5G/5vBLU4becgHoVLuDOLObaXJBvls+
@@ -43,7 +43,7 @@ FtzH7UVWOQ3nQTG1q+R7qv7eD7rdic3ko+MtxIwNAoGAcPK3VNs0GNqLr7Fz5DvF
 HyGCvi0YYjH3WoHRlPVh6SUTSMSYsDu7/2AysIz5g6Mnc5DgfQNIYQUTH6PZLpR3
 ggCuCXluMgEs4vPUzDm3M14=
 -----END PRIVATE KEY-----
-"#;
+";
 
 fn jwks() -> Value {
     json!({
@@ -127,7 +127,7 @@ fn config() -> Config {
     config.allow_insecure_http = true;
     config.introspection_secret = Some("resource-server-secret".into());
     config.positive_cache_ttl = Duration::from_secs(5);
-    config.jwks_cache_ttl = Duration::from_secs(60);
+    config.jwks_cache_ttl = Duration::from_mins(1);
     config.jwks_refresh_cooldown = Duration::from_millis(25);
     config
 }
@@ -197,9 +197,15 @@ async fn valid_jwt_is_locally_verified_centrally_confirmed_and_cached() {
     transport.insert(&token, central_claims(&claims)).await;
     let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
 
-    let first = authorizer.authorize(&token, &["document:read"]).await.unwrap();
+    let first = authorizer
+        .authorize(&token, &["document:read"])
+        .await
+        .unwrap();
     assert_document_principal(&first);
-    let second = authorizer.authorize(&token, &["document:read"]).await.unwrap();
+    let second = authorizer
+        .authorize(&token, &["document:read"])
+        .await
+        .unwrap();
     assert_eq!(second, first);
     assert_eq!(transport.jwks_calls.load(Ordering::Relaxed), 1);
     assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 1);
@@ -230,7 +236,9 @@ async fn central_revocation_and_claim_mismatch_fail_closed() {
     let revoked_transport = FakeTransport::new();
     let claims = access_claims();
     let token = access_token(&claims);
-    revoked_transport.insert(&token, json!({ "active": false })).await;
+    revoked_transport
+        .insert(&token, json!({ "active": false }))
+        .await;
     let revoked = HybridAuthorizer::with_transport(config(), revoked_transport).unwrap();
     assert_eq!(
         revoked.authorize(&token, &["document:read"]).await,
@@ -273,8 +281,14 @@ async fn opaque_api_keys_are_centrally_introspected_and_bounded_cached() {
         .await;
     let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
 
-    let first = authorizer.authorize(token, &["document:read"]).await.unwrap();
-    let second = authorizer.authorize(token, &["document:read"]).await.unwrap();
+    let first = authorizer
+        .authorize(token, &["document:read"])
+        .await
+        .unwrap();
+    let second = authorizer
+        .authorize(token, &["document:read"])
+        .await
+        .unwrap();
     assert_eq!(first, second);
     assert_eq!(first.token_type, "api_key");
     assert_eq!(transport.jwks_calls.load(Ordering::Relaxed), 0);
@@ -287,7 +301,8 @@ async fn concurrent_cache_misses_singleflight_to_one_authority_decision() {
     let claims = access_claims();
     let token = access_token(&claims);
     transport.insert(&token, central_claims(&claims)).await;
-    let authorizer = Arc::new(HybridAuthorizer::with_transport(config(), transport.clone()).unwrap());
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(config(), transport.clone()).unwrap());
 
     let mut tasks = Vec::new();
     for _ in 0..32 {
@@ -312,7 +327,10 @@ async fn operation_scope_is_checked_against_cached_authority() {
     transport.insert(&token, central_claims(&claims)).await;
     let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
 
-    authorizer.authorize(&token, &["document:read"]).await.unwrap();
+    authorizer
+        .authorize(&token, &["document:read"])
+        .await
+        .unwrap();
     assert_eq!(
         authorizer.authorize(&token, &["admin"]).await,
         Err(AuthError::MissingScope("admin".into())),
