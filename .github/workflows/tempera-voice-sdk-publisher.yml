@@ -1,0 +1,86 @@
+name: tempera-voice-sdk-publisher
+
+on:
+  push:
+    branches: [agent/register-tempera-voice-sdk]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tempera-voice-sdk-publisher-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Mint exact-source reader
+        id: source-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: |
+            auth-hub
+            tempera-voice
+          permission-contents: read
+      - uses: actions/checkout@v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: 2c052aa8f3c9b6026b9c659d8bc1715442b04fc5
+          token: ${{ steps.source-token.outputs.token }}
+          path: .sources/auth-hub
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: tempera-dev/tempera-voice
+          ref: 6ab903b87911124dcc0793d6d01c01b34c314883
+          token: ${{ steps.source-token.outputs.token }}
+          path: .sources/tempera-voice
+          fetch-depth: 0
+      - name: Register Voice generation inputs
+        run: python3 scripts/register-tempera-voice-sdk.py
+      - name: Vendor exact Auth Hub contract
+        run: python3 scripts/sync-control-plane-openapi.py --source-repo-dir .sources/auth-hub --source-commit 2c052aa8f3c9b6026b9c659d8bc1715442b04fc5
+      - name: Vendor exact Voice contract
+        run: python3 scripts/sync-vendored-openapi.py --product temperaVoice --source-repo-dir .sources/tempera-voice --source-commit 6ab903b87911124dcc0793d6d01c01b34c314883
+      - name: Synchronize typed operations
+        run: python3 scripts/sync-openapi-surface.py --product controlPlane --product temperaVoice
+      - name: Generate SDKs and docs
+        run: |
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-docs.py
+      - name: Validate generated state
+        run: |
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/gen-sdk-docs.py --check
+          python3 scripts/sync-openapi-surface.py --product controlPlane --product temperaVoice --check
+          python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .sources/auth-hub --source-commit 2c052aa8f3c9b6026b9c659d8bc1715442b04fc5
+          python3 scripts/sync-vendored-openapi.py --check --product temperaVoice --source-repo-dir .sources/tempera-voice --source-commit 6ab903b87911124dcc0793d6d01c01b34c314883
+          python3 -m compileall -q packages/python/src scripts
+          git diff --check
+      - name: Publish source-locked Voice SDK surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .sources
+          rm -f scripts/register-tempera-voice-sdk.py .github/workflows/tempera-voice-sdk-publisher.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'SDK already synchronized.'
+            exit 0
+          fi
+          git commit -m 'Register source-locked Tempera Voice SDK surface'
+          git push origin HEAD:${{ github.ref_name }}
