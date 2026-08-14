@@ -3,8 +3,10 @@
 
 from pathlib import Path
 
-path = Path("packages/auth-rust/src/lib.rs")
-text = path.read_text()
+LIB = Path("packages/auth-rust/src/lib.rs")
+CARGO = Path("packages/auth-rust/Cargo.toml")
+TEST = Path("packages/auth-rust/tests/hybrid.rs")
+text = LIB.read_text()
 
 
 def replace_once(old: str, new: str, label: str) -> None:
@@ -78,6 +80,27 @@ new_authorize = '''        let guard = flight.lock().await;
         result
 '''
 replace_once(old_authorize, new_authorize, "unconditional singleflight cleanup")
+LIB.write_text(text)
 
-path.write_text(text)
+cargo = CARGO.read_text()
+old_dev = '''[dev-dependencies]
+tokio = { version = "1.47", features = ["full"] }
+'''
+new_dev = '''[dev-dependencies]
+# PEM decoding is needed only to mint deterministic JWT fixtures in tests. The
+# production dependency remains public-JWK/DER-only.
+jsonwebtoken = { version = "=10.4.0", default-features = false, features = ["aws_lc_rs", "use_pem"] }
+tokio = { version = "1.47", features = ["full"] }
+'''
+if cargo.count(old_dev) != 1:
+    raise SystemExit(f"test-only PEM dependency: expected one source block, found {cargo.count(old_dev)}")
+CARGO.write_text(cargo.replace(old_dev, new_dev, 1))
+
+hybrid = TEST.read_text()
+if hybrid.count('const PRIVATE_KEY: &str = r#"') != 1 or hybrid.count('-----END PRIVATE KEY-----\n"#;') != 1:
+    raise SystemExit("private-key fixture raw string shape changed")
+hybrid = hybrid.replace('const PRIVATE_KEY: &str = r#"', 'const PRIVATE_KEY: &str = r"', 1)
+hybrid = hybrid.replace('-----END PRIVATE KEY-----\n"#;', '-----END PRIVATE KEY-----\n";', 1)
+TEST.write_text(hybrid)
+
 print("hybrid auth runtime strict fixes applied")
