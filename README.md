@@ -46,6 +46,7 @@ a live hosted service, or an undocumented endpoint.
 | `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, Bio campaign compilation, and authorized physical experiment submission/reconciliation; run SSE events via passthrough) | 20 | `tempera-workflows` |
 | `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack, sealed evaluation, and outcome-blind Bio batch proposals | 22 | `tempera-gym` |
 | `temperaBio` / `tempera_bio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) — fail-closed computational-biology artifacts, Gym selection materialization, measurement verification, and replay-derived campaign state | 10 | `tempera-bio` |
+| `temperaVoice` / `tempera_voice` | [tempera-voice](https://github.com/tempera-dev/tempera-voice) — provider-neutral realtime voice control plane; typed HTTP operations plus a separately versioned full-duplex WebSocket contract | 23 | `tempera-voice` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |
 | `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 55 | `data-engine` |
 | `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
@@ -66,7 +67,7 @@ Your provisioned control-plane URL is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
 RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
 `remi`, `human-data`, `data-engine`, `tempera-bio`, `tempera-gym`,
-`tempera-llm`, `tempera-workflows`, and `tempera-mcp` registered). One account mints one token
+`tempera-llm`, `tempera-workflows`, `tempera-voice`, and `tempera-mcp` registered). One account mints one token
 per product audience, and control-plane API keys (`tp_...`) work as bearers
 at every product via central introspection.
 

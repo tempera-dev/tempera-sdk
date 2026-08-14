@@ -24,6 +24,13 @@ visibility = "private"
 default_env = "TEMPERA_LLM_URL"
 scopes = ["model:read", "model:invoke"]
 
+[products.tempera_voice]
+name = "tempera-voice"
+repository = "https://github.com/tempera-dev/tempera-voice"
+visibility = "private"
+default_env = "TEMPERA_VOICE_URL"
+scopes = ["voice:read", "voice:write", "voice:stream", "eval:run"]
+
 [products.tempera_risk]
 name = "tempera-risk"
 repository = "https://github.com/tempera-dev/tempera-risk"

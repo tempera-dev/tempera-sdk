@@ -17,6 +17,7 @@ EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
 OVERRIDES = ROOT / "contracts" / "sdk-operation-overrides.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 PRODUCT_SPECS = {
+    "temperaVoice": "tempera-voice-api.json",
     "temperaPayments": "tempera-payments-api.json",
     "dataEngine": "data-engine-openapi.json",
     "humanData": "human-data-openapi.json",
@@ -33,6 +34,7 @@ PRODUCT_SPECS = {
     "tempo": "tempo-openapi.json",
 }
 DEFAULT_AUTH = {
+    "temperaVoice": "oauthResource",
     "temperaPayments": "oauthResource",
     "dataEngine": "product",
     "humanData": "product",

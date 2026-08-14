@@ -134,6 +134,7 @@ export function createTemperaClient({
           tempo: environmentTargets.tempoApiUrl,
           temperaLlm: environmentTargets.temperaLlmApiUrl,
           temperaRisk: environmentTargets.temperaRiskApiUrl,
+          temperaVoice: environmentTargets.temperaVoiceApiUrl,
           temperaWorkflows: environmentTargets.temperaWorkflowsApiUrl,
           temperaGym: environmentTargets.temperaGymUrl,
           dataEngine: environmentTargets.dataEngineApiUrl,

@@ -29,6 +29,7 @@ function testClient(overrides = {}) {
       tempo: "https://tempo.example.test",
       temperaLlm: "https://llm.example.test",
       temperaRisk: "https://risk.example.test",
+      temperaVoice: "https://voice.example.test",
       temperaWorkflows: "https://workflows.example.test",
       temperaGym: "https://gym.example.test",
       temperaBio: "https://bio.example.test",

@@ -25,6 +25,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["temperaGym"]["repository"], "https://github.com/tempera-dev/tempera-gym")
         self.assertEqual(PRODUCTS["temperaBio"]["repository"], "https://github.com/tempera-dev/tempera-bio")
         self.assertEqual(PRODUCTS["temperaDocument"]["repository"], "https://github.com/tempera-dev/tempera-document")
+        self.assertEqual(PRODUCTS["temperaVoice"]["repository"], "https://github.com/tempera-dev/tempera-voice")
         self.assertEqual(PRODUCTS["cradle"]["repository"], "https://github.com/tempera-dev/cradle")
         self.assertEqual(PRODUCTS["remi"]["repository"], "https://github.com/tempera-dev/remi")
         self.assertEqual(PRODUCTS["dataEngine"]["repository"], "https://github.com/tempera-dev/data-engine")
@@ -47,6 +48,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("tempera-gym", AUDIENCES)
         self.assertIn("tempera-bio", AUDIENCES)
         self.assertIn("tempera-document", AUDIENCES)
+        self.assertIn("tempera-voice", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
         self.assertEqual(
@@ -63,7 +65,8 @@ class TemperaSdkTest(unittest.TestCase):
                 "usage:reserve", "document:read", "document:write",
                 "risk:read", "risk:write", "risk:review", "pii:unmask",
                 "payments:intents:read", "payments:intents:write", "payments:receipts:read",
-                "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin",
+                "payments:webhooks:write", "payments:refunds:write", "payments:admin",
+                "voice:read", "voice:write", "voice:stream", "admin",
             ],
         )
 
@@ -79,6 +82,8 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(ENVIRONMENTS["production"]["tempoApiUrl"], "https://tempo.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaLlmApiUrl"], "https://llm.tempera.dev")
         self.assertEqual(ENVIRONMENTS["production"]["temperaWorkflowsApiUrl"], "https://workflows.tempera.dev")
+        self.assertEqual(ENVIRONMENTS["production"]["temperaVoiceApiUrl"], "https://voice.tempera.dev")
+        self.assertEqual(ENVIRONMENTS["local"]["temperaVoiceApiUrl"], "http://127.0.0.1:8102")
         self.assertEqual(ENVIRONMENTS["production"]["temperaGymUrl"], "https://gym.tempera.dev")
         # Deprecated alias points at the same object.
         self.assertIs(API_TARGETS, ENVIRONMENTS)

@@ -177,6 +177,7 @@ class ProductBearerTest(unittest.TestCase):
                 "temperaBio": ("tempera-bio", "TEMPERA_BIO_URL"),
                 "temperaDocument": ("tempera-document", "TEMPERA_DOCUMENT_URL"),
                 "temperaPayments": ("tempera-payments", "TEMPERA_PAYMENTS_URL"),
+                "temperaVoice": ("tempera-voice", "TEMPERA_VOICE_URL"),
                 "cradle": ("cradle", "TEMPERA_CRADLE_URL"),
                 "remi": ("remi", "TEMPERA_REMI_URL"),
                 "dataEngine": ("data-engine", "TEMPERA_DATA_ENGINE_URL"),

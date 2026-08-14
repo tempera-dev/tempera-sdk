@@ -13,6 +13,7 @@ import type {
   RemiClient,
   TemperaLlmClient,
   TemperaRiskClient,
+  TemperaVoiceClient,
   TemperaWorkflowsClient,
   TemperaGymClient,
   TemperaDocumentClient,
@@ -138,6 +139,7 @@ export type TemperaClient = {
   tempo: TempoClient;
   temperaLlm: TemperaLlmClient;
   temperaRisk: TemperaRiskClient;
+  temperaVoice: TemperaVoiceClient;
   temperaWorkflows: TemperaWorkflowsClient;
   temperaGym: TemperaGymClient;
   temperaBio: TemperaBioClient;

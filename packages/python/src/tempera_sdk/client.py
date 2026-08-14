@@ -72,6 +72,7 @@ _ENVIRONMENT_TARGET_KEYS = {
     "tempo": "tempoApiUrl",
     "temperaLlm": "temperaLlmApiUrl",
     "temperaRisk": "temperaRiskApiUrl",
+    "temperaVoice": "temperaVoiceApiUrl",
     "temperaWorkflows": "temperaWorkflowsApiUrl",
     "temperaGym": "temperaGymUrl",
     "dataEngine": "dataEngineApiUrl",
@@ -172,6 +173,7 @@ class TemperaClient:
         self.tempo: _ProductClient
         self.tempera_llm: _ProductClient
         self.tempera_risk: _ProductClient
+        self.tempera_voice: _ProductClient
         self.tempera_workflows: _ProductClient
         self.tempera_gym: _ProductClient
         self.tempera_bio: _ProductClient

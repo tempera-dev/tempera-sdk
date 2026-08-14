@@ -5,11 +5,11 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 6
+SURFACE_VERSION = 7
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-payments')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-payments', 'tempera-voice')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'voice:read', 'voice:write', 'voice:stream', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -28,7 +28,8 @@ ENVIRONMENTS = {
         "temperaWorkflowsApiUrl": "http://127.0.0.1:8095",
         "paletteApiUrl": "http://localhost:8080",
         "paletteMcpUrl": "http://localhost:8080/mcp",
-        "tempoApiUrl": "http://localhost:7878"
+        "tempoApiUrl": "http://localhost:7878",
+        "temperaVoiceApiUrl": "http://127.0.0.1:8102"
     },
     "preview": {
         "publicSiteUrl": "https://tempera-public-site-git-preview-tempera.vercel.app",
@@ -44,7 +45,8 @@ ENVIRONMENTS = {
         "temperaWorkflowsApiUrl": "https://preview-workflows.tempera.dev",
         "paletteApiUrl": "https://preview-mcp.tempera.dev",
         "paletteMcpUrl": "https://preview-mcp.tempera.dev/mcp",
-        "tempoApiUrl": "https://preview-tempo.tempera.dev"
+        "tempoApiUrl": "https://preview-tempo.tempera.dev",
+        "temperaVoiceApiUrl": "https://preview-voice.tempera.dev"
     },
     "staging": {
         "publicSiteUrl": "https://staging.tempera.dev",
@@ -60,7 +62,8 @@ ENVIRONMENTS = {
         "temperaWorkflowsApiUrl": "https://staging-workflows.tempera.dev",
         "paletteApiUrl": "https://staging-mcp.tempera.dev",
         "paletteMcpUrl": "https://staging-mcp.tempera.dev/mcp",
-        "tempoApiUrl": "https://staging-tempo.tempera.dev"
+        "tempoApiUrl": "https://staging-tempo.tempera.dev",
+        "temperaVoiceApiUrl": "https://staging-voice.tempera.dev"
     },
     "production": {
         "publicSiteUrl": "https://tempera.dev",
@@ -76,7 +79,8 @@ ENVIRONMENTS = {
         "temperaWorkflowsApiUrl": "https://workflows.tempera.dev",
         "paletteApiUrl": "https://mcp.tempera.dev",
         "paletteMcpUrl": "https://mcp.tempera.dev/mcp",
-        "tempoApiUrl": "https://tempo.tempera.dev"
+        "tempoApiUrl": "https://tempo.tempera.dev",
+        "temperaVoiceApiUrl": "https://voice.tempera.dev"
     }
 }
 
@@ -150,6 +154,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_PAYMENTS_URL",
         "audience": "tempera-payments",
         "description": "Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations."
+    },
+    "temperaVoice": {
+        "name": "tempera-voice",
+        "repository": "https://github.com/tempera-dev/tempera-voice",
+        "env_var": "TEMPERA_VOICE_URL",
+        "audience": "tempera-voice",
+        "description": "Provider-neutral realtime voice control plane with durable sessions, bounded media, MCP-mediated actions, Palette telemetry, and governed Tempera Evals evidence."
     },
     "cradle": {
         "name": "cradle",
@@ -7984,6 +7995,668 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
+        }
+    ],
+    "temperaVoice": [
+        {
+            "id": "voice_liveness",
+            "upstream_operation_id": "voiceLiveness",
+            "method": "GET",
+            "path": "/livez",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Liveness."
+        },
+        {
+            "id": "voice_readiness",
+            "upstream_operation_id": "voiceReadiness",
+            "method": "GET",
+            "path": "/readyz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Readiness."
+        },
+        {
+            "id": "resolve_voice_action",
+            "upstream_operation_id": "resolveVoiceAction",
+            "method": "POST",
+            "path": "/v1/actions/{action_id}:resolve",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "action_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "approved",
+                "note"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "approved"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Resolve Action."
+        },
+        {
+            "id": "list_voice_agents",
+            "upstream_operation_id": "listVoiceAgents",
+            "method": "GET",
+            "path": "/v1/agents",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "limit"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List Agents."
+        },
+        {
+            "id": "create_voice_agent",
+            "upstream_operation_id": "createVoiceAgent",
+            "method": "POST",
+            "path": "/v1/agents",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "id",
+                "input_audio_format",
+                "instructions",
+                "language",
+                "limits",
+                "metadata",
+                "model",
+                "name",
+                "output_audio_format",
+                "output_modality",
+                "provider",
+                "retention",
+                "tools",
+                "transcription_model",
+                "turn_detection",
+                "use_case",
+                "voice"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "name",
+                "instructions"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create Agent."
+        },
+        {
+            "id": "get_voice_agent",
+            "upstream_operation_id": "getVoiceAgent",
+            "method": "GET",
+            "path": "/v1/agents/{agent_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "agent_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get Agent."
+        },
+        {
+            "id": "upsert_voice_agent",
+            "upstream_operation_id": "upsertVoiceAgent",
+            "method": "PUT",
+            "path": "/v1/agents/{agent_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "agent_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "id",
+                "input_audio_format",
+                "instructions",
+                "language",
+                "limits",
+                "metadata",
+                "model",
+                "name",
+                "output_audio_format",
+                "output_modality",
+                "provider",
+                "retention",
+                "tools",
+                "transcription_model",
+                "turn_detection",
+                "use_case",
+                "voice"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "name",
+                "instructions"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Upsert Agent."
+        },
+        {
+            "id": "download_voice_artifact",
+            "upstream_operation_id": "downloadVoiceArtifact",
+            "method": "GET",
+            "path": "/v1/artifacts/{reference}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "reference"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Download Artifact."
+        },
+        {
+            "id": "upload_voice_artifact",
+            "upstream_operation_id": "uploadVoiceArtifact",
+            "method": "POST",
+            "path": "/v1/artifacts:upload",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "classification",
+                "content_base64",
+                "media_type",
+                "name"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "name",
+                "content_base64"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Upload Artifact."
+        },
+        {
+            "id": "get_voice_capabilities",
+            "upstream_operation_id": "getVoiceCapabilities",
+            "method": "GET",
+            "path": "/v1/capabilities",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Capabilities."
+        },
+        {
+            "id": "list_voice_eval_profiles",
+            "upstream_operation_id": "listVoiceEvalProfiles",
+            "method": "GET",
+            "path": "/v1/eval-profiles",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List Eval Profiles."
+        },
+        {
+            "id": "build_voice_eval_bundle",
+            "upstream_operation_id": "buildVoiceEvalBundle",
+            "method": "POST",
+            "path": "/v1/evals/bundles:build",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "adapter_import_path",
+                "adapter_import_public_key_path",
+                "adapter_import_signature_path",
+                "bundle_id",
+                "created_at",
+                "exposure_ledger_path",
+                "guardrails_path",
+                "preregistration_path",
+                "profile_id",
+                "redaction_policy_path",
+                "release_evidence_path"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profile_id",
+                "adapter_import_path",
+                "adapter_import_signature_path",
+                "adapter_import_public_key_path",
+                "release_evidence_path",
+                "exposure_ledger_path",
+                "redaction_policy_path",
+                "guardrails_path",
+                "preregistration_path",
+                "bundle_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Build Eval Bundle."
+        },
+        {
+            "id": "create_voice_palette_handoff",
+            "upstream_operation_id": "createVoicePaletteHandoff",
+            "method": "POST",
+            "path": "/v1/evals/palette-handoffs:create",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "ab_plan_path",
+                "evidence_path",
+                "kind",
+                "profile_id",
+                "project_id",
+                "public_key_path",
+                "signature_path",
+                "tenant_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profile_id",
+                "evidence_path",
+                "kind",
+                "signature_path",
+                "public_key_path",
+                "tenant_id",
+                "project_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create Palette Handoff."
+        },
+        {
+            "id": "publish_voice_palette_handoff",
+            "upstream_operation_id": "publishVoicePaletteHandoff",
+            "method": "POST",
+            "path": "/v1/evals/palette-handoffs:publish",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "handoff_path"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "handoff_path"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Publish Palette Handoff."
+        },
+        {
+            "id": "import_voice_eval_result",
+            "upstream_operation_id": "importVoiceEvalResult",
+            "method": "POST",
+            "path": "/v1/evals/results:import",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "artifacts",
+                "attestation_path",
+                "attestation_public_key_path",
+                "attestation_signature_path",
+                "profile_id",
+                "sealed_result_path"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profile_id",
+                "sealed_result_path",
+                "artifacts"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Import Eval Result."
+        },
+        {
+            "id": "seal_voice_eval_result",
+            "upstream_operation_id": "sealVoiceEvalResult",
+            "method": "POST",
+            "path": "/v1/evals/results:seal",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "draft",
+                "profile_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profile_id",
+                "draft"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Seal Eval Result."
+        },
+        {
+            "id": "list_voice_sessions",
+            "upstream_operation_id": "listVoiceSessions",
+            "method": "GET",
+            "path": "/v1/sessions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "agent_id",
+                "limit"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List Sessions."
+        },
+        {
+            "id": "create_voice_session",
+            "upstream_operation_id": "createVoiceSession",
+            "method": "POST",
+            "path": "/v1/sessions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "agent_id",
+                "channel",
+                "external_id",
+                "metadata",
+                "safety_identifier"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "agent_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create Session."
+        },
+        {
+            "id": "get_voice_session",
+            "upstream_operation_id": "getVoiceSession",
+            "method": "GET",
+            "path": "/v1/sessions/{session_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "session_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get Session."
+        },
+        {
+            "id": "list_voice_session_actions",
+            "upstream_operation_id": "listVoiceSessionActions",
+            "method": "GET",
+            "path": "/v1/sessions/{session_id}/actions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "session_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List Actions."
+        },
+        {
+            "id": "list_voice_session_events",
+            "upstream_operation_id": "listVoiceSessionEvents",
+            "method": "GET",
+            "path": "/v1/sessions/{session_id}/events",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "session_id"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "after_sequence",
+                "limit"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List Events."
+        },
+        {
+            "id": "end_voice_session",
+            "upstream_operation_id": "endVoiceSession",
+            "method": "POST",
+            "path": "/v1/sessions/{session_id}:end",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "session_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "reason"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "End Session."
+        },
+        {
+            "id": "export_voice_sessions",
+            "upstream_operation_id": "exportVoiceSessions",
+            "method": "POST",
+            "path": "/v1/sessions:export",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "session_ids"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "session_ids"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Export Sessions."
         }
     ],
     "temperaDocument": [
