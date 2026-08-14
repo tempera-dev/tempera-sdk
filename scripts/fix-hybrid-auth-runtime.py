@@ -97,10 +97,23 @@ if cargo.count(old_dev) != 1:
 CARGO.write_text(cargo.replace(old_dev, new_dev, 1))
 
 hybrid = TEST.read_text()
+if hybrid.startswith("//! Adversarial hybrid authorization tests.\n\n"):
+    pass
+elif hybrid.startswith("use std::"):
+    hybrid = "//! Adversarial hybrid authorization tests.\n\n" + hybrid
+else:
+    raise SystemExit("hybrid test module header changed")
 if hybrid.count('const PRIVATE_KEY: &str = r#"') != 1 or hybrid.count('-----END PRIVATE KEY-----\n"#;') != 1:
     raise SystemExit("private-key fixture raw string shape changed")
 hybrid = hybrid.replace('const PRIVATE_KEY: &str = r#"', 'const PRIVATE_KEY: &str = r"', 1)
 hybrid = hybrid.replace('-----END PRIVATE KEY-----\n"#;', '-----END PRIVATE KEY-----\n";', 1)
+if hybrid.count("config.jwks_cache_ttl = Duration::from_secs(60);") != 1:
+    raise SystemExit("JWKS test TTL shape changed")
+hybrid = hybrid.replace(
+    "config.jwks_cache_ttl = Duration::from_secs(60);",
+    "config.jwks_cache_ttl = Duration::from_mins(1);",
+    1,
+)
 TEST.write_text(hybrid)
 
 print("hybrid auth runtime strict fixes applied")
