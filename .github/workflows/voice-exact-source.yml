@@ -1,0 +1,140 @@
+name: Verify exact Tempera Voice SDK source
+
+on:
+  pull_request:
+    paths:
+      - "specs/control-plane.openapi.json"
+      - "specs/control-plane.openapi.json.source"
+      - "specs/tempera-voice-api.json"
+      - "specs/tempera-voice-api.json.source"
+      - "surface.json"
+      - "scripts/sync-control-plane-openapi.py"
+      - "scripts/sync-vendored-openapi.py"
+      - "scripts/sync-openapi-surface.py"
+      - ".github/workflows/voice-exact-source.yml"
+  push:
+    branches:
+      - main
+      - agent/tempera-voice-sdk
+    paths:
+      - "specs/control-plane.openapi.json"
+      - "specs/control-plane.openapi.json.source"
+      - "specs/tempera-voice-api.json"
+      - "specs/tempera-voice-api.json.source"
+      - "surface.json"
+      - "scripts/sync-control-plane-openapi.py"
+      - "scripts/sync-vendored-openapi.py"
+      - "scripts/sync-openapi-surface.py"
+      - ".github/workflows/voice-exact-source.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: voice-exact-source-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  exact-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Mint private contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub,tempera-voice
+
+      - name: Read exact producer locks
+        id: locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          specs = {
+              "auth": (
+                  Path("specs/control-plane.openapi.json.source"),
+                  "tempera-dev/auth-hub",
+                  "contracts/control-plane.openapi.json",
+              ),
+              "voice": (
+                  Path("specs/tempera-voice-api.json.source"),
+                  "tempera-dev/tempera-voice",
+                  "contracts/voice-api.openapi.json",
+              ),
+          }
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              for prefix, (path, repository, source_path) in specs.items():
+                  value = json.loads(path.read_text(encoding="utf-8"))
+                  if value.get("source_repo") != repository:
+                      raise SystemExit(f"{path}: unexpected source_repo")
+                  if value.get("source_path") != source_path:
+                      raise SystemExit(f"{path}: unexpected source_path")
+                  branch = value.get("source_branch", "")
+                  commit = value.get("source_commit", "")
+                  if (
+                      re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,255}", branch) is None
+                      or ".." in branch
+                      or branch.endswith("/")
+                  ):
+                      raise SystemExit(f"{path}: unsafe source_branch")
+                  if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+                      raise SystemExit(f"{path}: invalid source_commit")
+                  stream.write(f"{prefix}_branch={branch}\n")
+                  stream.write(f"{prefix}_commit={commit}\n")
+          PY
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/auth-hub
+          ref: ${{ steps.locks.outputs.auth_commit }}
+          fetch-depth: 0
+          path: .auth-source
+          token: ${{ steps.contract-reader.outputs.token }}
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/tempera-voice
+          ref: ${{ steps.locks.outputs.voice_commit }}
+          fetch-depth: 0
+          path: .voice-source
+          token: ${{ steps.contract-reader.outputs.token }}
+
+      - name: Verify exact Auth Hub and Voice source bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C .auth-source rev-parse HEAD)" = "${{ steps.locks.outputs.auth_commit }}"
+          test "$(git -C .voice-source rev-parse HEAD)" = "${{ steps.locks.outputs.voice_commit }}"
+          test -z "$(git -C .auth-source status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C .voice-source status --porcelain=v1 --untracked-files=all)"
+          python3 scripts/sync-control-plane-openapi.py --check \
+            --source-repo-dir .auth-source \
+            --source-branch "${{ steps.locks.outputs.auth_branch }}" \
+            --source-commit "${{ steps.locks.outputs.auth_commit }}"
+          python3 scripts/sync-vendored-openapi.py --check \
+            --product temperaVoice \
+            --source-repo-dir .voice-source \
+            --source-branch "${{ steps.locks.outputs.voice_branch }}" \
+            --source-commit "${{ steps.locks.outputs.voice_commit }}"
+
+      - name: Verify generated Voice surface remains exact
+        run: |
+          python3 scripts/sync-openapi-surface.py --check --product controlPlane --product temperaVoice
+          python3 scripts/check-upstream-drift.py
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/gen-sdk-docs.py --check
