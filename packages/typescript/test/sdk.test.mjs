@@ -49,6 +49,7 @@ test("audience-bearing products map to registered audiences", () => {
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-llm"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-risk"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-voice"));
+  assert.ok(TEMPERA_AUDIENCES.includes("tempera-clearing"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-workflows"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-gym"));
   assert.ok(TEMPERA_AUDIENCES.includes("tempera-bio"));
@@ -70,7 +71,10 @@ test("scopes match the control-plane scope registry", () => {
       "risk:read", "risk:write", "risk:review", "pii:unmask",
       "payments:intents:read", "payments:intents:write", "payments:receipts:read",
       "payments:webhooks:write", "payments:refunds:write", "payments:admin",
-      "voice:read", "voice:write", "voice:stream", "admin",
+      "voice:read", "voice:write", "voice:stream",
+      "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit",
+      "clearing:actions:reconcile", "clearing:receipts:read",
+      "clearing:actions:approve", "admin",
     ],
   );
 });
