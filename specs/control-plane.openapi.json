@@ -4239,6 +4239,9 @@
           "payments:webhooks:write",
           "payments:refunds:write",
           "payments:admin",
+          "voice:read",
+          "voice:write",
+          "voice:stream",
           "admin"
         ]
       },
@@ -4272,6 +4275,9 @@
           "risk:write",
           "risk:review",
           "pii:unmask",
+          "voice:read",
+          "voice:write",
+          "voice:stream",
           "admin"
         ]
       },
@@ -4293,7 +4299,8 @@
           "tempera-bio",
           "tempera-document",
           "tempera-risk",
-          "tempera-payments"
+          "tempera-payments",
+          "tempera-voice"
         ]
       },
       "TokenClaims": {

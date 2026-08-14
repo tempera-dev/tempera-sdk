@@ -27,6 +27,7 @@
           "products/palette",
           "products/tempo",
           "products/tempera-llm",
+          "products/tempera-voice",
           "products/tempera-risk",
           "products/tempera-workflows",
           "products/tempera-gym",
