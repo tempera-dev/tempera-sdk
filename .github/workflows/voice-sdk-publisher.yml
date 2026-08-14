@@ -50,7 +50,9 @@ jobs:
         with:
           node-version: 24
       - name: Stage aggregate product registry
-        run: python3 scripts/apply-tempera-voice-sdk.py
+        run: |
+          python3 scripts/apply-tempera-voice-sdk.py
+          python3 scripts/repair-tempera-voice-sdk-tests.py
       - name: Vendor exact producer contracts
         shell: bash
         run: |
@@ -121,6 +123,7 @@ jobs:
       - name: Remove one-shot publisher
         run: |
           rm scripts/apply-tempera-voice-sdk.py
+          rm scripts/repair-tempera-voice-sdk-tests.py
           rm .github/workflows/voice-sdk-publisher.yml
       - name: Publish reviewed branch result
         shell: bash
