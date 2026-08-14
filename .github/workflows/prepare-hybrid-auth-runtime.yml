@@ -26,9 +26,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-      - uses: dtolnay/rust-toolchain@4305c38b25d3d91c4ae17ee6b964f0861b44d1f1
+      - uses: dtolnay/rust-toolchain@1.97.1
         with:
-          toolchain: "1.96.0"
           components: rustfmt,clippy
       - name: Format, lock, and test the runtime
         shell: bash
