@@ -7,7 +7,7 @@ It combines two checks instead of forcing a service to choose between low latenc
 1. **Local JWT verification** rejects malformed or forged access tokens without an Auth Hub round trip. It requires RS256, a bounded JOSE header, an exact issuer and audience, a known JWKS `kid`, a valid signature, bounded temporal claims, a subject/JTI, workspace claims, and syntactically valid scopes.
 2. **Central freshness** confirms the locally verified access token through Auth Hub introspection on cache miss. Opaque API keys always take this path. Positive decisions are cached for at most five seconds by default, bounding role, grant, security-epoch, and revocation staleness.
 
-Concurrent misses for the same token are singleflighted. Cache and flight keys are SHA-256 digests; raw bearer values are never retained as map keys, metric labels, or log fields.
+Concurrent misses for the same token are singleflighted through cancellation-safe leases. Positive-cache lookup is O(1), expiry and capacity eviction are O(log n), and cache/flight keys are SHA-256 digests; raw bearer values are never retained as map keys, metric labels, or log fields.
 
 ```rust
 use tempera_auth_runtime::{Config, HybridAuthorizer};
@@ -48,9 +48,10 @@ let principal = authorizer
 - Scope checks are repeated for each operation, including positive-cache hits.
 - Exactly one resource audience is accepted, and duplicate claim aliases must agree.
 - Cache hits inspect only the requested entry; expiry sweeping remains off the hot path.
+- Cancelling an authorization future releases its singleflight lease; later requests cannot inherit unreachable coordination state from an aborted caller.
 
 ## Operational guidance
 
 The default five-second positive cache is the maximum revocation-freshness window for repeated traffic handled by one process. Services may reduce it, but cannot configure it above the runtime's hard safety ceiling. High-risk operations can bypass application-level request caching and should still require their narrow operation scopes.
 
-The package exposes privacy-safe counters for cache hits/misses, local JWT rejection, central introspection, authority failure, and claim mismatch. These counters contain no credential or tenant identifiers.
+The package exposes privacy-safe counters and bounded-state gauges for cache hits/misses/evictions, local JWT rejection, introspection, authority failure, claim mismatch, positive-cache entries, and active singleflight keys. They contain no credential or tenant identifiers.

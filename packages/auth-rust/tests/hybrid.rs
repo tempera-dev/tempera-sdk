@@ -338,6 +338,88 @@ async fn operation_scope_is_checked_against_cached_authority() {
     assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 1);
 }
 
+#[tokio::test]
+async fn cancelled_authorization_releases_singleflight_state() {
+    let transport = FakeTransport::new().with_delay(Duration::from_secs(30));
+    let token = "tp_key_cancelled.secret";
+    transport
+        .insert(
+            token,
+            json!({
+                "active": true,
+                "iss": "http://127.0.0.1:8080",
+                "aud": "tempera-document",
+                "sub": "usr_service",
+                "client_id": "raw-api",
+                "token_type": "api_key",
+                "api_key_id": "key_cancelled",
+                "org_id": "org_test",
+                "project_id": "proj_test",
+                "environment_id": "env_test",
+                "scope": "document:read"
+            }),
+        )
+        .await;
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(config(), transport.clone()).unwrap());
+    let task_authorizer = Arc::clone(&authorizer);
+    let task =
+        tokio::spawn(async move { task_authorizer.authorize(token, &["document:read"]).await });
+    for _ in 0..100 {
+        if transport.introspection_calls.load(Ordering::Relaxed) == 1 {
+            break;
+        }
+        tokio::task::yield_now().await;
+    }
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 1);
+    task.abort();
+    let _ = task.await;
+    tokio::task::yield_now().await;
+    assert_eq!(authorizer.metrics().active_flights, 0);
+}
+
+#[tokio::test]
+async fn positive_cache_evicts_at_a_strict_bound() {
+    let transport = FakeTransport::new();
+    let mut bounded = config();
+    bounded.max_cache_entries = 2;
+    let authorizer = HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap();
+    for suffix in ["a", "b", "c"] {
+        let token = format!("tp_key_{suffix}.secret");
+        transport
+            .insert(
+                token.clone(),
+                json!({
+                    "active": true,
+                    "iss": "http://127.0.0.1:8080",
+                    "aud": "tempera-document",
+                    "sub": "usr_service",
+                    "client_id": "raw-api",
+                    "token_type": "api_key",
+                    "api_key_id": format!("key_{suffix}"),
+                    "org_id": "org_test",
+                    "project_id": "proj_test",
+                    "environment_id": "env_test",
+                    "scope": "document:read"
+                }),
+            )
+            .await;
+        authorizer
+            .authorize(&token, &["document:read"])
+            .await
+            .unwrap();
+    }
+    let metrics = authorizer.metrics();
+    assert_eq!(metrics.positive_cache_entries, 2);
+    assert_eq!(metrics.cache_evictions, 1);
+
+    authorizer
+        .authorize("tp_key_a.secret", &["document:read"])
+        .await
+        .unwrap();
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 4);
+}
+
 #[test]
 fn configuration_rejects_insecure_or_unbounded_authority() {
     let mut secure = Config::new(
