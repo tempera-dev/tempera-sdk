@@ -59,6 +59,106 @@ jobs:
           path.write_text(text[:start] + fast_path + text[end:], encoding="utf-8")
           PY
           python3 scripts/harden-auth-authority-admission.py
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          path = Path("packages/auth-rust/src/lib.rs")
+          text = path.read_text(encoding="utf-8")
+          old = '''struct JwksCache {
+              keys: HashMap<String, CachedJwk>,
+              expires_at: Option<Instant>,
+              last_refresh_attempt: Option<Instant>,
+          }'''
+          new = '''struct JwksCache {
+              keys: HashMap<String, CachedJwk>,
+              expires_at: Option<Instant>,
+              last_refresh_attempt: Option<Instant>,
+              generation: u64,
+          }'''
+          if text.count(old) != 1:
+              raise SystemExit(f"JwksCache shape changed: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          pattern = r'''    async fn jwks_key\(&self, kid: &str\) -> Result<DecodingKey, AuthError> \{.*?\n    \}\n\n    fn principal_from_claims'''
+          replacement = '''    async fn jwks_key(&self, kid: &str) -> Result<DecodingKey, AuthError> {
+              let observed_generation = {
+                  let cache = self.jwks.lock().await;
+                  if cache.expires_at.is_some_and(|expiry| expiry > Instant::now())
+                      && let Some(key) = cache.keys.get(kid)
+                  {
+                      return Ok(key.key.clone());
+                  }
+                  cache.generation
+              };
+
+              let _refresh_guard = self.jwks_refresh.lock().await;
+              let now = Instant::now();
+              {
+                  let mut cache = self.jwks.lock().await;
+                  if cache.generation != observed_generation
+                      && cache.expires_at.is_some_and(|expiry| expiry > now)
+                  {
+                      return cache
+                          .keys
+                          .get(kid)
+                          .map(|key| key.key.clone())
+                          .ok_or(AuthError::InvalidToken);
+                  }
+                  if let Some(key) = lookup_jwks_key(
+                      &cache,
+                      kid,
+                      now,
+                      self.config.jwks_refresh_cooldown,
+                  )? {
+                      return Ok(key);
+                  }
+              }
+
+              self.metrics
+                  .jwks_refreshes
+                  .fetch_add(1, Ordering::Relaxed);
+              let document = match self
+                  .transport
+                  .fetch_jwks(&self.config.jwks_url, self.config.max_response_bytes)
+                  .await
+              {
+                  Ok(document) => document,
+                  Err(error) => {
+                      self.metrics
+                          .authority_failures
+                          .fetch_add(1, Ordering::Relaxed);
+                      self.jwks.lock().await.last_refresh_attempt = Some(Instant::now());
+                      return Err(error);
+                  }
+              };
+              let keys = match parse_jwks(document) {
+                  Ok(keys) => keys,
+                  Err(error) => {
+                      self.metrics
+                          .authority_failures
+                          .fetch_add(1, Ordering::Relaxed);
+                      self.jwks.lock().await.last_refresh_attempt = Some(Instant::now());
+                      return Err(error);
+                  }
+              };
+              let requested = keys.get(kid).map(|key| key.key.clone());
+              {
+                  let mut cache = self.jwks.lock().await;
+                  cache.keys = keys;
+                  cache.expires_at = Some(Instant::now() + self.config.jwks_cache_ttl);
+                  cache.last_refresh_attempt = Some(Instant::now());
+                  cache.generation = cache.generation.wrapping_add(1).max(1);
+              }
+              requested.ok_or(AuthError::InvalidToken)
+          }
+
+          fn principal_from_claims'''
+          text, count = re.subn(pattern, lambda _: replacement, text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit(f"jwks_key shape changed: {count}")
+          path.write_text(text, encoding="utf-8")
+          PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
           cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
