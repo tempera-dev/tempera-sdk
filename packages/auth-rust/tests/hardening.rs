@@ -64,3 +64,13 @@ fn jwt_lifetime_bounds_are_validated() {
         Err(AuthError::InvalidConfiguration(_))
     ));
 }
+
+#[test]
+fn required_scope_collections_are_bounded() {
+    let mut c = base();
+    c.required_scopes = (0..257).map(|index| format!("scope:{index}")).collect();
+    assert!(matches!(
+        c.validate(),
+        Err(AuthError::InvalidConfiguration(_))
+    ));
+}

@@ -45,6 +45,8 @@ let principal = authorizer
 - Auth Hub or JWKS transport failures fail as unavailable when no fresh positive decision exists.
 - API keys are never parsed as JWTs and are never accepted without central introspection.
 - Scope checks are repeated for each operation, including positive-cache hits.
+- Exactly one resource audience is accepted, and duplicate claim aliases must agree.
+- Cache hits inspect only the requested entry; expiry sweeping remains off the hot path.
 
 ## Operational guidance
 

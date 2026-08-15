@@ -360,3 +360,39 @@ fn configuration_rejects_insecure_or_unbounded_authority() {
         Err(AuthError::InvalidConfiguration(_)),
     ));
 }
+
+#[tokio::test]
+async fn ambiguous_central_authority_claims_fail_closed() {
+    let claims = access_claims();
+    let token = access_token(&claims);
+
+    let transport = FakeTransport::new();
+    let mut multi_audience = central_claims(&claims);
+    multi_audience["aud"] = json!(["tempera-document", "tempera-other"]);
+    transport.insert(&token, multi_audience).await;
+    let authorizer = HybridAuthorizer::with_transport(config(), transport).unwrap();
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::WrongAudience),
+    );
+
+    let transport = FakeTransport::new();
+    let mut mismatched_scope_alias = central_claims(&claims);
+    mismatched_scope_alias["scopes"] = json!(["document:read", "admin"]);
+    transport.insert(&token, mismatched_scope_alias).await;
+    let authorizer = HybridAuthorizer::with_transport(config(), transport).unwrap();
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::InvalidToken),
+    );
+
+    let transport = FakeTransport::new();
+    let mut mismatched_client_alias = central_claims(&claims);
+    mismatched_client_alias["azp"] = Value::String("other-client".into());
+    transport.insert(&token, mismatched_client_alias).await;
+    let authorizer = HybridAuthorizer::with_transport(config(), transport).unwrap();
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::InvalidToken),
+    );
+}

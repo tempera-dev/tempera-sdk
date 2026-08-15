@@ -25,7 +25,7 @@ use jsonwebtoken::{
     errors::ErrorKind as JwtErrorKind,
     jwk::{AlgorithmParameters, JwkSet, KeyAlgorithm, KeyOperations, PublicKeyUse},
 };
-use reqwest::{StatusCode, header};
+use reqwest::header;
 use serde_json::{Map, Value, json};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
@@ -128,6 +128,7 @@ impl Config {
             ));
         }
         if !valid_audience(&self.audience)
+            || self.required_scopes.len() > 256
             || self.required_scopes.iter().any(|scope| !valid_scope(scope))
             || self.positive_cache_ttl.is_zero()
             || self.positive_cache_ttl > Duration::from_secs(30)
@@ -328,11 +329,12 @@ impl AuthorityTransport for ReqwestAuthorityTransport {
         }
         let response = request.send().await.map_err(|_| AuthError::Unavailable)?;
         let status = response.status();
-        if status.is_server_error() || status == StatusCode::TOO_MANY_REQUESTS {
-            return Err(AuthError::Unavailable);
-        }
+        // Auth Hub represents an invalid credential with a successful
+        // `active: false` response. Any HTTP failure therefore means the
+        // authority, route, or resource-server credential is unavailable or
+        // misconfigured; it must not be reported as a bad caller token.
         if !status.is_success() {
-            return Err(AuthError::InvalidToken);
+            return Err(AuthError::Unavailable);
         }
         if !json_content_type(response.headers()) {
             return Err(AuthError::Unavailable);
@@ -429,6 +431,18 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
     ) -> Result<Principal, AuthError> {
         if token.is_empty() || token.len() > self.config.max_token_bytes {
             return Err(AuthError::InvalidToken);
+        }
+        if required_scopes.len() > 256
+            || self
+                .config
+                .required_scopes
+                .len()
+                .saturating_add(required_scopes.len())
+                > 256
+        {
+            return Err(AuthError::InvalidConfiguration(
+                "too many required scopes".into(),
+            ));
         }
         for scope in required_scopes {
             if !valid_scope(scope) {
@@ -611,14 +625,17 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             return Err(AuthError::WrongIssuer);
         }
         let audiences = strict_set(object.get("aud"), 32, valid_audience)?;
-        if !audiences.contains(&self.config.audience) {
+        if audiences.len() != 1 || !audiences.contains(&self.config.audience) {
             return Err(AuthError::WrongAudience);
         }
-        let mut scopes = strict_set(object.get("scope"), 256, valid_scope)?;
-        scopes.extend(strict_set(object.get("scopes"), 256, valid_scope)?);
-        if scopes.len() > 256 {
-            return Err(AuthError::InvalidToken);
-        }
+        let scope = strict_set(object.get("scope"), 256, valid_scope)?;
+        let scopes_alias = strict_set(object.get("scopes"), 256, valid_scope)?;
+        let scopes = match (object.contains_key("scope"), object.contains_key("scopes")) {
+            (true, true) if scope != scopes_alias => return Err(AuthError::InvalidToken),
+            (true, _) => scope,
+            (_, true) => scopes_alias,
+            (false, false) => BTreeSet::new(),
+        };
 
         let subject = strict_id(object, "sub", 256)?.ok_or(AuthError::InvalidToken)?;
         let token_type =
@@ -632,11 +649,9 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             strict_id(object, "jti", 256)?
         }
         .ok_or(AuthError::InvalidToken)?;
-        let client_id = strict_id(object, "client_id", 256)?
-            .or(strict_id(object, "azp", 256)?)
-            .ok_or(AuthError::InvalidToken)?;
-        let organization_id =
-            strict_id(object, "org_id", 256)?.or(strict_id(object, "organization_id", 256)?);
+        let client_id =
+            strict_alias_id(object, "client_id", "azp", 256)?.ok_or(AuthError::InvalidToken)?;
+        let organization_id = strict_alias_id(object, "org_id", "organization_id", 256)?;
         let project_id = strict_id(object, "project_id", 256)?;
         let environment_id = strict_id(object, "environment_id", 256)?;
         if self.config.require_workspace
@@ -700,8 +715,14 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
     async fn cached(&self, key: [u8; 32]) -> Option<Principal> {
         let mut cache = self.cache.lock().await;
         let now = Instant::now();
-        cache.retain(|_, entry| entry.expires_at > now);
-        cache.get(&key).map(|entry| entry.principal.clone())
+        match cache.get(&key) {
+            Some(entry) if entry.expires_at > now => Some(entry.principal.clone()),
+            Some(_) => {
+                cache.remove(&key);
+                None
+            }
+            None => None,
+        }
     }
 
     async fn store(&self, key: [u8; 32], principal: Principal) {
@@ -921,6 +942,20 @@ fn strict_id(
     }
     Ok(value)
 }
+fn strict_alias_id(
+    claims: &Map<String, Value>,
+    primary: &str,
+    alias: &str,
+    max: usize,
+) -> Result<Option<String>, AuthError> {
+    let primary_value = strict_id(claims, primary, max)?;
+    let alias_value = strict_id(claims, alias, max)?;
+    if primary_value.is_some() && alias_value.is_some() && primary_value != alias_value {
+        return Err(AuthError::InvalidToken);
+    }
+    Ok(primary_value.or(alias_value))
+}
+
 fn strict_u64(claims: &Map<String, Value>, name: &str) -> Result<Option<u64>, AuthError> {
     match claims.get(name) {
         None | Some(Value::Null) => Ok(None),
