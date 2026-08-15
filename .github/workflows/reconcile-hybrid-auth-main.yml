@@ -1,0 +1,41 @@
+name: Reconcile Hybrid Auth Onto Main
+
+on:
+  push:
+    branches: [agent/hybrid-auth-runtime]
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/hybrid-auth-runtime
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Merge current main and validate combined surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          echo "MAIN_SHA=$(git rev-parse refs/remotes/origin/main)"
+          git merge --no-commit --no-ff refs/remotes/origin/main
+          rm -f .github/workflows/probe-hybrid-main-merge.yml
+          rm -f .github/workflows/reconcile-hybrid-auth-main.yml
+          npm test
+          cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all -- --check
+          cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
+          cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          git add -A
+          git diff --cached --check
+          git status --short
+          git commit -m "Reconcile hybrid auth with current SDK main"
+          git push origin HEAD:agent/hybrid-auth-runtime
