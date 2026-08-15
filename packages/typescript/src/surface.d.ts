@@ -5,7 +5,7 @@
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-payments" | "tempera-voice" | "tempera-clearing";
 export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -875,6 +875,55 @@ export interface DataEngineClient extends TemperaProductClientBase {
 export interface HumanDataClient extends TemperaProductClientBase {
   /** Compute live qualification evidence. */
   computeQualification(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaVoiceClient extends TemperaProductClientBase {
+  /** Liveness. */
+  voiceLiveness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Readiness. */
+  voiceReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve Action. */
+  resolveVoiceAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Agents. */
+  listVoiceAgents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Agent. */
+  createVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Agent. */
+  getVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Upsert Agent. */
+  upsertVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Download Artifact. */
+  downloadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Upload Artifact. */
+  uploadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Capabilities. */
+  getVoiceCapabilities(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Eval Profiles. */
+  listVoiceEvalProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Build Eval Bundle. */
+  buildVoiceEvalBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Palette Handoff. */
+  createVoicePaletteHandoff(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Publish Palette Handoff. */
+  publishVoicePaletteHandoff(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import Eval Result. */
+  importVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Seal Eval Result. */
+  sealVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Sessions. */
+  listVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Session. */
+  createVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Session. */
+  getVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Actions. */
+  listVoiceSessionActions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Events. */
+  listVoiceSessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** End Session. */
+  endVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Export Sessions. */
+  exportVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

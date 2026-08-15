@@ -172,6 +172,7 @@ class TemperaClient:
         self.tempo: _ProductClient
         self.tempera_llm: _ProductClient
         self.tempera_risk: _ProductClient
+        self.tempera_voice: _ProductClient
         self.tempera_workflows: _ProductClient
         self.tempera_gym: _ProductClient
         self.tempera_bio: _ProductClient

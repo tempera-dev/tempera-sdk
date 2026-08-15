@@ -91,6 +91,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
+    "temperaVoice": {
+        "source_repo": "tempera-dev/tempera-voice",
+        "source_branch": "main",
+        "source_path": "contracts/voice-api.openapi.json",
+        "generated_path": "specs/tempera-voice-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "temperaRisk": {
         "source_repo": "tempera-dev/tempera-risk",
         "source_branch": "main",

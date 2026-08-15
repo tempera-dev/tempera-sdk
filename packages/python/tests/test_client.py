@@ -14,26 +14,7 @@ from tempera_sdk import (
     api_error_from_response,
     normalize_error_body,
 )
-
-PRODUCT_ATTRS = {
-    "controlPlane": "control_plane",
-    "palette": "palette",
-    "tempo": "tempo",
-    "temperaLlm": "tempera_llm",
-    "temperaRisk": "tempera_risk",
-    "temperaWorkflows": "tempera_workflows",
-    "temperaGym": "tempera_gym",
-    "temperaBio": "tempera_bio",
-    "temperaDocument": "tempera_document",
-    "temperaPayments": "tempera_payments",
-    "cradle": "cradle",
-    "remi": "remi",
-    "dataEngine": "data_engine",
-    "humanData": "human_data",
-    "tempJs": "temp_js",
-    "tempOS": "temp_os",
-    "arrha": "arrha",
-}
+from tempera_sdk.client import PRODUCT_ATTRS
 
 SAMPLE_PARAM_VALUE = "sample-value"
 
@@ -78,6 +59,7 @@ def make_client(**overrides):
             "palette": "https://palette.example.test",
             "tempo": "https://tempo.example.test",
             "tempera_llm": "https://llm.example.test",
+            "tempera_voice": "https://voice.example.test",
             "tempera_risk": "https://risk.example.test",
             "tempera_workflows": "https://workflows.example.test",
             "tempera_gym": "https://gym.example.test",

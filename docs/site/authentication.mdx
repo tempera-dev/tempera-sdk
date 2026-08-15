@@ -191,7 +191,7 @@ is the default when none is specified.
 | `tempera-document` | tempera-document |
 | `tempera-risk` | tempera-risk |
 | `tempera-payments` | tempera-payments |
-| `tempera-voice` | — |
+| `tempera-voice` | tempera-voice |
 | `tempera-clearing` | — |
 
 ## Scopes
@@ -206,7 +206,7 @@ is the default when none is specified.
 | `trace:write` | palette: `importSource`, `ingestSpan` |
 | `dataset:read` | data-engine: `getArtifact`, `getDiscoveryRelease`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listConnectors`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `bioProposalPoliciesList`, `getEpisode`, `getRun`, `getSealedEvaluation`, `getTask`, `listDomains`, `listEnvironments`, `listEpisodes`, `listRuns`, `listSealedEvaluations`, `listSealedEvaluators`, `listTasks`, `listVerifiers` |
 | `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `extractSource`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
-| `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode` |
+| `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode`; tempera-voice: `buildVoiceEvalBundle`, `createVoicePaletteHandoff`, `exportVoiceSessions`, `importVoiceEvalResult`, `listVoiceEvalProfiles`, `publishVoicePaletteHandoff`, `sealVoiceEvalResult` |
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask`, `createReviewerRevocation` |
 | `review:resolve` | data-engine: `claimExpertTask`, `createExpertTaskAppeal`, `getReviewOperations`, `getReviewerQualification`, `recordReviewerSessionEvent`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
@@ -235,8 +235,8 @@ is the default when none is specified.
 | `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
-| `voice:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `voice:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
+| `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |

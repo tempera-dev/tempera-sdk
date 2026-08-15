@@ -1,4 +1,6 @@
+import json
 import unittest
+from pathlib import Path
 
 from tempera_sdk import (
     API_TARGETS,
@@ -21,6 +23,7 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertEqual(PRODUCTS["palette"]["repository"], "https://github.com/tempera-dev/palette")
         self.assertEqual(PRODUCTS["tempo"]["repository"], "https://github.com/tempera-dev/tempo")
         self.assertEqual(PRODUCTS["temperaLlm"]["repository"], "https://github.com/tempera-dev/tempera-llm")
+        self.assertEqual(PRODUCTS["temperaVoice"]["repository"], "https://github.com/tempera-dev/tempera-voice")
         self.assertEqual(PRODUCTS["temperaWorkflows"]["repository"], "https://github.com/tempera-dev/tempera-workflows")
         self.assertEqual(PRODUCTS["temperaGym"]["repository"], "https://github.com/tempera-dev/tempera-gym")
         self.assertEqual(PRODUCTS["temperaBio"]["repository"], "https://github.com/tempera-dev/tempera-bio")
@@ -43,32 +46,22 @@ class TemperaSdkTest(unittest.TestCase):
         self.assertIn("data-engine", AUDIENCES)
         self.assertIn("tempera-code", AUDIENCES)
         self.assertIn("tempera-llm", AUDIENCES)
+        self.assertIn("tempera-voice", AUDIENCES)
         self.assertIn("tempera-workflows", AUDIENCES)
         self.assertIn("tempera-gym", AUDIENCES)
         self.assertIn("tempera-bio", AUDIENCES)
         self.assertIn("tempera-document", AUDIENCES)
 
     def test_scopes_match_the_control_plane_scope_registry(self):
+        root = Path(__file__).resolve().parents[3]
+        control_plane = json.loads(
+            (root / "specs" / "control-plane.openapi.json").read_text(
+                encoding="utf-8"
+            )
+        )
         self.assertEqual(
             list(SCOPES),
-            [
-                "mcp:invoke", "memory:read", "memory:write", "memory:manage",
-                "trace:read", "trace:write", "dataset:read", "dataset:write",
-                "eval:run", "training:publish", "review:gold:manage",
-                "review:resolve", "workflow:read", "workflow:write",
-                "workflow:run", "bio:source:read", "bio:proposal:write",
-                "bio:measurement:verify", "bio:decision:write",
-                "bio:experiment:approve", "bio:experiment:submit",
-                "bio:signer:manage", "model:read", "model:invoke",
-                "usage:reserve", "document:read", "document:write",
-                "risk:read", "risk:write", "risk:review", "pii:unmask",
-                "payments:intents:read", "payments:intents:write", "payments:receipts:read",
-                "payments:webhooks:write", "payments:refunds:write", "payments:admin",
-                "voice:read", "voice:write", "voice:stream",
-                "clearing:actions:read", "clearing:actions:propose",
-                "clearing:actions:commit", "clearing:actions:reconcile",
-                "clearing:receipts:read", "clearing:actions:approve", "admin",
-            ],
+            control_plane["components"]["schemas"]["Scope"]["enum"],
         )
 
     def test_all_four_environments_carry_the_same_target_keys(self):
