@@ -290,6 +290,69 @@ async fn valid_jwt_is_locally_verified_centrally_confirmed_and_cached() {
 }
 
 #[tokio::test]
+async fn signed_access_tokens_require_a_security_epoch() {
+    let transport = FakeTransport::new();
+    let mut claims = access_claims();
+    claims.as_object_mut().unwrap().remove("security_epoch");
+    let token = access_token(&claims);
+    transport.insert(&token, central_claims(&claims)).await;
+    let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
+
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::InvalidToken),
+    );
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 0);
+}
+
+#[tokio::test]
+async fn central_security_epoch_must_exactly_match_the_signed_epoch() {
+    let transport = FakeTransport::new();
+    let claims = access_claims();
+    let token = access_token(&claims);
+    let mut central = central_claims(&claims);
+    central["security_epoch"] = Value::from(8_u64);
+    transport.insert(&token, central).await;
+    let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
+
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::ClaimMismatch),
+    );
+    assert_eq!(authorizer.metrics().claim_mismatches, 1);
+}
+
+#[tokio::test]
+async fn central_revocation_is_observed_after_the_positive_freshness_window() {
+    let transport = FakeTransport::new();
+    let claims = access_claims();
+    let token = access_token(&claims);
+    transport.insert(&token, central_claims(&claims)).await;
+    let mut bounded = config();
+    bounded.positive_cache_ttl = Duration::from_millis(20);
+    let authorizer = HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap();
+
+    authorizer
+        .authorize(&token, &["document:read"])
+        .await
+        .expect("initial central authorization");
+    transport.insert(&token, json!({ "active": false })).await;
+
+    // A positive decision may be reused only inside the explicitly configured
+    // freshness window.
+    authorizer
+        .authorize(&token, &["document:read"])
+        .await
+        .expect("bounded positive cache hit");
+    tokio::time::sleep(Duration::from_millis(30)).await;
+    assert_eq!(
+        authorizer.authorize(&token, &["document:read"]).await,
+        Err(AuthError::InvalidToken),
+    );
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 2);
+}
+
+#[tokio::test]
 async fn forged_jwt_is_rejected_before_introspection() {
     let transport = FakeTransport::new();
     let claims = access_claims();

@@ -33,7 +33,7 @@ let principal = authorizer
 - The issuer, JWKS, and introspection endpoints must share the same scheme, host, and effective port.
 - Hosted authority endpoints require HTTPS and a resource-server introspection secret.
 - Plain HTTP is accepted only for explicit loopback development (`localhost`, `127.0.0.0/8`, or `::1`) when `allow_insecure_http` is enabled.
-- Access tokens require integer `iat` and `exp` claims. Their lifetime is bounded to one hour by default and is configurable only within the runtime's safety limits.
+- Access tokens require integer `iat`, `exp`, and `security_epoch` claims. Their lifetime is bounded to one hour by default; the signed security epoch must exactly match Auth Hub's current server-controlled epoch on central confirmation.
 - Future issuance, expired tokens, malformed claim types, malformed scope collections, oversized values, and local/central authority disagreement fail closed.
 - JWKS and introspection responses are size-bounded, redirects are disabled, and the runtime never authorizes from stale-on-error state. JWKS network refresh is singleflighted without holding the shared key-cache lock.
 - Auth Hub represents an invalid credential with a successful `active: false` response. Any non-success introspection HTTP status is therefore an unavailable or misconfigured authority boundary, not evidence that the caller's credential is invalid.
