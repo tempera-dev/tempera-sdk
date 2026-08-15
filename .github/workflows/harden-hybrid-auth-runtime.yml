@@ -1,33 +1,12 @@
 name: Harden Hybrid Auth Runtime
 
-on:
-  push:
-    branches: [agent/hybrid-auth-runtime]
-    paths:
-      - ".github/workflows/harden-hybrid-auth-runtime.yml"
-      - "scripts/harden-hybrid-auth-runtime.py"
-      - "packages/auth-rust/**"
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - ".github/workflows/harden-hybrid-auth-runtime.yml"
-      - "scripts/harden-hybrid-auth-runtime.py"
-      - "packages/auth-rust/**"
+on: [push]
 
 permissions:
   contents: write
 
-concurrency:
-  group: harden-hybrid-auth-runtime-agent-hybrid-auth-runtime
-  cancel-in-progress: false
-
 jobs:
   harden:
-    if: >-
-      (github.event_name == 'push' && github.ref == 'refs/heads/agent/hybrid-auth-runtime') ||
-      (github.event_name == 'pull_request' &&
-       github.event.pull_request.head.repo.full_name == github.repository &&
-       github.event.pull_request.head.ref == 'agent/hybrid-auth-runtime')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -42,6 +21,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/agent/hybrid-auth-runtime"
           python3 scripts/harden-hybrid-auth-runtime.py
           python3 - <<'PY'
           from pathlib import Path
