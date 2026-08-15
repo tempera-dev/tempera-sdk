@@ -63,7 +63,11 @@ class TemperaSdkTest(unittest.TestCase):
                 "usage:reserve", "document:read", "document:write",
                 "risk:read", "risk:write", "risk:review", "pii:unmask",
                 "payments:intents:read", "payments:intents:write", "payments:receipts:read",
-                "payments:webhooks:write", "payments:refunds:write", "payments:admin", "admin",
+                "payments:webhooks:write", "payments:refunds:write", "payments:admin",
+                "voice:read", "voice:write", "voice:stream",
+                "clearing:actions:read", "clearing:actions:propose",
+                "clearing:actions:commit", "clearing:actions:reconcile",
+                "clearing:receipts:read", "clearing:actions:approve", "admin",
             ],
         )
 

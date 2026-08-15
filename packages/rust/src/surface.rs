@@ -21,6 +21,8 @@ pub const AUDIENCES: &[&str] = &[
     "tempera-document",
     "tempera-risk",
     "tempera-payments",
+    "tempera-voice",
+    "tempera-clearing",
 ];
 pub const DEFAULT_AUDIENCE: &str = "palette";
 pub const SCOPES: &[&str] = &[
@@ -61,6 +63,15 @@ pub const SCOPES: &[&str] = &[
     "payments:webhooks:write",
     "payments:refunds:write",
     "payments:admin",
+    "voice:read",
+    "voice:write",
+    "voice:stream",
+    "clearing:actions:read",
+    "clearing:actions:propose",
+    "clearing:actions:commit",
+    "clearing:actions:reconcile",
+    "clearing:receipts:read",
+    "clearing:actions:approve",
     "admin",
 ];
 
