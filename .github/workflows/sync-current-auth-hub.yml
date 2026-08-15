@@ -1,0 +1,62 @@
+name: Sync Current Auth Hub Producer
+
+on:
+  push:
+    branches: [agent/hybrid-auth-runtime]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/hybrid-auth-runtime
+          fetch-depth: 0
+      - name: Mint Auth Hub contract reader
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: 93755981bb7ed3002b947be1889683e35846d9e1
+          fetch-depth: 0
+          path: .auth-hub-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Regenerate exact producer surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .auth-hub-source rev-parse HEAD)" = "93755981bb7ed3002b947be1889683e35846d9e1"
+          test "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)" = "93755981bb7ed3002b947be1889683e35846d9e1"
+          python3 scripts/sync-control-plane-openapi.py --source-repo-dir .auth-hub-source --source-commit 93755981bb7ed3002b947be1889683e35846d9e1
+          python3 scripts/sync-openapi-surface.py --product controlPlane
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-docs.py
+          npm test
+          git diff --check
+      - name: Commit synchronized surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .auth-hub-source
+          rm -f .github/workflows/sync-current-auth-hub.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          git commit -m "Sync SDK to current Auth Hub producer"
+          git push origin HEAD:agent/hybrid-auth-runtime
