@@ -34,6 +34,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/harden-auth-authority-admission.py")
+          text = path.read_text(encoding="utf-8")
+          old = '''        let now = Instant::now();
+          {
+              let cache = self.jwks.lock().await;
+              if let Some(key) = lookup_jwks_key(
+                  &cache,
+                  kid,
+                  now,
+                  self.config.jwks_refresh_cooldown,
+              )? {
+                  return Ok(key);
+              }
+          }
+          '''
+          new = '''        {
+              let cache = self.jwks.lock().await;
+              if cache.expires_at.is_some_and(|expiry| expiry > Instant::now())
+                  && let Some(key) = cache.keys.get(kid)
+              {
+                  return Ok(key.key.clone());
+              }
+          }
+          '''
+          if text.count(old) != 1:
+              raise SystemExit(f"JWKS fast-path transformer changed: found {text.count(old)} blocks")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
           python3 scripts/harden-auth-authority-admission.py
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
