@@ -1,0 +1,54 @@
+name: Apply Auth Runtime Hot-Path Hardening
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/apply-auth-runtime-hot-path.yml"
+      - "scripts/harden-auth-runtime-hot-path.py"
+      - "packages/auth-rust/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auth-runtime-hot-path-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'agent/auth-runtime-hot-path-hardening'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Apply and validate the bounded hot path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/harden-auth-runtime-hot-path.py
+          cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
+          cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
+          cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          rm scripts/harden-auth-runtime-hot-path.py
+          rm .github/workflows/apply-auth-runtime-hot-path.yml
+      - name: Commit validated source
+        shell: bash
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Harden auth runtime hot paths"
+          git push origin "HEAD:${HEAD_BRANCH}"
