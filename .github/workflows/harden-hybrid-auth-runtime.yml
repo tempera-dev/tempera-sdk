@@ -37,10 +37,31 @@ jobs:
           python3 scripts/harden-hybrid-auth-runtime.py
           python3 - <<'PY'
           from pathlib import Path
-          path = Path('packages/auth-rust/tests/hardening.rs')
-          text = path.read_text()
+          hardening = Path('packages/auth-rust/tests/hardening.rs')
+          text = hardening.read_text()
           if not text.startswith('//!'):
-              path.write_text('//! Adversarial configuration tests for the hybrid authorization runtime.\n\n' + text)
+              hardening.write_text('//! Adversarial configuration tests for the hybrid authorization runtime.\n\n' + text)
+
+          hybrid = Path('packages/auth-rust/tests/hybrid.rs')
+          text = hybrid.read_text().replace('http://auth.test', 'http://127.0.0.1:8080')
+          old = '''    let secure = Config::new(
+        "https://api.tempera.dev",
+        "tempera-document",
+        "https://api.tempera.dev/.well-known/jwks.json",
+        "https://api.tempera.dev/v1/oauth/introspect",
+    );
+    assert!(secure.validate().is_ok());'''
+          new = '''    let mut secure = Config::new(
+        "https://api.tempera.dev",
+        "tempera-document",
+        "https://api.tempera.dev/.well-known/jwks.json",
+        "https://api.tempera.dev/v1/oauth/introspect",
+    );
+    secure.introspection_secret = Some("resource-server-secret".into());
+    assert!(secure.validate().is_ok());'''
+          if text.count(old) != 1:
+              raise SystemExit('secure fixture: expected exactly one match')
+          hybrid.write_text(text.replace(old, new, 1))
           PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
