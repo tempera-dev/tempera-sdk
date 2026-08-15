@@ -1,0 +1,45 @@
+name: Apply Qualified Hybrid Auth Runtime
+
+on:
+  push:
+    branches: [agent/hybrid-auth-runtime]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/hybrid-auth-runtime
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Apply exact protected-CI candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/agent/hybrid-auth-runtime"
+          bash scripts/qualify-hybrid-auth-runtime.sh
+          cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          git checkout 48d4b98610e48132adca15adbee4f3af27cee057 -- package.json scripts/test-sdk-names.py
+          rm -f packages/auth-rust/.harden-trigger
+          rm -f scripts/harden-hybrid-auth-runtime.py scripts/qualify-hybrid-auth-runtime.sh
+          rm -f .github/workflows/harden-hybrid-auth-runtime.yml
+          rm -f .github/workflows/qualify-hybrid-auth-runtime.yml
+          rm -f .github/workflows/apply-qualified-hybrid-auth.yml
+      - name: Commit exact validated bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          git commit -m "Harden hybrid authority boundaries"
+          git push origin HEAD:agent/hybrid-auth-runtime
