@@ -30,7 +30,7 @@ use serde_json::{Map, Value, json};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
 use tokio::sync::Mutex;
-use url::Url;
+use url::{Host, Url};
 
 const DEFAULT_POSITIVE_CACHE_TTL: Duration = Duration::from_secs(5);
 const DEFAULT_JWKS_CACHE_TTL: Duration = Duration::from_mins(5);
@@ -39,6 +39,7 @@ const DEFAULT_MAX_CACHE_ENTRIES: usize = 8_192;
 const DEFAULT_MAX_TOKEN_BYTES: usize = 16 * 1024;
 const DEFAULT_MAX_RESPONSE_BYTES: usize = 64 * 1024;
 const DEFAULT_CLOCK_SKEW_SECONDS: u64 = 30;
+const DEFAULT_MAX_ACCESS_TOKEN_LIFETIME_SECONDS: u64 = 3_600;
 const MAX_JWKS_KEYS: usize = 32;
 
 /// Runtime configuration for one resource audience.
@@ -70,6 +71,8 @@ pub struct Config {
     pub max_response_bytes: usize,
     /// Accepted clock skew for JWT temporal claims.
     pub clock_skew_seconds: u64,
+    /// Maximum permitted access-token lifetime (`exp - iat`).
+    pub max_access_token_lifetime_seconds: u64,
     /// Require organization, project, and environment claims.
     pub require_workspace: bool,
     /// Permit HTTP authority URLs for explicit local development.
@@ -98,6 +101,7 @@ impl Config {
             max_token_bytes: DEFAULT_MAX_TOKEN_BYTES,
             max_response_bytes: DEFAULT_MAX_RESPONSE_BYTES,
             clock_skew_seconds: DEFAULT_CLOCK_SKEW_SECONDS,
+            max_access_token_lifetime_seconds: DEFAULT_MAX_ACCESS_TOKEN_LIFETIME_SECONDS,
             require_workspace: true,
             allow_insecure_http: false,
         }
@@ -105,24 +109,27 @@ impl Config {
 
     /// Validate all security-sensitive bounds before serving traffic.
     pub fn validate(&self) -> Result<(), AuthError> {
-        validate_authority_url(&self.issuer_url, self.allow_insecure_http, "issuer_url")?;
-        validate_authority_url(&self.jwks_url, self.allow_insecure_http, "jwks_url")?;
-        validate_authority_url(
+        let issuer =
+            validate_authority_url(&self.issuer_url, self.allow_insecure_http, "issuer_url")?;
+        let jwks = validate_authority_url(&self.jwks_url, self.allow_insecure_http, "jwks_url")?;
+        let introspection = validate_authority_url(
             &self.introspection_url,
             self.allow_insecure_http,
             "introspection_url",
         )?;
-        if !valid_audience(&self.audience) {
+        if !same_origin(&issuer, &jwks) || !same_origin(&issuer, &introspection) {
             return Err(AuthError::InvalidConfiguration(
-                "audience must be a bounded URL-safe resource name".into(),
+                "JWKS and introspection endpoints must share the issuer origin".into(),
             ));
         }
-        if self.required_scopes.iter().any(|scope| !valid_scope(scope)) {
+        if !is_loopback_url(&issuer) && self.introspection_secret.is_none() {
             return Err(AuthError::InvalidConfiguration(
-                "required scopes contain an invalid OAuth scope token".into(),
+                "hosted introspection requires a resource-server secret".into(),
             ));
         }
-        if self.positive_cache_ttl.is_zero()
+        if !valid_audience(&self.audience)
+            || self.required_scopes.iter().any(|scope| !valid_scope(scope))
+            || self.positive_cache_ttl.is_zero()
             || self.positive_cache_ttl > Duration::from_secs(30)
             || self.jwks_cache_ttl < Duration::from_secs(30)
             || self.jwks_cache_ttl > Duration::from_hours(24)
@@ -132,18 +139,19 @@ impl Config {
             || !(256..=65_536).contains(&self.max_token_bytes)
             || !(1_024..=16 * 1024 * 1024).contains(&self.max_response_bytes)
             || self.clock_skew_seconds > 300
+            || !(60..=86_400).contains(&self.max_access_token_lifetime_seconds)
         {
             return Err(AuthError::InvalidConfiguration(
-                "authorization cache/JWT bounds are unsafe".into(),
+                "authorization configuration is outside safe bounds".into(),
             ));
         }
-        if self
-            .introspection_secret
-            .as_deref()
-            .is_some_and(|secret| secret.is_empty() || secret.len() > 4_096)
-        {
+        if self.introspection_secret.as_deref().is_some_and(|secret| {
+            secret.is_empty()
+                || secret.len() > 4_096
+                || secret.bytes().any(|b| b.is_ascii_control())
+        }) {
             return Err(AuthError::InvalidConfiguration(
-                "introspection secret is empty or oversized".into(),
+                "introspection secret is empty, oversized, or contains control characters".into(),
             ));
         }
         Ok(())
@@ -170,6 +178,10 @@ impl fmt::Debug for Config {
             .field("max_token_bytes", &self.max_token_bytes)
             .field("max_response_bytes", &self.max_response_bytes)
             .field("clock_skew_seconds", &self.clock_skew_seconds)
+            .field(
+                "max_access_token_lifetime_seconds",
+                &self.max_access_token_lifetime_seconds,
+            )
             .field("require_workspace", &self.require_workspace)
             .field("allow_insecure_http", &self.allow_insecure_http)
             .finish()
@@ -197,6 +209,8 @@ pub struct Principal {
     pub environment_id: Option<String>,
     /// Current scopes.
     pub scopes: BTreeSet<String>,
+    /// JWT issuance time, when present.
+    pub issued_at_epoch_seconds: Option<u64>,
     /// JWT expiration, when present.
     pub expires_at_epoch_seconds: Option<u64>,
     /// User security epoch, when present.
@@ -537,7 +551,7 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         let mut validation = Validation::new(Algorithm::RS256);
         validation.leeway = self.config.clock_skew_seconds;
         validation.validate_nbf = true;
-        validation.set_required_spec_claims(&["exp", "iss", "aud", "sub", "jti"]);
+        validation.set_required_spec_claims(&["exp", "iat", "iss", "aud", "sub", "jti"]);
         validation.set_issuer(&[self.config.issuer_url.as_str()]);
         validation.set_audience(&[self.config.audience.as_str()]);
         let claims = decode::<Value>(token, &key, &validation)
@@ -588,54 +602,74 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         claims: &Value,
         require_active: bool,
     ) -> Result<Principal, AuthError> {
-        if require_active && claims.get("active").and_then(Value::as_bool) != Some(true) {
+        let object = claims.as_object().ok_or(AuthError::InvalidToken)?;
+        if require_active && object.get("active").and_then(Value::as_bool) != Some(true) {
             return Err(AuthError::InvalidToken);
         }
-        let issuer = claims
-            .get("iss")
-            .and_then(Value::as_str)
-            .ok_or(AuthError::WrongIssuer)?;
+        let issuer = strict_string(object, "iss", 2_048)?.ok_or(AuthError::WrongIssuer)?;
         if issuer != self.config.issuer_url {
             return Err(AuthError::WrongIssuer);
         }
-        let audiences = string_set(claims.get("aud"));
+        let audiences = strict_set(object.get("aud"), 32, valid_audience)?;
         if !audiences.contains(&self.config.audience) {
             return Err(AuthError::WrongAudience);
         }
-        let mut scopes = string_set(claims.get("scope"));
-        scopes.extend(string_set(claims.get("scopes")));
-        let subject = claim_string(claims, "sub").ok_or(AuthError::InvalidToken)?;
+        let mut scopes = strict_set(object.get("scope"), 256, valid_scope)?;
+        scopes.extend(strict_set(object.get("scopes"), 256, valid_scope)?);
+        if scopes.len() > 256 {
+            return Err(AuthError::InvalidToken);
+        }
+
+        let subject = strict_id(object, "sub", 256)?.ok_or(AuthError::InvalidToken)?;
         let token_type =
-            claim_string(claims, "token_type").unwrap_or_else(|| "access_token".into());
+            strict_id(object, "token_type", 32)?.unwrap_or_else(|| "access_token".into());
         if token_type != "access_token" && token_type != "api_key" {
             return Err(AuthError::InvalidToken);
         }
         let credential_id = if token_type == "api_key" {
-            claim_string(claims, "api_key_id")
+            strict_id(object, "api_key_id", 256)?
         } else {
-            claim_string(claims, "jti")
+            strict_id(object, "jti", 256)?
         }
         .ok_or(AuthError::InvalidToken)?;
+        let client_id = strict_id(object, "client_id", 256)?
+            .or(strict_id(object, "azp", 256)?)
+            .ok_or(AuthError::InvalidToken)?;
         let organization_id =
-            claim_string(claims, "org_id").or_else(|| claim_string(claims, "organization_id"));
-        let project_id = claim_string(claims, "project_id");
-        let environment_id = claim_string(claims, "environment_id");
+            strict_id(object, "org_id", 256)?.or(strict_id(object, "organization_id", 256)?);
+        let project_id = strict_id(object, "project_id", 256)?;
+        let environment_id = strict_id(object, "environment_id", 256)?;
         if self.config.require_workspace
             && (organization_id.is_none() || project_id.is_none() || environment_id.is_none())
         {
             return Err(AuthError::InvalidToken);
         }
-        let expires_at_epoch_seconds = claims.get("exp").and_then(Value::as_u64);
-        if token_type == "access_token" && expires_at_epoch_seconds.is_none() {
+
+        let issued_at_epoch_seconds = strict_u64(object, "iat")?;
+        let expires_at_epoch_seconds = strict_u64(object, "exp")?;
+        let now = unix_time_seconds();
+        if issued_at_epoch_seconds
+            .is_some_and(|issued_at| issued_at > now.saturating_add(self.config.clock_skew_seconds))
+        {
             return Err(AuthError::InvalidToken);
         }
-        if expires_at_epoch_seconds.is_some_and(|expiry| expiry <= unix_time_seconds()) {
+        if expires_at_epoch_seconds
+            .is_some_and(|expiry| expiry.saturating_add(self.config.clock_skew_seconds) <= now)
+        {
             return Err(AuthError::InvalidToken);
         }
-        let client_id = claim_string(claims, "client_id")
-            .or_else(|| claim_string(claims, "azp"))
-            .unwrap_or_else(|| self.config.audience.clone());
-        let mut object = claims.as_object().cloned().unwrap_or_default();
+        if token_type == "access_token" {
+            let issued_at = issued_at_epoch_seconds.ok_or(AuthError::InvalidToken)?;
+            let expiry = expires_at_epoch_seconds.ok_or(AuthError::InvalidToken)?;
+            if expiry < issued_at
+                || expiry - issued_at > self.config.max_access_token_lifetime_seconds
+            {
+                return Err(AuthError::InvalidToken);
+            }
+        }
+        let security_epoch = strict_u64(object, "security_epoch")?;
+        let grant_id = strict_id(object, "grant_id", 256)?;
+        let mut sanitized = object.clone();
         for field in [
             "token",
             "access_token",
@@ -643,7 +677,7 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             "client_secret",
             "introspection_secret",
         ] {
-            object.remove(field);
+            sanitized.remove(field);
         }
         Ok(Principal {
             subject,
@@ -655,10 +689,11 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             project_id,
             environment_id,
             scopes,
+            issued_at_epoch_seconds,
             expires_at_epoch_seconds,
-            security_epoch: claims.get("security_epoch").and_then(Value::as_u64),
-            grant_id: claim_string(claims, "grant_id"),
-            claims: object,
+            security_epoch,
+            grant_id,
+            claims: sanitized,
         })
     }
 
@@ -738,6 +773,7 @@ fn equivalent_authority(local: &Principal, central: &Principal) -> bool {
         && local.project_id == central.project_id
         && local.environment_id == central.environment_id
         && local.scopes == central.scopes
+        && local.issued_at_epoch_seconds == central.issued_at_epoch_seconds
         && local.expires_at_epoch_seconds == central.expires_at_epoch_seconds
         && local.security_epoch == central.security_epoch
         && local.grant_id == central.grant_id
@@ -856,29 +892,60 @@ fn jwt_decode_failure(error: &jsonwebtoken::errors::Error) -> AuthError {
     }
 }
 
-fn claim_string(claims: &Value, name: &str) -> Option<String> {
-    claims
-        .get(name)
-        .and_then(Value::as_str)
-        .filter(|value| !value.is_empty() && value.len() <= 4_096)
-        .map(str::to_owned)
-}
-
-fn string_set(value: Option<&Value>) -> BTreeSet<String> {
-    match value {
-        Some(Value::String(value)) => value
-            .split_whitespace()
-            .filter(|item| valid_scope(item) || valid_audience(item))
-            .map(str::to_owned)
-            .collect(),
-        Some(Value::Array(values)) => values
-            .iter()
-            .filter_map(Value::as_str)
-            .filter(|item| valid_scope(item) || valid_audience(item))
-            .map(str::to_owned)
-            .collect(),
-        _ => BTreeSet::new(),
+fn strict_string(
+    claims: &Map<String, Value>,
+    name: &str,
+    max: usize,
+) -> Result<Option<String>, AuthError> {
+    match claims.get(name) {
+        None | Some(Value::Null) => Ok(None),
+        Some(Value::String(v))
+            if !v.is_empty() && v.len() <= max && v.bytes().all(|b| !b.is_ascii_control()) =>
+        {
+            Ok(Some(v.clone()))
+        }
+        Some(_) => Err(AuthError::InvalidToken),
     }
+}
+fn strict_id(
+    claims: &Map<String, Value>,
+    name: &str,
+    max: usize,
+) -> Result<Option<String>, AuthError> {
+    let value = strict_string(claims, name, max)?;
+    if value
+        .as_deref()
+        .is_some_and(|v| !v.bytes().all(|b| matches!(b, 0x21..=0x7e)))
+    {
+        return Err(AuthError::InvalidToken);
+    }
+    Ok(value)
+}
+fn strict_u64(claims: &Map<String, Value>, name: &str) -> Result<Option<u64>, AuthError> {
+    match claims.get(name) {
+        None | Some(Value::Null) => Ok(None),
+        Some(v) => v.as_u64().map(Some).ok_or(AuthError::InvalidToken),
+    }
+}
+fn strict_set(
+    value: Option<&Value>,
+    max: usize,
+    validator: fn(&str) -> bool,
+) -> Result<BTreeSet<String>, AuthError> {
+    let items: Vec<&str> = match value {
+        None | Some(Value::Null) => return Ok(BTreeSet::new()),
+        Some(Value::String(v)) if v.len() <= 4_096 => v.split_whitespace().collect(),
+        Some(Value::Array(v)) if v.len() <= max => v
+            .iter()
+            .map(Value::as_str)
+            .collect::<Option<Vec<_>>>()
+            .ok_or(AuthError::InvalidToken)?,
+        Some(_) => return Err(AuthError::InvalidToken),
+    };
+    if items.len() > max || items.iter().any(|item| !validator(item)) {
+        return Err(AuthError::InvalidToken);
+    }
+    Ok(items.into_iter().map(str::to_owned).collect())
 }
 
 fn jwt_shaped(token: &str) -> bool {
@@ -905,24 +972,38 @@ fn valid_scope(value: &str) -> bool {
             .all(|byte| matches!(byte, 0x21 | 0x23..=0x5b | 0x5d..=0x7e))
 }
 
-fn validate_authority_url(value: &str, allow_http: bool, name: &str) -> Result<(), AuthError> {
+fn validate_authority_url(value: &str, allow_http: bool, name: &str) -> Result<Url, AuthError> {
     let url = Url::parse(value)
         .map_err(|_| AuthError::InvalidConfiguration(format!("{name} must be an absolute URL")))?;
     if url.username() != ""
         || url.password().is_some()
         || url.query().is_some()
         || url.fragment().is_some()
+        || url.host().is_none()
     {
         return Err(AuthError::InvalidConfiguration(format!(
-            "{name} must not contain credentials, query, or fragment"
+            "{name} contains forbidden URL components"
         )));
     }
-    if url.scheme() != "https" && !(allow_http && url.scheme() == "http") {
+    if url.scheme() != "https" && !(allow_http && url.scheme() == "http" && is_loopback_url(&url)) {
         return Err(AuthError::InvalidConfiguration(format!(
-            "{name} must use HTTPS"
+            "{name} must use HTTPS except for loopback development"
         )));
     }
-    Ok(())
+    Ok(url)
+}
+fn is_loopback_url(url: &Url) -> bool {
+    match url.host() {
+        Some(Host::Ipv4(ip)) => ip.is_loopback(),
+        Some(Host::Ipv6(ip)) => ip.is_loopback(),
+        Some(Host::Domain(name)) => name.eq_ignore_ascii_case("localhost"),
+        None => false,
+    }
+}
+fn same_origin(a: &Url, b: &Url) -> bool {
+    a.scheme() == b.scheme()
+        && a.host_str().map(str::to_ascii_lowercase) == b.host_str().map(str::to_ascii_lowercase)
+        && a.port_or_known_default() == b.port_or_known_default()
 }
 
 fn json_content_type(headers: &reqwest::header::HeaderMap) -> bool {

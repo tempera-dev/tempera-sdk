@@ -119,10 +119,10 @@ impl AuthorityTransport for FakeTransport {
 
 fn config() -> Config {
     let mut config = Config::new(
-        "http://auth.test",
+        "http://127.0.0.1:8080",
         "tempera-document",
-        "http://auth.test/.well-known/jwks.json",
-        "http://auth.test/v1/oauth/introspect",
+        "http://127.0.0.1:8080/.well-known/jwks.json",
+        "http://127.0.0.1:8080/v1/oauth/introspect",
     );
     config.allow_insecure_http = true;
     config.introspection_secret = Some("resource-server-secret".into());
@@ -142,7 +142,7 @@ fn now() -> u64 {
 fn access_claims() -> Value {
     let issued = now();
     json!({
-        "iss": "http://auth.test",
+        "iss": "http://127.0.0.1:8080",
         "aud": "tempera-document",
         "sub": "usr_test",
         "client_id": "tempera-public-site",
@@ -266,7 +266,7 @@ async fn opaque_api_keys_are_centrally_introspected_and_bounded_cached() {
             token,
             json!({
                 "active": true,
-                "iss": "http://auth.test",
+                "iss": "http://127.0.0.1:8080",
                 "aud": "tempera-document",
                 "sub": "usr_service",
                 "client_id": "raw-api",
@@ -340,12 +340,13 @@ async fn operation_scope_is_checked_against_cached_authority() {
 
 #[test]
 fn configuration_rejects_insecure_or_unbounded_authority() {
-    let secure = Config::new(
+    let mut secure = Config::new(
         "https://api.tempera.dev",
         "tempera-document",
         "https://api.tempera.dev/.well-known/jwks.json",
         "https://api.tempera.dev/v1/oauth/introspect",
     );
+    secure.introspection_secret = Some("resource-server-secret".into());
     assert!(secure.validate().is_ok());
 
     let insecure = Config::new(
