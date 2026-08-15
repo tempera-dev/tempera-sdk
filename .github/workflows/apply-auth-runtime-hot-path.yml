@@ -35,6 +35,17 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/harden-auth-runtime-hot-path.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("packages/auth-rust/src/lib.rs")
+          source = path.read_text()
+          old = "use reqwest::{StatusCode, header};"
+          new = "use reqwest::header;"
+          if source.count(old) != 1:
+              raise SystemExit("expected one obsolete StatusCode import")
+          path.write_text(source.replace(old, new, 1))
+          PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
           cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
