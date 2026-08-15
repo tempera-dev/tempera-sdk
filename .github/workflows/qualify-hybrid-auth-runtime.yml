@@ -1,0 +1,64 @@
+name: Qualify Hybrid Auth Runtime
+
+on: [push]
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/hybrid-auth-runtime
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Build exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/agent/hybrid-auth-runtime"
+          python3 scripts/harden-hybrid-auth-runtime.py
+          python3 - <<'PY'
+          from pathlib import Path
+          hardening = Path('packages/auth-rust/tests/hardening.rs')
+          text = hardening.read_text()
+          if not text.startswith('//!'):
+              hardening.write_text('//! Adversarial configuration tests for the hybrid authorization runtime.\n\n' + text)
+          hybrid = Path('packages/auth-rust/tests/hybrid.rs')
+          text = hybrid.read_text().replace('http://auth.test', 'http://127.0.0.1:8080')
+          old = '''    let secure = Config::new(
+        "https://api.tempera.dev",
+        "tempera-document",
+        "https://api.tempera.dev/.well-known/jwks.json",
+        "https://api.tempera.dev/v1/oauth/introspect",
+    );
+    assert!(secure.validate().is_ok());'''
+          new = '''    let mut secure = Config::new(
+        "https://api.tempera.dev",
+        "tempera-document",
+        "https://api.tempera.dev/.well-known/jwks.json",
+        "https://api.tempera.dev/v1/oauth/introspect",
+    );
+    secure.introspection_secret = Some("resource-server-secret".into());
+    assert!(secure.validate().is_ok());'''
+          if text.count(old) != 1:
+              raise SystemExit('secure fixture: expected exactly one match')
+          hybrid.write_text(text.replace(old, new, 1))
+          PY
+          cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
+          cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
+          cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          tar -czf /tmp/hybrid-auth-candidate.tgz \
+            packages/auth-rust/src/lib.rs \
+            packages/auth-rust/tests/hybrid.rs \
+            packages/auth-rust/tests/hardening.rs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: hybrid-auth-candidate
+          path: /tmp/hybrid-auth-candidate.tgz
+          if-no-files-found: error
+          retention-days: 1
