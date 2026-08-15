@@ -41,6 +41,12 @@ from .auth import (
 from .client import TemperaClient
 
 from .mcp import MCP_ERROR_CODES, MCP_PROTOCOL_VERSION, TemperaMcpClient
+from .provider import (
+    MCP_PROVIDER_PROTOCOL_VERSION,
+    ProviderArgumentError,
+    ProviderDefinitionError,
+    TemperaProvider,
+)
 
 # Deprecated alias kept for 0.1.x callers; use ENVIRONMENTS.
 API_TARGETS = ENVIRONMENTS
@@ -54,10 +60,13 @@ __all__ = [
     "MCP_ERROR_CODES",
     "MCP_GATEWAY",
     "MCP_PROTOCOL_VERSION",
+    "MCP_PROVIDER_PROTOCOL_VERSION",
     "OPERATIONS",
     "PRODUCTS",
     "PRODUCT_AUDIENCES",
     "PkcePair",
+    "ProviderArgumentError",
+    "ProviderDefinitionError",
     "SCOPES",
     "SURFACE_VERSION",
     "TemperaApiError",
@@ -65,6 +74,7 @@ __all__ = [
     "TemperaClient",
     "TemperaMcpClient",
     "TemperaMcpError",
+    "TemperaProvider",
     "TemperaSdkError",
     "TokenSet",
     "api_error_from_response",
