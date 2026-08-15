@@ -1,3 +1,4 @@
+import asyncio
 import dataclasses
 import unittest
 from typing import Literal
@@ -43,10 +44,7 @@ class ProviderAuthoringTest(unittest.TestCase):
         )
         self.assertTrue(tools[0]["annotations"]["readOnlyHint"])
         self.assertTrue(tools[0]["annotations"]["idempotentHint"])
-
-        result = app.handle(
-            {"method": "tools/call", "params": {"name": "add", "arguments": {"a": 41}}}
-        )
+        result = app.handle({"method": "tools/call", "params": {"name": "add", "arguments": {"a": 41}}})
         self.assertFalse(result["isError"])
         self.assertEqual(result["structuredContent"], {"value": 42})
 
@@ -84,30 +82,16 @@ class ProviderAuthoringTest(unittest.TestCase):
             return a + b
 
         with self.assertRaisesRegex(ProviderArgumentError, "a must be int"):
-            app.handle(
-                {
-                    "method": "tools/call",
-                    "params": {"name": "add", "arguments": {"a": True, "b": 2}},
-                }
-            )
+            app.handle({"method": "tools/call", "params": {"name": "add", "arguments": {"a": True, "b": 2}}})
         with self.assertRaisesRegex(ProviderArgumentError, "unknown arguments"):
-            app.handle(
-                {
-                    "method": "tools/call",
-                    "params": {"name": "add", "arguments": {"a": 1, "b": 2, "c": 3}},
-                }
-            )
+            app.handle({"method": "tools/call", "params": {"name": "add", "arguments": {"a": 1, "b": 2, "c": 3}}})
         self.assertEqual(calls, [])
 
     def test_dataclass_literal_optional_and_collection_contracts(self):
         app = TemperaProvider("typed")
 
         @app.tool(read_only=True)
-        def inspect_point(
-            point: Point,
-            mode: Literal["brief", "full"] = "brief",
-            tags: list[str] | None = None,
-        ) -> dict[str, object]:
+        def inspect_point(point: Point, mode: Literal["brief", "full"] = "brief", tags: list[str] | None = None) -> dict[str, object]:
             return {"sum": point.x + point.y, "mode": mode, "tags": tags or []}
 
         schema = app.handle({"method": "tools/list"})["tools"][0]["inputSchema"]
@@ -115,16 +99,7 @@ class ProviderAuthoringTest(unittest.TestCase):
         self.assertEqual(schema["properties"]["point"]["required"], ["x"])
         self.assertEqual(schema["properties"]["mode"]["enum"], ["brief", "full"])
         self.assertIn("anyOf", schema["properties"]["tags"])
-
-        result = app.handle(
-            {
-                "method": "tools/call",
-                "params": {
-                    "name": "inspect_point",
-                    "arguments": {"point": {"x": 40}, "mode": "full", "tags": ["a"]},
-                },
-            }
-        )
+        result = app.handle({"method": "tools/call", "params": {"name": "inspect_point", "arguments": {"point": {"x": 40}, "mode": "full", "tags": ["a"]}}})
         self.assertEqual(result["structuredContent"], {"sum": 42, "mode": "full", "tags": ["a"]})
 
     def test_duplicate_and_contradictory_definitions_fail_at_registration(self):
@@ -135,13 +110,11 @@ class ProviderAuthoringTest(unittest.TestCase):
             return value
 
         with self.assertRaisesRegex(ProviderDefinitionError, "duplicate tool name"):
-
             @app.tool(name="same")
             def second(value: str) -> str:
                 return value
 
         with self.assertRaisesRegex(ProviderDefinitionError, "read-only tool cannot be destructive"):
-
             @app.tool(read_only=True, destructive=True)
             def contradictory() -> None:
                 return None
@@ -158,20 +131,79 @@ class ProviderAuthoringTest(unittest.TestCase):
         self.assertEqual(result["structuredContent"], {"error": "tool_execution_failed"})
         self.assertNotIn("super-secret", str(result))
 
-    def test_async_function_is_rejected_without_leaking_unawaited_result(self):
-        app = TemperaProvider("async")
+    def test_async_function_is_rejected_by_sync_path_before_invocation(self):
+        app = TemperaProvider("async-sync-boundary")
+        calls = []
 
         @app.tool
         async def async_tool(value: int) -> int:
+            calls.append(value)
             return value
 
         with self.assertRaisesRegex(ProviderDefinitionError, "async tools require"):
-            app.handle(
-                {
-                    "method": "tools/call",
-                    "params": {"name": "async_tool", "arguments": {"value": 1}},
-                }
-            )
+            app.handle({"method": "tools/call", "params": {"name": "async_tool", "arguments": {"value": 1}}})
+        self.assertEqual(calls, [])
+
+
+class AsyncProviderAuthoringTest(unittest.IsolatedAsyncioTestCase):
+    async def test_handle_async_awaits_async_tools_and_accepts_sync_tools(self):
+        app = TemperaProvider("async")
+
+        @app.tool(read_only=True)
+        async def async_add(a: int, b: int) -> int:
+            await asyncio.sleep(0)
+            return a + b
+
+        @app.tool(read_only=True)
+        def sync_add(a: int, b: int) -> int:
+            return a + b
+
+        async_result = await app.handle_async({"method": "tools/call", "params": {"name": "async_add", "arguments": {"a": 20, "b": 22}}})
+        sync_result = await app.handle_async({"method": "tools/call", "params": {"name": "sync_add", "arguments": {"a": 19, "b": 23}}})
+        self.assertEqual(async_result["structuredContent"], {"value": 42})
+        self.assertEqual(sync_result["structuredContent"], {"value": 42})
+
+    async def test_async_application_exception_is_redacted(self):
+        app = TemperaProvider("async-redaction")
+
+        @app.tool
+        async def explode() -> None:
+            await asyncio.sleep(0)
+            raise RuntimeError("async-super-secret")
+
+        result = await app.handle_async({"method": "tools/call", "params": {"name": "explode", "arguments": {}}})
+        self.assertTrue(result["isError"])
+        self.assertEqual(result["structuredContent"], {"error": "tool_execution_failed"})
+        self.assertNotIn("async-super-secret", str(result))
+
+    async def test_async_argument_validation_happens_before_user_code(self):
+        app = TemperaProvider("async-validation")
+        calls = []
+
+        @app.tool
+        async def typed(value: int) -> int:
+            calls.append(value)
+            return value
+
+        with self.assertRaisesRegex(ProviderArgumentError, "value must be int"):
+            await app.handle_async({"method": "tools/call", "params": {"name": "typed", "arguments": {"value": True}}})
+        self.assertEqual(calls, [])
+
+    async def test_async_discovery_and_listing_match_sync_contract(self):
+        app = TemperaProvider("async-discovery")
+
+        @app.tool
+        async def zeta(value: int) -> int:
+            return value
+
+        @app.tool
+        def alpha(value: int) -> int:
+            return value
+
+        discovery = await app.handle_async({"method": "server/discover"})
+        listing = await app.handle_async({"method": "tools/list"})
+        self.assertEqual(discovery, app.handle({"method": "server/discover"}))
+        self.assertEqual([tool["name"] for tool in listing["tools"]], ["alpha", "zeta"])
 
 
 if __name__ == "__main__":
