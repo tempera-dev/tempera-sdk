@@ -983,6 +983,9 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             }
         }
         let security_epoch = strict_u64(object, "security_epoch")?;
+        if token_type == "access_token" && security_epoch.is_none() {
+            return Err(AuthError::InvalidToken);
+        }
         let grant_id = strict_id(object, "grant_id", 256)?;
         let mut sanitized = object.clone();
         for field in [
