@@ -8,10 +8,11 @@
 //! repeated requests. Opaque API keys always use central introspection.
 
 use std::{
-    collections::{BTreeSet, HashMap},
+    cmp::Reverse,
+    collections::{BTreeSet, BinaryHeap, HashMap},
     fmt,
     sync::{
-        Arc,
+        Arc, Mutex as StdMutex,
         atomic::{AtomicU64, Ordering},
     },
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
@@ -348,6 +349,132 @@ impl AuthorityTransport for ReqwestAuthorityTransport {
 struct CacheEntry {
     principal: Principal,
     expires_at: Instant,
+    generation: u64,
+}
+
+#[derive(Default)]
+struct PositiveCache {
+    entries: HashMap<[u8; 32], CacheEntry>,
+    expirations: BinaryHeap<Reverse<(Instant, u64, [u8; 32])>>,
+    next_generation: u64,
+}
+
+impl PositiveCache {
+    fn get(&mut self, key: [u8; 32], now: Instant) -> Option<Principal> {
+        self.prune_expired(now);
+        self.entries.get(&key).map(|entry| entry.principal.clone())
+    }
+
+    fn insert(
+        &mut self,
+        key: [u8; 32],
+        principal: Principal,
+        expires_at: Instant,
+        max_entries: usize,
+    ) -> bool {
+        self.prune_expired(Instant::now());
+        let evicted = !self.entries.contains_key(&key)
+            && self.entries.len() >= max_entries
+            && self.evict_soonest_live();
+        self.next_generation = self.next_generation.wrapping_add(1).max(1);
+        let generation = self.next_generation;
+        self.entries.insert(
+            key,
+            CacheEntry {
+                principal,
+                expires_at,
+                generation,
+            },
+        );
+        self.expirations
+            .push(Reverse((expires_at, generation, key)));
+        evicted
+    }
+
+    fn prune_expired(&mut self, now: Instant) {
+        while let Some(Reverse((expires_at, generation, key))) = self.expirations.peek().copied() {
+            if expires_at > now {
+                break;
+            }
+            self.expirations.pop();
+            if self
+                .entries
+                .get(&key)
+                .is_some_and(|entry| entry.generation == generation && entry.expires_at <= now)
+            {
+                self.entries.remove(&key);
+            }
+        }
+    }
+
+    fn evict_soonest_live(&mut self) -> bool {
+        while let Some(Reverse((_expires_at, generation, key))) = self.expirations.pop() {
+            if self
+                .entries
+                .get(&key)
+                .is_some_and(|entry| entry.generation == generation)
+            {
+                self.entries.remove(&key);
+                return true;
+            }
+        }
+        if let Some(key) = self.entries.keys().next().copied() {
+            self.entries.remove(&key);
+            return true;
+        }
+        false
+    }
+
+    fn len(&self) -> usize {
+        self.entries.len()
+    }
+}
+
+struct FlightEntry {
+    gate: Arc<Mutex<()>>,
+    users: usize,
+}
+
+struct FlightLease {
+    key: [u8; 32],
+    gate: Arc<Mutex<()>>,
+    flights: Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>,
+}
+
+impl FlightLease {
+    fn acquire(flights: &Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>, key: [u8; 32]) -> Self {
+        let mut entries = lock_recover(flights);
+        let entry = entries.entry(key).or_insert_with(|| FlightEntry {
+            gate: Arc::new(Mutex::new(())),
+            users: 0,
+        });
+        entry.users = entry.users.saturating_add(1);
+        Self {
+            key,
+            gate: Arc::clone(&entry.gate),
+            flights: Arc::clone(flights),
+        }
+    }
+}
+
+impl Drop for FlightLease {
+    fn drop(&mut self) {
+        let mut entries = lock_recover(&self.flights);
+        let should_remove = entries.get_mut(&self.key).is_some_and(|entry| {
+            if !Arc::ptr_eq(&entry.gate, &self.gate) {
+                return false;
+            }
+            if entry.users > 1 {
+                entry.users -= 1;
+                false
+            } else {
+                true
+            }
+        });
+        if should_remove {
+            entries.remove(&self.key);
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -370,6 +497,7 @@ struct Metrics {
     introspections: AtomicU64,
     authority_failures: AtomicU64,
     claim_mismatches: AtomicU64,
+    cache_evictions: AtomicU64,
 }
 
 /// Snapshot of runtime counters. No credential values are retained.
@@ -387,14 +515,20 @@ pub struct MetricsSnapshot {
     pub authority_failures: u64,
     /// Local JWT and central claim mismatches.
     pub claim_mismatches: u64,
+    /// Positive authorization entries evicted at the configured bound.
+    pub cache_evictions: u64,
+    /// Current positive authorization entries.
+    pub positive_cache_entries: usize,
+    /// Current credential keys with an active or waiting singleflight caller.
+    pub active_flights: usize,
 }
 
 /// Hybrid local-verification and central-freshness authorizer.
 pub struct HybridAuthorizer<T = ReqwestAuthorityTransport> {
     config: Config,
     transport: T,
-    cache: Mutex<HashMap<[u8; 32], CacheEntry>>,
-    flights: Mutex<HashMap<[u8; 32], Arc<Mutex<()>>>>,
+    cache: StdMutex<PositiveCache>,
+    flights: Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>,
     jwks: Mutex<JwksCache>,
     metrics: Metrics,
 }
@@ -413,8 +547,8 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         Ok(Self {
             config,
             transport,
-            cache: Mutex::new(HashMap::new()),
-            flights: Mutex::new(HashMap::new()),
+            cache: StdMutex::new(PositiveCache::default()),
+            flights: Arc::new(StdMutex::new(HashMap::new())),
             jwks: Mutex::new(JwksCache::default()),
             metrics: Metrics::default(),
         })
@@ -453,22 +587,17 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         }
 
         let cache_key: [u8; 32] = Sha256::digest(token.as_bytes()).into();
-        if let Some(principal) = self.cached(cache_key).await {
+        if let Some(principal) = self.cached(cache_key) {
             self.metrics.cache_hits.fetch_add(1, Ordering::Relaxed);
             require_scopes(&principal, &self.config.required_scopes, required_scopes)?;
             return Ok(principal);
         }
         self.metrics.cache_misses.fetch_add(1, Ordering::Relaxed);
 
-        let flight = {
-            let mut flights = self.flights.lock().await;
-            flights
-                .entry(cache_key)
-                .or_insert_with(|| Arc::new(Mutex::new(())))
-                .clone()
-        };
-        let guard = flight.lock().await;
-        let result = if let Some(principal) = self.cached(cache_key).await {
+        let flight = FlightLease::acquire(&self.flights, cache_key);
+        let gate = Arc::clone(&flight.gate);
+        let guard = gate.lock().await;
+        let result = if let Some(principal) = self.cached(cache_key) {
             self.metrics.cache_hits.fetch_add(1, Ordering::Relaxed);
             require_scopes(&principal, &self.config.required_scopes, required_scopes)
                 .map(|()| principal)
@@ -479,7 +608,7 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
                     // particular operation lacks a scope. A later operation
                     // still rechecks its own scope set against the cached
                     // principal, and the cache remains bounded by freshness.
-                    self.store(cache_key, principal.clone()).await;
+                    self.store(cache_key, principal.clone());
                     require_scopes(&principal, &self.config.required_scopes, required_scopes)
                         .map(|()| principal)
                 }
@@ -487,12 +616,14 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             }
         };
         drop(guard);
-        self.remove_flight(cache_key, &flight).await;
+        drop(flight);
         result
     }
 
-    /// Return a lock-free snapshot of authorization counters.
+    /// Return a privacy-safe snapshot of authorization counters and bounds.
     pub fn metrics(&self) -> MetricsSnapshot {
+        let positive_cache_entries = lock_recover(&self.cache).len();
+        let active_flights = lock_recover(&self.flights).len();
         MetricsSnapshot {
             cache_hits: self.metrics.cache_hits.load(Ordering::Relaxed),
             cache_misses: self.metrics.cache_misses.load(Ordering::Relaxed),
@@ -500,6 +631,9 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             introspections: self.metrics.introspections.load(Ordering::Relaxed),
             authority_failures: self.metrics.authority_failures.load(Ordering::Relaxed),
             claim_mismatches: self.metrics.claim_mismatches.load(Ordering::Relaxed),
+            cache_evictions: self.metrics.cache_evictions.load(Ordering::Relaxed),
+            positive_cache_entries,
+            active_flights,
         }
     }
 
@@ -712,20 +846,11 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         })
     }
 
-    async fn cached(&self, key: [u8; 32]) -> Option<Principal> {
-        let mut cache = self.cache.lock().await;
-        let now = Instant::now();
-        match cache.get(&key) {
-            Some(entry) if entry.expires_at > now => Some(entry.principal.clone()),
-            Some(_) => {
-                cache.remove(&key);
-                None
-            }
-            None => None,
-        }
+    fn cached(&self, key: [u8; 32]) -> Option<Principal> {
+        lock_recover(&self.cache).get(key, Instant::now())
     }
 
-    async fn store(&self, key: [u8; 32], principal: Principal) {
+    fn store(&self, key: [u8; 32], principal: Principal) {
         let now_epoch = unix_time_seconds();
         let token_ttl = principal
             .expires_at_epoch_seconds
@@ -739,34 +864,22 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         if ttl.is_zero() {
             return;
         }
-        let mut cache = self.cache.lock().await;
-        let now = Instant::now();
-        cache.retain(|_, entry| entry.expires_at > now);
-        if cache.len() >= self.config.max_cache_entries
-            && let Some(oldest) = cache
-                .iter()
-                .min_by_key(|(_, entry)| entry.expires_at)
-                .map(|(key, _)| *key)
-        {
-            cache.remove(&oldest);
-        }
-        cache.insert(
+        let expires_at = Instant::now() + ttl;
+        if lock_recover(&self.cache).insert(
             key,
-            CacheEntry {
-                principal,
-                expires_at: now + ttl,
-            },
-        );
-    }
-
-    async fn remove_flight(&self, key: [u8; 32], flight: &Arc<Mutex<()>>) {
-        let mut flights = self.flights.lock().await;
-        if flights
-            .get(&key)
-            .is_some_and(|existing| Arc::ptr_eq(existing, flight))
-        {
-            flights.remove(&key);
+            principal,
+            expires_at,
+            self.config.max_cache_entries,
+        ) {
+            self.metrics.cache_evictions.fetch_add(1, Ordering::Relaxed);
         }
+    }
+}
+
+fn lock_recover<T>(mutex: &StdMutex<T>) -> std::sync::MutexGuard<'_, T> {
+    match mutex.lock() {
+        Ok(guard) => guard,
+        Err(poisoned) => poisoned.into_inner(),
     }
 }
 
