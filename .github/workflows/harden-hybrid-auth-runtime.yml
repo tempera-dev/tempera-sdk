@@ -1,6 +1,12 @@
 name: Harden Hybrid Auth Runtime
 
 on:
+  push:
+    branches: [agent/hybrid-auth-runtime]
+    paths:
+      - ".github/workflows/harden-hybrid-auth-runtime.yml"
+      - "scripts/harden-hybrid-auth-runtime.py"
+      - "packages/auth-rust/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -12,20 +18,22 @@ permissions:
   contents: write
 
 concurrency:
-  group: harden-hybrid-auth-runtime-${{ github.event.pull_request.number }}
+  group: harden-hybrid-auth-runtime-agent-hybrid-auth-runtime
   cancel-in-progress: false
 
 jobs:
   harden:
     if: >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref == 'agent/hybrid-auth-runtime'
+      (github.event_name == 'push' && github.ref == 'refs/heads/agent/hybrid-auth-runtime') ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.head.ref == 'agent/hybrid-auth-runtime')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: agent/hybrid-auth-runtime
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@1.97.1
         with:
@@ -66,12 +74,11 @@ jobs:
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
           cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          rm -f packages/auth-rust/.harden-trigger
           rm scripts/harden-hybrid-auth-runtime.py
           rm .github/workflows/harden-hybrid-auth-runtime.yml
       - name: Commit validated runtime
         shell: bash
-        env:
-          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -79,4 +86,4 @@ jobs:
           git add -A
           git diff --cached --check
           git commit -m "Harden hybrid authority boundaries"
-          git push origin "HEAD:${HEAD_BRANCH}"
+          git push origin HEAD:agent/hybrid-auth-runtime
