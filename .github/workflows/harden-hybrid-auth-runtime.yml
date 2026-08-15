@@ -35,6 +35,13 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/harden-hybrid-auth-runtime.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('packages/auth-rust/tests/hardening.rs')
+          text = path.read_text()
+          if not text.startswith('//!'):
+              path.write_text('//! Adversarial configuration tests for the hybrid authorization runtime.\n\n' + text)
+          PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
           cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
