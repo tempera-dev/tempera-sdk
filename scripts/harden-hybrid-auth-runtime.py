@@ -221,8 +221,8 @@ replace_regex(
         let issued_at_epoch_seconds = strict_u64_claim(object, "iat")?;
         let expires_at_epoch_seconds = strict_u64_claim(object, "exp")?;
         let now = unix_time_seconds();
-        if issued_at_epoch_seconds.is_some_and(|issued| {
-            issued > now.saturating_add(self.config.clock_skew_seconds)
+        if issued_at_epoch_seconds.is_some_and(|issued_at| {
+            issued_at > now.saturating_add(self.config.clock_skew_seconds)
         }) {
             return Err(AuthError::InvalidToken);
         }
@@ -232,10 +232,10 @@ replace_regex(
             return Err(AuthError::InvalidToken);
         }
         if token_type == "access_token" {
-            let issued = issued_at_epoch_seconds.ok_or(AuthError::InvalidToken)?;
+            let issued_at = issued_at_epoch_seconds.ok_or(AuthError::InvalidToken)?;
             let expiry = expires_at_epoch_seconds.ok_or(AuthError::InvalidToken)?;
-            if expiry < issued
-                || expiry - issued > self.config.max_access_token_lifetime_seconds
+            if expiry < issued_at
+                || expiry - issued_at > self.config.max_access_token_lifetime_seconds
             {
                 return Err(AuthError::InvalidToken);
             }
@@ -296,9 +296,7 @@ replace_regex(
         Some(Value::String(value))
             if !value.is_empty()
                 && value.len() <= max_bytes
-                && value
-                    .bytes()
-                    .all(|byte| !byte.is_ascii_control()) =>
+                && value.bytes().all(|byte| !byte.is_ascii_control()) =>
         {
             Ok(Some(value.clone()))
         }
@@ -378,8 +376,7 @@ replace_regex(
         )));
     }
     let secure = url.scheme() == "https";
-    let loopback_http =
-        allow_http && url.scheme() == "http" && is_loopback_url(&url);
+    let loopback_http = allow_http && url.scheme() == "http" && is_loopback_url(&url);
     if !secure && !loopback_http {
         return Err(AuthError::InvalidConfiguration(format!(
             "{name} must use HTTPS, except for explicit loopback development"
@@ -392,171 +389,4 @@ fn is_loopback_url(url: &Url) -> bool {
     match url.host() {
         Some(Host::Ipv4(address)) => address.is_loopback(),
         Some(Host::Ipv6(address)) => address.is_loopback(),
-        Some(Host::Domain(domain)) => domain.eq_ignore_ascii_case("localhost"),
-        None => false,
-    }
-}
-
-fn same_origin(left: &Url, right: &Url) -> bool {
-    left.scheme() == right.scheme()
-        && left.host_str().map(str::to_ascii_lowercase)
-            == right.host_str().map(str::to_ascii_lowercase)
-        && left.port_or_known_default() == right.port_or_known_default()
-}
-''',
-    "loopback-only same-origin authority URLs",
-)
-LIB.write_text(text)
-
-hybrid = TEST.read_text()
-hybrid = hybrid.replace("http://auth.test", "http://127.0.0.1:4400")
-hybrid = hybrid.replace('"iss": "http://auth.test"', '"iss": "http://127.0.0.1:4400"')
-hybrid = hybrid.replace(
-    '''    assert_eq!(principal.security_epoch, Some(7));
-''',
-    '''    assert_eq!(principal.security_epoch, Some(7));
-    assert!(principal.issued_at_epoch_seconds.is_some());
-''',
-    1,
-)
-hybrid = hybrid.replace(
-    '''    let secure = Config::new(
-        "https://api.tempera.dev",
-        "tempera-document",
-        "https://api.tempera.dev/.well-known/jwks.json",
-        "https://api.tempera.dev/v1/oauth/introspect",
-    );
-    assert!(secure.validate().is_ok());
-''',
-    '''    let mut secure = Config::new(
-        "https://api.tempera.dev",
-        "tempera-document",
-        "https://api.tempera.dev/.well-known/jwks.json",
-        "https://api.tempera.dev/v1/oauth/introspect",
-    );
-    secure.introspection_secret = Some("hosted-resource-server-secret".into());
-    assert!(secure.validate().is_ok());
-''',
-    1,
-)
-append = r'''
-
-#[tokio::test]
-async fn future_and_overlong_access_tokens_fail_before_introspection() {
-    for mut claims in [access_claims(), access_claims()] {
-        if claims["jti"] == "jti_test" {
-            claims["jti"] = Value::String(format!("jti_{}", claims["iat"]));
-        }
-        let issued = now();
-        if claims["jti"].as_str().is_some_and(|value| value.contains(&issued.to_string())) {
-            claims["iat"] = Value::from(issued + 301);
-            claims["exp"] = Value::from(issued + 600);
-        } else {
-            claims["iat"] = Value::from(issued);
-            claims["exp"] = Value::from(issued + 3_601);
-        }
-        let token = access_token(&claims);
-        let transport = FakeTransport::new();
-        transport.insert(&token, central_claims(&claims)).await;
-        let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
-        assert_eq!(
-            authorizer.authorize(&token, &["document:read"]).await,
-            Err(AuthError::InvalidToken),
-        );
-        assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 0);
-    }
-}
-
-#[tokio::test]
-async fn malformed_scope_claim_fails_instead_of_being_silently_dropped() {
-    let transport = FakeTransport::new();
-    let mut claims = access_claims();
-    claims["scope"] = json!(["document:read", 7]);
-    let token = access_token(&claims);
-    transport.insert(&token, central_claims(&claims)).await;
-    let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
-    assert_eq!(
-        authorizer.authorize(&token, &["document:read"]).await,
-        Err(AuthError::InvalidToken),
-    );
-    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 0);
-}
-
-#[tokio::test]
-async fn missing_scope_releases_singleflight_and_preserves_bounded_authority_cache() {
-    let transport = FakeTransport::new();
-    let claims = access_claims();
-    let token = access_token(&claims);
-    transport.insert(&token, central_claims(&claims)).await;
-    let authorizer = HybridAuthorizer::with_transport(config(), transport.clone()).unwrap();
-
-    assert_eq!(
-        authorizer.authorize(&token, &["admin"]).await,
-        Err(AuthError::MissingScope("admin".into())),
-    );
-    let snapshot = authorizer.cache_snapshot().await;
-    assert_eq!(snapshot.inflight_entries, 0);
-    assert_eq!(snapshot.positive_entries, 1);
-    authorizer
-        .authorize(&token, &["document:read"])
-        .await
-        .unwrap();
-    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 1);
-}
-
-#[test]
-fn authority_urls_are_loopback_only_for_http_same_origin_and_secret_bound() {
-    let mut non_loopback = Config::new(
-        "http://auth.internal",
-        "tempera-document",
-        "http://auth.internal/.well-known/jwks.json",
-        "http://auth.internal/v1/oauth/introspect",
-    );
-    non_loopback.allow_insecure_http = true;
-    non_loopback.introspection_secret = Some("secret".into());
-    assert!(matches!(
-        non_loopback.validate(),
-        Err(AuthError::InvalidConfiguration(_)),
-    ));
-
-    let mut cross_origin = Config::new(
-        "https://api.tempera.dev",
-        "tempera-document",
-        "https://keys.example.test/.well-known/jwks.json",
-        "https://api.tempera.dev/v1/oauth/introspect",
-    );
-    cross_origin.introspection_secret = Some("secret".into());
-    assert!(matches!(
-        cross_origin.validate(),
-        Err(AuthError::InvalidConfiguration(_)),
-    ));
-
-    let hosted_without_secret = Config::new(
-        "https://api.tempera.dev",
-        "tempera-document",
-        "https://api.tempera.dev/.well-known/jwks.json",
-        "https://api.tempera.dev/v1/oauth/introspect",
-    );
-    assert!(matches!(
-        hosted_without_secret.validate(),
-        Err(AuthError::InvalidConfiguration(_)),
-    ));
-}
-'''
-if "future_and_overlong_access_tokens_fail_before_introspection" in hybrid:
-    raise SystemExit("security tests already appended")
-hybrid += append
-TEST.write_text(hybrid)
-
-readme = README.read_text()
-readme += '''
-
-## Authority configuration
-
-Hosted JWKS and introspection endpoints must use HTTPS and share the exact issuer origin. HTTP is accepted only for explicit loopback development. Hosted introspection requires a resource-server secret, preventing accidental unauthenticated or cross-origin authority calls.
-
-Access tokens must include integer `iat` and `exp` claims, may not be issued in the future beyond configured skew, and may not exceed the configured maximum lifetime (one hour by default). Authority IDs and scope/audience collections are parsed strictly; malformed members fail the credential rather than being silently discarded.
-'''
-README.write_text(readme)
-
-print("hybrid auth authority and JWT hardening applied")
+        Some(Host::Domain(domain)) => domain.eq_ignore_ascii_case("localhost
