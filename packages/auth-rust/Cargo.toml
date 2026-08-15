@@ -1,0 +1,43 @@
+[package]
+name = "tempera-auth-runtime"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "Apache-2.0"
+repository = "https://github.com/tempera-dev/tempera-sdk"
+description = "Bounded local-JWT plus central-freshness authorization runtime for Tempera services"
+
+[lib]
+path = "src/lib.rs"
+
+[workspace]
+
+[dependencies]
+async-trait = "0.1"
+base64 = "0.22"
+futures-util = "0.3"
+jsonwebtoken = { version = "=10.4.0", default-features = false, features = ["aws_lc_rs"] }
+reqwest = { version = "0.13.2", default-features = false, features = ["json", "rustls", "stream"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+tokio = { version = "1.47", features = ["sync", "time"] }
+url = "2.5"
+
+[dev-dependencies]
+# PEM decoding is needed only to mint deterministic JWT fixtures in tests. The
+# production dependency remains public-JWK/DER-only.
+jsonwebtoken = { version = "=10.4.0", default-features = false, features = ["aws_lc_rs", "use_pem"] }
+tokio = { version = "1.47", features = ["full"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
