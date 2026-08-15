@@ -39,31 +39,24 @@ jobs:
 
           path = Path("scripts/harden-auth-authority-admission.py")
           text = path.read_text(encoding="utf-8")
-          old = '''        let now = Instant::now();
-          {
-              let cache = self.jwks.lock().await;
-              if let Some(key) = lookup_jwks_key(
-                  &cache,
-                  kid,
-                  now,
-                  self.config.jwks_refresh_cooldown,
-              )? {
-                  return Ok(key);
-              }
-          }
-          '''
-          new = '''        {
+          start_marker = "        let now = Instant::now();\n        {\n            let cache = self.jwks.lock().await;"
+          end_marker = "\n\n        let _refresh_guard = self.jwks_refresh.lock().await;"
+          if text.count(start_marker) != 1 or text.count(end_marker) != 1:
+              raise SystemExit(
+                  f"JWKS transformer markers changed: start={text.count(start_marker)}, "
+                  f"end={text.count(end_marker)}"
+              )
+          start = text.index(start_marker)
+          end = text.index(end_marker, start)
+          fast_path = '''        {
               let cache = self.jwks.lock().await;
               if cache.expires_at.is_some_and(|expiry| expiry > Instant::now())
                   && let Some(key) = cache.keys.get(kid)
               {
                   return Ok(key.key.clone());
               }
-          }
-          '''
-          if text.count(old) != 1:
-              raise SystemExit(f"JWKS fast-path transformer changed: found {text.count(old)} blocks")
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          }'''
+          path.write_text(text[:start] + fast_path + text[end:], encoding="utf-8")
           PY
           python3 scripts/harden-auth-authority-admission.py
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
