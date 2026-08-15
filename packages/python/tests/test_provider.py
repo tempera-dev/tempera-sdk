@@ -30,18 +30,7 @@ class ProviderAuthoringTest(unittest.TestCase):
         self.assertEqual(len(tools), 1)
         self.assertEqual(tools[0]["name"], "add")
         self.assertEqual(tools[0]["description"], "Add two integers.")
-        self.assertEqual(
-            tools[0]["inputSchema"],
-            {
-                "type": "object",
-                "properties": {
-                    "a": {"type": "integer"},
-                    "b": {"type": "integer", "default": 1},
-                },
-                "additionalProperties": False,
-                "required": ["a"],
-            },
-        )
+        self.assertEqual(tools[0]["inputSchema"], {"type": "object", "properties": {"a": {"type": "integer"}, "b": {"type": "integer", "default": 1}}, "additionalProperties": False, "required": ["a"]})
         self.assertTrue(tools[0]["annotations"]["readOnlyHint"])
         self.assertTrue(tools[0]["annotations"]["idempotentHint"])
         result = app.handle({"method": "tools/call", "params": {"name": "add", "arguments": {"a": 41}}})
@@ -140,7 +129,7 @@ class ProviderAuthoringTest(unittest.TestCase):
             calls.append(value)
             return value
 
-        with self.assertRaisesRegex(ProviderDefinitionError, "async tools require"):
+        with self.assertRaisesRegex(ProviderDefinitionError, "async tool requires handle_async"):
             app.handle({"method": "tools/call", "params": {"name": "async_tool", "arguments": {"value": 1}}})
         self.assertEqual(calls, [])
 
