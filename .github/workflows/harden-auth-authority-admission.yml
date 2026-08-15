@@ -176,6 +176,27 @@ jobs:
           if hybrid.count(marker) != 1:
               raise SystemExit(f"unknown-kid test shape changed: {hybrid.count(marker)}")
           hybrid = hybrid.replace(marker, replacement_test, 1)
+
+          cooldown_marker = '''    authorizer
+              .authorize(&initial_token, &["document:read"])
+              .await
+              .unwrap();
+
+              let mut unknown_claims = access_claims();'''
+          cooldown_replacement = '''    authorizer
+              .authorize(&initial_token, &["document:read"])
+              .await
+              .unwrap();
+
+              // The refresh cooldown intentionally begins when the completed
+              // JWKS document is published. Cross that boundary so this test
+              // measures read progress during a real subsequent refresh.
+              tokio::time::sleep(Duration::from_millis(50)).await;
+
+              let mut unknown_claims = access_claims();'''
+          if hybrid.count(cooldown_marker) != 1:
+              raise SystemExit(f"JWKS progress test shape changed: {hybrid.count(cooldown_marker)}")
+          hybrid = hybrid.replace(cooldown_marker, cooldown_replacement, 1)
           tests.write_text(hybrid, encoding="utf-8")
           PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
