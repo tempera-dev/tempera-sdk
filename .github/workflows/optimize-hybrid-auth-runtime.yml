@@ -1,0 +1,71 @@
+name: Optimize Hybrid Auth Runtime
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/optimize-hybrid-auth-runtime.yml"
+      - "scripts/optimize-hybrid-auth-runtime.py"
+      - "packages/auth-rust/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: optimize-hybrid-auth-runtime-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  optimize:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'agent/optimize-hybrid-auth-runtime-v2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt,clippy
+      - name: Apply and validate bounded cache and singleflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/optimize-hybrid-auth-runtime.py")
+          text = path.read_text(encoding="utf-8")
+          replacements = {
+              "Concurrent misses for the same token are singleflighted. Cache and flight keys are SHA-256 digests; raw bearer values are never retained as map keys, metrics labels, or log fields.":
+                  "Concurrent misses for the same token are singleflighted. Cache and flight keys are SHA-256 digests; raw bearer values are never retained as map keys, metric labels, or log fields.",
+              "The package exposes counters for cache hits/misses, local JWT rejection, introspection, authority failure, and claim mismatch. These counters contain no credential or tenant identifiers.":
+                  "The package exposes privacy-safe counters for cache hits/misses, local JWT rejection, central introspection, authority failure, and claim mismatch. These counters contain no credential or tenant identifiers.",
+          }
+          for old, new in replacements.items():
+              if text.count(old) != 1:
+                  raise SystemExit(f"transformer documentation anchor changed: {old!r}")
+              text = text.replace(old, new, 1)
+          path.write_text(text, encoding="utf-8")
+          PY
+          python3 scripts/optimize-hybrid-auth-runtime.py
+          cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
+          cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
+          cargo test --manifest-path packages/auth-rust/Cargo.toml --locked
+          rm scripts/optimize-hybrid-auth-runtime.py
+          rm .github/workflows/optimize-hybrid-auth-runtime.yml
+      - name: Commit validated optimization
+        shell: bash
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898218+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Bound hybrid auth cache and singleflight state"
+          git push origin "HEAD:${HEAD_BRANCH}"
