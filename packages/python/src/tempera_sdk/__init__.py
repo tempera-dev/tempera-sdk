@@ -45,8 +45,8 @@ from .provider import (
     MCP_PROVIDER_PROTOCOL_VERSION,
     ProviderArgumentError,
     ProviderDefinitionError,
-    TemperaProvider,
 )
+from .provider_capabilities import TemperaProvider
 
 # Deprecated alias kept for 0.1.x callers; use ENVIRONMENTS.
 API_TARGETS = ENVIRONMENTS
