@@ -144,10 +144,11 @@ jobs:
               };
               let requested = keys.get(kid).map(|key| key.key.clone());
               {
+                  let published_at = Instant::now();
                   let mut cache = self.jwks.lock().await;
                   cache.keys = keys;
-                  cache.expires_at = Some(Instant::now() + self.config.jwks_cache_ttl);
-                  cache.last_refresh_attempt = Some(Instant::now());
+                  cache.expires_at = Some(published_at + self.config.jwks_cache_ttl);
+                  cache.last_refresh_attempt = Some(published_at);
                   cache.generation = cache.generation.wrapping_add(1).max(1);
               }
               requested.ok_or(AuthError::InvalidToken)
@@ -158,6 +159,24 @@ jobs:
           if count != 1:
               raise SystemExit(f"jwks_key shape changed: {count}")
           path.write_text(text, encoding="utf-8")
+
+          tests = Path("packages/auth-rust/tests/hybrid.rs")
+          hybrid = tests.read_text(encoding="utf-8")
+          marker = '''async fn concurrent_unknown_key_refreshes_are_singleflighted() {
+              let transport = FakeTransport::new().with_jwks_delay(Duration::from_millis(100));
+              let authorizer =
+                  Arc::new(HybridAuthorizer::with_transport(config(), transport.clone()).unwrap());'''
+          replacement_test = '''async fn concurrent_unknown_key_refreshes_are_singleflighted() {
+              let transport = FakeTransport::new().with_jwks_delay(Duration::from_millis(100));
+              let mut bounded = config();
+              bounded.jwks_refresh_cooldown = Duration::from_secs(2);
+              let authorizer = Arc::new(
+                  HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap(),
+              );'''
+          if hybrid.count(marker) != 1:
+              raise SystemExit(f"unknown-kid test shape changed: {hybrid.count(marker)}")
+          hybrid = hybrid.replace(marker, replacement_test, 1)
+          tests.write_text(hybrid, encoding="utf-8")
           PY
           cargo fmt --manifest-path packages/auth-rust/Cargo.toml --all
           cargo clippy --manifest-path packages/auth-rust/Cargo.toml --locked --all-targets --all-features -- -D warnings
