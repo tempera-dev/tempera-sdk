@@ -74,3 +74,31 @@ fn required_scope_collections_are_bounded() {
         Err(AuthError::InvalidConfiguration(_))
     ));
 }
+
+#[test]
+fn authority_admission_bounds_are_validated() {
+    let mut c = base();
+    c.max_active_flights = 0;
+    assert!(matches!(
+        c.validate(),
+        Err(AuthError::InvalidConfiguration(_))
+    ));
+    c.max_active_flights = 1;
+    c.max_waiters_per_flight = 65_537;
+    assert!(matches!(
+        c.validate(),
+        Err(AuthError::InvalidConfiguration(_))
+    ));
+    c.max_waiters_per_flight = 0;
+    c.max_introspection_in_flight = 0;
+    assert!(matches!(
+        c.validate(),
+        Err(AuthError::InvalidConfiguration(_))
+    ));
+    c.max_introspection_in_flight = 1;
+    c.introspection_queue_timeout = Duration::ZERO;
+    assert!(matches!(
+        c.validate(),
+        Err(AuthError::InvalidConfiguration(_))
+    ));
+}

@@ -59,13 +59,26 @@ fn jwks() -> Value {
     })
 }
 
+struct ActiveCallGuard {
+    active: Arc<AtomicUsize>,
+}
+
+impl Drop for ActiveCallGuard {
+    fn drop(&mut self) {
+        self.active.fetch_sub(1, Ordering::Relaxed);
+    }
+}
+
 #[derive(Clone)]
 struct FakeTransport {
     jwks: Arc<Mutex<Value>>,
     decisions: Arc<Mutex<HashMap<String, Value>>>,
     jwks_calls: Arc<AtomicUsize>,
     introspection_calls: Arc<AtomicUsize>,
-    delay: Duration,
+    active_introspections: Arc<AtomicUsize>,
+    max_active_introspections: Arc<AtomicUsize>,
+    introspection_delay: Duration,
+    jwks_delay: Duration,
 }
 
 impl FakeTransport {
@@ -75,13 +88,25 @@ impl FakeTransport {
             decisions: Arc::new(Mutex::new(HashMap::new())),
             jwks_calls: Arc::new(AtomicUsize::new(0)),
             introspection_calls: Arc::new(AtomicUsize::new(0)),
-            delay: Duration::ZERO,
+            active_introspections: Arc::new(AtomicUsize::new(0)),
+            max_active_introspections: Arc::new(AtomicUsize::new(0)),
+            introspection_delay: Duration::ZERO,
+            jwks_delay: Duration::ZERO,
         }
     }
 
     fn with_delay(mut self, delay: Duration) -> Self {
-        self.delay = delay;
+        self.introspection_delay = delay;
         self
+    }
+
+    fn with_jwks_delay(mut self, delay: Duration) -> Self {
+        self.jwks_delay = delay;
+        self
+    }
+
+    fn max_active_introspections(&self) -> usize {
+        self.max_active_introspections.load(Ordering::Relaxed)
     }
 
     async fn insert(&self, token: impl Into<String>, claims: Value) {
@@ -93,6 +118,9 @@ impl FakeTransport {
 impl AuthorityTransport for FakeTransport {
     async fn fetch_jwks(&self, _url: &str, _max_bytes: usize) -> Result<Value, AuthError> {
         self.jwks_calls.fetch_add(1, Ordering::Relaxed);
+        if !self.jwks_delay.is_zero() {
+            tokio::time::sleep(self.jwks_delay).await;
+        }
         Ok(self.jwks.lock().await.clone())
     }
 
@@ -104,8 +132,14 @@ impl AuthorityTransport for FakeTransport {
         _max_bytes: usize,
     ) -> Result<Value, AuthError> {
         self.introspection_calls.fetch_add(1, Ordering::Relaxed);
-        if !self.delay.is_zero() {
-            tokio::time::sleep(self.delay).await;
+        let active = self.active_introspections.fetch_add(1, Ordering::Relaxed) + 1;
+        self.max_active_introspections
+            .fetch_max(active, Ordering::Relaxed);
+        let _active_guard = ActiveCallGuard {
+            active: Arc::clone(&self.active_introspections),
+        };
+        if !self.introspection_delay.is_zero() {
+            tokio::time::sleep(self.introspection_delay).await;
         }
         Ok(self
             .decisions
@@ -159,8 +193,12 @@ fn access_claims() -> Value {
 }
 
 fn access_token(claims: &Value) -> String {
+    access_token_with_kid(claims, "kid_test")
+}
+
+fn access_token_with_kid(claims: &Value, kid: &str) -> String {
     let mut header = Header::new(Algorithm::RS256);
-    header.kid = Some("kid_test".into());
+    header.kid = Some(kid.into());
     header.typ = Some("at+jwt".into());
     encode(
         &header,
@@ -168,6 +206,45 @@ fn access_token(claims: &Value) -> String {
         &EncodingKey::from_rsa_pem(PRIVATE_KEY.as_bytes()).unwrap(),
     )
     .unwrap()
+}
+
+fn api_key_claims(key_id: &str) -> Value {
+    json!({
+        "active": true,
+        "iss": "http://127.0.0.1:8080",
+        "aud": "tempera-document",
+        "sub": "usr_service",
+        "client_id": "raw-api",
+        "token_type": "api_key",
+        "api_key_id": key_id,
+        "org_id": "org_test",
+        "project_id": "proj_test",
+        "environment_id": "env_test",
+        "scope": "document:read"
+    })
+}
+
+async fn wait_for_counter(counter: &AtomicUsize, expected: usize) {
+    tokio::time::timeout(Duration::from_secs(2), async {
+        while counter.load(Ordering::Relaxed) < expected {
+            tokio::task::yield_now().await;
+        }
+    })
+    .await
+    .unwrap();
+}
+
+async fn wait_for_flight_participants<T: AuthorityTransport>(
+    authorizer: &HybridAuthorizer<T>,
+    expected: usize,
+) {
+    tokio::time::timeout(Duration::from_secs(2), async {
+        while authorizer.metrics().active_flight_participants < expected {
+            tokio::task::yield_now().await;
+        }
+    })
+    .await
+    .unwrap();
 }
 
 fn central_claims(local: &Value) -> Value {
@@ -418,6 +495,192 @@ async fn positive_cache_evicts_at_a_strict_bound() {
         .await
         .unwrap();
     assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 4);
+}
+
+#[tokio::test]
+async fn central_introspection_concurrency_is_strictly_bounded() {
+    let transport = FakeTransport::new().with_delay(Duration::from_millis(200));
+    let mut bounded = config();
+    bounded.max_introspection_in_flight = 2;
+    bounded.introspection_queue_timeout = Duration::from_millis(20);
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap());
+
+    for suffix in ["a", "b", "c"] {
+        transport
+            .insert(
+                format!("tp_key_{suffix}.secret"),
+                api_key_claims(&format!("key_{suffix}")),
+            )
+            .await;
+    }
+    let mut tasks = Vec::new();
+    for suffix in ["a", "b"] {
+        let authorizer = Arc::clone(&authorizer);
+        let token = format!("tp_key_{suffix}.secret");
+        tasks.push(tokio::spawn(async move {
+            authorizer.authorize(&token, &["document:read"]).await
+        }));
+    }
+    wait_for_counter(&transport.active_introspections, 2).await;
+    assert_eq!(
+        authorizer
+            .authorize("tp_key_c.secret", &["document:read"])
+            .await,
+        Err(AuthError::Unavailable),
+    );
+    for task in tasks {
+        assert!(task.await.unwrap().is_ok());
+    }
+    assert_eq!(transport.max_active_introspections(), 2);
+    let metrics = authorizer.metrics();
+    assert_eq!(metrics.introspection_admission_rejections, 1);
+    assert_eq!(metrics.introspections, 2);
+    assert_eq!(metrics.introspection_in_flight, 0);
+}
+
+#[tokio::test]
+async fn distinct_credential_flights_are_strictly_bounded() {
+    let transport = FakeTransport::new().with_delay(Duration::from_millis(200));
+    let mut bounded = config();
+    bounded.max_active_flights = 2;
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap());
+
+    for suffix in ["a", "b", "c"] {
+        transport
+            .insert(
+                format!("tp_key_{suffix}.secret"),
+                api_key_claims(&format!("key_{suffix}")),
+            )
+            .await;
+    }
+    let mut tasks = Vec::new();
+    for suffix in ["a", "b"] {
+        let authorizer = Arc::clone(&authorizer);
+        let token = format!("tp_key_{suffix}.secret");
+        tasks.push(tokio::spawn(async move {
+            authorizer.authorize(&token, &["document:read"]).await
+        }));
+    }
+    wait_for_counter(&transport.active_introspections, 2).await;
+    assert_eq!(
+        authorizer
+            .authorize("tp_key_c.secret", &["document:read"])
+            .await,
+        Err(AuthError::Unavailable),
+    );
+    for task in tasks {
+        assert!(task.await.unwrap().is_ok());
+    }
+    assert_eq!(authorizer.metrics().coordination_rejections, 1);
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 2);
+}
+
+#[tokio::test]
+async fn per_credential_waiters_are_strictly_bounded() {
+    let transport = FakeTransport::new().with_delay(Duration::from_millis(200));
+    let token = "tp_key_shared.secret";
+    transport.insert(token, api_key_claims("key_shared")).await;
+    let mut bounded = config();
+    bounded.max_waiters_per_flight = 1;
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap());
+
+    let leader_authorizer = Arc::clone(&authorizer);
+    let leader =
+        tokio::spawn(async move { leader_authorizer.authorize(token, &["document:read"]).await });
+    wait_for_counter(&transport.active_introspections, 1).await;
+    let waiter_authorizer = Arc::clone(&authorizer);
+    let waiter =
+        tokio::spawn(async move { waiter_authorizer.authorize(token, &["document:read"]).await });
+    wait_for_flight_participants(&authorizer, 2).await;
+    assert_eq!(
+        authorizer.authorize(token, &["document:read"]).await,
+        Err(AuthError::Unavailable),
+    );
+    assert!(leader.await.unwrap().is_ok());
+    assert!(waiter.await.unwrap().is_ok());
+    assert_eq!(transport.introspection_calls.load(Ordering::Relaxed), 1);
+    assert_eq!(authorizer.metrics().coordination_rejections, 1);
+}
+
+#[tokio::test]
+async fn jwks_refresh_does_not_block_a_fresh_cached_key() {
+    let transport = FakeTransport::new().with_jwks_delay(Duration::from_millis(200));
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(config(), transport.clone()).unwrap());
+
+    let mut initial_claims = access_claims();
+    initial_claims["jti"] = Value::String("jti_initial".into());
+    let initial_token = access_token(&initial_claims);
+    transport
+        .insert(&initial_token, central_claims(&initial_claims))
+        .await;
+    authorizer
+        .authorize(&initial_token, &["document:read"])
+        .await
+        .unwrap();
+
+    // The initial successful fetch starts the negative-refresh cooldown.
+    // Cross that boundary before starting a deliberately slow unknown-kid
+    // refresh so this test measures read progress during real network I/O.
+    tokio::time::sleep(Duration::from_millis(50)).await;
+
+    let mut unknown_claims = access_claims();
+    unknown_claims["jti"] = Value::String("jti_unknown".into());
+    let unknown_token = access_token_with_kid(&unknown_claims, "kid_unknown");
+    transport
+        .insert(&unknown_token, central_claims(&unknown_claims))
+        .await;
+    let unknown_authorizer = Arc::clone(&authorizer);
+    let unknown = tokio::spawn(async move {
+        unknown_authorizer
+            .authorize(&unknown_token, &["document:read"])
+            .await
+    });
+    wait_for_counter(&transport.jwks_calls, 2).await;
+
+    let mut known_claims = access_claims();
+    known_claims["jti"] = Value::String("jti_known_during_refresh".into());
+    let known_token = access_token(&known_claims);
+    transport
+        .insert(&known_token, central_claims(&known_claims))
+        .await;
+    let known_result = tokio::time::timeout(
+        Duration::from_millis(100),
+        authorizer.authorize(&known_token, &["document:read"]),
+    )
+    .await
+    .expect("fresh cached key must not wait for unrelated JWKS refresh");
+    assert!(known_result.is_ok());
+    assert_eq!(unknown.await.unwrap(), Err(AuthError::InvalidToken));
+    assert_eq!(transport.jwks_calls.load(Ordering::Relaxed), 2);
+}
+
+#[tokio::test]
+async fn concurrent_unknown_key_refreshes_are_singleflighted() {
+    let transport = FakeTransport::new().with_jwks_delay(Duration::from_millis(100));
+    let mut bounded = config();
+    bounded.jwks_refresh_cooldown = Duration::from_secs(2);
+    let authorizer =
+        Arc::new(HybridAuthorizer::with_transport(bounded, transport.clone()).unwrap());
+    let mut tasks = Vec::new();
+    for suffix in ["a", "b"] {
+        let mut claims = access_claims();
+        claims["jti"] = Value::String(format!("jti_unknown_{suffix}"));
+        let token = access_token_with_kid(&claims, "kid_unknown");
+        transport.insert(&token, central_claims(&claims)).await;
+        let authorizer = Arc::clone(&authorizer);
+        tasks.push(tokio::spawn(async move {
+            authorizer.authorize(&token, &["document:read"]).await
+        }));
+    }
+    for task in tasks {
+        assert_eq!(task.await.unwrap(), Err(AuthError::InvalidToken));
+    }
+    assert_eq!(transport.jwks_calls.load(Ordering::Relaxed), 1);
+    assert_eq!(authorizer.metrics().jwks_refreshes, 1);
 }
 
 #[test]

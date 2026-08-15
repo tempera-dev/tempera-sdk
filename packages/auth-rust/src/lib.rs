@@ -30,13 +30,17 @@ use reqwest::header;
 use serde_json::{Map, Value, json};
 use sha2::{Digest as _, Sha256};
 use thiserror::Error;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, Semaphore};
 use url::{Host, Url};
 
 const DEFAULT_POSITIVE_CACHE_TTL: Duration = Duration::from_secs(5);
 const DEFAULT_JWKS_CACHE_TTL: Duration = Duration::from_mins(5);
 const DEFAULT_JWKS_REFRESH_COOLDOWN: Duration = Duration::from_secs(2);
 const DEFAULT_MAX_CACHE_ENTRIES: usize = 8_192;
+const DEFAULT_MAX_ACTIVE_FLIGHTS: usize = 4_096;
+const DEFAULT_MAX_WAITERS_PER_FLIGHT: usize = 256;
+const DEFAULT_MAX_INTROSPECTION_IN_FLIGHT: usize = 128;
+const DEFAULT_INTROSPECTION_QUEUE_TIMEOUT: Duration = Duration::from_millis(250);
 const DEFAULT_MAX_TOKEN_BYTES: usize = 16 * 1024;
 const DEFAULT_MAX_RESPONSE_BYTES: usize = 64 * 1024;
 const DEFAULT_CLOCK_SKEW_SECONDS: u64 = 30;
@@ -66,6 +70,14 @@ pub struct Config {
     pub jwks_refresh_cooldown: Duration,
     /// Maximum positive authorization entries retained in memory.
     pub max_cache_entries: usize,
+    /// Maximum distinct credential misses coordinated at once.
+    pub max_active_flights: usize,
+    /// Maximum waiting callers behind one credential's active authorization.
+    pub max_waiters_per_flight: usize,
+    /// Maximum central introspection requests running concurrently.
+    pub max_introspection_in_flight: usize,
+    /// Maximum time a central introspection request may wait for admission.
+    pub introspection_queue_timeout: Duration,
     /// Maximum accepted bearer-token size.
     pub max_token_bytes: usize,
     /// Maximum accepted JWKS or introspection response size.
@@ -99,6 +111,10 @@ impl Config {
             jwks_cache_ttl: DEFAULT_JWKS_CACHE_TTL,
             jwks_refresh_cooldown: DEFAULT_JWKS_REFRESH_COOLDOWN,
             max_cache_entries: DEFAULT_MAX_CACHE_ENTRIES,
+            max_active_flights: DEFAULT_MAX_ACTIVE_FLIGHTS,
+            max_waiters_per_flight: DEFAULT_MAX_WAITERS_PER_FLIGHT,
+            max_introspection_in_flight: DEFAULT_MAX_INTROSPECTION_IN_FLIGHT,
+            introspection_queue_timeout: DEFAULT_INTROSPECTION_QUEUE_TIMEOUT,
             max_token_bytes: DEFAULT_MAX_TOKEN_BYTES,
             max_response_bytes: DEFAULT_MAX_RESPONSE_BYTES,
             clock_skew_seconds: DEFAULT_CLOCK_SKEW_SECONDS,
@@ -138,6 +154,11 @@ impl Config {
             || self.jwks_refresh_cooldown.is_zero()
             || self.jwks_refresh_cooldown > self.jwks_cache_ttl
             || !(1..=1_000_000).contains(&self.max_cache_entries)
+            || !(1..=1_000_000).contains(&self.max_active_flights)
+            || self.max_waiters_per_flight > 65_536
+            || !(1..=65_536).contains(&self.max_introspection_in_flight)
+            || self.introspection_queue_timeout < Duration::from_millis(1)
+            || self.introspection_queue_timeout > Duration::from_secs(30)
             || !(256..=65_536).contains(&self.max_token_bytes)
             || !(1_024..=16 * 1024 * 1024).contains(&self.max_response_bytes)
             || self.clock_skew_seconds > 300
@@ -177,6 +198,16 @@ impl fmt::Debug for Config {
             .field("jwks_cache_ttl", &self.jwks_cache_ttl)
             .field("jwks_refresh_cooldown", &self.jwks_refresh_cooldown)
             .field("max_cache_entries", &self.max_cache_entries)
+            .field("max_active_flights", &self.max_active_flights)
+            .field("max_waiters_per_flight", &self.max_waiters_per_flight)
+            .field(
+                "max_introspection_in_flight",
+                &self.max_introspection_in_flight,
+            )
+            .field(
+                "introspection_queue_timeout",
+                &self.introspection_queue_timeout,
+            )
             .field("max_token_bytes", &self.max_token_bytes)
             .field("max_response_bytes", &self.max_response_bytes)
             .field("clock_skew_seconds", &self.clock_skew_seconds)
@@ -362,6 +393,14 @@ struct PositiveCache {
 impl PositiveCache {
     fn get(&mut self, key: [u8; 32], now: Instant) -> Option<Principal> {
         self.prune_expired(now);
+        if self
+            .entries
+            .get(&key)
+            .is_some_and(|entry| entry.expires_at <= now)
+        {
+            self.entries.remove(&key);
+            return None;
+        }
         self.entries.get(&key).map(|entry| entry.principal.clone())
     }
 
@@ -442,18 +481,38 @@ struct FlightLease {
 }
 
 impl FlightLease {
-    fn acquire(flights: &Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>, key: [u8; 32]) -> Self {
+    fn acquire(
+        flights: &Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>,
+        key: [u8; 32],
+        max_active_flights: usize,
+        max_waiters_per_flight: usize,
+    ) -> Result<Self, AuthError> {
         let mut entries = lock_recover(flights);
-        let entry = entries.entry(key).or_insert_with(|| FlightEntry {
-            gate: Arc::new(Mutex::new(())),
-            users: 0,
-        });
-        entry.users = entry.users.saturating_add(1);
-        Self {
+        let gate = if let Some(entry) = entries.get_mut(&key) {
+            if entry.users.saturating_sub(1) >= max_waiters_per_flight {
+                return Err(AuthError::Unavailable);
+            }
+            entry.users = entry.users.saturating_add(1);
+            Arc::clone(&entry.gate)
+        } else {
+            if entries.len() >= max_active_flights {
+                return Err(AuthError::Unavailable);
+            }
+            let gate = Arc::new(Mutex::new(()));
+            entries.insert(
+                key,
+                FlightEntry {
+                    gate: Arc::clone(&gate),
+                    users: 1,
+                },
+            );
+            gate
+        };
+        Ok(Self {
             key,
-            gate: Arc::clone(&entry.gate),
+            gate,
             flights: Arc::clone(flights),
-        }
+        })
     }
 }
 
@@ -487,6 +546,7 @@ struct JwksCache {
     keys: HashMap<String, CachedJwk>,
     expires_at: Option<Instant>,
     last_refresh_attempt: Option<Instant>,
+    generation: u64,
 }
 
 #[derive(Default)]
@@ -498,6 +558,9 @@ struct Metrics {
     authority_failures: AtomicU64,
     claim_mismatches: AtomicU64,
     cache_evictions: AtomicU64,
+    coordination_rejections: AtomicU64,
+    introspection_admission_rejections: AtomicU64,
+    jwks_refreshes: AtomicU64,
 }
 
 /// Snapshot of runtime counters. No credential values are retained.
@@ -521,6 +584,16 @@ pub struct MetricsSnapshot {
     pub positive_cache_entries: usize,
     /// Current credential keys with an active or waiting singleflight caller.
     pub active_flights: usize,
+    /// Current callers participating in credential singleflight groups.
+    pub active_flight_participants: usize,
+    /// Credential coordination requests rejected at a configured bound.
+    pub coordination_rejections: u64,
+    /// Central introspection requests rejected after bounded queueing.
+    pub introspection_admission_rejections: u64,
+    /// Current central introspection requests holding admission permits.
+    pub introspection_in_flight: usize,
+    /// JWKS refreshes actually sent to the authority.
+    pub jwks_refreshes: u64,
 }
 
 /// Hybrid local-verification and central-freshness authorizer.
@@ -530,6 +603,8 @@ pub struct HybridAuthorizer<T = ReqwestAuthorityTransport> {
     cache: StdMutex<PositiveCache>,
     flights: Arc<StdMutex<HashMap<[u8; 32], FlightEntry>>>,
     jwks: Mutex<JwksCache>,
+    jwks_refresh: Mutex<()>,
+    introspection_permits: Semaphore,
     metrics: Metrics,
 }
 
@@ -544,12 +619,15 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
     /// Construct an authorizer with an explicit transport.
     pub fn with_transport(config: Config, transport: T) -> Result<Self, AuthError> {
         config.validate()?;
+        let introspection_permits = Semaphore::new(config.max_introspection_in_flight);
         Ok(Self {
             config,
             transport,
             cache: StdMutex::new(PositiveCache::default()),
             flights: Arc::new(StdMutex::new(HashMap::new())),
             jwks: Mutex::new(JwksCache::default()),
+            jwks_refresh: Mutex::new(()),
+            introspection_permits,
             metrics: Metrics::default(),
         })
     }
@@ -594,7 +672,17 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
         }
         self.metrics.cache_misses.fetch_add(1, Ordering::Relaxed);
 
-        let flight = FlightLease::acquire(&self.flights, cache_key);
+        let flight = FlightLease::acquire(
+            &self.flights,
+            cache_key,
+            self.config.max_active_flights,
+            self.config.max_waiters_per_flight,
+        )
+        .inspect_err(|_| {
+            self.metrics
+                .coordination_rejections
+                .fetch_add(1, Ordering::Relaxed);
+        })?;
         let gate = Arc::clone(&flight.gate);
         let guard = gate.lock().await;
         let result = if let Some(principal) = self.cached(cache_key) {
@@ -623,7 +711,17 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
     /// Return a privacy-safe snapshot of authorization counters and bounds.
     pub fn metrics(&self) -> MetricsSnapshot {
         let positive_cache_entries = lock_recover(&self.cache).len();
-        let active_flights = lock_recover(&self.flights).len();
+        let (active_flights, active_flight_participants) = {
+            let flights = lock_recover(&self.flights);
+            (
+                flights.len(),
+                flights.values().map(|entry| entry.users).sum(),
+            )
+        };
+        let introspection_in_flight = self
+            .config
+            .max_introspection_in_flight
+            .saturating_sub(self.introspection_permits.available_permits());
         MetricsSnapshot {
             cache_hits: self.metrics.cache_hits.load(Ordering::Relaxed),
             cache_misses: self.metrics.cache_misses.load(Ordering::Relaxed),
@@ -634,6 +732,14 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             cache_evictions: self.metrics.cache_evictions.load(Ordering::Relaxed),
             positive_cache_entries,
             active_flights,
+            active_flight_participants,
+            coordination_rejections: self.metrics.coordination_rejections.load(Ordering::Relaxed),
+            introspection_admission_rejections: self
+                .metrics
+                .introspection_admission_rejections
+                .load(Ordering::Relaxed),
+            introspection_in_flight,
+            jwks_refreshes: self.metrics.jwks_refreshes.load(Ordering::Relaxed),
         }
     }
 
@@ -652,6 +758,23 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             None
         };
 
+        let permit = tokio::time::timeout(
+            self.config.introspection_queue_timeout,
+            self.introspection_permits.acquire(),
+        )
+        .await
+        .map_err(|_| {
+            self.metrics
+                .introspection_admission_rejections
+                .fetch_add(1, Ordering::Relaxed);
+            AuthError::Unavailable
+        })?
+        .map_err(|_| {
+            self.metrics
+                .introspection_admission_rejections
+                .fetch_add(1, Ordering::Relaxed);
+            AuthError::Unavailable
+        })?;
         self.metrics.introspections.fetch_add(1, Ordering::Relaxed);
         let claims = self
             .transport
@@ -669,6 +792,7 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
                         .fetch_add(1, Ordering::Relaxed);
                 }
             })?;
+        drop(permit);
         let central = self.principal_from_claims(&claims, true)?;
         if let Some(local) = local
             && !equivalent_authority(&local, &central)
@@ -709,40 +833,82 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
     }
 
     async fn jwks_key(&self, kid: &str) -> Result<DecodingKey, AuthError> {
-        let mut cache = self.jwks.lock().await;
-        let now = Instant::now();
-        if cache.expires_at.is_some_and(|expiry| expiry > now) {
-            if let Some(key) = cache.keys.get(kid) {
+        // Fast path: a known key in a fresh published snapshot never waits for
+        // refresh coordination or network I/O.
+        let observed_generation = {
+            let cache = self.jwks.lock().await;
+            if cache
+                .expires_at
+                .is_some_and(|expiry| expiry > Instant::now())
+                && let Some(key) = cache.keys.get(kid)
+            {
                 return Ok(key.key.clone());
             }
-            if cache.last_refresh_attempt.is_some_and(|attempt| {
-                now.saturating_duration_since(attempt) < self.config.jwks_refresh_cooldown
-            }) {
-                return Err(AuthError::InvalidToken);
+            cache.generation
+        };
+
+        // Only one authority refresh may run at a time. The published JWKS
+        // snapshot is not locked while the network request is in flight.
+        let _refresh_guard = self.jwks_refresh.lock().await;
+        let now = Instant::now();
+        {
+            let cache = self.jwks.lock().await;
+
+            // A waiter that overlapped a completed refresh consumes that
+            // publication rather than immediately issuing a second fetch.
+            if cache.generation != observed_generation
+                && cache.expires_at.is_some_and(|expiry| expiry > now)
+            {
+                return cache
+                    .keys
+                    .get(kid)
+                    .map(|key| key.key.clone())
+                    .ok_or(AuthError::InvalidToken);
             }
-        } else if cache.last_refresh_attempt.is_some_and(|attempt| {
-            now.saturating_duration_since(attempt) < self.config.jwks_refresh_cooldown
-        }) {
-            return Err(AuthError::Unavailable);
+
+            if let Some(key) = lookup_jwks_key(&cache, kid, now, self.config.jwks_refresh_cooldown)?
+            {
+                return Ok(key);
+            }
         }
 
-        cache.last_refresh_attempt = Some(now);
-        let document = self
+        self.metrics.jwks_refreshes.fetch_add(1, Ordering::Relaxed);
+        let document = match self
             .transport
             .fetch_jwks(&self.config.jwks_url, self.config.max_response_bytes)
             .await
-            .inspect_err(|_| {
+        {
+            Ok(document) => document,
+            Err(error) => {
                 self.metrics
                     .authority_failures
                     .fetch_add(1, Ordering::Relaxed);
-            })?;
-        cache.keys = parse_jwks(document)?;
-        cache.expires_at = Some(Instant::now() + self.config.jwks_cache_ttl);
-        cache
-            .keys
-            .get(kid)
-            .map(|key| key.key.clone())
-            .ok_or(AuthError::InvalidToken)
+                self.jwks.lock().await.last_refresh_attempt = Some(Instant::now());
+                return Err(error);
+            }
+        };
+        let keys = match parse_jwks(document) {
+            Ok(keys) => keys,
+            Err(error) => {
+                self.metrics
+                    .authority_failures
+                    .fetch_add(1, Ordering::Relaxed);
+                self.jwks.lock().await.last_refresh_attempt = Some(Instant::now());
+                return Err(error);
+            }
+        };
+        let requested = keys.get(kid).map(|key| key.key.clone());
+        {
+            // The cooldown begins when the completed document is published,
+            // not when a potentially slow fetch started.
+            let published_at = Instant::now();
+            let mut cache = self.jwks.lock().await;
+            cache.keys = keys;
+            cache.expires_at = Some(published_at + self.config.jwks_cache_ttl);
+            cache.last_refresh_attempt = Some(published_at);
+            cache.generation = cache.generation.wrapping_add(1).max(1);
+        }
+        requested.ok_or(AuthError::InvalidToken)
     }
 
     fn principal_from_claims(
@@ -874,6 +1040,33 @@ impl<T: AuthorityTransport> HybridAuthorizer<T> {
             self.metrics.cache_evictions.fetch_add(1, Ordering::Relaxed);
         }
     }
+}
+
+fn lookup_jwks_key(
+    cache: &JwksCache,
+    kid: &str,
+    now: Instant,
+    refresh_cooldown: Duration,
+) -> Result<Option<DecodingKey>, AuthError> {
+    if cache.expires_at.is_some_and(|expiry| expiry > now) {
+        if let Some(key) = cache.keys.get(kid) {
+            return Ok(Some(key.key.clone()));
+        }
+        if cache
+            .last_refresh_attempt
+            .is_some_and(|attempt| now.saturating_duration_since(attempt) < refresh_cooldown)
+        {
+            return Err(AuthError::InvalidToken);
+        }
+        return Ok(None);
+    }
+    if cache
+        .last_refresh_attempt
+        .is_some_and(|attempt| now.saturating_duration_since(attempt) < refresh_cooldown)
+    {
+        return Err(AuthError::Unavailable);
+    }
+    Ok(None)
 }
 
 fn lock_recover<T>(mutex: &StdMutex<T>) -> std::sync::MutexGuard<'_, T> {
