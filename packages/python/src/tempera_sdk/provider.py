@@ -8,6 +8,7 @@ delimited JSON-RPC with protocol-only stdout.
 
 from __future__ import annotations
 
+import asyncio
 import dataclasses
 import inspect
 import json
@@ -143,7 +144,7 @@ def _matches_primitive(value: Any, annotation: Any) -> bool:
     if annotation is int:
         return isinstance(value, int) and not isinstance(value, bool)
     if annotation is float:
-        return (isinstance(value, (int, float)) and not isinstance(value, bool))
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
     if annotation is str:
         return isinstance(value, str)
     return False
@@ -184,7 +185,10 @@ def _decode(value: Any, annotation: Any, path: str) -> Any:
             return tuple(_decode(item, args[0], f"{path}[{index}]") for index, item in enumerate(value))
         if len(value) != len(args):
             raise ProviderArgumentError(f"{path} must contain exactly {len(args)} items")
-        return tuple(_decode(item, item_type, f"{path}[{index}]") for index, (item, item_type) in enumerate(zip(value, args)))
+        return tuple(
+            _decode(item, item_type, f"{path}[{index}]")
+            for index, (item, item_type) in enumerate(zip(value, args))
+        )
     if origin is dict:
         if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
             raise ProviderArgumentError(f"{path} must be an object with string keys")
@@ -217,7 +221,13 @@ def _decode(value: Any, annotation: Any, path: str) -> Any:
     raise ProviderArgumentError(f"{path} uses an unsupported type")
 
 
-def _compile_tool(function: Callable[..., Any], *, name: str, description: str, annotations: Mapping[str, bool]) -> _RegisteredTool:
+def _compile_tool(
+    function: Callable[..., Any],
+    *,
+    name: str,
+    description: str,
+    annotations: Mapping[str, bool],
+) -> _RegisteredTool:
     signature = inspect.signature(function)
     hints = get_type_hints(function, include_extras=True)
     properties: dict[str, Any] = {}
@@ -256,6 +266,55 @@ def _compile_tool(function: Callable[..., Any], *, name: str, description: str, 
     )
 
 
+def _decode_arguments(tool: _RegisteredTool, arguments: Mapping[str, Any]) -> dict[str, Any]:
+    extras = set(arguments) - set(tool.signature.parameters)
+    if extras:
+        raise ProviderArgumentError(f"unknown arguments: {sorted(extras)!r}")
+    decoded: dict[str, Any] = {}
+    for name, parameter in tool.signature.parameters.items():
+        if name in arguments:
+            decoded[name] = _decode(
+                arguments[name],
+                tool.hints.get(name, parameter.annotation),
+                name,
+            )
+        elif parameter.default is inspect.Parameter.empty:
+            raise ProviderArgumentError(f"{name} is required")
+    return decoded
+
+
+def _tool_result(result: Any) -> dict[str, Any]:
+    if dataclasses.is_dataclass(result) and not isinstance(result, type):
+        structured = dataclasses.asdict(result)
+    elif isinstance(result, Mapping):
+        structured = dict(result)
+    elif result is None:
+        structured = {}
+    else:
+        structured = {"value": result}
+    try:
+        text = json.dumps(structured, separators=(",", ":"), default=_json_default)
+    except (TypeError, ValueError):
+        return {
+            "content": [{"type": "text", "text": "Tool returned a non-JSON value"}],
+            "structuredContent": {"error": "non_json_result"},
+            "isError": True,
+        }
+    return {
+        "content": [{"type": "text", "text": text}],
+        "structuredContent": structured,
+        "isError": False,
+    }
+
+
+def _tool_failure() -> dict[str, Any]:
+    return {
+        "content": [{"type": "text", "text": "Tool execution failed"}],
+        "structuredContent": {"error": "tool_execution_failed"},
+        "isError": True,
+    }
+
+
 class TemperaProvider:
     """Tiny typed MCP provider intended to run behind the Tempera gateway."""
 
@@ -280,6 +339,7 @@ class TemperaProvider:
         """Register a function as one typed MCP tool.
 
         Use as ``@app.tool`` or ``@app.tool(read_only=True, idempotent=True)``.
+        Sync and async functions share the same registration contract.
         """
 
         def register(target: Callable[..., Any]) -> Callable[..., Any]:
@@ -311,10 +371,8 @@ class TemperaProvider:
             return register
         return register(function)
 
-    def handle(self, request: Mapping[str, Any]) -> dict[str, Any]:
-        """Handle one decoded JSON-RPC request and return its result object."""
+    def _base_response(self, request: Mapping[str, Any]) -> dict[str, Any] | None:
         method = request.get("method")
-        params = request.get("params") or {}
         if method == "server/discover":
             return {
                 "resultType": "complete",
@@ -328,67 +386,68 @@ class TemperaProvider:
             return {}
         if method == "tools/list":
             return {"tools": [self._tools[name].public_spec() for name in sorted(self._tools)]}
-        if method == "tools/call":
-            if not isinstance(params, Mapping):
-                raise ProviderArgumentError("tools/call params must be an object")
-            tool_name = params.get("name")
-            if not isinstance(tool_name, str) or tool_name not in self._tools:
-                raise ProviderArgumentError("unknown tool")
-            arguments = params.get("arguments") or {}
-            if not isinstance(arguments, Mapping):
-                raise ProviderArgumentError("tool arguments must be an object")
-            return self._call(self._tools[tool_name], arguments)
-        raise KeyError("unknown method")
+        return None
 
-    def _call(self, tool: _RegisteredTool, arguments: Mapping[str, Any]) -> dict[str, Any]:
-        extras = set(arguments) - set(tool.signature.parameters)
-        if extras:
-            raise ProviderArgumentError(f"unknown arguments: {sorted(extras)!r}")
-        decoded: dict[str, Any] = {}
-        for name, parameter in tool.signature.parameters.items():
-            if name in arguments:
-                decoded[name] = _decode(
-                    arguments[name],
-                    tool.hints.get(name, parameter.annotation),
-                    name,
-                )
-            elif parameter.default is inspect.Parameter.empty:
-                raise ProviderArgumentError(f"{name} is required")
+    def _requested_tool(self, request: Mapping[str, Any]) -> tuple[_RegisteredTool, Mapping[str, Any]]:
+        params = request.get("params") or {}
+        if not isinstance(params, Mapping):
+            raise ProviderArgumentError("tools/call params must be an object")
+        tool_name = params.get("name")
+        if not isinstance(tool_name, str) or tool_name not in self._tools:
+            raise ProviderArgumentError("unknown tool")
+        arguments = params.get("arguments") or {}
+        if not isinstance(arguments, Mapping):
+            raise ProviderArgumentError("tool arguments must be an object")
+        return self._tools[tool_name], arguments
+
+    def handle(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        """Handle one synchronous decoded JSON-RPC request.
+
+        Async tools are rejected before invocation. Call :meth:`handle_async` or use
+        :meth:`run_stdio` for providers containing async tools.
+        """
+        base = self._base_response(request)
+        if base is not None:
+            return base
+        if request.get("method") != "tools/call":
+            raise KeyError("unknown method")
+        tool, arguments = self._requested_tool(request)
+        if inspect.iscoroutinefunction(tool.function):
+            raise ProviderDefinitionError("async tool requires handle_async() or run_stdio()")
+        decoded = _decode_arguments(tool, arguments)
         try:
             result = tool.function(**decoded)
         except Exception:
-            return {
-                "content": [{"type": "text", "text": "Tool execution failed"}],
-                "structuredContent": {"error": "tool_execution_failed"},
-                "isError": True,
-            }
+            return _tool_failure()
         if inspect.isawaitable(result):
-            raise ProviderDefinitionError("async tools require an async provider runtime")
-        if dataclasses.is_dataclass(result) and not isinstance(result, type):
-            structured = dataclasses.asdict(result)
-        elif isinstance(result, Mapping):
-            structured = dict(result)
-        elif result is None:
-            structured = {}
-        else:
-            structured = {"value": result}
-        try:
-            text = json.dumps(structured, separators=(",", ":"), default=_json_default)
-        except (TypeError, ValueError):
-            return {
-                "content": [{"type": "text", "text": "Tool returned a non-JSON value"}],
-                "structuredContent": {"error": "non_json_result"},
-                "isError": True,
-            }
-        return {
-            "content": [{"type": "text", "text": text}],
-            "structuredContent": structured,
-            "isError": False,
-        }
+            if inspect.iscoroutine(result):
+                result.close()
+            raise ProviderDefinitionError("tool returned an awaitable from synchronous handle()")
+        return _tool_result(result)
 
-    def run_stdio(self) -> None:
-        """Run the provider over line-delimited JSON-RPC stdio."""
-        for raw_line in sys.stdin:
+    async def handle_async(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        """Handle one decoded request, supporting both sync and async tools."""
+        base = self._base_response(request)
+        if base is not None:
+            return base
+        if request.get("method") != "tools/call":
+            raise KeyError("unknown method")
+        tool, arguments = self._requested_tool(request)
+        decoded = _decode_arguments(tool, arguments)
+        try:
+            result = tool.function(**decoded)
+            if inspect.isawaitable(result):
+                result = await result
+        except Exception:
+            return _tool_failure()
+        return _tool_result(result)
+
+    async def run_stdio_async(self) -> None:
+        """Run line-delimited JSON-RPC stdio in the caller's async runtime."""
+        while True:
+            raw_line = await asyncio.to_thread(sys.stdin.readline)
+            if raw_line == "":
+                return
             request: Any = None
             try:
                 request = json.loads(raw_line)
@@ -396,7 +455,7 @@ class TemperaProvider:
                     raise ProviderArgumentError("request must be an object")
                 if "id" not in request:
                     continue
-                result = self.handle(request)
+                result = await self.handle_async(request)
                 response = {"jsonrpc": "2.0", "id": request["id"], "result": result}
             except KeyError:
                 response = {
@@ -412,6 +471,15 @@ class TemperaProvider:
                 }
             sys.stdout.write(json.dumps(response, separators=(",", ":")) + "\n")
             sys.stdout.flush()
+
+    def run_stdio(self) -> None:
+        """Run the provider over stdio, owning one event loop for sync and async tools."""
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            asyncio.run(self.run_stdio_async())
+            return
+        raise ProviderDefinitionError("run_stdio() cannot own an already-running event loop; await run_stdio_async()")
 
 
 __all__ = [
