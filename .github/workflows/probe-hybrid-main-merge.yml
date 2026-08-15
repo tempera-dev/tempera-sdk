@@ -1,0 +1,35 @@
+name: Probe Hybrid Auth Main Merge
+
+on:
+  push:
+    branches: [agent/hybrid-auth-runtime]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: agent/hybrid-auth-runtime
+          fetch-depth: 0
+      - name: Probe current main merge
+        shell: bash
+        run: |
+          set -u
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          set +e
+          git merge --no-commit --no-ff refs/remotes/origin/main
+          status=$?
+          set -e
+          echo "MERGE_STATUS=$status"
+          if [ "$status" -ne 0 ]; then
+            echo "CONFLICTS_BEGIN"
+            git diff --name-only --diff-filter=U
+            echo "CONFLICTS_END"
+            git merge --abort || true
+            exit 1
+          fi
+          git merge --abort || true
