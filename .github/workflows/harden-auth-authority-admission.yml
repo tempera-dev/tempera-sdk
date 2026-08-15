@@ -95,7 +95,7 @@ jobs:
               let _refresh_guard = self.jwks_refresh.lock().await;
               let now = Instant::now();
               {
-                  let mut cache = self.jwks.lock().await;
+                  let cache = self.jwks.lock().await;
                   if cache.generation != observed_generation
                       && cache.expires_at.is_some_and(|expiry| expiry > now)
                   {
