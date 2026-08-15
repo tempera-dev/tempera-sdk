@@ -36,6 +36,7 @@ let principal = authorizer
 - Access tokens require integer `iat` and `exp` claims. Their lifetime is bounded to one hour by default and is configurable only within the runtime's safety limits.
 - Future issuance, expired tokens, malformed claim types, malformed scope collections, oversized values, and local/central authority disagreement fail closed.
 - JWKS and introspection responses are size-bounded, redirects are disabled, and the runtime never authorizes from stale-on-error state.
+- Auth Hub represents an invalid credential with a successful `active: false` response. Any non-success introspection HTTP status is therefore an unavailable or misconfigured authority boundary, not evidence that the caller's credential is invalid.
 
 ## Failure behavior
 
