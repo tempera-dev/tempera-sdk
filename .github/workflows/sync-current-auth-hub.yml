@@ -45,6 +45,7 @@ jobs:
           python3 scripts/sync-openapi-surface.py --product controlPlane
           python3 scripts/gen-sdk-surface.py
           python3 scripts/gen-sdk-docs.py
+          python3 scripts/update-current-auth-scope-fixture.py
           npm test
           git diff --check
       - name: Commit synchronized surface
@@ -52,6 +53,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf .auth-hub-source
+          rm -f scripts/update-current-auth-scope-fixture.py
           rm -f .github/workflows/sync-current-auth-hub.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
