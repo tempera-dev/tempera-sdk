@@ -66,6 +66,7 @@ def make_client(**overrides):
             "tempera_bio": "https://bio.example.test",
             "tempera_document": "https://document.example.test",
             "tempera_payments": "https://payments.example.test",
+            "tempera_clearing": "https://clearing.example.test",
             "cradle": "https://cradle.example.test",
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",

@@ -264,6 +264,14 @@
       "auth": "bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key",
       "description": "Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations."
     },
+    "temperaClearing": {
+      "name": "tempera-clearing",
+      "repository": "https://github.com/tempera-dev/tempera-clearing",
+      "envVar": "TEMPERA_CLEARING_URL",
+      "audience": "tempera-clearing",
+      "auth": "bearer minted for audience tempera-clearing with the operation's clearing scope, or a central tp_ API key",
+      "description": "Durable transaction-control runtime for consequential agent actions: prepares exact effects, binds authority and risk evidence, commits bounded dispatch, and records outcome evidence."
+    },
     "cradle": {
       "name": "cradle",
       "repository": "https://github.com/tempera-dev/cradle",
@@ -322,6 +330,215 @@
     }
   },
   "operations": {
+    "temperaClearing": [
+      {
+        "id": "getClearingHealth",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Call GET /healthz.",
+        "upstreamOperationId": "getClearingHealth",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "getClearingReadiness",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Call GET /readyz.",
+        "upstreamOperationId": "getClearingReadiness",
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "validateClearingAction",
+        "method": "POST",
+        "path": "/v1/actions:validate",
+        "auth": "product",
+        "description": "Call POST /v1/actions:validate.",
+        "upstreamOperationId": "validateClearingAction",
+        "body": [
+          "actionId",
+          "actor",
+          "authorityAdmission",
+          "causality",
+          "evidence",
+          "expiresAt",
+          "idempotencyKey",
+          "mandate",
+          "preparedEffect",
+          "principal",
+          "purpose",
+          "requestDigest",
+          "risk",
+          "schema",
+          "workspace"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "clearing:actions:propose"
+      },
+      {
+        "id": "prepareClearingAction",
+        "method": "POST",
+        "path": "/v1/prepared-actions",
+        "auth": "product",
+        "description": "Persist a non-executable canonical effect before authority is issued.",
+        "upstreamOperationId": "prepareClearingAction",
+        "body": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "clearing:actions:propose"
+      },
+      {
+        "id": "proposeClearingAction",
+        "method": "POST",
+        "path": "/v1/actions",
+        "auth": "product",
+        "description": "Bind exact authority and Risk evidence to a prior prepared effect.",
+        "upstreamOperationId": "proposeClearingAction",
+        "body": [
+          "actionId",
+          "actor",
+          "authorityAdmission",
+          "causality",
+          "evidence",
+          "expiresAt",
+          "idempotencyKey",
+          "mandate",
+          "preparedEffect",
+          "principal",
+          "purpose",
+          "requestDigest",
+          "risk",
+          "schema",
+          "workspace"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "clearing:actions:propose"
+      },
+      {
+        "id": "getClearingAction",
+        "method": "GET",
+        "path": "/v1/actions/{id}",
+        "auth": "product",
+        "description": "Call GET /v1/actions/{id}.",
+        "upstreamOperationId": "getClearingAction",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "scope": "clearing:actions:read"
+      },
+      {
+        "id": "listClearingActionEvents",
+        "method": "GET",
+        "path": "/v1/actions/{id}/events",
+        "auth": "product",
+        "description": "Call GET /v1/actions/{id}/events.",
+        "upstreamOperationId": "listClearingActionEvents",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "scope": "clearing:actions:read"
+      },
+      {
+        "id": "commitClearingAction",
+        "method": "POST",
+        "path": "/v1/actions/{id}/commit",
+        "auth": "product",
+        "description": "Durably commit the exact previously prepared and authority-bound action.",
+        "upstreamOperationId": "commitClearingAction",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "actionId",
+          "actor",
+          "authorityAdmission",
+          "causality",
+          "evidence",
+          "expiresAt",
+          "idempotencyKey",
+          "mandate",
+          "preparedEffect",
+          "principal",
+          "purpose",
+          "requestDigest",
+          "risk",
+          "schema",
+          "workspace"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "clearing:actions:commit"
+      }
+    ],
     "controlPlane": [
       {
         "id": "health",

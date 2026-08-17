@@ -192,7 +192,7 @@ is the default when none is specified.
 | `tempera-risk` | tempera-risk |
 | `tempera-payments` | tempera-payments |
 | `tempera-voice` | tempera-voice |
-| `tempera-clearing` | — |
+| `tempera-clearing` | tempera-clearing |
 
 ## Scopes
 
@@ -238,9 +238,9 @@ is the default when none is specified.
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:commit` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:read` | tempera-clearing: `getClearingAction`, `listClearingActionEvents` |
+| `clearing:actions:propose` | tempera-clearing: `prepareClearingAction`, `proposeClearingAction`, `validateClearingAction` |
+| `clearing:actions:commit` | tempera-clearing: `commitClearingAction` |
 | `clearing:actions:reconcile` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:approve` | No typed SDK operation declares it yet; enforced server-side. |

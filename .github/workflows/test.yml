@@ -209,6 +209,15 @@ jobs:
             generated_path: specs/tempera-payments-api.json
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
+          - name: Tempera Clearing
+            product: temperaClearing
+            repository: tempera-clearing
+            source_branch: main
+            source_path: contracts/openapi/clearing.openapi.json
+            lock: specs/tempera-clearing-api.json.source
+            generated_path: specs/tempera-clearing-api.json
+            generated_with: source_lock.py@2+inline-local-json-ref-bundle
+            transform: json-inline-local-refs
           - name: Cradle
             product: cradle
             repository: cradle

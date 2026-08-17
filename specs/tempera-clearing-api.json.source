@@ -1,0 +1,33 @@
+{
+  "generated_path": "specs/tempera-clearing-api.json",
+  "generated_sha256": "fca4a5eb8c0fc7709800a3d8d494daa5dd15dd17eb061c58ae9a5ec09e4c91a4",
+  "generated_with": "source_lock.py@2+inline-local-json-ref-bundle",
+  "schema_version": 1,
+  "source_blob_sha": "7f7ecf667a7bfc297279159dbeb010ee2752be99",
+  "source_branch": "main",
+  "source_commit": "9e65f823d54eb447a71c72b78a1431c0f93967a8",
+  "source_dependencies": [
+    {
+      "source_blob_sha": "254b947072c8fdf45b9c2028992be2d089af085a",
+      "source_mode": "100644",
+      "source_path": "contracts/schemas/action-envelope-v1.schema.json",
+      "source_sha256": "22d78a5f829e1f704e6874efca3e37a4a9f48e790a40707375c531105c05700f"
+    },
+    {
+      "source_blob_sha": "eef5ea1a07a5a04674592edb0902bd05539f1c64",
+      "source_mode": "100644",
+      "source_path": "contracts/schemas/action-event-v1.schema.json",
+      "source_sha256": "9b5fa532ee3e8d7680c9a2bcde834db0f31b99b948fdc1c50213a27ad3fe0ee0"
+    },
+    {
+      "source_blob_sha": "0ef63c91c5bc61a2a9e20c99abb93a967d96afe9",
+      "source_mode": "100644",
+      "source_path": "contracts/schemas/prepared-effect-v1.schema.json",
+      "source_sha256": "4f3da1fc40b50ee4f3f67999249aecbb072be9717f60032da07a4020702fc1c2"
+    }
+  ],
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/clearing.openapi.json",
+  "source_repo": "tempera-dev/tempera-clearing",
+  "source_sha256": "c2b56a2d2396b5cfcf9a7df5003e666f36d7ce0caa538e3ce6ada0764810c722"
+}

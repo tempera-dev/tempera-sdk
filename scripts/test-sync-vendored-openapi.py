@@ -59,6 +59,46 @@ def verify(repo: Path, commit: str) -> tuple[str, str, str, bytes]:
 
 
 class CurrentBranchEquivalentFileTest(unittest.TestCase):
+    def test_inline_local_json_refs_bundles_and_locks_each_dependency(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="tempera-sdk-inline-local-ref-"
+        ) as directory:
+            repo = Path(directory)
+            source, _ = create_source_repo(repo)
+            source.write_text(
+                '{"openapi":"3.1.0","paths":{"/v1/action":{"post":'
+                '{"requestBody":{"content":{"application/json":{"schema":'
+                '{"$ref":"../schemas/action.json"}}}}}}}}\n',
+                encoding="utf-8",
+            )
+            dependency = repo / "sdks/schemas/action.json"
+            dependency.parent.mkdir(parents=True)
+            dependency.write_text(
+                '{"type":"object","properties":{"actionId":{"type":"string"}},'
+                '"required":["actionId"]}\n',
+                encoding="utf-8",
+            )
+            commit = commit_all(repo, "add local request schema")
+            git(repo, "update-ref", "refs/remotes/origin/main", commit)
+
+            rendered, dependencies = sync.render_inline_local_json_refs(
+                source.read_bytes(),
+                sync.load_source_lock_module(),
+                repo,
+                "main",
+                commit,
+                SOURCE_PATH,
+            )
+
+            bundled = rendered.decode(encoding="utf-8")
+            self.assertNotIn("../schemas/action.json", bundled)
+            self.assertIn('"actionId"', bundled)
+            self.assertEqual([item["source_path"] for item in dependencies], [
+                "sdks/schemas/action.json"
+            ])
+            self.assertRegex(dependencies[0]["source_blob_sha"], r"^[0-9a-f]{40}$")
+            self.assertRegex(dependencies[0]["source_sha256"], r"^[0-9a-f]{64}$")
+
     def test_unrelated_descendant_keeps_exact_pinned_source_valid(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="tempera-sdk-content-equivalence-"

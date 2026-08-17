@@ -5,7 +5,7 @@
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-payments" | "tempera-voice" | "tempera-clearing";
 export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "temperaClearing" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -94,6 +94,25 @@ export type TemperaProductClientBase = TemperaProduct & {
   /** Passthrough request for endpoints the surface tables do not cover yet. */
   request(path: string, options?: TemperaPassthroughOptions): Promise<unknown>;
 };
+
+export interface TemperaClearingClient extends TemperaProductClientBase {
+  /** Call GET /healthz. */
+  getClearingHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /readyz. */
+  getClearingReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call POST /v1/actions:validate. */
+  validateClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Persist a non-executable canonical effect before authority is issued. */
+  prepareClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Bind exact authority and Risk evidence to a prior prepared effect. */
+  proposeClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/actions/{id}. */
+  getClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /v1/actions/{id}/events. */
+  listClearingActionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Durably commit the exact previously prepared and authority-bound action. */
+  commitClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
 
 export interface ControlPlaneClient extends TemperaProductClientBase {
   /** Check control-plane liveness; returns {ok: true}. */

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import posixpath
 import subprocess
 import sys
 from pathlib import Path
@@ -26,6 +27,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_path": "specs/tempera-payments-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
+    },
+    "temperaClearing": {
+        "source_repo": "tempera-dev/tempera-clearing",
+        "source_branch": "main",
+        "source_path": "contracts/openapi/clearing.openapi.json",
+        "generated_path": "specs/tempera-clearing-api.json",
+        "generated_with": "source_lock.py@2+inline-local-json-ref-bundle",
+        "transform": "json-inline-local-refs",
     },
     "dataEngine": {
         "source_repo": "tempera-dev/data-engine",
@@ -159,15 +168,130 @@ def git(repo: Path, *arguments: str) -> str:
     return result.stdout.strip()
 
 
-def render(content: bytes, transform: str) -> bytes:
+def normalize_source_path(current_path: str, reference_path: str) -> str:
+    """Resolve a relative Git-tree path without permitting repository escape."""
+
+    if reference_path.startswith("/"):
+        raise ValueError(f"absolute local reference is not allowed: {reference_path}")
+    resolved = posixpath.normpath(
+        posixpath.join(posixpath.dirname(current_path), reference_path)
+    )
+    if resolved == "." or resolved.startswith("../"):
+        raise ValueError(f"local reference escapes source tree: {reference_path}")
+    return resolved
+
+
+def resolve_json_pointer(document: Any, fragment: str) -> Any:
+    if not fragment:
+        return document
+    if not fragment.startswith("/"):
+        raise ValueError(f"unsupported local reference fragment #{fragment}")
+    value = document
+    for token in fragment[1:].split("/"):
+        token = token.replace("~1", "/").replace("~0", "~")
+        if isinstance(value, dict) and token in value:
+            value = value[token]
+        elif isinstance(value, list) and token.isdigit() and int(token) < len(value):
+            value = value[int(token)]
+        else:
+            raise ValueError(f"unresolved local JSON pointer #{fragment}")
+    return value
+
+
+def render_inline_local_json_refs(
+    content: bytes,
+    source_lock: Any,
+    repo: Path,
+    source_branch: str,
+    commit: str,
+    source_path: str,
+) -> tuple[bytes, list[dict[str, str]]]:
+    """Bundle checked-in relative JSON refs and lock every source dependency.
+
+    Generated SDK tables need request-body field names. A verbatim OpenAPI copy
+    that leaves relative schema references behind cannot provide those fields or
+    prove which schema revision they came from. Remote schema IDs remain remote;
+    only files addressed through the producer's Git tree are inlined.
+    """
+
+    dependencies: dict[str, dict[str, str]] = {}
+    resolving: set[tuple[str, str]] = set()
+    current_head = git(repo, "rev-parse", f"refs/remotes/origin/{source_branch}^{{commit}}")
+
+    def source_document(path: str) -> Any:
+        blob, mode, bytes_at_commit = source_lock.committed_file(repo, commit, path)
+        current_blob, current_mode, _ = source_lock.committed_file(repo, current_head, path)
+        if (blob, mode) != (current_blob, current_mode):
+            raise ValueError(
+                f"source tree entry drift for {path}: {commit} has {mode} {blob}, while "
+                f"origin/{source_branch}@{current_head} has {current_mode} {current_blob}; "
+                "re-vendor from current source"
+            )
+        dependencies[path] = {
+            "source_path": path,
+            "source_blob_sha": blob,
+            "source_mode": mode,
+            "source_sha256": source_lock.digest(bytes_at_commit),
+        }
+        try:
+            return json.loads(bytes_at_commit)
+        except json.JSONDecodeError as error:
+            raise ValueError(f"local reference {path} is not valid JSON") from error
+
+    def visit(value: Any, current_path: str) -> Any:
+        if isinstance(value, list):
+            return [visit(item, current_path) for item in value]
+        if not isinstance(value, dict):
+            return value
+        reference = value.get("$ref")
+        if isinstance(reference, str) and not reference.startswith("#") and "://" not in reference:
+            reference_path, marker, fragment = reference.partition("#")
+            resolved_path = normalize_source_path(current_path, reference_path)
+            identity = (resolved_path, fragment)
+            if identity in resolving:
+                raise ValueError(f"cyclic local JSON reference {reference!r}")
+            resolving.add(identity)
+            try:
+                target = resolve_json_pointer(source_document(resolved_path), fragment if marker else "")
+                expanded = visit(target, resolved_path)
+            finally:
+                resolving.remove(identity)
+            if len(value) == 1:
+                return expanded
+            if not isinstance(expanded, dict):
+                raise ValueError(f"local reference {reference!r} cannot be merged with sibling keys")
+            return visit({**expanded, **{key: item for key, item in value.items() if key != "$ref"}}, current_path)
+        return {key: visit(item, current_path) for key, item in value.items()}
+
+    try:
+        document = json.loads(content)
+    except json.JSONDecodeError as error:
+        raise ValueError("inline-local-json-ref bundle requires JSON source") from error
+    rendered = (json.dumps(visit(document, source_path), indent=2) + "\n").encode()
+    return rendered, [dependencies[path] for path in sorted(dependencies)]
+
+
+def render(
+    content: bytes,
+    transform: str,
+    source_lock: Any,
+    repo: Path,
+    source_branch: str,
+    commit: str,
+    source_path: str,
+) -> tuple[bytes, list[dict[str, str]]]:
     if transform == "verbatim":
-        return content
+        return content, []
     if transform == "yaml-json":
         try:
             import yaml
         except ImportError as error:
             raise ValueError("PyYAML 6.0.3 is required for the yaml-json transform") from error
-        return (json.dumps(yaml.safe_load(content), indent=2) + "\n").encode()
+        return (json.dumps(yaml.safe_load(content), indent=2) + "\n").encode(), []
+    if transform == "json-inline-local-refs":
+        return render_inline_local_json_refs(
+            content, source_lock, repo, source_branch, commit, source_path
+        )
     raise ValueError(f"unknown transform {transform!r}")
 
 
@@ -222,7 +346,15 @@ def synchronize(
         requested_commit,
         config["source_path"],
     )
-    rendered = render(content, config["transform"])
+    rendered, source_dependencies = render(
+        content,
+        config["transform"],
+        source_lock,
+        repo,
+        selected_branch,
+        commit,
+        config["source_path"],
+    )
     generated = ROOT / config["generated_path"]
     lock_path = generated.with_name(generated.name + ".source")
     lock = {
@@ -238,6 +370,8 @@ def synchronize(
         "generated_path": config["generated_path"],
         "generated_sha256": source_lock.digest(rendered),
     }
+    if source_dependencies:
+        lock["source_dependencies"] = source_dependencies
     expected_lock = json.dumps(lock, indent=2, sort_keys=True) + "\n"
     if check:
         observed_lock = lock_path.read_text(encoding="utf-8")

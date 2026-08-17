@@ -1,0 +1,1798 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Clearing API",
+    "version": "0.2.0-alpha",
+    "description": "Canonical preparation, authority binding, durable commit, and evidence reads for consequential Tempera actions. A prepared action is non-executable until a complete authority-bearing action is proposed and committed."
+  },
+  "servers": [
+    {
+      "url": "https://clearing.example.invalid"
+    }
+  ],
+  "security": [
+    {
+      "temperaOAuth": []
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getClearingHealth",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Process is alive",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "getClearingReadiness",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Required contract and authentication dependencies are ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions:validate": {
+      "post": {
+        "operationId": "validateClearingAction",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$id": "https://tempera.dev/contracts/clearing/action-envelope-v1.schema.json",
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "else": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "if": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "relationship": {
+                              "const": "ROOT"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actionId": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                  },
+                  "actor": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/actor"
+                  },
+                  "authorityAdmission": {
+                    "$ref": "https://tempera.dev/contracts/clearing/authority-admission-v1.schema.json"
+                  },
+                  "causality": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "parentActionId": {
+                        "oneOf": [
+                          {
+                            "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "relationship": {
+                        "enum": [
+                          "ROOT",
+                          "COMPENSATES",
+                          "RECOVERS",
+                          "REPLACES_NO_EFFECT"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "relationship",
+                      "parentActionId"
+                    ],
+                    "type": "object"
+                  },
+                  "evidence": {
+                    "items": {
+                      "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/evidenceRef"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "expiresAt": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+                  },
+                  "idempotencyKey": {
+                    "pattern": "^[A-Za-z0-9._:-]{8,200}$",
+                    "type": "string"
+                  },
+                  "mandate": {
+                    "$ref": "https://tempera.dev/contracts/clearing/mandate-binding-v1.schema.json"
+                  },
+                  "preparedEffect": {
+                    "$ref": "https://tempera.dev/contracts/clearing/prepared-effect-v1.schema.json"
+                  },
+                  "principal": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "delegationId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "principalId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "subjectId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      }
+                    },
+                    "required": [
+                      "principalId",
+                      "subjectId",
+                      "delegationId"
+                    ],
+                    "type": "object"
+                  },
+                  "purpose": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "reference": {
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "requestedOutcomeDigest": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                      },
+                      "type": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/operationName"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "reference",
+                      "requestedOutcomeDigest"
+                    ],
+                    "type": "object"
+                  },
+                  "requestDigest": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                  },
+                  "risk": {
+                    "$ref": "https://tempera.dev/contracts/clearing/risk-binding-v1.schema.json"
+                  },
+                  "schema": {
+                    "const": "tempera.clearing.action-envelope/v1"
+                  },
+                  "workspace": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+                  }
+                },
+                "required": [
+                  "schema",
+                  "actionId",
+                  "workspace",
+                  "principal",
+                  "actor",
+                  "purpose",
+                  "idempotencyKey",
+                  "causality",
+                  "preparedEffect",
+                  "mandate",
+                  "authorityAdmission",
+                  "risk",
+                  "evidence",
+                  "expiresAt",
+                  "requestDigest"
+                ],
+                "title": "Tempera Clearing action envelope v1",
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action is structurally valid but was not persisted or dispatched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/prepared-actions": {
+      "post": {
+        "operationId": "prepareClearingAction",
+        "summary": "Persist a non-executable canonical effect before authority is issued",
+        "description": "Validates the prepared effect and source-locked adapter, binds it to one workspace/action/idempotency identity, and creates no provider outbox task.",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact replay of an existing preparation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePreparedActionResult"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Prepared effect persisted without authority or dispatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePreparedActionResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions": {
+      "post": {
+        "operationId": "proposeClearingAction",
+        "summary": "Bind exact authority and Risk evidence to a prior prepared effect",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$id": "https://tempera.dev/contracts/clearing/action-envelope-v1.schema.json",
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "else": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "if": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "relationship": {
+                              "const": "ROOT"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actionId": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                  },
+                  "actor": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/actor"
+                  },
+                  "authorityAdmission": {
+                    "$ref": "https://tempera.dev/contracts/clearing/authority-admission-v1.schema.json"
+                  },
+                  "causality": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "parentActionId": {
+                        "oneOf": [
+                          {
+                            "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "relationship": {
+                        "enum": [
+                          "ROOT",
+                          "COMPENSATES",
+                          "RECOVERS",
+                          "REPLACES_NO_EFFECT"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "relationship",
+                      "parentActionId"
+                    ],
+                    "type": "object"
+                  },
+                  "evidence": {
+                    "items": {
+                      "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/evidenceRef"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "expiresAt": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+                  },
+                  "idempotencyKey": {
+                    "pattern": "^[A-Za-z0-9._:-]{8,200}$",
+                    "type": "string"
+                  },
+                  "mandate": {
+                    "$ref": "https://tempera.dev/contracts/clearing/mandate-binding-v1.schema.json"
+                  },
+                  "preparedEffect": {
+                    "$ref": "https://tempera.dev/contracts/clearing/prepared-effect-v1.schema.json"
+                  },
+                  "principal": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "delegationId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "principalId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "subjectId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      }
+                    },
+                    "required": [
+                      "principalId",
+                      "subjectId",
+                      "delegationId"
+                    ],
+                    "type": "object"
+                  },
+                  "purpose": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "reference": {
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "requestedOutcomeDigest": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                      },
+                      "type": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/operationName"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "reference",
+                      "requestedOutcomeDigest"
+                    ],
+                    "type": "object"
+                  },
+                  "requestDigest": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                  },
+                  "risk": {
+                    "$ref": "https://tempera.dev/contracts/clearing/risk-binding-v1.schema.json"
+                  },
+                  "schema": {
+                    "const": "tempera.clearing.action-envelope/v1"
+                  },
+                  "workspace": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+                  }
+                },
+                "required": [
+                  "schema",
+                  "actionId",
+                  "workspace",
+                  "principal",
+                  "actor",
+                  "purpose",
+                  "idempotencyKey",
+                  "causality",
+                  "preparedEffect",
+                  "mandate",
+                  "authorityAdmission",
+                  "risk",
+                  "evidence",
+                  "expiresAt",
+                  "requestDigest"
+                ],
+                "title": "Tempera Clearing action envelope v1",
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Authority-bearing proposal validated and persisted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}": {
+      "get": {
+        "operationId": "getClearingAction",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prepared or authority-bound action",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}/events": {
+      "get": {
+        "operationId": "listClearingActionEvents",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hash-linked authority-bound action events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$id": "https://tempera.dev/contracts/clearing/action-event-v1.schema.json",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "additionalProperties": false,
+                    "properties": {
+                      "actionId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "actor": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/actor"
+                      },
+                      "commandId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "eventDigest": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                      },
+                      "eventId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "eventType": {
+                        "pattern": "^[A-Z][A-Z0-9_]{0,127}$",
+                        "type": "string"
+                      },
+                      "evidenceDigests": {
+                        "items": {
+                          "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                        },
+                        "maxItems": 128,
+                        "type": "array",
+                        "uniqueItems": true
+                      },
+                      "fromStatus": {
+                        "oneOf": [
+                          {
+                            "enum": [
+                              "PROPOSED",
+                              "VALIDATED",
+                              "PREPARED",
+                              "APPROVAL_REQUIRED",
+                              "READY",
+                              "COMMIT_DECIDED",
+                              "DISPATCHING",
+                              "OUTCOME_UNKNOWN",
+                              "EFFECT_OBSERVED",
+                              "VERIFYING",
+                              "COMPENSATION_REQUIRED",
+                              "COMPENSATING",
+                              "COMPENSATION_FAILED",
+                              "DISPUTE_OPEN",
+                              "SETTLED",
+                              "COMPENSATED",
+                              "REJECTED",
+                              "EXPIRED",
+                              "CANCELLED_BEFORE_DISPATCH",
+                              "TERMINAL_FAILURE"
+                            ],
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "occurredAt": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+                      },
+                      "payloadDigest": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                      },
+                      "previousEventDigest": {
+                        "oneOf": [
+                          {
+                            "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "schema": {
+                        "const": "tempera.clearing.action-event/v1"
+                      },
+                      "sequence": {
+                        "maximum": 10000000,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "toStatus": {
+                        "enum": [
+                          "PROPOSED",
+                          "VALIDATED",
+                          "PREPARED",
+                          "APPROVAL_REQUIRED",
+                          "READY",
+                          "COMMIT_DECIDED",
+                          "DISPATCHING",
+                          "OUTCOME_UNKNOWN",
+                          "EFFECT_OBSERVED",
+                          "VERIFYING",
+                          "COMPENSATION_REQUIRED",
+                          "COMPENSATING",
+                          "COMPENSATION_FAILED",
+                          "DISPUTE_OPEN",
+                          "SETTLED",
+                          "COMPENSATED",
+                          "REJECTED",
+                          "EXPIRED",
+                          "CANCELLED_BEFORE_DISPATCH",
+                          "TERMINAL_FAILURE"
+                        ],
+                        "type": "string"
+                      },
+                      "workspace": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+                      }
+                    },
+                    "required": [
+                      "schema",
+                      "eventId",
+                      "actionId",
+                      "workspace",
+                      "sequence",
+                      "eventType",
+                      "fromStatus",
+                      "toStatus",
+                      "actor",
+                      "commandId",
+                      "payloadDigest",
+                      "evidenceDigests",
+                      "previousEventDigest",
+                      "occurredAt",
+                      "eventDigest"
+                    ],
+                    "title": "Tempera Clearing action event v1",
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}/commit": {
+      "post": {
+        "operationId": "commitClearingAction",
+        "summary": "Durably commit the exact previously prepared and authority-bound action",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$id": "https://tempera.dev/contracts/clearing/action-envelope-v1.schema.json",
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "else": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "if": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "relationship": {
+                              "const": "ROOT"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "causality": {
+                          "properties": {
+                            "parentActionId": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "properties": {
+                  "actionId": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                  },
+                  "actor": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/actor"
+                  },
+                  "authorityAdmission": {
+                    "$ref": "https://tempera.dev/contracts/clearing/authority-admission-v1.schema.json"
+                  },
+                  "causality": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "parentActionId": {
+                        "oneOf": [
+                          {
+                            "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "relationship": {
+                        "enum": [
+                          "ROOT",
+                          "COMPENSATES",
+                          "RECOVERS",
+                          "REPLACES_NO_EFFECT"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "relationship",
+                      "parentActionId"
+                    ],
+                    "type": "object"
+                  },
+                  "evidence": {
+                    "items": {
+                      "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/evidenceRef"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "expiresAt": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+                  },
+                  "idempotencyKey": {
+                    "pattern": "^[A-Za-z0-9._:-]{8,200}$",
+                    "type": "string"
+                  },
+                  "mandate": {
+                    "$ref": "https://tempera.dev/contracts/clearing/mandate-binding-v1.schema.json"
+                  },
+                  "preparedEffect": {
+                    "$ref": "https://tempera.dev/contracts/clearing/prepared-effect-v1.schema.json"
+                  },
+                  "principal": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "delegationId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "principalId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "subjectId": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      }
+                    },
+                    "required": [
+                      "principalId",
+                      "subjectId",
+                      "delegationId"
+                    ],
+                    "type": "object"
+                  },
+                  "purpose": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "reference": {
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "requestedOutcomeDigest": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                      },
+                      "type": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/operationName"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "reference",
+                      "requestedOutcomeDigest"
+                    ],
+                    "type": "object"
+                  },
+                  "requestDigest": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                  },
+                  "risk": {
+                    "$ref": "https://tempera.dev/contracts/clearing/risk-binding-v1.schema.json"
+                  },
+                  "schema": {
+                    "const": "tempera.clearing.action-envelope/v1"
+                  },
+                  "workspace": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+                  }
+                },
+                "required": [
+                  "schema",
+                  "actionId",
+                  "workspace",
+                  "principal",
+                  "actor",
+                  "purpose",
+                  "idempotencyKey",
+                  "causality",
+                  "preparedEffect",
+                  "mandate",
+                  "authorityAdmission",
+                  "risk",
+                  "evidence",
+                  "expiresAt",
+                  "requestDigest"
+                ],
+                "title": "Tempera Clearing action envelope v1",
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact commit replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalCommitResult"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Commit decision and dispatch task durably recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalCommitResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "temperaOAuth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://auth.example.invalid/oauth/authorize",
+            "tokenUrl": "https://auth.example.invalid/oauth/token",
+            "scopes": {
+              "clearing:actions:propose": "Prepare and propose Clearing actions",
+              "clearing:actions:read": "Read tenant-scoped Clearing actions and events",
+              "clearing:actions:commit": "Commit an exact previously prepared action",
+              "clearing:actions:reconcile": "Request reconciliation without blind redispatch",
+              "clearing:receipts:read": "Read staged Clearing receipts"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "ActionId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Fail-closed API error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Workspace": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "environmentId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "PrepareActionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.clearing.prepare-action-request/v1"
+          },
+          "actionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "preparedEffect": {
+            "$id": "https://tempera.dev/contracts/clearing/prepared-effect-v1.schema.json",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "effectClass": {
+                      "const": "FINANCIAL"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "economicValue": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "adapter": {
+                "additionalProperties": false,
+                "properties": {
+                  "adapterId": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                  },
+                  "adapterVersion": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "manifestDigest": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "adapterId",
+                  "adapterVersion",
+                  "manifestDigest"
+                ],
+                "type": "object"
+              },
+              "economicValue": {
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "asset": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "atomicAmount": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/exactUnsigned"
+                      },
+                      "decimals": {
+                        "maximum": 38,
+                        "minimum": 0,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "asset",
+                      "atomicAmount",
+                      "decimals"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "effectClass": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/effectClass"
+              },
+              "expiresAt": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+              },
+              "operation": {
+                "additionalProperties": false,
+                "properties": {
+                  "arguments": {
+                    "additionalProperties": true,
+                    "maxProperties": 128,
+                    "type": "object"
+                  },
+                  "name": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/operationName"
+                  },
+                  "target": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "version": {
+                        "oneOf": [
+                          {
+                            "maxLength": 256,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "id",
+                      "version"
+                    ],
+                    "type": "object"
+                  },
+                  "version": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "version",
+                  "target",
+                  "arguments"
+                ],
+                "type": "object"
+              },
+              "postconditions": {
+                "items": {
+                  "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/condition"
+                },
+                "maxItems": 64,
+                "minItems": 1,
+                "type": "array"
+              },
+              "preconditions": {
+                "items": {
+                  "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/condition"
+                },
+                "maxItems": 64,
+                "type": "array"
+              },
+              "preparedAt": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+              },
+              "preparedEffectDigest": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+              },
+              "preparedEffectId": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+              },
+              "recoveryProfile": {
+                "additionalProperties": false,
+                "properties": {
+                  "authoritativeObservationRequired": {
+                    "type": "boolean"
+                  },
+                  "compensationMode": {
+                    "enum": [
+                      "NONE",
+                      "DIRECT_REVERSAL",
+                      "FORWARD_ACTION",
+                      "HUMAN_RECOVERY"
+                    ],
+                    "type": "string"
+                  },
+                  "negativeProofRequiredBeforeRedispatch": {
+                    "type": "boolean"
+                  },
+                  "pointOfNoReturn": {
+                    "enum": [
+                      "BEFORE_DISPATCH",
+                      "PROVIDER_ACCEPTANCE",
+                      "PUBLICATION",
+                      "PHYSICAL_ACTUATION",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  },
+                  "residualLossPossible": {
+                    "type": "boolean"
+                  },
+                  "reversibility": {
+                    "enum": [
+                      "REVERSIBLE",
+                      "COMPENSABLE",
+                      "DELAYABLE",
+                      "ESCROWABLE",
+                      "IRREVERSIBLE",
+                      "SAFETY_CRITICAL"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "reversibility",
+                  "pointOfNoReturn",
+                  "compensationMode",
+                  "authoritativeObservationRequired",
+                  "negativeProofRequiredBeforeRedispatch",
+                  "residualLossPossible"
+                ],
+                "type": "object"
+              },
+              "schema": {
+                "const": "tempera.clearing.prepared-effect/v1"
+              },
+              "secretRefs": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "purpose": {
+                      "maxLength": 256,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "secretRef": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "secretRef",
+                    "purpose"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 32,
+                "type": "array"
+              },
+              "workspace": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+              }
+            },
+            "required": [
+              "schema",
+              "preparedEffectId",
+              "workspace",
+              "effectClass",
+              "adapter",
+              "operation",
+              "economicValue",
+              "preconditions",
+              "postconditions",
+              "recoveryProfile",
+              "secretRefs",
+              "preparedAt",
+              "expiresAt",
+              "preparedEffectDigest"
+            ],
+            "title": "Tempera Clearing prepared effect v1",
+            "type": "object"
+          }
+        }
+      },
+      "PreparedActionRecord": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "status",
+          "version",
+          "preparedEffect",
+          "normalizedEffect",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.clearing.prepared-action-record/v1"
+          },
+          "actionId": {
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "preparedEffectId": {
+            "type": "string"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "status": {
+            "const": "PREPARED_UNBOUND"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "preparedEffect": {
+            "$id": "https://tempera.dev/contracts/clearing/prepared-effect-v1.schema.json",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "effectClass": {
+                      "const": "FINANCIAL"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "economicValue": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "adapter": {
+                "additionalProperties": false,
+                "properties": {
+                  "adapterId": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                  },
+                  "adapterVersion": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "manifestDigest": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+                  }
+                },
+                "required": [
+                  "adapterId",
+                  "adapterVersion",
+                  "manifestDigest"
+                ],
+                "type": "object"
+              },
+              "economicValue": {
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "asset": {
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "atomicAmount": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/exactUnsigned"
+                      },
+                      "decimals": {
+                        "maximum": 38,
+                        "minimum": 0,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "asset",
+                      "atomicAmount",
+                      "decimals"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "effectClass": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/effectClass"
+              },
+              "expiresAt": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+              },
+              "operation": {
+                "additionalProperties": false,
+                "properties": {
+                  "arguments": {
+                    "additionalProperties": true,
+                    "maxProperties": 128,
+                    "type": "object"
+                  },
+                  "name": {
+                    "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/operationName"
+                  },
+                  "target": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "maxLength": 512,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": {
+                        "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+                      },
+                      "version": {
+                        "oneOf": [
+                          {
+                            "maxLength": 256,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "id",
+                      "version"
+                    ],
+                    "type": "object"
+                  },
+                  "version": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "version",
+                  "target",
+                  "arguments"
+                ],
+                "type": "object"
+              },
+              "postconditions": {
+                "items": {
+                  "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/condition"
+                },
+                "maxItems": 64,
+                "minItems": 1,
+                "type": "array"
+              },
+              "preconditions": {
+                "items": {
+                  "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/condition"
+                },
+                "maxItems": 64,
+                "type": "array"
+              },
+              "preparedAt": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/dateTime"
+              },
+              "preparedEffectDigest": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/digest"
+              },
+              "preparedEffectId": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/resourceId"
+              },
+              "recoveryProfile": {
+                "additionalProperties": false,
+                "properties": {
+                  "authoritativeObservationRequired": {
+                    "type": "boolean"
+                  },
+                  "compensationMode": {
+                    "enum": [
+                      "NONE",
+                      "DIRECT_REVERSAL",
+                      "FORWARD_ACTION",
+                      "HUMAN_RECOVERY"
+                    ],
+                    "type": "string"
+                  },
+                  "negativeProofRequiredBeforeRedispatch": {
+                    "type": "boolean"
+                  },
+                  "pointOfNoReturn": {
+                    "enum": [
+                      "BEFORE_DISPATCH",
+                      "PROVIDER_ACCEPTANCE",
+                      "PUBLICATION",
+                      "PHYSICAL_ACTUATION",
+                      "UNKNOWN"
+                    ],
+                    "type": "string"
+                  },
+                  "residualLossPossible": {
+                    "type": "boolean"
+                  },
+                  "reversibility": {
+                    "enum": [
+                      "REVERSIBLE",
+                      "COMPENSABLE",
+                      "DELAYABLE",
+                      "ESCROWABLE",
+                      "IRREVERSIBLE",
+                      "SAFETY_CRITICAL"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "reversibility",
+                  "pointOfNoReturn",
+                  "compensationMode",
+                  "authoritativeObservationRequired",
+                  "negativeProofRequiredBeforeRedispatch",
+                  "residualLossPossible"
+                ],
+                "type": "object"
+              },
+              "schema": {
+                "const": "tempera.clearing.prepared-effect/v1"
+              },
+              "secretRefs": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "purpose": {
+                      "maxLength": 256,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "secretRef": {
+                      "maxLength": 512,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "secretRef",
+                    "purpose"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 32,
+                "type": "array"
+              },
+              "workspace": {
+                "$ref": "https://tempera.dev/contracts/clearing/common-v1.schema.json#/$defs/workspace"
+              }
+            },
+            "required": [
+              "schema",
+              "preparedEffectId",
+              "workspace",
+              "effectClass",
+              "adapter",
+              "operation",
+              "economicValue",
+              "preconditions",
+              "postconditions",
+              "recoveryProfile",
+              "secretRefs",
+              "preparedAt",
+              "expiresAt",
+              "preparedEffectDigest"
+            ],
+            "title": "Tempera Clearing prepared effect v1",
+            "type": "object"
+          },
+          "normalizedEffect": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatePreparedActionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "replayed"
+        ],
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/PreparedActionRecord"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AdmissionConsumptionOutcome": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admissionId",
+          "admissionDigest",
+          "clearingCommitDigest",
+          "leaseFence",
+          "replayed",
+          "authorityMode"
+        ],
+        "properties": {
+          "admissionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "admissionDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "clearingCommitDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "authorityMode": {
+            "type": "string",
+            "enum": [
+              "auth-hub",
+              "local-contract-only"
+            ]
+          }
+        }
+      },
+      "CanonicalCommitResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "replayed",
+          "proposalValidationEventDigest",
+          "canonicalActionId",
+          "requestDigest",
+          "preparedEffectDigest",
+          "providerIdempotencyKey",
+          "authorityConsumption",
+          "contractSetDigest"
+        ],
+        "properties": {
+          "action": {
+            "type": "object"
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "proposalValidationEventDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "canonicalActionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "requestDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "providerIdempotencyKey": {
+            "type": "string",
+            "pattern": "^tc_[0-9a-f]{48}$"
+          },
+          "authorityConsumption": {
+            "$ref": "#/components/schemas/AdmissionConsumptionOutcome"
+          },
+          "contractSetDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ValidationResult": {
+        "type": "object",
+        "required": [
+          "contractSchema",
+          "valid",
+          "persisted",
+          "dispatched",
+          "action"
+        ],
+        "properties": {
+          "contractSchema": {
+            "type": "string"
+          },
+          "valid": {
+            "const": true
+          },
+          "persisted": {
+            "const": false
+          },
+          "dispatched": {
+            "const": false
+          },
+          "action": {
+            "type": "object"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

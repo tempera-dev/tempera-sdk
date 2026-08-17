@@ -35,6 +35,7 @@ function testClient(overrides = {}) {
       temperaBio: "https://bio.example.test",
       temperaDocument: "https://document.example.test",
       temperaPayments: "https://payments.example.test",
+      temperaClearing: "https://clearing.example.test",
       cradle: "https://cradle.example.test",
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
