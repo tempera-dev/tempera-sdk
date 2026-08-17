@@ -1,0 +1,90 @@
+name: Trusted PR exact-source ledger removal
+
+# The workflow definition is read from the pull request base.  Never change
+# this lane to `pull_request`: that event cannot receive the Contract Reader
+# credentials needed for the exact private-source check.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  trusted-pr-exact-source:
+    name: Verify candidate ledger removals from trusted base
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Refuse fork-originated credentialed runs
+        env:
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY" || {
+            echo "exact-source ledger removal must originate from this repository" >&2
+            exit 1
+          }
+      - name: Checkout only the immutable trusted base
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Confirm trusted base revision
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$BASE_SHA"
+      - name: Run trusted verifier adversarial tests from the base
+        run: python3 scripts/test-verify-trusted-pr-exact-source.py
+      - name: Fetch candidate as Git data without checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          test "$PR_NUMBER" -eq "$PR_NUMBER"
+          case "$PR_HEAD_SHA" in
+            ''|*[!0-9a-f]*) echo "invalid pull-request head SHA" >&2; exit 1 ;;
+          esac
+          test "${#PR_HEAD_SHA}" = 40
+          candidate_header="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0=http.https://github.com/.extraheader \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $candidate_header" \
+          GIT_TERMINAL_PROMPT=0 \
+          git fetch --no-tags --no-write-fetch-head origin \
+            "+refs/pull/$PR_NUMBER/head:refs/trusted/candidate"
+          test "$(git rev-parse refs/trusted/candidate)" = "$PR_HEAD_SHA"
+          unset candidate_header GH_TOKEN
+      - name: Statically validate candidate before credentials exist
+        id: static-validation
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python3 scripts/verify-trusted-pr-exact-source.py validate \
+            --repo-dir . \
+            --base-rev "$BASE_SHA" \
+            --candidate-rev refs/trusted/candidate \
+            --manifest "$RUNNER_TEMP/trusted-pr-exact-source.json"
+          repositories="$(python3 scripts/verify-trusted-pr-exact-source.py repositories \
+            --manifest "$RUNNER_TEMP/trusted-pr-exact-source.json")"
+          printf 'repositories=%s\n' "$repositories" >> "$GITHUB_OUTPUT"
+      - name: Mint least-privilege Contract Reader token after static validation
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: ${{ steps.static-validation.outputs.repositories }}
+      - name: Verify current exact sources with transient credentials
+        env:
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
+        run: |
+          python3 scripts/verify-trusted-pr-exact-source.py verify \
+            --manifest "$RUNNER_TEMP/trusted-pr-exact-source.json" \
+            --token-env CONTRACT_READER_TOKEN
+          unset CONTRACT_READER_TOKEN
