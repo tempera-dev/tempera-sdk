@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "dcf0660417bfa7a9f7221d9e3d810ede61a72fa4",
   "source_branch": "main",
-  "source_commit": "f9cd8b8364fb8cd4ef8e24645a59e1cd495ce2b4",
+  "source_commit": "ea4ae0f0cc281e35ae38c9fc9124b213939e6c3b",
   "source_mode": "100644",
   "source_path": "contracts/control-plane.openapi.json",
   "source_repo": "tempera-dev/auth-hub",
