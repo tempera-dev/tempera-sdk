@@ -209,6 +209,15 @@ jobs:
             generated_path: specs/tempera-payments-api.json
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
+          - name: Tempera Risk
+            product: temperaRisk
+            repository: tempera-risk
+            source_branch: main
+            source_path: api/openapi.yaml
+            lock: specs/tempera-risk-api.json.source
+            generated_path: specs/tempera-risk-api.json
+            generated_with: sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2
+            transform: yaml-json
           - name: Cradle
             product: cradle
             repository: cradle

@@ -663,6 +663,10 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare program. */
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare prospective experiment protocol. */
+  prepareProspectiveExperimentProtocol(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify prospective measurement. */
+  verifyProspectiveMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

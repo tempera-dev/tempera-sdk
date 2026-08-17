@@ -5535,6 +5535,72 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "prepareProspectiveExperimentProtocol",
+        "method": "POST",
+        "path": "/v1/prospectiveExperimentProtocols:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare prospective experiment protocol.",
+        "upstreamOperationId": "prepareProspectiveExperimentProtocol",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "configuration",
+          "experimentProposal",
+          "program"
+        ],
+        "requiredBody": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyProspectiveMeasurement",
+        "method": "POST",
+        "path": "/v1/prospectiveMeasurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify prospective measurement.",
+        "upstreamOperationId": "verifyProspectiveMeasurement",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "measurementIdentitySignature",
+          "program",
+          "prospectiveProtocol",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
+      },
+      {
         "id": "ingestMaveDBScoreSet",
         "method": "POST",
         "path": "/v1/sources/maveDbScoreSets:ingest",
