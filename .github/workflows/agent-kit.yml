@@ -23,7 +23,9 @@ permissions:
   contents: read
 
 jobs:
+  # Do not expose the cross-repository reader token to pull-request code.
   exact-source-drift:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -44,6 +46,12 @@ jobs:
           fetch-depth: 0
           path: .agent-kit-source
           token: ${{ steps.contract-reader.outputs.token }}
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
+        run: |
+          test -z "$(git -C .agent-kit-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .agent-kit-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .agent-kit-source config --local --get remote.origin.url | grep -q '@'
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"

@@ -6,7 +6,9 @@ on:
     branches: [main]
 
 jobs:
+  # Exact-source jobs must not mint cross-repository reader tokens from PR-head code.
   data-engine-exact-source:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -60,12 +62,28 @@ jobs:
           fetch-depth: 0
           path: .data-engine-source
           token: ${{ steps.contract-reader.outputs.token }}
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
+        run: |
+          test -z "$(git -C .data-engine-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .data-engine-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .data-engine-source config --local --get remote.origin.url | grep -q '@'
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"
       - name: Verify exact committed Data Engine source
+        env:
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
         run: |
+          reader_auth="$(printf 'x-access-token:%s' "$CONTRACT_READER_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $reader_auth" \
           git -C .data-engine-source fetch --no-tags origin main:refs/remotes/origin/main
+          unset reader_auth CONTRACT_READER_TOKEN
+          test -z "$(git -C .data-engine-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .data-engine-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .data-engine-source config --local --get remote.origin.url | grep -q '@'
           test "$(git -C .data-engine-source rev-parse HEAD)" = "$(git -C .data-engine-source rev-parse refs/remotes/origin/main)"
           python3 -m pip install PyYAML==6.0.3
           python3 scripts/sync-vendored-openapi.py --check --product dataEngine --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
@@ -73,6 +91,7 @@ jobs:
           python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
 
   auth-hub-exact-source:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -126,13 +145,30 @@ jobs:
           fetch-depth: 0
           path: .auth-hub-source
           token: ${{ steps.contract-reader.outputs.token }}
-      - name: Verify exact committed Auth Hub source
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
         run: |
+          test -z "$(git -C .auth-hub-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .auth-hub-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .auth-hub-source config --local --get remote.origin.url | grep -q '@'
+      - name: Verify exact committed Auth Hub source
+        env:
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
+        run: |
+          reader_auth="$(printf 'x-access-token:%s' "$CONTRACT_READER_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $reader_auth" \
           git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          unset reader_auth CONTRACT_READER_TOKEN
+          test -z "$(git -C .auth-hub-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .auth-hub-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .auth-hub-source config --local --get remote.origin.url | grep -q '@'
           test "$(git -C .auth-hub-source rev-parse HEAD)" = "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)"
           python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit "${{ steps.auth-hub-lock.outputs.commit }}"
 
   palette-exact-source:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -184,15 +220,32 @@ jobs:
           fetch-depth: 0
           path: .palette-source
           token: ${{ steps.contract-reader.outputs.token }}
-      - name: Verify exact committed Palette source
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
         run: |
+          test -z "$(git -C .palette-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .palette-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .palette-source config --local --get remote.origin.url | grep -q '@'
+      - name: Verify exact committed Palette source
+        env:
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
+        run: |
+          reader_auth="$(printf 'x-access-token:%s' "$CONTRACT_READER_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $reader_auth" \
           git -C .palette-source fetch --no-tags origin main:refs/remotes/origin/main
+          unset reader_auth CONTRACT_READER_TOKEN
+          test -z "$(git -C .palette-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .palette-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .palette-source config --local --get remote.origin.url | grep -q '@'
           test "$(git -C .palette-source rev-parse HEAD)" = "$(git -C .palette-source rev-parse refs/remotes/origin/main)"
           python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .palette-source --source-repo tempera-dev/palette --source-branch main --commit "${{ steps.palette-lock.outputs.commit }}" --source-path sdks/openapi/palette-api.json --generated-with source_lock.py@1+palette-api-dump-openapi --generated-file specs/palette-api.json --generated-path specs/palette-api.json --lock specs/palette-api.json.source
           python3 scripts/sync-palette-eval-openapi.py --check --source .palette-source/sdks/openapi/palette-api.json --source-checkout .palette-source
 
   upstream-exact-source:
-    name: ${{ matrix.name }} source gate
+    name: ${{ matrix.name }} trusted main source gate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -209,6 +262,15 @@ jobs:
             generated_path: specs/tempera-payments-api.json
             generated_with: source_lock.py@1+verbatim-openapi-copy
             transform: verbatim
+          - name: Tempera Risk
+            product: temperaRisk
+            repository: tempera-risk
+            source_branch: main
+            source_path: api/openapi.yaml
+            lock: specs/tempera-risk-api.json.source
+            generated_path: specs/tempera-risk-api.json
+            generated_with: sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2
+            transform: yaml-json
           - name: Cradle
             product: cradle
             repository: cradle
@@ -315,7 +377,6 @@ jobs:
               output.write(f"commit={commit}\n")
           PY
       - name: Mint private contract reader token
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         id: contract-reader
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -324,22 +385,35 @@ jobs:
           owner: tempera-dev
           repositories: ${{ matrix.repository }}
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         with:
           repository: tempera-dev/${{ matrix.repository }}
           ref: ${{ steps.source-lock.outputs.commit }}
           fetch-depth: 0
           path: .upstream-source
           token: ${{ steps.contract-reader.outputs.token }}
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
+        run: |
+          test -z "$(git -C .upstream-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .upstream-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .upstream-source config --local --get remote.origin.url | grep -q '@'
       - name: Reproduce and verify exact committed source
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         env:
           PRODUCT: ${{ matrix.product }}
           SOURCE_BRANCH: ${{ matrix.source_branch }}
           TRANSFORM: ${{ matrix.transform }}
           COMMIT: ${{ steps.source-lock.outputs.commit }}
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
         run: |
+          reader_auth="$(printf 'x-access-token:%s' "$CONTRACT_READER_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $reader_auth" \
           git -C .upstream-source fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
+          unset reader_auth CONTRACT_READER_TOKEN
+          test -z "$(git -C .upstream-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .upstream-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .upstream-source config --local --get remote.origin.url | grep -q '@'
           if [ "$TRANSFORM" = yaml-json ]; then
             python3 -m pip install PyYAML==6.0.3
           fi
@@ -348,23 +422,18 @@ jobs:
             --source-repo-dir .upstream-source \
             --source-branch "$SOURCE_BRANCH" \
             --source-commit "$COMMIT"
-      - name: Verify explicit hosted exact-source blocker
-        if: ${{ matrix.repository == 'remi' || matrix.repository == 'tempo' || matrix.repository == 'tempera-bio' || matrix.repository == 'human-data' }}
-        env:
-          SOURCE_REPO: tempera-dev/${{ matrix.repository }}
-        run: python3 scripts/check-exact-source-gaps.py --repository "$SOURCE_REPO"
 
   sdk:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
-      - uses: dtolnay/rust-toolchain@1.97.1
+      - uses: dtolnay/rust-toolchain@032958afbdc797a9164d3bc0b56325c1308924a5 # 1.97.1
         with:
           components: clippy, rustfmt
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py

@@ -1591,6 +1591,138 @@
           "credentialId"
         ],
         "requestBodyKind": "none"
+      },
+      {
+        "id": "clearingAdmissionsCreate",
+        "method": "POST",
+        "path": "/v1/clearing/admissions",
+        "auth": "oauthResource",
+        "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
+        "upstreamOperationId": "clearingAdmissions.create",
+        "body": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey",
+          "ttlSeconds"
+        ],
+        "requiredBody": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:approve"
+      },
+      {
+        "id": "clearingAdmissionsGet",
+        "method": "GET",
+        "path": "/v1/clearing/admissions/{admissionId}",
+        "auth": "oauthResource",
+        "description": "Read a Clearing admission from the caller's exact workspace.",
+        "upstreamOperationId": "clearingAdmissions.get",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:read"
+      },
+      {
+        "id": "clearingAdmissionsClaim",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:claim",
+        "auth": "oauthResource",
+        "description": "Atomically move one READY admission to a fenced lease before dispatch.",
+        "upstreamOperationId": "clearingAdmissions.claim",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseSeconds"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsFinalize",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:finalize",
+        "auth": "oauthResource",
+        "description": "Consume a matching lease with one durable Clearing commit identity.",
+        "upstreamOperationId": "clearingAdmissions.finalize",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsMarkRecoveryRequired",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:markRecoveryRequired",
+        "auth": "oauthResource",
+        "description": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
+        "upstreamOperationId": "clearingAdmissions.markRecoveryRequired",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:reconcile"
       }
     ],
     "palette": [
@@ -4133,6 +4265,181 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "verifyRiskClearingEvidenceLive",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+        "auth": "product",
+        "description": "Verify one signed Risk Clearing evidence envelope against live Risk state.",
+        "upstreamOperationId": "verifyRiskClearingEvidenceLive",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "envelope"
+        ],
+        "requiredBody": [
+          "envelope"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "abortRiskClearingReservation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+        "auth": "product",
+        "description": "Release a reservation only when Clearing proved no external dispatch occurred.",
+        "upstreamOperationId": "abortRiskClearingReservation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "markRiskClearingOutcomeUnknown",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+        "auth": "product",
+        "description": "Hold budget capacity after an ambiguous provider dispatch.",
+        "upstreamOperationId": "markRiskClearingOutcomeUnknown",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "openRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+        "auth": "product",
+        "description": "Record an independently observed provider effect while retaining capacity.",
+        "upstreamOperationId": "openRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingProvisionalOutcome",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+        "auth": "product",
+        "description": "Record a non-final observed outcome without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingProvisionalOutcome",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingCompensation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+        "auth": "product",
+        "description": "Record compensation as a forward action without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingCompensation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "disputeRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+        "auth": "product",
+        "description": "Keep capacity held when authoritative evidence conflicts.",
+        "upstreamOperationId": "disputeRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "settleRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+        "auth": "product",
+        "description": "Settle a mature reconciled outcome and release held capacity.",
+        "upstreamOperationId": "settleRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "exportAudit",
         "method": "GET",
         "path": "/v1/projects/{project}/audit:export",
@@ -5226,6 +5533,72 @@
         "prepareCommitRequired": false,
         "requestBodyKind": "json",
         "requestContentType": "application/json"
+      },
+      {
+        "id": "prepareProspectiveExperimentProtocol",
+        "method": "POST",
+        "path": "/v1/prospectiveExperimentProtocols:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare prospective experiment protocol.",
+        "upstreamOperationId": "prepareProspectiveExperimentProtocol",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "configuration",
+          "experimentProposal",
+          "program"
+        ],
+        "requiredBody": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyProspectiveMeasurement",
+        "method": "POST",
+        "path": "/v1/prospectiveMeasurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify prospective measurement.",
+        "upstreamOperationId": "verifyProspectiveMeasurement",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "measurementIdentitySignature",
+          "program",
+          "prospectiveProtocol",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
       },
       {
         "id": "ingestMaveDBScoreSet",

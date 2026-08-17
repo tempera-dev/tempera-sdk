@@ -9,7 +9,9 @@ permissions:
   contents: read
 
 jobs:
+  # Do not expose the cross-repository reader token to pull-request code.
   tempera-voice-exact-source:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -64,12 +66,28 @@ jobs:
           fetch-depth: 0
           path: .tempera-voice-source
           token: ${{ steps.contract-reader.outputs.token }}
+          persist-credentials: false
+      - name: Confirm reader credentials are not persisted
+        run: |
+          test -z "$(git -C .tempera-voice-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .tempera-voice-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .tempera-voice-source config --local --get remote.origin.url | grep -q '@'
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"
       - name: Verify exact committed Tempera Voice source
+        env:
+          CONTRACT_READER_TOKEN: ${{ steps.contract-reader.outputs.token }}
         run: |
+          reader_auth="$(printf 'x-access-token:%s' "$CONTRACT_READER_TOKEN" | base64 | tr -d '\n')"
+          GIT_CONFIG_COUNT=1 \
+          GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $reader_auth" \
           git -C .tempera-voice-source fetch --no-tags origin main:refs/remotes/origin/main
+          unset reader_auth CONTRACT_READER_TOKEN
+          test -z "$(git -C .tempera-voice-source config --local --get-regexp '^http\..*extraheader$' || true)"
+          test -z "$(git -C .tempera-voice-source config --local --get-regexp '^credential\.' || true)"
+          ! git -C .tempera-voice-source config --local --get remote.origin.url | grep -q '@'
           python3 scripts/sync-vendored-openapi.py \
             --check \
             --product temperaVoice \

@@ -214,8 +214,8 @@ is the default when none is specified.
 | `workflow:write` | tempera-workflows: `assistJson`, `compileBioCampaign`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun`, `runsSignal` |
 | `bio:source:read` | tempera-bio: `ingestMaveDBScoreSet` |
-| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareProgram` |
-| `bio:measurement:verify` | tempera-bio: `verifyMeasurement` |
+| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareProgram`, `prepareProspectiveExperimentProtocol` |
+| `bio:measurement:verify` | tempera-bio: `verifyMeasurement`, `verifyProspectiveMeasurement` |
 | `bio:decision:write` | tempera-bio: `deriveCampaignState`, `deriveDecision` |
 | `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
 | `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection`; tempera-workflows: `createExperimentSubmission`, `reconcileExperimentSubmission` |
@@ -238,12 +238,12 @@ is the default when none is specified.
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:read` | auth-hub: `clearingAdmissionsGet` |
 | `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:commit` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:reconcile` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:commit` | auth-hub: `clearingAdmissionsClaim`, `clearingAdmissionsFinalize` |
+| `clearing:actions:reconcile` | auth-hub: `clearingAdmissionsMarkRecoveryRequired` |
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:approve` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:approve` | auth-hub: `clearingAdmissionsCreate` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 
 ## Issuer endpoints

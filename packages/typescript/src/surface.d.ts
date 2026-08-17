@@ -258,6 +258,16 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   passkeysRecover(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete one passkey after recent AAL2 step-up. */
   passkeysDelete(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Issue a short-lived, effect-specific, single-use Clearing admission from a human approval. */
+  clearingAdmissionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read a Clearing admission from the caller's exact workspace. */
+  clearingAdmissionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically move one READY admission to a fenced lease before dispatch. */
+  clearingAdmissionsClaim(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Consume a matching lease with one durable Clearing commit identity. */
+  clearingAdmissionsFinalize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Monotonically mark an expired lease as requiring authoritative reconciliation. */
+  clearingAdmissionsMarkRecoveryRequired(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {
@@ -524,6 +534,22 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   cancelResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/researchJobs/{jobId}:review. */
   reviewResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify one signed Risk Clearing evidence envelope against live Risk state. */
+  verifyRiskClearingEvidenceLive(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Release a reservation only when Clearing proved no external dispatch occurred. */
+  abortRiskClearingReservation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Hold budget capacity after an ambiguous provider dispatch. */
+  markRiskClearingOutcomeUnknown(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an independently observed provider effect while retaining capacity. */
+  openRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record a non-final observed outcome without releasing capacity. */
+  recordRiskClearingProvisionalOutcome(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record compensation as a forward action without releasing capacity. */
+  recordRiskClearingCompensation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Keep capacity held when authoritative evidence conflicts. */
+  disputeRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Settle a mature reconciled outcome and release held capacity. */
+  settleRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/audit:export. */
   exportAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
@@ -637,6 +663,10 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare program. */
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare prospective experiment protocol. */
+  prepareProspectiveExperimentProtocol(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify prospective measurement. */
+  verifyProspectiveMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
