@@ -18,6 +18,7 @@ OVERRIDES = ROOT / "contracts" / "sdk-operation-overrides.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 PRODUCT_SPECS = {
     "temperaPayments": "tempera-payments-api.json",
+    "temperaClearing": "tempera-clearing-api.json",
     "dataEngine": "data-engine-openapi.json",
     "humanData": "human-data-openapi.json",
     "controlPlane": "control-plane.openapi.json",
@@ -35,6 +36,7 @@ PRODUCT_SPECS = {
 }
 DEFAULT_AUTH = {
     "temperaPayments": "oauthResource",
+    "temperaClearing": "product",
     "dataEngine": "product",
     "humanData": "product",
     "controlPlane": "account",
