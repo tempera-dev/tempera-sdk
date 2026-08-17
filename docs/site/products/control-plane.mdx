@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 81 |
+| Typed operations | 86 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -3564,6 +3564,318 @@ result = client.control_plane.passkeys_delete({
 ```rust Rust
 let spec = client.build_request("control_plane", "passkeys_delete", &[
     ("credentialId", "<credentialId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### clearingAdmissionsCreate
+
+`POST /v1/clearing/admissions`
+
+Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.
+
+- **Producer operationId:** `clearingAdmissions.create`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:approve`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsCreate()` · Python `client.control_plane.clearing_admissions_create()` · Rust `build_request("control_plane", "clearing_admissions_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | — |
+| `workspace` | yes | — |
+| `principalId` | yes | — |
+| `canonicalActionId` | yes | — |
+| `canonicalRequestDigest` | yes | — |
+| `preparedEffectId` | yes | — |
+| `preparedEffectDigest` | yes | — |
+| `operation` | yes | — |
+| `resourceSelectors` | yes | — |
+| `economicAuthority` | yes | — |
+| `mandateId` | yes | — |
+| `mandateDigest` | yes | — |
+| `riskAssessmentId` | yes | — |
+| `riskAssessmentDigest` | yes | — |
+| `riskReservationId` | yes | — |
+| `riskReservationDigest` | yes | — |
+| `authorizationContextDigest` | yes | — |
+| `consumptionKey` | yes | — |
+| `ttlSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsCreate({
+  admissionId: "<admissionId>",
+  workspace: "<workspace>",
+  principalId: "<principalId>",
+  canonicalActionId: "<canonicalActionId>",
+  canonicalRequestDigest: "<canonicalRequestDigest>",
+  preparedEffectId: "<preparedEffectId>",
+  preparedEffectDigest: "<preparedEffectDigest>",
+  operation: "<operation>",
+  resourceSelectors: "<resourceSelectors>",
+  economicAuthority: "<economicAuthority>",
+  mandateId: "<mandateId>",
+  mandateDigest: "<mandateDigest>",
+  riskAssessmentId: "<riskAssessmentId>",
+  riskAssessmentDigest: "<riskAssessmentDigest>",
+  riskReservationId: "<riskReservationId>",
+  riskReservationDigest: "<riskReservationDigest>",
+  authorizationContextDigest: "<authorizationContextDigest>",
+  consumptionKey: "<consumptionKey>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_create({
+    "admissionId": "<admissionId>",
+    "workspace": "<workspace>",
+    "principalId": "<principalId>",
+    "canonicalActionId": "<canonicalActionId>",
+    "canonicalRequestDigest": "<canonicalRequestDigest>",
+    "preparedEffectId": "<preparedEffectId>",
+    "preparedEffectDigest": "<preparedEffectDigest>",
+    "operation": "<operation>",
+    "resourceSelectors": "<resourceSelectors>",
+    "economicAuthority": "<economicAuthority>",
+    "mandateId": "<mandateId>",
+    "mandateDigest": "<mandateDigest>",
+    "riskAssessmentId": "<riskAssessmentId>",
+    "riskAssessmentDigest": "<riskAssessmentDigest>",
+    "riskReservationId": "<riskReservationId>",
+    "riskReservationDigest": "<riskReservationDigest>",
+    "authorizationContextDigest": "<authorizationContextDigest>",
+    "consumptionKey": "<consumptionKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_create", &[
+    ("admissionId", "<admissionId>".into()),
+    ("workspace", "<workspace>".into()),
+    ("principalId", "<principalId>".into()),
+    ("canonicalActionId", "<canonicalActionId>".into()),
+    ("canonicalRequestDigest", "<canonicalRequestDigest>".into()),
+    ("preparedEffectId", "<preparedEffectId>".into()),
+    ("preparedEffectDigest", "<preparedEffectDigest>".into()),
+    ("operation", "<operation>".into()),
+    ("resourceSelectors", "<resourceSelectors>".into()),
+    ("economicAuthority", "<economicAuthority>".into()),
+    ("mandateId", "<mandateId>".into()),
+    ("mandateDigest", "<mandateDigest>".into()),
+    ("riskAssessmentId", "<riskAssessmentId>".into()),
+    ("riskAssessmentDigest", "<riskAssessmentDigest>".into()),
+    ("riskReservationId", "<riskReservationId>".into()),
+    ("riskReservationDigest", "<riskReservationDigest>".into()),
+    ("authorizationContextDigest", "<authorizationContextDigest>".into()),
+    ("consumptionKey", "<consumptionKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### clearingAdmissionsGet
+
+`GET /v1/clearing/admissions/{admissionId}`
+
+Read a Clearing admission from the caller's exact workspace.
+
+- **Producer operationId:** `clearingAdmissions.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:read`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsGet()` · Python `client.control_plane.clearing_admissions_get()` · Rust `build_request("control_plane", "clearing_admissions_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsGet({
+  admissionId: "<admissionId>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_get({
+    "admissionId": "<admissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_get", &[
+    ("admissionId", "<admissionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### clearingAdmissionsClaim
+
+`POST /v1/clearing/admissions/{admissionId}:claim`
+
+Atomically move one READY admission to a fenced lease before dispatch.
+
+- **Producer operationId:** `clearingAdmissions.claim`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:commit`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsClaim()` · Python `client.control_plane.clearing_admissions_claim()` · Rust `build_request("control_plane", "clearing_admissions_claim", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionDigest` | yes | — |
+| `leaseTokenDigest` | yes | — |
+| `leaseSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsClaim({
+  admissionId: "<admissionId>",
+  admissionDigest: "<admissionDigest>",
+  leaseTokenDigest: "<leaseTokenDigest>",
+  leaseSeconds: "<leaseSeconds>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_claim({
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseSeconds": "<leaseSeconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_claim", &[
+    ("admissionId", "<admissionId>".into()),
+    ("admissionDigest", "<admissionDigest>".into()),
+    ("leaseTokenDigest", "<leaseTokenDigest>".into()),
+    ("leaseSeconds", "<leaseSeconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### clearingAdmissionsFinalize
+
+`POST /v1/clearing/admissions/{admissionId}:finalize`
+
+Consume a matching lease with one durable Clearing commit identity.
+
+- **Producer operationId:** `clearingAdmissions.finalize`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:commit`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsFinalize()` · Python `client.control_plane.clearing_admissions_finalize()` · Rust `build_request("control_plane", "clearing_admissions_finalize", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionDigest` | yes | — |
+| `leaseTokenDigest` | yes | — |
+| `leaseFence` | yes | — |
+| `clearingCommitDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsFinalize({
+  admissionId: "<admissionId>",
+  admissionDigest: "<admissionDigest>",
+  leaseTokenDigest: "<leaseTokenDigest>",
+  leaseFence: "<leaseFence>",
+  clearingCommitDigest: "<clearingCommitDigest>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_finalize({
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseFence": "<leaseFence>",
+    "clearingCommitDigest": "<clearingCommitDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_finalize", &[
+    ("admissionId", "<admissionId>".into()),
+    ("admissionDigest", "<admissionDigest>".into()),
+    ("leaseTokenDigest", "<leaseTokenDigest>".into()),
+    ("leaseFence", "<leaseFence>".into()),
+    ("clearingCommitDigest", "<clearingCommitDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### clearingAdmissionsMarkRecoveryRequired
+
+`POST /v1/clearing/admissions/{admissionId}:markRecoveryRequired`
+
+Monotonically mark an expired lease as requiring authoritative reconciliation.
+
+- **Producer operationId:** `clearingAdmissions.markRecoveryRequired`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:reconcile`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsMarkRecoveryRequired()` · Python `client.control_plane.clearing_admissions_mark_recovery_required()` · Rust `build_request("control_plane", "clearing_admissions_mark_recovery_required", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsMarkRecoveryRequired({
+  admissionId: "<admissionId>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_mark_recovery_required({
+    "admissionId": "<admissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_mark_recovery_required", &[
+    ("admissionId", "<admissionId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

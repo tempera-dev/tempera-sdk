@@ -2385,6 +2385,180 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Delete one passkey after recent AAL2 step-up."
+        },
+        {
+            "id": "clearing_admissions_create",
+            "upstream_operation_id": "clearingAdmissions.create",
+            "method": "POST",
+            "path": "/v1/clearing/admissions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionId",
+                "workspace",
+                "principalId",
+                "canonicalActionId",
+                "canonicalRequestDigest",
+                "preparedEffectId",
+                "preparedEffectDigest",
+                "operation",
+                "resourceSelectors",
+                "economicAuthority",
+                "mandateId",
+                "mandateDigest",
+                "riskAssessmentId",
+                "riskAssessmentDigest",
+                "riskReservationId",
+                "riskReservationDigest",
+                "authorizationContextDigest",
+                "consumptionKey",
+                "ttlSeconds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionId",
+                "workspace",
+                "principalId",
+                "canonicalActionId",
+                "canonicalRequestDigest",
+                "preparedEffectId",
+                "preparedEffectDigest",
+                "operation",
+                "resourceSelectors",
+                "economicAuthority",
+                "mandateId",
+                "mandateDigest",
+                "riskAssessmentId",
+                "riskAssessmentDigest",
+                "riskReservationId",
+                "riskReservationDigest",
+                "authorizationContextDigest",
+                "consumptionKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval."
+        },
+        {
+            "id": "clearing_admissions_get",
+            "upstream_operation_id": "clearingAdmissions.get",
+            "method": "GET",
+            "path": "/v1/clearing/admissions/{admissionId}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "clearing:actions:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read a Clearing admission from the caller's exact workspace."
+        },
+        {
+            "id": "clearing_admissions_claim",
+            "upstream_operation_id": "clearingAdmissions.claim",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:claim",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseSeconds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionDigest",
+                "leaseTokenDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:commit",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Atomically move one READY admission to a fenced lease before dispatch."
+        },
+        {
+            "id": "clearing_admissions_finalize",
+            "upstream_operation_id": "clearingAdmissions.finalize",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:finalize",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseFence",
+                "clearingCommitDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseFence",
+                "clearingCommitDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:commit",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Consume a matching lease with one durable Clearing commit identity."
+        },
+        {
+            "id": "clearing_admissions_mark_recovery_required",
+            "upstream_operation_id": "clearingAdmissions.markRecoveryRequired",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:markRecoveryRequired",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "clearing:actions:reconcile",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Monotonically mark an expired lease as requiring authoritative reconciliation."
         }
     ],
     "palette": [
@@ -6253,6 +6427,253 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
+        },
+        {
+            "id": "verify_risk_clearing_evidence_live",
+            "upstream_operation_id": "verifyRiskClearingEvidenceLive",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Verify one signed Risk Clearing evidence envelope against live Risk state."
+        },
+        {
+            "id": "abort_risk_clearing_reservation",
+            "upstream_operation_id": "abortRiskClearingReservation",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "abortReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "abortReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Release a reservation only when Clearing proved no external dispatch occurred."
+        },
+        {
+            "id": "mark_risk_clearing_outcome_unknown",
+            "upstream_operation_id": "markRiskClearingOutcomeUnknown",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "dispatchAttemptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "dispatchAttemptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Hold budget capacity after an ambiguous provider dispatch."
+        },
+        {
+            "id": "open_risk_clearing_exposure",
+            "upstream_operation_id": "openRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "executionReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "executionReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record an independently observed provider effect while retaining capacity."
+        },
+        {
+            "id": "record_risk_clearing_provisional_outcome",
+            "upstream_operation_id": "recordRiskClearingProvisionalOutcome",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "outcomeDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "outcomeDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record a non-final observed outcome without releasing capacity."
+        },
+        {
+            "id": "record_risk_clearing_compensation",
+            "upstream_operation_id": "recordRiskClearingCompensation",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "compensationReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "compensationReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record compensation as a forward action without releasing capacity."
+        },
+        {
+            "id": "dispute_risk_clearing_exposure",
+            "upstream_operation_id": "disputeRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "disputeEvidenceDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "disputeEvidenceDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Keep capacity held when authoritative evidence conflicts."
+        },
+        {
+            "id": "settle_risk_clearing_exposure",
+            "upstream_operation_id": "settleRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "outcomeDigest",
+                "realizedLoss"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "outcomeDigest",
+                "realizedLoss"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Settle a mature reconciled outcome and release held capacity."
         },
         {
             "id": "export_audit",
