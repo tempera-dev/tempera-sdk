@@ -439,84 +439,32 @@ Durably commit the exact previously prepared and authority-bound action.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `actionId` | yes | — |
-| `actor` | yes | — |
-| `authorityAdmission` | yes | — |
-| `causality` | yes | — |
-| `evidence` | yes | — |
-| `expiresAt` | yes | — |
-| `idempotencyKey` | yes | — |
-| `mandate` | yes | — |
-| `preparedEffect` | yes | — |
-| `principal` | yes | — |
-| `purpose` | yes | — |
-| `requestDigest` | yes | — |
-| `risk` | yes | — |
-| `schema` | yes | — |
-| `workspace` | yes | — |
+| `action` | yes | — |
+| `riskEvidenceEnvelope` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaClearing.commitClearingAction({
   id: "<id>",
-  actionId: "<actionId>",
-  actor: "<actor>",
-  authorityAdmission: "<authorityAdmission>",
-  causality: "<causality>",
-  evidence: "<evidence>",
-  expiresAt: "<expiresAt>",
-  idempotencyKey: "<idempotencyKey>",
-  mandate: "<mandate>",
-  preparedEffect: "<preparedEffect>",
-  principal: "<principal>",
-  purpose: "<purpose>",
-  requestDigest: "<requestDigest>",
-  risk: "<risk>",
-  schema: "<schema>",
-  workspace: "<workspace>",
+  action: "<action>",
+  riskEvidenceEnvelope: "<riskEvidenceEnvelope>",
 });
 ```
 
 ```python Python
 result = client.tempera_clearing.commit_clearing_action({
     "id": "<id>",
-    "actionId": "<actionId>",
-    "actor": "<actor>",
-    "authorityAdmission": "<authorityAdmission>",
-    "causality": "<causality>",
-    "evidence": "<evidence>",
-    "expiresAt": "<expiresAt>",
-    "idempotencyKey": "<idempotencyKey>",
-    "mandate": "<mandate>",
-    "preparedEffect": "<preparedEffect>",
-    "principal": "<principal>",
-    "purpose": "<purpose>",
-    "requestDigest": "<requestDigest>",
-    "risk": "<risk>",
-    "schema": "<schema>",
-    "workspace": "<workspace>",
+    "action": "<action>",
+    "riskEvidenceEnvelope": "<riskEvidenceEnvelope>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_clearing", "commit_clearing_action", &[
     ("id", "<id>".into()),
-    ("actionId", "<actionId>".into()),
-    ("actor", "<actor>".into()),
-    ("authorityAdmission", "<authorityAdmission>".into()),
-    ("causality", "<causality>".into()),
-    ("evidence", "<evidence>".into()),
-    ("expiresAt", "<expiresAt>".into()),
-    ("idempotencyKey", "<idempotencyKey>".into()),
-    ("mandate", "<mandate>".into()),
-    ("preparedEffect", "<preparedEffect>".into()),
-    ("principal", "<principal>".into()),
-    ("purpose", "<purpose>".into()),
-    ("requestDigest", "<requestDigest>".into()),
-    ("risk", "<risk>".into()),
-    ("schema", "<schema>".into()),
-    ("workspace", "<workspace>".into()),
+    ("action", "<action>".into()),
+    ("riskEvidenceEnvelope", "<riskEvidenceEnvelope>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

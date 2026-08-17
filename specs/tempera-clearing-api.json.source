@@ -1,11 +1,11 @@
 {
   "generated_path": "specs/tempera-clearing-api.json",
-  "generated_sha256": "fca4a5eb8c0fc7709800a3d8d494daa5dd15dd17eb061c58ae9a5ec09e4c91a4",
+  "generated_sha256": "d5ce0dbfd9eab6d936239f2014cd6b51dd49c6c596f4494abd27b84aa9a1dcbd",
   "generated_with": "source_lock.py@2+inline-local-json-ref-bundle",
   "schema_version": 1,
-  "source_blob_sha": "7f7ecf667a7bfc297279159dbeb010ee2752be99",
+  "source_blob_sha": "d1005f91462c7f62d7d745b1eafe9806ac8d580e",
   "source_branch": "main",
-  "source_commit": "9e65f823d54eb447a71c72b78a1431c0f93967a8",
+  "source_commit": "3676e4e638747fd4870ceab240f2566032fa17f1",
   "source_dependencies": [
     {
       "source_blob_sha": "254b947072c8fdf45b9c2028992be2d089af085a",
@@ -29,5 +29,5 @@
   "source_mode": "100644",
   "source_path": "contracts/openapi/clearing.openapi.json",
   "source_repo": "tempera-dev/tempera-clearing",
-  "source_sha256": "c2b56a2d2396b5cfcf9a7df5003e666f36d7ce0caa538e3ce6ada0764810c722"
+  "source_sha256": "d9cc5ec45b873dc9dee86024a0759e3a6723266f49696c303add53f9e9cc8ec0"
 }

@@ -501,38 +501,12 @@
           "id"
         ],
         "body": [
-          "actionId",
-          "actor",
-          "authorityAdmission",
-          "causality",
-          "evidence",
-          "expiresAt",
-          "idempotencyKey",
-          "mandate",
-          "preparedEffect",
-          "principal",
-          "purpose",
-          "requestDigest",
-          "risk",
-          "schema",
-          "workspace"
+          "action",
+          "riskEvidenceEnvelope"
         ],
         "requiredBody": [
-          "schema",
-          "actionId",
-          "workspace",
-          "principal",
-          "actor",
-          "purpose",
-          "idempotencyKey",
-          "causality",
-          "preparedEffect",
-          "mandate",
-          "authorityAdmission",
-          "risk",
-          "evidence",
-          "expiresAt",
-          "requestDigest"
+          "action",
+          "riskEvidenceEnvelope"
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
