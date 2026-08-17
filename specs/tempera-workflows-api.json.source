@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "a519d608916fd0d88a5c7f56903055b4db1cfdc6",
   "source_branch": "main",
-  "source_commit": "7f929443d3cb5b4f534cb1b3aba16d227665995e",
+  "source_commit": "2dcf97e8222f277515dfe5a07077a6996a21050f",
   "source_mode": "100644",
   "source_path": "sdks/openapi/tempera-workflows-api.json",
   "source_repo": "tempera-dev/tempera-workflows",
