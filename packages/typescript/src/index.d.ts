@@ -24,27 +24,10 @@ import type {
   TemperaScope,
   TempoClient,
 } from "./surface.js";
-import type { BrowserTask } from "./browser.js";
 
-export declare class TemperaSdkError extends Error {
-  status?: number;
-  body?: unknown;
-}
-
-export declare class TemperaApiError extends TemperaSdkError {
-  status: number;
-  code: string | null;
-  requestId: string | null;
-  product: string | null;
-  operation: string | null;
-  body: unknown;
-}
-
-export declare class TemperaMcpError extends TemperaSdkError {
-  code: number;
-  data: unknown;
-}
-
+export declare class TemperaSdkError extends Error { status?: number; body?: unknown; }
+export declare class TemperaApiError extends TemperaSdkError { status: number; code: string | null; requestId: string | null; product: string | null; operation: string | null; body: unknown; }
+export declare class TemperaMcpError extends TemperaSdkError { code: number; data: unknown; }
 export declare function normalizeErrorBody(body: unknown, statusText?: string): { code: string | null; message: string; requestId: string | null };
 export declare function apiErrorFromResponse(options: { status: number; statusText?: string; headers?: { get(name: string): string | null }; body?: unknown; product?: string; operation?: string }): TemperaApiError;
 
@@ -75,8 +58,6 @@ export type TemperaClientOptions = { auth?: TemperaAuth; accountToken?: string; 
 export type TemperaClient = {
   auth: TemperaAuth | null;
   accountToken: string | null;
-  browserTask(options?: Record<string, unknown>): Promise<BrowserTask>;
-  attachBrowserTask(sessionId: string, options?: { session?: unknown }): BrowserTask;
   controlPlane: ControlPlaneClient;
   palette: PaletteClient;
   tempo: TempoClient;
