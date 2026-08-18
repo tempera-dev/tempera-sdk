@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/sdk-five-language-docs-bootstrap.yml
       - scripts/apply-five-language-docs.py
+      - scripts/fix-five-language-docs-target.py
       - scripts/test-five-language-docs.py
 
 permissions:
@@ -28,7 +29,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.97.1
         with: { components: 'clippy,rustfmt' }
       - name: Apply the five-language docs migration
-        run: python3 scripts/apply-five-language-docs.py
+        run: |
+          python3 scripts/apply-five-language-docs.py
+          python3 scripts/fix-five-language-docs-target.py
+          python3 -m py_compile scripts/gen-sdk-docs.py scripts/check-sdk-surface.py
       - name: Regenerate all committed language and documentation surfaces
         run: |
           python3 scripts/gen-sdk-surface.py
@@ -62,6 +66,7 @@ jobs:
       - name: Commit only after the complete five-language qualification passes
         run: |
           rm scripts/apply-five-language-docs.py
+          rm scripts/fix-five-language-docs-target.py
           rm .github/workflows/sdk-five-language-docs-bootstrap.yml
           if git diff --quiet; then
             echo 'No documentation changes'
