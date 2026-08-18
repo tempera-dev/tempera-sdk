@@ -11,10 +11,29 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_LANGUAGES = ["typescript", "python", "rust", "go", "c"]
+RESOURCE_METHODS = {"GET", "POST", "PATCH", "DELETE"}
 
 
 def fail(message: str) -> None:
     raise SystemExit(message)
+
+
+def is_supported_method(op: dict[str, object]) -> bool:
+    """Accept resource methods plus the narrow raw-binary upload transport.
+
+    AIP-127 rejects PUT for resource create/update methods. A content upload is
+    not a resource replacement, however: it streams bytes to an already-created
+    upload resource and therefore follows its protocol-native PUT contract. Keep
+    this exception structural so an ordinary JSON PUT still fails closed.
+    """
+    method = op.get("method")
+    if method in RESOURCE_METHODS:
+        return True
+    return (
+        method == "PUT"
+        and op.get("requestBodyKind") == "binary"
+        and op.get("requestContentType") == "application/octet-stream"
+    )
 
 
 def main() -> int:
@@ -44,7 +63,8 @@ def main() -> int:
         "c": ROOT / "packages/c/include/tempera/tempera.h",
     }
     for language, path in required.items():
-        if not path.exists() or "BrowserTask" not in path.read_text(encoding="utf-8") and "browser_task" not in path.read_text(encoding="utf-8"):
+        text = path.read_text(encoding="utf-8") if path.exists() else ""
+        if not path.exists() or ("BrowserTask" not in text and "browser_task" not in text):
             fail(f"{language} BrowserTask surface is missing")
 
     for product, operations in surface["operations"].items():
@@ -59,7 +79,7 @@ def main() -> int:
                 fail(f"{product}.{operation_id} description must be a non-empty one-line sentence")
             if description[-1] not in ".!?)`'\"":
                 fail(f"{product}.{operation_id} description must end with punctuation")
-            if op.get("method") not in {"GET", "POST", "PATCH", "DELETE"}:
+            if not is_supported_method(op):
                 fail(f"{product}.{operation_id} uses unsupported HTTP method {op.get('method')!r}")
             path = op.get("path", "")
             if not path.startswith("/"):
