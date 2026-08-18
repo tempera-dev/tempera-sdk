@@ -37,7 +37,7 @@ jobs:
         run: |
           python3 scripts/gen-sdk-surface.py
           python3 scripts/gen-sdk-go-c.py
-          gofmt -w packages/go/*.go
+          gofmt -w packages/go/client.go packages/go/browser.go packages/go/client_test.go
           cargo fmt --manifest-path packages/rust/Cargo.toml
           python3 scripts/gen-sdk-docs.py
       - name: Validate deterministic docs and AIP contract
