@@ -28,10 +28,12 @@ jobs:
         with: { go-version: '1.23.x', cache: false }
       - uses: dtolnay/rust-toolchain@1.97.1
         with: { components: 'clippy,rustfmt' }
-      - run: |
+      - name: Generate surfaces and format handwritten Go
+        run: |
           python3 scripts/gen-sdk-go-c.py
-          gofmt -w packages/go/*.go
-      - run: |
+          gofmt -w packages/go/client.go packages/go/browser.go packages/go/client_test.go
+      - name: Validate generated surfaces and AIP
+        run: |
           python3 scripts/gen-sdk-surface.py --check
           python3 scripts/gen-sdk-go-c.py --check
           python3 scripts/test-aip-conformance.py
