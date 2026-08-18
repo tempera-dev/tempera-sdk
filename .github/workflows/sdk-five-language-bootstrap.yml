@@ -7,6 +7,7 @@ on:
       - scripts/gen-sdk-go-c.py
       - packages/go/**
       - packages/c/**
+      - packages/rust/**
 
 permissions:
   contents: write
@@ -28,31 +29,37 @@ jobs:
         with: { go-version: '1.23.x', cache: false }
       - uses: dtolnay/rust-toolchain@1.97.1
         with: { components: 'clippy,rustfmt' }
-      - name: Generate surfaces and format handwritten Go
+      - name: Generate surfaces and format source
         run: |
           python3 scripts/gen-sdk-go-c.py
           gofmt -w packages/go/client.go packages/go/browser.go packages/go/client_test.go
+          cargo fmt --manifest-path packages/rust/Cargo.toml
       - name: Validate generated surfaces and AIP
         run: |
           python3 scripts/gen-sdk-surface.py --check
           python3 scripts/gen-sdk-go-c.py --check
           python3 scripts/test-aip-conformance.py
           python3 scripts/check-aip-conformance.py
-      - run: npm --prefix packages/typescript test
-      - run: PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
-      - run: |
+      - name: Validate TypeScript
+        run: npm --prefix packages/typescript test
+      - name: Validate Python
+        run: PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
+      - name: Validate Rust
+        run: |
           cargo fmt --manifest-path packages/rust/Cargo.toml -- --check
           cargo check --manifest-path packages/rust/Cargo.toml --all-targets
           cargo clippy --manifest-path packages/rust/Cargo.toml --all-targets -- -D warnings
           cargo test --manifest-path packages/rust/Cargo.toml
-      - working-directory: packages/go
+      - name: Validate Go
+        working-directory: packages/go
         run: go test ./...
-      - run: make -C packages/c test
-      - name: Push generated surfaces only after all gates pass
+      - name: Validate C
+        run: make -C packages/c test
+      - name: Push generated and formatting changes only after all gates pass
         run: |
           if git diff --quiet; then exit 0; fi
           git config user.name 'tempera-sdk-sync'
           git config user.email 'tempera-sdk-sync@users.noreply.github.com'
-          git add packages/go packages/c/include/tempera/surface_gen.h packages/c/src/surface_gen.c
-          git commit -m 'chore(sdk): generate Go and C contract surfaces'
+          git add packages/go packages/c/include/tempera/surface_gen.h packages/c/src/surface_gen.c packages/rust
+          git commit -m 'chore(sdk): qualify five-language generated surfaces'
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
