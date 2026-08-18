@@ -37,7 +37,7 @@ Call GET /healthz.
 
 - **Producer operationId:** `health`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaRisk.health()` · Python `client.tempera_risk.health()` · Rust `build_request("tempera_risk", "health", params)`
+- **Call as:** TypeScript `client.temperaRisk.health()` · Python `client.tempera_risk.health()` · Rust `build_request("tempera_risk", "health", params)` · Go `BuildRequest("temperaRisk", "health", params)` · C `tempera_build_request(..., "temperaRisk", "health", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_risk", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getOpenApi
@@ -65,7 +89,7 @@ Call GET /openapi.yaml.
 
 - **Producer operationId:** `getOpenApi`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaRisk.getOpenApi()` · Python `client.tempera_risk.get_open_api()` · Rust `build_request("tempera_risk", "get_open_api", params)`
+- **Call as:** TypeScript `client.temperaRisk.getOpenApi()` · Python `client.tempera_risk.get_open_api()` · Rust `build_request("tempera_risk", "get_open_api", params)` · Go `BuildRequest("temperaRisk", "getOpenApi", params)` · C `tempera_build_request(..., "temperaRisk", "getOpenApi", ...)`
 
 <CodeGroup>
 
@@ -83,6 +107,30 @@ let spec = client.build_request("tempera_risk", "get_open_api", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getOpenApi", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getOpenApi",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### executeGraphRead
@@ -93,7 +141,7 @@ Execute one principal-bound, signed, bounded graph read.
 
 - **Producer operationId:** `executeGraphRead`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.executeGraphRead()` · Python `client.tempera_risk.execute_graph_read()` · Rust `build_request("tempera_risk", "execute_graph_read", params)`
+- **Call as:** TypeScript `client.temperaRisk.executeGraphRead()` · Python `client.tempera_risk.execute_graph_read()` · Rust `build_request("tempera_risk", "execute_graph_read", params)` · Go `BuildRequest("temperaRisk", "executeGraphRead", params)` · C `tempera_build_request(..., "temperaRisk", "executeGraphRead", ...)`
 
 **Path parameters**
 
@@ -136,6 +184,36 @@ let spec = client.build_request("tempera_risk", "execute_graph_read", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "executeGraphRead", map[string]any{
+    "project": "<project>",
+    "request": "<request>",
+    "people_binding": "<people_binding>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"request\":\"<request>\",\"people_binding\":\"<people_binding>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "executeGraphRead",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createSubject
@@ -146,7 +224,7 @@ Call POST /v1/projects/\{project\}/subjects.
 
 - **Producer operationId:** `createSubject`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createSubject()` · Python `client.tempera_risk.create_subject()` · Rust `build_request("tempera_risk", "create_subject", params)`
+- **Call as:** TypeScript `client.temperaRisk.createSubject()` · Python `client.tempera_risk.create_subject()` · Rust `build_request("tempera_risk", "create_subject", params)` · Go `BuildRequest("temperaRisk", "createSubject", params)` · C `tempera_build_request(..., "temperaRisk", "createSubject", ...)`
 
 **Path parameters**
 
@@ -196,6 +274,37 @@ let spec = client.build_request("tempera_risk", "create_subject", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createSubject", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "subject_id": "<subject_id>",
+    "subject_type": "<subject_type>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"subject_id\":\"<subject_id>\",\"subject_type\":\"<subject_type>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createSubject",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSubjects
@@ -206,7 +315,7 @@ Call GET /v1/projects/\{project\}/subjects.
 
 - **Producer operationId:** `listSubjects`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.listSubjects()` · Python `client.tempera_risk.list_subjects()` · Rust `build_request("tempera_risk", "list_subjects", params)`
+- **Call as:** TypeScript `client.temperaRisk.listSubjects()` · Python `client.tempera_risk.list_subjects()` · Rust `build_request("tempera_risk", "list_subjects", params)` · Go `BuildRequest("temperaRisk", "listSubjects", params)` · C `tempera_build_request(..., "temperaRisk", "listSubjects", ...)`
 
 **Path parameters**
 
@@ -236,6 +345,34 @@ let spec = client.build_request("tempera_risk", "list_subjects", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "listSubjects", map[string]any{
+    "project": "<project>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "listSubjects",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getSubject
@@ -246,7 +383,7 @@ Call GET /v1/projects/\{project\}/subjects/\{subjectId\}.
 
 - **Producer operationId:** `getSubject`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getSubject()` · Python `client.tempera_risk.get_subject()` · Rust `build_request("tempera_risk", "get_subject", params)`
+- **Call as:** TypeScript `client.temperaRisk.getSubject()` · Python `client.tempera_risk.get_subject()` · Rust `build_request("tempera_risk", "get_subject", params)` · Go `BuildRequest("temperaRisk", "getSubject", params)` · C `tempera_build_request(..., "temperaRisk", "getSubject", ...)`
 
 **Path parameters**
 
@@ -280,6 +417,36 @@ let spec = client.build_request("tempera_risk", "get_subject", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getSubject", map[string]any{
+    "project": "<project>",
+    "subjectId": "<subjectId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"subjectId", "<subjectId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getSubject",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ingestEvent
@@ -290,7 +457,7 @@ Call POST /v1/projects/\{project\}/events:ingest.
 
 - **Producer operationId:** `ingestEvent`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.ingestEvent()` · Python `client.tempera_risk.ingest_event()` · Rust `build_request("tempera_risk", "ingest_event", params)`
+- **Call as:** TypeScript `client.temperaRisk.ingestEvent()` · Python `client.tempera_risk.ingest_event()` · Rust `build_request("tempera_risk", "ingest_event", params)` · Go `BuildRequest("temperaRisk", "ingestEvent", params)` · C `tempera_build_request(..., "temperaRisk", "ingestEvent", ...)`
 
 **Path parameters**
 
@@ -354,6 +521,40 @@ let spec = client.build_request("tempera_risk", "ingest_event", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "ingestEvent", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "event_id": "<event_id>",
+    "event_type": "<event_type>",
+    "subject_id": "<subject_id>",
+    "event_time": "<event_time>",
+    "received_at": "<received_at>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"event_id\":\"<event_id>\",\"event_type\":\"<event_type>\",\"subject_id\":\"<subject_id>\",\"event_time\":\"<event_time>\",\"received_at\":\"<received_at>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "ingestEvent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### registerPolicy
@@ -364,7 +565,7 @@ Call POST /v1/projects/\{project\}/policies.
 
 - **Producer operationId:** `registerPolicy`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.registerPolicy()` · Python `client.tempera_risk.register_policy()` · Rust `build_request("tempera_risk", "register_policy", params)`
+- **Call as:** TypeScript `client.temperaRisk.registerPolicy()` · Python `client.tempera_risk.register_policy()` · Rust `build_request("tempera_risk", "register_policy", params)` · Go `BuildRequest("temperaRisk", "registerPolicy", params)` · C `tempera_build_request(..., "temperaRisk", "registerPolicy", ...)`
 
 **Path parameters**
 
@@ -450,6 +651,46 @@ let spec = client.build_request("tempera_risk", "register_policy", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "registerPolicy", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "policy_id": "<policy_id>",
+    "version": "<version>",
+    "use_case": "<use_case>",
+    "default_action": "<default_action>",
+    "default_reason_code": "<default_reason_code>",
+    "missing_data_action": "<missing_data_action>",
+    "missing_data_reason_code": "<missing_data_reason_code>",
+    "conflict_strategy": "<conflict_strategy>",
+    "rules": "<rules>",
+    "change_ticket": "<change_ticket>",
+    "created_by": "<created_by>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"policy_id\":\"<policy_id>\",\"version\":\"<version>\",\"use_case\":\"<use_case>\",\"default_action\":\"<default_action>\",\"default_reason_code\":\"<default_reason_code>\",\"missing_data_action\":\"<missing_data_action>\",\"missing_data_reason_code\":\"<missing_data_reason_code>\",\"conflict_strategy\":\"<conflict_strategy>\",\"rules\":\"<rules>\",\"change_ticket\":\"<change_ticket>\",\"created_by\":\"<created_by>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "registerPolicy",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### registerModel
@@ -460,7 +701,7 @@ Register an immutable model artifact after dual human approval.
 
 - **Producer operationId:** `registerModel`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.registerModel()` · Python `client.tempera_risk.register_model()` · Rust `build_request("tempera_risk", "register_model", params)`
+- **Call as:** TypeScript `client.temperaRisk.registerModel()` · Python `client.tempera_risk.register_model()` · Rust `build_request("tempera_risk", "register_model", params)` · Go `BuildRequest("temperaRisk", "registerModel", params)` · C `tempera_build_request(..., "temperaRisk", "registerModel", ...)`
 
 **Path parameters**
 
@@ -551,6 +792,48 @@ let spec = client.build_request("tempera_risk", "register_model", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "registerModel", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "model_id": "<model_id>",
+    "version": "<version>",
+    "state": "<state>",
+    "artifact_sha256": "<artifact_sha256>",
+    "runtime": "<runtime>",
+    "input_features": "<input_features>",
+    "output_feature": "<output_feature>",
+    "training_data_refs": "<training_data_refs>",
+    "validation_report_ref": "<validation_report_ref>",
+    "calibration": "<calibration>",
+    "limitations": "<limitations>",
+    "created_at": "<created_at>",
+    "approval_ids": "<approval_ids>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"model_id\":\"<model_id>\",\"version\":\"<version>\",\"state\":\"<state>\",\"artifact_sha256\":\"<artifact_sha256>\",\"runtime\":\"<runtime>\",\"input_features\":\"<input_features>\",\"output_feature\":\"<output_feature>\",\"training_data_refs\":\"<training_data_refs>\",\"validation_report_ref\":\"<validation_report_ref>\",\"calibration\":\"<calibration>\",\"limitations\":\"<limitations>\",\"created_at\":\"<created_at>\",\"approval_ids\":\"<approval_ids>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "registerModel",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ingestModelScore
@@ -561,7 +844,7 @@ Ingest a signed non-decisional score from an authenticated scorer workload.
 
 - **Producer operationId:** `ingestModelScore`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.ingestModelScore()` · Python `client.tempera_risk.ingest_model_score()` · Rust `build_request("tempera_risk", "ingest_model_score", params)`
+- **Call as:** TypeScript `client.temperaRisk.ingestModelScore()` · Python `client.tempera_risk.ingest_model_score()` · Rust `build_request("tempera_risk", "ingest_model_score", params)` · Go `BuildRequest("temperaRisk", "ingestModelScore", params)` · C `tempera_build_request(..., "temperaRisk", "ingestModelScore", ...)`
 
 **Path parameters**
 
@@ -616,6 +899,39 @@ let spec = client.build_request("tempera_risk", "ingest_model_score", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "ingestModelScore", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "algorithm": "<algorithm>",
+    "key_id": "<key_id>",
+    "score": "<score>",
+    "signature": "<signature>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"algorithm\":\"<algorithm>\",\"key_id\":\"<key_id>\",\"score\":\"<score>\",\"signature\":\"<signature>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "ingestModelScore",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createApproval
@@ -626,7 +942,7 @@ Call POST /v1/projects/\{project\}/approvals.
 
 - **Producer operationId:** `createApproval`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createApproval()` · Python `client.tempera_risk.create_approval()` · Rust `build_request("tempera_risk", "create_approval", params)`
+- **Call as:** TypeScript `client.temperaRisk.createApproval()` · Python `client.tempera_risk.create_approval()` · Rust `build_request("tempera_risk", "create_approval", params)` · Go `BuildRequest("temperaRisk", "createApproval", params)` · C `tempera_build_request(..., "temperaRisk", "createApproval", ...)`
 
 **Path parameters**
 
@@ -669,6 +985,36 @@ let spec = client.build_request("tempera_risk", "create_approval", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createApproval", map[string]any{
+    "project": "<project>",
+    "action": "<action>",
+    "target": "<target>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"action\":\"<action>\",\"target\":\"<target>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createApproval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### deployPolicy
@@ -679,7 +1025,7 @@ Call POST /v1/projects/\{project\}/policyDeployments.
 
 - **Producer operationId:** `deployPolicy`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.deployPolicy()` · Python `client.tempera_risk.deploy_policy()` · Rust `build_request("tempera_risk", "deploy_policy", params)`
+- **Call as:** TypeScript `client.temperaRisk.deployPolicy()` · Python `client.tempera_risk.deploy_policy()` · Rust `build_request("tempera_risk", "deploy_policy", params)` · Go `BuildRequest("temperaRisk", "deployPolicy", params)` · C `tempera_build_request(..., "temperaRisk", "deployPolicy", ...)`
 
 **Path parameters**
 
@@ -742,6 +1088,41 @@ let spec = client.build_request("tempera_risk", "deploy_policy", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "deployPolicy", map[string]any{
+    "project": "<project>",
+    "deployment_id": "<deployment_id>",
+    "policy_id": "<policy_id>",
+    "policy_version": "<policy_version>",
+    "mode": "<mode>",
+    "traffic_percent": "<traffic_percent>",
+    "effective_at": "<effective_at>",
+    "approval_ids": "<approval_ids>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"deployment_id\":\"<deployment_id>\",\"policy_id\":\"<policy_id>\",\"policy_version\":\"<policy_version>\",\"mode\":\"<mode>\",\"traffic_percent\":\"<traffic_percent>\",\"effective_at\":\"<effective_at>\",\"approval_ids\":\"<approval_ids>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "deployPolicy",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createDecision
@@ -752,7 +1133,7 @@ Call POST /v1/projects/\{project\}/decisions.
 
 - **Producer operationId:** `createDecision`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createDecision()` · Python `client.tempera_risk.create_decision()` · Rust `build_request("tempera_risk", "create_decision", params)`
+- **Call as:** TypeScript `client.temperaRisk.createDecision()` · Python `client.tempera_risk.create_decision()` · Rust `build_request("tempera_risk", "create_decision", params)` · Go `BuildRequest("temperaRisk", "createDecision", params)` · C `tempera_build_request(..., "temperaRisk", "createDecision", ...)`
 
 **Path parameters**
 
@@ -814,6 +1195,39 @@ let spec = client.build_request("tempera_risk", "create_decision", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createDecision", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "request_id": "<request_id>",
+    "subject_id": "<subject_id>",
+    "use_case": "<use_case>",
+    "as_of": "<as_of>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"request_id\":\"<request_id>\",\"subject_id\":\"<subject_id>\",\"use_case\":\"<use_case>\",\"as_of\":\"<as_of>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createDecision",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getDecision
@@ -824,7 +1238,7 @@ Call GET /v1/projects/\{project\}/decisions/\{decisionId\}.
 
 - **Producer operationId:** `getDecision`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getDecision()` · Python `client.tempera_risk.get_decision()` · Rust `build_request("tempera_risk", "get_decision", params)`
+- **Call as:** TypeScript `client.temperaRisk.getDecision()` · Python `client.tempera_risk.get_decision()` · Rust `build_request("tempera_risk", "get_decision", params)` · Go `BuildRequest("temperaRisk", "getDecision", params)` · C `tempera_build_request(..., "temperaRisk", "getDecision", ...)`
 
 **Path parameters**
 
@@ -858,6 +1272,36 @@ let spec = client.build_request("tempera_risk", "get_decision", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getDecision", map[string]any{
+    "project": "<project>",
+    "decisionId": "<decisionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"decisionId", "<decisionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getDecision",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### recordOutcome
@@ -868,7 +1312,7 @@ Call POST /v1/projects/\{project\}/outcomes.
 
 - **Producer operationId:** `recordOutcome`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.recordOutcome()` · Python `client.tempera_risk.record_outcome()` · Rust `build_request("tempera_risk", "record_outcome", params)`
+- **Call as:** TypeScript `client.temperaRisk.recordOutcome()` · Python `client.tempera_risk.record_outcome()` · Rust `build_request("tempera_risk", "record_outcome", params)` · Go `BuildRequest("temperaRisk", "recordOutcome", params)` · C `tempera_build_request(..., "temperaRisk", "recordOutcome", ...)`
 
 **Path parameters**
 
@@ -898,6 +1342,34 @@ let spec = client.build_request("tempera_risk", "record_outcome", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "recordOutcome", map[string]any{
+    "project": "<project>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "recordOutcome",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createScreening
@@ -908,7 +1380,7 @@ Call POST /v1/projects/\{project\}/screenings.
 
 - **Producer operationId:** `createScreening`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createScreening()` · Python `client.tempera_risk.create_screening()` · Rust `build_request("tempera_risk", "create_screening", params)`
+- **Call as:** TypeScript `client.temperaRisk.createScreening()` · Python `client.tempera_risk.create_screening()` · Rust `build_request("tempera_risk", "create_screening", params)` · Go `BuildRequest("temperaRisk", "createScreening", params)` · C `tempera_build_request(..., "temperaRisk", "createScreening", ...)`
 
 **Path parameters**
 
@@ -961,6 +1433,38 @@ let spec = client.build_request("tempera_risk", "create_screening", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createScreening", map[string]any{
+    "project": "<project>",
+    "index_name": "<index_name>",
+    "subject": "<subject>",
+    "permissible_purpose": "<permissible_purpose>",
+    "case_id": "<case_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"index_name\":\"<index_name>\",\"subject\":\"<subject>\",\"permissible_purpose\":\"<permissible_purpose>\",\"case_id\":\"<case_id>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createScreening",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listCases
@@ -971,7 +1475,7 @@ Call GET /v1/projects/\{project\}/cases.
 
 - **Producer operationId:** `listCases`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.listCases()` · Python `client.tempera_risk.list_cases()` · Rust `build_request("tempera_risk", "list_cases", params)`
+- **Call as:** TypeScript `client.temperaRisk.listCases()` · Python `client.tempera_risk.list_cases()` · Rust `build_request("tempera_risk", "list_cases", params)` · Go `BuildRequest("temperaRisk", "listCases", params)` · C `tempera_build_request(..., "temperaRisk", "listCases", ...)`
 
 **Path parameters**
 
@@ -1001,6 +1505,34 @@ let spec = client.build_request("tempera_risk", "list_cases", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "listCases", map[string]any{
+    "project": "<project>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "listCases",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createCase
@@ -1011,7 +1543,7 @@ Open a governed multi-domain investigation case.
 
 - **Producer operationId:** `createCase`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createCase()` · Python `client.tempera_risk.create_case()` · Rust `build_request("tempera_risk", "create_case", params)`
+- **Call as:** TypeScript `client.temperaRisk.createCase()` · Python `client.tempera_risk.create_case()` · Rust `build_request("tempera_risk", "create_case", params)` · Go `BuildRequest("temperaRisk", "createCase", params)` · C `tempera_build_request(..., "temperaRisk", "createCase", ...)`
 
 **Path parameters**
 
@@ -1086,6 +1618,44 @@ let spec = client.build_request("tempera_risk", "create_case", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createCase", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "case_id": "<case_id>",
+    "case_type": "<case_type>",
+    "state": "<state>",
+    "subject_ids": "<subject_ids>",
+    "alert_ids": "<alert_ids>",
+    "assigned_to": "<assigned_to>",
+    "disposition": "<disposition>",
+    "evidence_refs": "<evidence_refs>",
+    "attributes": "<attributes>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"case_id\":\"<case_id>\",\"case_type\":\"<case_type>\",\"state\":\"<state>\",\"subject_ids\":\"<subject_ids>\",\"alert_ids\":\"<alert_ids>\",\"assigned_to\":\"<assigned_to>\",\"disposition\":\"<disposition>\",\"evidence_refs\":\"<evidence_refs>\",\"attributes\":\"<attributes>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createCase",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getCase
@@ -1096,7 +1666,7 @@ Call GET /v1/projects/\{project\}/cases/\{caseId\}.
 
 - **Producer operationId:** `getCase`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getCase()` · Python `client.tempera_risk.get_case()` · Rust `build_request("tempera_risk", "get_case", params)`
+- **Call as:** TypeScript `client.temperaRisk.getCase()` · Python `client.tempera_risk.get_case()` · Rust `build_request("tempera_risk", "get_case", params)` · Go `BuildRequest("temperaRisk", "getCase", params)` · C `tempera_build_request(..., "temperaRisk", "getCase", ...)`
 
 **Path parameters**
 
@@ -1130,6 +1700,36 @@ let spec = client.build_request("tempera_risk", "get_case", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getCase", map[string]any{
+    "project": "<project>",
+    "caseId": "<caseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"caseId", "<caseId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getCase",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getCaseDossier
@@ -1140,7 +1740,7 @@ Read all completed non-decisional investigation dossiers for a case.
 
 - **Producer operationId:** `getCaseDossier`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getCaseDossier()` · Python `client.tempera_risk.get_case_dossier()` · Rust `build_request("tempera_risk", "get_case_dossier", params)`
+- **Call as:** TypeScript `client.temperaRisk.getCaseDossier()` · Python `client.tempera_risk.get_case_dossier()` · Rust `build_request("tempera_risk", "get_case_dossier", params)` · Go `BuildRequest("temperaRisk", "getCaseDossier", params)` · C `tempera_build_request(..., "temperaRisk", "getCaseDossier", ...)`
 
 **Path parameters**
 
@@ -1174,6 +1774,36 @@ let spec = client.build_request("tempera_risk", "get_case_dossier", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getCaseDossier", map[string]any{
+    "project": "<project>",
+    "caseId": "<caseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"caseId", "<caseId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getCaseDossier",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createAccessGrant
@@ -1184,7 +1814,7 @@ Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded acc
 
 - **Producer operationId:** `createAccessGrant`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createAccessGrant()` · Python `client.tempera_risk.create_access_grant()` · Rust `build_request("tempera_risk", "create_access_grant", params)`
+- **Call as:** TypeScript `client.temperaRisk.createAccessGrant()` · Python `client.tempera_risk.create_access_grant()` · Rust `build_request("tempera_risk", "create_access_grant", params)` · Go `BuildRequest("temperaRisk", "createAccessGrant", params)` · C `tempera_build_request(..., "temperaRisk", "createAccessGrant", ...)`
 
 **Path parameters**
 
@@ -1275,6 +1905,48 @@ let spec = client.build_request("tempera_risk", "create_access_grant", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createAccessGrant", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "grant_id": "<grant_id>",
+    "case_id": "<case_id>",
+    "subject_ids": "<subject_ids>",
+    "actor_ids": "<actor_ids>",
+    "permissible_purpose": "<permissible_purpose>",
+    "allowed_fields": "<allowed_fields>",
+    "allowed_providers": "<allowed_providers>",
+    "third_party_disclosure_allowed": "<third_party_disclosure_allowed>",
+    "valid_from": "<valid_from>",
+    "expires_at": "<expires_at>",
+    "created_by": "<created_by>",
+    "approval_ids": "<approval_ids>",
+    "change_ticket": "<change_ticket>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"grant_id\":\"<grant_id>\",\"case_id\":\"<case_id>\",\"subject_ids\":\"<subject_ids>\",\"actor_ids\":\"<actor_ids>\",\"permissible_purpose\":\"<permissible_purpose>\",\"allowed_fields\":\"<allowed_fields>\",\"allowed_providers\":\"<allowed_providers>\",\"third_party_disclosure_allowed\":\"<third_party_disclosure_allowed>\",\"valid_from\":\"<valid_from>\",\"expires_at\":\"<expires_at>\",\"created_by\":\"<created_by>\",\"approval_ids\":\"<approval_ids>\",\"change_ticket\":\"<change_ticket>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createAccessGrant",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeAccessGrant
@@ -1285,7 +1957,7 @@ Revoke a sensitive investigation-data access grant.
 
 - **Producer operationId:** `revokeAccessGrant`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.revokeAccessGrant()` · Python `client.tempera_risk.revoke_access_grant()` · Rust `build_request("tempera_risk", "revoke_access_grant", params)`
+- **Call as:** TypeScript `client.temperaRisk.revokeAccessGrant()` · Python `client.tempera_risk.revoke_access_grant()` · Rust `build_request("tempera_risk", "revoke_access_grant", params)` · Go `BuildRequest("temperaRisk", "revokeAccessGrant", params)` · C `tempera_build_request(..., "temperaRisk", "revokeAccessGrant", ...)`
 
 **Path parameters**
 
@@ -1328,6 +2000,37 @@ let spec = client.build_request("tempera_risk", "revoke_access_grant", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "revokeAccessGrant", map[string]any{
+    "project": "<project>",
+    "grantId": "<grantId>",
+    "reason": "<reason>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"grantId", "<grantId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"reason\":\"<reason>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "revokeAccessGrant",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createPeopleDirectoryProfile
@@ -1338,7 +2041,7 @@ Ingest an evidence-backed bitemporal person or company profile.
 
 - **Producer operationId:** `createPeopleDirectoryProfile`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createPeopleDirectoryProfile()` · Python `client.tempera_risk.create_people_directory_profile()` · Rust `build_request("tempera_risk", "create_people_directory_profile", params)`
+- **Call as:** TypeScript `client.temperaRisk.createPeopleDirectoryProfile()` · Python `client.tempera_risk.create_people_directory_profile()` · Rust `build_request("tempera_risk", "create_people_directory_profile", params)` · Go `BuildRequest("temperaRisk", "createPeopleDirectoryProfile", params)` · C `tempera_build_request(..., "temperaRisk", "createPeopleDirectoryProfile", ...)`
 
 **Path parameters**
 
@@ -1422,6 +2125,46 @@ let spec = client.build_request("tempera_risk", "create_people_directory_profile
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createPeopleDirectoryProfile", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "profile_id": "<profile_id>",
+    "subject_id": "<subject_id>",
+    "entity_kind": "<entity_kind>",
+    "anchors": "<anchors>",
+    "attributes": "<attributes>",
+    "source_ids": "<source_ids>",
+    "evidence_refs": "<evidence_refs>",
+    "valid_from": "<valid_from>",
+    "valid_to": "<valid_to>",
+    "recorded_at": "<recorded_at>",
+    "retention_expires_at": "<retention_expires_at>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"profile_id\":\"<profile_id>\",\"subject_id\":\"<subject_id>\",\"entity_kind\":\"<entity_kind>\",\"anchors\":\"<anchors>\",\"attributes\":\"<attributes>\",\"source_ids\":\"<source_ids>\",\"evidence_refs\":\"<evidence_refs>\",\"valid_from\":\"<valid_from>\",\"valid_to\":\"<valid_to>\",\"recorded_at\":\"<recorded_at>\",\"retention_expires_at\":\"<retention_expires_at>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createPeopleDirectoryProfile",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### searchPeople
@@ -1432,7 +2175,7 @@ Find non-decisional identity-resolution candidates under an active case grant.
 
 - **Producer operationId:** `searchPeople`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.searchPeople()` · Python `client.tempera_risk.search_people()` · Rust `build_request("tempera_risk", "search_people", params)`
+- **Call as:** TypeScript `client.temperaRisk.searchPeople()` · Python `client.tempera_risk.search_people()` · Rust `build_request("tempera_risk", "search_people", params)` · Go `BuildRequest("temperaRisk", "searchPeople", params)` · C `tempera_build_request(..., "temperaRisk", "searchPeople", ...)`
 
 **Path parameters**
 
@@ -1515,6 +2258,46 @@ let spec = client.build_request("tempera_risk", "search_people", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "searchPeople", map[string]any{
+    "project": "<project>",
+    "schema": "<schema>",
+    "query_id": "<query_id>",
+    "subject_id": "<subject_id>",
+    "access_grant_id": "<access_grant_id>",
+    "case_id": "<case_id>",
+    "permissible_purpose": "<permissible_purpose>",
+    "entity_kind": "<entity_kind>",
+    "anchors": "<anchors>",
+    "attributes": "<attributes>",
+    "max_candidates": "<max_candidates>",
+    "as_of": "<as_of>",
+    "known_at": "<known_at>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schema\":\"<schema>\",\"query_id\":\"<query_id>\",\"subject_id\":\"<subject_id>\",\"access_grant_id\":\"<access_grant_id>\",\"case_id\":\"<case_id>\",\"permissible_purpose\":\"<permissible_purpose>\",\"entity_kind\":\"<entity_kind>\",\"anchors\":\"<anchors>\",\"attributes\":\"<attributes>\",\"max_candidates\":\"<max_candidates>\",\"as_of\":\"<as_of>\",\"known_at\":\"<known_at>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "searchPeople",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSourcePacks
@@ -1525,7 +2308,7 @@ List declared non-runnable investigation source packs.
 
 - **Producer operationId:** `listSourcePacks`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.listSourcePacks()` · Python `client.tempera_risk.list_source_packs()` · Rust `build_request("tempera_risk", "list_source_packs", params)`
+- **Call as:** TypeScript `client.temperaRisk.listSourcePacks()` · Python `client.tempera_risk.list_source_packs()` · Rust `build_request("tempera_risk", "list_source_packs", params)` · Go `BuildRequest("temperaRisk", "listSourcePacks", params)` · C `tempera_build_request(..., "temperaRisk", "listSourcePacks", ...)`
 
 **Path parameters**
 
@@ -1555,6 +2338,34 @@ let spec = client.build_request("tempera_risk", "list_source_packs", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "listSourcePacks", map[string]any{
+    "project": "<project>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "listSourcePacks",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getSourcePack
@@ -1565,7 +2376,7 @@ Read one declared non-runnable investigation source pack.
 
 - **Producer operationId:** `getSourcePack`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getSourcePack()` · Python `client.tempera_risk.get_source_pack()` · Rust `build_request("tempera_risk", "get_source_pack", params)`
+- **Call as:** TypeScript `client.temperaRisk.getSourcePack()` · Python `client.tempera_risk.get_source_pack()` · Rust `build_request("tempera_risk", "get_source_pack", params)` · Go `BuildRequest("temperaRisk", "getSourcePack", params)` · C `tempera_build_request(..., "temperaRisk", "getSourcePack", ...)`
 
 **Path parameters**
 
@@ -1599,6 +2410,36 @@ let spec = client.build_request("tempera_risk", "get_source_pack", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getSourcePack", map[string]any{
+    "project": "<project>",
+    "sourcePackId": "<sourcePackId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"sourcePackId", "<sourcePackId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getSourcePack",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getSourceCoverage
@@ -1609,7 +2450,7 @@ Read truthful admitted coverage for one source pack.
 
 - **Producer operationId:** `getSourceCoverage`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getSourceCoverage()` · Python `client.tempera_risk.get_source_coverage()` · Rust `build_request("tempera_risk", "get_source_coverage", params)`
+- **Call as:** TypeScript `client.temperaRisk.getSourceCoverage()` · Python `client.tempera_risk.get_source_coverage()` · Rust `build_request("tempera_risk", "get_source_coverage", params)` · Go `BuildRequest("temperaRisk", "getSourceCoverage", params)` · C `tempera_build_request(..., "temperaRisk", "getSourceCoverage", ...)`
 
 **Path parameters**
 
@@ -1643,6 +2484,36 @@ let spec = client.build_request("tempera_risk", "get_source_coverage", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getSourceCoverage", map[string]any{
+    "project": "<project>",
+    "sourcePackId": "<sourcePackId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"sourcePackId", "<sourcePackId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getSourceCoverage",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createResearchJob
@@ -1653,7 +2524,7 @@ Call POST /v1/projects/\{project\}/researchJobs.
 
 - **Producer operationId:** `createResearchJob`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.createResearchJob()` · Python `client.tempera_risk.create_research_job()` · Rust `build_request("tempera_risk", "create_research_job", params)`
+- **Call as:** TypeScript `client.temperaRisk.createResearchJob()` · Python `client.tempera_risk.create_research_job()` · Rust `build_request("tempera_risk", "create_research_job", params)` · Go `BuildRequest("temperaRisk", "createResearchJob", params)` · C `tempera_build_request(..., "temperaRisk", "createResearchJob", ...)`
 
 **Path parameters**
 
@@ -1738,6 +2609,45 @@ let spec = client.build_request("tempera_risk", "create_research_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "createResearchJob", map[string]any{
+    "project": "<project>",
+    "subject": "<subject>",
+    "question": "<question>",
+    "purpose": "<purpose>",
+    "permissible_purpose": "<permissible_purpose>",
+    "output_schema": "<output_schema>",
+    "budgets": "<budgets>",
+    "source_policy": "<source_policy>",
+    "case_id": "<case_id>",
+    "actor_id": "<actor_id>",
+    "retention_policy_id": "<retention_policy_id>",
+    "human_review_required": "<human_review_required>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"subject\":\"<subject>\",\"question\":\"<question>\",\"purpose\":\"<purpose>\",\"permissible_purpose\":\"<permissible_purpose>\",\"output_schema\":\"<output_schema>\",\"budgets\":\"<budgets>\",\"source_policy\":\"<source_policy>\",\"case_id\":\"<case_id>\",\"actor_id\":\"<actor_id>\",\"retention_policy_id\":\"<retention_policy_id>\",\"human_review_required\":\"<human_review_required>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "createResearchJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getResearchJob
@@ -1748,7 +2658,7 @@ Call GET /v1/projects/\{project\}/researchJobs/\{jobId\}.
 
 - **Producer operationId:** `getResearchJob`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getResearchJob()` · Python `client.tempera_risk.get_research_job()` · Rust `build_request("tempera_risk", "get_research_job", params)`
+- **Call as:** TypeScript `client.temperaRisk.getResearchJob()` · Python `client.tempera_risk.get_research_job()` · Rust `build_request("tempera_risk", "get_research_job", params)` · Go `BuildRequest("temperaRisk", "getResearchJob", params)` · C `tempera_build_request(..., "temperaRisk", "getResearchJob", ...)`
 
 **Path parameters**
 
@@ -1782,6 +2692,36 @@ let spec = client.build_request("tempera_risk", "get_research_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getResearchJob", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getResearchJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### streamResearchJobEvents
@@ -1792,7 +2732,7 @@ Replay bounded authorized job events as SSE; reconnect with afterSequence.
 
 - **Producer operationId:** `streamResearchJobEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.streamResearchJobEvents()` · Python `client.tempera_risk.stream_research_job_events()` · Rust `build_request("tempera_risk", "stream_research_job_events", params)`
+- **Call as:** TypeScript `client.temperaRisk.streamResearchJobEvents()` · Python `client.tempera_risk.stream_research_job_events()` · Rust `build_request("tempera_risk", "stream_research_job_events", params)` · Go `BuildRequest("temperaRisk", "streamResearchJobEvents", params)` · C `tempera_build_request(..., "temperaRisk", "streamResearchJobEvents", ...)`
 
 **Path parameters**
 
@@ -1839,6 +2779,38 @@ let spec = client.build_request("tempera_risk", "stream_research_job_events", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "streamResearchJobEvents", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+    "afterSequence": "<afterSequence>",
+    "pageSize": "<pageSize>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "afterSequence=<afterSequence>&pageSize=<pageSize>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "streamResearchJobEvents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getResearchJobResult
@@ -1849,7 +2821,7 @@ Read the cited, non-decisional result under the job's original access grant.
 
 - **Producer operationId:** `getResearchJobResult`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.getResearchJobResult()` · Python `client.tempera_risk.get_research_job_result()` · Rust `build_request("tempera_risk", "get_research_job_result", params)`
+- **Call as:** TypeScript `client.temperaRisk.getResearchJobResult()` · Python `client.tempera_risk.get_research_job_result()` · Rust `build_request("tempera_risk", "get_research_job_result", params)` · Go `BuildRequest("temperaRisk", "getResearchJobResult", params)` · C `tempera_build_request(..., "temperaRisk", "getResearchJobResult", ...)`
 
 **Path parameters**
 
@@ -1883,6 +2855,36 @@ let spec = client.build_request("tempera_risk", "get_research_job_result", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "getResearchJobResult", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "getResearchJobResult",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listResearchJobEvents
@@ -1893,7 +2895,7 @@ Read ordered non-decisional job events under the job's original access grant.
 
 - **Producer operationId:** `listResearchJobEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.listResearchJobEvents()` · Python `client.tempera_risk.list_research_job_events()` · Rust `build_request("tempera_risk", "list_research_job_events", params)`
+- **Call as:** TypeScript `client.temperaRisk.listResearchJobEvents()` · Python `client.tempera_risk.list_research_job_events()` · Rust `build_request("tempera_risk", "list_research_job_events", params)` · Go `BuildRequest("temperaRisk", "listResearchJobEvents", params)` · C `tempera_build_request(..., "temperaRisk", "listResearchJobEvents", ...)`
 
 **Path parameters**
 
@@ -1940,6 +2942,38 @@ let spec = client.build_request("tempera_risk", "list_research_job_events", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "listResearchJobEvents", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+    "afterSequence": "<afterSequence>",
+    "pageSize": "<pageSize>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "afterSequence=<afterSequence>&pageSize=<pageSize>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "listResearchJobEvents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### cancelResearchJob
@@ -1950,7 +2984,7 @@ Call POST /v1/projects/\{project\}/researchJobs/\{jobId\}:cancel.
 
 - **Producer operationId:** `cancelResearchJob`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.cancelResearchJob()` · Python `client.tempera_risk.cancel_research_job()` · Rust `build_request("tempera_risk", "cancel_research_job", params)`
+- **Call as:** TypeScript `client.temperaRisk.cancelResearchJob()` · Python `client.tempera_risk.cancel_research_job()` · Rust `build_request("tempera_risk", "cancel_research_job", params)` · Go `BuildRequest("temperaRisk", "cancelResearchJob", params)` · C `tempera_build_request(..., "temperaRisk", "cancelResearchJob", ...)`
 
 **Path parameters**
 
@@ -1993,6 +3027,37 @@ let spec = client.build_request("tempera_risk", "cancel_research_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "cancelResearchJob", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+    "reason": "<reason>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"reason\":\"<reason>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "cancelResearchJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### reviewResearchJob
@@ -2003,7 +3068,7 @@ Call POST /v1/projects/\{project\}/researchJobs/\{jobId\}:review.
 
 - **Producer operationId:** `reviewResearchJob`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.reviewResearchJob()` · Python `client.tempera_risk.review_research_job()` · Rust `build_request("tempera_risk", "review_research_job", params)`
+- **Call as:** TypeScript `client.temperaRisk.reviewResearchJob()` · Python `client.tempera_risk.review_research_job()` · Rust `build_request("tempera_risk", "review_research_job", params)` · Go `BuildRequest("temperaRisk", "reviewResearchJob", params)` · C `tempera_build_request(..., "temperaRisk", "reviewResearchJob", ...)`
 
 **Path parameters**
 
@@ -2050,6 +3115,38 @@ let spec = client.build_request("tempera_risk", "review_research_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "reviewResearchJob", map[string]any{
+    "project": "<project>",
+    "jobId": "<jobId>",
+    "approved": "<approved>",
+    "reason": "<reason>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"approved\":\"<approved>\",\"reason\":\"<reason>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "reviewResearchJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### exportAudit
@@ -2060,7 +3157,7 @@ Call GET /v1/projects/\{project\}/audit:export.
 
 - **Producer operationId:** `exportAudit`
 - **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaRisk.exportAudit()` · Python `client.tempera_risk.export_audit()` · Rust `build_request("tempera_risk", "export_audit", params)`
+- **Call as:** TypeScript `client.temperaRisk.exportAudit()` · Python `client.tempera_risk.export_audit()` · Rust `build_request("tempera_risk", "export_audit", params)` · Go `BuildRequest("temperaRisk", "exportAudit", params)` · C `tempera_build_request(..., "temperaRisk", "exportAudit", ...)`
 
 **Path parameters**
 
@@ -2088,6 +3185,34 @@ let spec = client.build_request("tempera_risk", "export_audit", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaRisk", "exportAudit", map[string]any{
+    "project": "<project>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaRisk", "exportAudit",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

@@ -1,6 +1,6 @@
 # Tempera SDK
 
-One versioned SDK contract in TypeScript, Python, and Rust. The primary product
+One versioned SDK contract in TypeScript, Python, Rust, Go, and C. The primary product
 story is a browser-agent quality loop: the control plane provisions access,
 Tempo runs and records a browser session, Human Data reviews the provisioned
 session and trace evidence, and Palette holds and measures the corresponding
@@ -126,11 +126,11 @@ const session = await client.tempo.createSession({ url: "https://example.com" })
 const availableTraces = await client.palette.listTraces({ tenant_id: tenantId, limit: 20 });
 ```
 
-Python is the same surface in snake_case (`client.control_plane.discovery()`,
-`client.palette.list_traces(...)`); Rust builds `RequestSpec`s for your HTTP
-client (`client.build_request("palette", "list_traces", &params)`) since the
-crate ships no HTTP stack. Parameters use wire names (snake_case) in every
-language.
+Python exposes snake_case methods (`client.palette.list_traces(...)`). Rust and C
+are transport-neutral request builders; Go provides both `BuildRequest` and a
+standard-library HTTP executor. TypeScript and Go use lowerCamel operation ids,
+Python and Rust use snake_case method ids, and C accepts the canonical manifest
+operation id. Every request emits the producer's canonical wire names.
 
 ## Code-validation evidence
 
@@ -236,7 +236,7 @@ and conflicts. The receipt is minimal and never returns the raw signed payload.
 Every product speaks a different wire error shape; the SDK normalizes all of
 them into one `TemperaApiError` with `status`, `code`, `message`,
 `requestId`, `product`, `operation`, and the raw `body` — identical fields in
-all three languages. MCP JSON-RPC errors raise `TemperaMcpError` with the
+TypeScript, Python, Rust, and Go; the transport-neutral C ABI returns bounded build codes. MCP JSON-RPC errors raise `TemperaMcpError` with the
 gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
 
 ## MCP gateway
@@ -261,7 +261,7 @@ The documentation site lives in [`docs/site/`](./docs/site) — a complete
 from `surface.json` (and `docs/ROLLOUT.md`) by
 [`scripts/gen-sdk-docs.py`](./scripts/gen-sdk-docs.py): overview, auth,
 environments, errors, MCP gateway, rollout, and one API-reference page per
-typed product covering every operation with tabbed TS/Python/Rust examples.
+typed product covering every operation with tabbed TypeScript/Python/Rust/Go/C examples.
 
 The docs are auto-updated by construction: `scripts/check-sdk-surface.py`
 re-renders the site and fails on any diff, so CI rejects a `surface.json`
@@ -283,7 +283,7 @@ the committed site is always current thanks to the drift gate).
   `scripts/gen-sdk-docs.py` the Mintlify docs site (both committed, both
   drift-gated).
 - `scripts/check-sdk-surface.py` gates: manifest invariants, regenerate-and-
-  diff (surface tables and docs site), one version across the three packages,
+  diff (surface tables and docs site), one version across all five packages,
   uniform-primitive markers, data-engine operation/path/method parity, and the
   exact source-pinned Palette evidence contract.
 - `scripts/check-aip-conformance.py` is the Google Cloud AIP migration

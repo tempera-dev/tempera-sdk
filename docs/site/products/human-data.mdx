@@ -34,7 +34,7 @@ Compute live qualification evidence.
 
 - **Producer operationId:** `computeQualification`
 - **Auth:** Product bearer — an access token minted for audience `human-data`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.humanData.computeQualification()` · Python `client.human_data.compute_qualification()` · Rust `build_request("human_data", "compute_qualification", params)`
+- **Call as:** TypeScript `client.humanData.computeQualification()` · Python `client.human_data.compute_qualification()` · Rust `build_request("human_data", "compute_qualification", params)` · Go `BuildRequest("humanData", "computeQualification", params)` · C `tempera_build_request(..., "humanData", "computeQualification", ...)`
 
 **Query parameters**
 
@@ -66,6 +66,33 @@ let spec = client.build_request("human_data", "compute_qualification", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("humanData", "computeQualification", map[string]any{
+    "productId": "<productId>",
+    "releaseId": "<releaseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "productId=<productId>&releaseId=<releaseId>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "humanData", "computeQualification",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

@@ -37,7 +37,7 @@ Check tempera-llm gateway liveness; returns \{ok: true\}.
 
 - **Producer operationId:** `health.check`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaLlm.health()` · Python `client.tempera_llm.health()` · Rust `build_request("tempera_llm", "health", params)`
+- **Call as:** TypeScript `client.temperaLlm.health()` · Python `client.tempera_llm.health()` · Rust `build_request("tempera_llm", "health", params)` · Go `BuildRequest("temperaLlm", "health", params)` · C `tempera_build_request(..., "temperaLlm", "health", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_llm", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaLlm", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaLlm", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### readinessCheck
@@ -65,7 +89,7 @@ Call GET /readyz.
 
 - **Producer operationId:** `readiness.check`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaLlm.readinessCheck()` · Python `client.tempera_llm.readiness_check()` · Rust `build_request("tempera_llm", "readiness_check", params)`
+- **Call as:** TypeScript `client.temperaLlm.readinessCheck()` · Python `client.tempera_llm.readiness_check()` · Rust `build_request("tempera_llm", "readiness_check", params)` · Go `BuildRequest("temperaLlm", "readinessCheck", params)` · C `tempera_build_request(..., "temperaLlm", "readinessCheck", ...)`
 
 <CodeGroup>
 
@@ -83,6 +107,30 @@ let spec = client.build_request("tempera_llm", "readiness_check", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaLlm", "readinessCheck", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaLlm", "readinessCheck",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createChatCompletion
@@ -94,7 +142,7 @@ Create a non-streaming OpenAI-compatible chat completion through the tempera-llm
 - **Producer operationId:** `chatCompletions.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
 - **Scope:** `model:invoke`
-- **Call as:** TypeScript `client.temperaLlm.createChatCompletion()` · Python `client.tempera_llm.create_chat_completion()` · Rust `build_request("tempera_llm", "create_chat_completion", params)`
+- **Call as:** TypeScript `client.temperaLlm.createChatCompletion()` · Python `client.tempera_llm.create_chat_completion()` · Rust `build_request("tempera_llm", "create_chat_completion", params)` · Go `BuildRequest("temperaLlm", "createChatCompletion", params)` · C `tempera_build_request(..., "temperaLlm", "createChatCompletion", ...)`
 
 **Body parameters**
 
@@ -136,6 +184,34 @@ let spec = client.build_request("tempera_llm", "create_chat_completion", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaLlm", "createChatCompletion", map[string]any{
+    "max_tokens": "<max_tokens>",
+    "messages": "<messages>",
+    "model": "<model>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"max_tokens\":\"<max_tokens>\",\"messages\":\"<messages>\",\"model\":\"<model>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaLlm", "createChatCompletion",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listModels
@@ -147,7 +223,7 @@ List the configured model catalog the gateway can route to.
 - **Producer operationId:** `models.list`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
 - **Scope:** `model:read`
-- **Call as:** TypeScript `client.temperaLlm.listModels()` · Python `client.tempera_llm.list_models()` · Rust `build_request("tempera_llm", "list_models", params)`
+- **Call as:** TypeScript `client.temperaLlm.listModels()` · Python `client.tempera_llm.list_models()` · Rust `build_request("tempera_llm", "list_models", params)` · Go `BuildRequest("temperaLlm", "listModels", params)` · C `tempera_build_request(..., "temperaLlm", "listModels", ...)`
 
 **Query parameters**
 
@@ -181,6 +257,33 @@ let spec = client.build_request("tempera_llm", "list_models", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaLlm", "listModels", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaLlm", "listModels",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createResponse
@@ -192,7 +295,7 @@ Create a non-streaming OpenAI Responses-style inference request through the temp
 - **Producer operationId:** `responses.create`
 - **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
 - **Scope:** `model:invoke`
-- **Call as:** TypeScript `client.temperaLlm.createResponse()` · Python `client.tempera_llm.create_response()` · Rust `build_request("tempera_llm", "create_response", params)`
+- **Call as:** TypeScript `client.temperaLlm.createResponse()` · Python `client.tempera_llm.create_response()` · Rust `build_request("tempera_llm", "create_response", params)` · Go `BuildRequest("temperaLlm", "createResponse", params)` · C `tempera_build_request(..., "temperaLlm", "createResponse", ...)`
 
 **Body parameters**
 
@@ -230,6 +333,34 @@ let spec = client.build_request("tempera_llm", "create_response", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaLlm", "createResponse", map[string]any{
+    "input": "<input>",
+    "max_output_tokens": "<max_output_tokens>",
+    "model": "<model>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"input\":\"<input>\",\"max_output_tokens\":\"<max_output_tokens>\",\"model\":\"<model>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaLlm", "createResponse",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """The Tempera SDK uniformity gate.
 
-Fails when the three language packages can drift apart:
+Fails when the five language packages can drift apart:
 
 1. surface.json invariants (validated by the generator).
-2. The generated surface tables (TypeScript, TypeScript .d.ts, Python, Rust)
+2. The generated surface tables (TypeScript, TypeScript .d.ts, Python, Rust, Go, C)
    must byte-match a fresh render of surface.json — so nobody hand-edits a
    generated file or forgets to regenerate after changing the manifest.
 3. The generated Mintlify docs site (docs/site/, rendered by
    scripts/gen-sdk-docs.py from surface.json and docs/ROLLOUT.md) must
    byte-match a fresh render — stale docs fail the gate the same way.
-4. The three package versions must be identical.
+4. The five package versions must be identical.
 5. The hand-written mirror files must each define the uniform primitives
    (TemperaApiError, the unified client, the MCP client) so a package cannot
    quietly drop part of the surface.
@@ -59,6 +59,10 @@ REQUIRED_MARKERS = {
     "packages/rust/src/client.rs": ["pub struct TemperaClient", "pub struct RequestSpec"],
     "packages/rust/src/mcp.rs": ["MCP_PROTOCOL_VERSION"],
     "packages/rust/src/auth.rs": ["pub struct TemperaAuth", "pub fn pkce_challenge_s256"],
+    "packages/go/client.go": ["type APIError struct", "func NewClient", "func (c *Client) BuildRequest"],
+    "packages/go/browser.go": ["type BrowserTask struct", "func CreateBrowserTask"],
+    "packages/c/include/tempera/tempera.h": ["tempera_request_spec", "tempera_browser_task"],
+    "packages/c/src/tempera.c": ["tempera_build_request", "tempera_browser_task_attach"],
 }
 
 FORBIDDEN_README_EXAMPLES = [
@@ -80,6 +84,12 @@ def package_versions() -> dict[str, str]:
     cargo = (ROOT / "packages/rust/Cargo.toml").read_text()
     match = re.search(r'^version\s*=\s*"([^"]+)"', cargo, re.MULTILINE)
     versions["rust"] = match.group(1) if match else "?"
+    go = (ROOT / "packages/go/client.go").read_text()
+    match = re.search(r'const Version = "([^"]+)"', go)
+    versions["go"] = match.group(1) if match else "?"
+    c_header = (ROOT / "packages/c/include/tempera/surface_gen.h").read_text()
+    match = re.search(r'#define TEMPERA_SDK_VERSION "([^"]+)"', c_header)
+    versions["c"] = match.group(1) if match else "?"
     return versions
 
 
@@ -353,6 +363,16 @@ def main() -> int:
     if result.returncode != 0:
         failures.append("generated surface tables are stale or surface.json is invalid")
 
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/gen-sdk-go-c.py"), "--check"],
+        capture_output=True,
+        text=True,
+    )
+    sys.stdout.write(result.stdout)
+    sys.stderr.write(result.stderr)
+    if result.returncode != 0:
+        failures.append("generated Go/C surface tables are stale")
+
     # 3: generated docs-site drift (same regenerate-and-diff pattern).
     result = subprocess.run(
         [sys.executable, str(ROOT / "scripts/gen-sdk-docs.py"), "--check"],
@@ -394,7 +414,7 @@ def main() -> int:
                 f"README.md: public example presents reserved production access: {forbidden!r}"
             )
 
-    # 4: one SDK version across the three packages.
+    # 4: one SDK version across all five packages.
     versions = package_versions()
     if len(set(versions.values())) != 1:
         failures.append(f"package versions differ: {versions}")

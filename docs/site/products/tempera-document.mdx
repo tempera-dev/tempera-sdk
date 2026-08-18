@@ -37,7 +37,7 @@ Health check.
 
 - **Producer operationId:** `health.get`
 - **Auth:** Product bearer — an access token minted for audience `tempera-document`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.temperaDocument.healthGet()` · Python `client.tempera_document.health_get()` · Rust `build_request("tempera_document", "health_get", params)`
+- **Call as:** TypeScript `client.temperaDocument.healthGet()` · Python `client.tempera_document.health_get()` · Rust `build_request("tempera_document", "health_get", params)` · Go `BuildRequest("temperaDocument", "healthGet", params)` · C `tempera_build_request(..., "temperaDocument", "healthGet", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_document", "health_get", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "healthGet", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "healthGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsCreate
@@ -66,7 +90,7 @@ Create an immutable document version from a completed upload.
 - **Producer operationId:** `documents.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.documentsCreate()` · Python `client.tempera_document.documents_create()` · Rust `build_request("tempera_document", "documents_create", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsCreate()` · Python `client.tempera_document.documents_create()` · Rust `build_request("tempera_document", "documents_create", params)` · Go `BuildRequest("temperaDocument", "documentsCreate", params)` · C `tempera_build_request(..., "temperaDocument", "documentsCreate", ...)`
 
 **Path parameters**
 
@@ -105,6 +129,35 @@ let spec = client.build_request("tempera_document", "documents_create", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsCreate", map[string]any{
+    "project_id": "<project_id>",
+    "upload": "<upload>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"upload\":\"<upload>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsGet
@@ -116,7 +169,7 @@ Get a document.
 - **Producer operationId:** `documents.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.documentsGet()` · Python `client.tempera_document.documents_get()` · Rust `build_request("tempera_document", "documents_get", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsGet()` · Python `client.tempera_document.documents_get()` · Rust `build_request("tempera_document", "documents_get", params)` · Go `BuildRequest("temperaDocument", "documentsGet", params)` · C `tempera_build_request(..., "temperaDocument", "documentsGet", ...)`
 
 **Path parameters**
 
@@ -150,6 +203,36 @@ let spec = client.build_request("tempera_document", "documents_get", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsGet", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsExtract
@@ -161,7 +244,7 @@ Extract one caller-schema object with exact source evidence.
 - **Producer operationId:** `documents.extract`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.documentsExtract()` · Python `client.tempera_document.documents_extract()` · Rust `build_request("tempera_document", "documents_extract", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsExtract()` · Python `client.tempera_document.documents_extract()` · Rust `build_request("tempera_document", "documents_extract", params)` · Go `BuildRequest("temperaDocument", "documentsExtract", params)` · C `tempera_build_request(..., "temperaDocument", "documentsExtract", ...)`
 
 **Path parameters**
 
@@ -214,6 +297,39 @@ let spec = client.build_request("tempera_document", "documents_extract", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsExtract", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+    "instructions": "<instructions>",
+    "schema": "<schema>",
+    "schema_name": "<schema_name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"instructions\":\"<instructions>\",\"schema\":\"<schema>\",\"schema_name\":\"<schema_name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsExtract",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsGetGraph
@@ -225,7 +341,7 @@ Return the latest successful canonical document graph.
 - **Producer operationId:** `documents.getGraph`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.documentsGetGraph()` · Python `client.tempera_document.documents_get_graph()` · Rust `build_request("tempera_document", "documents_get_graph", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsGetGraph()` · Python `client.tempera_document.documents_get_graph()` · Rust `build_request("tempera_document", "documents_get_graph", params)` · Go `BuildRequest("temperaDocument", "documentsGetGraph", params)` · C `tempera_build_request(..., "temperaDocument", "documentsGetGraph", ...)`
 
 **Path parameters**
 
@@ -259,6 +375,36 @@ let spec = client.build_request("tempera_document", "documents_get_graph", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsGetGraph", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsGetGraph",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsPrepareRetrieval
@@ -270,7 +416,7 @@ Build or reuse a qualified immutable hybrid-retrieval index.
 - **Producer operationId:** `documents.prepareRetrieval`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.documentsPrepareRetrieval()` · Python `client.tempera_document.documents_prepare_retrieval()` · Rust `build_request("tempera_document", "documents_prepare_retrieval", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsPrepareRetrieval()` · Python `client.tempera_document.documents_prepare_retrieval()` · Rust `build_request("tempera_document", "documents_prepare_retrieval", params)` · Go `BuildRequest("temperaDocument", "documentsPrepareRetrieval", params)` · C `tempera_build_request(..., "temperaDocument", "documentsPrepareRetrieval", ...)`
 
 **Path parameters**
 
@@ -313,6 +459,37 @@ let spec = client.build_request("tempera_document", "documents_prepare_retrieval
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsPrepareRetrieval", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+    "kind": "<kind>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"kind\":\"<kind>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsPrepareRetrieval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsSearch
@@ -324,7 +501,7 @@ Search the latest immutable graph and return grounded source excerpts.
 - **Producer operationId:** `documents.search`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.documentsSearch()` · Python `client.tempera_document.documents_search()` · Rust `build_request("tempera_document", "documents_search", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsSearch()` · Python `client.tempera_document.documents_search()` · Rust `build_request("tempera_document", "documents_search", params)` · Go `BuildRequest("temperaDocument", "documentsSearch", params)` · C `tempera_build_request(..., "temperaDocument", "documentsSearch", ...)`
 
 **Path parameters**
 
@@ -375,6 +552,39 @@ let spec = client.build_request("tempera_document", "documents_search", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsSearch", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+    "query": "<query>",
+    "strategy": "<strategy>",
+    "top_k": "<top_k>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"query\":\"<query>\",\"strategy\":\"<strategy>\",\"top_k\":\"<top_k>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsSearch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentUnitsList
@@ -386,7 +596,7 @@ List logical units without materializing the complete document graph.
 - **Producer operationId:** `documentUnits.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.documentUnitsList()` · Python `client.tempera_document.document_units_list()` · Rust `build_request("tempera_document", "document_units_list", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentUnitsList()` · Python `client.tempera_document.document_units_list()` · Rust `build_request("tempera_document", "document_units_list", params)` · Go `BuildRequest("temperaDocument", "documentUnitsList", params)` · C `tempera_build_request(..., "temperaDocument", "documentUnitsList", ...)`
 
 **Path parameters**
 
@@ -433,6 +643,38 @@ let spec = client.build_request("tempera_document", "document_units_list", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentUnitsList", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+    "page_size": "<page_size>",
+    "page_token": "<page_token>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "page_size=<page_size>&page_token=<page_token>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentUnitsList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### documentsProcess
@@ -444,7 +686,7 @@ Start an idempotent long-running processing operation.
 - **Producer operationId:** `documents.process`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.documentsProcess()` · Python `client.tempera_document.documents_process()` · Rust `build_request("tempera_document", "documents_process", params)`
+- **Call as:** TypeScript `client.temperaDocument.documentsProcess()` · Python `client.tempera_document.documents_process()` · Rust `build_request("tempera_document", "documents_process", params)` · Go `BuildRequest("temperaDocument", "documentsProcess", params)` · C `tempera_build_request(..., "temperaDocument", "documentsProcess", ...)`
 
 **Path parameters**
 
@@ -487,6 +729,37 @@ let spec = client.build_request("tempera_document", "documents_process", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "documentsProcess", map[string]any{
+    "project_id": "<project_id>",
+    "document_id": "<document_id>",
+    "profile": "<profile>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"document_id", "<document_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"profile\":\"<profile>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "documentsProcess",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### operationsGet
@@ -498,7 +771,7 @@ Get a long-running operation.
 - **Producer operationId:** `operations.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.operationsGet()` · Python `client.tempera_document.operations_get()` · Rust `build_request("tempera_document", "operations_get", params)`
+- **Call as:** TypeScript `client.temperaDocument.operationsGet()` · Python `client.tempera_document.operations_get()` · Rust `build_request("tempera_document", "operations_get", params)` · Go `BuildRequest("temperaDocument", "operationsGet", params)` · C `tempera_build_request(..., "temperaDocument", "operationsGet", ...)`
 
 **Path parameters**
 
@@ -532,6 +805,36 @@ let spec = client.build_request("tempera_document", "operations_get", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "operationsGet", map[string]any{
+    "project_id": "<project_id>",
+    "operation_id": "<operation_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"operation_id", "<operation_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "operationsGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### uploadsCreate
@@ -543,7 +846,7 @@ Create a resumable upload resource.
 - **Producer operationId:** `uploads.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.uploadsCreate()` · Python `client.tempera_document.uploads_create()` · Rust `build_request("tempera_document", "uploads_create", params)`
+- **Call as:** TypeScript `client.temperaDocument.uploadsCreate()` · Python `client.tempera_document.uploads_create()` · Rust `build_request("tempera_document", "uploads_create", params)` · Go `BuildRequest("temperaDocument", "uploadsCreate", params)` · C `tempera_build_request(..., "temperaDocument", "uploadsCreate", ...)`
 
 **Path parameters**
 
@@ -590,6 +893,37 @@ let spec = client.build_request("tempera_document", "uploads_create", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "uploadsCreate", map[string]any{
+    "project_id": "<project_id>",
+    "media_type": "<media_type>",
+    "expected_byte_length": "<expected_byte_length>",
+    "expected_sha256": "<expected_sha256>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"expected_byte_length\":\"<expected_byte_length>\",\"expected_sha256\":\"<expected_sha256>\",\"media_type\":\"<media_type>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "uploadsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### uploadsGet
@@ -601,7 +935,7 @@ Get an upload.
 - **Producer operationId:** `uploads.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:read`
-- **Call as:** TypeScript `client.temperaDocument.uploadsGet()` · Python `client.tempera_document.uploads_get()` · Rust `build_request("tempera_document", "uploads_get", params)`
+- **Call as:** TypeScript `client.temperaDocument.uploadsGet()` · Python `client.tempera_document.uploads_get()` · Rust `build_request("tempera_document", "uploads_get", params)` · Go `BuildRequest("temperaDocument", "uploadsGet", params)` · C `tempera_build_request(..., "temperaDocument", "uploadsGet", ...)`
 
 **Path parameters**
 
@@ -635,6 +969,36 @@ let spec = client.build_request("tempera_document", "uploads_get", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "uploadsGet", map[string]any{
+    "project_id": "<project_id>",
+    "upload_id": "<upload_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"upload_id", "<upload_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "uploadsGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### uploadsWrite
@@ -646,7 +1010,7 @@ Stream source bytes to content-addressed storage.
 - **Producer operationId:** `uploads.write`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.uploadsWrite()` · Python `client.tempera_document.uploads_write()` · Rust `build_request("tempera_document", "uploads_write", params)`
+- **Call as:** TypeScript `client.temperaDocument.uploadsWrite()` · Python `client.tempera_document.uploads_write()` · Rust `build_request("tempera_document", "uploads_write", params)` · Go `BuildRequest("temperaDocument", "uploadsWrite", params)` · C `tempera_build_request(..., "temperaDocument", "uploadsWrite", ...)`
 
 **Path parameters**
 
@@ -680,6 +1044,36 @@ let spec = client.build_request("tempera_document", "uploads_write", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "uploadsWrite", map[string]any{
+    "project_id": "<project_id>",
+    "upload_id": "<upload_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"upload_id", "<upload_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "uploadsWrite",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### uploadsComplete
@@ -691,7 +1085,7 @@ Complete a streamed upload after digest assertions.
 - **Producer operationId:** `uploads.complete`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
 - **Scope:** `document:write`
-- **Call as:** TypeScript `client.temperaDocument.uploadsComplete()` · Python `client.tempera_document.uploads_complete()` · Rust `build_request("tempera_document", "uploads_complete", params)`
+- **Call as:** TypeScript `client.temperaDocument.uploadsComplete()` · Python `client.tempera_document.uploads_complete()` · Rust `build_request("tempera_document", "uploads_complete", params)` · Go `BuildRequest("temperaDocument", "uploadsComplete", params)` · C `tempera_build_request(..., "temperaDocument", "uploadsComplete", ...)`
 
 **Path parameters**
 
@@ -736,6 +1130,38 @@ let spec = client.build_request("tempera_document", "uploads_complete", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaDocument", "uploadsComplete", map[string]any{
+    "project_id": "<project_id>",
+    "upload_id": "<upload_id>",
+    "byte_length": "<byte_length>",
+    "sha256": "<sha256>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project_id", "<project_id>"},
+    {"upload_id", "<upload_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"byte_length\":\"<byte_length>\",\"sha256\":\"<sha256>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaDocument", "uploadsComplete",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

@@ -179,6 +179,9 @@ def operation_example(surface: dict, product_key: str, op: dict) -> list[str]:
     py_attr = snake_attr(product_key)
     rust_product = snake(product_key)
     op_snake = snake(op["id"])
+    path_names = [name for name in op.get("pathParams", []) if name in names]
+    query_names = [name for name in op.get("query", []) if name in names]
+    body_names = [name for name in op.get("body", []) if name in names]
 
     if names:
         ts_args = "{\n" + "".join(f'  {name}: "<{name}>",\n' for name in names) + "}"
@@ -186,20 +189,63 @@ def operation_example(surface: dict, product_key: str, op: dict) -> list[str]:
         py_args = "{\n" + "".join(f'    "{name}": "<{name}>",\n' for name in names) + "}"
         py_code = f"result = client.{py_attr}.{op_snake}({py_args})"
         rust_args = "&[\n" + "".join(f'    ("{name}", "<{name}>".into()),\n' for name in names) + "]"
+        go_params = "map[string]any{\n" + "".join(
+            f'    "{name}": "<{name}>",\n' for name in names
+        ) + "}"
     else:
         ts_code = f"const result = await client.{ts_attr}.{op['id']}();"
         py_code = f"result = client.{py_attr}.{op_snake}()"
         rust_args = "&[]"
+        go_params = "map[string]any{}"
     rust_code = (
         f'let spec = client.build_request("{rust_product}", "{op_snake}", {rust_args})?;\n'
         "// Send spec.method / spec.full_url() / spec.headers / spec.body_json\n"
         "// with your own HTTP client."
+    )
+    go_code = (
+        f'spec, err := client.BuildRequest("{product_key}", "{op["id"]}", {go_params})\n'
+        "if err != nil {\n"
+        "    return err\n"
+        "}\n"
+        "_ = spec // Or call client.Do with the same product, operation, and params."
+    )
+
+    if path_names:
+        c_path = "const tempera_param path_params[] = {\n" + "".join(
+            f'    {{"{name}", "<{name}>"}},\n' for name in path_names
+        ) + "};\nconst size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);"
+        c_path_ref = "path_params"
+    else:
+        c_path = "const tempera_param *path_params = NULL;\nconst size_t path_param_count = 0;"
+        c_path_ref = "path_params"
+    query_value = "&".join(f"{name}=<{name}>" for name in query_names)
+    query_literal = json.dumps(query_value) if query_value else "NULL"
+    body_value = json.dumps(
+        {name: f"<{name}>" for name in body_names},
+        separators=(",", ":"),
+    ) if body_names else None
+    body_literal = json.dumps(body_value) if body_value is not None else "NULL"
+    c_code = (
+        f"{c_path}\n"
+        f"const char *query_string = {query_literal};\n"
+        f"const char *body_json = {body_literal};\n"
+        "tempera_request_spec request;\n"
+        "int rc = tempera_build_request(\n"
+        "    base_url, bearer,\n"
+        f'    "{product_key}", "{op["id"]}",\n'
+        f"    {c_path_ref}, path_param_count,\n"
+        "    query_string, body_json, &request);\n"
+        "if (rc != TEMPERA_OK) {\n"
+        "    /* Handle bounded request-construction failure. */\n"
+        "}"
     )
     return code_group(
         [
             ("typescript", "TypeScript", ts_code),
             ("python", "Python", py_code),
             ("rust", "Rust", rust_code),
+            ("go", "Go", go_code),
+            ("c", "C", c_code),
         ]
     )
 
@@ -239,7 +285,9 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     lines.append(
         f"- **Call as:** TypeScript `client.{product_key}.{op['id']}()` · "
         f"Python `client.{snake_attr(product_key)}.{op_snake}()` · "
-        f'Rust `build_request("{rust_product}", "{op_snake}", params)`'
+        f'Rust `build_request("{rust_product}", "{op_snake}", params)` · '
+        f'Go `BuildRequest("{product_key}", "{op["id"]}", params)` · '
+        f'C `tempera_build_request(..., "{product_key}", "{op["id"]}", ...)`'
     )
     lines.append("")
 
@@ -303,8 +351,9 @@ def render_index(surface: dict) -> str:
         )
     ]
     lines += [
-        "The Tempera SDK exposes **one uniform surface in three languages** — TypeScript",
-        "(`@tempera/sdk`), Python (`tempera-sdk`), and Rust (`tempera-sdk`). The primary",
+        "The Tempera SDK exposes **one contract in five languages** — TypeScript",
+        "(`@tempera/sdk`), Python and Rust (`tempera-sdk`), Go (`tempera.dev/sdk-go`),",
+        "and a transport-neutral C11 ABI. The primary",
         "workflow connects the control plane, Tempo browser sessions, Human Data review,",
         "and Palette measurement through an onboarding-provisioned integration and",
         "correlation path. A single manifest, `surface.json`, also preserves the",
@@ -409,18 +458,64 @@ def render_index(surface: dict) -> str:
         ")?;\n"
         "// Send each RequestSpec with your own HTTP client."
     )
+    go_code = (
+        "// Module access and environment values are supplied during onboarding.\n"
+        "import (\n"
+        '    "context"\n'
+        '    "os"\n'
+        '    tempera "tempera.dev/sdk-go"\n'
+        ")\n"
+        "ctx := context.Background()\n"
+        'apiKey := os.Getenv("TEMPERA_API_KEY")\n'
+        "client := tempera.NewClient()\n"
+        'client.BaseURLs["tempo"] = os.Getenv("TEMPERA_TEMPO_URL")\n'
+        'client.BaseURLs["palette"] = os.Getenv("TEMPERA_PALETTE_URL")\n'
+        'client.Bearers["tempo"] = apiKey\n'
+        'client.Bearers["palette"] = apiKey\n'
+        "var session map[string]any\n"
+        'if err := client.Do(ctx, "tempo", "createSession", map[string]any{\n'
+        '    "url": "https://example.com",\n'
+        "}, &session); err != nil {\n"
+        "    return err\n"
+        "}\n"
+        "var traces map[string]any\n"
+        'if err := client.Do(ctx, "palette", "listTraces", map[string]any{\n'
+        '    "tenant_id": os.Getenv("TEMPERA_TENANT_ID"),\n'
+        '    "limit": 20,\n'
+        "}, &traces); err != nil {\n"
+        "    return err\n"
+        "}"
+    )
+    c_quickstart_body = json.dumps(
+        {"url": "https://example.com"},
+        separators=(",", ":"),
+    )
+    c_code = (
+        "/* The C11 SDK builds bounded request specs; supply your HTTP transport. */\n"
+        'const tempera_param params[] = {{"url", "https://example.com"}};\n'
+        "tempera_request_spec request;\n"
+        f"const char *body_json = {json.dumps(c_quickstart_body)};\n"
+        "int rc = tempera_build_request(\n"
+        "    tempo_url, api_key, \"tempo\", \"createSession\",\n"
+        "    NULL, 0, NULL, body_json, &request);\n"
+        "if (rc != TEMPERA_OK) {\n"
+        "    /* Handle the fail-closed bounded build error. */\n"
+        "}"
+    )
     lines += code_group(
         [
             ("typescript", "TypeScript", ts_code),
             ("python", "Python", py_code),
             ("rust", "Rust", rust_code),
+            ("go", "Go", go_code),
+            ("c", "C", c_code),
         ]
     )
     lines += [
-        "Method naming is mechanical across the languages: the SDK's lowerCamelCase",
-        "method id in TypeScript (`listTraces`), snake_case in Python (`list_traces`),",
-        'and `build_request(product, "list_traces", params)` in Rust. Parameters use wire',
-        "names (snake_case) in every language.",
+        "Method naming is mechanical: lowerCamelCase in TypeScript and Go",
+        "(`listTraces`), snake_case in Python and Rust (`list_traces`), and the",
+        "canonical manifest operation id in C. Requests always emit producer wire names;",
+        "Go/C callers supply already-provisioned bearer credentials to their transport layer.",
         "",
         "## Primary workflow surfaces",
         "",
@@ -779,14 +874,16 @@ def render_environments(surface: dict) -> str:
         "request is sent:",
         "",
         "1. **Explicit override** — `baseUrls.<product>` (TypeScript),",
-        "   `base_urls[\"<product>\"]` (Python), or `with_base_url(\"<product>\", url)` (Rust).",
+        "   `base_urls[\"<product>\"]` (Python), `with_base_url(\"<product>\", url)` (Rust),",
+        "   `BaseURLs[\"<product>\"]` (Go), or the `base_url` argument (C).",
         "2. **The product's env var** — `TEMPERA_*_URL` from the table above.",
         "3. **The environment preset** — TypeScript and Python only, and only for the",
         "   control plane, palette, and tempo. The Rust crate takes no `environment`",
         "   option; use an explicit `with_base_url` or the env var (the preset table is",
         "   still available as `tempera_sdk::ENVIRONMENTS`).",
         "",
-        "Trailing slashes on configured base URLs are trimmed in every language.",
+        "Trailing slashes are trimmed by the TypeScript, Python, Rust, and Go clients;",
+        "C callers pass the base URL to each bounded request build.",
         "",
     ]
     return "\n".join(lines)
