@@ -1,7 +1,7 @@
 [sdk]
 name = "tempera-sdk"
 repository = "https://github.com/tempera-dev/tempera-sdk"
-languages = ["typescript", "python", "rust"]
+languages = ["typescript", "python", "rust", "go", "c"]
 
 [products.auth_hub]
 name = "auth-hub"
