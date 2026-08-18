@@ -31,13 +31,9 @@ impl<'a> BrowserTask<'a> {
 
     pub fn create_request(
         client: &'a TemperaClient,
-        params: &[(impl AsRef<str>, ParamValue)],
+        params: &[(&str, ParamValue)],
     ) -> Result<RequestSpec, BuildError> {
-        let owned = params
-            .iter()
-            .map(|(key, value)| (key.as_ref(), value.clone()))
-            .collect::<Vec<_>>();
-        client.build_request("tempo", "create_session", &owned)
+        client.build_request("tempo", "create_session", params)
     }
 
     pub fn session_id(&self) -> &str {
@@ -48,7 +44,7 @@ impl<'a> BrowserTask<'a> {
         &self.state
     }
 
-    fn session_params(&self, extra: &[(&str, ParamValue)]) -> Vec<(&str, ParamValue)> {
+    fn session_params<'b>(&'b self, extra: &'b [(&'b str, ParamValue)]) -> Vec<(&'b str, ParamValue)> {
         let mut params = Vec::with_capacity(extra.len() + 1);
         params.push(("session_id", self.session_id.clone().into()));
         params.extend(extra.iter().cloned());
@@ -76,12 +72,10 @@ impl<'a> BrowserTask<'a> {
             .build_request("tempo", "close_session", &self.session_params(extra))
     }
 
-    /// Mark a close request as accepted by the remote runtime.
     pub fn mark_closed(&mut self) {
         self.state = BrowserTaskState::Closed;
     }
 
-    /// Mark a close request as failed before the remote session closed.
     pub fn reopen_after_close_failure(&mut self) {
         if self.state == BrowserTaskState::Closing {
             self.state = BrowserTaskState::Open;
@@ -89,7 +83,6 @@ impl<'a> BrowserTask<'a> {
     }
 }
 
-/// Transport-neutral description of one deterministic workflow step.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BrowserWorkflowStep {
     pub name: String,
