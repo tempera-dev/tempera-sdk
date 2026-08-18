@@ -3,7 +3,7 @@
 //! Rust intentionally does not execute the loop because this crate owns no HTTP
 //! runtime. Instead it keeps session identity/state and emits the exact Tempo
 //! `RequestSpec`s a caller needs to drive the same observe -> decide -> act loop
-//! exposed directly by the TypeScript and Python SDKs.
+//! exposed directly by the TypeScript, Python, and Go SDKs.
 
 use crate::{BuildError, ParamValue, RequestSpec, TemperaClient};
 
@@ -44,29 +44,35 @@ impl<'a> BrowserTask<'a> {
         &self.state
     }
 
-    fn session_params<'b>(&'b self, extra: &'b [(&'b str, ParamValue)]) -> Vec<(&'b str, ParamValue)> {
+    fn session_params<'b>(
+        &'b self,
+        extra: &'b [(&'b str, ParamValue)],
+    ) -> Vec<(&'b str, ParamValue)> {
         let mut params = Vec::with_capacity(extra.len() + 1);
-        params.push(("session_id", self.session_id.clone().into()));
+        params.push(("sessionId", self.session_id.clone().into()));
         params.extend(extra.iter().cloned());
         params
     }
 
     pub fn observe_request(&self, extra: &[(&str, ParamValue)]) -> Result<RequestSpec, BuildError> {
         self.client
-            .build_request("tempo", "observe_session", &self.session_params(extra))
+            .build_request("tempo", "observe", &self.session_params(extra))
     }
 
     pub fn act_batch_request(
         &self,
-        actions_json: impl Into<String>,
+        batch_json: impl Into<String>,
         extra: &[(&str, ParamValue)],
     ) -> Result<RequestSpec, BuildError> {
         let mut params = self.session_params(extra);
-        params.push(("actions", ParamValue::RawJson(actions_json.into())));
+        params.push(("batch", ParamValue::RawJson(batch_json.into())));
         self.client.build_request("tempo", "act_batch", &params)
     }
 
-    pub fn close_request(&mut self, extra: &[(&str, ParamValue)]) -> Result<RequestSpec, BuildError> {
+    pub fn close_request(
+        &mut self,
+        extra: &[(&str, ParamValue)],
+    ) -> Result<RequestSpec, BuildError> {
         self.state = BrowserTaskState::Closing;
         self.client
             .build_request("tempo", "close_session", &self.session_params(extra))

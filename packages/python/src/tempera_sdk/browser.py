@@ -25,6 +25,15 @@ def _session_id(value: Any) -> str:
     return candidate
 
 
+def _session_params(params: Mapping[str, Any], session_id: str) -> dict[str, Any]:
+    payload = dict(params)
+    # BrowserTask owns session routing. Remove the language alias so the
+    # generated client cannot observe both spellings of the same parameter.
+    payload.pop("session_id", None)
+    payload["sessionId"] = session_id
+    return payload
+
+
 @dataclass(slots=True)
 class BrowserLoopResult:
     task: "BrowserTask"
@@ -68,7 +77,7 @@ class BrowserTask:
 
     def observe(self, **params: Any) -> Any:
         self._assert_open()
-        observation = _method(self.tempo, "observe_session")(session_id=self.session_id, **params)
+        observation = _method(self.tempo, "observe")(_session_params(params, self.session_id))
         self.last_observation = observation
         return observation
 
@@ -76,7 +85,12 @@ class BrowserTask:
         self._assert_open()
         if not isinstance(actions, list) or not actions:
             raise TemperaSdkError("BrowserTask.act requires a non-empty actions list")
-        receipt = _method(self.tempo, "act_batch")(session_id=self.session_id, actions=actions, **params)
+        payload = _session_params(params, self.session_id)
+        # `batch` is the canonical Tempo request field. BrowserTask owns it; do
+        # not leak the pre-AIP `actions` compatibility spelling onto the wire.
+        payload.pop("actions", None)
+        payload["batch"] = actions
+        receipt = _method(self.tempo, "act_batch")(payload)
         self.last_receipt = receipt
         return receipt
 
@@ -129,7 +143,8 @@ class BrowserTask:
                 if observation is None:
                     observation = self.observe()
                 self.last_observation = observation
-            return BrowserLoopResult(self, steps, self.last_observation or observation, self.last_receipt, value)
+            final_observation = self.last_observation if self.last_observation is not None else observation
+            return BrowserLoopResult(self, steps, final_observation, self.last_receipt, value)
         finally:
             if close and self.state == "open":
                 self.close()
@@ -144,7 +159,7 @@ class BrowserTask:
             raise TemperaSdkError(f"BrowserTask {self.session_id} is already closing")
         self.state = "closing"
         try:
-            result = _method(self.tempo, "close_session")(session_id=self.session_id, **params)
+            result = _method(self.tempo, "close_session")(_session_params(params, self.session_id))
             self.state = "closed"
             return result
         except BaseException:

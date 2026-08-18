@@ -10,9 +10,9 @@ class FakeTempo:
         payload = dict(params or {})
         payload.update(extra)
         self.calls.append(("create", payload))
-        return {"session_id": "s-1"}
+        return {"sessionId": "s-1"}
 
-    def observe_session(self, params=None, **extra):
+    def observe(self, params=None, **extra):
         payload = dict(params or {})
         payload.update(extra)
         self.calls.append(("observe", payload))
@@ -37,7 +37,7 @@ class FakeClient:
         self.tempo = FakeTempo()
 
 
-def test_browser_task_reuses_settled_observation():
+def test_browser_task_reuses_settled_observation_and_emits_canonical_wire_names():
     client = FakeClient()
     task = BrowserTask.create(client, url="https://example.test")
 
@@ -48,10 +48,19 @@ def test_browser_task_reuses_settled_observation():
 
     assert result.steps == 2
     assert result.observation["revision"] == 2
-    assert len([call for call in client.tempo.calls if call[0] == "observe"]) == 1
-    assert len([call for call in client.tempo.calls if call[0] == "act"]) == 2
+    observe_calls = [call for call in client.tempo.calls if call[0] == "observe"]
+    action_calls = [call for call in client.tempo.calls if call[0] == "act"]
+    assert observe_calls == [("observe", {"sessionId": "s-1"})]
+    assert len(action_calls) == 2
+    for _, payload in action_calls:
+        assert payload["sessionId"] == "s-1"
+        assert isinstance(payload["batch"], list)
+        assert "actions" not in payload
+        assert "session_id" not in payload
+
     task.close()
     assert task.closed
+    assert client.tempo.calls[-1] == ("close", {"sessionId": "s-1"})
 
 
 def test_browser_workflow_shares_task_and_context():

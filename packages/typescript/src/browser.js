@@ -22,6 +22,15 @@ function assertPositiveInteger(name, value) {
   }
 }
 
+function sessionParams(params, sessionId) {
+  const payload = { ...(params ?? {}) };
+  // BrowserTask owns session routing. Remove the language alias so the
+  // generated client cannot observe both spellings of the same parameter.
+  delete payload.session_id;
+  payload.sessionId = sessionId;
+  return payload;
+}
+
 /**
  * Stateful, lifecycle-owning browser session built on the generated Tempo client.
  * It deliberately does not hide Tempo receipts or observations: higher-level
@@ -65,8 +74,8 @@ export class BrowserTask {
 
   async observe(params = {}, options) {
     this.#assertOpen();
-    const observeSession = requireFunction(this.tempo, "observeSession");
-    const observation = await observeSession({ session_id: this.sessionId, ...params }, options);
+    const observe = requireFunction(this.tempo, "observe");
+    const observation = await observe(sessionParams(params, this.sessionId), options);
     this.lastObservation = observation;
     return observation;
   }
@@ -77,7 +86,12 @@ export class BrowserTask {
       throw new TemperaSdkError("BrowserTask.act requires a non-empty actions array");
     }
     const actBatch = requireFunction(this.tempo, "actBatch");
-    const receipt = await actBatch({ session_id: this.sessionId, actions, ...params }, options);
+    const payload = sessionParams(params, this.sessionId);
+    // `batch` is the canonical Tempo request field. BrowserTask owns it; do
+    // not leak the pre-AIP `actions` compatibility spelling onto the wire.
+    delete payload.actions;
+    payload.batch = actions;
+    const receipt = await actBatch(payload, options);
     this.lastReceipt = receipt;
     return receipt;
   }
@@ -144,7 +158,7 @@ export class BrowserTask {
     this.state = "closing";
     try {
       const closeSession = requireFunction(this.tempo, "closeSession");
-      const result = await closeSession({ session_id: this.sessionId, ...params }, options);
+      const result = await closeSession(sessionParams(params, this.sessionId), options);
       this.state = "closed";
       return result;
     } catch (error) {

@@ -105,25 +105,25 @@ int tempera_browser_task_attach(tempera_browser_task *task, const char *base_url
 int tempera_browser_observe_request(const tempera_browser_task *task, tempera_request_spec *out) {
   tempera_param p;
   if (!task || task->state != TEMPERA_BROWSER_OPEN) return TEMPERA_ESTATE;
-  p.name = "session_id"; p.value = task->session_id;
-  return tempera_build_request(task->base_url, task->bearer, "tempo", "observe_session", &p, 1, NULL, NULL, out);
+  p.name = "sessionId"; p.value = task->session_id;
+  return tempera_build_request(task->base_url, task->bearer, "tempo", "observe", &p, 1, NULL, NULL, out);
 }
 
-int tempera_browser_act_batch_request(const tempera_browser_task *task, const char *actions_json, tempera_request_spec *out) {
+int tempera_browser_act_batch_request(const tempera_browser_task *task, const char *batch_json, tempera_request_spec *out) {
   tempera_param p; char body[65536]; int written;
-  if (!task || task->state != TEMPERA_BROWSER_OPEN || !actions_json || !*actions_json) return TEMPERA_EINVAL;
-  p.name = "session_id"; p.value = task->session_id;
-  written = snprintf(body, sizeof(body), "{\"actions\":%s}", actions_json);
+  if (!task || task->state != TEMPERA_BROWSER_OPEN || !batch_json || !*batch_json) return TEMPERA_EINVAL;
+  p.name = "sessionId"; p.value = task->session_id;
+  written = snprintf(body, sizeof(body), "{\"batch\":%s}", batch_json);
   if (written < 0 || (size_t)written >= sizeof(body)) return TEMPERA_ECAPACITY;
-  return tempera_build_request(task->base_url, task->bearer, "tempo", "act_batch", &p, 1, NULL, body, out);
+  return tempera_build_request(task->base_url, task->bearer, "tempo", "actBatch", &p, 1, NULL, body, out);
 }
 
 int tempera_browser_close_request(tempera_browser_task *task, tempera_request_spec *out) {
   tempera_param p; int rc;
   if (!task || task->state != TEMPERA_BROWSER_OPEN) return TEMPERA_ESTATE;
   task->state = TEMPERA_BROWSER_CLOSING;
-  p.name = "session_id"; p.value = task->session_id;
-  rc = tempera_build_request(task->base_url, task->bearer, "tempo", "close_session", &p, 1, NULL, NULL, out);
+  p.name = "sessionId"; p.value = task->session_id;
+  rc = tempera_build_request(task->base_url, task->bearer, "tempo", "closeSession", &p, 1, NULL, NULL, out);
   if (rc != TEMPERA_OK) task->state = TEMPERA_BROWSER_OPEN;
   return rc;
 }

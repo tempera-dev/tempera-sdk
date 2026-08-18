@@ -10,9 +10,9 @@ function fakeClient() {
     tempo: {
       async createSession(params) {
         calls.push(["create", params]);
-        return { session_id: "s-1" };
+        return { sessionId: "s-1" };
       },
-      async observeSession(params) {
+      async observe(params) {
         calls.push(["observe", params]);
         return { revision, url: "https://example.test" };
       },
@@ -29,7 +29,7 @@ function fakeClient() {
   };
 }
 
-test("BrowserTask owns session lifecycle and reuses settled observations", async () => {
+test("BrowserTask owns session lifecycle and emits the canonical Tempo contract", async () => {
   const client = fakeClient();
   const task = await BrowserTask.create(client, { url: "https://example.test" });
   const result = await task.run(
@@ -39,10 +39,21 @@ test("BrowserTask owns session lifecycle and reuses settled observations", async
 
   assert.equal(result.steps, 2);
   assert.equal(result.observation.revision, 2);
-  assert.equal(client.calls.filter(([kind]) => kind === "observe").length, 1);
-  assert.equal(client.calls.filter(([kind]) => kind === "act").length, 2);
+  const observeCalls = client.calls.filter(([kind]) => kind === "observe");
+  const actionCalls = client.calls.filter(([kind]) => kind === "act");
+  assert.equal(observeCalls.length, 1);
+  assert.deepEqual(observeCalls[0][1], { sessionId: "s-1" });
+  assert.equal(actionCalls.length, 2);
+  for (const [, params] of actionCalls) {
+    assert.equal(params.sessionId, "s-1");
+    assert.equal(Array.isArray(params.batch), true);
+    assert.equal(Object.hasOwn(params, "actions"), false);
+    assert.equal(Object.hasOwn(params, "session_id"), false);
+  }
+
   await task.close();
   assert.equal(task.closed, true);
+  assert.deepEqual(client.calls.at(-1), ["close", { sessionId: "s-1" }]);
 });
 
 test("BrowserWorkflow composes deterministic steps around one task", async () => {
