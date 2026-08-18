@@ -28,6 +28,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.97.1
         with:
           components: clippy,rustfmt
+      # Bootstrap run 2: generated artifacts are committed only after all five SDKs validate.
       - name: Generate Go and C surfaces
         run: |
           python3 scripts/gen-sdk-go-c.py
