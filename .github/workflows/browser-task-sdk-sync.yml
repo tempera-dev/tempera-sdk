@@ -31,6 +31,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.97.1
         with:
           components: clippy,rustfmt
+      # This workflow is temporary and branch-scoped; it exists only to produce
+      # an exact staged Tempo contract receipt without unrelated source-gap gates.
       - name: Vendor exact staged Tempo contract
         run: |
           python3 scripts/sync-vendored-openapi.py \
