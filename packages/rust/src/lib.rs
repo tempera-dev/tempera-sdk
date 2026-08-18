@@ -37,9 +37,20 @@ mod tests {
     fn surface_tables_replace_the_legacy_hand_written_consts() {
         assert_eq!(INTROSPECT_PATH, "/v1/oauth/introspect");
         for key in [
-            "control_plane", "palette", "tempo", "tempera_llm", "tempera_workflows",
-            "tempera_gym", "tempera_bio", "cradle", "remi", "data_engine", "human_data",
-            "temp_js", "temp_os", "arrha",
+            "control_plane",
+            "palette",
+            "tempo",
+            "tempera_llm",
+            "tempera_workflows",
+            "tempera_gym",
+            "tempera_bio",
+            "cradle",
+            "remi",
+            "data_engine",
+            "human_data",
+            "temp_js",
+            "temp_os",
+            "arrha",
         ] {
             assert!(find_product(key).is_some(), "missing product {key}");
         }
@@ -59,7 +70,10 @@ mod tests {
         assert_eq!(production.palette_mcp_url, "https://mcp.tempera.dev/mcp");
         assert_eq!(production.tempo_api_url, "https://tempo.tempera.dev");
         assert_eq!(production.tempera_llm_api_url, "https://llm.tempera.dev");
-        assert_eq!(production.tempera_workflows_api_url, "https://workflows.tempera.dev");
+        assert_eq!(
+            production.tempera_workflows_api_url,
+            "https://workflows.tempera.dev"
+        );
         assert_eq!(production.tempera_gym_url, "https://gym.tempera.dev");
         assert_eq!(production.mcp_gateway_url, "https://api.tempera.dev/mcp");
     }
