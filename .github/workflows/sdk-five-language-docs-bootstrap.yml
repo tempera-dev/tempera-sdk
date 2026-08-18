@@ -1,0 +1,74 @@
+name: SDK five-language docs bootstrap
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/sdk-five-language-docs-bootstrap.yml
+      - scripts/apply-five-language-docs.py
+      - scripts/test-five-language-docs.py
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.23.x', cache: false }
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with: { components: 'clippy,rustfmt' }
+      - name: Apply the five-language docs migration
+        run: python3 scripts/apply-five-language-docs.py
+      - name: Regenerate all committed language and documentation surfaces
+        run: |
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-go-c.py
+          gofmt -w packages/go/*.go
+          cargo fmt --manifest-path packages/rust/Cargo.toml
+          python3 scripts/gen-sdk-docs.py
+      - name: Validate deterministic docs and AIP contract
+        run: |
+          python3 -m py_compile scripts/gen-sdk-docs.py scripts/check-sdk-surface.py scripts/test-five-language-docs.py
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/gen-sdk-go-c.py --check
+          python3 scripts/gen-sdk-docs.py --check
+          python3 scripts/test-five-language-docs.py
+          python3 scripts/test-aip-conformance.py
+          python3 scripts/check-aip-conformance.py
+      - name: Validate TypeScript and Python
+        run: |
+          npm --prefix packages/typescript test
+          PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
+      - name: Validate Rust
+        run: |
+          cargo fmt --manifest-path packages/rust/Cargo.toml -- --check
+          cargo check --manifest-path packages/rust/Cargo.toml --all-targets
+          cargo clippy --manifest-path packages/rust/Cargo.toml --all-targets -- -D warnings
+          cargo test --manifest-path packages/rust/Cargo.toml
+      - name: Validate Go and C
+        run: |
+          (cd packages/go && go test ./...)
+          make -C packages/c test
+      - name: Commit only after the complete five-language qualification passes
+        run: |
+          rm scripts/apply-five-language-docs.py
+          rm .github/workflows/sdk-five-language-docs-bootstrap.yml
+          if git diff --quiet; then
+            echo 'No documentation changes'
+            exit 0
+          fi
+          git config user.name 'tempera-sdk-docs-sync'
+          git config user.email 'tempera-sdk-docs-sync@users.noreply.github.com'
+          git add -A
+          git commit -m 'docs(sdk): generate five-language API reference'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
