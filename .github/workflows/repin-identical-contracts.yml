@@ -1,0 +1,76 @@
+name: repin-identical-contracts
+
+on:
+  push:
+    branches: [agent/browser-task-workflow-sdk]
+    paths: [.github/workflows/repin-identical-contracts.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  repin:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/browser-task-workflow-sdk
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install PyYAML==6.0.3
+      - name: Repin content-identical producer revisions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              '332a6ea6baafbf19511dc6dee5077dd62cc9b0ad': 'cf55d3f979b4374d221f7b368fff26f9875ed710',
+              '19a34d5d06dd6977887d45892ab84eef6786c637': '03cd6ee5631435b9af482f5f4276de25b780236e',
+          }
+          roots = [Path('specs'), Path('contracts'), Path('scripts')]
+          changed = []
+          for root in roots:
+              for path in root.rglob('*'):
+                  if not path.is_file():
+                      continue
+                  try:
+                      text = path.read_text(encoding='utf-8')
+                  except UnicodeDecodeError:
+                      continue
+                  new = text
+                  for old, current in replacements.items():
+                      new = new.replace(old, current)
+                  if new != text:
+                      path.write_text(new, encoding='utf-8')
+                      changed.append(str(path))
+          print('\n'.join(changed))
+          if not changed:
+              raise SystemExit('expected at least one secondary provenance pin to change')
+          for old in replacements:
+              for root in roots:
+                  for path in root.rglob('*'):
+                      if path.is_file():
+                          try:
+                              if old in path.read_text(encoding='utf-8'):
+                                  raise SystemExit(f'stale producer revision remains in {path}')
+                          except UnicodeDecodeError:
+                              pass
+          PY
+      - name: Verify generated contract stability
+        run: |
+          python3 scripts/sync-palette-eval-openapi.py --check
+          python3 scripts/sync-data-engine-openapi.py --check
+          python3 scripts/sync-data-engine-mcp-contracts.py --check
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/check-aip-conformance.py
+      - name: Commit provenance-only changes
+        run: |
+          git config user.name 'tempera-sdk-provenance'
+          git config user.email 'tempera-sdk-provenance@users.noreply.github.com'
+          git add specs contracts scripts
+          git diff --cached --exit-code && exit 1 || true
+          git commit -m 'chore(sdk): repin content-identical producer contracts'
+          git push origin HEAD:agent/browser-task-workflow-sdk
