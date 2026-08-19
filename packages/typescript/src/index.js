@@ -38,6 +38,7 @@ export {
 } from "./auth.js";
 
 export { createTemperaClient } from "./client.js";
+export { BrowserTask, BrowserWorkflow, browserWorkflow } from "./browser.js";
 
 export { MCP_ERROR_CODES, MCP_PROTOCOL_VERSION, TemperaMcpClient } from "./mcp.js";
 

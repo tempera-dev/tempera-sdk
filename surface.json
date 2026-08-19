@@ -1,5 +1,5 @@
 {
-  "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
+  "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, Rust, Go, and C packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
   "version": 6,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
@@ -1591,6 +1591,138 @@
           "credentialId"
         ],
         "requestBodyKind": "none"
+      },
+      {
+        "id": "clearingAdmissionsCreate",
+        "method": "POST",
+        "path": "/v1/clearing/admissions",
+        "auth": "oauthResource",
+        "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
+        "upstreamOperationId": "clearingAdmissions.create",
+        "body": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey",
+          "ttlSeconds"
+        ],
+        "requiredBody": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:approve"
+      },
+      {
+        "id": "clearingAdmissionsGet",
+        "method": "GET",
+        "path": "/v1/clearing/admissions/{admissionId}",
+        "auth": "oauthResource",
+        "description": "Read a Clearing admission from the caller's exact workspace.",
+        "upstreamOperationId": "clearingAdmissions.get",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:read"
+      },
+      {
+        "id": "clearingAdmissionsClaim",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:claim",
+        "auth": "oauthResource",
+        "description": "Atomically move one READY admission to a fenced lease before dispatch.",
+        "upstreamOperationId": "clearingAdmissions.claim",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseSeconds"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsFinalize",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:finalize",
+        "auth": "oauthResource",
+        "description": "Consume a matching lease with one durable Clearing commit identity.",
+        "upstreamOperationId": "clearingAdmissions.finalize",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsMarkRecoveryRequired",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:markRecoveryRequired",
+        "auth": "oauthResource",
+        "description": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
+        "upstreamOperationId": "clearingAdmissions.markRecoveryRequired",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:reconcile"
       }
     ],
     "palette": [

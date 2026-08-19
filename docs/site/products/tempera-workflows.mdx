@@ -37,7 +37,7 @@ Check tempera-workflows engine liveness.
 
 - **Producer operationId:** `healthz`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaWorkflows.health()` · Python `client.tempera_workflows.health()` · Rust `build_request("tempera_workflows", "health", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.health()` · Python `client.tempera_workflows.health()` · Rust `build_request("tempera_workflows", "health", params)` · Go `BuildRequest("temperaWorkflows", "health", params)` · C `tempera_build_request(..., "temperaWorkflows", "health", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_workflows", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createExperimentSubmission
@@ -68,7 +92,7 @@ Authorize and durably submit one preregistered prospective Bio experiment.
 - **Physical action:** Yes. This operation may cause an external real-world action.
 - **Prepare/commit:** Required. Obtain a valid prepare receipt and commit authorization before invoking it.
 - **Scope:** `bio:experiment:submit`
-- **Call as:** TypeScript `client.temperaWorkflows.createExperimentSubmission()` · Python `client.tempera_workflows.create_experiment_submission()` · Rust `build_request("tempera_workflows", "create_experiment_submission", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.createExperimentSubmission()` · Python `client.tempera_workflows.create_experiment_submission()` · Rust `build_request("tempera_workflows", "create_experiment_submission", params)` · Go `BuildRequest("temperaWorkflows", "createExperimentSubmission", params)` · C `tempera_build_request(..., "temperaWorkflows", "createExperimentSubmission", ...)`
 
 **Body parameters**
 
@@ -122,6 +146,38 @@ let spec = client.build_request("tempera_workflows", "create_experiment_submissi
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "createExperimentSubmission", map[string]any{
+    "approvalId": "<approvalId>",
+    "connectionId": "<connectionId>",
+    "experimentProposal": "<experimentProposal>",
+    "mcpCommitReceiptDigest": "<mcpCommitReceiptDigest>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "prospectiveProtocol": "<prospectiveProtocol>",
+    "submissionIdempotencyKey": "<submissionIdempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"approvalId\":\"<approvalId>\",\"connectionId\":\"<connectionId>\",\"experimentProposal\":\"<experimentProposal>\",\"mcpCommitReceiptDigest\":\"<mcpCommitReceiptDigest>\",\"mcpPrepareReceiptDigest\":\"<mcpPrepareReceiptDigest>\",\"prospectiveProtocol\":\"<prospectiveProtocol>\",\"submissionIdempotencyKey\":\"<submissionIdempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "createExperimentSubmission",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getExperimentSubmission
@@ -133,7 +189,7 @@ Get a credential-free durable view of one experiment submission.
 - **Producer operationId:** `experimentSubmissions.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.getExperimentSubmission()` · Python `client.tempera_workflows.get_experiment_submission()` · Rust `build_request("tempera_workflows", "get_experiment_submission", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.getExperimentSubmission()` · Python `client.tempera_workflows.get_experiment_submission()` · Rust `build_request("tempera_workflows", "get_experiment_submission", params)` · Go `BuildRequest("temperaWorkflows", "getExperimentSubmission", params)` · C `tempera_build_request(..., "temperaWorkflows", "getExperimentSubmission", ...)`
 
 **Path parameters**
 
@@ -163,6 +219,34 @@ let spec = client.build_request("tempera_workflows", "get_experiment_submission"
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "getExperimentSubmission", map[string]any{
+    "submissionId": "<submissionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"submissionId", "<submissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "getExperimentSubmission",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### reconcileExperimentSubmission
@@ -174,7 +258,7 @@ Resolve an ambiguous physical dispatch with a provider-side lookup. This operati
 - **Producer operationId:** `experimentSubmissions.reconcile`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `bio:experiment:submit`
-- **Call as:** TypeScript `client.temperaWorkflows.reconcileExperimentSubmission()` · Python `client.tempera_workflows.reconcile_experiment_submission()` · Rust `build_request("tempera_workflows", "reconcile_experiment_submission", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.reconcileExperimentSubmission()` · Python `client.tempera_workflows.reconcile_experiment_submission()` · Rust `build_request("tempera_workflows", "reconcile_experiment_submission", params)` · Go `BuildRequest("temperaWorkflows", "reconcileExperimentSubmission", params)` · C `tempera_build_request(..., "temperaWorkflows", "reconcileExperimentSubmission", ...)`
 
 **Path parameters**
 
@@ -204,6 +288,34 @@ let spec = client.build_request("tempera_workflows", "reconcile_experiment_submi
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "reconcileExperimentSubmission", map[string]any{
+    "submissionId": "<submissionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"submissionId", "<submissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "reconcileExperimentSubmission",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listNodeTypes
@@ -215,7 +327,7 @@ List the typed node catalog: native orchestration nodes plus the sdk.\<product>.
 - **Producer operationId:** `nodeTypes.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.listNodeTypes()` · Python `client.tempera_workflows.list_node_types()` · Rust `build_request("tempera_workflows", "list_node_types", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.listNodeTypes()` · Python `client.tempera_workflows.list_node_types()` · Rust `build_request("tempera_workflows", "list_node_types", params)` · Go `BuildRequest("temperaWorkflows", "listNodeTypes", params)` · C `tempera_build_request(..., "temperaWorkflows", "listNodeTypes", ...)`
 
 **Query parameters**
 
@@ -249,6 +361,33 @@ let spec = client.build_request("tempera_workflows", "list_node_types", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "listNodeTypes", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "listNodeTypes",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listRuns
@@ -260,7 +399,7 @@ List workflow runs, optionally filtered to one workflow.
 - **Producer operationId:** `runs.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.listRuns()` · Python `client.tempera_workflows.list_runs()` · Rust `build_request("tempera_workflows", "list_runs", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.listRuns()` · Python `client.tempera_workflows.list_runs()` · Rust `build_request("tempera_workflows", "list_runs", params)` · Go `BuildRequest("temperaWorkflows", "listRuns", params)` · C `tempera_build_request(..., "temperaWorkflows", "listRuns", ...)`
 
 **Query parameters**
 
@@ -295,6 +434,33 @@ let spec = client.build_request("tempera_workflows", "list_runs", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "listRuns", map[string]any{
+    "workflowId": "<workflowId>",
+    "pageSize": "<pageSize>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "workflowId=<workflowId>&pageSize=<pageSize>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "listRuns",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getRun
@@ -306,7 +472,7 @@ Fetch one workflow run with its state, node results, and timings; the live SSE e
 - **Producer operationId:** `runs.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.getRun()` · Python `client.tempera_workflows.get_run()` · Rust `build_request("tempera_workflows", "get_run", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.getRun()` · Python `client.tempera_workflows.get_run()` · Rust `build_request("tempera_workflows", "get_run", params)` · Go `BuildRequest("temperaWorkflows", "getRun", params)` · C `tempera_build_request(..., "temperaWorkflows", "getRun", ...)`
 
 **Path parameters**
 
@@ -336,6 +502,34 @@ let spec = client.build_request("tempera_workflows", "get_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "getRun", map[string]any{
+    "runId": "<runId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "getRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### cancelRun
@@ -347,7 +541,7 @@ Cancel a queued or running workflow run.
 - **Producer operationId:** `runs.cancel`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
-- **Call as:** TypeScript `client.temperaWorkflows.cancelRun()` · Python `client.tempera_workflows.cancel_run()` · Rust `build_request("tempera_workflows", "cancel_run", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.cancelRun()` · Python `client.tempera_workflows.cancel_run()` · Rust `build_request("tempera_workflows", "cancel_run", params)` · Go `BuildRequest("temperaWorkflows", "cancelRun", params)` · C `tempera_build_request(..., "temperaWorkflows", "cancelRun", ...)`
 
 **Path parameters**
 
@@ -377,6 +571,34 @@ let spec = client.build_request("tempera_workflows", "cancel_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "cancelRun", map[string]any{
+    "runId": "<runId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "cancelRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### runsSignal
@@ -388,7 +610,7 @@ Consume a durable external callback and resume a waiting run.
 - **Producer operationId:** `runs.signal`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
-- **Call as:** TypeScript `client.temperaWorkflows.runsSignal()` · Python `client.tempera_workflows.runs_signal()` · Rust `build_request("tempera_workflows", "runs_signal", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.runsSignal()` · Python `client.tempera_workflows.runs_signal()` · Rust `build_request("tempera_workflows", "runs_signal", params)` · Go `BuildRequest("temperaWorkflows", "runsSignal", params)` · C `tempera_build_request(..., "temperaWorkflows", "runsSignal", ...)`
 
 **Path parameters**
 
@@ -439,6 +661,38 @@ let spec = client.build_request("tempera_workflows", "runs_signal", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "runsSignal", map[string]any{
+    "runId": "<runId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "payload": "<payload>",
+    "payloadDigest": "<payloadDigest>",
+    "signalName": "<signalName>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"payload\":\"<payload>\",\"payloadDigest\":\"<payloadDigest>\",\"signalName\":\"<signalName>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "runsSignal",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listWorkflows
@@ -450,7 +704,7 @@ List stored workflow definitions, newest first.
 - **Producer operationId:** `workflows.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.listWorkflows()` · Python `client.tempera_workflows.list_workflows()` · Rust `build_request("tempera_workflows", "list_workflows", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.listWorkflows()` · Python `client.tempera_workflows.list_workflows()` · Rust `build_request("tempera_workflows", "list_workflows", params)` · Go `BuildRequest("temperaWorkflows", "listWorkflows", params)` · C `tempera_build_request(..., "temperaWorkflows", "listWorkflows", ...)`
 
 **Query parameters**
 
@@ -484,6 +738,33 @@ let spec = client.build_request("tempera_workflows", "list_workflows", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "listWorkflows", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "listWorkflows",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createWorkflow
@@ -495,7 +776,7 @@ Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); t
 - **Producer operationId:** `workflows.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.createWorkflow()` · Python `client.tempera_workflows.create_workflow()` · Rust `build_request("tempera_workflows", "create_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.createWorkflow()` · Python `client.tempera_workflows.create_workflow()` · Rust `build_request("tempera_workflows", "create_workflow", params)` · Go `BuildRequest("temperaWorkflows", "createWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "createWorkflow", ...)`
 
 **Body parameters**
 
@@ -543,6 +824,36 @@ let spec = client.build_request("tempera_workflows", "create_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "createWorkflow", map[string]any{
+    "contractVersion": "<contractVersion>",
+    "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"contractVersion\":\"<contractVersion>\",\"edges\":\"<edges>\",\"id\":\"<id>\",\"name\":\"<name>\",\"nodes\":\"<nodes>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "createWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### deleteWorkflow
@@ -554,7 +865,7 @@ Delete a stored workflow definition.
 - **Producer operationId:** `workflows.delete`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.deleteWorkflow()` · Python `client.tempera_workflows.delete_workflow()` · Rust `build_request("tempera_workflows", "delete_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.deleteWorkflow()` · Python `client.tempera_workflows.delete_workflow()` · Rust `build_request("tempera_workflows", "delete_workflow", params)` · Go `BuildRequest("temperaWorkflows", "deleteWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "deleteWorkflow", ...)`
 
 **Path parameters**
 
@@ -584,6 +895,34 @@ let spec = client.build_request("tempera_workflows", "delete_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "deleteWorkflow", map[string]any{
+    "workflowId": "<workflowId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "deleteWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getWorkflow
@@ -595,7 +934,7 @@ Fetch one stored workflow definition.
 - **Producer operationId:** `workflows.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:read`
-- **Call as:** TypeScript `client.temperaWorkflows.getWorkflow()` · Python `client.tempera_workflows.get_workflow()` · Rust `build_request("tempera_workflows", "get_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.getWorkflow()` · Python `client.tempera_workflows.get_workflow()` · Rust `build_request("tempera_workflows", "get_workflow", params)` · Go `BuildRequest("temperaWorkflows", "getWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "getWorkflow", ...)`
 
 **Path parameters**
 
@@ -625,6 +964,34 @@ let spec = client.build_request("tempera_workflows", "get_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "getWorkflow", map[string]any{
+    "workflowId": "<workflowId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "getWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### updateWorkflow
@@ -636,7 +1003,7 @@ Replace a stored workflow definition with a new validated revision.
 - **Producer operationId:** `workflows.update`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.updateWorkflow()` · Python `client.tempera_workflows.update_workflow()` · Rust `build_request("tempera_workflows", "update_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.updateWorkflow()` · Python `client.tempera_workflows.update_workflow()` · Rust `build_request("tempera_workflows", "update_workflow", params)` · Go `BuildRequest("temperaWorkflows", "updateWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "updateWorkflow", ...)`
 
 **Path parameters**
 
@@ -699,6 +1066,39 @@ let spec = client.build_request("tempera_workflows", "update_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "updateWorkflow", map[string]any{
+    "workflowId": "<workflowId>",
+    "contractVersion": "<contractVersion>",
+    "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"contractVersion\":\"<contractVersion>\",\"edges\":\"<edges>\",\"id\":\"<id>\",\"name\":\"<name>\",\"nodes\":\"<nodes>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "updateWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createRun
@@ -710,7 +1110,7 @@ Start a run of a stored workflow with an optional input document and idempotency
 - **Producer operationId:** `runs.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
-- **Call as:** TypeScript `client.temperaWorkflows.createRun()` · Python `client.tempera_workflows.create_run()` · Rust `build_request("tempera_workflows", "create_run", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.createRun()` · Python `client.tempera_workflows.create_run()` · Rust `build_request("tempera_workflows", "create_run", params)` · Go `BuildRequest("temperaWorkflows", "createRun", params)` · C `tempera_build_request(..., "temperaWorkflows", "createRun", ...)`
 
 **Path parameters**
 
@@ -760,6 +1160,37 @@ let spec = client.build_request("tempera_workflows", "create_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "createRun", map[string]any{
+    "workflowId": "<workflowId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "input": "<input>",
+    "only": "<only>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"input\":\"<input>\",\"only\":\"<only>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "createRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### callWorkflow
@@ -771,7 +1202,7 @@ Run a workflow to completion and return its output in a single call.
 - **Producer operationId:** `workflows.call`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:run`
-- **Call as:** TypeScript `client.temperaWorkflows.callWorkflow()` · Python `client.tempera_workflows.call_workflow()` · Rust `build_request("tempera_workflows", "call_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.callWorkflow()` · Python `client.tempera_workflows.call_workflow()` · Rust `build_request("tempera_workflows", "call_workflow", params)` · Go `BuildRequest("temperaWorkflows", "callWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "callWorkflow", ...)`
 
 **Path parameters**
 
@@ -822,6 +1253,37 @@ let spec = client.build_request("tempera_workflows", "call_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "callWorkflow", map[string]any{
+    "workflowId": "<workflowId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "input": "<input>",
+    "only": "<only>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"input\":\"<input>\",\"only\":\"<only>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "callWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### compileBioCampaign
@@ -833,7 +1295,7 @@ Compile a validated, unsaved, bounded Bio campaign workflow draft.
 - **Producer operationId:** `workflows.compileBioCampaign`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.compileBioCampaign()` · Python `client.tempera_workflows.compile_bio_campaign()` · Rust `build_request("tempera_workflows", "compile_bio_campaign", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.compileBioCampaign()` · Python `client.tempera_workflows.compile_bio_campaign()` · Rust `build_request("tempera_workflows", "compile_bio_campaign", params)` · Go `BuildRequest("temperaWorkflows", "compileBioCampaign", params)` · C `tempera_build_request(..., "temperaWorkflows", "compileBioCampaign", ...)`
 
 **Path parameters**
 
@@ -882,6 +1344,37 @@ let spec = client.build_request("tempera_workflows", "compile_bio_campaign", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "compileBioCampaign", map[string]any{
+    "workflowId": "<workflowId>",
+    "deadlineMs": "<deadlineMs>",
+    "maxRounds": "<maxRounds>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"deadlineMs\":\"<deadlineMs>\",\"maxRounds\":\"<maxRounds>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "compileBioCampaign",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### composeWorkflow
@@ -893,7 +1386,7 @@ Search the full SDK-backed node catalog or ask Tempera Code to propose a validat
 - **Producer operationId:** `workflows.compose`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.composeWorkflow()` · Python `client.tempera_workflows.compose_workflow()` · Rust `build_request("tempera_workflows", "compose_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.composeWorkflow()` · Python `client.tempera_workflows.compose_workflow()` · Rust `build_request("tempera_workflows", "compose_workflow", params)` · Go `BuildRequest("temperaWorkflows", "composeWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "composeWorkflow", ...)`
 
 **Path parameters**
 
@@ -942,6 +1435,37 @@ let spec = client.build_request("tempera_workflows", "compose_workflow", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "composeWorkflow", map[string]any{
+    "workflowId": "<workflowId>",
+    "prompt": "<prompt>",
+    "attachments": "<attachments>",
+    "draft": "<draft>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"workflowId", "<workflowId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"attachments\":\"<attachments>\",\"draft\":\"<draft>\",\"prompt\":\"<prompt>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "composeWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### assistJson
@@ -953,7 +1477,7 @@ Generate or repair one JSON editor value and validate its requested root and pur
 - **Producer operationId:** `workflows.assistJson`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.assistJson()` · Python `client.tempera_workflows.assist_json()` · Rust `build_request("tempera_workflows", "assist_json", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.assistJson()` · Python `client.tempera_workflows.assist_json()` · Rust `build_request("tempera_workflows", "assist_json", params)` · Go `BuildRequest("temperaWorkflows", "assistJson", params)` · C `tempera_build_request(..., "temperaWorkflows", "assistJson", ...)`
 
 **Body parameters**
 
@@ -994,6 +1518,34 @@ let spec = client.build_request("tempera_workflows", "assist_json", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "assistJson", map[string]any{
+    "expectedRoot": "<expectedRoot>",
+    "mode": "<mode>",
+    "purpose": "<purpose>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"expectedRoot\":\"<expectedRoot>\",\"mode\":\"<mode>\",\"purpose\":\"<purpose>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "assistJson",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### validateWorkflow
@@ -1005,7 +1557,7 @@ Validate a workflow definition without storing it; returns the full diagnostic l
 - **Producer operationId:** `workflows.validate`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `workflow:write`
-- **Call as:** TypeScript `client.temperaWorkflows.validateWorkflow()` · Python `client.tempera_workflows.validate_workflow()` · Rust `build_request("tempera_workflows", "validate_workflow", params)`
+- **Call as:** TypeScript `client.temperaWorkflows.validateWorkflow()` · Python `client.tempera_workflows.validate_workflow()` · Rust `build_request("tempera_workflows", "validate_workflow", params)` · Go `BuildRequest("temperaWorkflows", "validateWorkflow", params)` · C `tempera_build_request(..., "temperaWorkflows", "validateWorkflow", ...)`
 
 **Body parameters**
 
@@ -1051,6 +1603,36 @@ let spec = client.build_request("tempera_workflows", "validate_workflow", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaWorkflows", "validateWorkflow", map[string]any{
+    "contractVersion": "<contractVersion>",
+    "edges": "<edges>",
+    "id": "<id>",
+    "name": "<name>",
+    "nodes": "<nodes>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"contractVersion\":\"<contractVersion>\",\"edges\":\"<edges>\",\"id\":\"<id>\",\"name\":\"<name>\",\"nodes\":\"<nodes>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaWorkflows", "validateWorkflow",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

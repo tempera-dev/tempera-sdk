@@ -37,7 +37,7 @@ Check memory-server liveness.
 
 - **Producer operationId:** `livez`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.remi.livez()` · Python `client.remi.livez()` · Rust `build_request("remi", "livez", params)`
+- **Call as:** TypeScript `client.remi.livez()` · Python `client.remi.livez()` · Rust `build_request("remi", "livez", params)` · Go `BuildRequest("remi", "livez", params)` · C `tempera_build_request(..., "remi", "livez", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("remi", "livez", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "livez", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "livez",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### readyz
@@ -65,7 +89,7 @@ Check memory-server readiness, including database health.
 
 - **Producer operationId:** `readyz`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.remi.readyz()` · Python `client.remi.readyz()` · Rust `build_request("remi", "readyz", params)`
+- **Call as:** TypeScript `client.remi.readyz()` · Python `client.remi.readyz()` · Rust `build_request("remi", "readyz", params)` · Go `BuildRequest("remi", "readyz", params)` · C `tempera_build_request(..., "remi", "readyz", ...)`
 
 <CodeGroup>
 
@@ -83,6 +107,30 @@ let spec = client.build_request("remi", "readyz", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "readyz", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "readyz",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### health
@@ -93,7 +141,7 @@ Fetch deep store health: schema version, integrity checks, and graph consistency
 
 - **Producer operationId:** `health`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.health()` · Python `client.remi.health()` · Rust `build_request("remi", "health", params)`
+- **Call as:** TypeScript `client.remi.health()` · Python `client.remi.health()` · Rust `build_request("remi", "health", params)` · Go `BuildRequest("remi", "health", params)` · C `tempera_build_request(..., "remi", "health", ...)`
 
 <CodeGroup>
 
@@ -111,6 +159,30 @@ let spec = client.build_request("remi", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getStats
@@ -121,7 +193,7 @@ Fetch memory-store statistics: ledger events, nodes, and token counts by kind.
 
 - **Producer operationId:** `getStats`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.getStats()` · Python `client.remi.get_stats()` · Rust `build_request("remi", "get_stats", params)`
+- **Call as:** TypeScript `client.remi.getStats()` · Python `client.remi.get_stats()` · Rust `build_request("remi", "get_stats", params)` · Go `BuildRequest("remi", "getStats", params)` · C `tempera_build_request(..., "remi", "getStats", ...)`
 
 <CodeGroup>
 
@@ -139,6 +211,30 @@ let spec = client.build_request("remi", "get_stats", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "getStats", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "getStats",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getMetrics
@@ -149,7 +245,7 @@ Fetch service metrics as JSON, including per-route counters and query-tier laten
 
 - **Producer operationId:** `getMetrics`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.getMetrics()` · Python `client.remi.get_metrics()` · Rust `build_request("remi", "get_metrics", params)`
+- **Call as:** TypeScript `client.remi.getMetrics()` · Python `client.remi.get_metrics()` · Rust `build_request("remi", "get_metrics", params)` · Go `BuildRequest("remi", "getMetrics", params)` · C `tempera_build_request(..., "remi", "getMetrics", ...)`
 
 <CodeGroup>
 
@@ -167,6 +263,30 @@ let spec = client.build_request("remi", "get_metrics", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "getMetrics", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "getMetrics",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getPrometheusMetrics
@@ -177,7 +297,7 @@ Fetch service metrics in Prometheus text exposition format for scrape-based moni
 
 - **Producer operationId:** `getPrometheusMetrics`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.getPrometheusMetrics()` · Python `client.remi.get_prometheus_metrics()` · Rust `build_request("remi", "get_prometheus_metrics", params)`
+- **Call as:** TypeScript `client.remi.getPrometheusMetrics()` · Python `client.remi.get_prometheus_metrics()` · Rust `build_request("remi", "get_prometheus_metrics", params)` · Go `BuildRequest("remi", "getPrometheusMetrics", params)` · C `tempera_build_request(..., "remi", "getPrometheusMetrics", ...)`
 
 <CodeGroup>
 
@@ -195,6 +315,30 @@ let spec = client.build_request("remi", "get_prometheus_metrics", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "getPrometheusMetrics", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "getPrometheusMetrics",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listAudit
@@ -205,7 +349,7 @@ List recent service audit events (default 100, maximum 500).
 
 - **Producer operationId:** `listAudit`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.listAudit()` · Python `client.remi.list_audit()` · Rust `build_request("remi", "list_audit", params)`
+- **Call as:** TypeScript `client.remi.listAudit()` · Python `client.remi.list_audit()` · Rust `build_request("remi", "list_audit", params)` · Go `BuildRequest("remi", "listAudit", params)` · C `tempera_build_request(..., "remi", "listAudit", ...)`
 
 **Query parameters**
 
@@ -239,6 +383,33 @@ let spec = client.build_request("remi", "list_audit", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "listAudit", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "listAudit",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### remember
@@ -249,7 +420,7 @@ Write one memory event into the tenant and project ledger.
 
 - **Producer operationId:** `remember`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.remember()` · Python `client.remi.remember()` · Rust `build_request("remi", "remember", params)`
+- **Call as:** TypeScript `client.remi.remember()` · Python `client.remi.remember()` · Rust `build_request("remi", "remember", params)` · Go `BuildRequest("remi", "remember", params)` · C `tempera_build_request(..., "remi", "remember", ...)`
 
 **Body parameters**
 
@@ -294,6 +465,35 @@ let spec = client.build_request("remi", "remember", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "remember", map[string]any{
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+    "kind": "<kind>",
+    "text": "<text>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"tenantId\":\"<tenantId>\",\"projectId\":\"<projectId>\",\"kind\":\"<kind>\",\"text\":\"<text>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "remember",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### project
@@ -304,7 +504,7 @@ Project pending ledger events into the memory graph and return the projection re
 
 - **Producer operationId:** `project`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.project()` · Python `client.remi.project()` · Rust `build_request("remi", "project", params)`
+- **Call as:** TypeScript `client.remi.project()` · Python `client.remi.project()` · Rust `build_request("remi", "project", params)` · Go `BuildRequest("remi", "project", params)` · C `tempera_build_request(..., "remi", "project", ...)`
 
 **Body parameters**
 
@@ -334,6 +534,32 @@ let spec = client.build_request("remi", "project", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "project", map[string]any{
+    "limit": "<limit>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"limit\":\"<limit>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "project",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### query
@@ -344,7 +570,7 @@ Answer a scoped memory question with evidence and reconstruction metadata.
 
 - **Producer operationId:** `query`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.query()` · Python `client.remi.query()` · Rust `build_request("remi", "query", params)`
+- **Call as:** TypeScript `client.remi.query()` · Python `client.remi.query()` · Rust `build_request("remi", "query", params)` · Go `BuildRequest("remi", "query", params)` · C `tempera_build_request(..., "remi", "query", ...)`
 
 **Body parameters**
 
@@ -387,6 +613,34 @@ let spec = client.build_request("remi", "query", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("remi", "query", map[string]any{
+    "question": "<question>",
+    "scope": "<scope>",
+    "maxTokens": "<maxTokens>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"question\":\"<question>\",\"scope\":\"<scope>\",\"maxTokens\":\"<maxTokens>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "query",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### maintenance
@@ -397,7 +651,7 @@ Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orpha
 
 - **Producer operationId:** `maintenance`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.remi.maintenance()` · Python `client.remi.maintenance()` · Rust `build_request("remi", "maintenance", params)`
+- **Call as:** TypeScript `client.remi.maintenance()` · Python `client.remi.maintenance()` · Rust `build_request("remi", "maintenance", params)` · Go `BuildRequest("remi", "maintenance", params)` · C `tempera_build_request(..., "remi", "maintenance", ...)`
 
 **Body parameters**
 
@@ -434,6 +688,34 @@ let spec = client.build_request("remi", "maintenance", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("remi", "maintenance", map[string]any{
+    "vacuum": "<vacuum>",
+    "repairOrphans": "<repairOrphans>",
+    "pruneAuditBeforeUnixMs": "<pruneAuditBeforeUnixMs>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"vacuum\":\"<vacuum>\",\"repairOrphans\":\"<repairOrphans>\",\"pruneAuditBeforeUnixMs\":\"<pruneAuditBeforeUnixMs>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "remi", "maintenance",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

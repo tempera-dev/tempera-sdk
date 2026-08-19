@@ -67,11 +67,13 @@ wins); if nothing resolves, calls fail with a configuration error before any
 request is sent:
 
 1. **Explicit override** — `baseUrls.<product>` (TypeScript),
-   `base_urls["<product>"]` (Python), or `with_base_url("<product>", url)` (Rust).
+   `base_urls["<product>"]` (Python), `with_base_url("<product>", url)` (Rust),
+   `BaseURLs["<product>"]` (Go), or the `base_url` argument (C).
 2. **The product's env var** — `TEMPERA_*_URL` from the table above.
 3. **The environment preset** — TypeScript and Python only, and only for the
    control plane, palette, and tempo. The Rust crate takes no `environment`
    option; use an explicit `with_base_url` or the env var (the preset table is
    still available as `tempera_sdk::ENVIRONMENTS`).
 
-Trailing slashes on configured base URLs are trimmed in every language.
+Trailing slashes are trimmed by the TypeScript, Python, Rust, and Go clients;
+C callers pass the base URL to each bounded request build.

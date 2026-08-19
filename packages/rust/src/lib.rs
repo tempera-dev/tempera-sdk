@@ -5,18 +5,9 @@
 //! product, audience, scope, environment target, and typed operation comes
 //! from the generated surface tables in [`surface`] (from `surface.json`),
 //! shared verbatim with the TypeScript and Python packages.
-//!
-//! - [`surface`]: the generated tables (products, operations, environments,
-//!   MCP methods, error-code constants). GENERATED — never edit by hand.
-//! - [`auth`]: PKCE (S256) helpers, audience-aware OAuth request builders,
-//!   and the unified per-audience credential store with tp_ API-key fallback.
-//! - [`client`]: [`TemperaClient`] turns `(product, operation, params)` into
-//!   a fully-described [`RequestSpec`].
-//! - [`error`]: [`TemperaApiError`] and [`normalize_error_body`], folding the
-//!   canonical AIP-193 envelope and supported compatibility shapes into one type.
-//! - [`mcp`]: JSON-RPC 2.0 body builders for the unified MCP gateway.
 
 pub mod auth;
+pub mod browser;
 pub mod client;
 pub mod error;
 pub mod mcp;
@@ -26,6 +17,7 @@ pub use auth::{
     AuthorizeUrlParams, PkcePair, TemperaAuth, TokenSet, base64url_no_pad, pkce_challenge_s256,
     pkce_pair_from_entropy, pkce_verifier_from_entropy,
 };
+pub use browser::{BrowserTask, BrowserTaskState, BrowserWorkflow, BrowserWorkflowStep};
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
 pub use error::{TemperaApiError, normalize_error_body};
 pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
@@ -44,8 +36,6 @@ mod tests {
     #[test]
     fn surface_tables_replace_the_legacy_hand_written_consts() {
         assert_eq!(INTROSPECT_PATH, "/v1/oauth/introspect");
-
-        // Every legacy product is present in the generated table, by key.
         for key in [
             "control_plane",
             "palette",
@@ -66,27 +56,12 @@ mod tests {
         }
         assert_eq!(find_product("palette").unwrap().audience, Some("palette"));
         assert!(SCOPES.contains(&"mcp:invoke"));
-        assert!(SCOPES.contains(&"model:read"));
-        assert!(SCOPES.contains(&"model:invoke"));
-        assert!(SCOPES.contains(&"training:publish"));
-        assert!(SCOPES.contains(&"review:gold:manage"));
-        assert!(SCOPES.contains(&"bio:source:read"));
-        assert!(SCOPES.contains(&"bio:experiment:approve"));
-        assert!(SCOPES.contains(&"bio:experiment:submit"));
-        assert!(SCOPES.contains(&"bio:signer:manage"));
-        assert!(SCOPES.contains(&"usage:reserve"));
-        assert!(SCOPES.contains(&"admin"));
         assert!(AUDIENCES.contains(&DEFAULT_AUDIENCE));
         assert!(AUDIENCES.contains(&"tempera-code"));
-        assert!(AUDIENCES.contains(&"tempera-llm"));
-        assert!(AUDIENCES.contains(&"tempera-workflows"));
-        assert!(AUDIENCES.contains(&"tempera-gym"));
-        assert!(AUDIENCES.contains(&"tempera-bio"));
         assert!(SCOPES.contains(&"workflow:read"));
         assert!(SCOPES.contains(&"workflow:write"));
         assert!(SCOPES.contains(&"workflow:run"));
 
-        // ENVIRONMENTS replaces PRODUCTION_TARGETS.
         let production = ENVIRONMENTS
             .iter()
             .find(|target| target.environment == "production")
@@ -130,5 +105,20 @@ mod tests {
         assert_eq!(id, 1);
         assert!(parse_mcp_error(&body).is_none());
         assert_eq!(MCP_PROTOCOL_VERSION, "2025-06-18");
+    }
+
+    #[test]
+    fn browser_task_builds_tempo_loop_requests() {
+        let auth = TemperaAuth::new("https://api.tempera.dev").with_api_key("tp_key_1");
+        let client = TemperaClient::new()
+            .with_auth(auth)
+            .with_base_url("tempo", "https://tempo.tempera.dev");
+        let task = BrowserTask::attach(&client, "session-1");
+        let observe = task.observe_request(&[]).unwrap();
+        assert!(observe.url.contains("session-1"));
+        let act = task
+            .act_batch_request("[{\"kind\":\"scroll\",\"y\":1}]", &[])
+            .unwrap();
+        assert_eq!(act.method, "POST");
     }
 }

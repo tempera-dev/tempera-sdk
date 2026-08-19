@@ -37,7 +37,7 @@ Check data-engine liveness; returns the service status.
 
 - **Producer operationId:** `health.get`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.dataEngine.health()` · Python `client.data_engine.health()` · Rust `build_request("data_engine", "health", params)`
+- **Call as:** TypeScript `client.dataEngine.health()` · Python `client.data_engine.health()` · Rust `build_request("data_engine", "health", params)` · Go `BuildRequest("dataEngine", "health", params)` · C `tempera_build_request(..., "dataEngine", "health", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("data_engine", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listUseCases
@@ -67,7 +91,7 @@ List the MVP use-case templates (data products and pipeline templates) for a pro
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listUseCases()` · Python `client.data_engine.list_use_cases()` · Rust `build_request("data_engine", "list_use_cases", params)`
+- **Call as:** TypeScript `client.dataEngine.listUseCases()` · Python `client.data_engine.list_use_cases()` · Rust `build_request("data_engine", "list_use_cases", params)` · Go `BuildRequest("dataEngine", "listUseCases", params)` · C `tempera_build_request(..., "dataEngine", "listUseCases", ...)`
 
 **Path parameters**
 
@@ -110,6 +134,36 @@ let spec = client.build_request("data_engine", "list_use_cases", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listUseCases", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listUseCases",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getUseCase
@@ -122,7 +176,7 @@ Fetch one MVP use-case template with its rubric, modalities, skill tags, and tar
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getUseCase()` · Python `client.data_engine.get_use_case()` · Rust `build_request("data_engine", "get_use_case", params)`
+- **Call as:** TypeScript `client.dataEngine.getUseCase()` · Python `client.data_engine.get_use_case()` · Rust `build_request("data_engine", "get_use_case", params)` · Go `BuildRequest("dataEngine", "getUseCase", params)` · C `tempera_build_request(..., "dataEngine", "getUseCase", ...)`
 
 **Path parameters**
 
@@ -156,6 +210,36 @@ let spec = client.build_request("data_engine", "get_use_case", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getUseCase", map[string]any{
+    "parent": "<parent>",
+    "useCaseId": "<useCaseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"useCaseId", "<useCaseId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getUseCase",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ingestArtifact
@@ -168,7 +252,7 @@ Ingest one artifact deterministically into the project; returns an async operati
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.ingestArtifact()` · Python `client.data_engine.ingest_artifact()` · Rust `build_request("data_engine", "ingest_artifact", params)`
+- **Call as:** TypeScript `client.dataEngine.ingestArtifact()` · Python `client.data_engine.ingest_artifact()` · Rust `build_request("data_engine", "ingest_artifact", params)` · Go `BuildRequest("dataEngine", "ingestArtifact", params)` · C `tempera_build_request(..., "dataEngine", "ingestArtifact", ...)`
 
 **Path parameters**
 
@@ -217,6 +301,37 @@ let spec = client.build_request("data_engine", "ingest_artifact", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "ingestArtifact", map[string]any{
+    "parent": "<parent>",
+    "artifactType": "<artifactType>",
+    "source": "<source>",
+    "externalId": "<externalId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"artifactType\":\"<artifactType>\",\"source\":\"<source>\",\"externalId\":\"<externalId>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "ingestArtifact",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ingestWeb
@@ -229,7 +344,7 @@ Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an a
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.ingestWeb()` · Python `client.data_engine.ingest_web()` · Rust `build_request("data_engine", "ingest_web", params)`
+- **Call as:** TypeScript `client.dataEngine.ingestWeb()` · Python `client.data_engine.ingest_web()` · Rust `build_request("data_engine", "ingest_web", params)` · Go `BuildRequest("dataEngine", "ingestWeb", params)` · C `tempera_build_request(..., "dataEngine", "ingestWeb", ...)`
 
 **Path parameters**
 
@@ -279,6 +394,37 @@ let spec = client.build_request("data_engine", "ingest_web", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "ingestWeb", map[string]any{
+    "parent": "<parent>",
+    "url": "<url>",
+    "artifactType": "<artifactType>",
+    "timeoutSeconds": "<timeoutSeconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"url\":\"<url>\",\"artifactType\":\"<artifactType>\",\"timeoutSeconds\":\"<timeoutSeconds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "ingestWeb",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createCampaign
@@ -291,7 +437,7 @@ Create a data campaign with a rubric, budget, target accuracy, and skill tags.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.createCampaign()` · Python `client.data_engine.create_campaign()` · Rust `build_request("data_engine", "create_campaign", params)`
+- **Call as:** TypeScript `client.dataEngine.createCampaign()` · Python `client.data_engine.create_campaign()` · Rust `build_request("data_engine", "create_campaign", params)` · Go `BuildRequest("dataEngine", "createCampaign", params)` · C `tempera_build_request(..., "dataEngine", "createCampaign", ...)`
 
 **Path parameters**
 
@@ -345,6 +491,37 @@ let spec = client.build_request("data_engine", "create_campaign", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createCampaign", map[string]any{
+    "parent": "<parent>",
+    "taskFamily": "<taskFamily>",
+    "targetAccuracy": "<targetAccuracy>",
+    "budgetCents": "<budgetCents>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"taskFamily\":\"<taskFamily>\",\"targetAccuracy\":\"<targetAccuracy>\",\"budgetCents\":\"<budgetCents>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createCampaign",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listCampaigns
@@ -357,7 +534,7 @@ List a project's data campaigns with pagination.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listCampaigns()` · Python `client.data_engine.list_campaigns()` · Rust `build_request("data_engine", "list_campaigns", params)`
+- **Call as:** TypeScript `client.dataEngine.listCampaigns()` · Python `client.data_engine.list_campaigns()` · Rust `build_request("data_engine", "list_campaigns", params)` · Go `BuildRequest("dataEngine", "listCampaigns", params)` · C `tempera_build_request(..., "dataEngine", "listCampaigns", ...)`
 
 **Path parameters**
 
@@ -400,6 +577,36 @@ let spec = client.build_request("data_engine", "list_campaigns", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listCampaigns", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listCampaigns",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### transitionCampaign
@@ -412,7 +619,7 @@ Pause, resume, or permanently close campaign job admission; returns an immutable
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.transitionCampaign()` · Python `client.data_engine.transition_campaign()` · Rust `build_request("data_engine", "transition_campaign", params)`
+- **Call as:** TypeScript `client.dataEngine.transitionCampaign()` · Python `client.data_engine.transition_campaign()` · Rust `build_request("data_engine", "transition_campaign", params)` · Go `BuildRequest("dataEngine", "transitionCampaign", params)` · C `tempera_build_request(..., "dataEngine", "transitionCampaign", ...)`
 
 **Path parameters**
 
@@ -459,6 +666,38 @@ let spec = client.build_request("data_engine", "transition_campaign", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "transitionCampaign", map[string]any{
+    "parent": "<parent>",
+    "campaignId": "<campaignId>",
+    "targetStatus": "<targetStatus>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"campaignId", "<campaignId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"targetStatus\":\"<targetStatus>\",\"idempotencyKey\":\"<idempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "transitionCampaign",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getReviewerQualification
@@ -471,7 +710,7 @@ Fetch the authenticated reviewer's project-scoped qualification and campaign eli
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.getReviewerQualification()` · Python `client.data_engine.get_reviewer_qualification()` · Rust `build_request("data_engine", "get_reviewer_qualification", params)`
+- **Call as:** TypeScript `client.dataEngine.getReviewerQualification()` · Python `client.data_engine.get_reviewer_qualification()` · Rust `build_request("data_engine", "get_reviewer_qualification", params)` · Go `BuildRequest("dataEngine", "getReviewerQualification", params)` · C `tempera_build_request(..., "dataEngine", "getReviewerQualification", ...)`
 
 **Path parameters**
 
@@ -505,6 +744,36 @@ let spec = client.build_request("data_engine", "get_reviewer_qualification", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getReviewerQualification", map[string]any{
+    "parent": "<parent>",
+    "campaignId": "<campaignId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"campaignId", "<campaignId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getReviewerQualification",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### runUseCase
@@ -517,7 +786,7 @@ Run a complete MVP use-case pipeline end to end; verifier selects the configured
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.runUseCase()` · Python `client.data_engine.run_use_case()` · Rust `build_request("data_engine", "run_use_case", params)`
+- **Call as:** TypeScript `client.dataEngine.runUseCase()` · Python `client.data_engine.run_use_case()` · Rust `build_request("data_engine", "run_use_case", params)` · Go `BuildRequest("dataEngine", "runUseCase", params)` · C `tempera_build_request(..., "dataEngine", "runUseCase", ...)`
 
 **Path parameters**
 
@@ -570,6 +839,37 @@ let spec = client.build_request("data_engine", "run_use_case", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "runUseCase", map[string]any{
+    "parent": "<parent>",
+    "useCase": "<useCase>",
+    "verifier": "<verifier>",
+    "budgetCents": "<budgetCents>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"useCase\":\"<useCase>\",\"verifier\":\"<verifier>\",\"budgetCents\":\"<budgetCents>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "runUseCase",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listExpertTasks
@@ -582,7 +882,7 @@ List human residual review tasks, optionally filtered by status and campaign.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listExpertTasks()` · Python `client.data_engine.list_expert_tasks()` · Rust `build_request("data_engine", "list_expert_tasks", params)`
+- **Call as:** TypeScript `client.dataEngine.listExpertTasks()` · Python `client.data_engine.list_expert_tasks()` · Rust `build_request("data_engine", "list_expert_tasks", params)` · Go `BuildRequest("dataEngine", "listExpertTasks", params)` · C `tempera_build_request(..., "dataEngine", "listExpertTasks", ...)`
 
 **Path parameters**
 
@@ -628,6 +928,36 @@ let spec = client.build_request("data_engine", "list_expert_tasks", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listExpertTasks", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listExpertTasks",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createReviewQualificationTask
@@ -640,7 +970,7 @@ Clone a review task into an isolated, HMAC-scored qualification task without ret
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:gold:manage`
-- **Call as:** TypeScript `client.dataEngine.createReviewQualificationTask()` · Python `client.data_engine.create_review_qualification_task()` · Rust `build_request("data_engine", "create_review_qualification_task", params)`
+- **Call as:** TypeScript `client.dataEngine.createReviewQualificationTask()` · Python `client.data_engine.create_review_qualification_task()` · Rust `build_request("data_engine", "create_review_qualification_task", params)` · Go `BuildRequest("dataEngine", "createReviewQualificationTask", params)` · C `tempera_build_request(..., "dataEngine", "createReviewQualificationTask", ...)`
 
 **Path parameters**
 
@@ -689,6 +1019,37 @@ let spec = client.build_request("data_engine", "create_review_qualification_task
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createReviewQualificationTask", map[string]any{
+    "parent": "<parent>",
+    "sourceExpertTaskName": "<sourceExpertTaskName>",
+    "expectedLabel": "<expectedLabel>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"sourceExpertTaskName\":\"<sourceExpertTaskName>\",\"expectedLabel\":\"<expectedLabel>\",\"idempotencyKey\":\"<idempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createReviewQualificationTask",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createReviewerRevocation
@@ -701,7 +1062,7 @@ Record an immutable project-scoped reviewer revocation and terminate active assi
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:gold:manage`
-- **Call as:** TypeScript `client.dataEngine.createReviewerRevocation()` · Python `client.data_engine.create_reviewer_revocation()` · Rust `build_request("data_engine", "create_reviewer_revocation", params)`
+- **Call as:** TypeScript `client.dataEngine.createReviewerRevocation()` · Python `client.data_engine.create_reviewer_revocation()` · Rust `build_request("data_engine", "create_reviewer_revocation", params)` · Go `BuildRequest("dataEngine", "createReviewerRevocation", params)` · C `tempera_build_request(..., "dataEngine", "createReviewerRevocation", ...)`
 
 **Path parameters**
 
@@ -748,6 +1109,37 @@ let spec = client.build_request("data_engine", "create_reviewer_revocation", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createReviewerRevocation", map[string]any{
+    "parent": "<parent>",
+    "reviewerRef": "<reviewerRef>",
+    "reason": "<reason>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"reviewerRef\":\"<reviewerRef>\",\"reason\":\"<reason>\",\"idempotencyKey\":\"<idempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createReviewerRevocation",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### resolveExpertTask
@@ -760,7 +1152,7 @@ Resolve, abstain, flag, or adjudicate one human residual with an idempotent norm
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.resolveExpertTask()` · Python `client.data_engine.resolve_expert_task()` · Rust `build_request("data_engine", "resolve_expert_task", params)`
+- **Call as:** TypeScript `client.dataEngine.resolveExpertTask()` · Python `client.data_engine.resolve_expert_task()` · Rust `build_request("data_engine", "resolve_expert_task", params)` · Go `BuildRequest("dataEngine", "resolveExpertTask", params)` · C `tempera_build_request(..., "dataEngine", "resolveExpertTask", ...)`
 
 **Path parameters**
 
@@ -818,6 +1210,39 @@ let spec = client.build_request("data_engine", "resolve_expert_task", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "resolveExpertTask", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "label": "<label>",
+    "idempotencyKey": "<idempotencyKey>",
+    "reviewContext": "<reviewContext>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"label\":\"<label>\",\"idempotencyKey\":\"<idempotencyKey>\",\"reviewContext\":\"<reviewContext>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "resolveExpertTask",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createExpertTaskAppeal
@@ -830,7 +1255,7 @@ Record an immutable reviewer appeal and open independent adjudication without ch
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.createExpertTaskAppeal()` · Python `client.data_engine.create_expert_task_appeal()` · Rust `build_request("data_engine", "create_expert_task_appeal", params)`
+- **Call as:** TypeScript `client.dataEngine.createExpertTaskAppeal()` · Python `client.data_engine.create_expert_task_appeal()` · Rust `build_request("data_engine", "create_expert_task_appeal", params)` · Go `BuildRequest("dataEngine", "createExpertTaskAppeal", params)` · C `tempera_build_request(..., "dataEngine", "createExpertTaskAppeal", ...)`
 
 **Path parameters**
 
@@ -881,6 +1306,39 @@ let spec = client.build_request("data_engine", "create_expert_task_appeal", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createExpertTaskAppeal", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "rationale": "<rationale>",
+    "idempotencyKey": "<idempotencyKey>",
+    "evidence": "<evidence>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"rationale\":\"<rationale>\",\"evidence\":\"<evidence>\",\"idempotencyKey\":\"<idempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createExpertTaskAppeal",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### claimExpertTask
@@ -893,7 +1351,7 @@ Atomically claim one open expert task with an exclusive renewable lease.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.claimExpertTask()` · Python `client.data_engine.claim_expert_task()` · Rust `build_request("data_engine", "claim_expert_task", params)`
+- **Call as:** TypeScript `client.dataEngine.claimExpertTask()` · Python `client.data_engine.claim_expert_task()` · Rust `build_request("data_engine", "claim_expert_task", params)` · Go `BuildRequest("dataEngine", "claimExpertTask", params)` · C `tempera_build_request(..., "dataEngine", "claimExpertTask", ...)`
 
 **Path parameters**
 
@@ -944,6 +1402,39 @@ let spec = client.build_request("data_engine", "claim_expert_task", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "claimExpertTask", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "leaseToken": "<leaseToken>",
+    "leaseDurationSeconds": "<leaseDurationSeconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"leaseToken\":\"<leaseToken>\",\"leaseDurationSeconds\":\"<leaseDurationSeconds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "claimExpertTask",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### renewExpertTaskAssignment
@@ -956,7 +1447,7 @@ Renew the authenticated reviewer's active expert-task lease.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.renewExpertTaskAssignment()` · Python `client.data_engine.renew_expert_task_assignment()` · Rust `build_request("data_engine", "renew_expert_task_assignment", params)`
+- **Call as:** TypeScript `client.dataEngine.renewExpertTaskAssignment()` · Python `client.data_engine.renew_expert_task_assignment()` · Rust `build_request("data_engine", "renew_expert_task_assignment", params)` · Go `BuildRequest("dataEngine", "renewExpertTaskAssignment", params)` · C `tempera_build_request(..., "dataEngine", "renewExpertTaskAssignment", ...)`
 
 **Path parameters**
 
@@ -1007,6 +1498,39 @@ let spec = client.build_request("data_engine", "renew_expert_task_assignment", &
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "renewExpertTaskAssignment", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "leaseToken": "<leaseToken>",
+    "leaseDurationSeconds": "<leaseDurationSeconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"leaseToken\":\"<leaseToken>\",\"leaseDurationSeconds\":\"<leaseDurationSeconds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "renewExpertTaskAssignment",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### releaseExpertTaskAssignment
@@ -1019,7 +1543,7 @@ Release the authenticated reviewer's active expert-task lease for reassignment.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.releaseExpertTaskAssignment()` · Python `client.data_engine.release_expert_task_assignment()` · Rust `build_request("data_engine", "release_expert_task_assignment", params)`
+- **Call as:** TypeScript `client.dataEngine.releaseExpertTaskAssignment()` · Python `client.data_engine.release_expert_task_assignment()` · Rust `build_request("data_engine", "release_expert_task_assignment", params)` · Go `BuildRequest("dataEngine", "releaseExpertTaskAssignment", params)` · C `tempera_build_request(..., "dataEngine", "releaseExpertTaskAssignment", ...)`
 
 **Path parameters**
 
@@ -1066,6 +1590,38 @@ let spec = client.build_request("data_engine", "release_expert_task_assignment",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "releaseExpertTaskAssignment", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "leaseToken": "<leaseToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"leaseToken\":\"<leaseToken>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "releaseExpertTaskAssignment",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### saveExpertTaskDraft
@@ -1078,7 +1634,7 @@ Autosave a version-checked draft under the active reviewer lease.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.saveExpertTaskDraft()` · Python `client.data_engine.save_expert_task_draft()` · Rust `build_request("data_engine", "save_expert_task_draft", params)`
+- **Call as:** TypeScript `client.dataEngine.saveExpertTaskDraft()` · Python `client.data_engine.save_expert_task_draft()` · Rust `build_request("data_engine", "save_expert_task_draft", params)` · Go `BuildRequest("dataEngine", "saveExpertTaskDraft", params)` · C `tempera_build_request(..., "dataEngine", "saveExpertTaskDraft", ...)`
 
 **Path parameters**
 
@@ -1133,6 +1689,40 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "saveExpertTaskDraft", map[string]any{
+    "parent": "<parent>",
+    "expertTaskId": "<expertTaskId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "leaseToken": "<leaseToken>",
+    "draft": "<draft>",
+    "expectedVersion": "<expectedVersion>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"expertTaskId", "<expertTaskId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"idempotencyKey\":\"<idempotencyKey>\",\"leaseToken\":\"<leaseToken>\",\"draft\":\"<draft>\",\"expectedVersion\":\"<expectedVersion>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "saveExpertTaskDraft",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### recordReviewerSessionEvent
@@ -1145,7 +1735,7 @@ Record one same-origin reviewer-session lifecycle event using only an opaque bro
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.recordReviewerSessionEvent()` · Python `client.data_engine.record_reviewer_session_event()` · Rust `build_request("data_engine", "record_reviewer_session_event", params)`
+- **Call as:** TypeScript `client.dataEngine.recordReviewerSessionEvent()` · Python `client.data_engine.record_reviewer_session_event()` · Rust `build_request("data_engine", "record_reviewer_session_event", params)` · Go `BuildRequest("dataEngine", "recordReviewerSessionEvent", params)` · C `tempera_build_request(..., "dataEngine", "recordReviewerSessionEvent", ...)`
 
 **Path parameters**
 
@@ -1188,6 +1778,36 @@ let spec = client.build_request("data_engine", "record_reviewer_session_event", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "recordReviewerSessionEvent", map[string]any{
+    "parent": "<parent>",
+    "event": "<event>",
+    "sessionId": "<sessionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"event\":\"<event>\",\"sessionId\":\"<sessionId>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "recordReviewerSessionEvent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getReviewOperations
@@ -1200,7 +1820,7 @@ Fetch bounded project review-operations, SLA, agreement, calibration, rubric-dri
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
-- **Call as:** TypeScript `client.dataEngine.getReviewOperations()` · Python `client.data_engine.get_review_operations()` · Rust `build_request("data_engine", "get_review_operations", params)`
+- **Call as:** TypeScript `client.dataEngine.getReviewOperations()` · Python `client.data_engine.get_review_operations()` · Rust `build_request("data_engine", "get_review_operations", params)` · Go `BuildRequest("dataEngine", "getReviewOperations", params)` · C `tempera_build_request(..., "dataEngine", "getReviewOperations", ...)`
 
 **Path parameters**
 
@@ -1243,6 +1863,36 @@ let spec = client.build_request("data_engine", "get_review_operations", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getReviewOperations", map[string]any{
+    "parent": "<parent>",
+    "windowSeconds": "<windowSeconds>",
+    "slaTargetSeconds": "<slaTargetSeconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "windowSeconds=<windowSeconds>&slaTargetSeconds=<slaTargetSeconds>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getReviewOperations",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getMetrics
@@ -1255,7 +1905,7 @@ Fetch data-engine usage and quality metrics for a project.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getMetrics()` · Python `client.data_engine.get_metrics()` · Rust `build_request("data_engine", "get_metrics", params)`
+- **Call as:** TypeScript `client.dataEngine.getMetrics()` · Python `client.data_engine.get_metrics()` · Rust `build_request("data_engine", "get_metrics", params)` · Go `BuildRequest("dataEngine", "getMetrics", params)` · C `tempera_build_request(..., "dataEngine", "getMetrics", ...)`
 
 **Path parameters**
 
@@ -1285,6 +1935,34 @@ let spec = client.build_request("data_engine", "get_metrics", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getMetrics", map[string]any{
+    "parent": "<parent>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getMetrics",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getLabelQuality
@@ -1297,7 +1975,7 @@ Fetch the project label-quality report and unresolved expert backlog.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getLabelQuality()` · Python `client.data_engine.get_label_quality()` · Rust `build_request("data_engine", "get_label_quality", params)`
+- **Call as:** TypeScript `client.dataEngine.getLabelQuality()` · Python `client.data_engine.get_label_quality()` · Rust `build_request("data_engine", "get_label_quality", params)` · Go `BuildRequest("dataEngine", "getLabelQuality", params)` · C `tempera_build_request(..., "dataEngine", "getLabelQuality", ...)`
 
 **Path parameters**
 
@@ -1327,6 +2005,34 @@ let spec = client.build_request("data_engine", "get_label_quality", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getLabelQuality", map[string]any{
+    "parent": "<parent>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getLabelQuality",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getEcosystemReadiness
@@ -1339,7 +2045,7 @@ Fetch public-site and ecosystem readiness signals for a project.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getEcosystemReadiness()` · Python `client.data_engine.get_ecosystem_readiness()` · Rust `build_request("data_engine", "get_ecosystem_readiness", params)`
+- **Call as:** TypeScript `client.dataEngine.getEcosystemReadiness()` · Python `client.data_engine.get_ecosystem_readiness()` · Rust `build_request("data_engine", "get_ecosystem_readiness", params)` · Go `BuildRequest("dataEngine", "getEcosystemReadiness", params)` · C `tempera_build_request(..., "dataEngine", "getEcosystemReadiness", ...)`
 
 **Path parameters**
 
@@ -1369,6 +2075,34 @@ let spec = client.build_request("data_engine", "get_ecosystem_readiness", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getEcosystemReadiness", map[string]any{
+    "parent": "<parent>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getEcosystemReadiness",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listArtifacts
@@ -1381,7 +2115,7 @@ List a project's artifacts with cursor pagination, expanded to the requested vie
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listArtifacts()` · Python `client.data_engine.list_artifacts()` · Rust `build_request("data_engine", "list_artifacts", params)`
+- **Call as:** TypeScript `client.dataEngine.listArtifacts()` · Python `client.data_engine.list_artifacts()` · Rust `build_request("data_engine", "list_artifacts", params)` · Go `BuildRequest("dataEngine", "listArtifacts", params)` · C `tempera_build_request(..., "dataEngine", "listArtifacts", ...)`
 
 **Path parameters**
 
@@ -1425,6 +2159,36 @@ let spec = client.build_request("data_engine", "list_artifacts", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listArtifacts", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listArtifacts",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getArtifact
@@ -1437,7 +2201,7 @@ Fetch one artifact, expanded to the requested view (BASIC or FULL).
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getArtifact()` · Python `client.data_engine.get_artifact()` · Rust `build_request("data_engine", "get_artifact", params)`
+- **Call as:** TypeScript `client.dataEngine.getArtifact()` · Python `client.data_engine.get_artifact()` · Rust `build_request("data_engine", "get_artifact", params)` · Go `BuildRequest("dataEngine", "getArtifact", params)` · C `tempera_build_request(..., "dataEngine", "getArtifact", ...)`
 
 **Path parameters**
 
@@ -1480,6 +2244,37 @@ let spec = client.build_request("data_engine", "get_artifact", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getArtifact", map[string]any{
+    "parent": "<parent>",
+    "artifactId": "<artifactId>",
+    "view": "<view>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"artifactId", "<artifactId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "view=<view>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getArtifact",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listArtifactLabels
@@ -1492,7 +2287,7 @@ List the labels attached to one artifact.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listArtifactLabels()` · Python `client.data_engine.list_artifact_labels()` · Rust `build_request("data_engine", "list_artifact_labels", params)`
+- **Call as:** TypeScript `client.dataEngine.listArtifactLabels()` · Python `client.data_engine.list_artifact_labels()` · Rust `build_request("data_engine", "list_artifact_labels", params)` · Go `BuildRequest("dataEngine", "listArtifactLabels", params)` · C `tempera_build_request(..., "dataEngine", "listArtifactLabels", ...)`
 
 **Path parameters**
 
@@ -1539,6 +2334,38 @@ let spec = client.build_request("data_engine", "list_artifact_labels", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listArtifactLabels", map[string]any{
+    "parent": "<parent>",
+    "artifactId": "<artifactId>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"artifactId", "<artifactId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listArtifactLabels",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### profileDataset
@@ -1551,7 +2378,7 @@ Profile dataset quality before export, including duplicates, label coverage, and
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.profileDataset()` · Python `client.data_engine.profile_dataset()` · Rust `build_request("data_engine", "profile_dataset", params)`
+- **Call as:** TypeScript `client.dataEngine.profileDataset()` · Python `client.data_engine.profile_dataset()` · Rust `build_request("data_engine", "profile_dataset", params)` · Go `BuildRequest("dataEngine", "profileDataset", params)` · C `tempera_build_request(..., "dataEngine", "profileDataset", ...)`
 
 **Path parameters**
 
@@ -1594,6 +2421,36 @@ let spec = client.build_request("data_engine", "profile_dataset", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "profileDataset", map[string]any{
+    "parent": "<parent>",
+    "artifactIds": "<artifactIds>",
+    "artifactType": "<artifactType>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"artifactIds\":\"<artifactIds>\",\"artifactType\":\"<artifactType>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "profileDataset",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createJob
@@ -1606,7 +2463,7 @@ Create an asynchronous labeling job over a set of artifacts; returns an operatio
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.createJob()` · Python `client.data_engine.create_job()` · Rust `build_request("data_engine", "create_job", params)`
+- **Call as:** TypeScript `client.dataEngine.createJob()` · Python `client.data_engine.create_job()` · Rust `build_request("data_engine", "create_job", params)` · Go `BuildRequest("dataEngine", "createJob", params)` · C `tempera_build_request(..., "dataEngine", "createJob", ...)`
 
 **Path parameters**
 
@@ -1656,6 +2513,37 @@ let spec = client.build_request("data_engine", "create_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createJob", map[string]any{
+    "parent": "<parent>",
+    "artifactIds": "<artifactIds>",
+    "taskFamily": "<taskFamily>",
+    "campaign": "<campaign>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"artifactIds\":\"<artifactIds>\",\"taskFamily\":\"<taskFamily>\",\"campaign\":\"<campaign>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getJob
@@ -1668,7 +2556,7 @@ Fetch one labeling job with its state and progress.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getJob()` · Python `client.data_engine.get_job()` · Rust `build_request("data_engine", "get_job", params)`
+- **Call as:** TypeScript `client.dataEngine.getJob()` · Python `client.data_engine.get_job()` · Rust `build_request("data_engine", "get_job", params)` · Go `BuildRequest("dataEngine", "getJob", params)` · C `tempera_build_request(..., "dataEngine", "getJob", ...)`
 
 **Path parameters**
 
@@ -1702,6 +2590,36 @@ let spec = client.build_request("data_engine", "get_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getJob", map[string]any{
+    "parent": "<parent>",
+    "jobId": "<jobId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getJobResults
@@ -1714,7 +2632,7 @@ List the deterministic label results a job produced.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getJobResults()` · Python `client.data_engine.get_job_results()` · Rust `build_request("data_engine", "get_job_results", params)`
+- **Call as:** TypeScript `client.dataEngine.getJobResults()` · Python `client.data_engine.get_job_results()` · Rust `build_request("data_engine", "get_job_results", params)` · Go `BuildRequest("dataEngine", "getJobResults", params)` · C `tempera_build_request(..., "dataEngine", "getJobResults", ...)`
 
 **Path parameters**
 
@@ -1761,6 +2679,38 @@ let spec = client.build_request("data_engine", "get_job_results", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getJobResults", map[string]any{
+    "parent": "<parent>",
+    "jobId": "<jobId>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"jobId", "<jobId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getJobResults",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getProduct
@@ -1773,7 +2723,7 @@ Fetch one emitted product bundle with its status and manifest URL.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getProduct()` · Python `client.data_engine.get_product()` · Rust `build_request("data_engine", "get_product", params)`
+- **Call as:** TypeScript `client.dataEngine.getProduct()` · Python `client.data_engine.get_product()` · Rust `build_request("data_engine", "get_product", params)` · Go `BuildRequest("dataEngine", "getProduct", params)` · C `tempera_build_request(..., "dataEngine", "getProduct", ...)`
 
 **Path parameters**
 
@@ -1807,6 +2757,36 @@ let spec = client.build_request("data_engine", "get_product", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getProduct", map[string]any{
+    "parent": "<parent>",
+    "productId": "<productId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"productId", "<productId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getProduct",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### validateProduct
@@ -1819,7 +2799,7 @@ Validate an emitted product bundle's referential integrity and hygiene.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.validateProduct()` · Python `client.data_engine.validate_product()` · Rust `build_request("data_engine", "validate_product", params)`
+- **Call as:** TypeScript `client.dataEngine.validateProduct()` · Python `client.data_engine.validate_product()` · Rust `build_request("data_engine", "validate_product", params)` · Go `BuildRequest("dataEngine", "validateProduct", params)` · C `tempera_build_request(..., "dataEngine", "validateProduct", ...)`
 
 **Path parameters**
 
@@ -1853,6 +2833,36 @@ let spec = client.build_request("data_engine", "validate_product", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "validateProduct", map[string]any{
+    "parent": "<parent>",
+    "productId": "<productId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"productId", "<productId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "validateProduct",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### checkProductLeakage
@@ -1865,7 +2875,7 @@ Check raw-hash leakage between exactly two product bundles.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.checkProductLeakage()` · Python `client.data_engine.check_product_leakage()` · Rust `build_request("data_engine", "check_product_leakage", params)`
+- **Call as:** TypeScript `client.dataEngine.checkProductLeakage()` · Python `client.data_engine.check_product_leakage()` · Rust `build_request("data_engine", "check_product_leakage", params)` · Go `BuildRequest("dataEngine", "checkProductLeakage", params)` · C `tempera_build_request(..., "dataEngine", "checkProductLeakage", ...)`
 
 **Path parameters**
 
@@ -1904,6 +2914,35 @@ let spec = client.build_request("data_engine", "check_product_leakage", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "checkProductLeakage", map[string]any{
+    "parent": "<parent>",
+    "productIds": "<productIds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"productIds\":\"<productIds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "checkProductLeakage",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getProductManifest
@@ -1916,7 +2955,7 @@ Fetch an integrity-checked, bounded manifest for an emitted eval product.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getProductManifest()` · Python `client.data_engine.get_product_manifest()` · Rust `build_request("data_engine", "get_product_manifest", params)`
+- **Call as:** TypeScript `client.dataEngine.getProductManifest()` · Python `client.data_engine.get_product_manifest()` · Rust `build_request("data_engine", "get_product_manifest", params)` · Go `BuildRequest("dataEngine", "getProductManifest", params)` · C `tempera_build_request(..., "dataEngine", "getProductManifest", ...)`
 
 **Path parameters**
 
@@ -1950,6 +2989,36 @@ let spec = client.build_request("data_engine", "get_product_manifest", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getProductManifest", map[string]any{
+    "parent": "<parent>",
+    "productId": "<productId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"productId", "<productId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getProductManifest",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### admitTrainingRelease
@@ -1962,7 +3031,7 @@ Admit exact training and heldout product generations after revalidating integrit
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `training:publish`
-- **Call as:** TypeScript `client.dataEngine.admitTrainingRelease()` · Python `client.data_engine.admit_training_release()` · Rust `build_request("data_engine", "admit_training_release", params)`
+- **Call as:** TypeScript `client.dataEngine.admitTrainingRelease()` · Python `client.data_engine.admit_training_release()` · Rust `build_request("data_engine", "admit_training_release", params)` · Go `BuildRequest("dataEngine", "admitTrainingRelease", params)` · C `tempera_build_request(..., "dataEngine", "admitTrainingRelease", ...)`
 
 **Path parameters**
 
@@ -2009,6 +3078,37 @@ let spec = client.build_request("data_engine", "admit_training_release", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "admitTrainingRelease", map[string]any{
+    "parent": "<parent>",
+    "trainingProductId": "<trainingProductId>",
+    "heldoutProductId": "<heldoutProductId>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"trainingProductId\":\"<trainingProductId>\",\"heldoutProductId\":\"<heldoutProductId>\",\"idempotencyKey\":\"<idempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "admitTrainingRelease",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getTrainingRelease
@@ -2021,7 +3121,7 @@ Revalidate and fetch one training release, including any durable stale state.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `training:publish`
-- **Call as:** TypeScript `client.dataEngine.getTrainingRelease()` · Python `client.data_engine.get_training_release()` · Rust `build_request("data_engine", "get_training_release", params)`
+- **Call as:** TypeScript `client.dataEngine.getTrainingRelease()` · Python `client.data_engine.get_training_release()` · Rust `build_request("data_engine", "get_training_release", params)` · Go `BuildRequest("dataEngine", "getTrainingRelease", params)` · C `tempera_build_request(..., "dataEngine", "getTrainingRelease", ...)`
 
 **Path parameters**
 
@@ -2055,6 +3155,36 @@ let spec = client.build_request("data_engine", "get_training_release", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getTrainingRelease", map[string]any{
+    "parent": "<parent>",
+    "releaseId": "<releaseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"releaseId", "<releaseId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getTrainingRelease",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### deriveBundle
@@ -2067,7 +3197,7 @@ Derive a deterministic post-training bundle from a ready product.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.deriveBundle()` · Python `client.data_engine.derive_bundle()` · Rust `build_request("data_engine", "derive_bundle", params)`
+- **Call as:** TypeScript `client.dataEngine.deriveBundle()` · Python `client.data_engine.derive_bundle()` · Rust `build_request("data_engine", "derive_bundle", params)` · Go `BuildRequest("dataEngine", "deriveBundle", params)` · C `tempera_build_request(..., "dataEngine", "deriveBundle", ...)`
 
 **Path parameters**
 
@@ -2121,6 +3251,39 @@ let spec = client.build_request("data_engine", "derive_bundle", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "deriveBundle", map[string]any{
+    "parent": "<parent>",
+    "productId": "<productId>",
+    "format": "<format>",
+    "trainFraction": "<trainFraction>",
+    "includeRaw": "<includeRaw>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"productId", "<productId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"format\":\"<format>\",\"trainFraction\":\"<trainFraction>\",\"includeRaw\":\"<includeRaw>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "deriveBundle",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### emitEval
@@ -2133,7 +3296,7 @@ Emit an eval dataset bundle from verified artifacts; returns an async operation 
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.emitEval()` · Python `client.data_engine.emit_eval()` · Rust `build_request("data_engine", "emit_eval", params)`
+- **Call as:** TypeScript `client.dataEngine.emitEval()` · Python `client.data_engine.emit_eval()` · Rust `build_request("data_engine", "emit_eval", params)` · Go `BuildRequest("dataEngine", "emitEval", params)` · C `tempera_build_request(..., "dataEngine", "emitEval", ...)`
 
 **Path parameters**
 
@@ -2176,6 +3339,36 @@ let spec = client.build_request("data_engine", "emit_eval", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "emitEval", map[string]any{
+    "parent": "<parent>",
+    "artifactIds": "<artifactIds>",
+    "job": "<job>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"artifactIds\":\"<artifactIds>\",\"job\":\"<job>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "emitEval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### extractSource
@@ -2188,7 +3381,7 @@ Extract bounded objects or records from a configured source connector.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.extractSource()` · Python `client.data_engine.extract_source()` · Rust `build_request("data_engine", "extract_source", params)`
+- **Call as:** TypeScript `client.dataEngine.extractSource()` · Python `client.data_engine.extract_source()` · Rust `build_request("data_engine", "extract_source", params)` · Go `BuildRequest("dataEngine", "extractSource", params)` · C `tempera_build_request(..., "dataEngine", "extractSource", ...)`
 
 **Path parameters**
 
@@ -2246,6 +3439,37 @@ let spec = client.build_request("data_engine", "extract_source", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "extractSource", map[string]any{
+    "parent": "<parent>",
+    "connector": "<connector>",
+    "bucket": "<bucket>",
+    "prefix": "<prefix>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"connector\":\"<connector>\",\"bucket\":\"<bucket>\",\"prefix\":\"<prefix>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "extractSource",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listConnectors
@@ -2258,7 +3482,7 @@ List registered source connectors for a project.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listConnectors()` · Python `client.data_engine.list_connectors()` · Rust `build_request("data_engine", "list_connectors", params)`
+- **Call as:** TypeScript `client.dataEngine.listConnectors()` · Python `client.data_engine.list_connectors()` · Rust `build_request("data_engine", "list_connectors", params)` · Go `BuildRequest("dataEngine", "listConnectors", params)` · C `tempera_build_request(..., "dataEngine", "listConnectors", ...)`
 
 **Path parameters**
 
@@ -2301,6 +3525,36 @@ let spec = client.build_request("data_engine", "list_connectors", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listConnectors", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listConnectors",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createTool
@@ -2313,7 +3567,7 @@ Create or version-bump a stored custom tool.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.createTool()` · Python `client.data_engine.create_tool()` · Rust `build_request("data_engine", "create_tool", params)`
+- **Call as:** TypeScript `client.dataEngine.createTool()` · Python `client.data_engine.create_tool()` · Rust `build_request("data_engine", "create_tool", params)` · Go `BuildRequest("dataEngine", "createTool", params)` · C `tempera_build_request(..., "dataEngine", "createTool", ...)`
 
 **Path parameters**
 
@@ -2366,6 +3620,38 @@ let spec = client.build_request("data_engine", "create_tool", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createTool", map[string]any{
+    "parent": "<parent>",
+    "name": "<name>",
+    "description": "<description>",
+    "kind": "<kind>",
+    "implementation": "<implementation>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"name\":\"<name>\",\"description\":\"<description>\",\"kind\":\"<kind>\",\"implementation\":\"<implementation>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createTool",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listTools
@@ -2378,7 +3664,7 @@ List stored custom tools and their usage statistics.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listTools()` · Python `client.data_engine.list_tools()` · Rust `build_request("data_engine", "list_tools", params)`
+- **Call as:** TypeScript `client.dataEngine.listTools()` · Python `client.data_engine.list_tools()` · Rust `build_request("data_engine", "list_tools", params)` · Go `BuildRequest("dataEngine", "listTools", params)` · C `tempera_build_request(..., "dataEngine", "listTools", ...)`
 
 **Path parameters**
 
@@ -2421,6 +3707,36 @@ let spec = client.build_request("data_engine", "list_tools", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listTools", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listTools",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getTool
@@ -2433,7 +3749,7 @@ Fetch one stored custom tool and its usage statistics.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getTool()` · Python `client.data_engine.get_tool()` · Rust `build_request("data_engine", "get_tool", params)`
+- **Call as:** TypeScript `client.dataEngine.getTool()` · Python `client.data_engine.get_tool()` · Rust `build_request("data_engine", "get_tool", params)` · Go `BuildRequest("dataEngine", "getTool", params)` · C `tempera_build_request(..., "dataEngine", "getTool", ...)`
 
 **Path parameters**
 
@@ -2467,6 +3783,36 @@ let spec = client.build_request("data_engine", "get_tool", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getTool", map[string]any{
+    "parent": "<parent>",
+    "toolName": "<toolName>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"toolName", "<toolName>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getTool",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### deleteTool
@@ -2479,7 +3825,7 @@ Delete a stored custom tool and every retained version.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.deleteTool()` · Python `client.data_engine.delete_tool()` · Rust `build_request("data_engine", "delete_tool", params)`
+- **Call as:** TypeScript `client.dataEngine.deleteTool()` · Python `client.data_engine.delete_tool()` · Rust `build_request("data_engine", "delete_tool", params)` · Go `BuildRequest("dataEngine", "deleteTool", params)` · C `tempera_build_request(..., "dataEngine", "deleteTool", ...)`
 
 **Path parameters**
 
@@ -2513,6 +3859,36 @@ let spec = client.build_request("data_engine", "delete_tool", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "deleteTool", map[string]any{
+    "parent": "<parent>",
+    "toolName": "<toolName>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"toolName", "<toolName>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "deleteTool",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### invokeTool
@@ -2525,7 +3901,7 @@ Invoke a stored custom tool through its configured execution boundary.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.invokeTool()` · Python `client.data_engine.invoke_tool()` · Rust `build_request("data_engine", "invoke_tool", params)`
+- **Call as:** TypeScript `client.dataEngine.invokeTool()` · Python `client.data_engine.invoke_tool()` · Rust `build_request("data_engine", "invoke_tool", params)` · Go `BuildRequest("dataEngine", "invokeTool", params)` · C `tempera_build_request(..., "dataEngine", "invokeTool", ...)`
 
 **Path parameters**
 
@@ -2568,6 +3944,37 @@ let spec = client.build_request("data_engine", "invoke_tool", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "invokeTool", map[string]any{
+    "parent": "<parent>",
+    "toolName": "<toolName>",
+    "arguments": "<arguments>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"toolName", "<toolName>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"arguments\":\"<arguments>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "invokeTool",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### commitDiscoveryRelease
@@ -2580,7 +3987,7 @@ Atomically commit an immutable discovery release graph.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.commitDiscoveryRelease()` · Python `client.data_engine.commit_discovery_release()` · Rust `build_request("data_engine", "commit_discovery_release", params)`
+- **Call as:** TypeScript `client.dataEngine.commitDiscoveryRelease()` · Python `client.data_engine.commit_discovery_release()` · Rust `build_request("data_engine", "commit_discovery_release", params)` · Go `BuildRequest("dataEngine", "commitDiscoveryRelease", params)` · C `tempera_build_request(..., "dataEngine", "commitDiscoveryRelease", ...)`
 
 **Path parameters**
 
@@ -2659,6 +4066,45 @@ let spec = client.build_request("data_engine", "commit_discovery_release", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "commitDiscoveryRelease", map[string]any{
+    "parent": "<parent>",
+    "schemaVersion": "<schemaVersion>",
+    "requestId": "<requestId>",
+    "releaseId": "<releaseId>",
+    "releaseKind": "<releaseKind>",
+    "evidenceClass": "<evidenceClass>",
+    "claimClass": "<claimClass>",
+    "bindings": "<bindings>",
+    "lineageEdges": "<lineageEdges>",
+    "budget": "<budget>",
+    "eligibility": "<eligibility>",
+    "prospectiveExecution": "<prospectiveExecution>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schemaVersion\":\"<schemaVersion>\",\"requestId\":\"<requestId>\",\"releaseId\":\"<releaseId>\",\"releaseKind\":\"<releaseKind>\",\"evidenceClass\":\"<evidenceClass>\",\"claimClass\":\"<claimClass>\",\"bindings\":\"<bindings>\",\"lineageEdges\":\"<lineageEdges>\",\"budget\":\"<budget>\",\"eligibility\":\"<eligibility>\",\"prospectiveExecution\":\"<prospectiveExecution>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "commitDiscoveryRelease",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getDiscoveryRelease
@@ -2671,7 +4117,7 @@ Get one immutable discovery release.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getDiscoveryRelease()` · Python `client.data_engine.get_discovery_release()` · Rust `build_request("data_engine", "get_discovery_release", params)`
+- **Call as:** TypeScript `client.dataEngine.getDiscoveryRelease()` · Python `client.data_engine.get_discovery_release()` · Rust `build_request("data_engine", "get_discovery_release", params)` · Go `BuildRequest("dataEngine", "getDiscoveryRelease", params)` · C `tempera_build_request(..., "dataEngine", "getDiscoveryRelease", ...)`
 
 **Path parameters**
 
@@ -2705,6 +4151,36 @@ let spec = client.build_request("data_engine", "get_discovery_release", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getDiscoveryRelease", map[string]any{
+    "parent": "<parent>",
+    "discoveryReleaseId": "<discoveryReleaseId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"discoveryReleaseId", "<discoveryReleaseId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getDiscoveryRelease",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createEvidenceRecord
@@ -2717,7 +4193,7 @@ Create an immutable shared evidence record by canonical content hash.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.createEvidenceRecord()` · Python `client.data_engine.create_evidence_record()` · Rust `build_request("data_engine", "create_evidence_record", params)`
+- **Call as:** TypeScript `client.dataEngine.createEvidenceRecord()` · Python `client.data_engine.create_evidence_record()` · Rust `build_request("data_engine", "create_evidence_record", params)` · Go `BuildRequest("dataEngine", "createEvidenceRecord", params)` · C `tempera_build_request(..., "dataEngine", "createEvidenceRecord", ...)`
 
 **Path parameters**
 
@@ -2784,6 +4260,41 @@ let spec = client.build_request("data_engine", "create_evidence_record", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createEvidenceRecord", map[string]any{
+    "parent": "<parent>",
+    "schemaVersion": "<schemaVersion>",
+    "domain": "<domain>",
+    "evidenceType": "<evidenceType>",
+    "payloadSchema": "<payloadSchema>",
+    "payload": "<payload>",
+    "sourceArtifactRefs": "<sourceArtifactRefs>",
+    "verificationState": "<verificationState>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schemaVersion\":\"<schemaVersion>\",\"domain\":\"<domain>\",\"evidenceType\":\"<evidenceType>\",\"payloadSchema\":\"<payloadSchema>\",\"payload\":\"<payload>\",\"sourceArtifactRefs\":\"<sourceArtifactRefs>\",\"verificationState\":\"<verificationState>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createEvidenceRecord",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listEvidenceRecords
@@ -2796,7 +4307,7 @@ List immutable shared evidence records with bounded cursor pagination.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listEvidenceRecords()` · Python `client.data_engine.list_evidence_records()` · Rust `build_request("data_engine", "list_evidence_records", params)`
+- **Call as:** TypeScript `client.dataEngine.listEvidenceRecords()` · Python `client.data_engine.list_evidence_records()` · Rust `build_request("data_engine", "list_evidence_records", params)` · Go `BuildRequest("dataEngine", "listEvidenceRecords", params)` · C `tempera_build_request(..., "dataEngine", "listEvidenceRecords", ...)`
 
 **Path parameters**
 
@@ -2840,6 +4351,36 @@ let spec = client.build_request("data_engine", "list_evidence_records", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listEvidenceRecords", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listEvidenceRecords",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getEvidenceRecord
@@ -2852,7 +4393,7 @@ Fetch one immutable shared evidence record by its platform digest.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getEvidenceRecord()` · Python `client.data_engine.get_evidence_record()` · Rust `build_request("data_engine", "get_evidence_record", params)`
+- **Call as:** TypeScript `client.dataEngine.getEvidenceRecord()` · Python `client.data_engine.get_evidence_record()` · Rust `build_request("data_engine", "get_evidence_record", params)` · Go `BuildRequest("dataEngine", "getEvidenceRecord", params)` · C `tempera_build_request(..., "dataEngine", "getEvidenceRecord", ...)`
 
 **Path parameters**
 
@@ -2886,6 +4427,36 @@ let spec = client.build_request("data_engine", "get_evidence_record", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getEvidenceRecord", map[string]any{
+    "parent": "<parent>",
+    "evidenceRecordId": "<evidenceRecordId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"evidenceRecordId", "<evidenceRecordId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getEvidenceRecord",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createEpisode
@@ -2898,7 +4469,7 @@ Create an immutable shared episode by canonical content hash.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.dataEngine.createEpisode()` · Python `client.data_engine.create_episode()` · Rust `build_request("data_engine", "create_episode", params)`
+- **Call as:** TypeScript `client.dataEngine.createEpisode()` · Python `client.data_engine.create_episode()` · Rust `build_request("data_engine", "create_episode", params)` · Go `BuildRequest("dataEngine", "createEpisode", params)` · C `tempera_build_request(..., "dataEngine", "createEpisode", ...)`
 
 **Path parameters**
 
@@ -2977,6 +4548,44 @@ let spec = client.build_request("data_engine", "create_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createEpisode", map[string]any{
+    "parent": "<parent>",
+    "schemaVersion": "<schemaVersion>",
+    "domain": "<domain>",
+    "contextEvidenceRef": "<contextEvidenceRef>",
+    "environmentRef": "<environmentRef>",
+    "seed": "<seed>",
+    "observations": "<observations>",
+    "measuredOutcomes": "<measuredOutcomes>",
+    "verifierResults": "<verifierResults>",
+    "rewardComponents": "<rewardComponents>",
+    "terminalReason": "<terminalReason>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"schemaVersion\":\"<schemaVersion>\",\"domain\":\"<domain>\",\"contextEvidenceRef\":\"<contextEvidenceRef>\",\"environmentRef\":\"<environmentRef>\",\"seed\":\"<seed>\",\"observations\":\"<observations>\",\"measuredOutcomes\":\"<measuredOutcomes>\",\"verifierResults\":\"<verifierResults>\",\"rewardComponents\":\"<rewardComponents>\",\"terminalReason\":\"<terminalReason>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listEpisodes
@@ -2989,7 +4598,7 @@ List immutable shared episodes with bounded cursor pagination.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listEpisodes()` · Python `client.data_engine.list_episodes()` · Rust `build_request("data_engine", "list_episodes", params)`
+- **Call as:** TypeScript `client.dataEngine.listEpisodes()` · Python `client.data_engine.list_episodes()` · Rust `build_request("data_engine", "list_episodes", params)` · Go `BuildRequest("dataEngine", "listEpisodes", params)` · C `tempera_build_request(..., "dataEngine", "listEpisodes", ...)`
 
 **Path parameters**
 
@@ -3033,6 +4642,36 @@ let spec = client.build_request("data_engine", "list_episodes", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listEpisodes", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listEpisodes",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getEpisode
@@ -3045,7 +4684,7 @@ Fetch one immutable shared episode by its platform digest.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getEpisode()` · Python `client.data_engine.get_episode()` · Rust `build_request("data_engine", "get_episode", params)`
+- **Call as:** TypeScript `client.dataEngine.getEpisode()` · Python `client.data_engine.get_episode()` · Rust `build_request("data_engine", "get_episode", params)` · Go `BuildRequest("dataEngine", "getEpisode", params)` · C `tempera_build_request(..., "dataEngine", "getEpisode", ...)`
 
 **Path parameters**
 
@@ -3079,6 +4718,36 @@ let spec = client.build_request("data_engine", "get_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getEpisode", map[string]any{
+    "parent": "<parent>",
+    "episodeId": "<episodeId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"episodeId", "<episodeId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### queryResearchRetrieval
@@ -3091,7 +4760,7 @@ Retrieve deterministic candidates for one exact canonical typed research obligat
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.queryResearchRetrieval()` · Python `client.data_engine.query_research_retrieval()` · Rust `build_request("data_engine", "query_research_retrieval", params)`
+- **Call as:** TypeScript `client.dataEngine.queryResearchRetrieval()` · Python `client.data_engine.query_research_retrieval()` · Rust `build_request("data_engine", "query_research_retrieval", params)` · Go `BuildRequest("dataEngine", "queryResearchRetrieval", params)` · C `tempera_build_request(..., "dataEngine", "queryResearchRetrieval", ...)`
 
 **Path parameters**
 
@@ -3148,6 +4817,38 @@ let spec = client.build_request("data_engine", "query_research_retrieval", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "queryResearchRetrieval", map[string]any{
+    "parent": "<parent>",
+    "contractVersion": "<contractVersion>",
+    "requestId": "<requestId>",
+    "obligation": "<obligation>",
+    "limit": "<limit>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"contractVersion\":\"<contractVersion>\",\"requestId\":\"<requestId>\",\"obligation\":\"<obligation>\",\"limit\":\"<limit>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "queryResearchRetrieval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createResearchCatalogEntry
@@ -3160,7 +4861,7 @@ Create an immutable executable research catalog entry by canonical content hash.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
-- **Call as:** TypeScript `client.dataEngine.createResearchCatalogEntry()` · Python `client.data_engine.create_research_catalog_entry()` · Rust `build_request("data_engine", "create_research_catalog_entry", params)`
+- **Call as:** TypeScript `client.dataEngine.createResearchCatalogEntry()` · Python `client.data_engine.create_research_catalog_entry()` · Rust `build_request("data_engine", "create_research_catalog_entry", params)` · Go `BuildRequest("dataEngine", "createResearchCatalogEntry", params)` · C `tempera_build_request(..., "dataEngine", "createResearchCatalogEntry", ...)`
 
 **Path parameters**
 
@@ -3217,6 +4918,39 @@ let spec = client.build_request("data_engine", "create_research_catalog_entry", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "createResearchCatalogEntry", map[string]any{
+    "parent": "<parent>",
+    "kind": "<kind>",
+    "version": "<version>",
+    "obligationHash": "<obligationHash>",
+    "capabilityRoute": "<capabilityRoute>",
+    "provenance": "<provenance>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"kind\":\"<kind>\",\"version\":\"<version>\",\"obligationHash\":\"<obligationHash>\",\"capabilityRoute\":\"<capabilityRoute>\",\"provenance\":\"<provenance>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "createResearchCatalogEntry",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listResearchCatalogEntries
@@ -3229,7 +4963,7 @@ List immutable executable research catalog entries with bounded pagination.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.listResearchCatalogEntries()` · Python `client.data_engine.list_research_catalog_entries()` · Rust `build_request("data_engine", "list_research_catalog_entries", params)`
+- **Call as:** TypeScript `client.dataEngine.listResearchCatalogEntries()` · Python `client.data_engine.list_research_catalog_entries()` · Rust `build_request("data_engine", "list_research_catalog_entries", params)` · Go `BuildRequest("dataEngine", "listResearchCatalogEntries", params)` · C `tempera_build_request(..., "dataEngine", "listResearchCatalogEntries", ...)`
 
 **Path parameters**
 
@@ -3272,6 +5006,36 @@ let spec = client.build_request("data_engine", "list_research_catalog_entries", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("dataEngine", "listResearchCatalogEntries", map[string]any{
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "listResearchCatalogEntries",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getResearchCatalogEntry
@@ -3284,7 +5048,7 @@ Fetch one immutable executable research catalog entry by content hash.
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.dataEngine.getResearchCatalogEntry()` · Python `client.data_engine.get_research_catalog_entry()` · Rust `build_request("data_engine", "get_research_catalog_entry", params)`
+- **Call as:** TypeScript `client.dataEngine.getResearchCatalogEntry()` · Python `client.data_engine.get_research_catalog_entry()` · Rust `build_request("data_engine", "get_research_catalog_entry", params)` · Go `BuildRequest("dataEngine", "getResearchCatalogEntry", params)` · C `tempera_build_request(..., "dataEngine", "getResearchCatalogEntry", ...)`
 
 **Path parameters**
 
@@ -3316,6 +5080,36 @@ let spec = client.build_request("data_engine", "get_research_catalog_entry", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("dataEngine", "getResearchCatalogEntry", map[string]any{
+    "parent": "<parent>",
+    "entryId": "<entryId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"parent", "<parent>"},
+    {"entryId", "<entryId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "dataEngine", "getResearchCatalogEntry",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

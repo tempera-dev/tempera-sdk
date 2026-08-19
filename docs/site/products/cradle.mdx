@@ -37,7 +37,7 @@ Call POST /v1/browser/adapter/capability.
 
 - **Producer operationId:** `projects.browserAdapters.issueCapability`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersIssueCapability()` · Python `client.cradle.projects_browser_adapters_issue_capability()` · Rust `build_request("cradle", "projects_browser_adapters_issue_capability", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersIssueCapability()` · Python `client.cradle.projects_browser_adapters_issue_capability()` · Rust `build_request("cradle", "projects_browser_adapters_issue_capability", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersIssueCapability", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersIssueCapability", ...)`
 
 **Body parameters**
 
@@ -77,6 +77,34 @@ let spec = client.build_request("cradle", "projects_browser_adapters_issue_capab
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersIssueCapability", map[string]any{
+    "actor": "<actor>",
+    "sensitivity": "<sensitivity>",
+    "adapterId": "<adapterId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"actor\":\"<actor>\",\"adapterId\":\"<adapterId>\",\"sensitivity\":\"<sensitivity>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersIssueCapability",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsBrowserAdaptersValidateCompletion
@@ -87,7 +115,7 @@ Call POST /v1/browser/adapter/completion/validate.
 
 - **Producer operationId:** `projects.browserAdapters.validateCompletion`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidateCompletion()` · Python `client.cradle.projects_browser_adapters_validate_completion()` · Rust `build_request("cradle", "projects_browser_adapters_validate_completion", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidateCompletion()` · Python `client.cradle.projects_browser_adapters_validate_completion()` · Rust `build_request("cradle", "projects_browser_adapters_validate_completion", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersValidateCompletion", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersValidateCompletion", ...)`
 
 **Body parameters**
 
@@ -153,6 +181,41 @@ let spec = client.build_request("cradle", "projects_browser_adapters_validate_co
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersValidateCompletion", map[string]any{
+    "adapterId": "<adapterId>",
+    "contractVersion": "<contractVersion>",
+    "egressLogSealedOrDiscarded": "<egressLogSealedOrDiscarded>",
+    "notes": "<notes>",
+    "plaintextArtifactsRemoved": "<plaintextArtifactsRemoved>",
+    "processTerminated": "<processTerminated>",
+    "proofIds": "<proofIds>",
+    "requestId": "<requestId>",
+    "sealedArtifactHandles": "<sealedArtifactHandles>",
+    "temporaryProfileRemoved": "<temporaryProfileRemoved>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"adapterId\":\"<adapterId>\",\"contractVersion\":\"<contractVersion>\",\"egressLogSealedOrDiscarded\":\"<egressLogSealedOrDiscarded>\",\"notes\":\"<notes>\",\"plaintextArtifactsRemoved\":\"<plaintextArtifactsRemoved>\",\"processTerminated\":\"<processTerminated>\",\"proofIds\":\"<proofIds>\",\"requestId\":\"<requestId>\",\"sealedArtifactHandles\":\"<sealedArtifactHandles>\",\"temporaryProfileRemoved\":\"<temporaryProfileRemoved>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersValidateCompletion",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getBrowserAdapterContract
@@ -163,7 +226,7 @@ Fetch the browser adapter contract, required controls, and conformance profile.
 
 - **Producer operationId:** `projects.browserAdapters.getContract`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getBrowserAdapterContract()` · Python `client.cradle.get_browser_adapter_contract()` · Rust `build_request("cradle", "get_browser_adapter_contract", params)`
+- **Call as:** TypeScript `client.cradle.getBrowserAdapterContract()` · Python `client.cradle.get_browser_adapter_contract()` · Rust `build_request("cradle", "get_browser_adapter_contract", params)` · Go `BuildRequest("cradle", "getBrowserAdapterContract", params)` · C `tempera_build_request(..., "cradle", "getBrowserAdapterContract", ...)`
 
 <CodeGroup>
 
@@ -181,6 +244,30 @@ let spec = client.build_request("cradle", "get_browser_adapter_contract", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "getBrowserAdapterContract", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "getBrowserAdapterContract",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsBrowserAdaptersClaimLaunch
@@ -191,7 +278,7 @@ Call POST /v1/browser/adapter/launch/claim.
 
 - **Producer operationId:** `projects.browserAdapters.claimLaunch`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersClaimLaunch()` · Python `client.cradle.projects_browser_adapters_claim_launch()` · Rust `build_request("cradle", "projects_browser_adapters_claim_launch", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersClaimLaunch()` · Python `client.cradle.projects_browser_adapters_claim_launch()` · Rust `build_request("cradle", "projects_browser_adapters_claim_launch", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersClaimLaunch", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersClaimLaunch", ...)`
 
 **Body parameters**
 
@@ -221,6 +308,32 @@ let spec = client.build_request("cradle", "projects_browser_adapters_claim_launc
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersClaimLaunch", map[string]any{
+    "launchRequest": "<launchRequest>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"launchRequest\":\"<launchRequest>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersClaimLaunch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsBrowserAdaptersPlanLaunch
@@ -231,7 +344,7 @@ Call POST /v1/browser/adapter/launch/plan.
 
 - **Producer operationId:** `projects.browserAdapters.planLaunch`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersPlanLaunch()` · Python `client.cradle.projects_browser_adapters_plan_launch()` · Rust `build_request("cradle", "projects_browser_adapters_plan_launch", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersPlanLaunch()` · Python `client.cradle.projects_browser_adapters_plan_launch()` · Rust `build_request("cradle", "projects_browser_adapters_plan_launch", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersPlanLaunch", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersPlanLaunch", ...)`
 
 **Body parameters**
 
@@ -269,6 +382,34 @@ let spec = client.build_request("cradle", "projects_browser_adapters_plan_launch
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersPlanLaunch", map[string]any{
+    "admission": "<admission>",
+    "manifest": "<manifest>",
+    "sameUserCapability": "<sameUserCapability>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"admission\":\"<admission>\",\"manifest\":\"<manifest>\",\"sameUserCapability\":\"<sameUserCapability>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersPlanLaunch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsBrowserAdaptersRegister
@@ -279,7 +420,7 @@ Call POST /v1/browser/adapter/register.
 
 - **Producer operationId:** `projects.browserAdapters.register`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersRegister()` · Python `client.cradle.projects_browser_adapters_register()` · Rust `build_request("cradle", "projects_browser_adapters_register", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersRegister()` · Python `client.cradle.projects_browser_adapters_register()` · Rust `build_request("cradle", "projects_browser_adapters_register", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersRegister", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersRegister", ...)`
 
 **Body parameters**
 
@@ -321,6 +462,35 @@ let spec = client.build_request("cradle", "projects_browser_adapters_register", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersRegister", map[string]any{
+    "actor": "<actor>",
+    "manifest": "<manifest>",
+    "sameUserCapability": "<sameUserCapability>",
+    "sensitivity": "<sensitivity>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"actor\":\"<actor>\",\"manifest\":\"<manifest>\",\"sameUserCapability\":\"<sameUserCapability>\",\"sensitivity\":\"<sensitivity>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersRegister",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsBrowserAdaptersValidate
@@ -331,7 +501,7 @@ Call POST /v1/browser/adapter/validate.
 
 - **Producer operationId:** `projects.browserAdapters.validate`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidate()` · Python `client.cradle.projects_browser_adapters_validate()` · Rust `build_request("cradle", "projects_browser_adapters_validate", params)`
+- **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidate()` · Python `client.cradle.projects_browser_adapters_validate()` · Rust `build_request("cradle", "projects_browser_adapters_validate", params)` · Go `BuildRequest("cradle", "projectsBrowserAdaptersValidate", params)` · C `tempera_build_request(..., "cradle", "projectsBrowserAdaptersValidate", ...)`
 
 **Body parameters**
 
@@ -385,6 +555,38 @@ let spec = client.build_request("cradle", "projects_browser_adapters_validate", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsBrowserAdaptersValidate", map[string]any{
+    "adapterId": "<adapterId>",
+    "completionProofs": "<completionProofs>",
+    "contractVersion": "<contractVersion>",
+    "guardFields": "<guardFields>",
+    "launchEndpoint": "<launchEndpoint>",
+    "supportedControls": "<supportedControls>",
+    "supportedLevels": "<supportedLevels>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"adapterId\":\"<adapterId>\",\"completionProofs\":\"<completionProofs>\",\"contractVersion\":\"<contractVersion>\",\"guardFields\":\"<guardFields>\",\"launchEndpoint\":\"<launchEndpoint>\",\"supportedControls\":\"<supportedControls>\",\"supportedLevels\":\"<supportedLevels>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsBrowserAdaptersValidate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### admitBrowserSession
@@ -395,7 +597,7 @@ Request admission for a browser session at a sandbox level and receive the guard
 
 - **Producer operationId:** `projects.browserSessions.admit`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.admitBrowserSession()` · Python `client.cradle.admit_browser_session()` · Rust `build_request("cradle", "admit_browser_session", params)`
+- **Call as:** TypeScript `client.cradle.admitBrowserSession()` · Python `client.cradle.admit_browser_session()` · Rust `build_request("cradle", "admit_browser_session", params)` · Go `BuildRequest("cradle", "admitBrowserSession", params)` · C `tempera_build_request(..., "cradle", "admitBrowserSession", ...)`
 
 **Body parameters**
 
@@ -440,6 +642,34 @@ let spec = client.build_request("cradle", "admit_browser_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "admitBrowserSession", map[string]any{
+    "actor": "<actor>",
+    "requestedLevel": "<requestedLevel>",
+    "sensitivity": "<sensitivity>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"actor\":\"<actor>\",\"requestedLevel\":\"<requestedLevel>\",\"sensitivity\":\"<sensitivity>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "admitBrowserSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getBrowserProfiles
@@ -450,7 +680,7 @@ Fetch the browser sandbox profile levels and suppression modes this daemon offer
 
 - **Producer operationId:** `projects.browserProfiles.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getBrowserProfiles()` · Python `client.cradle.get_browser_profiles()` · Rust `build_request("cradle", "get_browser_profiles", params)`
+- **Call as:** TypeScript `client.cradle.getBrowserProfiles()` · Python `client.cradle.get_browser_profiles()` · Rust `build_request("cradle", "get_browser_profiles", params)` · Go `BuildRequest("cradle", "getBrowserProfiles", params)` · C `tempera_build_request(..., "cradle", "getBrowserProfiles", ...)`
 
 <CodeGroup>
 
@@ -468,6 +698,30 @@ let spec = client.build_request("cradle", "get_browser_profiles", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "getBrowserProfiles", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "getBrowserProfiles",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getCapabilities
@@ -478,7 +732,7 @@ Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.
 
 - **Producer operationId:** `projects.capabilities.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getCapabilities()` · Python `client.cradle.get_capabilities()` · Rust `build_request("cradle", "get_capabilities", params)`
+- **Call as:** TypeScript `client.cradle.getCapabilities()` · Python `client.cradle.get_capabilities()` · Rust `build_request("cradle", "get_capabilities", params)` · Go `BuildRequest("cradle", "getCapabilities", params)` · C `tempera_build_request(..., "cradle", "getCapabilities", ...)`
 
 <CodeGroup>
 
@@ -496,6 +750,30 @@ let spec = client.build_request("cradle", "get_capabilities", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "getCapabilities", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "getCapabilities",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### execute
@@ -506,7 +784,7 @@ Execute source synchronously in a sandbox lane and return the result with metric
 
 - **Producer operationId:** `projects.executions.execute`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.execute()` · Python `client.cradle.execute()` · Rust `build_request("cradle", "execute", params)`
+- **Call as:** TypeScript `client.cradle.execute()` · Python `client.cradle.execute()` · Rust `build_request("cradle", "execute", params)` · Go `BuildRequest("cradle", "execute", params)` · C `tempera_build_request(..., "cradle", "execute", ...)`
 
 **Body parameters**
 
@@ -548,6 +826,34 @@ let spec = client.build_request("cradle", "execute", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "execute", map[string]any{
+    "lane": "<lane>",
+    "source": "<source>",
+    "entrypoint": "<entrypoint>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"entrypoint\":\"<entrypoint>\",\"lane\":\"<lane>\",\"source\":\"<source>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "execute",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### health
@@ -558,7 +864,7 @@ Check sandbox-daemon liveness; returns status, version, and uptime.
 
 - **Producer operationId:** `health`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.cradle.health()` · Python `client.cradle.health()` · Rust `build_request("cradle", "health", params)`
+- **Call as:** TypeScript `client.cradle.health()` · Python `client.cradle.health()` · Rust `build_request("cradle", "health", params)` · Go `BuildRequest("cradle", "health", params)` · C `tempera_build_request(..., "cradle", "health", ...)`
 
 <CodeGroup>
 
@@ -576,6 +882,30 @@ let spec = client.build_request("cradle", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getIntegrationContract
@@ -586,7 +916,7 @@ Fetch the ecosystem integration contract this daemon implements.
 
 - **Producer operationId:** `projects.integration.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getIntegrationContract()` · Python `client.cradle.get_integration_contract()` · Rust `build_request("cradle", "get_integration_contract", params)`
+- **Call as:** TypeScript `client.cradle.getIntegrationContract()` · Python `client.cradle.get_integration_contract()` · Rust `build_request("cradle", "get_integration_contract", params)` · Go `BuildRequest("cradle", "getIntegrationContract", params)` · C `tempera_build_request(..., "cradle", "getIntegrationContract", ...)`
 
 <CodeGroup>
 
@@ -604,6 +934,30 @@ let spec = client.build_request("cradle", "get_integration_contract", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "getIntegrationContract", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "getIntegrationContract",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createJob
@@ -614,7 +968,7 @@ Submit an asynchronous sandbox job; returns an operation handle to poll.
 
 - **Producer operationId:** `projects.jobs.create`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.createJob()` · Python `client.cradle.create_job()` · Rust `build_request("cradle", "create_job", params)`
+- **Call as:** TypeScript `client.cradle.createJob()` · Python `client.cradle.create_job()` · Rust `build_request("cradle", "create_job", params)` · Go `BuildRequest("cradle", "createJob", params)` · C `tempera_build_request(..., "cradle", "createJob", ...)`
 
 **Body parameters**
 
@@ -656,6 +1010,34 @@ let spec = client.build_request("cradle", "create_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "createJob", map[string]any{
+    "lane": "<lane>",
+    "source": "<source>",
+    "entrypoint": "<entrypoint>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"entrypoint\":\"<entrypoint>\",\"lane\":\"<lane>\",\"source\":\"<source>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "createJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### cancelJob
@@ -666,7 +1048,7 @@ Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).
 
 - **Producer operationId:** `projects.jobs.cancel`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.cancelJob()` · Python `client.cradle.cancel_job()` · Rust `build_request("cradle", "cancel_job", params)`
+- **Call as:** TypeScript `client.cradle.cancelJob()` · Python `client.cradle.cancel_job()` · Rust `build_request("cradle", "cancel_job", params)` · Go `BuildRequest("cradle", "cancelJob", params)` · C `tempera_build_request(..., "cradle", "cancelJob", ...)`
 
 **Path parameters**
 
@@ -696,6 +1078,34 @@ let spec = client.build_request("cradle", "cancel_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "cancelJob", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "cancelJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getJob
@@ -706,7 +1116,7 @@ Fetch a sandbox job's status and result.
 
 - **Producer operationId:** `projects.jobs.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
+- **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)` · Go `BuildRequest("cradle", "getJob", params)` · C `tempera_build_request(..., "cradle", "getJob", ...)`
 
 **Path parameters**
 
@@ -736,6 +1146,34 @@ let spec = client.build_request("cradle", "get_job", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "getJob", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "getJob",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsModulesCreate
@@ -746,7 +1184,7 @@ Call POST /v1/projects/\{project\}/modules.
 
 - **Producer operationId:** `projects.modules.create`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsModulesCreate()` · Python `client.cradle.projects_modules_create()` · Rust `build_request("cradle", "projects_modules_create", params)`
+- **Call as:** TypeScript `client.cradle.projectsModulesCreate()` · Python `client.cradle.projects_modules_create()` · Rust `build_request("cradle", "projects_modules_create", params)` · Go `BuildRequest("cradle", "projectsModulesCreate", params)` · C `tempera_build_request(..., "cradle", "projectsModulesCreate", ...)`
 
 **Path parameters**
 
@@ -785,6 +1223,35 @@ let spec = client.build_request("cradle", "projects_modules_create", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsModulesCreate", map[string]any{
+    "project": "<project>",
+    "bytesBase64": "<bytesBase64>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"bytesBase64\":\"<bytesBase64>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsModulesCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### projectsModulesGet
@@ -795,7 +1262,7 @@ Call GET /v1/projects/\{project\}/modules/\{sha256\}.
 
 - **Producer operationId:** `projects.modules.get`
 - **Auth:** Product bearer — an access token minted for audience `cradle`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.cradle.projectsModulesGet()` · Python `client.cradle.projects_modules_get()` · Rust `build_request("cradle", "projects_modules_get", params)`
+- **Call as:** TypeScript `client.cradle.projectsModulesGet()` · Python `client.cradle.projects_modules_get()` · Rust `build_request("cradle", "projects_modules_get", params)` · Go `BuildRequest("cradle", "projectsModulesGet", params)` · C `tempera_build_request(..., "cradle", "projectsModulesGet", ...)`
 
 **Path parameters**
 
@@ -827,6 +1294,36 @@ let spec = client.build_request("cradle", "projects_modules_get", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("cradle", "projectsModulesGet", map[string]any{
+    "project": "<project>",
+    "sha256": "<sha256>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"project", "<project>"},
+    {"sha256", "<sha256>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "cradle", "projectsModulesGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

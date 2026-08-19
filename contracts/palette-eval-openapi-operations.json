@@ -88,7 +88,7 @@
   "requestSchema": "#/components/schemas/ImportTemperaEvidenceRequest",
   "requiredScope": "eval:run",
   "reviewUrl": "https://github.com/tempera-dev/palette/pull/23",
-  "revision": "332a6ea6baafbf19511dc6dee5077dd62cc9b0ad",
+  "revision": "cf55d3f979b4374d221f7b368fff26f9875ed710",
   "schemaVersion": 1,
   "sourceBlob": "ef6ccc33b3dad70c15d89c89190b877e8c342746",
   "sourcePath": "sdks/openapi/palette-api.json",

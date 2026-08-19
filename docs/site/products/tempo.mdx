@@ -34,7 +34,7 @@ Call GET /.well-known/agent-card.json.
 
 - **Producer operationId:** `agentCard`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.agentCard()` · Python `client.tempo.agent_card()` · Rust `build_request("tempo", "agent_card", params)`
+- **Call as:** TypeScript `client.tempo.agentCard()` · Python `client.tempo.agent_card()` · Rust `build_request("tempo", "agent_card", params)` · Go `BuildRequest("tempo", "agentCard", params)` · C `tempera_build_request(..., "tempo", "agentCard", ...)`
 
 <CodeGroup>
 
@@ -52,6 +52,30 @@ let spec = client.build_request("tempo", "agent_card", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "agentCard", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "agentCard",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### agentJson
@@ -62,7 +86,7 @@ Call GET /.well-known/agent.json.
 
 - **Producer operationId:** `agentJson`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.agentJson()` · Python `client.tempo.agent_json()` · Rust `build_request("tempo", "agent_json", params)`
+- **Call as:** TypeScript `client.tempo.agentJson()` · Python `client.tempo.agent_json()` · Rust `build_request("tempo", "agent_json", params)` · Go `BuildRequest("tempo", "agentJson", params)` · C `tempera_build_request(..., "tempo", "agentJson", ...)`
 
 <CodeGroup>
 
@@ -80,6 +104,30 @@ let spec = client.build_request("tempo", "agent_json", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "agentJson", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "agentJson",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### health
@@ -90,7 +138,7 @@ Check tempod liveness; returns \{ok: true\}.
 
 - **Producer operationId:** `health`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.tempo.health()` · Python `client.tempo.health()` · Rust `build_request("tempo", "health", params)`
+- **Call as:** TypeScript `client.tempo.health()` · Python `client.tempo.health()` · Rust `build_request("tempo", "health", params)` · Go `BuildRequest("tempo", "health", params)` · C `tempera_build_request(..., "tempo", "health", ...)`
 
 <CodeGroup>
 
@@ -108,6 +156,30 @@ let spec = client.build_request("tempo", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### metrics
@@ -118,7 +190,7 @@ Call GET /metrics.
 
 - **Producer operationId:** `metrics`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.metrics()` · Python `client.tempo.metrics()` · Rust `build_request("tempo", "metrics", params)`
+- **Call as:** TypeScript `client.tempo.metrics()` · Python `client.tempo.metrics()` · Rust `build_request("tempo", "metrics", params)` · Go `BuildRequest("tempo", "metrics", params)` · C `tempera_build_request(..., "tempo", "metrics", ...)`
 
 <CodeGroup>
 
@@ -136,6 +208,30 @@ let spec = client.build_request("tempo", "metrics", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "metrics", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "metrics",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### openapi
@@ -146,7 +242,7 @@ Fetch tempod's OpenAPI document, generated at runtime for this host.
 
 - **Producer operationId:** `openapi`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.tempo.openapi()` · Python `client.tempo.openapi()` · Rust `build_request("tempo", "openapi", params)`
+- **Call as:** TypeScript `client.tempo.openapi()` · Python `client.tempo.openapi()` · Rust `build_request("tempo", "openapi", params)` · Go `BuildRequest("tempo", "openapi", params)` · C `tempera_build_request(..., "tempo", "openapi", ...)`
 
 <CodeGroup>
 
@@ -164,6 +260,30 @@ let spec = client.build_request("tempo", "openapi", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "openapi", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "openapi",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ready
@@ -174,7 +294,7 @@ Check tempod readiness, including engine attachment, drain state, and session ca
 
 - **Producer operationId:** `ready`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.ready()` · Python `client.tempo.ready()` · Rust `build_request("tempo", "ready", params)`
+- **Call as:** TypeScript `client.tempo.ready()` · Python `client.tempo.ready()` · Rust `build_request("tempo", "ready", params)` · Go `BuildRequest("tempo", "ready", params)` · C `tempera_build_request(..., "tempo", "ready", ...)`
 
 <CodeGroup>
 
@@ -192,6 +312,30 @@ let spec = client.build_request("tempo", "ready", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "ready", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "ready",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### drain
@@ -202,7 +346,7 @@ Call POST /drain.
 
 - **Producer operationId:** `drain`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.drain()` · Python `client.tempo.drain()` · Rust `build_request("tempo", "drain", params)`
+- **Call as:** TypeScript `client.tempo.drain()` · Python `client.tempo.drain()` · Rust `build_request("tempo", "drain", params)` · Go `BuildRequest("tempo", "drain", params)` · C `tempera_build_request(..., "tempo", "drain", ...)`
 
 <CodeGroup>
 
@@ -220,6 +364,30 @@ let spec = client.build_request("tempo", "drain", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "drain", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "drain",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listRuns
@@ -230,7 +398,7 @@ List agent runs, optionally filtered to one session.
 
 - **Producer operationId:** `listRuns`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.listRuns()` · Python `client.tempo.list_runs()` · Rust `build_request("tempo", "list_runs", params)`
+- **Call as:** TypeScript `client.tempo.listRuns()` · Python `client.tempo.list_runs()` · Rust `build_request("tempo", "list_runs", params)` · Go `BuildRequest("tempo", "listRuns", params)` · C `tempera_build_request(..., "tempo", "listRuns", ...)`
 
 **Query parameters**
 
@@ -265,6 +433,33 @@ let spec = client.build_request("tempo", "list_runs", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "listRuns", map[string]any{
+    "sessionId": "<sessionId>",
+    "pageSize": "<pageSize>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "sessionId=<sessionId>&pageSize=<pageSize>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "listRuns",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getRun
@@ -275,7 +470,7 @@ Fetch one agent run with its state.
 
 - **Producer operationId:** `getRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.getRun()` · Python `client.tempo.get_run()` · Rust `build_request("tempo", "get_run", params)`
+- **Call as:** TypeScript `client.tempo.getRun()` · Python `client.tempo.get_run()` · Rust `build_request("tempo", "get_run", params)` · Go `BuildRequest("tempo", "getRun", params)` · C `tempera_build_request(..., "tempo", "getRun", ...)`
 
 **Path parameters**
 
@@ -305,6 +500,34 @@ let spec = client.build_request("tempo", "get_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "getRun", map[string]any{
+    "runId": "<runId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "getRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### runEvents
@@ -315,7 +538,7 @@ Call GET /runs/\{run_id\}/events.
 
 - **Producer operationId:** `runEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.runEvents()` · Python `client.tempo.run_events()` · Rust `build_request("tempo", "run_events", params)`
+- **Call as:** TypeScript `client.tempo.runEvents()` · Python `client.tempo.run_events()` · Rust `build_request("tempo", "run_events", params)` · Go `BuildRequest("tempo", "runEvents", params)` · C `tempera_build_request(..., "tempo", "runEvents", ...)`
 
 **Path parameters**
 
@@ -354,6 +577,35 @@ let spec = client.build_request("tempo", "run_events", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "runEvents", map[string]any{
+    "runId": "<runId>",
+    "afterSeq": "<afterSeq>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "afterSeq=<afterSeq>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "runEvents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### cancelRun
@@ -364,7 +616,7 @@ Cancel an agent run.
 
 - **Producer operationId:** `cancelRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.cancelRun()` · Python `client.tempo.cancel_run()` · Rust `build_request("tempo", "cancel_run", params)`
+- **Call as:** TypeScript `client.tempo.cancelRun()` · Python `client.tempo.cancel_run()` · Rust `build_request("tempo", "cancel_run", params)` · Go `BuildRequest("tempo", "cancelRun", params)` · C `tempera_build_request(..., "tempo", "cancelRun", ...)`
 
 **Path parameters**
 
@@ -394,6 +646,34 @@ let spec = client.build_request("tempo", "cancel_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "cancelRun", map[string]any{
+    "runId": "<runId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "cancelRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### resumeRun
@@ -404,7 +684,7 @@ Resume an agent run after a human handoff completes.
 
 - **Producer operationId:** `resumeRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.resumeRun()` · Python `client.tempo.resume_run()` · Rust `build_request("tempo", "resume_run", params)`
+- **Call as:** TypeScript `client.tempo.resumeRun()` · Python `client.tempo.resume_run()` · Rust `build_request("tempo", "resume_run", params)` · Go `BuildRequest("tempo", "resumeRun", params)` · C `tempera_build_request(..., "tempo", "resumeRun", ...)`
 
 **Path parameters**
 
@@ -434,6 +714,34 @@ let spec = client.build_request("tempo", "resume_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "resumeRun", map[string]any{
+    "runId": "<runId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"runId", "<runId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "resumeRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSessions
@@ -444,7 +752,7 @@ List browser sessions with their state and creation time.
 
 - **Producer operationId:** `listSessions`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.listSessions()` · Python `client.tempo.list_sessions()` · Rust `build_request("tempo", "list_sessions", params)`
+- **Call as:** TypeScript `client.tempo.listSessions()` · Python `client.tempo.list_sessions()` · Rust `build_request("tempo", "list_sessions", params)` · Go `BuildRequest("tempo", "listSessions", params)` · C `tempera_build_request(..., "tempo", "listSessions", ...)`
 
 **Query parameters**
 
@@ -478,6 +786,33 @@ let spec = client.build_request("tempo", "list_sessions", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "listSessions", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "listSessions",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createSession
@@ -488,7 +823,7 @@ Open a browser session at a URL; driverless sessions skip engine attachment.
 
 - **Producer operationId:** `createSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.createSession()` · Python `client.tempo.create_session()` · Rust `build_request("tempo", "create_session", params)`
+- **Call as:** TypeScript `client.tempo.createSession()` · Python `client.tempo.create_session()` · Rust `build_request("tempo", "create_session", params)` · Go `BuildRequest("tempo", "createSession", params)` · C `tempera_build_request(..., "tempo", "createSession", ...)`
 
 **Body parameters**
 
@@ -522,6 +857,33 @@ let spec = client.build_request("tempo", "create_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "createSession", map[string]any{
+    "url": "<url>",
+    "driverless": "<driverless>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"driverless\":\"<driverless>\",\"url\":\"<url>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "createSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### closeSession
@@ -532,7 +894,7 @@ Close a browser session and release its engine resources.
 
 - **Producer operationId:** `closeSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.closeSession()` · Python `client.tempo.close_session()` · Rust `build_request("tempo", "close_session", params)`
+- **Call as:** TypeScript `client.tempo.closeSession()` · Python `client.tempo.close_session()` · Rust `build_request("tempo", "close_session", params)` · Go `BuildRequest("tempo", "closeSession", params)` · C `tempera_build_request(..., "tempo", "closeSession", ...)`
 
 **Path parameters**
 
@@ -562,6 +924,34 @@ let spec = client.build_request("tempo", "close_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "closeSession", map[string]any{
+    "sessionId": "<sessionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "closeSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### grantConfirmation
@@ -572,7 +962,7 @@ Grant a pending policy confirmation and receive a single-use grant token.
 
 - **Producer operationId:** `grantSessionConfirmation`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.grantConfirmation()` · Python `client.tempo.grant_confirmation()` · Rust `build_request("tempo", "grant_confirmation", params)`
+- **Call as:** TypeScript `client.tempo.grantConfirmation()` · Python `client.tempo.grant_confirmation()` · Rust `build_request("tempo", "grant_confirmation", params)` · Go `BuildRequest("tempo", "grantConfirmation", params)` · C `tempera_build_request(..., "tempo", "grantConfirmation", ...)`
 
 **Path parameters**
 
@@ -606,6 +996,36 @@ let spec = client.build_request("tempo", "grant_confirmation", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "grantConfirmation", map[string]any{
+    "sessionId": "<sessionId>",
+    "confirmationId": "<confirmationId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+    {"confirmationId", "<confirmationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "grantConfirmation",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### sessionEvents
@@ -616,7 +1036,7 @@ Fetch the session's event window after a sequence number.
 
 - **Producer operationId:** `sessionEvents`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.sessionEvents()` · Python `client.tempo.session_events()` · Rust `build_request("tempo", "session_events", params)`
+- **Call as:** TypeScript `client.tempo.sessionEvents()` · Python `client.tempo.session_events()` · Rust `build_request("tempo", "session_events", params)` · Go `BuildRequest("tempo", "sessionEvents", params)` · C `tempera_build_request(..., "tempo", "sessionEvents", ...)`
 
 **Path parameters**
 
@@ -655,6 +1075,35 @@ let spec = client.build_request("tempo", "session_events", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "sessionEvents", map[string]any{
+    "sessionId": "<sessionId>",
+    "afterSeq": "<afterSeq>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "afterSeq=<afterSeq>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "sessionEvents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### managerSession
@@ -665,7 +1114,7 @@ Call GET /sessions/\{session_id\}/manager.
 
 - **Producer operationId:** `managerSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.managerSession()` · Python `client.tempo.manager_session()` · Rust `build_request("tempo", "manager_session", params)`
+- **Call as:** TypeScript `client.tempo.managerSession()` · Python `client.tempo.manager_session()` · Rust `build_request("tempo", "manager_session", params)` · Go `BuildRequest("tempo", "managerSession", params)` · C `tempera_build_request(..., "tempo", "managerSession", ...)`
 
 **Path parameters**
 
@@ -695,6 +1144,34 @@ let spec = client.build_request("tempo", "manager_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "managerSession", map[string]any{
+    "sessionId": "<sessionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "managerSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createRun
@@ -705,7 +1182,7 @@ Start an agent run against the session with a goal, action budget, and round lim
 
 - **Producer operationId:** `createSessionRun`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.createRun()` · Python `client.tempo.create_run()` · Rust `build_request("tempo", "create_run", params)`
+- **Call as:** TypeScript `client.tempo.createRun()` · Python `client.tempo.create_run()` · Rust `build_request("tempo", "create_run", params)` · Go `BuildRequest("tempo", "createRun", params)` · C `tempera_build_request(..., "tempo", "createRun", ...)`
 
 **Path parameters**
 
@@ -753,6 +1230,37 @@ let spec = client.build_request("tempo", "create_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "createRun", map[string]any{
+    "sessionId": "<sessionId>",
+    "actions": "<actions>",
+    "goal": "<goal>",
+    "maxRounds": "<maxRounds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"actions\":\"<actions>\",\"goal\":\"<goal>\",\"maxRounds\":\"<maxRounds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "createRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### registerSessionSurface
@@ -763,7 +1271,7 @@ Call POST /sessions/\{session_id\}/surfaces.
 
 - **Producer operationId:** `registerSessionSurface`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.registerSessionSurface()` · Python `client.tempo.register_session_surface()` · Rust `build_request("tempo", "register_session_surface", params)`
+- **Call as:** TypeScript `client.tempo.registerSessionSurface()` · Python `client.tempo.register_session_surface()` · Rust `build_request("tempo", "register_session_surface", params)` · Go `BuildRequest("tempo", "registerSessionSurface", params)` · C `tempera_build_request(..., "tempo", "registerSessionSurface", ...)`
 
 **Path parameters**
 
@@ -813,6 +1321,37 @@ let spec = client.build_request("tempo", "register_session_surface", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "registerSessionSurface", map[string]any{
+    "sessionId": "<sessionId>",
+    "engineTier": "<engineTier>",
+    "label": "<label>",
+    "platform": "<platform>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"engineTier\":\"<engineTier>\",\"label\":\"<label>\",\"platform\":\"<platform>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "registerSessionSurface",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### removeSessionSurface
@@ -823,7 +1362,7 @@ Call DELETE /sessions/\{session_id\}/surfaces/\{surface_id\}.
 
 - **Producer operationId:** `removeSessionSurface`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.removeSessionSurface()` · Python `client.tempo.remove_session_surface()` · Rust `build_request("tempo", "remove_session_surface", params)`
+- **Call as:** TypeScript `client.tempo.removeSessionSurface()` · Python `client.tempo.remove_session_surface()` · Rust `build_request("tempo", "remove_session_surface", params)` · Go `BuildRequest("tempo", "removeSessionSurface", params)` · C `tempera_build_request(..., "tempo", "removeSessionSurface", ...)`
 
 **Path parameters**
 
@@ -857,6 +1396,36 @@ let spec = client.build_request("tempo", "remove_session_surface", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "removeSessionSurface", map[string]any{
+    "sessionId": "<sessionId>",
+    "surfaceId": "<surfaceId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+    {"surfaceId", "<surfaceId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "removeSessionSurface",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### actBatch
@@ -867,7 +1436,7 @@ Apply a batch of semantic actions with policy gating; returns the applied diff o
 
 - **Producer operationId:** `actBatchSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.actBatch()` · Python `client.tempo.act_batch()` · Rust `build_request("tempo", "act_batch", params)`
+- **Call as:** TypeScript `client.tempo.actBatch()` · Python `client.tempo.act_batch()` · Rust `build_request("tempo", "act_batch", params)` · Go `BuildRequest("tempo", "actBatch", params)` · C `tempera_build_request(..., "tempo", "actBatch", ...)`
 
 **Path parameters**
 
@@ -917,6 +1486,37 @@ let spec = client.build_request("tempo", "act_batch", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "actBatch", map[string]any{
+    "sessionId": "<sessionId>",
+    "batch": "<batch>",
+    "confirmationGrant": "<confirmationGrant>",
+    "confirmed": "<confirmed>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"batch\":\"<batch>\",\"confirmationGrant\":\"<confirmationGrant>\",\"confirmed\":\"<confirmed>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "actBatch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### adoptSession
@@ -927,7 +1527,7 @@ Let a human surface take write ownership of the session and receive an adoption 
 
 - **Producer operationId:** `adoptSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.adoptSession()` · Python `client.tempo.adopt_session()` · Rust `build_request("tempo", "adopt_session", params)`
+- **Call as:** TypeScript `client.tempo.adoptSession()` · Python `client.tempo.adopt_session()` · Rust `build_request("tempo", "adopt_session", params)` · Go `BuildRequest("tempo", "adoptSession", params)` · C `tempera_build_request(..., "tempo", "adoptSession", ...)`
 
 **Path parameters**
 
@@ -977,6 +1577,37 @@ let spec = client.build_request("tempo", "adopt_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "adoptSession", map[string]any{
+    "sessionId": "<sessionId>",
+    "engineTier": "<engineTier>",
+    "label": "<label>",
+    "platform": "<platform>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"engineTier\":\"<engineTier>\",\"label\":\"<label>\",\"platform\":\"<platform>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "adoptSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### handoffSession
@@ -987,7 +1618,7 @@ Return write ownership of the session to the agent plane.
 
 - **Producer operationId:** `handoffSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.handoffSession()` · Python `client.tempo.handoff_session()` · Rust `build_request("tempo", "handoff_session", params)`
+- **Call as:** TypeScript `client.tempo.handoffSession()` · Python `client.tempo.handoff_session()` · Rust `build_request("tempo", "handoff_session", params)` · Go `BuildRequest("tempo", "handoffSession", params)` · C `tempera_build_request(..., "tempo", "handoffSession", ...)`
 
 **Path parameters**
 
@@ -1017,6 +1648,34 @@ let spec = client.build_request("tempo", "handoff_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "handoffSession", map[string]any{
+    "sessionId": "<sessionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "handoffSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### observe
@@ -1027,7 +1686,7 @@ Fetch the session's compiled structured observation (ranked, stably-identified e
 
 - **Producer operationId:** `observeSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.observe()` · Python `client.tempo.observe()` · Rust `build_request("tempo", "observe", params)`
+- **Call as:** TypeScript `client.tempo.observe()` · Python `client.tempo.observe()` · Rust `build_request("tempo", "observe", params)` · Go `BuildRequest("tempo", "observe", params)` · C `tempera_build_request(..., "tempo", "observe", ...)`
 
 **Path parameters**
 
@@ -1057,6 +1716,34 @@ let spec = client.build_request("tempo", "observe", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "observe", map[string]any{
+    "sessionId": "<sessionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "observe",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### screenshot
@@ -1067,7 +1754,7 @@ Capture a PNG screenshot of the session, optionally annotated with set-of-marks.
 
 - **Producer operationId:** `screenshotSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.screenshot()` · Python `client.tempo.screenshot()` · Rust `build_request("tempo", "screenshot", params)`
+- **Call as:** TypeScript `client.tempo.screenshot()` · Python `client.tempo.screenshot()` · Rust `build_request("tempo", "screenshot", params)` · Go `BuildRequest("tempo", "screenshot", params)` · C `tempera_build_request(..., "tempo", "screenshot", ...)`
 
 **Path parameters**
 
@@ -1106,6 +1793,35 @@ let spec = client.build_request("tempo", "screenshot", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("tempo", "screenshot", map[string]any{
+    "sessionId": "<sessionId>",
+    "setOfMarks": "<setOfMarks>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "setOfMarks=<setOfMarks>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "screenshot",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### transformSession
@@ -1116,7 +1832,7 @@ Call POST /sessions/\{session_id\}/transform.
 
 - **Producer operationId:** `transformSession`
 - **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
-- **Call as:** TypeScript `client.tempo.transformSession()` · Python `client.tempo.transform_session()` · Rust `build_request("tempo", "transform_session", params)`
+- **Call as:** TypeScript `client.tempo.transformSession()` · Python `client.tempo.transform_session()` · Rust `build_request("tempo", "transform_session", params)` · Go `BuildRequest("tempo", "transformSession", params)` · C `tempera_build_request(..., "tempo", "transformSession", ...)`
 
 **Path parameters**
 
@@ -1164,6 +1880,37 @@ let spec = client.build_request("tempo", "transform_session", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("tempo", "transformSession", map[string]any{
+    "sessionId": "<sessionId>",
+    "lane": "<lane>",
+    "source": "<source>",
+    "determinism": "<determinism>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"sessionId", "<sessionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"determinism\":\"<determinism>\",\"lane\":\"<lane>\",\"source\":\"<source>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "tempo", "transformSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

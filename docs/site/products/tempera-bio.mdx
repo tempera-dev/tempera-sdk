@@ -38,7 +38,7 @@ Derive campaign state.
 - **Producer operationId:** `deriveCampaignState`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:decision:write`
-- **Call as:** TypeScript `client.temperaBio.deriveCampaignState()` · Python `client.tempera_bio.derive_campaign_state()` · Rust `build_request("tempera_bio", "derive_campaign_state", params)`
+- **Call as:** TypeScript `client.temperaBio.deriveCampaignState()` · Python `client.tempera_bio.derive_campaign_state()` · Rust `build_request("tempera_bio", "derive_campaign_state", params)` · Go `BuildRequest("temperaBio", "deriveCampaignState", params)` · C `tempera_build_request(..., "temperaBio", "deriveCampaignState", ...)`
 
 **Body parameters**
 
@@ -80,6 +80,35 @@ let spec = client.build_request("tempera_bio", "derive_campaign_state", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "deriveCampaignState", map[string]any{
+    "candidateSet": "<candidateSet>",
+    "hypothesis": "<hypothesis>",
+    "program": "<program>",
+    "rounds": "<rounds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidateSet\":\"<candidateSet>\",\"hypothesis\":\"<hypothesis>\",\"program\":\"<program>\",\"rounds\":\"<rounds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "deriveCampaignState",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareCandidateSet
@@ -91,7 +120,7 @@ Prepare candidate set.
 - **Producer operationId:** `prepareCandidateSet`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareCandidateSet()` · Python `client.tempera_bio.prepare_candidate_set()` · Rust `build_request("tempera_bio", "prepare_candidate_set", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareCandidateSet()` · Python `client.tempera_bio.prepare_candidate_set()` · Rust `build_request("tempera_bio", "prepare_candidate_set", params)` · Go `BuildRequest("temperaBio", "prepareCandidateSet", params)` · C `tempera_build_request(..., "temperaBio", "prepareCandidateSet", ...)`
 
 **Body parameters**
 
@@ -121,6 +150,32 @@ let spec = client.build_request("tempera_bio", "prepare_candidate_set", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareCandidateSet", map[string]any{
+    "candidates": "<candidates>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidates\":\"<candidates>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareCandidateSet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareDatasetReleaseManifest
@@ -132,7 +187,7 @@ Prepare dataset release manifest.
 - **Producer operationId:** `prepareDatasetReleaseManifest`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareDatasetReleaseManifest()` · Python `client.tempera_bio.prepare_dataset_release_manifest()` · Rust `build_request("tempera_bio", "prepare_dataset_release_manifest", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareDatasetReleaseManifest()` · Python `client.tempera_bio.prepare_dataset_release_manifest()` · Rust `build_request("tempera_bio", "prepare_dataset_release_manifest", params)` · Go `BuildRequest("temperaBio", "prepareDatasetReleaseManifest", params)` · C `tempera_build_request(..., "temperaBio", "prepareDatasetReleaseManifest", ...)`
 
 **Body parameters**
 
@@ -170,6 +225,34 @@ let spec = client.build_request("tempera_bio", "prepare_dataset_release_manifest
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareDatasetReleaseManifest", map[string]any{
+    "decision": "<decision>",
+    "program": "<program>",
+    "verifierReceipts": "<verifierReceipts>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"decision\":\"<decision>\",\"program\":\"<program>\",\"verifierReceipts\":\"<verifierReceipts>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareDatasetReleaseManifest",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### deriveDecision
@@ -181,7 +264,7 @@ Derive decision.
 - **Producer operationId:** `deriveDecision`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:decision:write`
-- **Call as:** TypeScript `client.temperaBio.deriveDecision()` · Python `client.tempera_bio.derive_decision()` · Rust `build_request("tempera_bio", "derive_decision", params)`
+- **Call as:** TypeScript `client.temperaBio.deriveDecision()` · Python `client.tempera_bio.derive_decision()` · Rust `build_request("tempera_bio", "derive_decision", params)` · Go `BuildRequest("temperaBio", "deriveDecision", params)` · C `tempera_build_request(..., "temperaBio", "deriveDecision", ...)`
 
 **Body parameters**
 
@@ -227,6 +310,36 @@ let spec = client.build_request("tempera_bio", "derive_decision", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "deriveDecision", map[string]any{
+    "candidateSet": "<candidateSet>",
+    "experimentProposal": "<experimentProposal>",
+    "hypothesis": "<hypothesis>",
+    "program": "<program>",
+    "verifierReceipts": "<verifierReceipts>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidateSet\":\"<candidateSet>\",\"experimentProposal\":\"<experimentProposal>\",\"hypothesis\":\"<hypothesis>\",\"program\":\"<program>\",\"verifierReceipts\":\"<verifierReceipts>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "deriveDecision",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareExperimentProposal
@@ -238,7 +351,7 @@ Prepare experiment proposal.
 - **Producer operationId:** `prepareExperimentProposal`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareExperimentProposal()` · Python `client.tempera_bio.prepare_experiment_proposal()` · Rust `build_request("tempera_bio", "prepare_experiment_proposal", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareExperimentProposal()` · Python `client.tempera_bio.prepare_experiment_proposal()` · Rust `build_request("tempera_bio", "prepare_experiment_proposal", params)` · Go `BuildRequest("temperaBio", "prepareExperimentProposal", params)` · C `tempera_build_request(..., "temperaBio", "prepareExperimentProposal", ...)`
 
 **Body parameters**
 
@@ -276,6 +389,34 @@ let spec = client.build_request("tempera_bio", "prepare_experiment_proposal", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareExperimentProposal", map[string]any{
+    "candidateSet": "<candidateSet>",
+    "program": "<program>",
+    "selectedCandidates": "<selectedCandidates>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidateSet\":\"<candidateSet>\",\"program\":\"<program>\",\"selectedCandidates\":\"<selectedCandidates>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareExperimentProposal",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareExperimentProposalFromGymBatch
@@ -287,7 +428,7 @@ Prepare experiment proposal from gym batch.
 - **Producer operationId:** `prepareExperimentProposalFromGymBatch`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareExperimentProposalFromGymBatch()` · Python `client.tempera_bio.prepare_experiment_proposal_from_gym_batch()` · Rust `build_request("tempera_bio", "prepare_experiment_proposal_from_gym_batch", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareExperimentProposalFromGymBatch()` · Python `client.tempera_bio.prepare_experiment_proposal_from_gym_batch()` · Rust `build_request("tempera_bio", "prepare_experiment_proposal_from_gym_batch", params)` · Go `BuildRequest("temperaBio", "prepareExperimentProposalFromGymBatch", params)` · C `tempera_build_request(..., "temperaBio", "prepareExperimentProposalFromGymBatch", ...)`
 
 **Body parameters**
 
@@ -329,6 +470,35 @@ let spec = client.build_request("tempera_bio", "prepare_experiment_proposal_from
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareExperimentProposalFromGymBatch", map[string]any{
+    "batchProposal": "<batchProposal>",
+    "campaignContext": "<campaignContext>",
+    "candidateSet": "<candidateSet>",
+    "program": "<program>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"batchProposal\":\"<batchProposal>\",\"campaignContext\":\"<campaignContext>\",\"candidateSet\":\"<candidateSet>\",\"program\":\"<program>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareExperimentProposalFromGymBatch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareHypothesis
@@ -340,7 +510,7 @@ Prepare hypothesis.
 - **Producer operationId:** `prepareHypothesis`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareHypothesis()` · Python `client.tempera_bio.prepare_hypothesis()` · Rust `build_request("tempera_bio", "prepare_hypothesis", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareHypothesis()` · Python `client.tempera_bio.prepare_hypothesis()` · Rust `build_request("tempera_bio", "prepare_hypothesis", params)` · Go `BuildRequest("temperaBio", "prepareHypothesis", params)` · C `tempera_build_request(..., "temperaBio", "prepareHypothesis", ...)`
 
 **Body parameters**
 
@@ -370,6 +540,32 @@ let spec = client.build_request("tempera_bio", "prepare_hypothesis", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareHypothesis", map[string]any{
+    "hypothesis": "<hypothesis>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"hypothesis\":\"<hypothesis>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareHypothesis",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### verifyMeasurement
@@ -381,7 +577,7 @@ Verify measurement.
 - **Producer operationId:** `verifyMeasurement`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:measurement:verify`
-- **Call as:** TypeScript `client.temperaBio.verifyMeasurement()` · Python `client.tempera_bio.verify_measurement()` · Rust `build_request("tempera_bio", "verify_measurement", params)`
+- **Call as:** TypeScript `client.temperaBio.verifyMeasurement()` · Python `client.tempera_bio.verify_measurement()` · Rust `build_request("tempera_bio", "verify_measurement", params)` · Go `BuildRequest("temperaBio", "verifyMeasurement", params)` · C `tempera_build_request(..., "temperaBio", "verifyMeasurement", ...)`
 
 **Body parameters**
 
@@ -431,6 +627,37 @@ let spec = client.build_request("tempera_bio", "verify_measurement", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "verifyMeasurement", map[string]any{
+    "candidate": "<candidate>",
+    "experimentProposal": "<experimentProposal>",
+    "hypothesis": "<hypothesis>",
+    "identitySignature": "<identitySignature>",
+    "program": "<program>",
+    "rawMeasurementBase64": "<rawMeasurementBase64>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidate\":\"<candidate>\",\"experimentProposal\":\"<experimentProposal>\",\"hypothesis\":\"<hypothesis>\",\"identitySignature\":\"<identitySignature>\",\"program\":\"<program>\",\"rawMeasurementBase64\":\"<rawMeasurementBase64>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "verifyMeasurement",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### prepareProgram
@@ -442,7 +669,7 @@ Prepare program.
 - **Producer operationId:** `prepareProgram`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:proposal:write`
-- **Call as:** TypeScript `client.temperaBio.prepareProgram()` · Python `client.tempera_bio.prepare_program()` · Rust `build_request("tempera_bio", "prepare_program", params)`
+- **Call as:** TypeScript `client.temperaBio.prepareProgram()` · Python `client.tempera_bio.prepare_program()` · Rust `build_request("tempera_bio", "prepare_program", params)` · Go `BuildRequest("temperaBio", "prepareProgram", params)` · C `tempera_build_request(..., "temperaBio", "prepareProgram", ...)`
 
 **Body parameters**
 
@@ -480,6 +707,34 @@ let spec = client.build_request("tempera_bio", "prepare_program", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaBio", "prepareProgram", map[string]any{
+    "candidateSet": "<candidateSet>",
+    "configuration": "<configuration>",
+    "hypothesis": "<hypothesis>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"candidateSet\":\"<candidateSet>\",\"configuration\":\"<configuration>\",\"hypothesis\":\"<hypothesis>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "prepareProgram",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### ingestMaveDBScoreSet
@@ -491,7 +746,7 @@ Ingest mave d b score set.
 - **Producer operationId:** `ingestMaveDBScoreSet`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:source:read`
-- **Call as:** TypeScript `client.temperaBio.ingestMaveDBScoreSet()` · Python `client.tempera_bio.ingest_mave_db_score_set()` · Rust `build_request("tempera_bio", "ingest_mave_db_score_set", params)`
+- **Call as:** TypeScript `client.temperaBio.ingestMaveDBScoreSet()` · Python `client.tempera_bio.ingest_mave_db_score_set()` · Rust `build_request("tempera_bio", "ingest_mave_db_score_set", params)` · Go `BuildRequest("temperaBio", "ingestMaveDBScoreSet", params)` · C `tempera_build_request(..., "temperaBio", "ingestMaveDBScoreSet", ...)`
 
 **Body parameters**
 
@@ -519,6 +774,32 @@ let spec = client.build_request("tempera_bio", "ingest_mave_db_score_set", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaBio", "ingestMaveDBScoreSet", map[string]any{
+    "scoreSetUrn": "<scoreSetUrn>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"scoreSetUrn\":\"<scoreSetUrn>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaBio", "ingestMaveDBScoreSet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

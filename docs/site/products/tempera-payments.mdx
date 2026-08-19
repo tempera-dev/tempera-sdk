@@ -37,7 +37,7 @@ Call GET /v1/health.
 
 - **Producer operationId:** `getPaymentsHealth`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaPayments.getPaymentsHealth()` · Python `client.tempera_payments.get_payments_health()` · Rust `build_request("tempera_payments", "get_payments_health", params)`
+- **Call as:** TypeScript `client.temperaPayments.getPaymentsHealth()` · Python `client.tempera_payments.get_payments_health()` · Rust `build_request("tempera_payments", "get_payments_health", params)` · Go `BuildRequest("temperaPayments", "getPaymentsHealth", params)` · C `tempera_build_request(..., "temperaPayments", "getPaymentsHealth", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_payments", "get_payments_health", &[])?
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "getPaymentsHealth", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "getPaymentsHealth",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createPaymentIntent
@@ -66,7 +90,7 @@ Create a canonical payment intent.
 - **Producer operationId:** `createPaymentIntent`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:write`
-- **Call as:** TypeScript `client.temperaPayments.createPaymentIntent()` · Python `client.tempera_payments.create_payment_intent()` · Rust `build_request("tempera_payments", "create_payment_intent", params)`
+- **Call as:** TypeScript `client.temperaPayments.createPaymentIntent()` · Python `client.tempera_payments.create_payment_intent()` · Rust `build_request("tempera_payments", "create_payment_intent", params)` · Go `BuildRequest("temperaPayments", "createPaymentIntent", params)` · C `tempera_build_request(..., "temperaPayments", "createPaymentIntent", ...)`
 
 **Body parameters**
 
@@ -120,6 +144,38 @@ let spec = client.build_request("tempera_payments", "create_payment_intent", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "createPaymentIntent", map[string]any{
+    "tenant_id": "<tenant_id>",
+    "merchant_id": "<merchant_id>",
+    "risk_subject_id": "<risk_subject_id>",
+    "recipient": "<recipient>",
+    "asset": "<asset>",
+    "amount": "<amount>",
+    "expires_in_seconds": "<expires_in_seconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"tenant_id\":\"<tenant_id>\",\"merchant_id\":\"<merchant_id>\",\"risk_subject_id\":\"<risk_subject_id>\",\"recipient\":\"<recipient>\",\"asset\":\"<asset>\",\"amount\":\"<amount>\",\"expires_in_seconds\":\"<expires_in_seconds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "createPaymentIntent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getPaymentIntent
@@ -131,7 +187,7 @@ Read the canonical payment-intent projection.
 - **Producer operationId:** `getPaymentIntent`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:read`
-- **Call as:** TypeScript `client.temperaPayments.getPaymentIntent()` · Python `client.tempera_payments.get_payment_intent()` · Rust `build_request("tempera_payments", "get_payment_intent", params)`
+- **Call as:** TypeScript `client.temperaPayments.getPaymentIntent()` · Python `client.tempera_payments.get_payment_intent()` · Rust `build_request("tempera_payments", "get_payment_intent", params)` · Go `BuildRequest("temperaPayments", "getPaymentIntent", params)` · C `tempera_build_request(..., "temperaPayments", "getPaymentIntent", ...)`
 
 **Path parameters**
 
@@ -170,6 +226,35 @@ let spec = client.build_request("tempera_payments", "get_payment_intent", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "getPaymentIntent", map[string]any{
+    "payment_intent_id": "<payment_intent_id>",
+    "tenant_id": "<tenant_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"payment_intent_id", "<payment_intent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "tenant_id=<tenant_id>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "getPaymentIntent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getPaymentSettlementReceipt
@@ -181,7 +266,7 @@ Read and cryptographically re-verify the canonical settlement receipt.
 - **Producer operationId:** `getPaymentSettlementReceipt`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:receipts:read`
-- **Call as:** TypeScript `client.temperaPayments.getPaymentSettlementReceipt()` · Python `client.tempera_payments.get_payment_settlement_receipt()` · Rust `build_request("tempera_payments", "get_payment_settlement_receipt", params)`
+- **Call as:** TypeScript `client.temperaPayments.getPaymentSettlementReceipt()` · Python `client.tempera_payments.get_payment_settlement_receipt()` · Rust `build_request("tempera_payments", "get_payment_settlement_receipt", params)` · Go `BuildRequest("temperaPayments", "getPaymentSettlementReceipt", params)` · C `tempera_build_request(..., "temperaPayments", "getPaymentSettlementReceipt", ...)`
 
 **Path parameters**
 
@@ -220,6 +305,35 @@ let spec = client.build_request("tempera_payments", "get_payment_settlement_rece
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "getPaymentSettlementReceipt", map[string]any{
+    "payment_intent_id": "<payment_intent_id>",
+    "tenant_id": "<tenant_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"payment_intent_id", "<payment_intent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "tenant_id=<tenant_id>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "getPaymentSettlementReceipt",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createStripeCheckout
@@ -231,7 +345,7 @@ Create an idempotent hosted Stripe Checkout session for a fiat payment intent.
 - **Producer operationId:** `createStripeCheckout`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:write`
-- **Call as:** TypeScript `client.temperaPayments.createStripeCheckout()` · Python `client.tempera_payments.create_stripe_checkout()` · Rust `build_request("tempera_payments", "create_stripe_checkout", params)`
+- **Call as:** TypeScript `client.temperaPayments.createStripeCheckout()` · Python `client.tempera_payments.create_stripe_checkout()` · Rust `build_request("tempera_payments", "create_stripe_checkout", params)` · Go `BuildRequest("temperaPayments", "createStripeCheckout", params)` · C `tempera_build_request(..., "temperaPayments", "createStripeCheckout", ...)`
 
 **Path parameters**
 
@@ -286,6 +400,39 @@ let spec = client.build_request("tempera_payments", "create_stripe_checkout", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "createStripeCheckout", map[string]any{
+    "payment_intent_id": "<payment_intent_id>",
+    "tenant_id": "<tenant_id>",
+    "currency": "<currency>",
+    "product_name": "<product_name>",
+    "success_url": "<success_url>",
+    "cancel_url": "<cancel_url>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"payment_intent_id", "<payment_intent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"tenant_id\":\"<tenant_id>\",\"currency\":\"<currency>\",\"product_name\":\"<product_name>\",\"success_url\":\"<success_url>\",\"cancel_url\":\"<cancel_url>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "createStripeCheckout",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createCardSession
@@ -297,7 +444,7 @@ Create a hosted/tokenizing card session with the selected configured acquirer.
 - **Producer operationId:** `createCardSession`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:write`
-- **Call as:** TypeScript `client.temperaPayments.createCardSession()` · Python `client.tempera_payments.create_card_session()` · Rust `build_request("tempera_payments", "create_card_session", params)`
+- **Call as:** TypeScript `client.temperaPayments.createCardSession()` · Python `client.tempera_payments.create_card_session()` · Rust `build_request("tempera_payments", "create_card_session", params)` · Go `BuildRequest("temperaPayments", "createCardSession", params)` · C `tempera_build_request(..., "temperaPayments", "createCardSession", ...)`
 
 **Path parameters**
 
@@ -352,6 +499,39 @@ let spec = client.build_request("tempera_payments", "create_card_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "createCardSession", map[string]any{
+    "payment_intent_id": "<payment_intent_id>",
+    "tenant_id": "<tenant_id>",
+    "acquirer": "<acquirer>",
+    "success_url": "<success_url>",
+    "failure_url": "<failure_url>",
+    "billing": "<billing>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"payment_intent_id", "<payment_intent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"tenant_id\":\"<tenant_id>\",\"acquirer\":\"<acquirer>\",\"success_url\":\"<success_url>\",\"failure_url\":\"<failure_url>\",\"billing\":\"<billing>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "createCardSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### receiveStripeWebhook
@@ -362,7 +542,7 @@ Verify and durably deduplicate a Stripe webhook using its raw body.
 
 - **Producer operationId:** `receiveStripeWebhook`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaPayments.receiveStripeWebhook()` · Python `client.tempera_payments.receive_stripe_webhook()` · Rust `build_request("tempera_payments", "receive_stripe_webhook", params)`
+- **Call as:** TypeScript `client.temperaPayments.receiveStripeWebhook()` · Python `client.tempera_payments.receive_stripe_webhook()` · Rust `build_request("tempera_payments", "receive_stripe_webhook", params)` · Go `BuildRequest("temperaPayments", "receiveStripeWebhook", params)` · C `tempera_build_request(..., "temperaPayments", "receiveStripeWebhook", ...)`
 
 <CodeGroup>
 
@@ -378,6 +558,30 @@ result = client.tempera_payments.receive_stripe_webhook()
 let spec = client.build_request("tempera_payments", "receive_stripe_webhook", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaPayments", "receiveStripeWebhook", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaPayments", "receiveStripeWebhook",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

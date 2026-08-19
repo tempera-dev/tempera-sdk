@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 81 |
+| Typed operations | 86 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -34,7 +34,7 @@ Check control-plane liveness; returns \{ok: true\}.
 
 - **Producer operationId:** `getHealth`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.health()` · Python `client.control_plane.health()` · Rust `build_request("control_plane", "health", params)`
+- **Call as:** TypeScript `client.controlPlane.health()` · Python `client.control_plane.health()` · Rust `build_request("control_plane", "health", params)` · Go `BuildRequest("controlPlane", "health", params)` · C `tempera_build_request(..., "controlPlane", "health", ...)`
 
 <CodeGroup>
 
@@ -52,6 +52,30 @@ let spec = client.build_request("control_plane", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getReadiness
@@ -62,7 +86,7 @@ Readiness probe for durable control-plane storage.
 
 - **Producer operationId:** `getReadiness`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.getReadiness()` · Python `client.control_plane.get_readiness()` · Rust `build_request("control_plane", "get_readiness", params)`
+- **Call as:** TypeScript `client.controlPlane.getReadiness()` · Python `client.control_plane.get_readiness()` · Rust `build_request("control_plane", "get_readiness", params)` · Go `BuildRequest("controlPlane", "getReadiness", params)` · C `tempera_build_request(..., "controlPlane", "getReadiness", ...)`
 
 <CodeGroup>
 
@@ -80,6 +104,30 @@ let spec = client.build_request("control_plane", "get_readiness", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getReadiness", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getReadiness",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### me
@@ -90,7 +138,7 @@ Fetch the authenticated user's identity, active workspace, and roles.
 
 - **Producer operationId:** `getMe`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.me()` · Python `client.control_plane.me()` · Rust `build_request("control_plane", "me", params)`
+- **Call as:** TypeScript `client.controlPlane.me()` · Python `client.control_plane.me()` · Rust `build_request("control_plane", "me", params)` · Go `BuildRequest("controlPlane", "me", params)` · C `tempera_build_request(..., "controlPlane", "me", ...)`
 
 <CodeGroup>
 
@@ -108,6 +156,30 @@ let spec = client.build_request("control_plane", "me", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "me", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "me",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listOrgs
@@ -118,7 +190,7 @@ List the organizations the authenticated user belongs to.
 
 - **Producer operationId:** `listOrganizations`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)`
+- **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)` · Go `BuildRequest("controlPlane", "listOrgs", params)` · C `tempera_build_request(..., "controlPlane", "listOrgs", ...)`
 
 **Query parameters**
 
@@ -152,6 +224,33 @@ let spec = client.build_request("control_plane", "list_orgs", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listOrgs", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listOrgs",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createOrg
@@ -162,7 +261,7 @@ Create an organization; the caller becomes its owner.
 
 - **Producer operationId:** `createOrganization`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createOrg()` · Python `client.control_plane.create_org()` · Rust `build_request("control_plane", "create_org", params)`
+- **Call as:** TypeScript `client.controlPlane.createOrg()` · Python `client.control_plane.create_org()` · Rust `build_request("control_plane", "create_org", params)` · Go `BuildRequest("controlPlane", "createOrg", params)` · C `tempera_build_request(..., "controlPlane", "createOrg", ...)`
 
 **Body parameters**
 
@@ -192,6 +291,32 @@ let spec = client.build_request("control_plane", "create_org", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createOrg", map[string]any{
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createOrg",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSessions
@@ -202,7 +327,7 @@ List the user's active account sessions.
 
 - **Producer operationId:** `listAccountSessions`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)`
+- **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)` · Go `BuildRequest("controlPlane", "listSessions", params)` · C `tempera_build_request(..., "controlPlane", "listSessions", ...)`
 
 **Query parameters**
 
@@ -236,6 +361,33 @@ let spec = client.build_request("control_plane", "list_sessions", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listSessions", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listSessions",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createHostedSession
@@ -246,7 +398,7 @@ Create a first-party hosted account session from email/password login or signup.
 
 - **Producer operationId:** `createHostedSession`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.createHostedSession()` · Python `client.control_plane.create_hosted_session()` · Rust `build_request("control_plane", "create_hosted_session", params)`
+- **Call as:** TypeScript `client.controlPlane.createHostedSession()` · Python `client.control_plane.create_hosted_session()` · Rust `build_request("control_plane", "create_hosted_session", params)` · Go `BuildRequest("controlPlane", "createHostedSession", params)` · C `tempera_build_request(..., "controlPlane", "createHostedSession", ...)`
 
 **Body parameters**
 
@@ -286,6 +438,34 @@ let spec = client.build_request("control_plane", "create_hosted_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createHostedSession", map[string]any{
+    "email": "<email>",
+    "password": "<password>",
+    "mode": "<mode>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"mode\":\"<mode>\",\"email\":\"<email>\",\"password\":\"<password>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createHostedSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeSession
@@ -296,7 +476,7 @@ Revoke an account session and its tokens immediately (idempotent).
 
 - **Producer operationId:** `revokeAccountSession`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.revokeSession()` · Python `client.control_plane.revoke_session()` · Rust `build_request("control_plane", "revoke_session", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeSession()` · Python `client.control_plane.revoke_session()` · Rust `build_request("control_plane", "revoke_session", params)` · Go `BuildRequest("controlPlane", "revokeSession", params)` · C `tempera_build_request(..., "controlPlane", "revokeSession", ...)`
 
 **Path parameters**
 
@@ -326,6 +506,34 @@ let spec = client.build_request("control_plane", "revoke_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeSession", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### selectWorkspace
@@ -336,7 +544,7 @@ Switch the active workspace and receive a token pair scoped to it.
 
 - **Producer operationId:** `selectWorkspace`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.selectWorkspace()` · Python `client.control_plane.select_workspace()` · Rust `build_request("control_plane", "select_workspace", params)`
+- **Call as:** TypeScript `client.controlPlane.selectWorkspace()` · Python `client.control_plane.select_workspace()` · Rust `build_request("control_plane", "select_workspace", params)` · Go `BuildRequest("controlPlane", "selectWorkspace", params)` · C `tempera_build_request(..., "controlPlane", "selectWorkspace", ...)`
 
 **Body parameters**
 
@@ -374,6 +582,34 @@ let spec = client.build_request("control_plane", "select_workspace", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "selectWorkspace", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "selectWorkspace",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listTeamMembers
@@ -384,7 +620,7 @@ List team members of the active organization.
 
 - **Producer operationId:** `listTeamMembers`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)`
+- **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)` · Go `BuildRequest("controlPlane", "listTeamMembers", params)` · C `tempera_build_request(..., "controlPlane", "listTeamMembers", ...)`
 
 **Query parameters**
 
@@ -418,6 +654,33 @@ let spec = client.build_request("control_plane", "list_team_members", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listTeamMembers", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listTeamMembers",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### updateTeamMember
@@ -428,7 +691,7 @@ Change a team member's role (requires an org admin role; at least one owner must
 
 - **Producer operationId:** `updateTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.updateTeamMember()` · Python `client.control_plane.update_team_member()` · Rust `build_request("control_plane", "update_team_member", params)`
+- **Call as:** TypeScript `client.controlPlane.updateTeamMember()` · Python `client.control_plane.update_team_member()` · Rust `build_request("control_plane", "update_team_member", params)` · Go `BuildRequest("controlPlane", "updateTeamMember", params)` · C `tempera_build_request(..., "controlPlane", "updateTeamMember", ...)`
 
 **Path parameters**
 
@@ -473,6 +736,35 @@ let spec = client.build_request("control_plane", "update_team_member", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "updateTeamMember", map[string]any{
+    "id": "<id>",
+    "role": "<role>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"role\":\"<role>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "updateTeamMember",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### removeTeamMember
@@ -483,7 +775,7 @@ Remove a team member from the active organization (idempotent).
 
 - **Producer operationId:** `removeTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.removeTeamMember()` · Python `client.control_plane.remove_team_member()` · Rust `build_request("control_plane", "remove_team_member", params)`
+- **Call as:** TypeScript `client.controlPlane.removeTeamMember()` · Python `client.control_plane.remove_team_member()` · Rust `build_request("control_plane", "remove_team_member", params)` · Go `BuildRequest("controlPlane", "removeTeamMember", params)` · C `tempera_build_request(..., "controlPlane", "removeTeamMember", ...)`
 
 **Path parameters**
 
@@ -513,6 +805,34 @@ let spec = client.build_request("control_plane", "remove_team_member", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "removeTeamMember", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "removeTeamMember",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listInvites
@@ -523,7 +843,7 @@ List invites for the active organization, newest first.
 
 - **Producer operationId:** `listInvites`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)`
+- **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)` · Go `BuildRequest("controlPlane", "listInvites", params)` · C `tempera_build_request(..., "controlPlane", "listInvites", ...)`
 
 **Query parameters**
 
@@ -557,6 +877,33 @@ let spec = client.build_request("control_plane", "list_invites", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listInvites", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listInvites",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createInvite
@@ -567,7 +914,7 @@ Invite a user to the active organization; the accept URL is returned once.
 
 - **Producer operationId:** `createInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createInvite()` · Python `client.control_plane.create_invite()` · Rust `build_request("control_plane", "create_invite", params)`
+- **Call as:** TypeScript `client.controlPlane.createInvite()` · Python `client.control_plane.create_invite()` · Rust `build_request("control_plane", "create_invite", params)` · Go `BuildRequest("controlPlane", "createInvite", params)` · C `tempera_build_request(..., "controlPlane", "createInvite", ...)`
 
 **Body parameters**
 
@@ -601,6 +948,33 @@ let spec = client.build_request("control_plane", "create_invite", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createInvite", map[string]any{
+    "email": "<email>",
+    "role": "<role>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"email\":\"<email>\",\"role\":\"<role>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createInvite",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### cancelInvite
@@ -611,7 +985,7 @@ Cancel a pending invite (idempotent).
 
 - **Producer operationId:** `cancelInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.cancelInvite()` · Python `client.control_plane.cancel_invite()` · Rust `build_request("control_plane", "cancel_invite", params)`
+- **Call as:** TypeScript `client.controlPlane.cancelInvite()` · Python `client.control_plane.cancel_invite()` · Rust `build_request("control_plane", "cancel_invite", params)` · Go `BuildRequest("controlPlane", "cancelInvite", params)` · C `tempera_build_request(..., "controlPlane", "cancelInvite", ...)`
 
 **Path parameters**
 
@@ -641,6 +1015,34 @@ let spec = client.build_request("control_plane", "cancel_invite", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "cancelInvite", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "cancelInvite",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listProjects
@@ -651,7 +1053,7 @@ List projects across every organization the user belongs to.
 
 - **Producer operationId:** `listProjects`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listProjects()` · Python `client.control_plane.list_projects()` · Rust `build_request("control_plane", "list_projects", params)`
+- **Call as:** TypeScript `client.controlPlane.listProjects()` · Python `client.control_plane.list_projects()` · Rust `build_request("control_plane", "list_projects", params)` · Go `BuildRequest("controlPlane", "listProjects", params)` · C `tempera_build_request(..., "controlPlane", "listProjects", ...)`
 
 **Query parameters**
 
@@ -685,6 +1087,33 @@ let spec = client.build_request("control_plane", "list_projects", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listProjects", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listProjects",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createProject
@@ -695,7 +1124,7 @@ Create a project in an organization (requires an org admin role).
 
 - **Producer operationId:** `createProject`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createProject()` · Python `client.control_plane.create_project()` · Rust `build_request("control_plane", "create_project", params)`
+- **Call as:** TypeScript `client.controlPlane.createProject()` · Python `client.control_plane.create_project()` · Rust `build_request("control_plane", "create_project", params)` · Go `BuildRequest("controlPlane", "createProject", params)` · C `tempera_build_request(..., "controlPlane", "createProject", ...)`
 
 **Body parameters**
 
@@ -729,6 +1158,33 @@ let spec = client.build_request("control_plane", "create_project", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createProject", map[string]any{
+    "orgId": "<orgId>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createProject",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listEnvironments
@@ -739,7 +1195,7 @@ List environments across every project the user can access.
 
 - **Producer operationId:** `listEnvironments`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listEnvironments()` · Python `client.control_plane.list_environments()` · Rust `build_request("control_plane", "list_environments", params)`
+- **Call as:** TypeScript `client.controlPlane.listEnvironments()` · Python `client.control_plane.list_environments()` · Rust `build_request("control_plane", "list_environments", params)` · Go `BuildRequest("controlPlane", "listEnvironments", params)` · C `tempera_build_request(..., "controlPlane", "listEnvironments", ...)`
 
 **Query parameters**
 
@@ -773,6 +1229,33 @@ let spec = client.build_request("control_plane", "list_environments", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listEnvironments", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listEnvironments",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createEnvironment
@@ -783,7 +1266,7 @@ Create an environment in a project (requires an org admin role).
 
 - **Producer operationId:** `createEnvironment`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createEnvironment()` · Python `client.control_plane.create_environment()` · Rust `build_request("control_plane", "create_environment", params)`
+- **Call as:** TypeScript `client.controlPlane.createEnvironment()` · Python `client.control_plane.create_environment()` · Rust `build_request("control_plane", "create_environment", params)` · Go `BuildRequest("controlPlane", "createEnvironment", params)` · C `tempera_build_request(..., "controlPlane", "createEnvironment", ...)`
 
 **Body parameters**
 
@@ -817,6 +1300,33 @@ let spec = client.build_request("control_plane", "create_environment", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createEnvironment", map[string]any{
+    "projectId": "<projectId>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"projectId\":\"<projectId>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createEnvironment",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listApiKeys
@@ -827,7 +1337,7 @@ List API keys in the active workspace; secrets are never returned.
 
 - **Producer operationId:** `listApiKeys`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listApiKeys()` · Python `client.control_plane.list_api_keys()` · Rust `build_request("control_plane", "list_api_keys", params)`
+- **Call as:** TypeScript `client.controlPlane.listApiKeys()` · Python `client.control_plane.list_api_keys()` · Rust `build_request("control_plane", "list_api_keys", params)` · Go `BuildRequest("controlPlane", "listApiKeys", params)` · C `tempera_build_request(..., "controlPlane", "listApiKeys", ...)`
 
 **Query parameters**
 
@@ -861,6 +1371,33 @@ let spec = client.build_request("control_plane", "list_api_keys", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listApiKeys", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listApiKeys",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createApiKey
@@ -871,7 +1408,7 @@ Mint a workspace API key (tp_...); the secret is returned exactly once. The work
 
 - **Producer operationId:** `createApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createApiKey()` · Python `client.control_plane.create_api_key()` · Rust `build_request("control_plane", "create_api_key", params)`
+- **Call as:** TypeScript `client.controlPlane.createApiKey()` · Python `client.control_plane.create_api_key()` · Rust `build_request("control_plane", "create_api_key", params)` · Go `BuildRequest("controlPlane", "createApiKey", params)` · C `tempera_build_request(..., "controlPlane", "createApiKey", ...)`
 
 **Body parameters**
 
@@ -916,6 +1453,35 @@ let spec = client.build_request("control_plane", "create_api_key", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createApiKey", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "scopes": "<scopes>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"scopes\":\"<scopes>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createApiKey",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeApiKey
@@ -926,7 +1492,7 @@ Revoke an API key (idempotent).
 
 - **Producer operationId:** `revokeApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.revokeApiKey()` · Python `client.control_plane.revoke_api_key()` · Rust `build_request("control_plane", "revoke_api_key", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeApiKey()` · Python `client.control_plane.revoke_api_key()` · Rust `build_request("control_plane", "revoke_api_key", params)` · Go `BuildRequest("controlPlane", "revokeApiKey", params)` · C `tempera_build_request(..., "controlPlane", "revokeApiKey", ...)`
 
 **Path parameters**
 
@@ -956,6 +1522,34 @@ let spec = client.build_request("control_plane", "revoke_api_key", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeApiKey", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeApiKey",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### rotateApiKey
@@ -966,7 +1560,7 @@ Rotate an API key's secret; the new secret is returned exactly once.
 
 - **Producer operationId:** `rotateApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.rotateApiKey()` · Python `client.control_plane.rotate_api_key()` · Rust `build_request("control_plane", "rotate_api_key", params)`
+- **Call as:** TypeScript `client.controlPlane.rotateApiKey()` · Python `client.control_plane.rotate_api_key()` · Rust `build_request("control_plane", "rotate_api_key", params)` · Go `BuildRequest("controlPlane", "rotateApiKey", params)` · C `tempera_build_request(..., "controlPlane", "rotateApiKey", ...)`
 
 **Path parameters**
 
@@ -996,6 +1590,34 @@ let spec = client.build_request("control_plane", "rotate_api_key", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "rotateApiKey", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "rotateApiKey",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### providerConnectionsList
@@ -1006,7 +1628,7 @@ List provider connection metadata using a first-party account session. Secret re
 
 - **Producer operationId:** `providerConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.providerConnectionsList()` · Python `client.control_plane.provider_connections_list()` · Rust `build_request("control_plane", "provider_connections_list", params)`
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsList()` · Python `client.control_plane.provider_connections_list()` · Rust `build_request("control_plane", "provider_connections_list", params)` · Go `BuildRequest("controlPlane", "providerConnectionsList", params)` · C `tempera_build_request(..., "controlPlane", "providerConnectionsList", ...)`
 
 **Query parameters**
 
@@ -1040,6 +1662,33 @@ let spec = client.build_request("control_plane", "provider_connections_list", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "providerConnectionsList", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "providerConnectionsList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### providerConnectionsCreate
@@ -1050,7 +1699,7 @@ Create a tenant-scoped provider connection using only an external secret referen
 
 - **Producer operationId:** `providerConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.providerConnectionsCreate()` · Python `client.control_plane.provider_connections_create()` · Rust `build_request("control_plane", "provider_connections_create", params)`
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsCreate()` · Python `client.control_plane.provider_connections_create()` · Rust `build_request("control_plane", "provider_connections_create", params)` · Go `BuildRequest("controlPlane", "providerConnectionsCreate", params)` · C `tempera_build_request(..., "controlPlane", "providerConnectionsCreate", ...)`
 
 **Body parameters**
 
@@ -1101,6 +1750,37 @@ let spec = client.build_request("control_plane", "provider_connections_create", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "providerConnectionsCreate", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "provider": "<provider>",
+    "name": "<name>",
+    "secretRef": "<secretRef>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"provider\":\"<provider>\",\"name\":\"<name>\",\"secretRef\":\"<secretRef>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "providerConnectionsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### providerConnectionsRevoke
@@ -1111,7 +1791,7 @@ Revoke a provider connection immediately. Revoking an unknown id is a no-op.
 
 - **Producer operationId:** `providerConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.providerConnectionsRevoke()` · Python `client.control_plane.provider_connections_revoke()` · Rust `build_request("control_plane", "provider_connections_revoke", params)`
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsRevoke()` · Python `client.control_plane.provider_connections_revoke()` · Rust `build_request("control_plane", "provider_connections_revoke", params)` · Go `BuildRequest("controlPlane", "providerConnectionsRevoke", params)` · C `tempera_build_request(..., "controlPlane", "providerConnectionsRevoke", ...)`
 
 **Path parameters**
 
@@ -1141,6 +1821,34 @@ let spec = client.build_request("control_plane", "provider_connections_revoke", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "providerConnectionsRevoke", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "providerConnectionsRevoke",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### providerConnectionsRotate
@@ -1151,7 +1859,7 @@ Replace a connection secret reference and increment its revision without exposin
 
 - **Producer operationId:** `providerConnections.rotate`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.providerConnectionsRotate()` · Python `client.control_plane.provider_connections_rotate()` · Rust `build_request("control_plane", "provider_connections_rotate", params)`
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsRotate()` · Python `client.control_plane.provider_connections_rotate()` · Rust `build_request("control_plane", "provider_connections_rotate", params)` · Go `BuildRequest("controlPlane", "providerConnectionsRotate", params)` · C `tempera_build_request(..., "controlPlane", "providerConnectionsRotate", ...)`
 
 **Path parameters**
 
@@ -1194,6 +1902,36 @@ let spec = client.build_request("control_plane", "provider_connections_rotate", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "providerConnectionsRotate", map[string]any{
+    "id": "<id>",
+    "secretRef": "<secretRef>",
+    "allowedModels": "<allowedModels>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"secretRef\":\"<secretRef>\",\"allowedModels\":\"<allowedModels>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "providerConnectionsRotate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### providerConnectionsResolve
@@ -1204,7 +1942,7 @@ Resolve connection runtime metadata for a tenant-bound tempera-llm service crede
 
 - **Producer operationId:** `providerConnections.resolve`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.providerConnectionsResolve()` · Python `client.control_plane.provider_connections_resolve()` · Rust `build_request("control_plane", "provider_connections_resolve", params)`
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsResolve()` · Python `client.control_plane.provider_connections_resolve()` · Rust `build_request("control_plane", "provider_connections_resolve", params)` · Go `BuildRequest("controlPlane", "providerConnectionsResolve", params)` · C `tempera_build_request(..., "controlPlane", "providerConnectionsResolve", ...)`
 
 **Path parameters**
 
@@ -1255,6 +1993,38 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "providerConnectionsResolve", map[string]any{
+    "id": "<id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "usageDelegation": "<usageDelegation>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"usageDelegation\":\"<usageDelegation>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "providerConnectionsResolve",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listExperimentProviderConnections
@@ -1265,7 +2035,7 @@ List external experiment-provider metadata. Secret references and values are nev
 
 - **Producer operationId:** `experimentProviderConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listExperimentProviderConnections()` · Python `client.control_plane.list_experiment_provider_connections()` · Rust `build_request("control_plane", "list_experiment_provider_connections", params)`
+- **Call as:** TypeScript `client.controlPlane.listExperimentProviderConnections()` · Python `client.control_plane.list_experiment_provider_connections()` · Rust `build_request("control_plane", "list_experiment_provider_connections", params)` · Go `BuildRequest("controlPlane", "listExperimentProviderConnections", params)` · C `tempera_build_request(..., "controlPlane", "listExperimentProviderConnections", ...)`
 
 **Query parameters**
 
@@ -1299,6 +2069,33 @@ let spec = client.build_request("control_plane", "list_experiment_provider_conne
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listExperimentProviderConnections", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listExperimentProviderConnections",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createExperimentProviderConnection
@@ -1309,7 +2106,7 @@ Register a tenant-scoped experiment provider using only an external secret refer
 
 - **Producer operationId:** `experimentProviderConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createExperimentProviderConnection()` · Python `client.control_plane.create_experiment_provider_connection()` · Rust `build_request("control_plane", "create_experiment_provider_connection", params)`
+- **Call as:** TypeScript `client.controlPlane.createExperimentProviderConnection()` · Python `client.control_plane.create_experiment_provider_connection()` · Rust `build_request("control_plane", "create_experiment_provider_connection", params)` · Go `BuildRequest("controlPlane", "createExperimentProviderConnection", params)` · C `tempera_build_request(..., "controlPlane", "createExperimentProviderConnection", ...)`
 
 **Body parameters**
 
@@ -1367,6 +2164,39 @@ let spec = client.build_request("control_plane", "create_experiment_provider_con
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createExperimentProviderConnection", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "provider": "<provider>",
+    "providerKind": "<providerKind>",
+    "name": "<name>",
+    "secretRef": "<secretRef>",
+    "capabilities": "<capabilities>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"provider\":\"<provider>\",\"providerKind\":\"<providerKind>\",\"name\":\"<name>\",\"secretRef\":\"<secretRef>\",\"capabilities\":\"<capabilities>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createExperimentProviderConnection",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeExperimentProviderConnection
@@ -1377,7 +2207,7 @@ Revoke an experiment-provider connection. An unknown id is a no-op.
 
 - **Producer operationId:** `experimentProviderConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.revokeExperimentProviderConnection()` · Python `client.control_plane.revoke_experiment_provider_connection()` · Rust `build_request("control_plane", "revoke_experiment_provider_connection", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentProviderConnection()` · Python `client.control_plane.revoke_experiment_provider_connection()` · Rust `build_request("control_plane", "revoke_experiment_provider_connection", params)` · Go `BuildRequest("controlPlane", "revokeExperimentProviderConnection", params)` · C `tempera_build_request(..., "controlPlane", "revokeExperimentProviderConnection", ...)`
 
 **Path parameters**
 
@@ -1407,6 +2237,34 @@ let spec = client.build_request("control_plane", "revoke_experiment_provider_con
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeExperimentProviderConnection", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeExperimentProviderConnection",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### resolveExperimentProviderConnection
@@ -1418,7 +2276,7 @@ Atomically consume an exact human approval and resolve a provider reference for 
 - **Producer operationId:** `experimentProviderConnections.resolve`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
 - **Scope:** `bio:experiment:submit`
-- **Call as:** TypeScript `client.controlPlane.resolveExperimentProviderConnection()` · Python `client.control_plane.resolve_experiment_provider_connection()` · Rust `build_request("control_plane", "resolve_experiment_provider_connection", params)`
+- **Call as:** TypeScript `client.controlPlane.resolveExperimentProviderConnection()` · Python `client.control_plane.resolve_experiment_provider_connection()` · Rust `build_request("control_plane", "resolve_experiment_provider_connection", params)` · Go `BuildRequest("controlPlane", "resolveExperimentProviderConnection", params)` · C `tempera_build_request(..., "controlPlane", "resolveExperimentProviderConnection", ...)`
 
 **Path parameters**
 
@@ -1489,6 +2347,43 @@ let spec = client.build_request("control_plane", "resolve_experiment_provider_co
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "resolveExperimentProviderConnection", map[string]any{
+    "id": "<id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "approvalId": "<approvalId>",
+    "proposalDigest": "<proposalDigest>",
+    "protocolDigest": "<protocolDigest>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "mcpCommitReceiptDigest": "<mcpCommitReceiptDigest>",
+    "submissionIdempotencyKey": "<submissionIdempotencyKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"approvalId\":\"<approvalId>\",\"proposalDigest\":\"<proposalDigest>\",\"protocolDigest\":\"<protocolDigest>\",\"mcpPrepareReceiptDigest\":\"<mcpPrepareReceiptDigest>\",\"mcpCommitReceiptDigest\":\"<mcpCommitReceiptDigest>\",\"submissionIdempotencyKey\":\"<submissionIdempotencyKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "resolveExperimentProviderConnection",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listBioSignerKeys
@@ -1500,7 +2395,7 @@ List versioned public Ed25519 verifier keys for an authorized human administrato
 - **Producer operationId:** `bioSignerKeys.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:signer:manage`
-- **Call as:** TypeScript `client.controlPlane.listBioSignerKeys()` · Python `client.control_plane.list_bio_signer_keys()` · Rust `build_request("control_plane", "list_bio_signer_keys", params)`
+- **Call as:** TypeScript `client.controlPlane.listBioSignerKeys()` · Python `client.control_plane.list_bio_signer_keys()` · Rust `build_request("control_plane", "list_bio_signer_keys", params)` · Go `BuildRequest("controlPlane", "listBioSignerKeys", params)` · C `tempera_build_request(..., "controlPlane", "listBioSignerKeys", ...)`
 
 **Query parameters**
 
@@ -1534,6 +2429,33 @@ let spec = client.build_request("control_plane", "list_bio_signer_keys", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listBioSignerKeys", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listBioSignerKeys",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createBioSignerKey
@@ -1545,7 +2467,7 @@ Register or rotate a public Ed25519 verifier key. Private key material is reject
 - **Producer operationId:** `bioSignerKeys.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:signer:manage`
-- **Call as:** TypeScript `client.controlPlane.createBioSignerKey()` · Python `client.control_plane.create_bio_signer_key()` · Rust `build_request("control_plane", "create_bio_signer_key", params)`
+- **Call as:** TypeScript `client.controlPlane.createBioSignerKey()` · Python `client.control_plane.create_bio_signer_key()` · Rust `build_request("control_plane", "create_bio_signer_key", params)` · Go `BuildRequest("controlPlane", "createBioSignerKey", params)` · C `tempera_build_request(..., "controlPlane", "createBioSignerKey", ...)`
 
 **Body parameters**
 
@@ -1591,6 +2513,36 @@ let spec = client.build_request("control_plane", "create_bio_signer_key", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createBioSignerKey", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "keyId": "<keyId>",
+    "publicJwk": "<publicJwk>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"keyId\":\"<keyId>\",\"publicJwk\":\"<publicJwk>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createBioSignerKey",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeBioSignerKey
@@ -1602,7 +2554,7 @@ Revoke a public verifier key while retaining its history.
 - **Producer operationId:** `bioSignerKeys.revoke`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:signer:manage`
-- **Call as:** TypeScript `client.controlPlane.revokeBioSignerKey()` · Python `client.control_plane.revoke_bio_signer_key()` · Rust `build_request("control_plane", "revoke_bio_signer_key", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeBioSignerKey()` · Python `client.control_plane.revoke_bio_signer_key()` · Rust `build_request("control_plane", "revoke_bio_signer_key", params)` · Go `BuildRequest("controlPlane", "revokeBioSignerKey", params)` · C `tempera_build_request(..., "controlPlane", "revokeBioSignerKey", ...)`
 
 **Path parameters**
 
@@ -1632,6 +2584,34 @@ let spec = client.build_request("control_plane", "revoke_bio_signer_key", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeBioSignerKey", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeBioSignerKey",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listExperimentApprovals
@@ -1643,7 +2623,7 @@ List exact, single-use experiment approvals for an authorized human approver.
 - **Producer operationId:** `experimentApprovals.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:experiment:approve`
-- **Call as:** TypeScript `client.controlPlane.listExperimentApprovals()` · Python `client.control_plane.list_experiment_approvals()` · Rust `build_request("control_plane", "list_experiment_approvals", params)`
+- **Call as:** TypeScript `client.controlPlane.listExperimentApprovals()` · Python `client.control_plane.list_experiment_approvals()` · Rust `build_request("control_plane", "list_experiment_approvals", params)` · Go `BuildRequest("controlPlane", "listExperimentApprovals", params)` · C `tempera_build_request(..., "controlPlane", "listExperimentApprovals", ...)`
 
 **Query parameters**
 
@@ -1677,6 +2657,33 @@ let spec = client.build_request("control_plane", "list_experiment_approvals", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listExperimentApprovals", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listExperimentApprovals",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createExperimentApproval
@@ -1688,7 +2695,7 @@ Create a short-lived human approval bound to exact proposal, protocol, provider,
 - **Producer operationId:** `experimentApprovals.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:experiment:approve`
-- **Call as:** TypeScript `client.controlPlane.createExperimentApproval()` · Python `client.control_plane.create_experiment_approval()` · Rust `build_request("control_plane", "create_experiment_approval", params)`
+- **Call as:** TypeScript `client.controlPlane.createExperimentApproval()` · Python `client.control_plane.create_experiment_approval()` · Rust `build_request("control_plane", "create_experiment_approval", params)` · Go `BuildRequest("controlPlane", "createExperimentApproval", params)` · C `tempera_build_request(..., "controlPlane", "createExperimentApproval", ...)`
 
 **Body parameters**
 
@@ -1746,6 +2753,39 @@ let spec = client.build_request("control_plane", "create_experiment_approval", &
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createExperimentApproval", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "proposalDigest": "<proposalDigest>",
+    "protocolDigest": "<protocolDigest>",
+    "connectionId": "<connectionId>",
+    "mcpPrepareReceiptDigest": "<mcpPrepareReceiptDigest>",
+    "expiresAt": "<expiresAt>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"proposalDigest\":\"<proposalDigest>\",\"protocolDigest\":\"<protocolDigest>\",\"connectionId\":\"<connectionId>\",\"mcpPrepareReceiptDigest\":\"<mcpPrepareReceiptDigest>\",\"expiresAt\":\"<expiresAt>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createExperimentApproval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeExperimentApproval
@@ -1757,7 +2797,7 @@ Revoke an unused experiment approval. Consumed approvals remain immutable.
 - **Producer operationId:** `experimentApprovals.revoke`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
 - **Scope:** `bio:experiment:approve`
-- **Call as:** TypeScript `client.controlPlane.revokeExperimentApproval()` · Python `client.control_plane.revoke_experiment_approval()` · Rust `build_request("control_plane", "revoke_experiment_approval", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeExperimentApproval()` · Python `client.control_plane.revoke_experiment_approval()` · Rust `build_request("control_plane", "revoke_experiment_approval", params)` · Go `BuildRequest("controlPlane", "revokeExperimentApproval", params)` · C `tempera_build_request(..., "controlPlane", "revokeExperimentApproval", ...)`
 
 **Path parameters**
 
@@ -1787,6 +2827,34 @@ let spec = client.build_request("control_plane", "revoke_experiment_approval", &
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeExperimentApproval", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeExperimentApproval",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listAuditLog
@@ -1797,7 +2865,7 @@ List recent audit-log events for the user and active organization (up to 50, new
 
 - **Producer operationId:** `listAuditLog`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)`
+- **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)` · Go `BuildRequest("controlPlane", "listAuditLog", params)` · C `tempera_build_request(..., "controlPlane", "listAuditLog", ...)`
 
 **Query parameters**
 
@@ -1831,6 +2899,33 @@ let spec = client.build_request("control_plane", "list_audit_log", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listAuditLog", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listAuditLog",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listConnectors
@@ -1841,7 +2936,7 @@ List the connector catalog (MCP clients, editors, and API surfaces).
 
 - **Producer operationId:** `listConnectors`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listConnectors()` · Python `client.control_plane.list_connectors()` · Rust `build_request("control_plane", "list_connectors", params)`
+- **Call as:** TypeScript `client.controlPlane.listConnectors()` · Python `client.control_plane.list_connectors()` · Rust `build_request("control_plane", "list_connectors", params)` · Go `BuildRequest("controlPlane", "listConnectors", params)` · C `tempera_build_request(..., "controlPlane", "listConnectors", ...)`
 
 **Query parameters**
 
@@ -1875,6 +2970,33 @@ let spec = client.build_request("control_plane", "list_connectors", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listConnectors", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listConnectors",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getConnectorStatus
@@ -1885,7 +3007,7 @@ Fetch one connector's connection status for the active workspace.
 
 - **Producer operationId:** `getConnectorStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getConnectorStatus()` · Python `client.control_plane.get_connector_status()` · Rust `build_request("control_plane", "get_connector_status", params)`
+- **Call as:** TypeScript `client.controlPlane.getConnectorStatus()` · Python `client.control_plane.get_connector_status()` · Rust `build_request("control_plane", "get_connector_status", params)` · Go `BuildRequest("controlPlane", "getConnectorStatus", params)` · C `tempera_build_request(..., "controlPlane", "getConnectorStatus", ...)`
 
 **Path parameters**
 
@@ -1915,6 +3037,34 @@ let spec = client.build_request("control_plane", "get_connector_status", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getConnectorStatus", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getConnectorStatus",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listProducts
@@ -1925,7 +3075,7 @@ List the product catalog with default scopes and setup paths.
 
 - **Producer operationId:** `listProducts`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listProducts()` · Python `client.control_plane.list_products()` · Rust `build_request("control_plane", "list_products", params)`
+- **Call as:** TypeScript `client.controlPlane.listProducts()` · Python `client.control_plane.list_products()` · Rust `build_request("control_plane", "list_products", params)` · Go `BuildRequest("controlPlane", "listProducts", params)` · C `tempera_build_request(..., "controlPlane", "listProducts", ...)`
 
 **Query parameters**
 
@@ -1959,6 +3109,33 @@ let spec = client.build_request("control_plane", "list_products", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listProducts", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listProducts",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getProductStatus
@@ -1969,7 +3146,7 @@ Fetch one product's activation status, entitlements, signals, and usage meters.
 
 - **Producer operationId:** `getProductStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getProductStatus()` · Python `client.control_plane.get_product_status()` · Rust `build_request("control_plane", "get_product_status", params)`
+- **Call as:** TypeScript `client.controlPlane.getProductStatus()` · Python `client.control_plane.get_product_status()` · Rust `build_request("control_plane", "get_product_status", params)` · Go `BuildRequest("controlPlane", "getProductStatus", params)` · C `tempera_build_request(..., "controlPlane", "getProductStatus", ...)`
 
 **Path parameters**
 
@@ -1999,6 +3176,34 @@ let spec = client.build_request("control_plane", "get_product_status", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getProductStatus", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getProductStatus",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getBillingStatus
@@ -2009,7 +3214,7 @@ Fetch the organization's plan, subscription, usage meters, entitlements, invoice
 
 - **Producer operationId:** `getBillingStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getBillingStatus()` · Python `client.control_plane.get_billing_status()` · Rust `build_request("control_plane", "get_billing_status", params)`
+- **Call as:** TypeScript `client.controlPlane.getBillingStatus()` · Python `client.control_plane.get_billing_status()` · Rust `build_request("control_plane", "get_billing_status", params)` · Go `BuildRequest("controlPlane", "getBillingStatus", params)` · C `tempera_build_request(..., "controlPlane", "getBillingStatus", ...)`
 
 <CodeGroup>
 
@@ -2027,6 +3232,30 @@ let spec = client.build_request("control_plane", "get_billing_status", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getBillingStatus", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getBillingStatus",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createBillingCheckout
@@ -2037,7 +3266,7 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 
 - **Producer operationId:** `createBillingCheckout`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.createBillingCheckout()` · Python `client.control_plane.create_billing_checkout()` · Rust `build_request("control_plane", "create_billing_checkout", params)`
+- **Call as:** TypeScript `client.controlPlane.createBillingCheckout()` · Python `client.control_plane.create_billing_checkout()` · Rust `build_request("control_plane", "create_billing_checkout", params)` · Go `BuildRequest("controlPlane", "createBillingCheckout", params)` · C `tempera_build_request(..., "controlPlane", "createBillingCheckout", ...)`
 
 **Query parameters**
 
@@ -2075,6 +3304,33 @@ let spec = client.build_request("control_plane", "create_billing_checkout", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "createBillingCheckout", map[string]any{
+    "rail": "<rail>",
+    "plan": "<plan>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "rail=<rail>&plan=<plan>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "createBillingCheckout",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getBillingPortal
@@ -2085,7 +3341,7 @@ Fetch the billing-portal URL for the organization (requires a billing role).
 
 - **Producer operationId:** `createBillingPortal`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getBillingPortal()` · Python `client.control_plane.get_billing_portal()` · Rust `build_request("control_plane", "get_billing_portal", params)`
+- **Call as:** TypeScript `client.controlPlane.getBillingPortal()` · Python `client.control_plane.get_billing_portal()` · Rust `build_request("control_plane", "get_billing_portal", params)` · Go `BuildRequest("controlPlane", "getBillingPortal", params)` · C `tempera_build_request(..., "controlPlane", "getBillingPortal", ...)`
 
 <CodeGroup>
 
@@ -2103,6 +3359,30 @@ let spec = client.build_request("control_plane", "get_billing_portal", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getBillingPortal", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getBillingPortal",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getBillingCredits
@@ -2113,7 +3393,7 @@ Return the org credit wallet balance, grant, overage, and recent ledger for owne
 
 - **Producer operationId:** `getBillingCredits`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getBillingCredits()` · Python `client.control_plane.get_billing_credits()` · Rust `build_request("control_plane", "get_billing_credits", params)`
+- **Call as:** TypeScript `client.controlPlane.getBillingCredits()` · Python `client.control_plane.get_billing_credits()` · Rust `build_request("control_plane", "get_billing_credits", params)` · Go `BuildRequest("controlPlane", "getBillingCredits", params)` · C `tempera_build_request(..., "controlPlane", "getBillingCredits", ...)`
 
 <CodeGroup>
 
@@ -2131,6 +3411,30 @@ let spec = client.build_request("control_plane", "get_billing_credits", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getBillingCredits", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getBillingCredits",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getModelCatalog
@@ -2142,7 +3446,7 @@ List the entitled Tempera Code model catalog; requires a tempera-code bearer wit
 - **Producer operationId:** `getModelCatalog`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
 - **Scope:** `model:read`
-- **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)`
+- **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)` · Go `BuildRequest("controlPlane", "getModelCatalog", params)` · C `tempera_build_request(..., "controlPlane", "getModelCatalog", ...)`
 
 <CodeGroup>
 
@@ -2160,6 +3464,30 @@ let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getModelCatalog", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getModelCatalog",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### recordUsage
@@ -2170,7 +3498,7 @@ Record a usage event against a metered plan limit; requires a token carrying the
 
 - **Producer operationId:** `recordUsageEvent`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.recordUsage()` · Python `client.control_plane.record_usage()` · Rust `build_request("control_plane", "record_usage", params)`
+- **Call as:** TypeScript `client.controlPlane.recordUsage()` · Python `client.control_plane.record_usage()` · Rust `build_request("control_plane", "record_usage", params)` · Go `BuildRequest("controlPlane", "recordUsage", params)` · C `tempera_build_request(..., "controlPlane", "recordUsage", ...)`
 
 **Body parameters**
 
@@ -2215,6 +3543,35 @@ let spec = client.build_request("control_plane", "record_usage", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "recordUsage", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "metric": "<metric>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"metric\":\"<metric>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "recordUsage",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### usageReservationsCreate
@@ -2225,7 +3582,7 @@ Atomically reserve the maximum model cost before starting a provider request.
 
 - **Producer operationId:** `usageReservations.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.usageReservationsCreate()` · Python `client.control_plane.usage_reservations_create()` · Rust `build_request("control_plane", "usage_reservations_create", params)`
+- **Call as:** TypeScript `client.controlPlane.usageReservationsCreate()` · Python `client.control_plane.usage_reservations_create()` · Rust `build_request("control_plane", "usage_reservations_create", params)` · Go `BuildRequest("controlPlane", "usageReservationsCreate", params)` · C `tempera_build_request(..., "controlPlane", "usageReservationsCreate", ...)`
 
 **Body parameters**
 
@@ -2289,6 +3646,40 @@ let spec = client.build_request("control_plane", "usage_reservations_create", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "usageReservationsCreate", map[string]any{
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "provider": "<provider>",
+    "model": "<model>",
+    "configId": "<configId>",
+    "byok": "<byok>",
+    "maximumProviderCostMicros": "<maximumProviderCostMicros>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"idempotencyKey\":\"<idempotencyKey>\",\"provider\":\"<provider>\",\"model\":\"<model>\",\"configId\":\"<configId>\",\"byok\":\"<byok>\",\"maximumProviderCostMicros\":\"<maximumProviderCostMicros>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "usageReservationsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### usageReservationsCommit
@@ -2299,7 +3690,7 @@ Commit exact provider usage against an admitted reservation and release unused c
 
 - **Producer operationId:** `usageReservations.commit`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.usageReservationsCommit()` · Python `client.control_plane.usage_reservations_commit()` · Rust `build_request("control_plane", "usage_reservations_commit", params)`
+- **Call as:** TypeScript `client.controlPlane.usageReservationsCommit()` · Python `client.control_plane.usage_reservations_commit()` · Rust `build_request("control_plane", "usage_reservations_commit", params)` · Go `BuildRequest("controlPlane", "usageReservationsCommit", params)` · C `tempera_build_request(..., "controlPlane", "usageReservationsCommit", ...)`
 
 **Path parameters**
 
@@ -2354,6 +3745,39 @@ let spec = client.build_request("control_plane", "usage_reservations_commit", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "usageReservationsCommit", map[string]any{
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "configId": "<configId>",
+    "cost": "<cost>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"reservationId", "<reservationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"configId\":\"<configId>\",\"cost\":\"<cost>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "usageReservationsCommit",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### usageReservationsRelease
@@ -2364,7 +3788,7 @@ Release unused capacity after provider failure or cancellation.
 
 - **Producer operationId:** `usageReservations.release`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.usageReservationsRelease()` · Python `client.control_plane.usage_reservations_release()` · Rust `build_request("control_plane", "usage_reservations_release", params)`
+- **Call as:** TypeScript `client.controlPlane.usageReservationsRelease()` · Python `client.control_plane.usage_reservations_release()` · Rust `build_request("control_plane", "usage_reservations_release", params)` · Go `BuildRequest("controlPlane", "usageReservationsRelease", params)` · C `tempera_build_request(..., "controlPlane", "usageReservationsRelease", ...)`
 
 **Path parameters**
 
@@ -2411,6 +3835,37 @@ let spec = client.build_request("control_plane", "usage_reservations_release", &
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "usageReservationsRelease", map[string]any{
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"reservationId", "<reservationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "usageReservationsRelease",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### usageReservationsReconcile
@@ -2421,7 +3876,7 @@ Hold maximum capacity and record non-secret evidence when exact provider usage i
 
 - **Producer operationId:** `usageReservations.reconcile`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.usageReservationsReconcile()` · Python `client.control_plane.usage_reservations_reconcile()` · Rust `build_request("control_plane", "usage_reservations_reconcile", params)`
+- **Call as:** TypeScript `client.controlPlane.usageReservationsReconcile()` · Python `client.control_plane.usage_reservations_reconcile()` · Rust `build_request("control_plane", "usage_reservations_reconcile", params)` · Go `BuildRequest("controlPlane", "usageReservationsReconcile", params)` · C `tempera_build_request(..., "controlPlane", "usageReservationsReconcile", ...)`
 
 **Path parameters**
 
@@ -2482,6 +3937,40 @@ let spec = client.build_request("control_plane", "usage_reservations_reconcile",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "usageReservationsReconcile", map[string]any{
+    "reservationId": "<reservationId>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "configId": "<configId>",
+    "reason": "<reason>",
+    "observedUsage": "<observedUsage>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"reservationId", "<reservationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"configId\":\"<configId>\",\"reason\":\"<reason>\",\"observedUsage\":\"<observedUsage>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "usageReservationsReconcile",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listGrants
@@ -2492,7 +3981,7 @@ List the OAuth grants the user has approved in the active workspace.
 
 - **Producer operationId:** `listOAuthGrants`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)`
+- **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)` · Go `BuildRequest("controlPlane", "listGrants", params)` · C `tempera_build_request(..., "controlPlane", "listGrants", ...)`
 
 **Query parameters**
 
@@ -2526,6 +4015,33 @@ let spec = client.build_request("control_plane", "list_grants", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "listGrants", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "listGrants",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### revokeGrant
@@ -2536,7 +4052,7 @@ Revoke an OAuth grant and every refresh token issued under it.
 
 - **Producer operationId:** `revokeOAuthGrant`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.revokeGrant()` · Python `client.control_plane.revoke_grant()` · Rust `build_request("control_plane", "revoke_grant", params)`
+- **Call as:** TypeScript `client.controlPlane.revokeGrant()` · Python `client.control_plane.revoke_grant()` · Rust `build_request("control_plane", "revoke_grant", params)` · Go `BuildRequest("controlPlane", "revokeGrant", params)` · C `tempera_build_request(..., "controlPlane", "revokeGrant", ...)`
 
 **Path parameters**
 
@@ -2566,6 +4082,34 @@ let spec = client.build_request("control_plane", "revoke_grant", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "revokeGrant", map[string]any{
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"id", "<id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "revokeGrant",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### introspectToken
@@ -2576,7 +4120,7 @@ Introspect a token or tp_ API key server-side; requires the introspection secret
 
 - **Producer operationId:** `introspectOAuthToken`
 - **Auth:** Introspection secret bearer (server-side only).
-- **Call as:** TypeScript `client.controlPlane.introspectToken()` · Python `client.control_plane.introspect_token()` · Rust `build_request("control_plane", "introspect_token", params)`
+- **Call as:** TypeScript `client.controlPlane.introspectToken()` · Python `client.control_plane.introspect_token()` · Rust `build_request("control_plane", "introspect_token", params)` · Go `BuildRequest("controlPlane", "introspectToken", params)` · C `tempera_build_request(..., "controlPlane", "introspectToken", ...)`
 
 **Body parameters**
 
@@ -2610,6 +4154,33 @@ let spec = client.build_request("control_plane", "introspect_token", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "introspectToken", map[string]any{
+    "token": "<token>",
+    "token_type_hint": "<token_type_hint>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"token\":\"<token>\",\"token_type_hint\":\"<token_type_hint>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "introspectToken",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### discovery
@@ -2620,7 +4191,7 @@ Fetch OAuth 2.1 authorization-server metadata for the issuer.
 
 - **Producer operationId:** `getOAuthAuthorizationServerMetadata`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.discovery()` · Python `client.control_plane.discovery()` · Rust `build_request("control_plane", "discovery", params)`
+- **Call as:** TypeScript `client.controlPlane.discovery()` · Python `client.control_plane.discovery()` · Rust `build_request("control_plane", "discovery", params)` · Go `BuildRequest("controlPlane", "discovery", params)` · C `tempera_build_request(..., "controlPlane", "discovery", ...)`
 
 <CodeGroup>
 
@@ -2638,6 +4209,30 @@ let spec = client.build_request("control_plane", "discovery", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "discovery", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "discovery",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getOAuthProtectedResourceMetadata
@@ -2648,7 +4243,7 @@ OAuth protected resource discovery metadata for MCP/resource clients.
 
 - **Producer operationId:** `getOAuthProtectedResourceMetadata`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.getOAuthProtectedResourceMetadata()` · Python `client.control_plane.get_o_auth_protected_resource_metadata()` · Rust `build_request("control_plane", "get_o_auth_protected_resource_metadata", params)`
+- **Call as:** TypeScript `client.controlPlane.getOAuthProtectedResourceMetadata()` · Python `client.control_plane.get_o_auth_protected_resource_metadata()` · Rust `build_request("control_plane", "get_o_auth_protected_resource_metadata", params)` · Go `BuildRequest("controlPlane", "getOAuthProtectedResourceMetadata", params)` · C `tempera_build_request(..., "controlPlane", "getOAuthProtectedResourceMetadata", ...)`
 
 <CodeGroup>
 
@@ -2666,6 +4261,30 @@ let spec = client.build_request("control_plane", "get_o_auth_protected_resource_
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "getOAuthProtectedResourceMetadata", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "getOAuthProtectedResourceMetadata",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### protectedResourceMetadata
@@ -2676,7 +4295,7 @@ Fetch OAuth protected-resource metadata for one registered audience.
 
 - **Producer operationId:** `getOAuthProtectedResourceMetadataForAudience`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.protectedResourceMetadata()` · Python `client.control_plane.protected_resource_metadata()` · Rust `build_request("control_plane", "protected_resource_metadata", params)`
+- **Call as:** TypeScript `client.controlPlane.protectedResourceMetadata()` · Python `client.control_plane.protected_resource_metadata()` · Rust `build_request("control_plane", "protected_resource_metadata", params)` · Go `BuildRequest("controlPlane", "protectedResourceMetadata", params)` · C `tempera_build_request(..., "controlPlane", "protectedResourceMetadata", ...)`
 
 **Path parameters**
 
@@ -2706,6 +4325,34 @@ let spec = client.build_request("control_plane", "protected_resource_metadata", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "protectedResourceMetadata", map[string]any{
+    "resource": "<resource>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"resource", "<resource>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "protectedResourceMetadata",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### jwks
@@ -2716,7 +4363,7 @@ Fetch the JSON Web Key Set used to verify control-plane access tokens.
 
 - **Producer operationId:** `getJsonWebKeySet`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.jwks()` · Python `client.control_plane.jwks()` · Rust `build_request("control_plane", "jwks", params)`
+- **Call as:** TypeScript `client.controlPlane.jwks()` · Python `client.control_plane.jwks()` · Rust `build_request("control_plane", "jwks", params)` · Go `BuildRequest("controlPlane", "jwks", params)` · C `tempera_build_request(..., "controlPlane", "jwks", ...)`
 
 <CodeGroup>
 
@@ -2734,6 +4381,30 @@ let spec = client.build_request("control_plane", "jwks", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "jwks", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "jwks",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### adminOperationalProvenance
@@ -2744,7 +4415,7 @@ Return fail-closed source, machine, and image provenance for the serving runtime
 
 - **Producer operationId:** `adminOperationalProvenance`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.adminOperationalProvenance()` · Python `client.control_plane.admin_operational_provenance()` · Rust `build_request("control_plane", "admin_operational_provenance", params)`
+- **Call as:** TypeScript `client.controlPlane.adminOperationalProvenance()` · Python `client.control_plane.admin_operational_provenance()` · Rust `build_request("control_plane", "admin_operational_provenance", params)` · Go `BuildRequest("controlPlane", "adminOperationalProvenance", params)` · C `tempera_build_request(..., "controlPlane", "adminOperationalProvenance", ...)`
 
 <CodeGroup>
 
@@ -2762,6 +4433,30 @@ let spec = client.build_request("control_plane", "admin_operational_provenance",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "adminOperationalProvenance", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "adminOperationalProvenance",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### adminStepUp
@@ -2772,7 +4467,7 @@ Re-authenticate a platform-staff account session to mint a short-lived step-up e
 
 - **Producer operationId:** `adminStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.adminStepUp()` · Python `client.control_plane.admin_step_up()` · Rust `build_request("control_plane", "admin_step_up", params)`
+- **Call as:** TypeScript `client.controlPlane.adminStepUp()` · Python `client.control_plane.admin_step_up()` · Rust `build_request("control_plane", "admin_step_up", params)` · Go `BuildRequest("controlPlane", "adminStepUp", params)` · C `tempera_build_request(..., "controlPlane", "adminStepUp", ...)`
 
 **Body parameters**
 
@@ -2802,6 +4497,32 @@ let spec = client.build_request("control_plane", "admin_step_up", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "adminStepUp", map[string]any{
+    "password": "<password>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"password\":\"<password>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "adminStepUp",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### adminAdjustCredits
@@ -2812,7 +4533,7 @@ Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-u
 
 - **Producer operationId:** `adminAdjustCredits`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.adminAdjustCredits()` · Python `client.control_plane.admin_adjust_credits()` · Rust `build_request("control_plane", "admin_adjust_credits", params)`
+- **Call as:** TypeScript `client.controlPlane.adminAdjustCredits()` · Python `client.control_plane.admin_adjust_credits()` · Rust `build_request("control_plane", "admin_adjust_credits", params)` · Go `BuildRequest("controlPlane", "adminAdjustCredits", params)` · C `tempera_build_request(..., "controlPlane", "adminAdjustCredits", ...)`
 
 **Body parameters**
 
@@ -2851,6 +4572,34 @@ let spec = client.build_request("control_plane", "admin_adjust_credits", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "adminAdjustCredits", map[string]any{
+    "orgId": "<orgId>",
+    "creditMicros": "<creditMicros>",
+    "reference": "<reference>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"orgId\":\"<orgId>\",\"creditMicros\":\"<creditMicros>\",\"reference\":\"<reference>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "adminAdjustCredits",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### adminBillingOrgs
@@ -2861,7 +4610,7 @@ Platform-staff internal billing view: per-org wallet balances plus provider cost
 
 - **Producer operationId:** `adminBillingOrgs`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.adminBillingOrgs()` · Python `client.control_plane.admin_billing_orgs()` · Rust `build_request("control_plane", "admin_billing_orgs", params)`
+- **Call as:** TypeScript `client.controlPlane.adminBillingOrgs()` · Python `client.control_plane.admin_billing_orgs()` · Rust `build_request("control_plane", "admin_billing_orgs", params)` · Go `BuildRequest("controlPlane", "adminBillingOrgs", params)` · C `tempera_build_request(..., "controlPlane", "adminBillingOrgs", ...)`
 
 <CodeGroup>
 
@@ -2879,6 +4628,30 @@ let spec = client.build_request("control_plane", "admin_billing_orgs", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "adminBillingOrgs", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "adminBillingOrgs",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubSetupSessionsCreate
@@ -2889,7 +4662,7 @@ Create a one-time CSRF-bound GitHub App installation session.
 
 - **Producer operationId:** `githubSetupSessions.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsCreate()` · Python `client.control_plane.github_setup_sessions_create()` · Rust `build_request("control_plane", "github_setup_sessions_create", params)`
+- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsCreate()` · Python `client.control_plane.github_setup_sessions_create()` · Rust `build_request("control_plane", "github_setup_sessions_create", params)` · Go `BuildRequest("controlPlane", "githubSetupSessionsCreate", params)` · C `tempera_build_request(..., "controlPlane", "githubSetupSessionsCreate", ...)`
 
 **Body parameters**
 
@@ -2927,6 +4700,34 @@ let spec = client.build_request("control_plane", "github_setup_sessions_create",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubSetupSessionsCreate", map[string]any{
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "returnUrl": "<returnUrl>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"projectId\":\"<projectId>\",\"environmentId\":\"<environmentId>\",\"returnUrl\":\"<returnUrl>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubSetupSessionsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubSetupSessionsComplete
@@ -2937,7 +4738,7 @@ Bind a GitHub installation callback to its authenticated workspace.
 
 - **Producer operationId:** `githubSetupSessions.complete`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsComplete()` · Python `client.control_plane.github_setup_sessions_complete()` · Rust `build_request("control_plane", "github_setup_sessions_complete", params)`
+- **Call as:** TypeScript `client.controlPlane.githubSetupSessionsComplete()` · Python `client.control_plane.github_setup_sessions_complete()` · Rust `build_request("control_plane", "github_setup_sessions_complete", params)` · Go `BuildRequest("controlPlane", "githubSetupSessionsComplete", params)` · C `tempera_build_request(..., "controlPlane", "githubSetupSessionsComplete", ...)`
 
 **Query parameters**
 
@@ -2971,6 +4772,33 @@ let spec = client.build_request("control_plane", "github_setup_sessions_complete
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubSetupSessionsComplete", map[string]any{
+    "state": "<state>",
+    "installation_id": "<installation_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "state=<state>&installation_id=<installation_id>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubSetupSessionsComplete",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubInstallationsList
@@ -2981,7 +4809,7 @@ List active GitHub App installations for the organization.
 
 - **Producer operationId:** `githubInstallations.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.githubInstallationsList()` · Python `client.control_plane.github_installations_list()` · Rust `build_request("control_plane", "github_installations_list", params)`
+- **Call as:** TypeScript `client.controlPlane.githubInstallationsList()` · Python `client.control_plane.github_installations_list()` · Rust `build_request("control_plane", "github_installations_list", params)` · Go `BuildRequest("controlPlane", "githubInstallationsList", params)` · C `tempera_build_request(..., "controlPlane", "githubInstallationsList", ...)`
 
 **Query parameters**
 
@@ -3015,6 +4843,33 @@ let spec = client.build_request("control_plane", "github_installations_list", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubInstallationsList", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubInstallationsList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubInstallationsDisconnect
@@ -3025,7 +4880,7 @@ Disconnect a GitHub App installation from the workspace.
 
 - **Producer operationId:** `githubInstallations.disconnect`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.githubInstallationsDisconnect()` · Python `client.control_plane.github_installations_disconnect()` · Rust `build_request("control_plane", "github_installations_disconnect", params)`
+- **Call as:** TypeScript `client.controlPlane.githubInstallationsDisconnect()` · Python `client.control_plane.github_installations_disconnect()` · Rust `build_request("control_plane", "github_installations_disconnect", params)` · Go `BuildRequest("controlPlane", "githubInstallationsDisconnect", params)` · C `tempera_build_request(..., "controlPlane", "githubInstallationsDisconnect", ...)`
 
 **Path parameters**
 
@@ -3055,6 +4910,34 @@ let spec = client.build_request("control_plane", "github_installations_disconnec
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubInstallationsDisconnect", map[string]any{
+    "installationId": "<installationId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"installationId", "<installationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubInstallationsDisconnect",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubInstallationRepositoriesList
@@ -3065,7 +4948,7 @@ List repository metadata received for a GitHub installation.
 
 - **Producer operationId:** `githubInstallationRepositories.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.githubInstallationRepositoriesList()` · Python `client.control_plane.github_installation_repositories_list()` · Rust `build_request("control_plane", "github_installation_repositories_list", params)`
+- **Call as:** TypeScript `client.controlPlane.githubInstallationRepositoriesList()` · Python `client.control_plane.github_installation_repositories_list()` · Rust `build_request("control_plane", "github_installation_repositories_list", params)` · Go `BuildRequest("controlPlane", "githubInstallationRepositoriesList", params)` · C `tempera_build_request(..., "controlPlane", "githubInstallationRepositoriesList", ...)`
 
 **Path parameters**
 
@@ -3108,6 +4991,36 @@ let spec = client.build_request("control_plane", "github_installation_repositori
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubInstallationRepositoriesList", map[string]any{
+    "installationId": "<installationId>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"installationId", "<installationId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubInstallationRepositoriesList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubRepositorySnapshotsCapture
@@ -3118,7 +5031,7 @@ Capture an ephemeral, immutable GitHub repository snapshot for an authorized wor
 
 - **Producer operationId:** `githubRepositorySnapshots.capture`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.githubRepositorySnapshotsCapture()` · Python `client.control_plane.github_repository_snapshots_capture()` · Rust `build_request("control_plane", "github_repository_snapshots_capture", params)`
+- **Call as:** TypeScript `client.controlPlane.githubRepositorySnapshotsCapture()` · Python `client.control_plane.github_repository_snapshots_capture()` · Rust `build_request("control_plane", "github_repository_snapshots_capture", params)` · Go `BuildRequest("controlPlane", "githubRepositorySnapshotsCapture", params)` · C `tempera_build_request(..., "controlPlane", "githubRepositorySnapshotsCapture", ...)`
 
 **Path parameters**
 
@@ -3161,6 +5074,37 @@ let spec = client.build_request("control_plane", "github_repository_snapshots_ca
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubRepositorySnapshotsCapture", map[string]any{
+    "installationId": "<installationId>",
+    "repositoryId": "<repositoryId>",
+    "ref": "<ref>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"installationId", "<installationId>"},
+    {"repositoryId", "<repositoryId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"ref\":\"<ref>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubRepositorySnapshotsCapture",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### githubWebhooksAccept
@@ -3171,7 +5115,7 @@ Accept a signed, replay-deduplicated GitHub webhook.
 
 - **Producer operationId:** `githubWebhooks.accept`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.githubWebhooksAccept()` · Python `client.control_plane.github_webhooks_accept()` · Rust `build_request("control_plane", "github_webhooks_accept", params)`
+- **Call as:** TypeScript `client.controlPlane.githubWebhooksAccept()` · Python `client.control_plane.github_webhooks_accept()` · Rust `build_request("control_plane", "github_webhooks_accept", params)` · Go `BuildRequest("controlPlane", "githubWebhooksAccept", params)` · C `tempera_build_request(..., "controlPlane", "githubWebhooksAccept", ...)`
 
 <CodeGroup>
 
@@ -3189,6 +5133,30 @@ let spec = client.build_request("control_plane", "github_webhooks_accept", &[])?
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "githubWebhooksAccept", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "githubWebhooksAccept",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### sessionsRevokeAll
@@ -3199,7 +5167,7 @@ Revoke all account sessions, OAuth grants, and user-owned API keys and advance t
 
 - **Producer operationId:** `sessions.revokeAll`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.sessionsRevokeAll()` · Python `client.control_plane.sessions_revoke_all()` · Rust `build_request("control_plane", "sessions_revoke_all", params)`
+- **Call as:** TypeScript `client.controlPlane.sessionsRevokeAll()` · Python `client.control_plane.sessions_revoke_all()` · Rust `build_request("control_plane", "sessions_revoke_all", params)` · Go `BuildRequest("controlPlane", "sessionsRevokeAll", params)` · C `tempera_build_request(..., "controlPlane", "sessionsRevokeAll", ...)`
 
 <CodeGroup>
 
@@ -3217,6 +5185,30 @@ let spec = client.build_request("control_plane", "sessions_revoke_all", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "sessionsRevokeAll", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "sessionsRevokeAll",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysList
@@ -3227,7 +5219,7 @@ List passkeys enrolled for the authenticated account.
 
 - **Producer operationId:** `passkeys.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysList()` · Python `client.control_plane.passkeys_list()` · Rust `build_request("control_plane", "passkeys_list", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysList()` · Python `client.control_plane.passkeys_list()` · Rust `build_request("control_plane", "passkeys_list", params)` · Go `BuildRequest("controlPlane", "passkeysList", params)` · C `tempera_build_request(..., "controlPlane", "passkeysList", ...)`
 
 **Query parameters**
 
@@ -3261,6 +5253,33 @@ let spec = client.build_request("control_plane", "passkeys_list", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysList", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysBeginRegistration
@@ -3271,7 +5290,7 @@ Begin passkey registration for the authenticated account.
 
 - **Producer operationId:** `passkeys.beginRegistration`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysBeginRegistration()` · Python `client.control_plane.passkeys_begin_registration()` · Rust `build_request("control_plane", "passkeys_begin_registration", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginRegistration()` · Python `client.control_plane.passkeys_begin_registration()` · Rust `build_request("control_plane", "passkeys_begin_registration", params)` · Go `BuildRequest("controlPlane", "passkeysBeginRegistration", params)` · C `tempera_build_request(..., "controlPlane", "passkeysBeginRegistration", ...)`
 
 <CodeGroup>
 
@@ -3289,6 +5308,30 @@ let spec = client.build_request("control_plane", "passkeys_begin_registration", 
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysBeginRegistration", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysBeginRegistration",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysFinishRegistration
@@ -3299,7 +5342,7 @@ Verify and persist a passkey registration.
 
 - **Producer operationId:** `passkeys.finishRegistration`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysFinishRegistration()` · Python `client.control_plane.passkeys_finish_registration()` · Rust `build_request("control_plane", "passkeys_finish_registration", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishRegistration()` · Python `client.control_plane.passkeys_finish_registration()` · Rust `build_request("control_plane", "passkeys_finish_registration", params)` · Go `BuildRequest("controlPlane", "passkeysFinishRegistration", params)` · C `tempera_build_request(..., "controlPlane", "passkeysFinishRegistration", ...)`
 
 **Body parameters**
 
@@ -3337,6 +5380,34 @@ let spec = client.build_request("control_plane", "passkeys_finish_registration",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysFinishRegistration", map[string]any{
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"challengeId\":\"<challengeId>\",\"response\":\"<response>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysFinishRegistration",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysBeginAuthentication
@@ -3347,7 +5418,7 @@ Begin discoverable passkey authentication.
 
 - **Producer operationId:** `passkeys.beginAuthentication`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.passkeysBeginAuthentication()` · Python `client.control_plane.passkeys_begin_authentication()` · Rust `build_request("control_plane", "passkeys_begin_authentication", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginAuthentication()` · Python `client.control_plane.passkeys_begin_authentication()` · Rust `build_request("control_plane", "passkeys_begin_authentication", params)` · Go `BuildRequest("controlPlane", "passkeysBeginAuthentication", params)` · C `tempera_build_request(..., "controlPlane", "passkeysBeginAuthentication", ...)`
 
 <CodeGroup>
 
@@ -3365,6 +5436,30 @@ let spec = client.build_request("control_plane", "passkeys_begin_authentication"
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysBeginAuthentication", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysBeginAuthentication",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysFinishAuthentication
@@ -3375,7 +5470,7 @@ Verify a passkey assertion and create an AAL2 account session.
 
 - **Producer operationId:** `passkeys.finishAuthentication`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.controlPlane.passkeysFinishAuthentication()` · Python `client.control_plane.passkeys_finish_authentication()` · Rust `build_request("control_plane", "passkeys_finish_authentication", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishAuthentication()` · Python `client.control_plane.passkeys_finish_authentication()` · Rust `build_request("control_plane", "passkeys_finish_authentication", params)` · Go `BuildRequest("controlPlane", "passkeysFinishAuthentication", params)` · C `tempera_build_request(..., "controlPlane", "passkeysFinishAuthentication", ...)`
 
 **Body parameters**
 
@@ -3413,6 +5508,34 @@ let spec = client.build_request("control_plane", "passkeys_finish_authentication
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysFinishAuthentication", map[string]any{
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"challengeId\":\"<challengeId>\",\"response\":\"<response>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysFinishAuthentication",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysBeginStepUp
@@ -3423,7 +5546,7 @@ Begin passkey step-up for a signed-in account session.
 
 - **Producer operationId:** `passkeys.beginStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysBeginStepUp()` · Python `client.control_plane.passkeys_begin_step_up()` · Rust `build_request("control_plane", "passkeys_begin_step_up", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysBeginStepUp()` · Python `client.control_plane.passkeys_begin_step_up()` · Rust `build_request("control_plane", "passkeys_begin_step_up", params)` · Go `BuildRequest("controlPlane", "passkeysBeginStepUp", params)` · C `tempera_build_request(..., "controlPlane", "passkeysBeginStepUp", ...)`
 
 <CodeGroup>
 
@@ -3441,6 +5564,30 @@ let spec = client.build_request("control_plane", "passkeys_begin_step_up", &[])?
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysBeginStepUp", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysBeginStepUp",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysFinishStepUp
@@ -3451,7 +5598,7 @@ Verify passkey step-up and mint a short-lived AAL2 elevation token.
 
 - **Producer operationId:** `passkeys.finishStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysFinishStepUp()` · Python `client.control_plane.passkeys_finish_step_up()` · Rust `build_request("control_plane", "passkeys_finish_step_up", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysFinishStepUp()` · Python `client.control_plane.passkeys_finish_step_up()` · Rust `build_request("control_plane", "passkeys_finish_step_up", params)` · Go `BuildRequest("controlPlane", "passkeysFinishStepUp", params)` · C `tempera_build_request(..., "controlPlane", "passkeysFinishStepUp", ...)`
 
 **Body parameters**
 
@@ -3489,6 +5636,34 @@ let spec = client.build_request("control_plane", "passkeys_finish_step_up", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysFinishStepUp", map[string]any{
+    "challengeId": "<challengeId>",
+    "response": "<response>",
+    "name": "<name>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"challengeId\":\"<challengeId>\",\"response\":\"<response>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysFinishStepUp",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysRecover
@@ -3499,7 +5674,7 @@ Consume a one-time recovery code, remove passkeys, and revoke all active account
 
 - **Producer operationId:** `passkeys.recover`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysRecover()` · Python `client.control_plane.passkeys_recover()` · Rust `build_request("control_plane", "passkeys_recover", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysRecover()` · Python `client.control_plane.passkeys_recover()` · Rust `build_request("control_plane", "passkeys_recover", params)` · Go `BuildRequest("controlPlane", "passkeysRecover", params)` · C `tempera_build_request(..., "controlPlane", "passkeysRecover", ...)`
 
 **Body parameters**
 
@@ -3529,6 +5704,32 @@ let spec = client.build_request("control_plane", "passkeys_recover", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysRecover", map[string]any{
+    "recoveryCode": "<recoveryCode>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"recoveryCode\":\"<recoveryCode>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysRecover",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### passkeysDelete
@@ -3539,7 +5740,7 @@ Delete one passkey after recent AAL2 step-up.
 
 - **Producer operationId:** `passkeys.delete`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
-- **Call as:** TypeScript `client.controlPlane.passkeysDelete()` · Python `client.control_plane.passkeys_delete()` · Rust `build_request("control_plane", "passkeys_delete", params)`
+- **Call as:** TypeScript `client.controlPlane.passkeysDelete()` · Python `client.control_plane.passkeys_delete()` · Rust `build_request("control_plane", "passkeys_delete", params)` · Go `BuildRequest("controlPlane", "passkeysDelete", params)` · C `tempera_build_request(..., "controlPlane", "passkeysDelete", ...)`
 
 **Path parameters**
 
@@ -3567,6 +5768,508 @@ let spec = client.build_request("control_plane", "passkeys_delete", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "passkeysDelete", map[string]any{
+    "credentialId": "<credentialId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"credentialId", "<credentialId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "passkeysDelete",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
+</CodeGroup>
+
+### clearingAdmissionsCreate
+
+`POST /v1/clearing/admissions`
+
+Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.
+
+- **Producer operationId:** `clearingAdmissions.create`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:approve`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsCreate()` · Python `client.control_plane.clearing_admissions_create()` · Rust `build_request("control_plane", "clearing_admissions_create", params)` · Go `BuildRequest("controlPlane", "clearingAdmissionsCreate", params)` · C `tempera_build_request(..., "controlPlane", "clearingAdmissionsCreate", ...)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | — |
+| `workspace` | yes | — |
+| `principalId` | yes | — |
+| `canonicalActionId` | yes | — |
+| `canonicalRequestDigest` | yes | — |
+| `preparedEffectId` | yes | — |
+| `preparedEffectDigest` | yes | — |
+| `operation` | yes | — |
+| `resourceSelectors` | yes | — |
+| `economicAuthority` | yes | — |
+| `mandateId` | yes | — |
+| `mandateDigest` | yes | — |
+| `riskAssessmentId` | yes | — |
+| `riskAssessmentDigest` | yes | — |
+| `riskReservationId` | yes | — |
+| `riskReservationDigest` | yes | — |
+| `authorizationContextDigest` | yes | — |
+| `consumptionKey` | yes | — |
+| `ttlSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsCreate({
+  admissionId: "<admissionId>",
+  workspace: "<workspace>",
+  principalId: "<principalId>",
+  canonicalActionId: "<canonicalActionId>",
+  canonicalRequestDigest: "<canonicalRequestDigest>",
+  preparedEffectId: "<preparedEffectId>",
+  preparedEffectDigest: "<preparedEffectDigest>",
+  operation: "<operation>",
+  resourceSelectors: "<resourceSelectors>",
+  economicAuthority: "<economicAuthority>",
+  mandateId: "<mandateId>",
+  mandateDigest: "<mandateDigest>",
+  riskAssessmentId: "<riskAssessmentId>",
+  riskAssessmentDigest: "<riskAssessmentDigest>",
+  riskReservationId: "<riskReservationId>",
+  riskReservationDigest: "<riskReservationDigest>",
+  authorizationContextDigest: "<authorizationContextDigest>",
+  consumptionKey: "<consumptionKey>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_create({
+    "admissionId": "<admissionId>",
+    "workspace": "<workspace>",
+    "principalId": "<principalId>",
+    "canonicalActionId": "<canonicalActionId>",
+    "canonicalRequestDigest": "<canonicalRequestDigest>",
+    "preparedEffectId": "<preparedEffectId>",
+    "preparedEffectDigest": "<preparedEffectDigest>",
+    "operation": "<operation>",
+    "resourceSelectors": "<resourceSelectors>",
+    "economicAuthority": "<economicAuthority>",
+    "mandateId": "<mandateId>",
+    "mandateDigest": "<mandateDigest>",
+    "riskAssessmentId": "<riskAssessmentId>",
+    "riskAssessmentDigest": "<riskAssessmentDigest>",
+    "riskReservationId": "<riskReservationId>",
+    "riskReservationDigest": "<riskReservationDigest>",
+    "authorizationContextDigest": "<authorizationContextDigest>",
+    "consumptionKey": "<consumptionKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_create", &[
+    ("admissionId", "<admissionId>".into()),
+    ("workspace", "<workspace>".into()),
+    ("principalId", "<principalId>".into()),
+    ("canonicalActionId", "<canonicalActionId>".into()),
+    ("canonicalRequestDigest", "<canonicalRequestDigest>".into()),
+    ("preparedEffectId", "<preparedEffectId>".into()),
+    ("preparedEffectDigest", "<preparedEffectDigest>".into()),
+    ("operation", "<operation>".into()),
+    ("resourceSelectors", "<resourceSelectors>".into()),
+    ("economicAuthority", "<economicAuthority>".into()),
+    ("mandateId", "<mandateId>".into()),
+    ("mandateDigest", "<mandateDigest>".into()),
+    ("riskAssessmentId", "<riskAssessmentId>".into()),
+    ("riskAssessmentDigest", "<riskAssessmentDigest>".into()),
+    ("riskReservationId", "<riskReservationId>".into()),
+    ("riskReservationDigest", "<riskReservationDigest>".into()),
+    ("authorizationContextDigest", "<authorizationContextDigest>".into()),
+    ("consumptionKey", "<consumptionKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "clearingAdmissionsCreate", map[string]any{
+    "admissionId": "<admissionId>",
+    "workspace": "<workspace>",
+    "principalId": "<principalId>",
+    "canonicalActionId": "<canonicalActionId>",
+    "canonicalRequestDigest": "<canonicalRequestDigest>",
+    "preparedEffectId": "<preparedEffectId>",
+    "preparedEffectDigest": "<preparedEffectDigest>",
+    "operation": "<operation>",
+    "resourceSelectors": "<resourceSelectors>",
+    "economicAuthority": "<economicAuthority>",
+    "mandateId": "<mandateId>",
+    "mandateDigest": "<mandateDigest>",
+    "riskAssessmentId": "<riskAssessmentId>",
+    "riskAssessmentDigest": "<riskAssessmentDigest>",
+    "riskReservationId": "<riskReservationId>",
+    "riskReservationDigest": "<riskReservationDigest>",
+    "authorizationContextDigest": "<authorizationContextDigest>",
+    "consumptionKey": "<consumptionKey>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"admissionId\":\"<admissionId>\",\"workspace\":\"<workspace>\",\"principalId\":\"<principalId>\",\"canonicalActionId\":\"<canonicalActionId>\",\"canonicalRequestDigest\":\"<canonicalRequestDigest>\",\"preparedEffectId\":\"<preparedEffectId>\",\"preparedEffectDigest\":\"<preparedEffectDigest>\",\"operation\":\"<operation>\",\"resourceSelectors\":\"<resourceSelectors>\",\"economicAuthority\":\"<economicAuthority>\",\"mandateId\":\"<mandateId>\",\"mandateDigest\":\"<mandateDigest>\",\"riskAssessmentId\":\"<riskAssessmentId>\",\"riskAssessmentDigest\":\"<riskAssessmentDigest>\",\"riskReservationId\":\"<riskReservationId>\",\"riskReservationDigest\":\"<riskReservationDigest>\",\"authorizationContextDigest\":\"<authorizationContextDigest>\",\"consumptionKey\":\"<consumptionKey>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "clearingAdmissionsCreate",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
+</CodeGroup>
+
+### clearingAdmissionsGet
+
+`GET /v1/clearing/admissions/{admissionId}`
+
+Read a Clearing admission from the caller's exact workspace.
+
+- **Producer operationId:** `clearingAdmissions.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:read`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsGet()` · Python `client.control_plane.clearing_admissions_get()` · Rust `build_request("control_plane", "clearing_admissions_get", params)` · Go `BuildRequest("controlPlane", "clearingAdmissionsGet", params)` · C `tempera_build_request(..., "controlPlane", "clearingAdmissionsGet", ...)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsGet({
+  admissionId: "<admissionId>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_get({
+    "admissionId": "<admissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_get", &[
+    ("admissionId", "<admissionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "clearingAdmissionsGet", map[string]any{
+    "admissionId": "<admissionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"admissionId", "<admissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "clearingAdmissionsGet",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
+</CodeGroup>
+
+### clearingAdmissionsClaim
+
+`POST /v1/clearing/admissions/{admissionId}:claim`
+
+Atomically move one READY admission to a fenced lease before dispatch.
+
+- **Producer operationId:** `clearingAdmissions.claim`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:commit`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsClaim()` · Python `client.control_plane.clearing_admissions_claim()` · Rust `build_request("control_plane", "clearing_admissions_claim", params)` · Go `BuildRequest("controlPlane", "clearingAdmissionsClaim", params)` · C `tempera_build_request(..., "controlPlane", "clearingAdmissionsClaim", ...)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionDigest` | yes | — |
+| `leaseTokenDigest` | yes | — |
+| `leaseSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsClaim({
+  admissionId: "<admissionId>",
+  admissionDigest: "<admissionDigest>",
+  leaseTokenDigest: "<leaseTokenDigest>",
+  leaseSeconds: "<leaseSeconds>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_claim({
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseSeconds": "<leaseSeconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_claim", &[
+    ("admissionId", "<admissionId>".into()),
+    ("admissionDigest", "<admissionDigest>".into()),
+    ("leaseTokenDigest", "<leaseTokenDigest>".into()),
+    ("leaseSeconds", "<leaseSeconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "clearingAdmissionsClaim", map[string]any{
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseSeconds": "<leaseSeconds>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"admissionId", "<admissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"admissionDigest\":\"<admissionDigest>\",\"leaseTokenDigest\":\"<leaseTokenDigest>\",\"leaseSeconds\":\"<leaseSeconds>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "clearingAdmissionsClaim",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
+</CodeGroup>
+
+### clearingAdmissionsFinalize
+
+`POST /v1/clearing/admissions/{admissionId}:finalize`
+
+Consume a matching lease with one durable Clearing commit identity.
+
+- **Producer operationId:** `clearingAdmissions.finalize`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:commit`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsFinalize()` · Python `client.control_plane.clearing_admissions_finalize()` · Rust `build_request("control_plane", "clearing_admissions_finalize", params)` · Go `BuildRequest("controlPlane", "clearingAdmissionsFinalize", params)` · C `tempera_build_request(..., "controlPlane", "clearingAdmissionsFinalize", ...)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionDigest` | yes | — |
+| `leaseTokenDigest` | yes | — |
+| `leaseFence` | yes | — |
+| `clearingCommitDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsFinalize({
+  admissionId: "<admissionId>",
+  admissionDigest: "<admissionDigest>",
+  leaseTokenDigest: "<leaseTokenDigest>",
+  leaseFence: "<leaseFence>",
+  clearingCommitDigest: "<clearingCommitDigest>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_finalize({
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseFence": "<leaseFence>",
+    "clearingCommitDigest": "<clearingCommitDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_finalize", &[
+    ("admissionId", "<admissionId>".into()),
+    ("admissionDigest", "<admissionDigest>".into()),
+    ("leaseTokenDigest", "<leaseTokenDigest>".into()),
+    ("leaseFence", "<leaseFence>".into()),
+    ("clearingCommitDigest", "<clearingCommitDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "clearingAdmissionsFinalize", map[string]any{
+    "admissionId": "<admissionId>",
+    "admissionDigest": "<admissionDigest>",
+    "leaseTokenDigest": "<leaseTokenDigest>",
+    "leaseFence": "<leaseFence>",
+    "clearingCommitDigest": "<clearingCommitDigest>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"admissionId", "<admissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"admissionDigest\":\"<admissionDigest>\",\"leaseTokenDigest\":\"<leaseTokenDigest>\",\"leaseFence\":\"<leaseFence>\",\"clearingCommitDigest\":\"<clearingCommitDigest>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "clearingAdmissionsFinalize",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
+</CodeGroup>
+
+### clearingAdmissionsMarkRecoveryRequired
+
+`POST /v1/clearing/admissions/{admissionId}:markRecoveryRequired`
+
+Monotonically mark an expired lease as requiring authoritative reconciliation.
+
+- **Producer operationId:** `clearingAdmissions.markRecoveryRequired`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Scope:** `clearing:actions:reconcile`
+- **Call as:** TypeScript `client.controlPlane.clearingAdmissionsMarkRecoveryRequired()` · Python `client.control_plane.clearing_admissions_mark_recovery_required()` · Rust `build_request("control_plane", "clearing_admissions_mark_recovery_required", params)` · Go `BuildRequest("controlPlane", "clearingAdmissionsMarkRecoveryRequired", params)` · C `tempera_build_request(..., "controlPlane", "clearingAdmissionsMarkRecoveryRequired", ...)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `admissionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.clearingAdmissionsMarkRecoveryRequired({
+  admissionId: "<admissionId>",
+});
+```
+
+```python Python
+result = client.control_plane.clearing_admissions_mark_recovery_required({
+    "admissionId": "<admissionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "clearing_admissions_mark_recovery_required", &[
+    ("admissionId", "<admissionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("controlPlane", "clearingAdmissionsMarkRecoveryRequired", map[string]any{
+    "admissionId": "<admissionId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"admissionId", "<admissionId>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "controlPlane", "clearingAdmissionsMarkRecoveryRequired",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

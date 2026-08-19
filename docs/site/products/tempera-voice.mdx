@@ -37,7 +37,7 @@ Liveness.
 
 - **Producer operationId:** `voiceLiveness`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaVoice.voiceLiveness()` · Python `client.tempera_voice.voice_liveness()` · Rust `build_request("tempera_voice", "voice_liveness", params)`
+- **Call as:** TypeScript `client.temperaVoice.voiceLiveness()` · Python `client.tempera_voice.voice_liveness()` · Rust `build_request("tempera_voice", "voice_liveness", params)` · Go `BuildRequest("temperaVoice", "voiceLiveness", params)` · C `tempera_build_request(..., "temperaVoice", "voiceLiveness", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_voice", "voice_liveness", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "voiceLiveness", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "voiceLiveness",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### voiceReadiness
@@ -65,7 +89,7 @@ Readiness.
 
 - **Producer operationId:** `voiceReadiness`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaVoice.voiceReadiness()` · Python `client.tempera_voice.voice_readiness()` · Rust `build_request("tempera_voice", "voice_readiness", params)`
+- **Call as:** TypeScript `client.temperaVoice.voiceReadiness()` · Python `client.tempera_voice.voice_readiness()` · Rust `build_request("tempera_voice", "voice_readiness", params)` · Go `BuildRequest("temperaVoice", "voiceReadiness", params)` · C `tempera_build_request(..., "temperaVoice", "voiceReadiness", ...)`
 
 <CodeGroup>
 
@@ -83,6 +107,30 @@ let spec = client.build_request("tempera_voice", "voice_readiness", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "voiceReadiness", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "voiceReadiness",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### resolveVoiceAction
@@ -94,7 +142,7 @@ Resolve Action.
 - **Producer operationId:** `resolveVoiceAction`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.resolveVoiceAction()` · Python `client.tempera_voice.resolve_voice_action()` · Rust `build_request("tempera_voice", "resolve_voice_action", params)`
+- **Call as:** TypeScript `client.temperaVoice.resolveVoiceAction()` · Python `client.tempera_voice.resolve_voice_action()` · Rust `build_request("tempera_voice", "resolve_voice_action", params)` · Go `BuildRequest("temperaVoice", "resolveVoiceAction", params)` · C `tempera_build_request(..., "temperaVoice", "resolveVoiceAction", ...)`
 
 **Path parameters**
 
@@ -137,6 +185,36 @@ let spec = client.build_request("tempera_voice", "resolve_voice_action", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "resolveVoiceAction", map[string]any{
+    "action_id": "<action_id>",
+    "approved": "<approved>",
+    "note": "<note>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"action_id", "<action_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"approved\":\"<approved>\",\"note\":\"<note>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "resolveVoiceAction",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVoiceAgents
@@ -148,7 +226,7 @@ List Agents.
 - **Producer operationId:** `listVoiceAgents`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceAgents()` · Python `client.tempera_voice.list_voice_agents()` · Rust `build_request("tempera_voice", "list_voice_agents", params)`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceAgents()` · Python `client.tempera_voice.list_voice_agents()` · Rust `build_request("tempera_voice", "list_voice_agents", params)` · Go `BuildRequest("temperaVoice", "listVoiceAgents", params)` · C `tempera_build_request(..., "temperaVoice", "listVoiceAgents", ...)`
 
 **Query parameters**
 
@@ -178,6 +256,32 @@ let spec = client.build_request("tempera_voice", "list_voice_agents", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "listVoiceAgents", map[string]any{
+    "limit": "<limit>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "limit=<limit>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "listVoiceAgents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createVoiceAgent
@@ -189,7 +293,7 @@ Create Agent.
 - **Producer operationId:** `createVoiceAgent`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.createVoiceAgent()` · Python `client.tempera_voice.create_voice_agent()` · Rust `build_request("tempera_voice", "create_voice_agent", params)`
+- **Call as:** TypeScript `client.temperaVoice.createVoiceAgent()` · Python `client.tempera_voice.create_voice_agent()` · Rust `build_request("tempera_voice", "create_voice_agent", params)` · Go `BuildRequest("temperaVoice", "createVoiceAgent", params)` · C `tempera_build_request(..., "temperaVoice", "createVoiceAgent", ...)`
 
 **Body parameters**
 
@@ -241,6 +345,34 @@ let spec = client.build_request("tempera_voice", "create_voice_agent", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "createVoiceAgent", map[string]any{
+    "instructions": "<instructions>",
+    "name": "<name>",
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"id\":\"<id>\",\"instructions\":\"<instructions>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "createVoiceAgent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getVoiceAgent
@@ -252,7 +384,7 @@ Get Agent.
 - **Producer operationId:** `getVoiceAgent`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.getVoiceAgent()` · Python `client.tempera_voice.get_voice_agent()` · Rust `build_request("tempera_voice", "get_voice_agent", params)`
+- **Call as:** TypeScript `client.temperaVoice.getVoiceAgent()` · Python `client.tempera_voice.get_voice_agent()` · Rust `build_request("tempera_voice", "get_voice_agent", params)` · Go `BuildRequest("temperaVoice", "getVoiceAgent", params)` · C `tempera_build_request(..., "temperaVoice", "getVoiceAgent", ...)`
 
 **Path parameters**
 
@@ -282,6 +414,34 @@ let spec = client.build_request("tempera_voice", "get_voice_agent", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "getVoiceAgent", map[string]any{
+    "agent_id": "<agent_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"agent_id", "<agent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "getVoiceAgent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### upsertVoiceAgent
@@ -293,7 +453,7 @@ Upsert Agent.
 - **Producer operationId:** `upsertVoiceAgent`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.upsertVoiceAgent()` · Python `client.tempera_voice.upsert_voice_agent()` · Rust `build_request("tempera_voice", "upsert_voice_agent", params)`
+- **Call as:** TypeScript `client.temperaVoice.upsertVoiceAgent()` · Python `client.tempera_voice.upsert_voice_agent()` · Rust `build_request("tempera_voice", "upsert_voice_agent", params)` · Go `BuildRequest("temperaVoice", "upsertVoiceAgent", params)` · C `tempera_build_request(..., "temperaVoice", "upsertVoiceAgent", ...)`
 
 **Path parameters**
 
@@ -354,6 +514,37 @@ let spec = client.build_request("tempera_voice", "upsert_voice_agent", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "upsertVoiceAgent", map[string]any{
+    "agent_id": "<agent_id>",
+    "instructions": "<instructions>",
+    "name": "<name>",
+    "id": "<id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"agent_id", "<agent_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"id\":\"<id>\",\"instructions\":\"<instructions>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "upsertVoiceAgent",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### downloadVoiceArtifact
@@ -365,7 +556,7 @@ Download Artifact.
 - **Producer operationId:** `downloadVoiceArtifact`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.downloadVoiceArtifact()` · Python `client.tempera_voice.download_voice_artifact()` · Rust `build_request("tempera_voice", "download_voice_artifact", params)`
+- **Call as:** TypeScript `client.temperaVoice.downloadVoiceArtifact()` · Python `client.tempera_voice.download_voice_artifact()` · Rust `build_request("tempera_voice", "download_voice_artifact", params)` · Go `BuildRequest("temperaVoice", "downloadVoiceArtifact", params)` · C `tempera_build_request(..., "temperaVoice", "downloadVoiceArtifact", ...)`
 
 **Path parameters**
 
@@ -395,6 +586,34 @@ let spec = client.build_request("tempera_voice", "download_voice_artifact", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "downloadVoiceArtifact", map[string]any{
+    "reference": "<reference>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"reference", "<reference>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "downloadVoiceArtifact",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### uploadVoiceArtifact
@@ -406,7 +625,7 @@ Upload Artifact.
 - **Producer operationId:** `uploadVoiceArtifact`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.uploadVoiceArtifact()` · Python `client.tempera_voice.upload_voice_artifact()` · Rust `build_request("tempera_voice", "upload_voice_artifact", params)`
+- **Call as:** TypeScript `client.temperaVoice.uploadVoiceArtifact()` · Python `client.tempera_voice.upload_voice_artifact()` · Rust `build_request("tempera_voice", "upload_voice_artifact", params)` · Go `BuildRequest("temperaVoice", "uploadVoiceArtifact", params)` · C `tempera_build_request(..., "temperaVoice", "uploadVoiceArtifact", ...)`
 
 **Body parameters**
 
@@ -445,6 +664,34 @@ let spec = client.build_request("tempera_voice", "upload_voice_artifact", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "uploadVoiceArtifact", map[string]any{
+    "content_base64": "<content_base64>",
+    "name": "<name>",
+    "classification": "<classification>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"classification\":\"<classification>\",\"content_base64\":\"<content_base64>\",\"name\":\"<name>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "uploadVoiceArtifact",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getVoiceCapabilities
@@ -456,7 +703,7 @@ Capabilities.
 - **Producer operationId:** `getVoiceCapabilities`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.getVoiceCapabilities()` · Python `client.tempera_voice.get_voice_capabilities()` · Rust `build_request("tempera_voice", "get_voice_capabilities", params)`
+- **Call as:** TypeScript `client.temperaVoice.getVoiceCapabilities()` · Python `client.tempera_voice.get_voice_capabilities()` · Rust `build_request("tempera_voice", "get_voice_capabilities", params)` · Go `BuildRequest("temperaVoice", "getVoiceCapabilities", params)` · C `tempera_build_request(..., "temperaVoice", "getVoiceCapabilities", ...)`
 
 <CodeGroup>
 
@@ -474,6 +721,30 @@ let spec = client.build_request("tempera_voice", "get_voice_capabilities", &[])?
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "getVoiceCapabilities", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "getVoiceCapabilities",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVoiceEvalProfiles
@@ -485,7 +756,7 @@ List Eval Profiles.
 - **Producer operationId:** `listVoiceEvalProfiles`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceEvalProfiles()` · Python `client.tempera_voice.list_voice_eval_profiles()` · Rust `build_request("tempera_voice", "list_voice_eval_profiles", params)`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceEvalProfiles()` · Python `client.tempera_voice.list_voice_eval_profiles()` · Rust `build_request("tempera_voice", "list_voice_eval_profiles", params)` · Go `BuildRequest("temperaVoice", "listVoiceEvalProfiles", params)` · C `tempera_build_request(..., "temperaVoice", "listVoiceEvalProfiles", ...)`
 
 <CodeGroup>
 
@@ -503,6 +774,30 @@ let spec = client.build_request("tempera_voice", "list_voice_eval_profiles", &[]
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "listVoiceEvalProfiles", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "listVoiceEvalProfiles",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### buildVoiceEvalBundle
@@ -514,7 +809,7 @@ Build Eval Bundle.
 - **Producer operationId:** `buildVoiceEvalBundle`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.buildVoiceEvalBundle()` · Python `client.tempera_voice.build_voice_eval_bundle()` · Rust `build_request("tempera_voice", "build_voice_eval_bundle", params)`
+- **Call as:** TypeScript `client.temperaVoice.buildVoiceEvalBundle()` · Python `client.tempera_voice.build_voice_eval_bundle()` · Rust `build_request("tempera_voice", "build_voice_eval_bundle", params)` · Go `BuildRequest("temperaVoice", "buildVoiceEvalBundle", params)` · C `tempera_build_request(..., "temperaVoice", "buildVoiceEvalBundle", ...)`
 
 **Body parameters**
 
@@ -581,6 +876,41 @@ let spec = client.build_request("tempera_voice", "build_voice_eval_bundle", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "buildVoiceEvalBundle", map[string]any{
+    "adapter_import_path": "<adapter_import_path>",
+    "adapter_import_public_key_path": "<adapter_import_public_key_path>",
+    "adapter_import_signature_path": "<adapter_import_signature_path>",
+    "bundle_id": "<bundle_id>",
+    "exposure_ledger_path": "<exposure_ledger_path>",
+    "guardrails_path": "<guardrails_path>",
+    "preregistration_path": "<preregistration_path>",
+    "profile_id": "<profile_id>",
+    "redaction_policy_path": "<redaction_policy_path>",
+    "release_evidence_path": "<release_evidence_path>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"adapter_import_path\":\"<adapter_import_path>\",\"adapter_import_public_key_path\":\"<adapter_import_public_key_path>\",\"adapter_import_signature_path\":\"<adapter_import_signature_path>\",\"bundle_id\":\"<bundle_id>\",\"exposure_ledger_path\":\"<exposure_ledger_path>\",\"guardrails_path\":\"<guardrails_path>\",\"preregistration_path\":\"<preregistration_path>\",\"profile_id\":\"<profile_id>\",\"redaction_policy_path\":\"<redaction_policy_path>\",\"release_evidence_path\":\"<release_evidence_path>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "buildVoiceEvalBundle",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createVoicePaletteHandoff
@@ -592,7 +922,7 @@ Create Palette Handoff.
 - **Producer operationId:** `createVoicePaletteHandoff`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.createVoicePaletteHandoff()` · Python `client.tempera_voice.create_voice_palette_handoff()` · Rust `build_request("tempera_voice", "create_voice_palette_handoff", params)`
+- **Call as:** TypeScript `client.temperaVoice.createVoicePaletteHandoff()` · Python `client.tempera_voice.create_voice_palette_handoff()` · Rust `build_request("tempera_voice", "create_voice_palette_handoff", params)` · Go `BuildRequest("temperaVoice", "createVoicePaletteHandoff", params)` · C `tempera_build_request(..., "temperaVoice", "createVoicePaletteHandoff", ...)`
 
 **Body parameters**
 
@@ -647,6 +977,38 @@ let spec = client.build_request("tempera_voice", "create_voice_palette_handoff",
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "createVoicePaletteHandoff", map[string]any{
+    "evidence_path": "<evidence_path>",
+    "kind": "<kind>",
+    "profile_id": "<profile_id>",
+    "project_id": "<project_id>",
+    "public_key_path": "<public_key_path>",
+    "signature_path": "<signature_path>",
+    "tenant_id": "<tenant_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"evidence_path\":\"<evidence_path>\",\"kind\":\"<kind>\",\"profile_id\":\"<profile_id>\",\"project_id\":\"<project_id>\",\"public_key_path\":\"<public_key_path>\",\"signature_path\":\"<signature_path>\",\"tenant_id\":\"<tenant_id>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "createVoicePaletteHandoff",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### publishVoicePaletteHandoff
@@ -658,7 +1020,7 @@ Publish Palette Handoff.
 - **Producer operationId:** `publishVoicePaletteHandoff`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.publishVoicePaletteHandoff()` · Python `client.tempera_voice.publish_voice_palette_handoff()` · Rust `build_request("tempera_voice", "publish_voice_palette_handoff", params)`
+- **Call as:** TypeScript `client.temperaVoice.publishVoicePaletteHandoff()` · Python `client.tempera_voice.publish_voice_palette_handoff()` · Rust `build_request("tempera_voice", "publish_voice_palette_handoff", params)` · Go `BuildRequest("temperaVoice", "publishVoicePaletteHandoff", params)` · C `tempera_build_request(..., "temperaVoice", "publishVoicePaletteHandoff", ...)`
 
 **Body parameters**
 
@@ -688,6 +1050,32 @@ let spec = client.build_request("tempera_voice", "publish_voice_palette_handoff"
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "publishVoicePaletteHandoff", map[string]any{
+    "handoff_path": "<handoff_path>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"handoff_path\":\"<handoff_path>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "publishVoicePaletteHandoff",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### importVoiceEvalResult
@@ -699,7 +1087,7 @@ Import Eval Result.
 - **Producer operationId:** `importVoiceEvalResult`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.importVoiceEvalResult()` · Python `client.tempera_voice.import_voice_eval_result()` · Rust `build_request("tempera_voice", "import_voice_eval_result", params)`
+- **Call as:** TypeScript `client.temperaVoice.importVoiceEvalResult()` · Python `client.tempera_voice.import_voice_eval_result()` · Rust `build_request("tempera_voice", "import_voice_eval_result", params)` · Go `BuildRequest("temperaVoice", "importVoiceEvalResult", params)` · C `tempera_build_request(..., "temperaVoice", "importVoiceEvalResult", ...)`
 
 **Body parameters**
 
@@ -740,6 +1128,34 @@ let spec = client.build_request("tempera_voice", "import_voice_eval_result", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "importVoiceEvalResult", map[string]any{
+    "artifacts": "<artifacts>",
+    "profile_id": "<profile_id>",
+    "sealed_result_path": "<sealed_result_path>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"artifacts\":\"<artifacts>\",\"profile_id\":\"<profile_id>\",\"sealed_result_path\":\"<sealed_result_path>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "importVoiceEvalResult",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### sealVoiceEvalResult
@@ -751,7 +1167,7 @@ Seal Eval Result.
 - **Producer operationId:** `sealVoiceEvalResult`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.sealVoiceEvalResult()` · Python `client.tempera_voice.seal_voice_eval_result()` · Rust `build_request("tempera_voice", "seal_voice_eval_result", params)`
+- **Call as:** TypeScript `client.temperaVoice.sealVoiceEvalResult()` · Python `client.tempera_voice.seal_voice_eval_result()` · Rust `build_request("tempera_voice", "seal_voice_eval_result", params)` · Go `BuildRequest("temperaVoice", "sealVoiceEvalResult", params)` · C `tempera_build_request(..., "temperaVoice", "sealVoiceEvalResult", ...)`
 
 **Body parameters**
 
@@ -785,6 +1201,33 @@ let spec = client.build_request("tempera_voice", "seal_voice_eval_result", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "sealVoiceEvalResult", map[string]any{
+    "draft": "<draft>",
+    "profile_id": "<profile_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"draft\":\"<draft>\",\"profile_id\":\"<profile_id>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "sealVoiceEvalResult",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVoiceSessions
@@ -796,7 +1239,7 @@ List Sessions.
 - **Producer operationId:** `listVoiceSessions`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessions()` · Python `client.tempera_voice.list_voice_sessions()` · Rust `build_request("tempera_voice", "list_voice_sessions", params)`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessions()` · Python `client.tempera_voice.list_voice_sessions()` · Rust `build_request("tempera_voice", "list_voice_sessions", params)` · Go `BuildRequest("temperaVoice", "listVoiceSessions", params)` · C `tempera_build_request(..., "temperaVoice", "listVoiceSessions", ...)`
 
 **Query parameters**
 
@@ -830,6 +1273,33 @@ let spec = client.build_request("tempera_voice", "list_voice_sessions", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "listVoiceSessions", map[string]any{
+    "agent_id": "<agent_id>",
+    "limit": "<limit>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "agent_id=<agent_id>&limit=<limit>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "listVoiceSessions",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createVoiceSession
@@ -841,7 +1311,7 @@ Create Session.
 - **Producer operationId:** `createVoiceSession`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.createVoiceSession()` · Python `client.tempera_voice.create_voice_session()` · Rust `build_request("tempera_voice", "create_voice_session", params)`
+- **Call as:** TypeScript `client.temperaVoice.createVoiceSession()` · Python `client.tempera_voice.create_voice_session()` · Rust `build_request("tempera_voice", "create_voice_session", params)` · Go `BuildRequest("temperaVoice", "createVoiceSession", params)` · C `tempera_build_request(..., "temperaVoice", "createVoiceSession", ...)`
 
 **Body parameters**
 
@@ -881,6 +1351,34 @@ let spec = client.build_request("tempera_voice", "create_voice_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "createVoiceSession", map[string]any{
+    "agent_id": "<agent_id>",
+    "channel": "<channel>",
+    "external_id": "<external_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"agent_id\":\"<agent_id>\",\"channel\":\"<channel>\",\"external_id\":\"<external_id>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "createVoiceSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getVoiceSession
@@ -892,7 +1390,7 @@ Get Session.
 - **Producer operationId:** `getVoiceSession`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.getVoiceSession()` · Python `client.tempera_voice.get_voice_session()` · Rust `build_request("tempera_voice", "get_voice_session", params)`
+- **Call as:** TypeScript `client.temperaVoice.getVoiceSession()` · Python `client.tempera_voice.get_voice_session()` · Rust `build_request("tempera_voice", "get_voice_session", params)` · Go `BuildRequest("temperaVoice", "getVoiceSession", params)` · C `tempera_build_request(..., "temperaVoice", "getVoiceSession", ...)`
 
 **Path parameters**
 
@@ -922,6 +1420,34 @@ let spec = client.build_request("tempera_voice", "get_voice_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "getVoiceSession", map[string]any{
+    "session_id": "<session_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"session_id", "<session_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "getVoiceSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVoiceSessionActions
@@ -933,7 +1459,7 @@ List Actions.
 - **Producer operationId:** `listVoiceSessionActions`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionActions()` · Python `client.tempera_voice.list_voice_session_actions()` · Rust `build_request("tempera_voice", "list_voice_session_actions", params)`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionActions()` · Python `client.tempera_voice.list_voice_session_actions()` · Rust `build_request("tempera_voice", "list_voice_session_actions", params)` · Go `BuildRequest("temperaVoice", "listVoiceSessionActions", params)` · C `tempera_build_request(..., "temperaVoice", "listVoiceSessionActions", ...)`
 
 **Path parameters**
 
@@ -963,6 +1489,34 @@ let spec = client.build_request("tempera_voice", "list_voice_session_actions", &
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "listVoiceSessionActions", map[string]any{
+    "session_id": "<session_id>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"session_id", "<session_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "listVoiceSessionActions",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVoiceSessionEvents
@@ -974,7 +1528,7 @@ List Events.
 - **Producer operationId:** `listVoiceSessionEvents`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionEvents()` · Python `client.tempera_voice.list_voice_session_events()` · Rust `build_request("tempera_voice", "list_voice_session_events", params)`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionEvents()` · Python `client.tempera_voice.list_voice_session_events()` · Rust `build_request("tempera_voice", "list_voice_session_events", params)` · Go `BuildRequest("temperaVoice", "listVoiceSessionEvents", params)` · C `tempera_build_request(..., "temperaVoice", "listVoiceSessionEvents", ...)`
 
 **Path parameters**
 
@@ -1017,6 +1571,36 @@ let spec = client.build_request("tempera_voice", "list_voice_session_events", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "listVoiceSessionEvents", map[string]any{
+    "session_id": "<session_id>",
+    "after_sequence": "<after_sequence>",
+    "limit": "<limit>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"session_id", "<session_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "after_sequence=<after_sequence>&limit=<limit>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "listVoiceSessionEvents",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### endVoiceSession
@@ -1028,7 +1612,7 @@ End Session.
 - **Producer operationId:** `endVoiceSession`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.endVoiceSession()` · Python `client.tempera_voice.end_voice_session()` · Rust `build_request("tempera_voice", "end_voice_session", params)`
+- **Call as:** TypeScript `client.temperaVoice.endVoiceSession()` · Python `client.tempera_voice.end_voice_session()` · Rust `build_request("tempera_voice", "end_voice_session", params)` · Go `BuildRequest("temperaVoice", "endVoiceSession", params)` · C `tempera_build_request(..., "temperaVoice", "endVoiceSession", ...)`
 
 **Path parameters**
 
@@ -1067,6 +1651,35 @@ let spec = client.build_request("tempera_voice", "end_voice_session", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "endVoiceSession", map[string]any{
+    "session_id": "<session_id>",
+    "reason": "<reason>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"session_id", "<session_id>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"reason\":\"<reason>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "endVoiceSession",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### exportVoiceSessions
@@ -1078,7 +1691,7 @@ Export Sessions.
 - **Producer operationId:** `exportVoiceSessions`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.exportVoiceSessions()` · Python `client.tempera_voice.export_voice_sessions()` · Rust `build_request("tempera_voice", "export_voice_sessions", params)`
+- **Call as:** TypeScript `client.temperaVoice.exportVoiceSessions()` · Python `client.tempera_voice.export_voice_sessions()` · Rust `build_request("tempera_voice", "export_voice_sessions", params)` · Go `BuildRequest("temperaVoice", "exportVoiceSessions", params)` · C `tempera_build_request(..., "temperaVoice", "exportVoiceSessions", ...)`
 
 **Body parameters**
 
@@ -1106,6 +1719,32 @@ let spec = client.build_request("tempera_voice", "export_voice_sessions", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaVoice", "exportVoiceSessions", map[string]any{
+    "session_ids": "<session_ids>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"session_ids\":\"<session_ids>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaVoice", "exportVoiceSessions",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>

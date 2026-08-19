@@ -37,7 +37,7 @@ Check tempera-gym service liveness.
 
 - **Producer operationId:** `health.get`
 - **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaGym.health()` · Python `client.tempera_gym.health()` · Rust `build_request("tempera_gym", "health", params)`
+- **Call as:** TypeScript `client.temperaGym.health()` · Python `client.tempera_gym.health()` · Rust `build_request("tempera_gym", "health", params)` · Go `BuildRequest("temperaGym", "health", params)` · C `tempera_build_request(..., "temperaGym", "health", ...)`
 
 <CodeGroup>
 
@@ -55,6 +55,30 @@ let spec = client.build_request("tempera_gym", "health", &[])?;
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "health", map[string]any{})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "health",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listEnvironments
@@ -66,7 +90,7 @@ List the gym pack's environment catalog, including implementation status and per
 - **Producer operationId:** `environments.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listEnvironments()` · Python `client.tempera_gym.list_environments()` · Rust `build_request("tempera_gym", "list_environments", params)`
+- **Call as:** TypeScript `client.temperaGym.listEnvironments()` · Python `client.tempera_gym.list_environments()` · Rust `build_request("tempera_gym", "list_environments", params)` · Go `BuildRequest("temperaGym", "listEnvironments", params)` · C `tempera_build_request(..., "temperaGym", "listEnvironments", ...)`
 
 **Query parameters**
 
@@ -100,6 +124,33 @@ let spec = client.build_request("tempera_gym", "list_environments", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listEnvironments", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listEnvironments",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listDomains
@@ -111,7 +162,7 @@ Domain capabilities represented in the versioned task catalog.
 - **Producer operationId:** `domains.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listDomains()` · Python `client.tempera_gym.list_domains()` · Rust `build_request("tempera_gym", "list_domains", params)`
+- **Call as:** TypeScript `client.temperaGym.listDomains()` · Python `client.tempera_gym.list_domains()` · Rust `build_request("tempera_gym", "list_domains", params)` · Go `BuildRequest("temperaGym", "listDomains", params)` · C `tempera_build_request(..., "temperaGym", "listDomains", ...)`
 
 **Query parameters**
 
@@ -145,6 +196,33 @@ let spec = client.build_request("tempera_gym", "list_domains", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listDomains", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listDomains",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listTasks
@@ -156,7 +234,7 @@ List versioned task definitions without agent inputs.
 - **Producer operationId:** `tasks.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listTasks()` · Python `client.tempera_gym.list_tasks()` · Rust `build_request("tempera_gym", "list_tasks", params)`
+- **Call as:** TypeScript `client.temperaGym.listTasks()` · Python `client.tempera_gym.list_tasks()` · Rust `build_request("tempera_gym", "list_tasks", params)` · Go `BuildRequest("temperaGym", "listTasks", params)` · C `tempera_build_request(..., "temperaGym", "listTasks", ...)`
 
 **Query parameters**
 
@@ -192,6 +270,33 @@ let spec = client.build_request("tempera_gym", "list_tasks", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listTasks", map[string]any{
+    "domain": "<domain>",
+    "family": "<family>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "domain=<domain>&family=<family>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listTasks",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getTask
@@ -203,7 +308,7 @@ Get one immutable task definition including its agent-visible input.
 - **Producer operationId:** `tasks.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.getTask()` · Python `client.tempera_gym.get_task()` · Rust `build_request("tempera_gym", "get_task", params)`
+- **Call as:** TypeScript `client.temperaGym.getTask()` · Python `client.tempera_gym.get_task()` · Rust `build_request("tempera_gym", "get_task", params)` · Go `BuildRequest("temperaGym", "getTask", params)` · C `tempera_build_request(..., "temperaGym", "getTask", ...)`
 
 **Path parameters**
 
@@ -242,6 +347,35 @@ let spec = client.build_request("tempera_gym", "get_task", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "getTask", map[string]any{
+    "task": "<task>",
+    "version": "<version>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"task", "<task>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = "version=<version>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "getTask",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### evaluateTask
@@ -253,7 +387,7 @@ Deterministically verify one candidate without creating an episode.
 - **Producer operationId:** `tasks.evaluate`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.evaluateTask()` · Python `client.tempera_gym.evaluate_task()` · Rust `build_request("tempera_gym", "evaluate_task", params)`
+- **Call as:** TypeScript `client.temperaGym.evaluateTask()` · Python `client.tempera_gym.evaluate_task()` · Rust `build_request("tempera_gym", "evaluate_task", params)` · Go `BuildRequest("temperaGym", "evaluateTask", params)` · C `tempera_build_request(..., "temperaGym", "evaluateTask", ...)`
 
 **Path parameters**
 
@@ -306,6 +440,37 @@ let spec = client.build_request("tempera_gym", "evaluate_task", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "evaluateTask", map[string]any{
+    "task": "<task>",
+    "candidate": "<candidate>",
+    "seed": "<seed>",
+    "receipts": "<receipts>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"task", "<task>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"candidate\":\"<candidate>\",\"seed\":\"<seed>\",\"receipts\":\"<receipts>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "evaluateTask",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listVerifiers
@@ -317,7 +482,7 @@ List verifier identities and bound tasks without grader content.
 - **Producer operationId:** `verifiers.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listVerifiers()` · Python `client.tempera_gym.list_verifiers()` · Rust `build_request("tempera_gym", "list_verifiers", params)`
+- **Call as:** TypeScript `client.temperaGym.listVerifiers()` · Python `client.tempera_gym.list_verifiers()` · Rust `build_request("tempera_gym", "list_verifiers", params)` · Go `BuildRequest("temperaGym", "listVerifiers", params)` · C `tempera_build_request(..., "temperaGym", "listVerifiers", ...)`
 
 **Query parameters**
 
@@ -351,6 +516,33 @@ let spec = client.build_request("tempera_gym", "list_verifiers", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listVerifiers", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listVerifiers",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listEpisodes
@@ -362,7 +554,7 @@ List durable episode snapshots, newest first.
 - **Producer operationId:** `episodes.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listEpisodes()` · Python `client.tempera_gym.list_episodes()` · Rust `build_request("tempera_gym", "list_episodes", params)`
+- **Call as:** TypeScript `client.temperaGym.listEpisodes()` · Python `client.tempera_gym.list_episodes()` · Rust `build_request("tempera_gym", "list_episodes", params)` · Go `BuildRequest("temperaGym", "listEpisodes", params)` · C `tempera_build_request(..., "temperaGym", "listEpisodes", ...)`
 
 **Query parameters**
 
@@ -398,6 +590,33 @@ let spec = client.build_request("tempera_gym", "list_episodes", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listEpisodes", map[string]any{
+    "domain": "<domain>",
+    "status": "<status>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "domain=<domain>&status=<status>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listEpisodes",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createEpisode
@@ -409,7 +628,7 @@ Reset a versioned task into a durable episode.
 - **Producer operationId:** `episodes.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.createEpisode()` · Python `client.tempera_gym.create_episode()` · Rust `build_request("tempera_gym", "create_episode", params)`
+- **Call as:** TypeScript `client.temperaGym.createEpisode()` · Python `client.tempera_gym.create_episode()` · Rust `build_request("tempera_gym", "create_episode", params)` · Go `BuildRequest("temperaGym", "createEpisode", params)` · C `tempera_build_request(..., "temperaGym", "createEpisode", ...)`
 
 **Body parameters**
 
@@ -443,6 +662,33 @@ let spec = client.build_request("tempera_gym", "create_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "createEpisode", map[string]any{
+    "task": "<task>",
+    "seed": "<seed>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"task\":\"<task>\",\"seed\":\"<seed>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "createEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getEpisode
@@ -454,7 +700,7 @@ Read and content-verify one durable episode snapshot.
 - **Producer operationId:** `episodes.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.getEpisode()` · Python `client.tempera_gym.get_episode()` · Rust `build_request("tempera_gym", "get_episode", params)`
+- **Call as:** TypeScript `client.temperaGym.getEpisode()` · Python `client.tempera_gym.get_episode()` · Rust `build_request("tempera_gym", "get_episode", params)` · Go `BuildRequest("temperaGym", "getEpisode", params)` · C `tempera_build_request(..., "temperaGym", "getEpisode", ...)`
 
 **Path parameters**
 
@@ -484,6 +730,34 @@ let spec = client.build_request("tempera_gym", "get_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "getEpisode", map[string]any{
+    "episode": "<episode>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"episode", "<episode>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "getEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### stepEpisode
@@ -495,7 +769,7 @@ Apply one schema-validated action and persist the transition.
 - **Producer operationId:** `episodes.step`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.stepEpisode()` · Python `client.tempera_gym.step_episode()` · Rust `build_request("tempera_gym", "step_episode", params)`
+- **Call as:** TypeScript `client.temperaGym.stepEpisode()` · Python `client.tempera_gym.step_episode()` · Rust `build_request("tempera_gym", "step_episode", params)` · Go `BuildRequest("temperaGym", "stepEpisode", params)` · C `tempera_build_request(..., "temperaGym", "stepEpisode", ...)`
 
 **Path parameters**
 
@@ -538,6 +812,36 @@ let spec = client.build_request("tempera_gym", "step_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "stepEpisode", map[string]any{
+    "episode": "<episode>",
+    "action": "<action>",
+    "receipts": "<receipts>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"episode", "<episode>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"action\":\"<action>\",\"receipts\":\"<receipts>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "stepEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### exportEpisode
@@ -549,7 +853,7 @@ Retain a completed Gym episode and trajectory in Data Engine.
 - **Producer operationId:** `episodes.export`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.exportEpisode()` · Python `client.tempera_gym.export_episode()` · Rust `build_request("tempera_gym", "export_episode", params)`
+- **Call as:** TypeScript `client.temperaGym.exportEpisode()` · Python `client.tempera_gym.export_episode()` · Rust `build_request("tempera_gym", "export_episode", params)` · Go `BuildRequest("temperaGym", "exportEpisode", params)` · C `tempera_build_request(..., "temperaGym", "exportEpisode", ...)`
 
 **Path parameters**
 
@@ -596,6 +900,37 @@ let spec = client.build_request("tempera_gym", "export_episode", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "exportEpisode", map[string]any{
+    "episode": "<episode>",
+    "contextEvidenceRef": "<contextEvidenceRef>",
+    "verifierReceiptArtifactRef": "<verifierReceiptArtifactRef>",
+    "requestId": "<requestId>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"episode", "<episode>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"contextEvidenceRef\":\"<contextEvidenceRef>\",\"verifierReceiptArtifactRef\":\"<verifierReceiptArtifactRef>\",\"requestId\":\"<requestId>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "exportEpisode",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listRuns
@@ -607,7 +942,7 @@ List persisted rollout run index records, newest first.
 - **Producer operationId:** `runs.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listRuns()` · Python `client.tempera_gym.list_runs()` · Rust `build_request("tempera_gym", "list_runs", params)`
+- **Call as:** TypeScript `client.temperaGym.listRuns()` · Python `client.tempera_gym.list_runs()` · Rust `build_request("tempera_gym", "list_runs", params)` · Go `BuildRequest("temperaGym", "listRuns", params)` · C `tempera_build_request(..., "temperaGym", "listRuns", ...)`
 
 **Query parameters**
 
@@ -642,6 +977,33 @@ let spec = client.build_request("tempera_gym", "list_runs", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listRuns", map[string]any{
+    "environmentId": "<environmentId>",
+    "pageSize": "<pageSize>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "environmentId=<environmentId>&pageSize=<pageSize>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listRuns",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getRun
@@ -653,7 +1015,7 @@ Fetch one persisted run's index record and verified trajectory-v1 envelope by ru
 - **Producer operationId:** `runs.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.getRun()` · Python `client.tempera_gym.get_run()` · Rust `build_request("tempera_gym", "get_run", params)`
+- **Call as:** TypeScript `client.temperaGym.getRun()` · Python `client.tempera_gym.get_run()` · Rust `build_request("tempera_gym", "get_run", params)` · Go `BuildRequest("temperaGym", "getRun", params)` · C `tempera_build_request(..., "temperaGym", "getRun", ...)`
 
 **Path parameters**
 
@@ -683,6 +1045,34 @@ let spec = client.build_request("tempera_gym", "get_run", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "getRun", map[string]any{
+    "run": "<run>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"run", "<run>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "getRun",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### createRollout
@@ -694,7 +1084,7 @@ Execute one rollout synchronously, persist the trajectory, and return the comple
 - **Producer operationId:** `rollouts.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.createRollout()` · Python `client.tempera_gym.create_rollout()` · Rust `build_request("tempera_gym", "create_rollout", params)`
+- **Call as:** TypeScript `client.temperaGym.createRollout()` · Python `client.tempera_gym.create_rollout()` · Rust `build_request("tempera_gym", "create_rollout", params)` · Go `BuildRequest("temperaGym", "createRollout", params)` · C `tempera_build_request(..., "temperaGym", "createRollout", ...)`
 
 **Body parameters**
 
@@ -736,6 +1126,34 @@ let spec = client.build_request("tempera_gym", "create_rollout", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "createRollout", map[string]any{
+    "environmentId": "<environmentId>",
+    "seed": "<seed>",
+    "policy": "<policy>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"environmentId\":\"<environmentId>\",\"policy\":\"<policy>\",\"seed\":\"<seed>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "createRollout",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### bioProposalPoliciesList
@@ -747,7 +1165,7 @@ Discover the four frozen outcome-blind Bio proposal policies.
 - **Producer operationId:** `bioProposalPolicies.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.bioProposalPoliciesList()` · Python `client.tempera_gym.bio_proposal_policies_list()` · Rust `build_request("tempera_gym", "bio_proposal_policies_list", params)`
+- **Call as:** TypeScript `client.temperaGym.bioProposalPoliciesList()` · Python `client.tempera_gym.bio_proposal_policies_list()` · Rust `build_request("tempera_gym", "bio_proposal_policies_list", params)` · Go `BuildRequest("temperaGym", "bioProposalPoliciesList", params)` · C `tempera_build_request(..., "temperaGym", "bioProposalPoliciesList", ...)`
 
 **Query parameters**
 
@@ -781,6 +1199,33 @@ let spec = client.build_request("tempera_gym", "bio_proposal_policies_list", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "bioProposalPoliciesList", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "bioProposalPoliciesList",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### bioProposalsProposeBatch
@@ -792,7 +1237,7 @@ Propose one constrained Bio candidate batch without outcome access.
 - **Producer operationId:** `bioProposals.proposeBatch`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.bioProposalsProposeBatch()` · Python `client.tempera_gym.bio_proposals_propose_batch()` · Rust `build_request("tempera_gym", "bio_proposals_propose_batch", params)`
+- **Call as:** TypeScript `client.temperaGym.bioProposalsProposeBatch()` · Python `client.tempera_gym.bio_proposals_propose_batch()` · Rust `build_request("tempera_gym", "bio_proposals_propose_batch", params)` · Go `BuildRequest("temperaGym", "bioProposalsProposeBatch", params)` · C `tempera_build_request(..., "temperaGym", "bioProposalsProposeBatch", ...)`
 
 **Body parameters**
 
@@ -858,6 +1303,41 @@ let spec = client.build_request("tempera_gym", "bio_proposals_propose_batch", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "bioProposalsProposeBatch", map[string]any{
+    "schemaVersion": "<schemaVersion>",
+    "campaignDigest": "<campaignDigest>",
+    "datasetDigest": "<datasetDigest>",
+    "candidateSetDigest": "<candidateSetDigest>",
+    "model": "<model>",
+    "policy": "<policy>",
+    "shadowPolicies": "<shadowPolicies>",
+    "mode": "<mode>",
+    "constraints": "<constraints>",
+    "candidates": "<candidates>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"schemaVersion\":\"<schemaVersion>\",\"campaignDigest\":\"<campaignDigest>\",\"datasetDigest\":\"<datasetDigest>\",\"candidateSetDigest\":\"<candidateSetDigest>\",\"model\":\"<model>\",\"policy\":\"<policy>\",\"shadowPolicies\":\"<shadowPolicies>\",\"mode\":\"<mode>\",\"constraints\":\"<constraints>\",\"candidates\":\"<candidates>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "bioProposalsProposeBatch",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSealedEvaluators
@@ -869,7 +1349,7 @@ Discover boot-trusted exact sealed-evaluator identities.
 - **Producer operationId:** `sealedEvaluators.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listSealedEvaluators()` · Python `client.tempera_gym.list_sealed_evaluators()` · Rust `build_request("tempera_gym", "list_sealed_evaluators", params)`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluators()` · Python `client.tempera_gym.list_sealed_evaluators()` · Rust `build_request("tempera_gym", "list_sealed_evaluators", params)` · Go `BuildRequest("temperaGym", "listSealedEvaluators", params)` · C `tempera_build_request(..., "temperaGym", "listSealedEvaluators", ...)`
 
 **Query parameters**
 
@@ -903,6 +1383,33 @@ let spec = client.build_request("tempera_gym", "list_sealed_evaluators", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listSealedEvaluators", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listSealedEvaluators",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### listSealedEvaluations
@@ -914,7 +1421,7 @@ List persisted sealed-evaluation precommits and results.
 - **Producer operationId:** `sealedEvaluations.list`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.listSealedEvaluations()` · Python `client.tempera_gym.list_sealed_evaluations()` · Rust `build_request("tempera_gym", "list_sealed_evaluations", params)`
+- **Call as:** TypeScript `client.temperaGym.listSealedEvaluations()` · Python `client.tempera_gym.list_sealed_evaluations()` · Rust `build_request("tempera_gym", "list_sealed_evaluations", params)` · Go `BuildRequest("temperaGym", "listSealedEvaluations", params)` · C `tempera_build_request(..., "temperaGym", "listSealedEvaluations", ...)`
 
 **Query parameters**
 
@@ -948,6 +1455,33 @@ let spec = client.build_request("tempera_gym", "list_sealed_evaluations", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "listSealedEvaluations", map[string]any{
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = "pageSize=<pageSize>&pageToken=<pageToken>";
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "listSealedEvaluations",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### precommitSealedEvaluation
@@ -959,7 +1493,7 @@ Persist an opaque sealed-suite commitment before policy freeze.
 - **Producer operationId:** `sealedEvaluations.precommit`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.precommitSealedEvaluation()` · Python `client.tempera_gym.precommit_sealed_evaluation()` · Rust `build_request("tempera_gym", "precommit_sealed_evaluation", params)`
+- **Call as:** TypeScript `client.temperaGym.precommitSealedEvaluation()` · Python `client.tempera_gym.precommit_sealed_evaluation()` · Rust `build_request("tempera_gym", "precommit_sealed_evaluation", params)` · Go `BuildRequest("temperaGym", "precommitSealedEvaluation", params)` · C `tempera_build_request(..., "temperaGym", "precommitSealedEvaluation", ...)`
 
 **Body parameters**
 
@@ -1001,6 +1535,35 @@ let spec = client.build_request("tempera_gym", "precommit_sealed_evaluation", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "precommitSealedEvaluation", map[string]any{
+    "evaluator": "<evaluator>",
+    "qualificationPolicy": "<qualificationPolicy>",
+    "suite": "<suite>",
+    "trainer": "<trainer>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param *path_params = NULL;
+const size_t path_param_count = 0;
+const char *query_string = NULL;
+const char *body_json = "{\"evaluator\":\"<evaluator>\",\"qualificationPolicy\":\"<qualificationPolicy>\",\"suite\":\"<suite>\",\"trainer\":\"<trainer>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "precommitSealedEvaluation",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### getSealedEvaluation
@@ -1012,7 +1575,7 @@ Read one verified precommit and aggregate sealed result.
 - **Producer operationId:** `sealedEvaluations.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `dataset:read`
-- **Call as:** TypeScript `client.temperaGym.getSealedEvaluation()` · Python `client.tempera_gym.get_sealed_evaluation()` · Rust `build_request("tempera_gym", "get_sealed_evaluation", params)`
+- **Call as:** TypeScript `client.temperaGym.getSealedEvaluation()` · Python `client.tempera_gym.get_sealed_evaluation()` · Rust `build_request("tempera_gym", "get_sealed_evaluation", params)` · Go `BuildRequest("temperaGym", "getSealedEvaluation", params)` · C `tempera_build_request(..., "temperaGym", "getSealedEvaluation", ...)`
 
 **Path parameters**
 
@@ -1042,6 +1605,34 @@ let spec = client.build_request("tempera_gym", "get_sealed_evaluation", &[
 // with your own HTTP client.
 ```
 
+```go Go
+spec, err := client.BuildRequest("temperaGym", "getSealedEvaluation", map[string]any{
+    "evaluation": "<evaluation>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"evaluation", "<evaluation>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = NULL;
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "getSealedEvaluation",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
+```
+
 </CodeGroup>
 
 ### runSealedEvaluation
@@ -1053,7 +1644,7 @@ Evaluate one frozen policy through its exact sealed adapter.
 - **Producer operationId:** `sealedEvaluations.run`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-gym`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaGym.runSealedEvaluation()` · Python `client.tempera_gym.run_sealed_evaluation()` · Rust `build_request("tempera_gym", "run_sealed_evaluation", params)`
+- **Call as:** TypeScript `client.temperaGym.runSealedEvaluation()` · Python `client.tempera_gym.run_sealed_evaluation()` · Rust `build_request("tempera_gym", "run_sealed_evaluation", params)` · Go `BuildRequest("temperaGym", "runSealedEvaluation", params)` · C `tempera_build_request(..., "temperaGym", "runSealedEvaluation", ...)`
 
 **Path parameters**
 
@@ -1094,6 +1685,36 @@ let spec = client.build_request("tempera_gym", "run_sealed_evaluation", &[
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
+```
+
+```go Go
+spec, err := client.BuildRequest("temperaGym", "runSealedEvaluation", map[string]any{
+    "evaluation": "<evaluation>",
+    "policySubmission": "<policySubmission>",
+    "trainingReport": "<trainingReport>",
+})
+if err != nil {
+    return err
+}
+_ = spec // Or call client.Do with the same product, operation, and params.
+```
+
+```c C
+const tempera_param path_params[] = {
+    {"evaluation", "<evaluation>"},
+};
+const size_t path_param_count = sizeof(path_params) / sizeof(path_params[0]);
+const char *query_string = NULL;
+const char *body_json = "{\"policySubmission\":\"<policySubmission>\",\"trainingReport\":\"<trainingReport>\"}";
+tempera_request_spec request;
+int rc = tempera_build_request(
+    base_url, bearer,
+    "temperaGym", "runSealedEvaluation",
+    path_params, path_param_count,
+    query_string, body_json, &request);
+if (rc != TEMPERA_OK) {
+    /* Handle bounded request-construction failure. */
+}
 ```
 
 </CodeGroup>
