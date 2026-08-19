@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-investigations-api.json",
-  "generated_sha256": "sha256:d25e9db9caa20d9910ceed31e5b452c24b47ea6fafcc130b2722fea5b080cad9",
+  "generated_sha256": "sha256:1445c4789f780c94ba917462722e74deb38c05a305048ffeaee3cb7651a2bff2",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "96fe78435d468c1e67502e1e12e89ef0a1d5ce77",
+  "source_blob_sha": "42b0bd9790157e7d30093fd700dcd14537bbbd04",
   "source_branch": "agent/investigation-control-plane-v0.1.0",
-  "source_commit": "c738686856d03911407d6c98931c1683da24d15a",
+  "source_commit": "23f792a48f98aa104777f10965c604700001c345",
   "source_mode": "100644",
   "source_path": "api/openapi.json",
   "source_repo": "tempera-dev/tempera-investigations",
-  "source_sha256": "sha256:d25e9db9caa20d9910ceed31e5b452c24b47ea6fafcc130b2722fea5b080cad9"
+  "source_sha256": "sha256:1445c4789f780c94ba917462722e74deb38c05a305048ffeaee3cb7651a2bff2"
 }
