@@ -55,13 +55,13 @@ jobs:
           import json
           from pathlib import Path
           spec = json.loads(Path('contracts/voice-api.openapi.json').read_text())
+          assert '/v1/agents/{agent_id}' not in spec['paths']
           methods = spec['paths']['/v1/agents/{agentId}']
           assert 'patch' in methods and 'put' not in methods
           op = methods['patch']
           assert op['operationId'] == 'updateVoiceAgent'
           params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
-          assert params[('path', 'agentId')]['required'] is True
-          assert params[('query', 'updateMask')]['required'] is True
+          assert params[('updateMask', 'query')]['required'] is True
           PY
       - name: Upload exact validated Voice product files
         uses: actions/upload-artifact@v4
