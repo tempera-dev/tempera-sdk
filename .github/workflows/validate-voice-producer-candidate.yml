@@ -13,7 +13,7 @@ jobs:
   validate:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Mint Voice contract reader token
@@ -48,7 +48,6 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-
           path = Path('src/tempera_voice/aip_agents.py')
           text = path.read_text(encoding='utf-8')
           old = '''    if isinstance(value, (list, dict, tuple, set)) and not value:\n        return False\n    return True\n'''
@@ -76,7 +75,6 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-
           spec = json.loads(Path('contracts/voice-api.openapi.json').read_text())
           assert '/v1/agents/{agent_id}' not in spec['paths']
           assert '/v1/agents/{agentId}' not in spec['paths']
@@ -85,29 +83,19 @@ jobs:
           op = methods['patch']
           assert op['operationId'] == 'updateAgent'
           assert op['x-google-aip-standard-method'] == 'UpdateAgent'
-          assert op['x-google-http-rule'] == {
-              'patch': '/v1/{agent.name=agents/*}',
-              'body': 'agent',
-          }
+          assert op['x-google-http-rule'] == {'patch': '/v1/{agent.name=agents/*}', 'body': 'agent'}
           assert op['x-google-method-signature'] == 'agent,update_mask'
           params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
           assert params[('agent', 'path')]['required'] is True
           update_mask = params[('updateMask', 'query')]
           assert update_mask['required'] is False
-          protobuf_type = update_mask.get('x-google-protobuf-type')
-          if protobuf_type is None:
-              protobuf_type = update_mask.get('schema', {}).get('x-google-protobuf-type')
+          protobuf_type = update_mask.get('x-google-protobuf-type') or update_mask.get('schema', {}).get('x-google-protobuf-type')
           assert protobuf_type == 'google.protobuf.FieldMask'
           agent = spec['components']['schemas']['Agent']
           assert agent['properties']['name']['x-google-field-behavior'] == ['IDENTIFIER']
           display = agent['properties']['displayName']
           variants = [display, *(display.get('anyOf') or []), *(display.get('oneOf') or [])]
-          assert any(
-              isinstance(candidate, dict)
-              and candidate.get('type') == 'string'
-              and candidate.get('maxLength') == 63
-              for candidate in variants
-          )
+          assert any(isinstance(item, dict) and item.get('type') == 'string' and item.get('maxLength') == 63 for item in variants)
           assert agent['properties']['createTime']['x-google-field-behavior'] == ['OUTPUT_ONLY']
           assert agent['properties']['updateTime']['x-google-field-behavior'] == ['OUTPUT_ONLY']
           PY
@@ -124,3 +112,67 @@ jobs:
             .voice-source/tests/test_agent_update_api.py
             .voice-source/tests/test_http_concurrency.py
             .voice-source/contracts/voice-api.openapi.json
+      - name: Stage candidate Voice contract into SDK checkout
+        run: |
+          cp .voice-source/contracts/voice-api.openapi.json specs/tempera-voice-api.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('surface.json')
+          surface = json.loads(path.read_text())
+          operations = surface['operations']['temperaVoice']
+          legacy = [
+              item for item in operations
+              if item.get('id') == 'upsertVoiceAgent'
+              and item.get('method') == 'PUT'
+              and item.get('path') == '/v1/agents/{agent_id}'
+          ]
+          if len(legacy) != 1:
+              raise SystemExit(f'expected one legacy Voice upsert operation, found {len(legacy)}')
+          surface['operations']['temperaVoice'] = [item for item in operations if item is not legacy[0]]
+          path.write_text(json.dumps(surface, indent=2, ensure_ascii=False) + '\n')
+          PY
+          python scripts/sync-openapi-surface.py --product temperaVoice
+          python scripts/gen-sdk-surface.py
+          python scripts/gen-sdk-go-c.py
+      - name: Assert generated SDK Voice surface
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          surface = json.loads(Path('surface.json').read_text())
+          operations = {item['id']: item for item in surface['operations']['temperaVoice']}
+          assert 'upsertVoiceAgent' not in operations
+          update = operations['updateAgent']
+          assert update['upstreamOperationId'] == 'updateAgent'
+          assert update['method'] == 'PATCH'
+          assert update['path'] == '/v1/agents/{agent}'
+          assert update['pathParams'] == ['agent']
+          assert update['query'] == ['updateMask']
+          assert 'requiredQuery' not in update
+          assert update['requestBodyKind'] == 'json'
+          assert update['auth'] == 'oauthResource'
+          assert update['authAudience'] == 'tempera-voice'
+          assert update['scope'] == 'voice:write'
+          PY
+          python scripts/check-aip-conformance.py
+          python scripts/gen-sdk-surface.py --check
+          python scripts/gen-sdk-go-c.py --check
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      - uses: dtolnay/rust-toolchain@1.97.1
+      - name: TypeScript candidate integration
+        run: npm --prefix packages/typescript test
+      - name: Python candidate integration
+        run: PYTHONPATH=packages/python/src python -m unittest discover -s packages/python/tests
+      - name: Rust candidate integration
+        run: cargo test --manifest-path packages/rust/Cargo.toml
+      - name: Go candidate integration
+        working-directory: packages/go
+        run: go test ./...
+      - name: C candidate integration
+        run: make -C packages/c test
