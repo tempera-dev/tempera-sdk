@@ -2,7 +2,9 @@ name: validate-voice-producer-candidate
 
 on:
   pull_request:
-    paths: [.github/workflows/validate-voice-producer-candidate.yml]
+    paths:
+      - .github/workflows/validate-voice-producer-candidate.yml
+      - .github/scripts/materialize-strict-voice-aip.py
 
 permissions:
   contents: read
@@ -25,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: tempera-dev/tempera-voice
-          ref: d2c6ff2a20813ef4ea9bc5fa3a4ad14d4bd5b8ad
+          ref: 3d00c7bdd28aa98014743ea8ba385c374150543f
           fetch-depth: 0
           path: .voice-source
           token: ${{ steps.reader.outputs.token }}
@@ -39,38 +41,59 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e '.[test]'
-      - name: Apply deterministic AIP migration
+      - name: Materialize strict AIP candidate
+        run: python .github/scripts/materialize-strict-voice-aip.py
+      - name: Regenerate exact OpenAPI
         working-directory: .voice-source
-        run: |
-          python scripts/apply-agent-aip-update.py
-          PYTHONPATH=src python scripts/export-openapi.py
-      - name: Validate migrated producer source
+        run: PYTHONPATH=src python scripts/export-openapi.py
+      - name: Validate strict producer source
         working-directory: .voice-source
         run: |
           python -m compileall -q src tests
           ruff check src tests
           pytest
           PYTHONPATH=src python scripts/export-openapi.py --check
+          git diff --check
+      - name: Assert strict AIP wire contract
+        working-directory: .voice-source
+        run: |
           python - <<'PY'
           import json
           from pathlib import Path
+
           spec = json.loads(Path('contracts/voice-api.openapi.json').read_text())
           assert '/v1/agents/{agent_id}' not in spec['paths']
-          methods = spec['paths']['/v1/agents/{agentId}']
+          assert '/v1/agents/{agentId}' not in spec['paths']
+          methods = spec['paths']['/v1/agents/{agent}']
           assert 'patch' in methods and 'put' not in methods
           op = methods['patch']
-          assert op['operationId'] == 'updateVoiceAgent'
+          assert op['operationId'] == 'updateAgent'
+          assert op['x-google-aip-standard-method'] == 'UpdateAgent'
+          assert op['x-google-http-rule'] == {
+              'patch': '/v1/{agent.name=agents/*}',
+              'body': 'agent',
+          }
+          assert op['x-google-method-signature'] == 'agent,update_mask'
           params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
-          assert params[('updateMask', 'query')]['required'] is True
+          assert params[('agent', 'path')]['required'] is True
+          assert params[('updateMask', 'query')]['required'] is False
+          assert params[('updateMask', 'query')]['x-google-protobuf-type'] == 'google.protobuf.FieldMask'
+          agent = spec['components']['schemas']['Agent']
+          assert agent['properties']['name']['x-google-field-behavior'] == ['IDENTIFIER']
+          assert agent['properties']['displayName']['maxLength'] == 63
+          assert agent['properties']['createTime']['x-google-field-behavior'] == ['OUTPUT_ONLY']
+          assert agent['properties']['updateTime']['x-google-field-behavior'] == ['OUTPUT_ONLY']
           PY
       - name: Upload exact validated Voice product files
         uses: actions/upload-artifact@v4
         with:
-          name: validated-voice-aip-product-files
+          name: validated-voice-strict-aip-product-files
           retention-days: 1
           if-no-files-found: error
           path: |
             .voice-source/src/tempera_voice/app.py
+            .voice-source/src/tempera_voice/aip_agents.py
             .voice-source/tests/test_openapi_auth_contract.py
             .voice-source/tests/test_agent_update_api.py
+            .voice-source/tests/test_http_concurrency.py
             .voice-source/contracts/voice-api.openapi.json
