@@ -43,6 +43,11 @@ jobs:
           python -m pip install -e '.[test]'
       - name: Materialize strict AIP candidate
         run: python .github/scripts/materialize-strict-voice-aip.py
+      - name: Normalize candidate with repository tooling
+        working-directory: .voice-source
+        run: |
+          ruff format src/tempera_voice/app.py src/tempera_voice/aip_agents.py tests/test_agent_update_api.py
+          ruff check --fix src/tempera_voice/app.py src/tempera_voice/aip_agents.py tests/test_agent_update_api.py
       - name: Regenerate exact OpenAPI
         working-directory: .voice-source
         run: PYTHONPATH=src python scripts/export-openapi.py
