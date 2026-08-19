@@ -92,8 +92,12 @@ jobs:
           assert op['x-google-method-signature'] == 'agent,update_mask'
           params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
           assert params[('agent', 'path')]['required'] is True
-          assert params[('updateMask', 'query')]['required'] is False
-          assert params[('updateMask', 'query')]['x-google-protobuf-type'] == 'google.protobuf.FieldMask'
+          update_mask = params[('updateMask', 'query')]
+          assert update_mask['required'] is False
+          protobuf_type = update_mask.get('x-google-protobuf-type')
+          if protobuf_type is None:
+              protobuf_type = update_mask.get('schema', {}).get('x-google-protobuf-type')
+          assert protobuf_type == 'google.protobuf.FieldMask'
           agent = spec['components']['schemas']['Agent']
           assert agent['properties']['name']['x-google-field-behavior'] == ['IDENTIFIER']
           display = agent['properties']['displayName']
