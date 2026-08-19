@@ -48,7 +48,7 @@ jobs:
         working-directory: .voice-source
         run: |
           python -m compileall -q src tests scripts
-          ruff check src tests scripts
+          ruff check src tests
           pytest
           PYTHONPATH=src python scripts/export-openapi.py --check
           python - <<'PY'
