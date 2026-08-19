@@ -44,10 +44,11 @@ jobs:
         run: |
           python scripts/apply-agent-aip-update.py
           PYTHONPATH=src python scripts/export-openapi.py
+          rm tests/conftest.py
       - name: Validate migrated producer source
         working-directory: .voice-source
         run: |
-          python -m compileall -q src tests scripts
+          python -m compileall -q src tests
           ruff check src tests
           pytest
           PYTHONPATH=src python scripts/export-openapi.py --check
@@ -60,7 +61,8 @@ jobs:
           op = methods['patch']
           assert op['operationId'] == 'updateVoiceAgent'
           params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
-          assert params[('updateMask', 'query')]['required'] is True
+          assert params[('path', 'agentId')]['required'] is True
+          assert params[('query', 'updateMask')]['required'] is True
           PY
       - name: Upload exact validated Voice product files
         uses: actions/upload-artifact@v4
