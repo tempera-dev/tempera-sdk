@@ -1,0 +1,48 @@
+{
+  "schema": "tempera.sdk-producer-contract/v1",
+  "product": "temperaInvestigations",
+  "audience": "tempera-investigations",
+  "public_availability": false,
+  "hosted_auth_ready": false,
+  "source": {
+    "repository": "tempera-dev/tempera-investigations",
+    "branch": "agent/investigation-control-plane-v0.1.0",
+    "commit": "c738686856d03911407d6c98931c1683da24d15a",
+    "path": "api/openapi.json",
+    "blob_sha": "96fe78435d468c1e67502e1e12e89ef0a1d5ce77",
+    "sha256": "sha256:d25e9db9caa20d9910ceed31e5b452c24b47ea6fafcc130b2722fea5b080cad9"
+  },
+  "required_scopes": [
+    "investigation:read",
+    "investigation:write",
+    "investigation:run",
+    "investigation:review"
+  ],
+  "operations": [
+    "createInvestigationProfile",
+    "listInvestigationProfiles",
+    "getInvestigationProfile",
+    "updateInvestigationProfile",
+    "deleteInvestigationProfile",
+    "createInvestigation",
+    "listInvestigations",
+    "getInvestigation",
+    "evaluateInvestigationDeterministically",
+    "runInvestigationAgentic",
+    "runInvestigation",
+    "cancelInvestigation",
+    "replayInvestigation",
+    "listDeterministicEvaluations",
+    "getDeterministicEvaluation",
+    "listAgenticRuns",
+    "getAgenticRun",
+    "listFindings",
+    "listInvestigationEvents",
+    "listInvestigationReviews",
+    "createInvestigationReview",
+    "getInvestigationDossier",
+    "getOperation",
+    "cancelOperation"
+  ],
+  "release_gate": "Do not generate or advertise a hosted client until Auth Hub registers the audience/scopes and the producer is source-pinned from a merge-qualified revision."
+}
