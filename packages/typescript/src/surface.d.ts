@@ -258,6 +258,16 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   passkeysRecover(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete one passkey after recent AAL2 step-up. */
   passkeysDelete(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Issue a short-lived, effect-specific, single-use Clearing admission from a human approval. */
+  clearingAdmissionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read a Clearing admission from the caller's exact workspace. */
+  clearingAdmissionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically move one READY admission to a fenced lease before dispatch. */
+  clearingAdmissionsClaim(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Consume a matching lease with one durable Clearing commit identity. */
+  clearingAdmissionsFinalize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Monotonically mark an expired lease as requiring authoritative reconciliation. */
+  clearingAdmissionsMarkRecoveryRequired(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {

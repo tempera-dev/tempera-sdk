@@ -3927,6 +3927,125 @@
           }
         }
       }
+    },
+    "/v1/clearing/admissions": {
+      "post": {
+        "operationId": "clearingAdmissions.create",
+        "summary": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:approve",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearingAdmissionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Admission issued in READY state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecord"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Exact issuance replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecord"
+                }
+              }
+            }
+          },
+          "400": {"description": "Invalid admission", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Human approval scope or role missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission identity is already bound differently", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}": {
+      "get": {
+        "operationId": "clearingAdmissions.get",
+        "summary": "Read a Clearing admission from the caller's exact workspace.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "responses": {
+          "200": {"description": "Current admission state", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecord"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Read scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:claim": {
+      "post": {
+        "operationId": "clearingAdmissions.claim",
+        "summary": "Atomically move one READY admission to a fenced lease before dispatch.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionClaimRequest"}}}},
+        "responses": {
+          "200": {"description": "Admission leased exactly once", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionLease"}}}},
+          "400": {"description": "Invalid claim", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission is not READY, is expired, or does not match", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:finalize": {
+      "post": {
+        "operationId": "clearingAdmissions.finalize",
+        "summary": "Consume a matching lease with one durable Clearing commit identity.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeRequest"}}}},
+        "responses": {
+          "200": {"description": "Admission consumed or exact finalize replay accepted", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeResponse"}}}},
+          "400": {"description": "Invalid finalize request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Lease, fence, digest, or commit identity conflicts", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:markRecoveryRequired": {
+      "post": {
+        "operationId": "clearingAdmissions.markRecoveryRequired",
+        "summary": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:reconcile",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "responses": {
+          "200": {"description": "Admission is RECOVERY_REQUIRED", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecoveryResponse"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Reconcile scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission has no expired active lease", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
     }
   },
   "components": {
@@ -6405,6 +6524,153 @@
               "$ref": "#/components/schemas/ModelCatalogEntry"
             }
           }
+        }
+      },
+      "ClearingWorkspace": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tenantId", "projectId", "environmentId"],
+        "properties": {
+          "tenantId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "projectId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "environmentId": {"type": "string", "minLength": 1, "maxLength": 128}
+        }
+      },
+      "ClearingDigest": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      },
+      "ClearingFinalAdmission": {
+        "$ref": "./clearing-final-admission-v1.schema.json"
+      },
+      "ClearingAdmissionCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey"
+        ],
+        "properties": {
+          "admissionId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+          "workspace": {"$ref": "#/components/schemas/ClearingWorkspace"},
+          "principalId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "canonicalActionId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "canonicalRequestDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "preparedEffectId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "preparedEffectDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "operation": {"type": "string", "minLength": 1, "maxLength": 128},
+          "resourceSelectors": {"type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 512}},
+          "economicAuthority": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 32,
+            "propertyNames": {"pattern": "^[a-z][a-z0-9_.-]{0,63}$"},
+            "additionalProperties": {"type": "string", "pattern": "^(0|[1-9][0-9]*)$"}
+          },
+          "mandateId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "mandateDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "riskAssessmentId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "riskAssessmentDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "riskReservationId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "riskReservationDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "authorizationContextDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "consumptionKey": {"type": "string", "minLength": 16, "maxLength": 256},
+          "ttlSeconds": {"type": "integer", "minimum": 30, "maximum": 300, "default": 300}
+        }
+      },
+      "ClearingAdmissionRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admission",
+          "admissionDigest",
+          "state",
+          "leaseFence",
+          "leaseExpiresAt",
+          "consumedClearingCommitDigest",
+          "replay"
+        ],
+        "properties": {
+          "admission": {"$ref": "#/components/schemas/ClearingFinalAdmission"},
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "state": {"type": "string", "enum": ["READY", "LEASED", "RECOVERY_REQUIRED", "CONSUMED", "REVOKED", "CANCELLED"]},
+          "leaseFence": {"type": "integer", "minimum": 0},
+          "leaseExpiresAt": {"type": ["string", "null"], "format": "date-time"},
+          "consumedClearingCommitDigest": {
+            "oneOf": [
+              {"$ref": "#/components/schemas/ClearingDigest"},
+              {"type": "null"}
+            ]
+          },
+          "replay": {"type": "boolean"}
+        }
+      },
+      "ClearingAdmissionClaimRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionDigest", "leaseTokenDigest"],
+        "properties": {
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseSeconds": {"type": "integer", "minimum": 5, "maximum": 120, "default": 30}
+        }
+      },
+      "ClearingAdmissionLease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionId", "admissionDigest", "state", "leaseFence", "leaseExpiresAt"],
+        "properties": {
+          "admissionId": {"type": "string"},
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "state": {"const": "LEASED"},
+          "leaseFence": {"type": "integer", "minimum": 1},
+          "leaseExpiresAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "ClearingAdmissionFinalizeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionDigest", "leaseTokenDigest", "leaseFence", "clearingCommitDigest"],
+        "properties": {
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseFence": {"type": "integer", "minimum": 1},
+          "clearingCommitDigest": {"$ref": "#/components/schemas/ClearingDigest"}
+        }
+      },
+      "ClearingAdmissionFinalizeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["replay", "state"],
+        "properties": {
+          "replay": {"type": "boolean"},
+          "state": {"const": "CONSUMED"}
+        }
+      },
+      "ClearingAdmissionRecoveryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionId", "state", "leaseFence"],
+        "properties": {
+          "admissionId": {"type": "string"},
+          "state": {"const": "RECOVERY_REQUIRED"},
+          "leaseFence": {"type": "integer", "minimum": 1}
         }
       },
       "WorkspaceBinding": {
