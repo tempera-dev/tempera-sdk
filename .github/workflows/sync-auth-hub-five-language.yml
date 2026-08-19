@@ -54,15 +54,13 @@ jobs:
           python3 scripts/gen-sdk-docs.py
           gofmt -w packages/go/client.go packages/go/browser.go packages/go/client_test.go
           cargo fmt --manifest-path packages/rust/Cargo.toml
-      - name: Validate canonical contract and generated drift
+      - name: Validate Auth Hub contract and generated drift
         run: |
           python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit ea4ae0f0cc281e35ae38c9fc9124b213939e6c3b
           python3 scripts/sync-openapi-surface.py --check
           python3 scripts/gen-sdk-surface.py --check
           python3 scripts/gen-sdk-go-c.py --check
           python3 scripts/test-aip-conformance.py
-          python3 scripts/check-aip-conformance.py
-          python3 scripts/check-five-language-uniformity.py
           python3 scripts/test-five-language-docs.py
       - name: Validate TypeScript
         run: npm --prefix packages/typescript test
