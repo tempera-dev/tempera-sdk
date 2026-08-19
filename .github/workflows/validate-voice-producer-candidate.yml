@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: tempera-dev/tempera-voice
-          ref: 5919ac6d4eb822a7e48ee25459802f23f8d8de96
+          ref: 28c4f4fbe4e153f615b3b3f20b677b51e62e8764
           fetch-depth: 0
           path: .voice-source
           token: ${{ steps.reader.outputs.token }}
@@ -44,7 +44,6 @@ jobs:
         run: |
           python scripts/apply-agent-aip-update.py
           PYTHONPATH=src python scripts/export-openapi.py
-          rm tests/conftest.py
       - name: Validate migrated producer source
         working-directory: .voice-source
         run: |
