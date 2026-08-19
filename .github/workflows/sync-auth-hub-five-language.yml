@@ -1,0 +1,91 @@
+name: sync-auth-hub-five-language
+
+on:
+  pull_request:
+    paths: [.github/workflows/sync-auth-hub-five-language.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Mint Auth Hub contract reader token
+        id: reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+      - uses: actions/checkout@v4
+        with:
+          repository: tempera-dev/auth-hub
+          ref: ea4ae0f0cc281e35ae38c9fc9124b213939e6c3b
+          fetch-depth: 0
+          path: .auth-hub-source
+          token: ${{ steps.reader.outputs.token }}
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.23.x', cache: false }
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with: { components: 'clippy,rustfmt' }
+      - name: Verify current Auth Hub revision
+        run: |
+          git -C .auth-hub-source fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git -C .auth-hub-source rev-parse HEAD)" = "$(git -C .auth-hub-source rev-parse refs/remotes/origin/main)"
+      - name: Vendor exact Auth Hub contract
+        run: python3 scripts/sync-control-plane-openapi.py --source-repo-dir .auth-hub-source --source-commit ea4ae0f0cc281e35ae38c9fc9124b213939e6c3b
+      - name: Regenerate aggregate surface and five languages
+        run: |
+          python3 scripts/sync-openapi-surface.py
+          python3 scripts/gen-sdk-surface.py
+          python3 scripts/gen-sdk-go-c.py
+          python3 scripts/gen-sdk-docs.py
+          gofmt -w packages/go/client.go packages/go/browser.go packages/go/client_test.go
+          cargo fmt --manifest-path packages/rust/Cargo.toml
+      - name: Validate canonical contract and generated drift
+        run: |
+          python3 scripts/sync-control-plane-openapi.py --check --source-repo-dir .auth-hub-source --source-commit ea4ae0f0cc281e35ae38c9fc9124b213939e6c3b
+          python3 scripts/sync-openapi-surface.py --check
+          python3 scripts/gen-sdk-surface.py --check
+          python3 scripts/gen-sdk-go-c.py --check
+          python3 scripts/test-aip-conformance.py
+          python3 scripts/check-aip-conformance.py
+          python3 scripts/check-five-language-uniformity.py
+          python3 scripts/test-five-language-docs.py
+      - name: Validate TypeScript
+        run: npm --prefix packages/typescript test
+      - name: Validate Python
+        run: PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
+      - name: Validate Rust
+        run: |
+          cargo check --manifest-path packages/rust/Cargo.toml --all-targets
+          cargo clippy --manifest-path packages/rust/Cargo.toml --all-targets -- -D warnings
+          cargo test --manifest-path packages/rust/Cargo.toml
+      - name: Validate Go
+        working-directory: packages/go
+        run: go test ./...
+      - name: Validate C
+        run: make -C packages/c test
+      - name: Commit exact Auth Hub rollout
+        run: |
+          git config user.name 'tempera-sdk-auth-sync'
+          git config user.email 'tempera-sdk-auth-sync@users.noreply.github.com'
+          git add specs/control-plane.openapi.json specs/control-plane.openapi.json.source surface.json packages docs
+          if git diff --cached --quiet; then
+            echo 'Expected Auth Hub contract changes were not generated'
+            exit 1
+          fi
+          git commit -m 'chore(sdk): sync current Auth Hub contract across five languages'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
