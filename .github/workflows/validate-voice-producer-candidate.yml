@@ -46,6 +46,17 @@ jobs:
       - name: Normalize candidate with repository tooling
         working-directory: .voice-source
         run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/tempera_voice/aip_agents.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    if isinstance(value, (list, dict, tuple, set)) and not value:\n        return False\n    return True\n'''
+          new = '''    return not (isinstance(value, (list, dict, tuple, set)) and not value)\n'''
+          if text.count(old) != 1:
+              raise SystemExit('strict candidate _is_populated normalization anchor drifted')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
           ruff format src/tempera_voice/app.py src/tempera_voice/aip_agents.py tests/test_agent_update_api.py
           ruff check --fix src/tempera_voice/app.py src/tempera_voice/aip_agents.py tests/test_agent_update_api.py
       - name: Regenerate exact OpenAPI
