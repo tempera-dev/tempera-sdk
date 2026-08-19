@@ -1,0 +1,75 @@
+name: validate-voice-producer-candidate
+
+on:
+  pull_request:
+    paths: [.github/workflows/validate-voice-producer-candidate.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mint Voice contract reader token
+        id: reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-voice
+      - uses: actions/checkout@v4
+        with:
+          repository: tempera-dev/tempera-voice
+          ref: 5919ac6d4eb822a7e48ee25459802f23f8d8de96
+          fetch-depth: 0
+          path: .voice-source
+          token: ${{ steps.reader.outputs.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: .voice-source/pyproject.toml
+      - name: Install Voice candidate
+        working-directory: .voice-source
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+      - name: Apply deterministic AIP migration
+        working-directory: .voice-source
+        run: |
+          python scripts/apply-agent-aip-update.py
+          PYTHONPATH=src python scripts/export-openapi.py
+      - name: Validate migrated producer source
+        working-directory: .voice-source
+        run: |
+          python -m compileall -q src tests scripts
+          ruff check src tests scripts
+          pytest
+          PYTHONPATH=src python scripts/export-openapi.py --check
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          spec = json.loads(Path('contracts/voice-api.openapi.json').read_text())
+          methods = spec['paths']['/v1/agents/{agentId}']
+          assert 'patch' in methods and 'put' not in methods
+          op = methods['patch']
+          assert op['operationId'] == 'updateVoiceAgent'
+          params = {(p['name'], p['in']): p for p in op.get('parameters', [])}
+          assert params[('updateMask', 'query')]['required'] is True
+          PY
+      - name: Upload exact validated Voice product files
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-voice-aip-product-files
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            .voice-source/src/tempera_voice/app.py
+            .voice-source/tests/test_openapi_auth_contract.py
+            .voice-source/tests/test_agent_update_api.py
+            .voice-source/contracts/voice-api.openapi.json
