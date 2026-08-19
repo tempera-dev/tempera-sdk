@@ -1,8 +1,7 @@
 name: repin-identical-contracts
 
 on:
-  push:
-    branches: [agent/browser-task-workflow-sdk]
+  pull_request:
     paths: [.github/workflows/repin-identical-contracts.yml]
 
 permissions:
@@ -10,12 +9,13 @@ permissions:
 
 jobs:
   repin:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: agent/browser-task-workflow-sdk
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -73,4 +73,4 @@ jobs:
           git add specs contracts scripts
           git diff --cached --exit-code && exit 1 || true
           git commit -m 'chore(sdk): repin content-identical producer contracts'
-          git push origin HEAD:agent/browser-task-workflow-sdk
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
