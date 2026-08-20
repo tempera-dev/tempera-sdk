@@ -1,0 +1,201 @@
+name: Connectors release candidate exact-SHA
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/connectors-release-candidate.yml"
+      - ".github/workflows/tempera-investigations-exact-source.yml"
+      - "specs/tempera-investigations-api.json"
+      - "specs/tempera-investigations-api.json.source"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/connectors-release-candidate.yml"
+      - ".github/workflows/tempera-investigations-exact-source.yml"
+      - "specs/tempera-investigations-api.json"
+      - "specs/tempera-investigations-api.json.source"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-sha-conformance:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: connectors-acquisition (Python 3.11)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.11"
+            suite: connectors-acquisition
+          - name: connectors-acquisition (Python 3.12)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.12"
+            suite: connectors-acquisition
+          - name: connectors-acquisition (Python 3.13)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.13"
+            suite: connectors-acquisition
+          - name: connectors-monitoring (Python 3.11)
+            repository: tempera-connectors
+            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            python: "3.11"
+            suite: connectors-monitoring
+          - name: connectors-monitoring (Python 3.12)
+            repository: tempera-connectors
+            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            python: "3.12"
+            suite: connectors-monitoring
+          - name: connectors-monitoring (Python 3.13)
+            repository: tempera-connectors
+            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            python: "3.13"
+            suite: connectors-monitoring
+          - name: data-engine-ingress (Python 3.11)
+            repository: data-engine
+            ref: 61608a5bdfac5be0cf8e43e20ee89810ca7a391a
+            python: "3.11"
+            suite: data-engine
+          - name: satellite-consumer (Python 3.12)
+            repository: tempera-satellite
+            ref: 37eb65544d0325706cd69ff46cd5a35ab4c4e5ca
+            python: "3.12"
+            suite: satellite
+          - name: voice-producer (Python 3.12)
+            repository: tempera-voice
+            ref: daa760cb8a3e4215ec4d65a9e7d8f06fe0ab5075
+            python: "3.12"
+            suite: voice
+          - name: investigations-consumer (Python 3.12)
+            repository: tempera-investigations
+            ref: 7ebd868c81cf6cf66fd00f1082de16ed5b9ef06d
+            python: "3.12"
+            suite: investigations
+          - name: risk-adapter (Python 3.12)
+            repository: tempera-risk
+            ref: 07d4d127b5dc0a3b2976f4616059a691cbf01736
+            python: "3.12"
+            suite: risk
+    steps:
+      - name: Mint one-repository contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: ${{ matrix.repository }}
+
+      - name: Check out exact producer or consumer revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+          fetch-depth: 1
+          path: .source
+          persist-credentials: false
+          token: ${{ steps.contract-reader.outputs.token }}
+
+      - name: Verify immutable checkout
+        env:
+          EXPECTED_SHA: ${{ matrix.ref }}
+        run: test "$(git -C .source rev-parse HEAD)" = "$EXPECTED_SHA"
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Run repository-native conformance suite
+        working-directory: .source
+        env:
+          SUITE: ${{ matrix.suite }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$SUITE" in
+            connectors-acquisition)
+              python -m pip install '.[test,quality]'
+              ruff check src/tempera_connectors/acquisition.py src/tempera_connectors/__init__.py tests/test_acquisition_v1.py
+              ruff format --check src/tempera_connectors/acquisition.py src/tempera_connectors/__init__.py tests/test_acquisition_v1.py
+              mypy --strict --follow-imports=skip src/tempera_connectors/acquisition.py
+              python -m unittest discover -s tests -v
+              python -m tempera_connectors.demo
+              python -m compileall -q src tests
+              ;;
+            connectors-monitoring)
+              python -m pip install '.[test,quality]' build pip-audit
+              monitoring_files=(
+                src/tempera_connectors/acquisition.py
+                src/tempera_connectors/monitoring.py
+                src/tempera_connectors/compliance.py
+                src/tempera_connectors/investigation.py
+                src/tempera_connectors/github_monitoring.py
+                src/tempera_connectors/support_monitoring.py
+                src/tempera_connectors/tempera_voice.py
+                src/tempera_connectors/__init__.py
+                tests/test_acquisition_v1.py
+                tests/test_monitoring.py
+                tests/test_monitoring_compliance.py
+                tests/test_investigation_handoff.py
+                tests/test_monitoring_source_locks.py
+                tests/test_voice_handoff.py
+              )
+              ruff check "${monitoring_files[@]}"
+              ruff format --check "${monitoring_files[@]}"
+              mypy --strict --follow-imports=skip \
+                src/tempera_connectors/acquisition.py \
+                src/tempera_connectors/monitoring.py \
+                src/tempera_connectors/compliance.py \
+                src/tempera_connectors/investigation.py \
+                src/tempera_connectors/github_monitoring.py \
+                src/tempera_connectors/support_monitoring.py \
+                src/tempera_connectors/tempera_voice.py
+              python -m unittest discover -s tests -v
+              python -m tempera_connectors.demo
+              python -m compileall -q src tests
+              python -m pip_audit
+              python -m build
+              python -m pip install --force-reinstall dist/*.whl
+              python -m tempera_connectors.demo
+              ;;
+            data-engine)
+              python -m pip install .
+              python -m unittest discover -s tests -v
+              python scripts/check-api-contract.py
+              python scripts/naming-lint.py
+              ;;
+            satellite)
+              python -m pip install -e '.[dev]' pip-audit
+              pytest -q
+              python -m compileall -q src scripts
+              python -m pip wheel . --no-deps --wheel-dir dist
+              python -m pip_audit --skip-editable
+              ;;
+            voice)
+              python -m pip install -e '.[test]'
+              python -m compileall -q src tests scripts
+              ruff check src tests scripts
+              pytest
+              PYTHONPATH=src python scripts/export-openapi.py --check
+              ;;
+            investigations)
+              make check
+              ;;
+            risk)
+              python -m pip install -e '.[dev]'
+              python -m pytest -q
+              python scripts/check_core_duplication.py
+              python scripts/check_wheel_contents.py
+              ;;
+            *)
+              printf 'unknown conformance suite: %s\n' "$SUITE" >&2
+              exit 2
+              ;;
+          esac
