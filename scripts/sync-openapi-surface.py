@@ -221,6 +221,26 @@ def sdk_operation_id(operation_id: str) -> str:
     )
 
 
+def reuses_existing_operation_id(
+    observed: dict[str, Any] | None,
+    operation_id: str,
+    deprecated: bool,
+) -> bool:
+    """Keep a stable SDK name unless a deprecated route becomes an alias.
+
+    A producer can retain a deprecated route while moving the canonical operation
+    to a new route.  If the retained route also receives a distinct operationId,
+    carrying its historical SDK id forward would collide with the canonical
+    operation.  The deprecated alias must instead receive the id derived from
+    its new, distinct producer operationId.
+    """
+
+    return observed is not None and not (
+        deprecated
+        and observed.get("upstreamOperationId") != operation_id
+    )
+
+
 def sentence(operation: dict[str, Any], method: str, path: str) -> str:
     value = operation.get("summary") or operation.get("description")
     description = operation.get("description")
@@ -400,15 +420,22 @@ def synchronize_product(
                         product, observed["method"], observed["path"]
                     )
                 )
-            item = dict(observed) if observed is not None else {
-                "id": sdk_operation_id(operation_id),
-                "auth": (
-                    "none"
-                    if endpoint.get("auth") == "public"
-                    else DEFAULT_AUTH[product]
-                ),
-                "description": f"Call {method.upper()} {path}.",
-            }
+            if reuses_existing_operation_id(
+                observed,
+                operation_id,
+                endpoint.get("deprecated") is True,
+            ):
+                item = dict(observed)
+            else:
+                item = {
+                    "id": sdk_operation_id(operation_id),
+                    "auth": (
+                        "none"
+                        if endpoint.get("auth") == "public"
+                        else DEFAULT_AUTH[product]
+                    ),
+                    "description": f"Call {method.upper()} {path}.",
+                }
             item["method"] = method.upper()
             item["path"] = path
             item["upstreamOperationId"] = operation_id
@@ -481,18 +508,25 @@ def synchronize_product(
                         product, observed["method"], observed["path"]
                     )
                 )
-            item = dict(observed) if observed is not None else {
-                "id": sdk_operation_id(operation_id),
-                "method": method.upper(),
-                "path": path,
-                "auth": (
-                    "none"
-                    if operation.get("security") == []
-                    or path in {"/health", "/healthz", "/livez", "/readyz"}
-                    else DEFAULT_AUTH[product]
-                ),
-                "description": sentence(operation, method, path),
-            }
+            if reuses_existing_operation_id(
+                observed,
+                operation_id,
+                operation.get("deprecated") is True,
+            ):
+                item = dict(observed)
+            else:
+                item = {
+                    "id": sdk_operation_id(operation_id),
+                    "method": method.upper(),
+                    "path": path,
+                    "auth": (
+                        "none"
+                        if operation.get("security") == []
+                        or path in {"/health", "/healthz", "/livez", "/readyz"}
+                        else DEFAULT_AUTH[product]
+                    ),
+                    "description": sentence(operation, method, path),
+                }
             item["method"] = method.upper()
             item["path"] = path
             item["upstreamOperationId"] = operation_id

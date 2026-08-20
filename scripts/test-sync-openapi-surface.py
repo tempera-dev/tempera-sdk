@@ -176,6 +176,66 @@ class SynchronizeProductTests(unittest.TestCase):
         self.assertEqual(operation["id"], "runUseCase")
         self.assertEqual(operation["path"], "/v1/{parent}/pipelines:runUseCase")
 
+    def test_deprecated_alias_with_new_operation_id_gets_a_distinct_sdk_name(
+        self,
+    ) -> None:
+        """A Clearing-style AIP action migration cannot collapse aliases."""
+
+        legacy_path = "/v1/actions/{id}/commit"
+        canonical_path = "/v1/actions/{id}:commit"
+        surface = {
+            "operations": {
+                "temperaClearing": [
+                    {
+                        "id": "commitClearingAction",
+                        "method": "POST",
+                        "path": legacy_path,
+                        "auth": "product",
+                        "description": "Commit a clearing action.",
+                        "upstreamOperationId": "commitClearingAction",
+                    }
+                ]
+            }
+        }
+        producer = {
+            "paths": {
+                canonical_path: {
+                    "post": {
+                        "operationId": "commitClearingAction",
+                        "summary": "Commit a clearing action",
+                    }
+                },
+                legacy_path: {
+                    "post": {
+                        "operationId": "commitClearingActionLegacy",
+                        "summary": "Commit a clearing action (legacy)",
+                        "deprecated": True,
+                    }
+                },
+            }
+        }
+
+        MODULE.synchronize_product(
+            surface, "temperaClearing", producer, set(), {}
+        )
+
+        operations = surface["operations"]["temperaClearing"]
+        self.assertEqual(
+            [(item["path"], item["id"], item["upstreamOperationId"]) for item in operations],
+            [
+                (
+                    canonical_path,
+                    "commitClearingAction",
+                    "commitClearingAction",
+                ),
+                (
+                    legacy_path,
+                    "commitClearingActionLegacy",
+                    "commitClearingActionLegacy",
+                ),
+            ],
+        )
+
     def test_required_query_parameters_are_preserved_from_openapi(self) -> None:
         path = "/v1/payment_intents/{payment_intent_id}"
         surface = {"operations": {"temperaPayments": []}}
