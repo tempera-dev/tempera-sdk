@@ -45,22 +45,22 @@ jobs:
             suite: connectors-acquisition
           - name: connectors-monitoring (Python 3.11)
             repository: tempera-connectors
-            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
             python: "3.11"
             suite: connectors-monitoring
           - name: connectors-monitoring (Python 3.12)
             repository: tempera-connectors
-            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
             python: "3.12"
             suite: connectors-monitoring
           - name: connectors-monitoring (Python 3.13)
             repository: tempera-connectors
-            ref: a1a7ccf470ee0e2314feb111f102d12e24ed17c8
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
             python: "3.13"
             suite: connectors-monitoring
           - name: data-engine-ingress (Python 3.11)
             repository: data-engine
-            ref: 61608a5bdfac5be0cf8e43e20ee89810ca7a391a
+            ref: 3a3322006271b5df9f30f4af5bfaf5acc377837f
             python: "3.11"
             suite: data-engine
           - name: satellite-consumer (Python 3.12)
@@ -130,6 +130,7 @@ jobs:
               python -m compileall -q src tests
               ;;
             connectors-monitoring)
+              python -m pip install --upgrade 'setuptools>=83,<84'
               python -m pip install '.[test,quality]' build pip-audit
               monitoring_files=(
                 src/tempera_connectors/acquisition.py
@@ -167,7 +168,7 @@ jobs:
               ;;
             data-engine)
               python -m pip install .
-              python -m unittest discover -s tests -v
+              PYTHONPATH=src python -m unittest discover -s tests -v
               python scripts/check-api-contract.py
               python scripts/naming-lint.py
               ;;
