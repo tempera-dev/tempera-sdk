@@ -26,15 +26,17 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "contracts" / "palette-eval-openapi-operations.json"
 DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
+SOURCE_RECEIPT = ROOT / "specs" / "palette-api.json.source"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "332a6ea6baafbf19511dc6dee5077dd62cc9b0ad"
+PALETTE_REVISION = "cf55d3f979b4374d221f7b368fff26f9875ed710"
 PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
 PALETTE_SOURCE_BLOB = "ef6ccc33b3dad70c15d89c89190b877e8c342746"
 PALETTE_SOURCE_SHA256 = (
     "sha256:136074a04219ea2bb96a70674afdbad4eec142c971f7c100ae0ab9db212fc5b7"
 )
+PALETTE_GENERATED_WITH = "source_lock.py@1+palette-api-dump-openapi"
 PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/23"
 PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
@@ -84,6 +86,28 @@ OPERATIONS = [
 
 class ContractError(ValueError):
     """The vendored or source-checkout Palette contract differs from its pin."""
+
+
+def validate_source_receipt() -> None:
+    receipt = json.loads(SOURCE_RECEIPT.read_text(encoding="utf-8"))
+    digest = PALETTE_SOURCE_SHA256.removeprefix("sha256:")
+    expected = {
+        "generated_path": "specs/palette-api.json",
+        "generated_sha256": digest,
+        "generated_with": PALETTE_GENERATED_WITH,
+        "schema_version": 1,
+        "source_blob_sha": PALETTE_SOURCE_BLOB,
+        "source_branch": "main",
+        "source_commit": PALETTE_REVISION,
+        "source_mode": "100644",
+        "source_path": PALETTE_SOURCE_PATH,
+        "source_repo": canonical_repository(PALETTE_REPOSITORY),
+        "source_sha256": digest,
+    }
+    if receipt != expected:
+        raise ContractError(
+            "Palette source receipt differs from the evaluation contract pin"
+        )
 
 
 def sha256(path: Path) -> str:
@@ -150,6 +174,7 @@ def verify_source_checkout(source: Path, checkout: Path) -> None:
 
 
 def render(source: Path, *, source_checkout: Path | None = None) -> str:
+    validate_source_receipt()
     if not source.is_file():
         raise ContractError(f"Palette OpenAPI source is missing: {source}")
     observed_digest = sha256(source)
