@@ -65,7 +65,7 @@ jobs:
             suite: data-engine
           - name: satellite-consumer (Python 3.12)
             repository: tempera-satellite
-            ref: 37eb65544d0325706cd69ff46cd5a35ab4c4e5ca
+            ref: 95fb926d8f3c784b2b3eebf72b6e9f6d508c1fd3
             python: "3.12"
             suite: satellite
           - name: voice-producer (Python 3.12)
@@ -200,6 +200,192 @@ jobs:
               exit 2
               ;;
           esac
+
+  hosted-live-public-source-chain:
+    name: hosted live NOAA chain (not staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CONNECTORS_SHA: 49cddd5a970ea436e3a41343f143a85afe223529
+      DATA_ENGINE_SHA: 3a3322006271b5df9f30f4af5bfaf5acc377837f
+      SATELLITE_SHA: 95fb926d8f3c784b2b3eebf72b6e9f6d508c1fd3
+      SDK_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Mint Connectors reader token
+        id: connectors-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-connectors
+
+      - name: Check out exact Connectors revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-connectors
+          ref: ${{ env.CONNECTORS_SHA }}
+          fetch-depth: 1
+          path: .connectors
+          persist-credentials: false
+          token: ${{ steps.connectors-reader.outputs.token }}
+
+      - name: Mint Data Engine reader token
+        id: data-engine-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: data-engine
+
+      - name: Check out exact Data Engine revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/data-engine
+          ref: ${{ env.DATA_ENGINE_SHA }}
+          fetch-depth: 1
+          path: .data-engine
+          persist-credentials: false
+          token: ${{ steps.data-engine-reader.outputs.token }}
+
+      - name: Mint Satellite reader token
+        id: satellite-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-satellite
+
+      - name: Check out exact Satellite revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-satellite
+          ref: ${{ env.SATELLITE_SHA }}
+          fetch-depth: 1
+          path: .satellite
+          persist-credentials: false
+          token: ${{ steps.satellite-reader.outputs.token }}
+
+      - name: Verify all immutable checkouts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C .connectors rev-parse HEAD)" = "$CONNECTORS_SHA"
+          test "$(git -C .data-engine rev-parse HEAD)" = "$DATA_ENGINE_SHA"
+          test "$(git -C .satellite rev-parse HEAD)" = "$SATELLITE_SHA"
+          test -z "$(git -C .connectors status --porcelain)"
+          test -z "$(git -C .data-engine status --porcelain)"
+          test -z "$(git -C .satellite status --porcelain)"
+          [[ "$SDK_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install exact receiver and consumer dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install ./.data-engine
+          python -m pip install -e './.satellite[dev]'
+
+      - name: Execute live NOAA to Connectors to Data Engine to Satellite chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          proof_dir="$RUNNER_TEMP/connectors-hosted-live-proof"
+          mkdir -p "$proof_dir"
+          python .satellite/scripts/e2e_connectors_data_engine.py \
+            --connectors-root .connectors \
+            --data-engine-root .data-engine \
+            --output "$proof_dir/chain-receipt.json"
+          jq -e \
+            --arg connectors "$CONNECTORS_SHA" \
+            --arg data_engine "$DATA_ENGINE_SHA" \
+            '.schemaVersion == "tempera-satellite.connectors-data-engine-local-live-receipt/v1" and
+             .evidenceClass == "local_live_public_transport" and
+             .connectors.commitSha == $connectors and
+             .connectors.sourceUri == "https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json" and
+             .connectors.transportKind == "https" and
+             .dataEngine.commitSha == $data_engine and
+             .dataEngine.authenticatedHttpIngestAndRead == true and
+             .satellite.recordCount > 0 and
+             .authority.trainingEligible == false and
+             .authority.executionAuthority == false and
+             .limitations.hostedStaging == false and
+             .limitations.productionReleaseEvidence == false' \
+            "$proof_dir/chain-receipt.json"
+
+      - name: Bind the live chain to this hosted run
+        shell: bash
+        run: |
+          set -euo pipefail
+          proof_dir="$RUNNER_TEMP/connectors-hosted-live-proof"
+          run_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          jq -S -n \
+            --arg observed_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg workflow_ref "$GITHUB_WORKFLOW_REF" \
+            --arg event "$GITHUB_EVENT_NAME" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg run_url "$run_url" \
+            --arg sdk_head_sha "$SDK_HEAD_SHA" \
+            --arg connectors_sha "$CONNECTORS_SHA" \
+            --arg data_engine_sha "$DATA_ENGINE_SHA" \
+            --arg satellite_sha "$SATELLITE_SHA" \
+            --slurpfile chain "$proof_dir/chain-receipt.json" \
+            '{
+              schemaVersion: "tempera.connectors-hosted-live-public-source-proof/v1",
+              evidenceClass: "hosted_ci_live_public_transport",
+              observedAt: $observed_at,
+              github: {
+                repository: $repository,
+                workflowRef: $workflow_ref,
+                event: $event,
+                runId: $run_id,
+                runAttempt: $run_attempt,
+                runUrl: $run_url,
+                sdkHeadSha: $sdk_head_sha
+              },
+              exactRevisions: {
+                connectors: $connectors_sha,
+                dataEngine: $data_engine_sha,
+                satellite: $satellite_sha
+              },
+              chainReceipt: $chain[0],
+              limitations: {
+                persistentDeployment: false,
+                dataEngineLoopback: true,
+                ephemeralSigningKey: true,
+                receiverPolicyTestOnly: true,
+                hostedStaging: false,
+                productionReleaseEvidence: false
+              }
+            }' > "$proof_dir/hosted-proof.json"
+          jq -e '
+            .evidenceClass == "hosted_ci_live_public_transport" and
+            .limitations.persistentDeployment == false and
+            .limitations.hostedStaging == false and
+            .limitations.productionReleaseEvidence == false
+          ' "$proof_dir/hosted-proof.json"
+          (
+            cd "$proof_dir"
+            sha256sum chain-receipt.json hosted-proof.json > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+
+      - name: Upload immutable hosted-live receipts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: connectors-hosted-live-public-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/connectors-hosted-live-proof/chain-receipt.json
+            ${{ runner.temp }}/connectors-hosted-live-proof/hosted-proof.json
+            ${{ runner.temp }}/connectors-hosted-live-proof/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 90
 
   auth-hub-investigations-candidate:
     name: auth-hub Investigations identity candidate
