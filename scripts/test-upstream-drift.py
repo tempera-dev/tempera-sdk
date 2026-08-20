@@ -257,7 +257,10 @@ class UpstreamDriftTest(unittest.TestCase):
         )
 
     def test_override_and_producer_auth_extensions_are_both_enforced(self) -> None:
-        surface = {"operations": {"controlPlane": []}}
+        surface = {
+            "operations": {"controlPlane": []},
+            "scopes": ["bio:signer:manage"],
+        }
         spec = {
             "paths": {
                 "/bio-signer-keys": {
@@ -323,7 +326,10 @@ class UpstreamDriftTest(unittest.TestCase):
         self.assertNotIn("scope", operation)
 
     def test_producer_audience_implies_oauth_resource_auth(self) -> None:
-        surface = {"operations": {"temperaGym": []}}
+        surface = {
+            "operations": {"temperaGym": []},
+            "scopes": ["dataset:read"],
+        }
         spec = {
             "paths": {
                 "/v1/tasks": {

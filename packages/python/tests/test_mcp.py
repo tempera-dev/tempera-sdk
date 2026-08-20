@@ -49,6 +49,10 @@ class McpClientTest(unittest.TestCase):
             self.assertIsInstance(call["request"]["id"], int)
         self.assertEqual(transport.calls[0]["request"]["method"], "initialize")
         self.assertEqual(transport.calls[0]["request"]["params"]["protocolVersion"], "2025-06-18")
+        self.assertEqual(
+            transport.calls[0]["request"]["params"]["clientInfo"]["version"],
+            "0.13.0",
+        )
         self.assertEqual(MCP_PROTOCOL_VERSION, "2025-06-18")
         self.assertEqual(transport.calls[1]["request"]["method"], "ping")
         self.assertEqual(transport.calls[2]["request"]["method"], "tools/list")

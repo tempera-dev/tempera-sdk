@@ -55,7 +55,8 @@ python3 scripts/sync-data-engine-openapi.py --check \
 1. **Land the product change** behind its own contract gate (regenerate the
    product's OpenAPI/catalog artifacts as that repo requires).
 2. **Update `surface.json`** in this repo: add/adjust the operation entry
-   (id, method, path, params, auth kind, scope, one-sentence description).
+   (id, method, path, params, auth kind, singular scope or ordered compound
+   scope set, one-sentence description).
    - Adding an endpoint or an optional parameter → **minor** SDK version bump.
    - Renaming/removing an operation, changing a path, method, auth kind, or
      the error contract → **major** bump (pre-1.0: bump the minor and call it

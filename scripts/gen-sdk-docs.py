@@ -32,6 +32,7 @@ import sys
 from pathlib import Path
 
 from sdk_names import snake_case
+from scope_metadata import parse_scope_declaration
 
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
@@ -154,6 +155,30 @@ def auth_label(surface: dict, product_key: str, op: dict) -> str:
     return f"Product bearer — an access token minted for audience `{audience}`, or a central `tp_` API key."
 
 
+def operation_scopes(surface: dict, product_key: str, op: dict) -> tuple[str, ...]:
+    """Return one exact singular or compound scope declaration."""
+
+    declaration = parse_scope_declaration(
+        op,
+        singular_key="scope",
+        plural_key="scopes",
+        label=f"{product_key}.{op.get('id', '?')}",
+    )
+    if declaration.kind == "plural":
+        scopes = declaration.plural or ()
+    elif declaration.singular is not None:
+        scopes = (declaration.singular,)
+    else:
+        scopes = ()
+    registered = set(surface.get("scopes", [])) | set(surface.get("scopeGaps", {}))
+    for scope in scopes:
+        if scope not in registered:
+            raise ValueError(
+                f"{product_key}.{op.get('id', '?')}: unregistered scope {scope!r}"
+            )
+    return scopes
+
+
 def example_param_names(op: dict) -> list[str]:
     """Parameters shown in the per-operation example: every path parameter,
     every required body parameter, plus a readable optional sample."""
@@ -215,6 +240,7 @@ def param_table(title: str, rows: list[tuple[str, str, str]]) -> list[str]:
 def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
     op_snake = snake(op["id"])
     rust_product = snake(product_key)
+    declared_scopes = operation_scopes(surface, product_key, op)
     lines = [f"### {op['id']}", ""]
     lines.append(f"`{op['method']} {op['path']}`")
     lines.append("")
@@ -232,9 +258,14 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
             for name, template in op["pathParamTemplates"].items()
         )
         lines.append(f"- **AIP resource path templates:** {rendered_templates}")
-    if op.get("scope"):
-        lines.append(f"- **Scope:** `{op['scope']}`")
-        if op["scope"] in surface.get("scopeGaps", {}):
+    if len(declared_scopes) == 1 and "scope" in op:
+        lines.append(f"- **Scope:** `{declared_scopes[0]}`")
+        if declared_scopes[0] in surface.get("scopeGaps", {}):
+            lines.append("- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).")
+    elif declared_scopes:
+        rendered_scopes = ", ".join(f"`{scope}`" for scope in declared_scopes)
+        lines.append(f"- **Scopes (all required):** {rendered_scopes}")
+        if any(scope in surface.get("scopeGaps", {}) for scope in declared_scopes):
             lines.append("- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).")
     lines.append(
         f"- **Call as:** TypeScript `client.{product_key}.{op['id']}()` · "
@@ -673,8 +704,8 @@ def render_authentication(surface: dict) -> str:
     scope_ops: dict[str, dict[str, list[str]]] = {}
     for product_key, ops in surface["operations"].items():
         for op in ops:
-            if op.get("scope"):
-                scope_ops.setdefault(op["scope"], {}).setdefault(product_key, []).append(op["id"])
+            for scope in operation_scopes(surface, product_key, op):
+                scope_ops.setdefault(scope, {}).setdefault(product_key, []).append(op["id"])
     for scope in surface["scopes"]:
         if scope == "mcp:invoke":
             used_by = "the [MCP gateway](/mcp-gateway) — required for every tool call."

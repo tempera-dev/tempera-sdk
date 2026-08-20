@@ -1,5 +1,44 @@
 # SDK compatibility ledger
 
+## 2026-08-20 — compound operation authority representation
+
+- Owner: aggregate SDK contract generation and exact producer propagation.
+- Compatibility class: coordinated pre-1.0 minor boundary. Package version is
+  `0.13.0` and surface version is `7` because generated TypeScript and Rust
+  operation metadata gains a source-affecting compound-scope representation.
+- Added: producer OpenAPI may declare `x-tempera-required-scopes` as one
+  non-empty ordered AND-set. Singular `x-tempera-required-scope` remains
+  supported, including its established explicit `null` clear.
+- Fail-closed rules: singular and plural keys are mutually exclusive by key
+  presence. The plural form rejects `null`, scalars, empty or duplicate lists,
+  more than 64 members, members longer than 256 bytes, malformed RFC 6749
+  scope-tokens, and tokens absent from the central registry or an explicit
+  source gap. Generated TypeScript and Python objects emit only the active
+  singular or plural key. Rust keeps those two generated fields private and
+  exposes read-only `scope()` / `scopes()` accessors, so external callers
+  cannot construct or mutate an ambiguous dual-field state.
+- Consumer requirement: every member of `scopes` is required before target
+  selection, request interpolation, or network I/O. A partial set, wildcard,
+  prefix match, broad product key, or collapse to one member is not equivalent.
+- Producer boundary: this release does not vendor or trust a feature-branch
+  producer. Local disposable projection of Gym draft PR #36 exact head
+  `1a7409bb3b63470829bd6f11fbfaa8d54f7aa6d9` proves its `episodes.export`
+  declaration remains ordered as `eval:run`, `dataset:write`; it is not a
+  source receipt or release qualification.
+- Release order: qualify and merge this generic generator boundary; separately
+  review, qualify, and reproduce Gym #36 on trusted Gym main; only then vendor
+  the exact main contract, regenerate the SDK surface, and refresh Workflows or
+  other consumer receipts. Receipt-only repinning before generator support can
+  silently understate producer authority and is forbidden.
+- Stack coordination: SDK PR #104 independently claims the same `0.13.0`
+  boundary and overlaps generated/version/docs files. The stacks may share one
+  coordinated `0.13.0` only while neither is publicly released; the later
+  change must rebase and regenerate. If either `0.13.0` is published first,
+  the other must select a newer version rather than reuse the released number.
+  Generated files must never be conflict-resolved manually.
+- Rollback: revert the version/surface boundary, generator/parser, tests, and
+  generated tables together. Do not rewrite a compound set as a singular scope.
+
 ## 2026-07-24 — physical experiment provider boundary
 
 - Owner: Discovery release train across Tempera Workflows, SDK, MCP, Auth Hub,

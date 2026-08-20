@@ -48,6 +48,10 @@ export type TemperaProduct = {
 };
 export declare const TEMPERA_PRODUCTS: Readonly<Record<TemperaProductKey, TemperaProduct>>;
 
+export type TemperaOperationScopeAuthority =
+  | { scope: TemperaScope | null; scopes?: never }
+  | { scope?: never; scopes: readonly [TemperaScope, ...TemperaScope[]] };
+
 export type TemperaOperationSpec = {
   id: string;
   upstreamOperationId: string;
@@ -65,11 +69,10 @@ export type TemperaOperationSpec = {
   bodyDefaults: Readonly<Record<string, unknown>>;
   requestBodyKind: "none" | "json" | "binary";
   requestContentType: string | null;
-  scope: TemperaScope | null;
   physicalAction: boolean;
   prepareCommitRequired: boolean;
   description: string;
-};
+} & TemperaOperationScopeAuthority;
 export declare const TEMPERA_OPERATIONS: Readonly<Record<TemperaProductKey, readonly TemperaOperationSpec[]>>;
 
 export type TemperaMcpMethodSpec = { id: string; rpc: string; tool?: string; description: string };

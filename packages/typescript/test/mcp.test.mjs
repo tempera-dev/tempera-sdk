@@ -47,6 +47,7 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
   }
   assert.equal(calls[0].request.method, "initialize");
   assert.equal(calls[0].request.params.protocolVersion, "2025-06-18");
+  assert.equal(calls[0].request.params.clientInfo.version, "0.13.0");
   assert.equal(calls[1].request.method, "ping");
   assert.equal(calls[2].request.method, "tools/list");
 });
