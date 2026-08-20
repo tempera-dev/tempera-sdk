@@ -161,7 +161,7 @@ class TemperaMcpClient:
         bearer: str | None = None,
         transport: Transport | None = None,
         client_name: str = "tempera-sdk",
-        client_version: str = "0.12.0",
+        client_version: str = "0.13.0",
         client_capabilities: Mapping[str, Any] | None = None,
     ):
         self.url = url or (auth.mcp_url if auth else None)
@@ -317,7 +317,7 @@ class TemperaMcpClient:
             )
         return result
 
-    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.12.0") -> Any:
+    def initialize(self, *, name: str = "tempera-sdk", version: str = "0.13.0") -> Any:
         """Compatibility alias for :meth:`discover`; no session is created."""
         return self.discover(name=name, version=version)
 

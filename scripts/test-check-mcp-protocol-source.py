@@ -68,6 +68,15 @@ class McpProtocolSourceCheckTest(unittest.TestCase):
             Path("packages/python/src/tempera_sdk/provider.py"),
             Path("packages/python/src/tempera_sdk/provider_capabilities.py"),
             Path("packages/rust/examples/mcp_protocol_e2e.rs"),
+            Path("packages/typescript/examples/mcp_protocol_e2e.mjs"),
+            Path(".github/workflows/mcp-protocol-exact-source.yml"),
+            Path("scripts/mcp-protocol-e2e.py"),
+            Path("docs/COMPATIBILITY.md"),
+            Path("packages/python/pyproject.toml"),
+            Path("packages/python/uv.lock"),
+            Path("packages/rust/Cargo.toml"),
+            Path("packages/rust/Cargo.lock"),
+            Path("packages/typescript/package.json"),
         ]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -81,6 +90,57 @@ class McpProtocolSourceCheckTest(unittest.TestCase):
                 python_client.read_text(encoding="utf-8").replace(
                     'MCP_PROTOCOL_VERSION = "2026-07-28"',
                     'MCP_PROTOCOL_VERSION = "2025-06-18"',
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+
+            shutil.copyfile(MODULE.ROOT / paths[1], python_client)
+            workflow = root / Path(
+                ".github/workflows/mcp-protocol-exact-source.yml"
+            )
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    '      - "packages/rust/Cargo.lock"\n',
+                    "",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
+            typescript_example = root / Path(
+                "packages/typescript/examples/mcp_protocol_e2e.mjs"
+            )
+            typescript_example.write_text(
+                typescript_example.read_text(encoding="utf-8").replace(
+                    'from "../src/index.js";',
+                    'from "../src/mcp.js";',
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+
+            shutil.copyfile(
+                MODULE.ROOT / Path("packages/typescript/examples/mcp_protocol_e2e.mjs"),
+                typescript_example,
+            )
+            typescript_manifest = root / Path("packages/typescript/package.json")
+            typescript_manifest.write_text(
+                typescript_manifest.read_text(encoding="utf-8").replace(
+                    '"version": "0.13.0"',
+                    '"version": "0.12.0"',
                     1,
                 ),
                 encoding="utf-8",

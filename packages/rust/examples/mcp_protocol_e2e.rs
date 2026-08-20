@@ -96,6 +96,13 @@ fn run() -> Result<(), String> {
     if args.next().is_some() {
         return Err("unexpected extra argument".to_string());
     }
+    if bearer != "local-e2e-placeholder" {
+        return Err("the protocol E2E accepts only its non-secret placeholder bearer".to_string());
+    }
+    let (host, _, path) = endpoint_parts(&endpoint)?;
+    if host != "127.0.0.1" || path != "/mcp" {
+        return Err("the protocol E2E accepts only a disposable loopback /mcp URL".to_string());
+    }
 
     let mut builder = McpRequestBuilder::new()
         .with_client_info("tempera-sdk-rust-e2e", env!("CARGO_PKG_VERSION"));

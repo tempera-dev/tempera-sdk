@@ -94,7 +94,7 @@ class McpClientTest(unittest.TestCase):
         client.ping()
         self.assertEqual(
             transport.calls[0]["data"],
-            b'{"jsonrpc":"2.0","id":1,"method":"ping","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"tempera-sdk","version":"0.12.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}',
+            b'{"jsonrpc":"2.0","id":1,"method":"ping","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"tempera-sdk","version":"0.13.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}',
         )
 
     def test_call_tool_whoami_and_status_wrap_tools_call(self):

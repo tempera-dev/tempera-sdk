@@ -8,12 +8,14 @@ import hashlib
 import json
 import re
 import subprocess
+import tomllib
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK_PATH = ROOT / "contracts" / "mcp-protocol.source.json"
 PROTOCOL_VERSION = "2026-07-28"
+PACKAGE_VERSION = "0.13.0"
 SOURCE_REPO = "tempera-dev/tempera-mcp"
 SOURCE_BRANCH = "main"
 SOURCE_COMMIT = "99ac544fcfbc500f212906a61cf6c72c2cc16723"
@@ -158,6 +160,38 @@ def validate_lock(lock: dict[str, Any]) -> None:
 
 
 def validate_sdk(root: Path = ROOT) -> None:
+    python_manifest = tomllib.loads(
+        (root / "packages/python/pyproject.toml").read_text(encoding="utf-8")
+    )
+    rust_manifest = tomllib.loads(
+        (root / "packages/rust/Cargo.toml").read_text(encoding="utf-8")
+    )
+    typescript_manifest = json.loads(
+        (root / "packages/typescript/package.json").read_text(encoding="utf-8")
+    )
+    python_lock = tomllib.loads(
+        (root / "packages/python/uv.lock").read_text(encoding="utf-8")
+    )
+    rust_lock = tomllib.loads(
+        (root / "packages/rust/Cargo.lock").read_text(encoding="utf-8")
+    )
+
+    def locked_version(lock: dict[str, Any]) -> str | None:
+        for package in lock.get("package", []):
+            if package.get("name") == "tempera-sdk":
+                return package.get("version")
+        return None
+
+    versions = {
+        "python": python_manifest.get("project", {}).get("version"),
+        "python-lock": locked_version(python_lock),
+        "rust": rust_manifest.get("package", {}).get("version"),
+        "rust-lock": locked_version(rust_lock),
+        "typescript": typescript_manifest.get("version"),
+    }
+    if set(versions.values()) != {PACKAGE_VERSION}:
+        fail(f"SDK MCP package versions must all equal {PACKAGE_VERSION}: {versions}")
+
     surface = json.loads((root / "surface.json").read_text(encoding="utf-8"))
     gateway = surface.get("mcpGateway")
     if not isinstance(gateway, dict):
@@ -181,6 +215,7 @@ def validate_sdk(root: Path = ROOT) -> None:
     checks = {
         "packages/python/src/tempera_sdk/mcp.py": [
             'MCP_PROTOCOL_VERSION = "2026-07-28"',
+            'client_version: str = "0.13.0"',
             'self.rpc("server/discover", {})',
             '"io.modelcontextprotocol/clientCapabilities"',
             "text/event-stream",
@@ -191,6 +226,7 @@ def validate_sdk(root: Path = ROOT) -> None:
         ],
         "packages/typescript/src/mcp.js": [
             'MCP_PROTOCOL_VERSION = "2026-07-28"',
+            'clientVersion = "0.13.0"',
             'this.rpc("server/discover", {})',
             '"io.modelcontextprotocol/clientCapabilities"',
             "text/event-stream",
@@ -225,6 +261,28 @@ def validate_sdk(root: Path = ROOT) -> None:
             "classify_mcp_call_result(&outcome, invalid.id())",
             'catalog.matches("\\\"name\\\":\\\"tempera_").count() != 11',
             "rust-secret-argument-sentinel",
+            'bearer != "local-e2e-placeholder"',
+            'host != "127.0.0.1" || path != "/mcp"',
+        ],
+        "packages/typescript/examples/mcp_protocol_e2e.mjs": [
+            "TemperaMcpClient",
+            "MCP_PROTOCOL_VERSION",
+            'from "../src/index.js"',
+            "tools.length !== expectedTools.length",
+            "error instanceof TemperaMcpError",
+            "error.code !== 0",
+            'error.data?.resultType !== "complete"',
+            "identity.structuredContent?.authenticated !== false",
+            "typescript-secret-argument-sentinel",
+            'bearer !== "local-e2e-placeholder"',
+            'parsedEndpoint.hostname !== "127.0.0.1"',
+            'clientVersion: "0.13.0"',
+        ],
+        "docs/COMPATIBILITY.md": [
+            "stateless MCP 2026 client and terminal-outcome boundary",
+            "package `0.13.0`",
+            "call_tool_body",
+            "parse_mcp_error",
         ],
     }
     for relative, markers in checks.items():
@@ -242,6 +300,41 @@ def validate_sdk(root: Path = ROOT) -> None:
         for marker in forbidden:
             if marker in text:
                 fail(f"SDK MCP projection {relative} retains forbidden wire marker {marker!r}")
+
+    workflow = (root / ".github/workflows/mcp-protocol-exact-source.yml").read_text(
+        encoding="utf-8"
+    )
+    orchestrator = (root / "scripts/mcp-protocol-e2e.py").read_text(encoding="utf-8")
+    for marker in [
+        "packages/typescript/examples/mcp_protocol_e2e.mjs",
+        "node --check packages/typescript/examples/mcp_protocol_e2e.mjs",
+        "--typescript-client-script packages/typescript/examples/mcp_protocol_e2e.mjs",
+    ]:
+        if marker not in workflow:
+            fail(f"MCP exact-source workflow is missing {marker!r}")
+    for authority_path in [
+        "packages/python/pyproject.toml",
+        "packages/python/uv.lock",
+        "packages/rust/Cargo.toml",
+        "packages/rust/Cargo.lock",
+        "packages/typescript/package.json",
+    ]:
+        if workflow.count(f'\"{authority_path}\"') != 2:
+            fail(
+                "MCP exact-source workflow must watch version authority in both "
+                f"pull_request and main push filters: {authority_path}"
+            )
+    for marker in [
+        'parser.add_argument("--typescript-client-script", type=Path, required=True)',
+        '"TypeScript MCP E2E client must be the reviewed example',
+        '"Rust MCP E2E client must be the reviewed example',
+        '"exact MCP 2026-07-28 TypeScript SDK E2E passed"',
+        '"typescript-secret-argument-sentinel"',
+        'env={"PATH": os.environ.get("PATH", ""), "RUST_LOG": "warn"}',
+        'env={"PATH": os.environ.get("PATH", "")}',
+    ]:
+        if marker not in orchestrator:
+            fail(f"MCP wire orchestrator is missing {marker!r}")
 
 
 def validate_source(lock: dict[str, Any], source_root: Path) -> None:

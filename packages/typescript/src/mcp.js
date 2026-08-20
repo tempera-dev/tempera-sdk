@@ -131,7 +131,7 @@ export class TemperaMcpClient {
     bearer,
     fetch: fetchImpl,
     clientName = "tempera-sdk",
-    clientVersion = "0.12.0",
+    clientVersion = "0.13.0",
     clientCapabilities = {},
   } = {}) {
     this.url = url ?? auth?.mcpUrl;
@@ -311,7 +311,7 @@ export class TemperaMcpClient {
   }
 
   /** Compatibility alias for discover(); no transport session is created. */
-  initialize({ name = "tempera-sdk", version = "0.12.0" } = {}) {
+  initialize({ name = "tempera-sdk", version = "0.13.0" } = {}) {
     return this.discover({ name, version });
   }
 

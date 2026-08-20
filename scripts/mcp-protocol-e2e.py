@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run protocol-only Python SDK proof against an exact MCP binary.
+"""Run protocol-only Python, TypeScript, and Rust SDK proof against exact MCP.
 
 The disposable server intentionally uses ``auth.mode=none``. This binds wire,
 result, and logging semantics only; it is not authorization or tenancy proof.
@@ -89,6 +89,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--binary", type=Path, required=True)
     parser.add_argument("--rust-client-binary", type=Path, required=True)
+    parser.add_argument("--typescript-client-script", type=Path, required=True)
     args = parser.parse_args()
     binary = args.binary.resolve()
     if not binary.is_file() or not os.access(binary, os.X_OK):
@@ -96,6 +97,23 @@ def main() -> int:
     rust_client_binary = args.rust_client_binary.resolve()
     if not rust_client_binary.is_file() or not os.access(rust_client_binary, os.X_OK):
         raise SystemExit(f"Rust MCP E2E client is not executable: {rust_client_binary}")
+    expected_rust_client = (
+        Path(__file__).resolve().parents[1]
+        / "packages/rust/target/debug/examples/mcp_protocol_e2e"
+    ).resolve()
+    if rust_client_binary != expected_rust_client:
+        raise SystemExit(f"Rust MCP E2E client must be the reviewed example: {expected_rust_client}")
+    typescript_client_script = args.typescript_client_script.resolve()
+    if not typescript_client_script.is_file():
+        raise SystemExit(f"TypeScript MCP E2E client is not a file: {typescript_client_script}")
+    expected_typescript_client = (
+        Path(__file__).resolve().parents[1]
+        / "packages/typescript/examples/mcp_protocol_e2e.mjs"
+    ).resolve()
+    if typescript_client_script != expected_typescript_client:
+        raise SystemExit(
+            f"TypeScript MCP E2E client must be the reviewed example: {expected_typescript_client}"
+        )
 
     port = free_port()
     base = f"http://127.0.0.1:{port}"
@@ -124,7 +142,7 @@ def main() -> int:
                 [str(binary), "serve", "--config", str(config)],
                 stdout=stdout,
                 stderr=stderr,
-                env={**os.environ, "RUST_LOG": "warn"},
+                env={"PATH": os.environ.get("PATH", ""), "RUST_LOG": "warn"},
             )
             try:
                 wait_ready(f"{base}/healthz", process)
@@ -132,7 +150,7 @@ def main() -> int:
                     url=endpoint,
                     bearer="local-e2e-placeholder",
                     client_name="tempera-sdk-e2e",
-                    client_version="0.12.0",
+                    client_version="0.13.0",
                 )
                 discovery = client.discover()
                 if discovery.get("resultType") != "complete":
@@ -192,11 +210,32 @@ def main() -> int:
                     capture_output=True,
                     text=True,
                     timeout=20,
+                    env={"PATH": os.environ.get("PATH", "")},
                 )
                 if rust_result.returncode != 0:
                     raise AssertionError("Rust SDK failed its exact MCP protocol E2E")
                 if "exact MCP 2026-07-28 Rust SDK E2E passed" not in rust_result.stdout:
                     raise AssertionError("Rust SDK E2E omitted its success receipt")
+                typescript_result = subprocess.run(
+                    [
+                        "node",
+                        str(typescript_client_script),
+                        endpoint,
+                        "local-e2e-placeholder",
+                    ],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=20,
+                    env={"PATH": os.environ.get("PATH", "")},
+                )
+                if typescript_result.returncode != 0:
+                    raise AssertionError("TypeScript SDK failed its exact MCP protocol E2E")
+                if (
+                    "exact MCP 2026-07-28 TypeScript SDK E2E passed"
+                    not in typescript_result.stdout
+                ):
+                    raise AssertionError("TypeScript SDK E2E omitted its success receipt")
             finally:
                 process.terminate()
                 try:
@@ -213,7 +252,9 @@ def main() -> int:
             raise AssertionError("MCP logs leaked tool arguments")
         if "rust-secret-argument-sentinel" in logs:
             raise AssertionError("MCP logs leaked Rust tool arguments")
-    print("exact MCP 2026-07-28 Python SDK E2E passed")
+        if "typescript-secret-argument-sentinel" in logs:
+            raise AssertionError("MCP logs leaked TypeScript tool arguments")
+    print("exact MCP 2026-07-28 Python, TypeScript, and Rust SDK E2E passed")
     return 0
 
 
