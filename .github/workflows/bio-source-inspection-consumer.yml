@@ -31,7 +31,7 @@ jobs:
         run: |
           set -eu
           for seed in 1 97 211; do
-            PYTHONHASHSEED="$seed" python3 -m unittest +              packages/python/tests/test_bio_source_inspection.py
+            PYTHONHASHSEED="$seed" python3 -m unittest discover -s packages/python/tests -p 'test_bio_source_inspection.py'
           done
       - name: Independently replay deterministic receipt bytes
         env:
@@ -39,8 +39,8 @@ jobs:
         run: |
           set -eu
           for seed in 1 97 211; do
-            PYTHONHASHSEED="$seed" python3 -c +              'from pathlib import Path; from tempera_sdk.bio_source_inspection import receipt_bytes, verify_paths; print(receipt_bytes(verify_paths(Path("contracts/bio-source-inspection-sdk-consumer.staging.lock.json"), Path("contracts/bio-source-inspection-sdk-consumer-fixtures.json"))).decode())' +              > "$RUNNER_TEMP/bio-source-inspection-$seed.json"
+            PYTHONHASHSEED="$seed" python3 -c 'from pathlib import Path; from tempera_sdk.bio_source_inspection import receipt_bytes, verify_paths; print(receipt_bytes(verify_paths(Path("contracts/bio-source-inspection-sdk-consumer.staging.lock.json"), Path("contracts/bio-source-inspection-sdk-consumer-fixtures.json"))).decode())' > "$RUNNER_TEMP/bio-source-inspection-$seed.json"
           done
-          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" +            "$RUNNER_TEMP/bio-source-inspection-97.json"
-          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" +            "$RUNNER_TEMP/bio-source-inspection-211.json"
+          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" "$RUNNER_TEMP/bio-source-inspection-97.json"
+          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" "$RUNNER_TEMP/bio-source-inspection-211.json"
           sha256sum "$RUNNER_TEMP/bio-source-inspection-1.json"
