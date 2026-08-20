@@ -1,0 +1,478 @@
+name: Connectors release candidate exact-SHA
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/connectors-release-candidate.yml"
+      - ".github/workflows/tempera-investigations-exact-source.yml"
+      - "specs/tempera-investigations-api.json"
+      - "specs/tempera-investigations-api.json.source"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/connectors-release-candidate.yml"
+      - ".github/workflows/tempera-investigations-exact-source.yml"
+      - "specs/tempera-investigations-api.json"
+      - "specs/tempera-investigations-api.json.source"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-sha-conformance:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: connectors-acquisition (Python 3.11)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.11"
+            suite: connectors-acquisition
+          - name: connectors-acquisition (Python 3.12)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.12"
+            suite: connectors-acquisition
+          - name: connectors-acquisition (Python 3.13)
+            repository: tempera-connectors
+            ref: 49cddd5a970ea436e3a41343f143a85afe223529
+            python: "3.13"
+            suite: connectors-acquisition
+          - name: connectors-monitoring (Python 3.11)
+            repository: tempera-connectors
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
+            python: "3.11"
+            suite: connectors-monitoring
+          - name: connectors-monitoring (Python 3.12)
+            repository: tempera-connectors
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
+            python: "3.12"
+            suite: connectors-monitoring
+          - name: connectors-monitoring (Python 3.13)
+            repository: tempera-connectors
+            ref: 7db2d2cfee79047f0f2ca8e244e70886f3ec5d40
+            python: "3.13"
+            suite: connectors-monitoring
+          - name: data-engine-ingress (Python 3.11)
+            repository: data-engine
+            ref: 3a3322006271b5df9f30f4af5bfaf5acc377837f
+            python: "3.11"
+            suite: data-engine
+          - name: satellite-consumer (Python 3.12)
+            repository: tempera-satellite
+            ref: 95fb926d8f3c784b2b3eebf72b6e9f6d508c1fd3
+            python: "3.12"
+            suite: satellite
+          - name: voice-producer (Python 3.12)
+            repository: tempera-voice
+            ref: daa760cb8a3e4215ec4d65a9e7d8f06fe0ab5075
+            python: "3.12"
+            suite: voice
+          - name: investigations-consumer (Python 3.12)
+            repository: tempera-investigations
+            ref: 7ebd868c81cf6cf66fd00f1082de16ed5b9ef06d
+            python: "3.12"
+            suite: investigations
+          - name: risk-adapter (Python 3.12)
+            repository: tempera-risk
+            ref: 07d4d127b5dc0a3b2976f4616059a691cbf01736
+            python: "3.12"
+            suite: risk
+    steps:
+      - name: Mint one-repository contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: ${{ matrix.repository }}
+
+      - name: Check out exact producer or consumer revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+          fetch-depth: 1
+          path: .source
+          persist-credentials: false
+          token: ${{ steps.contract-reader.outputs.token }}
+
+      - name: Verify immutable checkout
+        env:
+          EXPECTED_SHA: ${{ matrix.ref }}
+        run: test "$(git -C .source rev-parse HEAD)" = "$EXPECTED_SHA"
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Run repository-native conformance suite
+        working-directory: .source
+        env:
+          SUITE: ${{ matrix.suite }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$SUITE" in
+            connectors-acquisition)
+              python -m pip install '.[test,quality]'
+              ruff check src/tempera_connectors/acquisition.py src/tempera_connectors/__init__.py tests/test_acquisition_v1.py
+              ruff format --check src/tempera_connectors/acquisition.py src/tempera_connectors/__init__.py tests/test_acquisition_v1.py
+              mypy --strict --follow-imports=skip src/tempera_connectors/acquisition.py
+              python -m unittest discover -s tests -v
+              python -m tempera_connectors.demo
+              python -m compileall -q src tests
+              ;;
+            connectors-monitoring)
+              python -m pip install --upgrade 'setuptools>=83,<84'
+              python -m pip install '.[test,quality]' build pip-audit
+              monitoring_files=(
+                src/tempera_connectors/acquisition.py
+                src/tempera_connectors/monitoring.py
+                src/tempera_connectors/compliance.py
+                src/tempera_connectors/investigation.py
+                src/tempera_connectors/github_monitoring.py
+                src/tempera_connectors/support_monitoring.py
+                src/tempera_connectors/tempera_voice.py
+                src/tempera_connectors/__init__.py
+                tests/test_acquisition_v1.py
+                tests/test_monitoring.py
+                tests/test_monitoring_compliance.py
+                tests/test_investigation_handoff.py
+                tests/test_monitoring_source_locks.py
+                tests/test_voice_handoff.py
+              )
+              ruff check "${monitoring_files[@]}"
+              ruff format --check "${monitoring_files[@]}"
+              mypy --strict --follow-imports=skip \
+                src/tempera_connectors/acquisition.py \
+                src/tempera_connectors/monitoring.py \
+                src/tempera_connectors/compliance.py \
+                src/tempera_connectors/investigation.py \
+                src/tempera_connectors/github_monitoring.py \
+                src/tempera_connectors/support_monitoring.py \
+                src/tempera_connectors/tempera_voice.py
+              python -m unittest discover -s tests -v
+              python -m tempera_connectors.demo
+              python -m compileall -q src tests
+              python -m pip_audit
+              python -m build
+              python -m pip install --force-reinstall dist/*.whl
+              python -m tempera_connectors.demo
+              ;;
+            data-engine)
+              python -m pip install .
+              PYTHONPATH=src python -m unittest discover -s tests -v
+              python scripts/check-api-contract.py
+              python scripts/naming-lint.py
+              ;;
+            satellite)
+              python -m pip install -e '.[dev]' pip-audit
+              pytest -q
+              python -m compileall -q src scripts
+              python -m pip wheel . --no-deps --wheel-dir dist
+              python -m pip_audit --skip-editable
+              ;;
+            voice)
+              python -m pip install -e '.[test]'
+              python -m compileall -q src tests scripts
+              ruff check src tests scripts
+              pytest
+              PYTHONPATH=src python scripts/export-openapi.py --check
+              ;;
+            investigations)
+              make check
+              ;;
+            risk)
+              python -m pip install -e '.[dev]'
+              python -m pytest -q
+              python scripts/check_core_duplication.py
+              python scripts/check_wheel_contents.py
+              ;;
+            *)
+              printf 'unknown conformance suite: %s\n' "$SUITE" >&2
+              exit 2
+              ;;
+          esac
+
+  hosted-live-public-source-chain:
+    name: hosted live NOAA chain (not staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CONNECTORS_SHA: 49cddd5a970ea436e3a41343f143a85afe223529
+      DATA_ENGINE_SHA: 3a3322006271b5df9f30f4af5bfaf5acc377837f
+      SATELLITE_SHA: 95fb926d8f3c784b2b3eebf72b6e9f6d508c1fd3
+      SDK_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Mint Connectors reader token
+        id: connectors-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-connectors
+
+      - name: Check out exact Connectors revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-connectors
+          ref: ${{ env.CONNECTORS_SHA }}
+          fetch-depth: 1
+          path: .connectors
+          persist-credentials: false
+          token: ${{ steps.connectors-reader.outputs.token }}
+
+      - name: Mint Data Engine reader token
+        id: data-engine-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: data-engine
+
+      - name: Check out exact Data Engine revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/data-engine
+          ref: ${{ env.DATA_ENGINE_SHA }}
+          fetch-depth: 1
+          path: .data-engine
+          persist-credentials: false
+          token: ${{ steps.data-engine-reader.outputs.token }}
+
+      - name: Mint Satellite reader token
+        id: satellite-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-satellite
+
+      - name: Check out exact Satellite revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-satellite
+          ref: ${{ env.SATELLITE_SHA }}
+          fetch-depth: 1
+          path: .satellite
+          persist-credentials: false
+          token: ${{ steps.satellite-reader.outputs.token }}
+
+      - name: Verify all immutable checkouts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C .connectors rev-parse HEAD)" = "$CONNECTORS_SHA"
+          test "$(git -C .data-engine rev-parse HEAD)" = "$DATA_ENGINE_SHA"
+          test "$(git -C .satellite rev-parse HEAD)" = "$SATELLITE_SHA"
+          test -z "$(git -C .connectors status --porcelain)"
+          test -z "$(git -C .data-engine status --porcelain)"
+          test -z "$(git -C .satellite status --porcelain)"
+          [[ "$SDK_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install exact receiver and consumer dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install ./.data-engine
+          python -m pip install -e './.satellite[dev]'
+
+      - name: Execute live NOAA to Connectors to Data Engine to Satellite chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          proof_dir="$RUNNER_TEMP/connectors-hosted-live-proof"
+          mkdir -p "$proof_dir"
+          python .satellite/scripts/e2e_connectors_data_engine.py \
+            --connectors-root .connectors \
+            --data-engine-root .data-engine \
+            --output "$proof_dir/chain-receipt.json"
+          jq -e \
+            --arg connectors "$CONNECTORS_SHA" \
+            --arg data_engine "$DATA_ENGINE_SHA" \
+            '.schemaVersion == "tempera-satellite.connectors-data-engine-local-live-receipt/v1" and
+             .evidenceClass == "local_live_public_transport" and
+             .connectors.commitSha == $connectors and
+             .connectors.sourceUri == "https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json" and
+             .connectors.transportKind == "https" and
+             .dataEngine.commitSha == $data_engine and
+             .dataEngine.authenticatedHttpIngestAndRead == true and
+             .satellite.recordCount > 0 and
+             .authority.trainingEligible == false and
+             .authority.executionAuthority == false and
+             .limitations.hostedStaging == false and
+             .limitations.productionReleaseEvidence == false' \
+            "$proof_dir/chain-receipt.json"
+
+      - name: Bind the live chain to this hosted run
+        shell: bash
+        run: |
+          set -euo pipefail
+          proof_dir="$RUNNER_TEMP/connectors-hosted-live-proof"
+          run_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          jq -S -n \
+            --arg observed_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg workflow_ref "$GITHUB_WORKFLOW_REF" \
+            --arg event "$GITHUB_EVENT_NAME" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --arg run_attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg run_url "$run_url" \
+            --arg sdk_head_sha "$SDK_HEAD_SHA" \
+            --arg connectors_sha "$CONNECTORS_SHA" \
+            --arg data_engine_sha "$DATA_ENGINE_SHA" \
+            --arg satellite_sha "$SATELLITE_SHA" \
+            --slurpfile chain "$proof_dir/chain-receipt.json" \
+            '{
+              schemaVersion: "tempera.connectors-hosted-live-public-source-proof/v1",
+              evidenceClass: "hosted_ci_live_public_transport",
+              observedAt: $observed_at,
+              github: {
+                repository: $repository,
+                workflowRef: $workflow_ref,
+                event: $event,
+                runId: $run_id,
+                runAttempt: $run_attempt,
+                runUrl: $run_url,
+                sdkHeadSha: $sdk_head_sha
+              },
+              exactRevisions: {
+                connectors: $connectors_sha,
+                dataEngine: $data_engine_sha,
+                satellite: $satellite_sha
+              },
+              chainReceipt: $chain[0],
+              limitations: {
+                persistentDeployment: false,
+                dataEngineLoopback: true,
+                ephemeralSigningKey: true,
+                receiverPolicyTestOnly: true,
+                hostedStaging: false,
+                productionReleaseEvidence: false
+              }
+            }' > "$proof_dir/hosted-proof.json"
+          jq -e '
+            .evidenceClass == "hosted_ci_live_public_transport" and
+            .limitations.persistentDeployment == false and
+            .limitations.hostedStaging == false and
+            .limitations.productionReleaseEvidence == false
+          ' "$proof_dir/hosted-proof.json"
+          (
+            cd "$proof_dir"
+            sha256sum chain-receipt.json hosted-proof.json > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+
+      - name: Upload immutable hosted-live receipts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: connectors-hosted-live-public-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/connectors-hosted-live-proof/chain-receipt.json
+            ${{ runner.temp }}/connectors-hosted-live-proof/hosted-proof.json
+            ${{ runner.temp }}/connectors-hosted-live-proof/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 90
+
+  auth-hub-investigations-candidate:
+    name: auth-hub Investigations identity candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17@sha256:a426e44bac0b759c95894d68e1a0ac03ecc20b619f498a91aae373bf06d8508d
+        env:
+          POSTGRES_USER: tempera
+          POSTGRES_PASSWORD: tempera-ci
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tempera -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      TEST_POSTGRES_ADMIN_URL: postgres://tempera:tempera-ci@127.0.0.1:5432/postgres
+    steps:
+      - name: Mint Auth Hub contract reader token
+        id: auth-hub-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+
+      - name: Check out exact Auth Hub candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/auth-hub
+          ref: d3a5d55808689af09e706b341152538a2603cb7d
+          fetch-depth: 1
+          path: .auth-hub-source
+          persist-credentials: false
+          token: ${{ steps.auth-hub-reader.outputs.token }}
+
+      - name: Verify immutable Auth Hub source and contract bytes
+        working-directory: .auth-hub-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "d3a5d55808689af09e706b341152538a2603cb7d"
+          test "$(git rev-parse 'HEAD^{tree}')" = "acad28843d61a6ae4752b5521e13f99ac324ce53"
+          test "$(git hash-object contracts/control-plane.openapi.json)" = "b99bd4510fea1cae1783dbf983649a66fdc9d5c3"
+          test "$(sha256sum contracts/control-plane.openapi.json | cut -d ' ' -f 1)" = "b99fe54dd513a5a246f2b4e5242c3f5f02cd7844eedb8ed767aad7514042602b"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: .auth-hub-source/control-plane/package-lock.json
+
+      - name: Verify Auth Hub contract and deployment gates
+        working-directory: .auth-hub-source
+        run: |
+          python3 scripts/test-control-plane-openapi.py
+          python3 scripts/check-control-plane-openapi.py
+          python3 scripts/test-auth-control-plane.py
+          python3 scripts/check-shared-client.py
+          python3 scripts/check-webauthn-deployment.py
+          python3 scripts/test-org-api-conformance.py
+
+      - name: Verify lockfile-only SBOM generation
+        working-directory: .auth-hub-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          sbom="$RUNNER_TEMP/control-plane-lockfile-sbom.cdx.json"
+          npm sbom --prefix control-plane --package-lock-only --sbom-format cyclonedx > "$sbom"
+          jq -e '
+            .bomFormat == "CycloneDX" and
+            .specVersion == "1.5" and
+            .metadata.component.name == "control-plane" and
+            .metadata.component.purl == "pkg:npm/%40tempera/control-plane@0.1.0" and
+            (.components | length > 0) and
+            any(.components[]; .name == "pg")
+          ' "$sbom"
+
+      - name: Run Auth Hub runtime and shared-client suites
+        working-directory: .auth-hub-source
+        run: |
+          npm ci --prefix control-plane
+          npm --prefix control-plane test
+          npm --prefix packages/tempera-client test
+          node --check control-plane/scripts/restore-drill.js

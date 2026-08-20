@@ -44,6 +44,11 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_ENGINE_OPERATION_LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
 DATA_ENGINE_MCP_ADMISSION = ROOT / "specs" / "data-engine-mcp-admission.json"
 DATA_ENGINE_MCP_TOOLS = ROOT / "specs" / "data-engine-mcp-tools.json"
+STAGED_SOURCE_CONTRACTS = {
+    "specs/tempera-investigations-api.json.source": (
+        "contracts/tempera-investigations-openapi-operations.json"
+    ),
+}
 
 # Hand-written files must keep exposing the uniform primitives by these names.
 REQUIRED_MARKERS = {
@@ -85,6 +90,7 @@ def package_versions() -> dict[str, str]:
 
 def validate_vendored_source_locks() -> list[str]:
     failures: list[str] = []
+    surface = json.loads((ROOT / "surface.json").read_text(encoding="utf-8"))
     for lock_path in sorted((ROOT / "specs").glob("*.source")):
         label = lock_path.relative_to(ROOT)
         try:
@@ -111,10 +117,47 @@ def validate_vendored_source_locks() -> list[str]:
         if lock.get("schema_version") != 1:
             failures.append(f"{label}: schema_version must be 1")
         if lock.get("source_branch") != "main":
-            failures.append(
-                f"{label}: source_branch must be main, not "
-                f"{lock.get('source_branch')!r}"
-            )
+            contract_relative = STAGED_SOURCE_CONTRACTS.get(label.as_posix())
+            if contract_relative is None:
+                failures.append(
+                    f"{label}: source_branch must be main, not "
+                    f"{lock.get('source_branch')!r}"
+                )
+            else:
+                try:
+                    staged = json.loads(
+                        (ROOT / contract_relative).read_text(encoding="utf-8")
+                    )
+                except (OSError, json.JSONDecodeError) as error:
+                    failures.append(
+                        f"{label}: cannot load staged producer contract: {error}"
+                    )
+                    staged = {}
+                source = staged.get("source") or {}
+                staged_sha = str(source.get("sha256", "")).removeprefix("sha256:")
+                expected_source = {
+                    "repository": lock.get("source_repo"),
+                    "branch": lock.get("source_branch"),
+                    "commit": lock.get("source_commit"),
+                    "path": lock.get("source_path"),
+                    "blob_sha": lock.get("source_blob_sha"),
+                }
+                if (
+                    staged.get("schema") != "tempera.sdk-producer-contract/v1"
+                    or staged.get("public_availability") is not False
+                    or staged.get("hosted_auth_ready") is not False
+                    or not staged.get("release_gate")
+                    or staged.get("product") in surface.get("products", {})
+                    or any(
+                        source.get(key) != value
+                        for key, value in expected_source.items()
+                    )
+                    or staged_sha != lock.get("source_sha256")
+                ):
+                    failures.append(
+                        f"{label}: staged branch is not bound to a gated, "
+                        "non-advertised producer contract"
+                    )
         if re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))) is None:
             failures.append(f"{label}: source_commit is not a 40-character SHA")
         generated = ROOT / str(lock["generated_path"])
