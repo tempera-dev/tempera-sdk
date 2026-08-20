@@ -6264,6 +6264,253 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
     },
     {
+      "id": "verifyRiskClearingEvidenceLive",
+      "upstreamOperationId": "verifyRiskClearingEvidenceLive",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Verify one signed Risk Clearing evidence envelope against live Risk state."
+    },
+    {
+      "id": "abortRiskClearingReservation",
+      "upstreamOperationId": "abortRiskClearingReservation",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "abortReceiptDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "abortReceiptDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Release a reservation only when Clearing proved no external dispatch occurred."
+    },
+    {
+      "id": "markRiskClearingOutcomeUnknown",
+      "upstreamOperationId": "markRiskClearingOutcomeUnknown",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "dispatchAttemptDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "dispatchAttemptDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Hold budget capacity after an ambiguous provider dispatch."
+    },
+    {
+      "id": "openRiskClearingExposure",
+      "upstreamOperationId": "openRiskClearingExposure",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "executionReceiptDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "executionReceiptDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record an independently observed provider effect while retaining capacity."
+    },
+    {
+      "id": "recordRiskClearingProvisionalOutcome",
+      "upstreamOperationId": "recordRiskClearingProvisionalOutcome",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "outcomeDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "outcomeDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record a non-final observed outcome without releasing capacity."
+    },
+    {
+      "id": "recordRiskClearingCompensation",
+      "upstreamOperationId": "recordRiskClearingCompensation",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "compensationReceiptDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "compensationReceiptDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Record compensation as a forward action without releasing capacity."
+    },
+    {
+      "id": "disputeRiskClearingExposure",
+      "upstreamOperationId": "disputeRiskClearingExposure",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "disputeEvidenceDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "disputeEvidenceDigest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Keep capacity held when authoritative evidence conflicts."
+    },
+    {
+      "id": "settleRiskClearingExposure",
+      "upstreamOperationId": "settleRiskClearingExposure",
+      "method": "POST",
+      "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "project",
+        "reservationId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "envelope",
+        "outcomeDigest",
+        "realizedLoss"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "envelope",
+        "outcomeDigest",
+        "realizedLoss"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Settle a mature reconciled outcome and release held capacity."
+    },
+    {
       "id": "exportAudit",
       "upstreamOperationId": "exportAudit",
       "method": "GET",

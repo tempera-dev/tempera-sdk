@@ -4133,6 +4133,181 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "verifyRiskClearingEvidenceLive",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+        "auth": "product",
+        "description": "Verify one signed Risk Clearing evidence envelope against live Risk state.",
+        "upstreamOperationId": "verifyRiskClearingEvidenceLive",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "envelope"
+        ],
+        "requiredBody": [
+          "envelope"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "abortRiskClearingReservation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+        "auth": "product",
+        "description": "Release a reservation only when Clearing proved no external dispatch occurred.",
+        "upstreamOperationId": "abortRiskClearingReservation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "markRiskClearingOutcomeUnknown",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+        "auth": "product",
+        "description": "Hold budget capacity after an ambiguous provider dispatch.",
+        "upstreamOperationId": "markRiskClearingOutcomeUnknown",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "openRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+        "auth": "product",
+        "description": "Record an independently observed provider effect while retaining capacity.",
+        "upstreamOperationId": "openRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingProvisionalOutcome",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+        "auth": "product",
+        "description": "Record a non-final observed outcome without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingProvisionalOutcome",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingCompensation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+        "auth": "product",
+        "description": "Record compensation as a forward action without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingCompensation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "disputeRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+        "auth": "product",
+        "description": "Keep capacity held when authoritative evidence conflicts.",
+        "upstreamOperationId": "disputeRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "settleRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+        "auth": "product",
+        "description": "Settle a mature reconciled outcome and release held capacity.",
+        "upstreamOperationId": "settleRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "exportAudit",
         "method": "GET",
         "path": "/v1/projects/{project}/audit:export",
