@@ -9,6 +9,7 @@ import json
 import re
 import subprocess
 import tomllib
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,39 @@ SOURCE_TREE = "d5abd3b96268e9e2d5cc8db091eb302e7c434dc2"
 OFFICIAL_SDK_COMMIT = "830e088d733c7964c806a2305760dd8deb30dff9"
 OFFICIAL_SDK_REPO = "modelcontextprotocol/rust-sdk"
 OFFICIAL_SDK_TREE = "3a48da49ebd214faa55c22add021cc6d76568759"
+WORKFLOW_USES_RUBY = r"""
+require "json"
+require "yaml"
+
+input = STDIN.read
+begin
+  document = YAML.safe_load(
+    input,
+    permitted_classes: [],
+    permitted_symbols: [],
+    aliases: false,
+  )
+rescue ArgumentError
+  document = YAML.safe_load(input, [], [], false)
+end
+abort "workflow must decode to a mapping" unless document.is_a?(Hash)
+jobs = document["jobs"]
+abort "workflow jobs must decode to a mapping" unless jobs.is_a?(Hash)
+uses = []
+jobs.each_value do |job|
+  next unless job.is_a?(Hash)
+  steps = job["steps"]
+  next if steps.nil?
+  abort "workflow job steps must decode to an array" unless steps.is_a?(Array)
+  steps.each do |step|
+    next unless step.is_a?(Hash) && step.key?("uses")
+    value = step["uses"]
+    abort "workflow uses values must decode to strings" unless value.is_a?(String)
+    uses << value
+  end
+end
+STDOUT.write(JSON.generate(uses))
+"""
 REQUIRED_HEADERS = ["accept", "content-type", "mcp-protocol-version", "mcp-method"]
 REQUIRED_META = [
     "io.modelcontextprotocol/protocolVersion",
@@ -312,6 +346,9 @@ def validate_sdk(root: Path = ROOT) -> None:
     ]:
         if marker not in workflow:
             fail(f"MCP exact-source workflow is missing {marker!r}")
+    watched_paths = Counter(
+        re.findall(r'^\s+-\s+"([^"\n]+)"\s*$', workflow, flags=re.MULTILINE)
+    )
     for authority_path in [
         "packages/python/pyproject.toml",
         "packages/python/uv.lock",
@@ -319,11 +356,69 @@ def validate_sdk(root: Path = ROOT) -> None:
         "packages/rust/Cargo.lock",
         "packages/typescript/package.json",
     ]:
-        if workflow.count(f'\"{authority_path}\"') != 2:
+        if watched_paths[authority_path] != 2:
             fail(
                 "MCP exact-source workflow must watch version authority in both "
                 f"pull_request and main push filters: {authority_path}"
             )
+    canonical_node_action = re.compile(
+        r"^\s*-\s+uses:\s+"
+        r"(actions/(?:checkout|setup-node)@[^\s#]+)"
+        r"(?:\s+#.*)?$"
+    )
+    for line_number, line in enumerate(workflow.splitlines(), start=1):
+        if line.lstrip().startswith("#"):
+            continue
+        if "actions/checkout@" not in line and "actions/setup-node@" not in line:
+            continue
+        match = canonical_node_action.fullmatch(line)
+        if match is None:
+            fail(
+                "MCP exact-source workflow must use canonical unquoted action "
+                f"pins at line {line_number}: {line.strip()!r}"
+            )
+    try:
+        parsed_uses = subprocess.run(
+            ["ruby", "-rjson", "-ryaml", "-e", WORKFLOW_USES_RUBY],
+            input=workflow,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except FileNotFoundError as exc:
+        fail(f"Ruby is required for semantic workflow validation: {exc}")
+    if parsed_uses.returncode != 0:
+        fail(
+            "MCP exact-source workflow semantic parse failed: "
+            f"{parsed_uses.stderr.strip()}"
+        )
+    try:
+        workflow_uses = json.loads(parsed_uses.stdout)
+    except json.JSONDecodeError as exc:
+        fail(f"MCP exact-source workflow uses output is invalid JSON: {exc}")
+    if not isinstance(workflow_uses, list) or not all(
+        isinstance(value, str) for value in workflow_uses
+    ):
+        fail("MCP exact-source workflow semantic uses must be an array of strings")
+    actual_node_actions: Counter[str] = Counter()
+    for value in workflow_uses:
+        if "@" not in value:
+            continue
+        action, ref = value.rsplit("@", 1)
+        normalized = action.lower()
+        if normalized in {"actions/checkout", "actions/setup-node"}:
+            actual_node_actions[f"{normalized}@{ref}"] += 1
+    expected_node_actions = Counter(
+        {
+            "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09": 4,
+            "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444": 2,
+        }
+    )
+    if actual_node_actions != expected_node_actions:
+        fail(
+            "MCP exact-source workflow Node 24 action pins do not match the "
+            f"required uses entries: {dict(actual_node_actions)}"
+        )
     for marker in [
         'parser.add_argument("--typescript-client-script", type=Path, required=True)',
         '"TypeScript MCP E2E client must be the reviewed example',

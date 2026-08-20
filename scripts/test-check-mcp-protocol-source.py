@@ -118,6 +118,100 @@ class McpProtocolSourceCheckTest(unittest.TestCase):
                 workflow,
             )
 
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+                    "actions/setup-node@1111111111111111111111111111111111111111",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
+            checkout_pin = (
+                "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09"
+            )
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    checkout_pin,
+                    "actions/checkout@2222222222222222222222222222222222222222",
+                    1,
+                )
+                + f"\n# comment spoof: {checkout_pin}\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    f"- uses: {checkout_pin} # v5",
+                    '- uses: "actions/checkout@'
+                    + '3333333333333333333333333333333333333333"',
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    "- uses: actions/setup-node@"
+                    "a0853c24544627f65ddf259abe73b1d18a591444 # v5",
+                    "- uses: >-\n"
+                    "          actions/setup-node@"
+                    "4444444444444444444444444444444444444444",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
+            workflow.write_text(
+                workflow.read_text(encoding="utf-8").replace(
+                    f"- uses: {checkout_pin} # v5",
+                    '- uses: "actions/check\\u006fut@'
+                    + '5555555555555555555555555555555555555555"',
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                MODULE.validate_sdk(root)
+            shutil.copyfile(
+                MODULE.ROOT / Path(
+                    ".github/workflows/mcp-protocol-exact-source.yml"
+                ),
+                workflow,
+            )
+
             typescript_example = root / Path(
                 "packages/typescript/examples/mcp_protocol_e2e.mjs"
             )
