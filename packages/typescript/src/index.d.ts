@@ -45,6 +45,10 @@ export declare class TemperaMcpError extends TemperaSdkError {
   data: unknown;
 }
 
+export declare class TemperaMcpInputRequired extends TemperaSdkError {
+  result: Record<string, unknown>;
+}
+
 export declare function normalizeErrorBody(
   body: unknown,
   statusText?: string,
@@ -159,6 +163,9 @@ export declare function createTemperaClient(options?: TemperaClientOptions): Tem
 // --- MCP gateway client ---
 
 export declare const MCP_PROTOCOL_VERSION: string;
+export declare const MCP_PROTOCOL_VERSION_HEADER: "mcp-protocol-version";
+export declare const MCP_METHOD_HEADER: "mcp-method";
+export declare const MCP_NAME_HEADER: "mcp-name";
 export declare const MCP_ERROR_CODES: Readonly<Record<string, number>>;
 
 export type TemperaMcpClientOptions = {
@@ -166,6 +173,9 @@ export type TemperaMcpClientOptions = {
   auth?: TemperaAuth;
   bearer?: string;
   fetch?: typeof fetch;
+  clientName?: string;
+  clientVersion?: string;
+  clientCapabilities?: Record<string, unknown>;
 };
 
 export declare class TemperaMcpClient {
@@ -173,11 +183,22 @@ export declare class TemperaMcpClient {
   url: string;
   auth: TemperaAuth | null;
   bearer: string | null;
+  clientName: string;
+  clientVersion: string;
+  clientCapabilities: Record<string, unknown>;
   rpc(method: string, params?: unknown): Promise<unknown>;
+  discover(clientInfo?: { name?: string; version?: string }): Promise<unknown>;
   initialize(clientInfo?: { name?: string; version?: string }): Promise<unknown>;
   ping(): Promise<unknown>;
   listTools(): Promise<unknown[]>;
-  callTool(name: string, args?: Record<string, unknown>): Promise<unknown>;
+  callTool(
+    name: string,
+    args?: Record<string, unknown>,
+    continuation?: {
+      inputResponses?: Record<string, unknown>;
+      requestState?: string;
+    },
+  ): Promise<unknown>;
   whoami(): Promise<unknown>;
   status(): Promise<unknown>;
 }

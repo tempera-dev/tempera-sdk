@@ -28,7 +28,12 @@ pub use auth::{
 };
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
 pub use error::{TemperaApiError, normalize_error_body};
-pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
+pub use mcp::{
+    MCP_ACCEPT, MCP_METHOD_HEADER, MCP_NAME_HEADER, MCP_PROTOCOL_VERSION,
+    MCP_PROTOCOL_VERSION_HEADER, McpBuildError, McpCallOutcome, McpError, McpHeaderError,
+    McpInputRequired, McpProtocolError, McpRequest, McpRequestBuilder, classify_mcp_call_result,
+    parse_mcp_error,
+};
 pub use surface::{
     AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
     MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,
@@ -126,9 +131,13 @@ mod tests {
         );
         assert_eq!(error.code.as_deref(), Some("quota"));
 
-        let (id, body) = McpRequestBuilder::new().ping_body();
-        assert_eq!(id, 1);
-        assert!(parse_mcp_error(&body).is_none());
-        assert_eq!(MCP_PROTOCOL_VERSION, "2025-06-18");
+        let request = McpRequestBuilder::new().ping_request();
+        assert_eq!(request.id(), 1);
+        assert!(
+            parse_mcp_error(r#"{"jsonrpc":"2.0","id":1,"result":{}}"#, request.id(),)
+                .unwrap()
+                .is_none()
+        );
+        assert_eq!(MCP_PROTOCOL_VERSION, "2026-07-28");
     }
 }

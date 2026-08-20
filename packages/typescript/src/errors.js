@@ -7,7 +7,8 @@
  * - `TemperaApiError`: an HTTP response error, normalized from the canonical
  *   AIP-193 envelope and supported compatibility shapes so callers always read
  *   the same fields.
- * - `TemperaMcpError`: a JSON-RPC error from an MCP endpoint.
+ * - `TemperaMcpError`: a JSON-RPC or terminal tool error from an MCP endpoint.
+ * - `TemperaMcpInputRequired`: a resumable tool outcome that is not complete.
  */
 
 export class TemperaSdkError extends Error {
@@ -39,6 +40,14 @@ export class TemperaMcpError extends TemperaSdkError {
     this.name = "TemperaMcpError";
     this.code = code;
     this.data = data ?? null;
+  }
+}
+
+export class TemperaMcpInputRequired extends TemperaSdkError {
+  constructor({ result }) {
+    super("MCP tool requires additional input");
+    this.name = "TemperaMcpInputRequired";
+    this.result = result;
   }
 }
 

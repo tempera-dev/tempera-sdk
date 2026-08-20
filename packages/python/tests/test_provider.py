@@ -34,12 +34,14 @@ class ProviderAuthoringTest(unittest.TestCase):
         self.assertTrue(tools[0]["annotations"]["readOnlyHint"])
         self.assertTrue(tools[0]["annotations"]["idempotentHint"])
         result = app.handle({"method": "tools/call", "params": {"name": "add", "arguments": {"a": 41}}})
+        self.assertEqual(result["resultType"], "complete")
         self.assertFalse(result["isError"])
         self.assertEqual(result["structuredContent"], {"value": 42})
 
     def test_discovery_is_tool_only_private_and_protocol_current(self):
         app = TemperaProvider("demo", version="2.0.0")
         discovery = app.handle({"method": "server/discover"})
+        self.assertEqual(discovery["resultType"], "complete")
         self.assertEqual(MCP_PROVIDER_PROTOCOL_VERSION, "2026-07-28")
         self.assertEqual(discovery["supportedVersions"], ["2026-07-28"])
         self.assertEqual(discovery["capabilities"], {"tools": {}})
@@ -191,6 +193,7 @@ class AsyncProviderAuthoringTest(unittest.IsolatedAsyncioTestCase):
 
         discovery = await app.handle_async({"method": "server/discover"})
         listing = await app.handle_async({"method": "tools/list"})
+        self.assertEqual(listing["resultType"], "complete")
         self.assertEqual(discovery, app.handle({"method": "server/discover"}))
         self.assertEqual([tool["name"] for tool in listing["tools"]], ["alpha", "zeta"])
 

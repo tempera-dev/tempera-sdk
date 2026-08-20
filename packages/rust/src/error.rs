@@ -40,10 +40,15 @@ impl Json {
     /// The integer payload, when this value is a JSON number.
     pub(crate) fn as_i64(&self) -> Option<i64> {
         match self {
-            Json::Num(raw) => raw
-                .parse::<i64>()
-                .ok()
-                .or_else(|| raw.parse::<f64>().ok().map(|value| value as i64)),
+            Json::Num(raw) => raw.parse::<i64>().ok(),
+            _ => None,
+        }
+    }
+
+    /// The boolean payload, when this value is a JSON boolean.
+    pub(crate) fn as_bool(&self) -> Option<bool> {
+        match self {
+            Json::Bool(value) => Some(*value),
             _ => None,
         }
     }
@@ -144,6 +149,9 @@ impl Parser<'_> {
                 return None;
             }
             let key = self.parse_string()?;
+            if members.iter().any(|(existing, _)| existing == &key) {
+                return None;
+            }
             self.skip_ws();
             if self.bump()? != b':' {
                 return None;
@@ -247,8 +255,20 @@ impl Parser<'_> {
         if self.peek() == Some(b'-') {
             self.pos += 1;
         }
-        if !self.eat_digits() {
-            return None;
+        match self.peek()? {
+            b'0' => {
+                self.pos += 1;
+                if matches!(self.peek(), Some(b'0'..=b'9')) {
+                    return None;
+                }
+            }
+            b'1'..=b'9' => {
+                self.pos += 1;
+                while matches!(self.peek(), Some(b'0'..=b'9')) {
+                    self.pos += 1;
+                }
+            }
+            _ => return None,
         }
         if self.peek() == Some(b'.') {
             self.pos += 1;

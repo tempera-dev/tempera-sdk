@@ -236,21 +236,27 @@ and conflicts. The receipt is minimal and never returns the raw signed payload.
 Every product speaks a different wire error shape; the SDK normalizes all of
 them into one `TemperaApiError` with `status`, `code`, `message`,
 `requestId`, `product`, `operation`, and the raw `body` — identical fields in
-all three languages. MCP JSON-RPC errors raise `TemperaMcpError` with the
-gateway's numeric `code` (`-32002` means `plan_limit_exceeded`).
+all three languages. MCP JSON-RPC and `isError: true` tool outcomes raise
+`TemperaMcpError`; resumable `input_required` outcomes raise
+`TemperaMcpInputRequired` so callers cannot record them as completed work.
 
 ## MCP gateway
 
 The unified MCP gateway lives at `${issuer}/mcp` (audience `tempera-mcp`,
-scope `mcp:invoke`) and aggregates every product MCP server behind namespaced
-tools (`palette_*`, `tempo_*`, `cradle_*`, `remi_*`, `data_engine_*`).
+scope `mcp:invoke`) and exposes the fixed eleven-verb capability fabric;
+product capabilities are discovered as policy-filtered cards instead of flat
+namespaced tools.
+The SDK speaks only the stateless MCP `2026-07-28` lifecycle: it opens with
+`server/discover`, includes the protocol/routing headers and complete client
+metadata on every request, and correlates both JSON and SSE responses. The
+exact MCP-main receipt is `contracts/mcp-protocol.source.json`.
 
 ```js
 import { TemperaMcpClient } from "@tempera/sdk";
 const mcp = new TemperaMcpClient({ auth });   // url derives as ${issuer}/mcp
-await mcp.initialize();
+await mcp.discover();
 const tools = await mcp.listTools();
-await mcp.callTool("cradle_get_capabilities");
+await mcp.callTool("tempera_search", { query: "browser capability" });
 console.log(await mcp.whoami());
 ```
 

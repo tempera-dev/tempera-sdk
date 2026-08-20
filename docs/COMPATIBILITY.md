@@ -1,5 +1,34 @@
 # SDK compatibility ledger
 
+## 2026-08-20 — stateless MCP 2026 client and terminal-outcome boundary
+
+- Owner: aggregate SDK -> MCP -> Voice release train.
+- Compatibility class: breaking pre-1.0 transport correction; package `0.13.0`,
+  surface version `6`.
+- Authority: `tempera-dev/tempera-mcp@99ac544fcfbc500f212906a61cf6c72c2cc16723`
+  and `modelcontextprotocol/rust-sdk@830e088d733c7964c806a2305760dd8deb30dff9`.
+- Protocol: all clients use stateless `server/discover`, MCP `2026-07-28`
+  routing headers and metadata, correlated JSON/SSE responses, official
+  `input_required`, and fail-closed terminal result classification.
+- Breaking Rust correction: `call_tool_body` returns `Result` so malformed
+  arguments cannot produce an invalid request, and `parse_mcp_error` requires
+  the expected request ID and distinguishes malformed envelopes. Consumers
+  must handle the builder/protocol error before dispatch.
+- TypeScript/Python correction: tool errors, input-required outcomes, malformed
+  discovery/catalog responses, and ambiguous JSON-RPC envelopes no longer look
+  successful. These are behavior-tightening changes under the same public
+  method names.
+- Evidence boundary: local exact-server wire coverage spans Python,
+  TypeScript, and Rust. It uses `auth.mode=none`, so a later consumer gate must
+  still prove central audience, scope, and tenant enforcement.
+- Rollout: merge only after the ordered SDK stack is regenerated on this
+  version boundary and trusted exact-source/wire evidence is green; then pin
+  Voice to that exact SDK main commit and prove non-terminal outcomes never
+  become `executed`.
+- Rollback: revert SDK and downstream Voice/MCP locks together. Do not retain a
+  2025 client or accept terminal false-success behavior to preserve source
+  compatibility.
+
 ## 2026-07-24 — physical experiment provider boundary
 
 - Owner: Discovery release train across Tempera Workflows, SDK, MCP, Auth Hub,
