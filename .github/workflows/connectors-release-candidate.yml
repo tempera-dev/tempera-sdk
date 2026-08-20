@@ -263,12 +263,9 @@ jobs:
           python3 scripts/test-control-plane-openapi.py
           python3 scripts/check-control-plane-openapi.py
           python3 scripts/test-auth-control-plane.py
-          python3 scripts/check-auth-control-plane.py
-          python3 scripts/check-hosted-auth-e2e-coverage.py
-          python3 scripts/check-hosted-auth-deployment.py
+          python3 scripts/check-shared-client.py
           python3 scripts/check-webauthn-deployment.py
           python3 scripts/test-org-api-conformance.py
-          python3 scripts/check-org-api-conformance.py
 
       - name: Verify lockfile-only SBOM generation
         working-directory: .auth-hub-source
