@@ -200,3 +200,96 @@ jobs:
               exit 2
               ;;
           esac
+
+  auth-hub-investigations-candidate:
+    name: auth-hub Investigations identity candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17@sha256:a426e44bac0b759c95894d68e1a0ac03ecc20b619f498a91aae373bf06d8508d
+        env:
+          POSTGRES_USER: tempera
+          POSTGRES_PASSWORD: tempera-ci
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tempera -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      TEST_POSTGRES_ADMIN_URL: postgres://tempera:tempera-ci@127.0.0.1:5432/postgres
+    steps:
+      - name: Mint Auth Hub contract reader token
+        id: auth-hub-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: auth-hub
+
+      - name: Check out exact Auth Hub candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: tempera-dev/auth-hub
+          ref: d3a5d55808689af09e706b341152538a2603cb7d
+          fetch-depth: 1
+          path: .auth-hub-source
+          persist-credentials: false
+          token: ${{ steps.auth-hub-reader.outputs.token }}
+
+      - name: Verify immutable Auth Hub source and contract bytes
+        working-directory: .auth-hub-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "d3a5d55808689af09e706b341152538a2603cb7d"
+          test "$(git rev-parse 'HEAD^{tree}')" = "acad28843d61a6ae4752b5521e13f99ac324ce53"
+          test "$(git hash-object contracts/control-plane.openapi.json)" = "b99bd4510fea1cae1783dbf983649a66fdc9d5c3"
+          test "$(sha256sum contracts/control-plane.openapi.json | cut -d ' ' -f 1)" = "b99fe54dd513a5a246f2b4e5242c3f5f02cd7844eedb8ed767aad7514042602b"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: .auth-hub-source/control-plane/package-lock.json
+
+      - name: Verify Auth Hub contract and deployment gates
+        working-directory: .auth-hub-source
+        run: |
+          python3 scripts/test-control-plane-openapi.py
+          python3 scripts/check-control-plane-openapi.py
+          python3 scripts/test-auth-control-plane.py
+          python3 scripts/check-auth-control-plane.py
+          python3 scripts/check-hosted-auth-e2e-coverage.py
+          python3 scripts/check-hosted-auth-deployment.py
+          python3 scripts/check-webauthn-deployment.py
+          python3 scripts/test-org-api-conformance.py
+          python3 scripts/check-org-api-conformance.py
+
+      - name: Verify lockfile-only SBOM generation
+        working-directory: .auth-hub-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          sbom="$RUNNER_TEMP/control-plane-lockfile-sbom.cdx.json"
+          npm sbom --prefix control-plane --package-lock-only --sbom-format cyclonedx > "$sbom"
+          jq -e '
+            .bomFormat == "CycloneDX" and
+            .specVersion == "1.5" and
+            .metadata.component.name == "control-plane" and
+            .metadata.component.purl == "pkg:npm/%40tempera/control-plane@0.1.0" and
+            (.components | length > 0) and
+            any(.components[]; .name == "pg")
+          ' "$sbom"
+
+      - name: Run Auth Hub runtime and shared-client suites
+        working-directory: .auth-hub-source
+        run: |
+          npm ci --prefix control-plane
+          npm --prefix control-plane test
+          npm --prefix packages/tempera-client test
+          node --check control-plane/scripts/restore-drill.js
