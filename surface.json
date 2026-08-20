@@ -1,6 +1,6 @@
 {
   "$comment": "Single source of truth for the Tempera SDK surface. Every product, audience, scope, environment target, error-normalization rule, and typed operation in the TypeScript, Python, and Rust packages is generated from this file. Edit this file, run `python3 scripts/gen-sdk-surface.py`, and commit the regenerated per-language surface tables together with it. CI fails on drift. See docs/ROLLOUT.md for the endpoint-change rollout process.",
-  "version": 6,
+  "version": 7,
   "issuer": {
     "description": "The Tempera control plane (auth-hub) is the OAuth 2.1 issuer. Authorization-code + PKCE (S256, public clients), refresh-token rotation, RFC 8707 resource parameter for audience selection, and central API keys (tp_...) that work as bearers at every product.",
     "authorizePath": "/oauth/authorize",

@@ -3,7 +3,7 @@
 // the error contract, and every typed operation, shared verbatim with
 // the Python and Rust packages.
 
-export const TEMPERA_SURFACE_VERSION = 6;
+export const TEMPERA_SURFACE_VERSION = 7;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-payments", "tempera-voice", "tempera-clearing"]);
 export const DEFAULT_AUDIENCE = "palette";

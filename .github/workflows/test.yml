@@ -370,6 +370,9 @@ jobs:
       - run: python3 scripts/test-sync-data-engine-openapi.py
       - run: python3 scripts/test-sync-vendored-openapi.py
       - run: python3 scripts/test-upstream-drift.py
+      - run: python3 scripts/test-sync-openapi-surface.py
+      - run: python3 scripts/test-gen-sdk-surface.py
+      - run: python3 scripts/test-gen-sdk-docs.py
       - run: python3 scripts/test-sdk-names.py
       - run: python3 scripts/test-aip-conformance.py
       - run: python3 scripts/check-aip-conformance.py

@@ -27,6 +27,7 @@ import sys
 from pathlib import Path
 
 from sdk_names import snake_case
+from scope_metadata import ScopeDeclaration, parse_scope_declaration
 
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
@@ -43,6 +44,29 @@ PATH_TEMPLATE_RE = re.compile(
 
 def snake(camel: str) -> str:
     return snake_case(camel)
+
+
+def scope_declaration(op: dict, label: str) -> ScopeDeclaration:
+    return parse_scope_declaration(
+        op,
+        singular_key="scope",
+        plural_key="scopes",
+        label=label,
+    )
+
+
+def rendered_scope_fields(
+    op: dict,
+    *,
+    singular_name: str = "scope",
+    plural_name: str = "scopes",
+) -> dict[str, object]:
+    """Render exactly one singular-or-compound authority representation."""
+
+    declaration = scope_declaration(op, op.get("id", "operation"))
+    if declaration.kind == "plural":
+        return {plural_name: list(declaration.plural or ())}
+    return {singular_name: declaration.singular}
 
 
 def validate(surface: dict) -> list[str]:
@@ -117,9 +141,28 @@ def validate(surface: dict) -> list[str]:
                 problems.append(
                     f"{label}: authAudience is only valid with oauthResource auth"
                 )
-            scope = op.get("scope")
-            if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
-                problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
+            try:
+                declaration = scope_declaration(op, label)
+            except ValueError as error:
+                problems.append(str(error))
+            else:
+                required_scopes = (
+                    list(declaration.plural)
+                    if declaration.kind == "plural" and declaration.plural is not None
+                    else [declaration.singular]
+                    if declaration.singular is not None
+                    else []
+                )
+                if op.get("auth") == "none" and required_scopes:
+                    problems.append(f"{label}: public operation cannot require scopes")
+                for required_scope in required_scopes:
+                    if required_scope not in surface["scopes"] and required_scope not in surface.get(
+                        "scopeGaps", {}
+                    ):
+                        problems.append(
+                            f"{label}: unregistered scope {required_scope!r} lacks "
+                            "an explicit scopeGaps entry"
+                        )
             physical_action = op.get("physicalAction", False)
             prepare_commit_required = op.get("prepareCommitRequired", False)
             if not isinstance(physical_action, bool):
@@ -235,9 +278,11 @@ def render_typescript(surface: dict) -> str:
     lines.append(json.dumps(products, indent=2))
     lines.append(");")
     lines.append("")
-    operations = {
-        product_key: [
-            {
+    operations: dict[str, list[dict[str, object]]] = {}
+    for product_key, product_operations in surface["operations"].items():
+        rendered_operations: list[dict[str, object]] = []
+        for op in product_operations:
+            rendered_operation = {
                 "id": op["id"],
                 "upstreamOperationId": op["upstreamOperationId"],
                 "method": op["method"],
@@ -254,15 +299,13 @@ def render_typescript(surface: dict) -> str:
                 "bodyDefaults": op.get("bodyDefaults", {}),
                 "requestBodyKind": op.get("requestBodyKind", "none"),
                 "requestContentType": op.get("requestContentType"),
-                "scope": op.get("scope"),
+                **rendered_scope_fields(op),
                 "physicalAction": op.get("physicalAction", False),
                 "prepareCommitRequired": op.get("prepareCommitRequired", False),
                 "description": op["description"],
             }
-            for op in ops
-        ]
-        for product_key, ops in surface["operations"].items()
-    }
+            rendered_operations.append(rendered_operation)
+        operations[product_key] = rendered_operations
     lines.append("export const TEMPERA_OPERATIONS = Object.freeze(")
     lines.append(json.dumps(operations, indent=2))
     lines.append(");")
@@ -322,6 +365,10 @@ def render_typescript_dts(surface: dict) -> str:
         "};",
         "export declare const TEMPERA_PRODUCTS: Readonly<Record<TemperaProductKey, TemperaProduct>>;",
         "",
+        "export type TemperaOperationScopeAuthority =",
+        "  | { scope: TemperaScope | null; scopes?: never }",
+        "  | { scope?: never; scopes: readonly [TemperaScope, ...TemperaScope[]] };",
+        "",
         "export type TemperaOperationSpec = {",
         "  id: string;",
         "  upstreamOperationId: string;",
@@ -339,11 +386,10 @@ def render_typescript_dts(surface: dict) -> str:
         "  bodyDefaults: Readonly<Record<string, unknown>>;",
         "  requestBodyKind: \"none\" | \"json\" | \"binary\";",
         "  requestContentType: string | null;",
-        "  scope: TemperaScope | null;",
         "  physicalAction: boolean;",
         "  prepareCommitRequired: boolean;",
         "  description: string;",
-        "};",
+        "} & TemperaOperationScopeAuthority;",
         "export declare const TEMPERA_OPERATIONS: Readonly<Record<TemperaProductKey, readonly TemperaOperationSpec[]>>;",
         "",
         "export type TemperaMcpMethodSpec = { id: string; rpc: string; tool?: string; description: string };",
@@ -429,9 +475,11 @@ def render_python(surface: dict) -> str:
     }
     lines.append("PRODUCTS = " + json.dumps(products, indent=4))
     lines.append("")
-    operations = {
-        product_key: [
-            {
+    operations: dict[str, list[dict[str, object]]] = {}
+    for product_key, product_operations in surface["operations"].items():
+        rendered_operations: list[dict[str, object]] = []
+        for op in product_operations:
+            rendered_operation = {
                 "id": snake(op["id"]),
                 "upstream_operation_id": op["upstreamOperationId"],
                 "method": op["method"],
@@ -448,15 +496,17 @@ def render_python(surface: dict) -> str:
                 "body_defaults": op.get("bodyDefaults", {}),
                 "request_body_kind": op.get("requestBodyKind", "none"),
                 "request_content_type": op.get("requestContentType"),
-                "scope": op.get("scope"),
+                **rendered_scope_fields(
+                    op,
+                    singular_name="scope",
+                    plural_name="scopes",
+                ),
                 "physical_action": op.get("physicalAction", False),
                 "prepare_commit_required": op.get("prepareCommitRequired", False),
                 "description": op["description"],
             }
-            for op in ops
-        ]
-        for product_key, ops in surface["operations"].items()
-    }
+            rendered_operations.append(rendered_operation)
+        operations[product_key] = rendered_operations
     lines.append("OPERATIONS = " + json.dumps(operations, indent=4))
     lines.append("")
     mcp = dict(surface["mcpGateway"])
@@ -482,6 +532,12 @@ def rust_str(value: str | None) -> str:
 
 def rust_str_slice(values: list[str]) -> str:
     return "&[" + ", ".join(json.dumps(value) for value in values) + "]"
+
+
+def rust_optional_str_slice(values: tuple[str, ...] | None) -> str:
+    if values is None:
+        return "None"
+    return f"Some({rust_str_slice(list(values))})"
 
 
 def rust_str_pairs(values: dict[str, str]) -> str:
@@ -571,15 +627,27 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub body_defaults: &'static [(&'static str, &'static str)],")
     lines.append("    pub request_body_kind: &'static str,")
     lines.append("    pub request_content_type: Option<&'static str>,")
-    lines.append("    pub scope: Option<&'static str>,")
+    lines.append("    pub(crate) scope: Option<&'static str>,")
+    lines.append("    pub(crate) scopes: Option<&'static [&'static str]>,")
     lines.append("    pub physical_action: bool,")
     lines.append("    pub prepare_commit_required: bool,")
     lines.append("    pub description: &'static str,")
     lines.append("}")
     lines.append("")
+    lines.append("impl OperationSpec {")
+    lines.append("    pub const fn scope(&self) -> Option<&'static str> {")
+    lines.append("        self.scope")
+    lines.append("    }")
+    lines.append("")
+    lines.append("    pub const fn scopes(&self) -> Option<&'static [&'static str]> {")
+    lines.append("        self.scopes")
+    lines.append("    }")
+    lines.append("}")
+    lines.append("")
     lines.append("pub const OPERATIONS: &[OperationSpec] = &[")
     for product_key, ops in surface["operations"].items():
         for op in ops:
+            declaration = scope_declaration(op, f"{product_key}.{op['id']}")
             lines.append("    OperationSpec {")
             lines.append(f"        product: {json.dumps(snake(product_key))},")
             lines.append(f"        id: {json.dumps(snake(op['id']))},")
@@ -607,7 +675,10 @@ def render_rust(surface: dict) -> str:
             lines.append(f"        body_defaults: &[{pairs}],")
             lines.append(f"        request_body_kind: {json.dumps(op.get('requestBodyKind', 'none'))},")
             lines.append(f"        request_content_type: {rust_str(op.get('requestContentType'))},")
-            lines.append(f"        scope: {rust_str(op.get('scope'))},")
+            lines.append(f"        scope: {rust_str(declaration.singular)},")
+            lines.append(
+                f"        scopes: {rust_optional_str_slice(declaration.plural)},"
+            )
             lines.append(
                 f"        physical_action: {str(op.get('physicalAction', False)).lower()},"
             )

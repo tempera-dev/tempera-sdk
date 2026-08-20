@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any, Mapping
 
+from scope_metadata import parse_scope_declaration
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
@@ -539,6 +541,32 @@ def synchronize_product(
             else:
                 item["requestContentType"] = request_content_type
             declared_scope = oauth_scope(operation)
+            scope_declaration = parse_scope_declaration(
+                operation,
+                singular_key="x-tempera-required-scope",
+                plural_key="x-tempera-required-scopes",
+                label=f"{product} {operation_id}",
+            )
+            required_scopes = (
+                list(scope_declaration.plural or ())
+                if scope_declaration.kind == "plural"
+                else [scope_declaration.singular]
+                if scope_declaration.singular is not None
+                else []
+            )
+            registered_scopes = set(surface.get("scopes", []))
+            registered_gaps = set(surface.get("scopeGaps", {}))
+            for required_scope in required_scopes:
+                if required_scope not in registered_scopes | registered_gaps:
+                    raise ValueError(
+                        f"{product} {operation_id} has unregistered required "
+                        f"scope {required_scope!r}"
+                    )
+            if declared_scope is not None and scope_declaration.kind is not None:
+                raise ValueError(
+                    f"{product} {operation_id} declares required scope authority "
+                    "in both OAuth security and x-tempera extensions"
+                )
             if declared_scope is not None:
                 audience = surface["products"][product].get("audience")
                 if not isinstance(audience, str) or not audience:
@@ -546,6 +574,7 @@ def synchronize_product(
                 item["auth"] = "oauthResource"
                 item["authAudience"] = audience
                 item["scope"] = declared_scope
+                item.pop("scopes", None)
             if "x-tempera-auth-kind" in operation:
                 auth_kind = operation["x-tempera-auth-kind"]
                 if auth_kind not in {
@@ -580,17 +609,21 @@ def synchronize_product(
                     )
             elif item.get("auth") != "oauthResource":
                 item.pop("authAudience", None)
-            if "x-tempera-required-scope" in operation:
-                scope = operation["x-tempera-required-scope"]
-                if scope is None:
+            if scope_declaration.kind == "singular":
+                item.pop("scopes", None)
+                if scope_declaration.singular is None:
                     item.pop("scope", None)
-                elif isinstance(scope, str) and scope:
-                    item["scope"] = scope
                 else:
-                    raise ValueError(
-                        f"{product} {operation_id} has invalid "
-                        "x-tempera-required-scope"
-                    )
+                    item["scope"] = scope_declaration.singular
+            elif scope_declaration.kind == "plural":
+                item.pop("scope", None)
+                item["scopes"] = list(scope_declaration.plural or ())
+            else:
+                # Plural authority is producer-owned and must never survive a
+                # producer contract that stopped declaring it. Legacy singular
+                # metadata remains compatible for producers that have not yet
+                # adopted the authority extensions.
+                item.pop("scopes", None)
             if item["id"] in seen_ids:
                 raise ValueError(f"{product} generated duplicate operation id {item['id']!r}")
             seen_ids.add(item["id"])

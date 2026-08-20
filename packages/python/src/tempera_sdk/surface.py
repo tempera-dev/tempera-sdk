@@ -5,7 +5,7 @@ error contract, and every typed operation, shared verbatim with the
 TypeScript and Rust packages.
 """
 
-SURFACE_VERSION = 6
+SURFACE_VERSION = 7
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-payments', 'tempera-voice', 'tempera-clearing')
 DEFAULT_AUDIENCE = 'palette'
