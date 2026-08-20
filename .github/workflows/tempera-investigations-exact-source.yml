@@ -1,0 +1,83 @@
+name: Tempera Investigations source gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tempera-investigations-exact-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Read allowlisted Investigations source lock
+        id: investigations-lock
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          lock = json.loads(
+              Path("specs/tempera-investigations-api.json.source").read_text(
+                  encoding="utf-8"
+              )
+          )
+          expected = {
+              "source_repo": "tempera-dev/tempera-investigations",
+              "source_branch": "agent/investigation-control-plane-v0.1.0",
+              "source_path": "api/openapi.json",
+              "generated_path": "specs/tempera-investigations-api.json",
+              "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+          }
+          for field, value in expected.items():
+              if lock.get(field) != value:
+                  raise SystemExit(
+                      f"refusing non-allowlisted {field}: {lock.get(field)!r}"
+                  )
+          commit = lock.get("source_commit", "")
+          if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+              raise SystemExit("source_commit must be a 40-character lowercase SHA")
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"commit={commit}\n")
+          PY
+      - name: Mint private Investigations contract reader token
+        id: contract-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-investigations
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-investigations
+          ref: ${{ steps.investigations-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .tempera-investigations-source
+          token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - name: Verify exact committed Investigations source
+        run: |
+          git -C .tempera-investigations-source fetch --no-tags origin agent/investigation-control-plane-v0.1.0:refs/remotes/origin/agent/investigation-control-plane-v0.1.0
+          test "$(git -C .tempera-investigations-source rev-parse HEAD)" = "$(git -C .tempera-investigations-source rev-parse refs/remotes/origin/agent/investigation-control-plane-v0.1.0)"
+          python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check \
+            --repo-dir .tempera-investigations-source \
+            --source-repo tempera-dev/tempera-investigations \
+            --source-branch agent/investigation-control-plane-v0.1.0 \
+            --commit "${{ steps.investigations-lock.outputs.commit }}" \
+            --source-path api/openapi.json \
+            --generated-with source_lock.py@1+verbatim-openapi-copy \
+            --generated-file specs/tempera-investigations-api.json \
+            --generated-path specs/tempera-investigations-api.json \
+            --lock specs/tempera-investigations-api.json.source

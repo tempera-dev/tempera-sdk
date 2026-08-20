@@ -7,7 +7,7 @@
   "source": {
     "repository": "tempera-dev/tempera-investigations",
     "branch": "agent/investigation-control-plane-v0.1.0",
-    "commit": "23f792a48f98aa104777f10965c604700001c345",
+    "commit": "7ebd868c81cf6cf66fd00f1082de16ed5b9ef06d",
     "path": "api/openapi.json",
     "blob_sha": "42b0bd9790157e7d30093fd700dcd14537bbbd04",
     "sha256": "sha256:1445c4789f780c94ba917462722e74deb38c05a305048ffeaee3cb7651a2bff2"
