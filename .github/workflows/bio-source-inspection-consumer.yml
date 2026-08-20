@@ -1,0 +1,46 @@
+name: Bio source inspection SDK staging consumer
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bio-source-inspection-consumer.yml"
+      - "contracts/bio-source-inspection-sdk-consumer-fixtures.json"
+      - "contracts/bio-source-inspection-sdk-consumer.staging.lock.json"
+      - "packages/python/src/tempera_sdk/bio_source_inspection.py"
+      - "packages/python/tests/test_bio_source_inspection.py"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-sealed-consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12.13"
+      - name: Compile stdlib-only SDK consumer
+        run: >-
+          python3 -m compileall -q
+          packages/python/src/tempera_sdk/bio_source_inspection.py
+          packages/python/tests/test_bio_source_inspection.py
+      - name: Run exact-source and adversarial tests under independent seeds
+        env:
+          PYTHONPATH: packages/python/src
+        run: |
+          set -eu
+          for seed in 1 97 211; do
+            PYTHONHASHSEED="$seed" python3 -m unittest +              packages/python/tests/test_bio_source_inspection.py
+          done
+      - name: Independently replay deterministic receipt bytes
+        env:
+          PYTHONPATH: packages/python/src
+        run: |
+          set -eu
+          for seed in 1 97 211; do
+            PYTHONHASHSEED="$seed" python3 -c +              'from pathlib import Path; from tempera_sdk.bio_source_inspection import receipt_bytes, verify_paths; print(receipt_bytes(verify_paths(Path("contracts/bio-source-inspection-sdk-consumer.staging.lock.json"), Path("contracts/bio-source-inspection-sdk-consumer-fixtures.json"))).decode())' +              > "$RUNNER_TEMP/bio-source-inspection-$seed.json"
+          done
+          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" +            "$RUNNER_TEMP/bio-source-inspection-97.json"
+          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" +            "$RUNNER_TEMP/bio-source-inspection-211.json"
+          sha256sum "$RUNNER_TEMP/bio-source-inspection-1.json"
