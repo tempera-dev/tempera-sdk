@@ -27,6 +27,7 @@ _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
     # errors
     "TemperaApiError": (".errors", "TemperaApiError"),
     "TemperaMcpError": (".errors", "TemperaMcpError"),
+    "TemperaMcpInputRequired": (".errors", "TemperaMcpInputRequired"),
     "TemperaSdkError": (".errors", "TemperaSdkError"),
     "api_error_from_response": (".errors", "api_error_from_response"),
     "normalize_error_body": (".errors", "normalize_error_body"),
@@ -42,7 +43,10 @@ _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
     # clients
     "TemperaClient": (".client", "TemperaClient"),
     "MCP_ERROR_CODES": (".mcp", "MCP_ERROR_CODES"),
+    "MCP_METHOD_HEADER": (".mcp", "MCP_METHOD_HEADER"),
+    "MCP_NAME_HEADER": (".mcp", "MCP_NAME_HEADER"),
     "MCP_PROTOCOL_VERSION": (".mcp", "MCP_PROTOCOL_VERSION"),
+    "MCP_PROTOCOL_VERSION_HEADER": (".mcp", "MCP_PROTOCOL_VERSION_HEADER"),
     "TemperaMcpClient": (".mcp", "TemperaMcpClient"),
     # provider authoring
     "MCP_PROVIDER_PROTOCOL_VERSION": (".provider", "MCP_PROVIDER_PROTOCOL_VERSION"),
@@ -61,8 +65,11 @@ __all__ = [
     "ENVIRONMENTS",
     "ISSUER_PATHS",
     "MCP_ERROR_CODES",
+    "MCP_METHOD_HEADER",
+    "MCP_NAME_HEADER",
     "MCP_GATEWAY",
     "MCP_PROTOCOL_VERSION",
+    "MCP_PROTOCOL_VERSION_HEADER",
     "MCP_PROVIDER_PROTOCOL_VERSION",
     "OPERATIONS",
     "PRODUCTS",
@@ -77,6 +84,7 @@ __all__ = [
     "TemperaClient",
     "TemperaMcpClient",
     "TemperaMcpError",
+    "TemperaMcpInputRequired",
     "TemperaProvider",
     "TemperaSdkError",
     "TokenSet",

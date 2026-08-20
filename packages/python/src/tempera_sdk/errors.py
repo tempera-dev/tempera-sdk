@@ -6,7 +6,9 @@ packages (see surface.json ``errorContract``).
 - ``TemperaApiError``: an HTTP response error, normalized from the canonical
   AIP-193 envelope and supported compatibility shapes so callers always read
   the same fields.
-- ``TemperaMcpError``: a JSON-RPC error from an MCP endpoint.
+- ``TemperaMcpError``: a JSON-RPC or terminal tool error from an MCP endpoint.
+- ``TemperaMcpInputRequired``: a resumable MCP tool outcome that must not be
+  recorded as completed work.
 """
 
 from __future__ import annotations
@@ -54,6 +56,18 @@ class TemperaMcpError(TemperaSdkError):
         self.message = message
         self.code = code
         self.data = data
+
+
+class TemperaMcpInputRequired(TemperaSdkError):
+    """A tool needs another input before it can reach a terminal outcome.
+
+    ``result`` is the complete protocol value so a caller can present the
+    elicitation request and submit its continuation without losing data.
+    """
+
+    def __init__(self, result: Mapping[str, Any]):
+        super().__init__("MCP tool requires additional input")
+        self.result = dict(result)
 
 
 def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
@@ -142,6 +156,7 @@ def _with_context(error: TemperaApiError, product: str | None, operation: str | 
 
 __all__ = [
     "TemperaApiError",
+    "TemperaMcpInputRequired",
     "TemperaMcpError",
     "TemperaSdkError",
     "api_error_from_response",

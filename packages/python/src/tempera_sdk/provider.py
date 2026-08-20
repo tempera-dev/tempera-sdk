@@ -29,6 +29,10 @@ class ProviderArgumentError(ValueError):
     """A tool invocation does not satisfy the registered Python type contract."""
 
 
+class _ProviderExecutionError(RuntimeError):
+    """Redacted application failure translated to a JSON-RPC internal error."""
+
+
 @dataclass(frozen=True)
 class _RegisteredTool:
     name: str
@@ -296,11 +300,13 @@ def _tool_result(result: Any) -> dict[str, Any]:
         text = json.dumps(structured, separators=(",", ":"), default=_json_default)
     except (TypeError, ValueError):
         return {
+            "resultType": "complete",
             "content": [{"type": "text", "text": "Tool returned a non-JSON value"}],
             "structuredContent": {"error": "non_json_result"},
             "isError": True,
         }
     return {
+        "resultType": "complete",
         "content": [{"type": "text", "text": text}],
         "structuredContent": structured,
         "isError": False,
@@ -309,6 +315,7 @@ def _tool_result(result: Any) -> dict[str, Any]:
 
 def _tool_failure() -> dict[str, Any]:
     return {
+        "resultType": "complete",
         "content": [{"type": "text", "text": "Tool execution failed"}],
         "structuredContent": {"error": "tool_execution_failed"},
         "isError": True,
@@ -385,7 +392,10 @@ class TemperaProvider:
         if method == "ping":
             return {}
         if method == "tools/list":
-            return {"tools": [self._tools[name].public_spec() for name in sorted(self._tools)]}
+            return {
+                "resultType": "complete",
+                "tools": [self._tools[name].public_spec() for name in sorted(self._tools)],
+            }
         return None
 
     def _requested_tool(self, request: Mapping[str, Any]) -> tuple[_RegisteredTool, Mapping[str, Any]]:
@@ -468,6 +478,12 @@ class TemperaProvider:
                     "jsonrpc": "2.0",
                     "id": request.get("id") if isinstance(request, Mapping) else None,
                     "error": {"code": -32602, "message": "Invalid request"},
+                }
+            except _ProviderExecutionError:
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id") if isinstance(request, Mapping) else None,
+                    "error": {"code": -32603, "message": "Provider execution failed"},
                 }
             sys.stdout.write(json.dumps(response, separators=(",", ":")) + "\n")
             sys.stdout.flush()

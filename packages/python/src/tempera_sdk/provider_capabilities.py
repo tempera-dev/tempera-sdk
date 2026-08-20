@@ -18,6 +18,7 @@ from .provider import (
     ProviderArgumentError,
     ProviderDefinitionError,
     TemperaProvider as _ToolProvider,
+    _ProviderExecutionError,
     _compile_tool,
     _decode_arguments,
 )
@@ -79,6 +80,7 @@ def _clean_token(value: str, *, label: str) -> str:
 def _resource_contents(resource: _RegisteredResource, result: Any) -> dict[str, Any]:
     if isinstance(result, str):
         return {
+            "resultType": "complete",
             "contents": [
                 {
                     "uri": resource.uri,
@@ -91,6 +93,7 @@ def _resource_contents(resource: _RegisteredResource, result: Any) -> dict[str, 
         import base64
 
         return {
+            "resultType": "complete",
             "contents": [
                 {
                     "uri": resource.uri,
@@ -119,7 +122,7 @@ def _prompt_messages(result: Any) -> dict[str, Any]:
             messages.append({"role": role, "content": {"type": "text", "text": content["text"]}})
     else:
         raise ProviderDefinitionError("prompt handlers must return str or a sequence of text messages")
-    return {"messages": messages}
+    return {"resultType": "complete", "messages": messages}
 
 
 class TemperaProvider(_ToolProvider):
@@ -219,9 +222,15 @@ class TemperaProvider(_ToolProvider):
                 "cacheScope": "private",
             }
         if method == "resources/list":
-            return {"resources": [self._resources[uri].public_spec() for uri in sorted(self._resources)]}
+            return {
+                "resultType": "complete",
+                "resources": [self._resources[uri].public_spec() for uri in sorted(self._resources)],
+            }
         if method == "prompts/list":
-            return {"prompts": [self._prompts[name].public_spec() for name in sorted(self._prompts)]}
+            return {
+                "resultType": "complete",
+                "prompts": [self._prompts[name].public_spec() for name in sorted(self._prompts)],
+            }
         return super()._base_response(request)
 
     def _requested_resource(self, request: Mapping[str, Any]) -> _RegisteredResource:
@@ -255,7 +264,7 @@ class TemperaProvider(_ToolProvider):
             try:
                 result = resource.function()
             except Exception:
-                return {"contents": []}
+                raise _ProviderExecutionError("resource execution failed") from None
             if inspect.isawaitable(result):
                 if inspect.iscoroutine(result):
                     result.close()
@@ -268,7 +277,7 @@ class TemperaProvider(_ToolProvider):
             try:
                 result = prompt.function(**decoded)
             except Exception:
-                return {"messages": []}
+                raise _ProviderExecutionError("prompt execution failed") from None
             if inspect.isawaitable(result):
                 if inspect.iscoroutine(result):
                     result.close()
@@ -288,7 +297,7 @@ class TemperaProvider(_ToolProvider):
                 if inspect.isawaitable(result):
                     result = await result
             except Exception:
-                return {"contents": []}
+                raise _ProviderExecutionError("resource execution failed") from None
             return _resource_contents(resource, result)
         if method == "prompts/get":
             prompt, decoded = self._requested_prompt(request)
@@ -297,7 +306,7 @@ class TemperaProvider(_ToolProvider):
                 if inspect.isawaitable(result):
                     result = await result
             except Exception:
-                return {"messages": []}
+                raise _ProviderExecutionError("prompt execution failed") from None
             return _prompt_messages(result)
         base = self._base_response(request)
         if base is not None:

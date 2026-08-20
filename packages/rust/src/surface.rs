@@ -10529,10 +10529,10 @@ pub struct McpMethodSpec {
 
 pub const MCP_METHODS: &[McpMethodSpec] = &[
     McpMethodSpec {
-        id: "initialize",
-        rpc: "initialize",
+        id: "discover",
+        rpc: "server/discover",
         tool: None,
-        description: "Open an MCP session and fetch server capabilities and instructions.",
+        description: "Discover the stateless MCP 2026-07-28 server capabilities and instructions.",
     },
     McpMethodSpec {
         id: "ping",
@@ -10544,7 +10544,7 @@ pub const MCP_METHODS: &[McpMethodSpec] = &[
         id: "list_tools",
         rpc: "tools/list",
         tool: None,
-        description: "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names.",
+        description: "List the fixed eleven-verb Tempera capability-fabric surface; product cards never appear as flat product tool names.",
     },
     McpMethodSpec {
         id: "call_tool",

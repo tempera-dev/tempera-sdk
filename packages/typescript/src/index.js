@@ -23,6 +23,7 @@ export {
 export {
   TemperaApiError,
   TemperaMcpError,
+  TemperaMcpInputRequired,
   TemperaSdkError,
   apiErrorFromResponse,
   normalizeErrorBody,
@@ -39,7 +40,14 @@ export {
 
 export { createTemperaClient } from "./client.js";
 
-export { MCP_ERROR_CODES, MCP_PROTOCOL_VERSION, TemperaMcpClient } from "./mcp.js";
+export {
+  MCP_ERROR_CODES,
+  MCP_METHOD_HEADER,
+  MCP_NAME_HEADER,
+  MCP_PROTOCOL_VERSION,
+  MCP_PROTOCOL_VERSION_HEADER,
+  TemperaMcpClient,
+} from "./mcp.js";
 
 // Deprecated alias kept for 0.1.x callers; use TEMPERA_ENVIRONMENTS.
 export { TEMPERA_ENVIRONMENTS as TEMPERA_API_TARGETS } from "./surface.js";

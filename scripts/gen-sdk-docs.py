@@ -848,9 +848,14 @@ def render_errors(surface: dict) -> str:
         "",
         "JSON-RPC errors from the [MCP gateway](/mcp-gateway) raise `TemperaMcpError`",
         "(TypeScript and Python) with the gateway's integer `code`, its `message`, and",
-        "any `data` member. The Rust crate returns the same information as `McpError`",
-        "(`code`, `message`) from `parse_mcp_error(body)`. A non-conformant error",
-        "without an integer code is reported uniformly as code `0`.",
+        "any `data` member. The Rust crate returns the same code and message from",
+        "`parse_mcp_error(body, expected_id)`. Non-object errors, non-integer codes,",
+        "missing messages, ambiguous result/error members, and wrong ids fail closed",
+        "as `TemperaSdkError` (TypeScript/Python) or `McpProtocolError` (Rust).",
+        "Tool-level `isError: true` outcomes use the same `TemperaMcpError` class",
+        "with the full result in `data`. Resumable `input_required` outcomes raise",
+        "`TemperaMcpInputRequired` with the full result; Rust callers classify both",
+        "with `classify_mcp_call_result` before recording terminal success.",
         "",
         "## MCP gateway error codes",
         "",
@@ -868,7 +873,7 @@ def render_mcp_gateway(surface: dict) -> str:
     lines = [
         frontmatter(
             "MCP gateway",
-            "The unified MCP gateway: every product's tools behind one JSON-RPC endpoint.",
+            "The unified MCP gateway: one fixed capability fabric behind a stateless MCP endpoint.",
         )
     ]
     lines += private_access_note()
@@ -914,9 +919,22 @@ def render_mcp_gateway(surface: dict) -> str:
         "",
         "## Client examples",
         "",
+        "The client baseline is MCP `2026-07-28`: `server/discover`, no transport",
+        "session, required routing headers, complete `_meta` on every request, and",
+        "JSON or SSE response correlation. The exact producer receipt is",
+        "`contracts/mcp-protocol.source.json`.",
+        "Tool `isError: true` outcomes raise `TemperaMcpError`; protocol",
+        "`input_required` outcomes raise `TemperaMcpInputRequired` with the full",
+        "continuation result, so neither can be mistaken for completed work.",
+        "Client capabilities are intentionally fixed to an empty object until the",
+        "SDK exposes a dispatcher for server-initiated SSE requests; non-empty",
+        "capability declarations fail before transport.",
+        "",
         "TypeScript and Python ship a `TemperaMcpClient`; the HTTP-less Rust crate",
-        "ships `McpRequestBuilder`, which produces the exact JSON-RPC bodies to POST",
-        "at `TemperaAuth::mcp_url()`.",
+        "ships checked `McpRequestBuilder` requests and a correlated outcome parser.",
+        "Its debug views redact request bodies and continuation state. The Python",
+        "provider emits explicit complete results for result-bearing 2026 methods",
+        "and converts resource/prompt execution failures to redacted JSON-RPC errors.",
         "",
     ]
     ts_code = (
@@ -927,7 +945,7 @@ def render_mcp_gateway(surface: dict) -> str:
         "const auth = new TemperaAuth({ issuerUrl, apiKey: process.env.TEMPERA_API_KEY });\n"
         "const mcp = new TemperaMcpClient({ auth }); // url derives as ${issuer}/mcp\n"
         "\n"
-        "await mcp.initialize();\n"
+        "await mcp.discover();\n"
         "const tools = await mcp.listTools();\n"
         'const cards = await mcp.callTool("tempera_search", { query: "browser capability" });\n'
         "console.log(await mcp.whoami());\n"
@@ -940,28 +958,35 @@ def render_mcp_gateway(surface: dict) -> str:
         'auth = TemperaAuth(issuer_url=os.environ["TEMPERA_ISSUER_URL"], api_key=os.environ["TEMPERA_API_KEY"])\n'
         "mcp = TemperaMcpClient(auth=auth)  # url derives as ${issuer}/mcp\n"
         "\n"
-        "mcp.initialize()\n"
+        "mcp.discover()\n"
         "tools = mcp.list_tools()\n"
         'cards = mcp.call_tool("tempera_search", {"query": "browser capability"})\n'
         "print(mcp.whoami())\n"
         "print(mcp.status())"
     )
     rust_code = (
-        "use tempera_sdk::{McpRequestBuilder, TemperaAuth, parse_mcp_error};\n"
+        "use tempera_sdk::{classify_mcp_call_result, McpCallOutcome, McpRequestBuilder, TemperaAuth, parse_mcp_error};\n"
         "\n"
         'let issuer_url = std::env::var("TEMPERA_ISSUER_URL")?;\n'
         "let auth = TemperaAuth::new(issuer_url).with_api_key(api_key);\n"
         "let mut mcp = McpRequestBuilder::new();\n"
         "\n"
-        "// POST each body at auth.mcp_url() with the tempera-mcp bearer:\n"
-        'let (id, body) = mcp.initialize_body("tempera-sdk", "0.10.0");\n'
-        "let (id, body) = mcp.list_tools_body();\n"
-        'let (id, body) = mcp.call_tool_body("tempera_search", Some(serde_json::json!({"query": "browser capability"})));\n'
-        "let (id, body) = mcp.whoami_body();\n"
+        "// Add authorization, then POST each complete request at auth.mcp_url():\n"
+        "let discover = mcp.discover_request();\n"
+        "let headers = discover.headers()?;\n"
+        "let listed = mcp.list_tools_request();\n"
+        'let search = mcp.call_tool_request("tempera_search", Some(r#"{"query":"browser capability"}"#))?;\n'
+        "let identity = mcp.whoami_request();\n"
         "\n"
         "// Feed error responses to the shared parser:\n"
-        "if let Some(err) = parse_mcp_error(&response_body) {\n"
+        "if let Some(err) = parse_mcp_error(&response_body, search.id())? {\n"
         '    eprintln!("MCP error {}: {}", err.code, err.message);\n'
+        "}\n"
+        "match classify_mcp_call_result(&response_body, search.id()) {\n"
+        "    Some(McpCallOutcome::Complete) => {}\n"
+        '    Some(McpCallOutcome::InputRequired(continuation)) => eprintln!("MCP input required: {continuation:?}"),\n'
+        '    Some(outcome) => eprintln!("MCP call is not complete: {outcome:?}"),\n'
+        "    None => eprintln!(\"malformed or JSON-RPC error response\"),\n"
         "}"
     )
     lines += code_group(

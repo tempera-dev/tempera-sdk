@@ -1,0 +1,85 @@
+{
+  "schema_version": "tempera.sdk-mcp-protocol-source.v1",
+  "source_repo": "tempera-dev/tempera-mcp",
+  "source_branch": "main",
+  "source_commit": "99ac544fcfbc500f212906a61cf6c72c2cc16723",
+  "source_tree": "d5abd3b96268e9e2d5cc8db091eb302e7c434dc2",
+  "protocol_version": "2026-07-28",
+  "lifecycle": "stateless-server-discover",
+  "official_rust_sdk_repo": "modelcontextprotocol/rust-sdk",
+  "official_rust_sdk_commit": "830e088d733c7964c806a2305760dd8deb30dff9",
+  "official_rust_sdk_tree": "3a48da49ebd214faa55c22add021cc6d76568759",
+  "required_headers": [
+    "accept",
+    "content-type",
+    "mcp-protocol-version",
+    "mcp-method"
+  ],
+  "conditional_headers": {
+    "tools/call": [
+      "mcp-name"
+    ]
+  },
+  "required_meta": [
+    "io.modelcontextprotocol/protocolVersion",
+    "io.modelcontextprotocol/clientInfo",
+    "io.modelcontextprotocol/clientCapabilities"
+  ],
+  "tool_result_contract": {
+    "complete_result_type": "complete",
+    "input_required_result_type": "input_required",
+    "tool_error_field": "isError"
+  },
+  "official_rust_sdk_source_files": {
+    "crates/rmcp/src/model.rs": {
+      "blob": "7ee93d82db807f4a02186eea6f8354be20de9654",
+      "sha256": "678226c7217ab232bdcef3207caca9a71939f6294efd4e2d977bca3385ea912a"
+    },
+    "crates/rmcp/src/model/mrtr.rs": {
+      "blob": "8dac9a39137d4178c83a4c3549165aefd50dce29",
+      "sha256": "462fc966dd35ce4a1deba3812fca4b2a2a7e614e50617acde0ab98c665d5612a"
+    },
+    "crates/rmcp/tests/test_deserialization.rs": {
+      "blob": "8570770153f48265f012f57139a0d6b11e4915fa",
+      "sha256": "f24700d7ba3a5c96679f20c2bbc73529ce496acb9ed61a7bed94a3d9da31cf46"
+    },
+    "crates/rmcp/tests/test_result_type_wire.rs": {
+      "blob": "d5f201532c62fc39c396751a7f164adb2acd28b6",
+      "sha256": "24ab645b42604fd8dae5fe8824089821a880a37ee1eb14725650bf0647f497e0"
+    }
+  },
+  "source_files": {
+    "Cargo.lock": {
+      "blob": "b6e12d291192a2572b0867058fa4eb0eae4750cd",
+      "sha256": "29709ac905c0aa69c2450a4575a828bdd5f4213a4140cbac2fdb80eb51d52fdd"
+    },
+    "Cargo.toml": {
+      "blob": "a2ca4d7deefbe05db66f40eae88dd4301cd79eb4",
+      "sha256": "2b1f8dc35713eb92776e2a2302a74e30ad9f07e6d69d339c91076d8220c12dc3"
+    },
+    "rust-toolchain.toml": {
+      "blob": "bf5eb1a847a7af9c1eca62a7a0b68796dded2812",
+      "sha256": "5a357c16adbb4740c3264b315c59c4882c286072146d7198757096197b498c52"
+    },
+    "contracts/mcp-tools-v1.json": {
+      "blob": "094200abdebb27756e4ff7221831d8dc19af37ca",
+      "sha256": "d01cee7c8d00b10287b514c9183d22aeb27abd52432ef950f5bafaa2df0aa7c4"
+    },
+    "docs/protocol-compatibility.md": {
+      "blob": "d3cae178a10883a33326975a3a02b8aa69f93cdb",
+      "sha256": "f638d38077fcb8fb6569708f780f43c19d9a922dede15e2bc129692774d1657f"
+    },
+    "scripts/framework-comparison.mjs": {
+      "blob": "782e75ee98cff658894807a93b282dba53b3b663",
+      "sha256": "b693d651286eab2d7ff13297cabe5a597ba6b0d9a0a3bf93cb32add0f7fb2b9b"
+    },
+    "src/app.rs": {
+      "blob": "0e4a05e3e914f5c501454c3f6b5f99650f94cc9b",
+      "sha256": "9166ea219b33890b5d1728e79a58c4f3abe02eeed3d8c9d0b341b433c912e7a0"
+    },
+    "src/client.rs": {
+      "blob": "929ce9d9984a817cff9f3fba1544c6eb4cef637e",
+      "sha256": "ed86069465cd5d9a0f7bdf7085db8cd211b21edb0329f5212823cd6f4c786c93"
+    }
+  }
+}

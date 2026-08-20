@@ -29,6 +29,7 @@ class ProviderCapabilitiesTest(unittest.TestCase):
             return topic
 
         discovery = app.handle({"method": "server/discover"})
+        self.assertEqual(discovery["resultType"], "complete")
         self.assertEqual(discovery["capabilities"], {"tools": {}, "resources": {}, "prompts": {}})
         resources = app.handle({"method": "resources/list"})["resources"]
         prompts = app.handle({"method": "prompts/list"})["prompts"]
@@ -48,8 +49,8 @@ class ProviderCapabilitiesTest(unittest.TestCase):
 
         text = app.handle({"method": "resources/read", "params": {"uri": "memory://text"}})
         blob = app.handle({"method": "resources/read", "params": {"uri": "memory://blob"}})
-        self.assertEqual(text, {"contents": [{"uri": "memory://text", "mimeType": "text/plain", "text": "hello"}]})
-        self.assertEqual(blob, {"contents": [{"uri": "memory://blob", "mimeType": "application/octet-stream", "blob": "YWJj"}]})
+        self.assertEqual(text, {"resultType": "complete", "contents": [{"uri": "memory://text", "mimeType": "text/plain", "text": "hello"}]})
+        self.assertEqual(blob, {"resultType": "complete", "contents": [{"uri": "memory://blob", "mimeType": "application/octet-stream", "blob": "YWJj"}]})
 
     def test_prompt_arguments_are_typed_and_validated_before_user_code(self):
         app = TemperaProvider("prompts")
@@ -66,7 +67,7 @@ class ProviderCapabilitiesTest(unittest.TestCase):
         self.assertFalse(by_name["count"]["required"])
         self.assertEqual(by_name["count"]["schema"], {"type": "integer", "default": 1})
         result = app.handle({"method": "prompts/get", "params": {"name": "summarize", "arguments": {"topic": "mcp", "count": 2}}})
-        self.assertEqual(result, {"messages": [{"role": "user", "content": {"type": "text", "text": "mcp:2"}}]})
+        self.assertEqual(result, {"resultType": "complete", "messages": [{"role": "user", "content": {"type": "text", "text": "mcp:2"}}]})
         self.assertEqual(calls, [("mcp", 2)])
         with self.assertRaisesRegex(ProviderArgumentError, "count must be int"):
             app.handle({"method": "prompts/get", "params": {"name": "summarize", "arguments": {"topic": "mcp", "count": True}}})
@@ -136,11 +137,11 @@ class ProviderCapabilitiesTest(unittest.TestCase):
         def bad_prompt() -> str:
             raise RuntimeError("prompt-secret")
 
-        resource = app.handle({"method": "resources/read", "params": {"uri": "memory://secret"}})
-        prompt = app.handle({"method": "prompts/get", "params": {"name": "bad_prompt", "arguments": {}}})
-        self.assertEqual(resource, {"contents": []})
-        self.assertEqual(prompt, {"messages": []})
-        self.assertNotIn("secret", str(resource) + str(prompt))
+        with self.assertRaisesRegex(RuntimeError, "resource execution failed") as resource:
+            app.handle({"method": "resources/read", "params": {"uri": "memory://secret"}})
+        with self.assertRaisesRegex(RuntimeError, "prompt execution failed") as prompt:
+            app.handle({"method": "prompts/get", "params": {"name": "bad_prompt", "arguments": {}}})
+        self.assertNotIn("secret", str(resource.exception) + str(prompt.exception))
 
 
 class AsyncProviderCapabilitiesTest(unittest.IsolatedAsyncioTestCase):

@@ -48,9 +48,14 @@ Applied in order to the parsed error body:
 
 JSON-RPC errors from the [MCP gateway](/mcp-gateway) raise `TemperaMcpError`
 (TypeScript and Python) with the gateway's integer `code`, its `message`, and
-any `data` member. The Rust crate returns the same information as `McpError`
-(`code`, `message`) from `parse_mcp_error(body)`. A non-conformant error
-without an integer code is reported uniformly as code `0`.
+any `data` member. The Rust crate returns the same code and message from
+`parse_mcp_error(body, expected_id)`. Non-object errors, non-integer codes,
+missing messages, ambiguous result/error members, and wrong ids fail closed
+as `TemperaSdkError` (TypeScript/Python) or `McpProtocolError` (Rust).
+Tool-level `isError: true` outcomes use the same `TemperaMcpError` class
+with the full result in `data`. Resumable `input_required` outcomes raise
+`TemperaMcpInputRequired` with the full result; Rust callers classify both
+with `classify_mcp_call_result` before recording terminal success.
 
 ## MCP gateway error codes
 

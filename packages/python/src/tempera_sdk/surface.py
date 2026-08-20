@@ -11735,12 +11735,12 @@ OPERATIONS = {
 }
 
 MCP_GATEWAY = {
-    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP JSON-RPC 2.0, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to ten tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
+    "description": "Unified MCP gateway at ${issuer}/mcp: stateless streamable-HTTP MCP 2026-07-28, audience tempera-mcp with scope mcp:invoke. The model-facing surface is fixed to eleven tempera_* fabric verbs; product capabilities are opaque, policy-filtered cards discovered with tempera_search, inspected with tempera_describe, and executed through tempera_invoke or tempera_prepare/tempera_commit. Per-call product execution is metered.",
     "methods": [
         {
-            "id": "initialize",
-            "rpc": "initialize",
-            "description": "Open an MCP session and fetch server capabilities and instructions."
+            "id": "discover",
+            "rpc": "server/discover",
+            "description": "Discover the stateless MCP 2026-07-28 server capabilities and instructions."
         },
         {
             "id": "ping",
@@ -11750,7 +11750,7 @@ MCP_GATEWAY = {
         {
             "id": "list_tools",
             "rpc": "tools/list",
-            "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
+            "description": "List the fixed eleven-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."
         },
         {
             "id": "call_tool",
