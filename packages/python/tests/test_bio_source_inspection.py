@@ -15,6 +15,7 @@ from tempera_sdk import bio_source_inspection as verifier
 ROOT = Path(__file__).resolve().parents[3]
 LOCK_PATH = ROOT / "contracts/bio-source-inspection-sdk-consumer.staging.lock.json"
 FIXTURE_PATH = ROOT / "contracts/bio-source-inspection-sdk-consumer-fixtures.json"
+RECEIPT_PATH = ROOT / "contracts/bio-source-inspection-sdk-consumer-verification.json"
 
 
 class BioSourceInspectionSdkConsumerTests(unittest.TestCase):
@@ -57,6 +58,22 @@ class BioSourceInspectionSdkConsumerTests(unittest.TestCase):
             verifier.receipt_bytes(receipt),
             verifier.canonical_json(receipt),
         )
+
+    def test_committed_handoff_receipt_is_exactly_regenerated(self):
+        receipt = verifier.verify_paths(LOCK_PATH, FIXTURE_PATH)
+        expected = verifier.receipt_bytes(receipt) + b"\n"
+        self.assertEqual(RECEIPT_PATH.read_bytes(), expected)
+        committed = json.loads(RECEIPT_PATH.read_bytes())
+        self.assertEqual(committed, receipt)
+        self.assertEqual(
+            committed["content_digest"],
+            "sha256:8534bd1d7823e34d3d0d2489c337bb6bbe0063a3c36066071abdadf129b75132",
+        )
+        self.assertEqual(
+            committed["result"],
+            "staging_cross_consumer_conformant_not_admitted",
+        )
+        self.assertFalse(any(committed["authority"].values()))
 
     def test_calls_the_unexported_sdk_verifier_and_no_network_stack(self):
         expected = (

@@ -6,6 +6,7 @@ on:
       - ".github/workflows/bio-source-inspection-consumer.yml"
       - "contracts/bio-source-inspection-sdk-consumer-fixtures.json"
       - "contracts/bio-source-inspection-sdk-consumer.staging.lock.json"
+      - "contracts/bio-source-inspection-sdk-consumer-verification.json"
       - "packages/python/src/tempera_sdk/bio_source_inspection.py"
       - "packages/python/tests/test_bio_source_inspection.py"
 
@@ -43,4 +44,6 @@ jobs:
           done
           cmp "$RUNNER_TEMP/bio-source-inspection-1.json" "$RUNNER_TEMP/bio-source-inspection-97.json"
           cmp "$RUNNER_TEMP/bio-source-inspection-1.json" "$RUNNER_TEMP/bio-source-inspection-211.json"
+          cmp "$RUNNER_TEMP/bio-source-inspection-1.json" "contracts/bio-source-inspection-sdk-consumer-verification.json"
           sha256sum "$RUNNER_TEMP/bio-source-inspection-1.json"
+          sha256sum "contracts/bio-source-inspection-sdk-consumer-verification.json"
