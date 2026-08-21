@@ -25,7 +25,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "6a69cc1eaca80238e1453052688e1365596878ef0da0de7f34846dad1e1af59e",
         "mcp_input_schema_sha256": "50abc3d683d6a8f72c3cf8f183a02e7296da66ff2ec1c993ee89b3ebf117cf86",
-        "mcp_output_schema_sha256": "dc102485d0af6edaa4a179519abca06e79e576cacf13802a306c2d67a625a8dd",
+        "mcp_output_schema_sha256": "4e58fca700b2b6900eff8ee976044a42d105969860aa3103ce959ad6b92fb5ef",
         "output_sha256": "0c529ee2e2a8d2a6d4ecf0fb89a67690e6ce1d56728aa3b73787fb9effea0bb1"
       }
     },
@@ -202,6 +202,29 @@
         "mcp_input_schema_sha256": "3cb5789c9de8fa63be15bfe1ca1642e96d6c789d49ca271b0184e30404b4cb77",
         "mcp_output_schema_sha256": "e6339fa14e3aeedc64a1f6b00705c317c9a5374d2e8ad34bfdb98c5902a6c86c",
         "output_sha256": "af3a7c1c2badb28338e157997325be0ab028704f77da310d48bfdb95c8afbf17"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.connectorEvidence.ingest",
+      "path": "/v1/{parent}/connectorEvidence:ingest",
+      "reason": "Signed high-volume source evidence admission remains a producer-orchestrated REST handoff.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f9e81cfdde916d68b8e1251440a40abe49f746ec11467b1bffff0aab9754dc79",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "34bf2c3dc9ce3a33fa8d4a4f2578a9aad81ee4ff36a12a3e9a5c49597428e086"
       }
     },
     {
@@ -1534,8 +1557,8 @@
     }
   ],
   "policy": {
-    "authenticated_operation_count": 57,
-    "denied_count": 21,
+    "authenticated_operation_count": 58,
+    "denied_count": 22,
     "excluded_transport_operations": [
       "health.get",
       "mcp.jsonrpc"
@@ -1543,19 +1566,19 @@
     "exposed_count": 36,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "42b8ed99dd011649a98aafb563d69cdb8fec8d6875edf38c8ede8c2c40dc176f"
+      "sha256": "d1c6c144d67c23725caf00ad678d8d3e55df7c71e5e705ee627a990bc7f30453"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "1deb0d418b1a3c8a2e3f8e7cd3ce348f79428685",
+    "commit": "f4bf0e62b17ff61d28072a5eca8f5a4cb0a21d53",
     "files": [
       {
-        "git_blob": "1d0acbc378d432940aac61e508f8ea6b85be8795",
+        "git_blob": "3ae816e647657d3a324874e86896f9eab4203cf3",
         "path": "api/openapi.yaml",
-        "sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f"
+        "sha256": "06a3007c8cee428cb2f6aab291033c15e40851416b117df71e504a33234a8d69"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1563,19 +1586,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "454c314d3ec09c88b76234b152fead6e20e2b91a",
+        "git_blob": "f915f2c55bf94eb835794198c3b1cc79e8393e0a",
         "path": "src/data_engine/app.py",
-        "sha256": "173beb096fc26468104f6adc22eac1be68a9d67c518c54be11fa64ef4b25cbbe"
+        "sha256": "7835f2fef4ebb346ec9cda7d2f0fd55db4c8470855172822c8097870e061f9c3"
       },
       {
-        "git_blob": "f930e96426af2edc7d88ffb609c66abc9e229a03",
+        "git_blob": "4f7777710cdb846140b170a03a070b2331862771",
         "path": "src/data_engine/mcp.py",
-        "sha256": "b9454386556f6ab800d6866472c9f1272e32385a8d88439fdefb7b946b24029f"
+        "sha256": "78d1824e3ddccd638887f2c713d56ec1edf9a94d434c5092cf48ab2cf353f5dd"
       },
       {
-        "git_blob": "5a50d8273b747fbf47eb3de636f655032d1d7fe4",
+        "git_blob": "be1cf96c5b8a167a253b174ba5c529d65380b3d6",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "3fb4160d2a3c89ce7491859b20ce3f0e5caed4759d1cf252efe7fba859a62c2c"
+        "sha256": "64b5d4593b8c307cc160afe3d57ee81d4d1558f83b1577b2ff8c737c172619bb"
       }
     ],
     "repository": "tempera-dev/data-engine"

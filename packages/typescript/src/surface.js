@@ -9295,6 +9295,38 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
     },
     {
+      "id": "projectsConnectorEvidenceIngest",
+      "upstreamOperationId": "projects.connectorEvidence.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/connectorEvidence:ingest",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "parent"
+      ],
+      "pathParamTemplates": {
+        "parent": "projects/*"
+      },
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "evidence",
+        "artifactBase64"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "evidence",
+        "artifactBase64"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "dataset:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Verify and retain signed Tempera Connectors source evidence."
+    },
+    {
       "id": "ingestWeb",
       "upstreamOperationId": "projects.web.ingest",
       "method": "POST",

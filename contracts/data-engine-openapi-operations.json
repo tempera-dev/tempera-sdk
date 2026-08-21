@@ -1,13 +1,13 @@
 {
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
-  "source_branch": "main",
-  "source_commit": "19a34d5d06dd6977887d45892ab84eef6786c637",
+  "source_branch": "codex/data-engine-credentialed-connectors-repin-20260821",
+  "source_commit": "ca2d61e3a6db0e8d678df644b0b866addc89679f",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "1d0acbc378d432940aac61e508f8ea6b85be8795",
-  "source_sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f",
+  "source_blob_sha": "3ae816e647657d3a324874e86896f9eab4203cf3",
+  "source_sha256": "06a3007c8cee428cb2f6aab291033c15e40851416b117df71e504a33234a8d69",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "b46d98b0eb87d3a7d1405c21ffd9fba819fbe31529084188cff0eb2654d9f331",
+  "generated_sha256": "8cb5858f71d33c33e272324ed3eabb11dcf380d65084ad1c19c043ca5b3838d7",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -38,6 +38,14 @@
       "operationId": "projects.artifacts.ingest",
       "method": "POST",
       "path": "/v1/{parent}/artifacts:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "projectsConnectorEvidenceIngest",
+      "operationId": "projects.connectorEvidence.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/connectorEvidence:ingest",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
     },

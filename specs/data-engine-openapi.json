@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "data-engine API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -256,6 +256,70 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/DataLoss"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/connectorEvidence:ingest": {
+      "post": {
+        "operationId": "projects.connectorEvidence.ingest",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "dataset:write",
+        "summary": "Verify and retain signed Tempera Connectors source evidence",
+        "description": "Verifies an Ed25519-signed public or credential-isolated source-acquisition envelope and its exact base64 artifact bytes against the receiver's pinned public-key, source, build, rights, and policy allowlist. The resulting immutable artifact remains ineligible for training and carries no execution authority. When the trust policy is absent this operation fails closed with 412.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/RequestIdParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "JSON request body; rejected before read when Content-Length exceeds 12 MiB.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorEvidenceIngestRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed source evidence was verified and retained immutably",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorEvidenceIngestReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/FailedPrecondition"
           },
           "413": {
             "$ref": "#/components/responses/PayloadTooLarge"
@@ -5095,7 +5159,6 @@
           "externalId",
           "rawBody",
           "rawHash",
-          "rawPath",
           "metadata",
           "status",
           "createTime",
@@ -5122,9 +5185,6 @@
             "additionalProperties": true
           },
           "rawHash": {
-            "type": "string"
-          },
-          "rawPath": {
             "type": "string"
           },
           "metadata": {
@@ -5191,11 +5251,614 @@
           }
         }
       },
+      "ConnectorIdentifier": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,127}$"
+      },
+      "ConnectorDigest": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      },
+      "ConnectorPolicyString": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "ConnectorEvidenceRights": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rightsClass",
+          "admissionReceiptDigest",
+          "retentionPolicy",
+          "egressPolicy"
+        ],
+        "properties": {
+          "rightsClass": {
+            "type": "string",
+            "const": "public"
+          },
+          "admissionReceiptDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "retentionPolicy": {
+            "$ref": "#/components/schemas/ConnectorPolicyString"
+          },
+          "egressPolicy": {
+            "$ref": "#/components/schemas/ConnectorPolicyString"
+          }
+        }
+      },
+      "ConnectorEvidenceArtifact": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rawSha256",
+          "sizeBytes",
+          "mediaType",
+          "storageUri"
+        ],
+        "properties": {
+          "rawSha256": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8388608
+          },
+          "mediaType": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"
+          },
+          "storageUri": {
+            "type": "string",
+            "pattern": "^staging://sha256/[a-f0-9]{64}$"
+          }
+        }
+      },
+      "ConnectorEvidenceTransport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "sourceUri",
+          "finalUri",
+          "httpStatus",
+          "etag",
+          "lastModified",
+          "testOnly"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "https",
+              "httpLoopbackTest"
+            ]
+          },
+          "sourceUri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "finalUri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "httpStatus": {
+            "type": "integer",
+            "const": 200
+          },
+          "etag": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          },
+          "lastModified": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          },
+          "testOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConnectorCredentialedEvidenceTransport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "sourceUri",
+          "finalUri",
+          "httpStatus",
+          "etag",
+          "lastModified",
+          "testOnly"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "httpsCredentialed",
+              "httpLoopbackCredentialedTest"
+            ]
+          },
+          "sourceUri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "finalUri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "httpStatus": {
+            "type": "integer",
+            "const": 200
+          },
+          "etag": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          },
+          "lastModified": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          },
+          "testOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConnectorEvidenceSignature": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "algorithm",
+          "keyId",
+          "value"
+        ],
+        "properties": {
+          "algorithm": {
+            "type": "string",
+            "const": "Ed25519"
+          },
+          "keyId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{86}$"
+          }
+        }
+      },
+      "ConnectorSourceAcquisitionEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "issuer",
+          "tenantId",
+          "projectId",
+          "connectorId",
+          "sourceId",
+          "requestId",
+          "requestDigest",
+          "sourceDefinitionDigest",
+          "connectorBuildDigest",
+          "policyRevision",
+          "acquiredAt",
+          "rights",
+          "artifact",
+          "transport",
+          "admissibility",
+          "executionAuthority",
+          "contentDigest",
+          "signature"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "tempera.connectors.source-acquisition-evidence/v1"
+          },
+          "issuer": {
+            "type": "string",
+            "const": "tempera-connectors"
+          },
+          "tenantId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "connectorId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "sourceId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "requestDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "sourceDefinitionDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "connectorBuildDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "policyRevision": {
+            "$ref": "#/components/schemas/ConnectorPolicyString"
+          },
+          "acquiredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/ConnectorEvidenceRights"
+          },
+          "artifact": {
+            "$ref": "#/components/schemas/ConnectorEvidenceArtifact"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/ConnectorEvidenceTransport"
+          },
+          "admissibility": {
+            "type": "string",
+            "enum": [
+              "admitted",
+              "testOnly"
+            ]
+          },
+          "executionAuthority": {
+            "type": "boolean",
+            "const": false
+          },
+          "contentDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/ConnectorEvidenceSignature"
+          }
+        }
+      },
+      "ConnectorCredentialBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "connectionRef",
+          "connectionRevision",
+          "connector",
+          "authentication",
+          "region",
+          "endpoint",
+          "bindingDigest"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "authHubDataSourceConnection"
+          },
+          "connectionRef": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^organizations/[^/]+/projects/[^/]+/environments/[^/]+/dataSourceConnections/[a-z][a-z0-9-]{0,62}$"
+          },
+          "connectionRevision": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$"
+          },
+          "connector": {
+            "type": "string",
+            "const": "s3"
+          },
+          "authentication": {
+            "type": "string",
+            "const": "awsSigV4"
+          },
+          "region": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(?:-gov)?-[a-z0-9-]+-[1-9][0-9]*$"
+          },
+          "endpoint": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "bindingDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          }
+        }
+      },
+      "ConnectorCredentialedSourceAcquisitionEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "issuer",
+          "tenantId",
+          "projectId",
+          "connectorId",
+          "sourceId",
+          "requestId",
+          "requestDigest",
+          "sourceDefinitionDigest",
+          "connectorBuildDigest",
+          "policyRevision",
+          "acquiredAt",
+          "rights",
+          "credentialBinding",
+          "artifact",
+          "transport",
+          "admissibility",
+          "executionAuthority",
+          "contentDigest",
+          "signature"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "tempera.connectors.credentialed-source-acquisition-evidence/v1"
+          },
+          "issuer": {
+            "type": "string",
+            "const": "tempera-connectors"
+          },
+          "tenantId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "connectorId": {
+            "type": "string",
+            "const": "s3"
+          },
+          "sourceId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "requestDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "sourceDefinitionDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "connectorBuildDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "policyRevision": {
+            "$ref": "#/components/schemas/ConnectorPolicyString"
+          },
+          "acquiredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/ConnectorEvidenceRights"
+          },
+          "credentialBinding": {
+            "$ref": "#/components/schemas/ConnectorCredentialBinding"
+          },
+          "artifact": {
+            "$ref": "#/components/schemas/ConnectorEvidenceArtifact"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/ConnectorCredentialedEvidenceTransport"
+          },
+          "admissibility": {
+            "type": "string",
+            "enum": [
+              "admitted",
+              "testOnly"
+            ]
+          },
+          "executionAuthority": {
+            "type": "boolean",
+            "const": false
+          },
+          "contentDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/ConnectorEvidenceSignature"
+          }
+        }
+      },
+      "ConnectorEvidenceIngestRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence",
+          "artifactBase64"
+        ],
+        "properties": {
+          "evidence": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorSourceAcquisitionEvidence"
+              },
+              {
+                "$ref": "#/components/schemas/ConnectorCredentialedSourceAcquisitionEvidence"
+              }
+            ]
+          },
+          "artifactBase64": {
+            "type": "string",
+            "maxLength": 11184812,
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          }
+        }
+      },
+      "ConnectorSourceLock": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repository",
+          "commitSha"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string",
+            "const": "tempera-dev/tempera-connectors"
+          },
+          "commitSha": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40}$"
+          }
+        }
+      },
+      "ConnectorTrustPolicyReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "policyRevision",
+          "environment",
+          "testOnly",
+          "policyDigest",
+          "sourceLock"
+        ],
+        "properties": {
+          "policyRevision": {
+            "$ref": "#/components/schemas/ConnectorPolicyString"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/ConnectorIdentifier"
+          },
+          "testOnly": {
+            "type": "boolean"
+          },
+          "policyDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "sourceLock": {
+            "$ref": "#/components/schemas/ConnectorSourceLock"
+          }
+        }
+      },
+      "ConnectorEvidenceIngestReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "artifactName",
+          "artifactContentSha256",
+          "upstreamEvidenceDigest",
+          "upstreamEvidenceSchema",
+          "upstreamCredentialBindingDigest",
+          "upstreamRawSha256",
+          "upstreamRequestDigest",
+          "upstreamSourceDefinitionDigest",
+          "upstreamConnectorBuildDigest",
+          "receiverAdmissibility",
+          "trainingEligible",
+          "executionAuthority",
+          "trustPolicy",
+          "createTime"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "data-engine.connector-evidence-ingest-receipt/v1"
+          },
+          "artifactName": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "artifactContentSha256": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "upstreamEvidenceDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "upstreamEvidenceSchema": {
+            "type": "string",
+            "enum": [
+              "tempera.connectors.source-acquisition-evidence/v1",
+              "tempera.connectors.credentialed-source-acquisition-evidence/v1"
+            ]
+          },
+          "upstreamCredentialBindingDigest": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorDigest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "upstreamRawSha256": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "upstreamRequestDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "upstreamSourceDefinitionDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "upstreamConnectorBuildDigest": {
+            "$ref": "#/components/schemas/ConnectorDigest"
+          },
+          "receiverAdmissibility": {
+            "type": "string",
+            "enum": [
+              "admitted",
+              "test_only"
+            ]
+          },
+          "trainingEligible": {
+            "type": "boolean",
+            "const": false
+          },
+          "executionAuthority": {
+            "type": "boolean",
+            "const": false
+          },
+          "trustPolicy": {
+            "$ref": "#/components/schemas/ConnectorTrustPolicyReceipt"
+          },
+          "createTime": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
       "ArtifactIngestRequest": {
         "type": "object",
         "description": "Generic artifact input. remi.memory_feedback.v1 and tempera.document-evidence.v1 markers are excluded from this branch and must use their exact canonical wire shapes.",
         "not": {
           "anyOf": [
+            {
+              "required": [
+                "artifactType"
+              ],
+              "properties": {
+                "artifactType": {
+                  "enum": [
+                    "CONNECTOR_SOURCE_EVIDENCE_V1"
+                  ]
+                }
+              }
+            },
             {
               "required": [
                 "artifactType"

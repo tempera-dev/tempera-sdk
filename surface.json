@@ -6181,6 +6181,31 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "projectsConnectorEvidenceIngest",
+        "method": "POST",
+        "path": "/v1/{parent}/connectorEvidence:ingest",
+        "auth": "product",
+        "description": "Verify and retain signed Tempera Connectors source evidence.",
+        "upstreamOperationId": "projects.connectorEvidence.ingest",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "body": [
+          "evidence",
+          "artifactBase64"
+        ],
+        "requiredBody": [
+          "evidence",
+          "artifactBase64"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "dataset:write"
+      },
+      {
         "id": "ingestWeb",
         "method": "POST",
         "path": "/v1/{parent}/web:ingest",

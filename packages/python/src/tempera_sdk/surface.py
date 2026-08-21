@@ -9286,6 +9286,38 @@ OPERATIONS = {
             "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
         },
         {
+            "id": "projects_connector_evidence_ingest",
+            "upstream_operation_id": "projects.connectorEvidence.ingest",
+            "method": "POST",
+            "path": "/v1/{parent}/connectorEvidence:ingest",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "required_query": [],
+            "body": [
+                "evidence",
+                "artifactBase64"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "evidence",
+                "artifactBase64"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "dataset:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Verify and retain signed Tempera Connectors source evidence."
+        },
+        {
             "id": "ingest_web",
             "upstream_operation_id": "projects.web.ingest",
             "method": "POST",

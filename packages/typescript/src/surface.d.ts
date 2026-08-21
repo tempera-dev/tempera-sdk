@@ -762,6 +762,8 @@ export interface DataEngineClient extends TemperaProductClientBase {
   getUseCase(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest one artifact deterministically into the project; returns an async operation handle. */
   ingestArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and retain signed Tempera Connectors source evidence. */
+  projectsConnectorEvidenceIngest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle. */
   ingestWeb(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a data campaign with a rubric, budget, target accuracy, and skill tags. */

@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "1deb0d418b1a3c8a2e3f8e7cd3ce348f79428685",
+    "commit": "f4bf0e62b17ff61d28072a5eca8f5a4cb0a21d53",
     "files": [
       {
-        "git_blob": "1d0acbc378d432940aac61e508f8ea6b85be8795",
+        "git_blob": "3ae816e647657d3a324874e86896f9eab4203cf3",
         "path": "api/openapi.yaml",
-        "sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f"
+        "sha256": "06a3007c8cee428cb2f6aab291033c15e40851416b117df71e504a33234a8d69"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "454c314d3ec09c88b76234b152fead6e20e2b91a",
+        "git_blob": "f915f2c55bf94eb835794198c3b1cc79e8393e0a",
         "path": "src/data_engine/app.py",
-        "sha256": "173beb096fc26468104f6adc22eac1be68a9d67c518c54be11fa64ef4b25cbbe"
+        "sha256": "7835f2fef4ebb346ec9cda7d2f0fd55db4c8470855172822c8097870e061f9c3"
       },
       {
-        "git_blob": "f930e96426af2edc7d88ffb609c66abc9e229a03",
+        "git_blob": "4f7777710cdb846140b170a03a070b2331862771",
         "path": "src/data_engine/mcp.py",
-        "sha256": "b9454386556f6ab800d6866472c9f1272e32385a8d88439fdefb7b946b24029f"
+        "sha256": "78d1824e3ddccd638887f2c713d56ec1edf9a94d434c5092cf48ab2cf353f5dd"
       },
       {
-        "git_blob": "5a50d8273b747fbf47eb3de636f655032d1d7fe4",
+        "git_blob": "be1cf96c5b8a167a253b174ba5c529d65380b3d6",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "3fb4160d2a3c89ce7491859b20ce3f0e5caed4759d1cf252efe7fba859a62c2c"
+        "sha256": "64b5d4593b8c307cc160afe3d57ee81d4d1558f83b1577b2ff8c737c172619bb"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -3830,9 +3830,6 @@
               "rawHash": {
                 "type": "string"
               },
-              "rawPath": {
-                "type": "string"
-              },
               "source": {
                 "type": "string"
               },
@@ -3851,7 +3848,6 @@
               "externalId",
               "rawBody",
               "rawHash",
-              "rawPath",
               "metadata",
               "status",
               "createTime",
