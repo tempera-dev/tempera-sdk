@@ -1,0 +1,111 @@
+{
+  "schema_version": "tempera.sdk.bio-source-inspection-consumer-staging-lock/v1",
+  "status": "staging_cross_consumer_locked_not_admitted",
+  "upstreams": {
+    "bio": {
+      "repository": "tempera-dev/tempera-bio",
+      "branch": "codex/scientific-problem-contract-v1",
+      "commit": "d0ea9f24ddb1e37b5dc878be8b160e596e91d2ad",
+      "artifacts": {
+        "contracts/fixtures/scientific-source-inspection-consumer-fixtures-v1.json": {
+          "git_blob": "b22ed98f595b519b704ba33c185677a3e60bf0b8",
+          "sha256": "32e22a99aca2179050a8d6d6691f7e1e4c7657f7a4dfff0269627dfc47d412ea"
+        },
+        "contracts/scientific-source-inspection-consumer-fixtures-v1.schema.json": {
+          "git_blob": "9f109129d1a913481a99ca439ff8379c218b5f4b",
+          "sha256": "4b0d214d6127b2dfd7eb10656194dc31e06a2bc83f6f2db1bb4af735447a5a46"
+        },
+        "contracts/scientific-source-inspection-consumer-verification-v1.schema.json": {
+          "git_blob": "54620c7edd5f8fb72660538a47151a2a71eb4031",
+          "sha256": "8fb0b67f47d80b37f4634400cbabb1bb5d726882a53cacfd47878cd7a5486168"
+        },
+        "contracts/scientific-source-inspection-request-v1.schema.json": {
+          "git_blob": "a6a0f54e9f2cae823b238b653f77ddd812b6e83a",
+          "sha256": "39d29e89b4a5310a076f27c99251c9681535b20817bdc6722bb8442c2660d003"
+        },
+        "contracts/scientific-source-inspection-workflow-receipt-v1.schema.json": {
+          "git_blob": "61b38c7872012c11be9d3880a23d8337c6a88dc6",
+          "sha256": "ac307b85358a9365deddd5b62db68297a97ef9aa46762ddc5eb1ec79f18e6541"
+        },
+        "src/tempera_bio/scientific_source_consumer.py": {
+          "git_blob": "60e01377cb8105eb8a6449253335aaac1c4af516",
+          "sha256": "690ba6c55c9bd65d32afcd86c2dae54f03e9b2132b98788a83dbb325923dc43c"
+        },
+        "src/tempera_bio/scientific_source_fixtures.py": {
+          "git_blob": "ee88642e040b11d97ebcfb3b0c9470b5f7bd9f23",
+          "sha256": "b8de03075a56cedf841e033918a25c05f09477d2925b300b814ea6e2a58ea967"
+        },
+        "src/tempera_bio/scientific_source_workflow.py": {
+          "git_blob": "1ebde13cfcdb1bf383417269838a447687f80872",
+          "sha256": "fedb58dbd17fdeacfcffcc973455a77627abccf41d225516b533acec61569048"
+        }
+      }
+    },
+    "mcp": {
+      "repository": "tempera-dev/tempera-mcp",
+      "branch": "codex/bio-source-inspection-consumer-v1",
+      "commit": "da99bf4175f5a178d9b7f1788832b0786d367a61",
+      "artifacts": {
+        "contracts/bio-source-inspection-consumer.staging.lock.json": {
+          "git_blob": "c90acec422a250d014e34a7221cee0170709f0a1",
+          "sha256": "090579e72821d6849eb5cc31969a066ef4132eef7da776bd0af8c6297569e4f9"
+        },
+        "contracts/bio-source-inspection-consumer-fixtures.json": {
+          "git_blob": "b22ed98f595b519b704ba33c185677a3e60bf0b8",
+          "sha256": "32e22a99aca2179050a8d6d6691f7e1e4c7657f7a4dfff0269627dfc47d412ea"
+        },
+        "scripts/verify-bio-source-inspection-consumer.py": {
+          "git_blob": "e6a3a5e301b11b5623cae1bf57d000abe6015ed0",
+          "sha256": "3f2075b26041aa25a708aa7cd62d389d53566a3516b06f952f3a3edc1f0b531a"
+        },
+        "scripts/test-verify-bio-source-inspection-consumer.py": {
+          "git_blob": "a23ff042eeb82512bdd16a4cba73c5ec3e1f8d91",
+          "sha256": "39b8af7c3ae37b2f03fe6edf826489751d08edb7b177fc9f7a3b877765038378"
+        }
+      }
+    }
+  },
+  "fixture": {
+    "path": "contracts/bio-source-inspection-sdk-consumer-fixtures.json",
+    "sha256": "32e22a99aca2179050a8d6d6691f7e1e4c7657f7a4dfff0269627dfc47d412ea",
+    "content_digest": "sha256:db3ba4de63d2674f4d6b3023a4ef3fc780dc1ff8a8cf500189233c0eb3f48334",
+    "domain_receipts": {
+      "protein_variant": {
+        "workflow_receipt_digest": "sha256:6af08b11daaef803d5e83c57394e47ae35c73e4e7e6db590dff3ee6f216b9e6d",
+        "consumer_verification_digest": "sha256:556c1b51ae3ff7b6069b66dd4e6305b0861f09b6ed8674977a4bfe43f4f58910"
+      },
+      "metabolic_feasibility": {
+        "workflow_receipt_digest": "sha256:fe68bbbad23c315ff8e16c7f3d5b6ed68f913a49e9d3353c79421720184e8b61",
+        "consumer_verification_digest": "sha256:b24a7d7ab539ee88a16737cb0d6340aec114a093368531477341638bb34ddf8a"
+      },
+      "neuronal_response": {
+        "workflow_receipt_digest": "sha256:cdb8370021a023fa2de583dca6f484ffd089323717cd2b0b6ecd211d5c6dc44b",
+        "consumer_verification_digest": "sha256:8201b2c3105c17900e6f5b3c33f8989a49f6facdff9908dc59b0a90472c1f663"
+      }
+    }
+  },
+  "consumer": {
+    "implementation": "packages/python/src/tempera_sdk/bio_source_inspection.py",
+    "package_root_export": false,
+    "mcp_tool_registered": false,
+    "workflow_registered": false,
+    "network": "denied",
+    "source_admission": false,
+    "evidence_stage_promotion": false,
+    "graph_write": false,
+    "proof_promotion": false,
+    "physical_action": false
+  },
+  "compatibility": {
+    "owner": "tempera-sdk",
+    "python": ">=3.10,<4",
+    "dependencies": "stdlib-only",
+    "rollout": "staging-verification-only",
+    "rollback": "remove unexported verifier and sealed fixtures",
+    "affected_consumers": [
+      "tempera-sdk-python-staging-tests"
+    ]
+  },
+  "claim_ceiling": "independent_cross_repo_contract_conformance",
+  "content_digest": "sha256:ec24830ddc58035c32ee123ef5bf0c1aad0761263d1f24bb30abac051e1b1626"
+}

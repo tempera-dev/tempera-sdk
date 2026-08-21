@@ -1,0 +1,261 @@
+{
+  "claim_ceiling": "portable_receipt_contract_conformance",
+  "consumer_policy": {
+    "evidence_stage_promotion": "prohibited",
+    "graph_write": "prohibited",
+    "network": "denied",
+    "physical_action": "prohibited",
+    "proof_promotion": "prohibited",
+    "runtime_registration": "prohibited",
+    "source_admission": "prohibited"
+  },
+  "content_digest": "sha256:db3ba4de63d2674f4d6b3023a4ef3fc780dc1ff8a8cf500189233c0eb3f48334",
+  "fixtures": [
+    {
+      "consumer_verification": {
+        "authority": {
+          "evidence_stage_promotion": false,
+          "graph_write": false,
+          "physical_action": false,
+          "proof_promotion": false
+        },
+        "claim_ceiling": "portable_receipt_contract_conformance",
+        "consumer_registration": {
+          "mcp_tool": false,
+          "sdk_adapter": false,
+          "workflow": false
+        },
+        "content_digest": "sha256:556c1b51ae3ff7b6069b66dd4e6305b0861f09b6ed8674977a4bfe43f4f58910",
+        "domain": "protein_variant",
+        "producer_contract": {
+          "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+          "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+        },
+        "request_id": "protein-variant-consumer-fixture-001",
+        "result": {
+          "contract_conformant": true,
+          "producer_reexecuted": false,
+          "source_admitted": false
+        },
+        "schema_version": "tempera.scientific-source-inspection-consumer-verification/v1",
+        "verified_bindings": {
+          "artifact_digest": "sha256:e4542a8c6ae86a6d50b07de9dd4de08ccf1df526909d6563039569efb6226a77",
+          "connector_receipt_digest": "sha256:ab78ed78c11cda95e2e2ba4b2b79779af31bcd43cacf300f72c50a82de1a4e03",
+          "inspection_receipt_digest": "sha256:82e6c35fa3a1712e39915bce14e7073dc83b282f4e5d07a276b594f9ca888503",
+          "request_digest": "sha256:6d5c3a1e6949a1760fac4ad6d472dc0720d9de446657254d2c379d626194356b",
+          "source_dispatch_receipt_digest": "sha256:25bbdb771a54542d0cdd67ec5ef951b169b66458d742f2e7267eeb8b39b9c445",
+          "source_lock_digest": "sha256:28c97da2245ebd35162bc2890757fa881c35e67405a8d13f990bb172fee59266"
+        },
+        "verifier_ref": "tempera_bio.scientific_source_consumer/v1",
+        "workflow_receipt_digest": "sha256:6af08b11daaef803d5e83c57394e47ae35c73e4e7e6db590dff3ee6f216b9e6d"
+      },
+      "domain": "protein_variant",
+      "workflow_receipt": {
+        "artifact_digest": "sha256:e4542a8c6ae86a6d50b07de9dd4de08ccf1df526909d6563039569efb6226a77",
+        "boundaries": {
+          "claim_ceiling": "software_contract_conformance",
+          "evidence_stage_promotion": "prohibited",
+          "graph_authority": "none",
+          "graph_projection": "not_emitted_pre_admission",
+          "physical_action": "prohibited",
+          "proof_promotion": "prohibited"
+        },
+        "connector_receipt_digest": "sha256:ab78ed78c11cda95e2e2ba4b2b79779af31bcd43cacf300f72c50a82de1a4e03",
+        "content_digest": "sha256:6af08b11daaef803d5e83c57394e47ae35c73e4e7e6db590dff3ee6f216b9e6d",
+        "domain": "protein_variant",
+        "eligibility": {
+          "evaluation": false,
+          "official_claim": false,
+          "training": false
+        },
+        "inspection_receipt_digest": "sha256:82e6c35fa3a1712e39915bce14e7073dc83b282f4e5d07a276b594f9ca888503",
+        "next_gate": "source_admission_review",
+        "portable_consumer_contract": {
+          "mcp_tool": "required_not_registered",
+          "sdk_adapter": "required_not_registered",
+          "workflow_registration": "required_not_registered"
+        },
+        "request_digest": "sha256:6d5c3a1e6949a1760fac4ad6d472dc0720d9de446657254d2c379d626194356b",
+        "request_id": "protein-variant-consumer-fixture-001",
+        "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+        "source_dispatch_receipt_digest": "sha256:25bbdb771a54542d0cdd67ec5ef951b169b66458d742f2e7267eeb8b39b9c445",
+        "source_lock_digest": "sha256:28c97da2245ebd35162bc2890757fa881c35e67405a8d13f990bb172fee59266",
+        "status": "inspection_complete_not_admitted",
+        "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+      }
+    },
+    {
+      "consumer_verification": {
+        "authority": {
+          "evidence_stage_promotion": false,
+          "graph_write": false,
+          "physical_action": false,
+          "proof_promotion": false
+        },
+        "claim_ceiling": "portable_receipt_contract_conformance",
+        "consumer_registration": {
+          "mcp_tool": false,
+          "sdk_adapter": false,
+          "workflow": false
+        },
+        "content_digest": "sha256:b24a7d7ab539ee88a16737cb0d6340aec114a093368531477341638bb34ddf8a",
+        "domain": "metabolic_feasibility",
+        "producer_contract": {
+          "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+          "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+        },
+        "request_id": "metabolic-feasibility-consumer-fixture-001",
+        "result": {
+          "contract_conformant": true,
+          "producer_reexecuted": false,
+          "source_admitted": false
+        },
+        "schema_version": "tempera.scientific-source-inspection-consumer-verification/v1",
+        "verified_bindings": {
+          "artifact_digest": "sha256:b55738cb3e4b296dbcd1e675c967db6eb146d2ab0338315a8d4d85415327063f",
+          "connector_receipt_digest": "sha256:3bf89b0a2ccb4444be84dcf626fe7c0c6af0e78d7c67c277720144d5bf57de97",
+          "inspection_receipt_digest": "sha256:d39de58719e37d8926a1acf3e197c7ce176fd61733ebc8933302fe25131d86e4",
+          "request_digest": "sha256:83ccabc7e22fc3b2056b7c3315d539467c9a8409bb1de6d08ba6d3ce9cf7c47a",
+          "source_dispatch_receipt_digest": "sha256:77b4aff98b6e917330f8327abffb4b8e0f730bee73019b9c0f957d59e8557164",
+          "source_lock_digest": "sha256:d4c0ae6abc968ae414298777038e8d43225f9fb297e99f3d627b37cea14dc523"
+        },
+        "verifier_ref": "tempera_bio.scientific_source_consumer/v1",
+        "workflow_receipt_digest": "sha256:fe68bbbad23c315ff8e16c7f3d5b6ed68f913a49e9d3353c79421720184e8b61"
+      },
+      "domain": "metabolic_feasibility",
+      "workflow_receipt": {
+        "artifact_digest": "sha256:b55738cb3e4b296dbcd1e675c967db6eb146d2ab0338315a8d4d85415327063f",
+        "boundaries": {
+          "claim_ceiling": "software_contract_conformance",
+          "evidence_stage_promotion": "prohibited",
+          "graph_authority": "none",
+          "graph_projection": "not_emitted_pre_admission",
+          "physical_action": "prohibited",
+          "proof_promotion": "prohibited"
+        },
+        "connector_receipt_digest": "sha256:3bf89b0a2ccb4444be84dcf626fe7c0c6af0e78d7c67c277720144d5bf57de97",
+        "content_digest": "sha256:fe68bbbad23c315ff8e16c7f3d5b6ed68f913a49e9d3353c79421720184e8b61",
+        "domain": "metabolic_feasibility",
+        "eligibility": {
+          "evaluation": false,
+          "official_claim": false,
+          "training": false
+        },
+        "inspection_receipt_digest": "sha256:d39de58719e37d8926a1acf3e197c7ce176fd61733ebc8933302fe25131d86e4",
+        "next_gate": "source_admission_review",
+        "portable_consumer_contract": {
+          "mcp_tool": "required_not_registered",
+          "sdk_adapter": "required_not_registered",
+          "workflow_registration": "required_not_registered"
+        },
+        "request_digest": "sha256:83ccabc7e22fc3b2056b7c3315d539467c9a8409bb1de6d08ba6d3ce9cf7c47a",
+        "request_id": "metabolic-feasibility-consumer-fixture-001",
+        "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+        "source_dispatch_receipt_digest": "sha256:77b4aff98b6e917330f8327abffb4b8e0f730bee73019b9c0f957d59e8557164",
+        "source_lock_digest": "sha256:d4c0ae6abc968ae414298777038e8d43225f9fb297e99f3d627b37cea14dc523",
+        "status": "inspection_complete_not_admitted",
+        "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+      }
+    },
+    {
+      "consumer_verification": {
+        "authority": {
+          "evidence_stage_promotion": false,
+          "graph_write": false,
+          "physical_action": false,
+          "proof_promotion": false
+        },
+        "claim_ceiling": "portable_receipt_contract_conformance",
+        "consumer_registration": {
+          "mcp_tool": false,
+          "sdk_adapter": false,
+          "workflow": false
+        },
+        "content_digest": "sha256:8201b2c3105c17900e6f5b3c33f8989a49f6facdff9908dc59b0a90472c1f663",
+        "domain": "neuronal_response",
+        "producer_contract": {
+          "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+          "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+        },
+        "request_id": "neuronal-response-consumer-fixture-001",
+        "result": {
+          "contract_conformant": true,
+          "producer_reexecuted": false,
+          "source_admitted": false
+        },
+        "schema_version": "tempera.scientific-source-inspection-consumer-verification/v1",
+        "verified_bindings": {
+          "artifact_digest": "sha256:3bde30c3614036a30213d18e409ac6561f4ad0a17e3223c8da9e3541425b1090",
+          "connector_receipt_digest": "sha256:7c87bbc668b2854cccd646b138123720fcbae3cb8bd77806978fb710d1fc88aa",
+          "inspection_receipt_digest": "sha256:ab4ca95ed3611ee1a3b0332e0e456cccbb1dee92e3bdb61c6f022e2d5aef97a1",
+          "request_digest": "sha256:d9c5041ac57f367d2caa72aaeeebc38e6de1f76986fa7adbb6dbafbc5d245b37",
+          "source_dispatch_receipt_digest": "sha256:ea18a1d55723e426f7ff03946c8814ec1f8c49d46bc14ad15bdf2ee0a4dca249",
+          "source_lock_digest": "sha256:1762db5b32f3fe1cc105d105b841321f3ddb70b37b5470ef6a5937d6aa497338"
+        },
+        "verifier_ref": "tempera_bio.scientific_source_consumer/v1",
+        "workflow_receipt_digest": "sha256:cdb8370021a023fa2de583dca6f484ffd089323717cd2b0b6ecd211d5c6dc44b"
+      },
+      "domain": "neuronal_response",
+      "workflow_receipt": {
+        "artifact_digest": "sha256:3bde30c3614036a30213d18e409ac6561f4ad0a17e3223c8da9e3541425b1090",
+        "boundaries": {
+          "claim_ceiling": "software_contract_conformance",
+          "evidence_stage_promotion": "prohibited",
+          "graph_authority": "none",
+          "graph_projection": "not_emitted_pre_admission",
+          "physical_action": "prohibited",
+          "proof_promotion": "prohibited"
+        },
+        "connector_receipt_digest": "sha256:7c87bbc668b2854cccd646b138123720fcbae3cb8bd77806978fb710d1fc88aa",
+        "content_digest": "sha256:cdb8370021a023fa2de583dca6f484ffd089323717cd2b0b6ecd211d5c6dc44b",
+        "domain": "neuronal_response",
+        "eligibility": {
+          "evaluation": false,
+          "official_claim": false,
+          "training": false
+        },
+        "inspection_receipt_digest": "sha256:ab4ca95ed3611ee1a3b0332e0e456cccbb1dee92e3bdb61c6f022e2d5aef97a1",
+        "next_gate": "source_admission_review",
+        "portable_consumer_contract": {
+          "mcp_tool": "required_not_registered",
+          "sdk_adapter": "required_not_registered",
+          "workflow_registration": "required_not_registered"
+        },
+        "request_digest": "sha256:d9c5041ac57f367d2caa72aaeeebc38e6de1f76986fa7adbb6dbafbc5d245b37",
+        "request_id": "neuronal-response-consumer-fixture-001",
+        "schema_version": "tempera.scientific-source-inspection-workflow-receipt/v1",
+        "source_dispatch_receipt_digest": "sha256:ea18a1d55723e426f7ff03946c8814ec1f8c49d46bc14ad15bdf2ee0a4dca249",
+        "source_lock_digest": "sha256:1762db5b32f3fe1cc105d105b841321f3ddb70b37b5470ef6a5937d6aa497338",
+        "status": "inspection_complete_not_admitted",
+        "workflow_ref": "tempera_bio.scientific_source_workflow/v1"
+      }
+    }
+  ],
+  "producer": {
+    "artifacts": {
+      "contracts/scientific-source-inspection-consumer-verification-v1.schema.json": {
+        "git_blob": "54620c7edd5f8fb72660538a47151a2a71eb4031",
+        "sha256": "8fb0b67f47d80b37f4634400cbabb1bb5d726882a53cacfd47878cd7a5486168"
+      },
+      "contracts/scientific-source-inspection-request-v1.schema.json": {
+        "git_blob": "a6a0f54e9f2cae823b238b653f77ddd812b6e83a",
+        "sha256": "39d29e89b4a5310a076f27c99251c9681535b20817bdc6722bb8442c2660d003"
+      },
+      "contracts/scientific-source-inspection-workflow-receipt-v1.schema.json": {
+        "git_blob": "61b38c7872012c11be9d3880a23d8337c6a88dc6",
+        "sha256": "ac307b85358a9365deddd5b62db68297a97ef9aa46762ddc5eb1ec79f18e6541"
+      },
+      "src/tempera_bio/scientific_source_consumer.py": {
+        "git_blob": "60e01377cb8105eb8a6449253335aaac1c4af516",
+        "sha256": "690ba6c55c9bd65d32afcd86c2dae54f03e9b2132b98788a83dbb325923dc43c"
+      },
+      "src/tempera_bio/scientific_source_workflow.py": {
+        "git_blob": "1ebde13cfcdb1bf383417269838a447687f80872",
+        "sha256": "fedb58dbd17fdeacfcffcc973455a77627abccf41d225516b533acec61569048"
+      }
+    },
+    "commit": "fca1bf28ca7baa8c2335ad2e079d6dc90492aede",
+    "repository": "tempera-dev/tempera-bio"
+  },
+  "schema_version": "tempera.scientific-source-inspection-consumer-fixtures/v1"
+}
