@@ -1,0 +1,71 @@
+{
+  "authority": {
+    "benchmark_release": false,
+    "evidence_stage_promotion": false,
+    "graph_write": false,
+    "merge": false,
+    "physical_action": false,
+    "proof_promotion": false,
+    "scientific_truth": false,
+    "source_admission": false
+  },
+  "claim_ceiling": "independent_mcp_v2_receipt_conformance",
+  "content_digest": "sha256:dabfeaea7a106f9431b20630a06a3941cd0a26e346ca9e3ad27ac90e9ac5b6fe",
+  "experiment_receipts_present": {
+    "metabolic_feasibility": {
+      "admitted_source": false,
+      "compute_run": false,
+      "domain_evaluation": false,
+      "independent_model_replay": false,
+      "pinned_model": false,
+      "uncertainty_ood": false
+    },
+    "neuronal_response": {
+      "admitted_source": false,
+      "compute_run": false,
+      "domain_evaluation": false,
+      "independent_model_replay": false,
+      "pinned_model": false,
+      "uncertainty_ood": false
+    },
+    "protein_variant": {
+      "admitted_source": false,
+      "compute_run": false,
+      "domain_evaluation": false,
+      "independent_model_replay": false,
+      "pinned_model": false,
+      "uncertainty_ood": false
+    }
+  },
+  "graph_projection_eligible": false,
+  "package_root_exported": false,
+  "producer_reexecuted": false,
+  "result": "staging_mcp_v2_receipt_conformant_not_exported",
+  "runtime_registered": false,
+  "schema_version": "tempera.sdk.bio-canonical-domain-v2-consumer-verification/v1",
+  "sdk_adapter_registered": false,
+  "source_admitted": false,
+  "upstream": {
+    "commit": "15fae3667b2898c95b592caab16b55ed67b17638",
+    "repository": "tempera-dev/tempera-mcp",
+    "source_lock_digest": "sha256:13a226f87e26eac31775d4e39fddefe9733929692de511b7e0ee39fd00532a35",
+    "verification_digest": "sha256:8f2062dd40321585c1f27e40129052fc1a57b69cc3fcf9cb82e2904b52bb9e21"
+  },
+  "verified_domains": {
+    "metabolic_feasibility": {
+      "adapter_result_digest": "sha256:62546431fd88dcdde7cd2e9d37706582dc86d11b6ad582b2af1f7146fabc2c98",
+      "entrypoint_ref": "tempera_bio.canonical_domain_inspector_v2.inspect_metabolic_feasibility_from_data_engine_v2/v2",
+      "v2_result_digest": "sha256:93587fc2c6d91a632ee9e21e283f29f43dd6955fa4ffcbcc3fd155c200d68b5c"
+    },
+    "neuronal_response": {
+      "adapter_result_digest": "sha256:aba54362529d5b3ba8fa3b7724eae84582e9e33d2eb098c5816909d40e6e4e23",
+      "entrypoint_ref": "tempera_bio.canonical_domain_inspector_v2.inspect_neuronal_response_from_data_engine_v2/v2",
+      "v2_result_digest": "sha256:9c94b1c156e21a89cf40082c6c52d6743f1deda7f890121658f5ba73ea8c2801"
+    },
+    "protein_variant": {
+      "adapter_result_digest": "sha256:73fba2bf2566d1fb4c769b857417e72d690b60a18bc6085e1b9776690870cdcf",
+      "entrypoint_ref": "tempera_bio.canonical_domain_inspector_v2.inspect_protein_variant_from_data_engine_v2/v2",
+      "v2_result_digest": "sha256:dc33f270e4d97f5b1a546462890d08a1b76307173816a67c80adfe1921f3e025"
+    }
+  }
+}
