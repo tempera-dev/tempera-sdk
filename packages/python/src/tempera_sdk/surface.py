@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 6
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-payments', 'tempera-voice', 'tempera-clearing')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-investigations', 'tempera-payments', 'tempera-voice', 'tempera-clearing')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'dataset:read', 'dataset:write', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -809,6 +809,183 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Rotate an API key's secret; the new secret is returned exactly once."
+        },
+        {
+            "id": "data_source_connections_resolve_internal",
+            "upstream_operation_id": "dataSourceConnections.resolveInternal",
+            "method": "POST",
+            "path": "/v1/internal/data-source-connections:resolve",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "project",
+                "connectionRef",
+                "connectionRevision",
+                "connector"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "project",
+                "connectionRef",
+                "connectionRevision",
+                "connector"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint."
+        },
+        {
+            "id": "data_source_connections_list",
+            "upstream_operation_id": "dataSourceConnections.list",
+            "method": "GET",
+            "path": "/v1/data-source-connections",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List redacted data-source connection metadata in the selected project and environment."
+        },
+        {
+            "id": "data_source_connections_create",
+            "upstream_operation_id": "dataSourceConnections.create",
+            "method": "POST",
+            "path": "/v1/data-source-connections",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "connectionId",
+                "connector",
+                "name",
+                "secretRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "connectionId",
+                "connector",
+                "name",
+                "secretRef"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create project-bound connector metadata using only an external secret reference."
+        },
+        {
+            "id": "data_source_connections_get",
+            "upstream_operation_id": "dataSourceConnections.get",
+            "method": "GET",
+            "path": "/v1/data-source-connections/{id}",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get redacted metadata for one data-source connection."
+        },
+        {
+            "id": "data_source_connections_update",
+            "upstream_operation_id": "dataSourceConnections.update",
+            "method": "PATCH",
+            "path": "/v1/data-source-connections/{id}",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "updateMask"
+            ],
+            "required_query": [
+                "updateMask"
+            ],
+            "body": [
+                "expectedRevision",
+                "name",
+                "secretRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Update a connection name or secret reference with exact-revision concurrency control."
+        },
+        {
+            "id": "data_source_connections_revoke",
+            "upstream_operation_id": "dataSourceConnections.revoke",
+            "method": "DELETE",
+            "path": "/v1/data-source-connections/{id}",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Revoke a data-source connection immediately. Revoking an unknown id is a no-op."
         },
         {
             "id": "provider_connections_list",
@@ -2385,6 +2562,180 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Delete one passkey after recent AAL2 step-up."
+        },
+        {
+            "id": "clearing_admissions_create",
+            "upstream_operation_id": "clearingAdmissions.create",
+            "method": "POST",
+            "path": "/v1/clearing/admissions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionId",
+                "workspace",
+                "principalId",
+                "canonicalActionId",
+                "canonicalRequestDigest",
+                "preparedEffectId",
+                "preparedEffectDigest",
+                "operation",
+                "resourceSelectors",
+                "economicAuthority",
+                "mandateId",
+                "mandateDigest",
+                "riskAssessmentId",
+                "riskAssessmentDigest",
+                "riskReservationId",
+                "riskReservationDigest",
+                "authorizationContextDigest",
+                "consumptionKey",
+                "ttlSeconds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionId",
+                "workspace",
+                "principalId",
+                "canonicalActionId",
+                "canonicalRequestDigest",
+                "preparedEffectId",
+                "preparedEffectDigest",
+                "operation",
+                "resourceSelectors",
+                "economicAuthority",
+                "mandateId",
+                "mandateDigest",
+                "riskAssessmentId",
+                "riskAssessmentDigest",
+                "riskReservationId",
+                "riskReservationDigest",
+                "authorizationContextDigest",
+                "consumptionKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval."
+        },
+        {
+            "id": "clearing_admissions_get",
+            "upstream_operation_id": "clearingAdmissions.get",
+            "method": "GET",
+            "path": "/v1/clearing/admissions/{admissionId}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "clearing:actions:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read a Clearing admission from the caller's exact workspace."
+        },
+        {
+            "id": "clearing_admissions_claim",
+            "upstream_operation_id": "clearingAdmissions.claim",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:claim",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseSeconds"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionDigest",
+                "leaseTokenDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:commit",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Atomically move one READY admission to a fenced lease before dispatch."
+        },
+        {
+            "id": "clearing_admissions_finalize",
+            "upstream_operation_id": "clearingAdmissions.finalize",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:finalize",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseFence",
+                "clearingCommitDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "admissionDigest",
+                "leaseTokenDigest",
+                "leaseFence",
+                "clearingCommitDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "clearing:actions:commit",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Consume a matching lease with one durable Clearing commit identity."
+        },
+        {
+            "id": "clearing_admissions_mark_recovery_required",
+            "upstream_operation_id": "clearingAdmissions.markRecoveryRequired",
+            "method": "POST",
+            "path": "/v1/clearing/admissions/{admissionId}:markRecoveryRequired",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-clearing",
+            "path_params": [
+                "admissionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "clearing:actions:reconcile",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Monotonically mark an expired lease as requiring authoritative reconciliation."
         }
     ],
     "palette": [
@@ -6253,6 +6604,253 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
+        },
+        {
+            "id": "verify_risk_clearing_evidence_live",
+            "upstream_operation_id": "verifyRiskClearingEvidenceLive",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Verify one signed Risk Clearing evidence envelope against live Risk state."
+        },
+        {
+            "id": "abort_risk_clearing_reservation",
+            "upstream_operation_id": "abortRiskClearingReservation",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "abortReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "abortReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Release a reservation only when Clearing proved no external dispatch occurred."
+        },
+        {
+            "id": "mark_risk_clearing_outcome_unknown",
+            "upstream_operation_id": "markRiskClearingOutcomeUnknown",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "dispatchAttemptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "dispatchAttemptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Hold budget capacity after an ambiguous provider dispatch."
+        },
+        {
+            "id": "open_risk_clearing_exposure",
+            "upstream_operation_id": "openRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "executionReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "executionReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record an independently observed provider effect while retaining capacity."
+        },
+        {
+            "id": "record_risk_clearing_provisional_outcome",
+            "upstream_operation_id": "recordRiskClearingProvisionalOutcome",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "outcomeDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "outcomeDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record a non-final observed outcome without releasing capacity."
+        },
+        {
+            "id": "record_risk_clearing_compensation",
+            "upstream_operation_id": "recordRiskClearingCompensation",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "compensationReceiptDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "compensationReceiptDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Record compensation as a forward action without releasing capacity."
+        },
+        {
+            "id": "dispute_risk_clearing_exposure",
+            "upstream_operation_id": "disputeRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "disputeEvidenceDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "disputeEvidenceDigest"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Keep capacity held when authoritative evidence conflicts."
+        },
+        {
+            "id": "settle_risk_clearing_exposure",
+            "upstream_operation_id": "settleRiskClearingExposure",
+            "method": "POST",
+            "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "project",
+                "reservationId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "envelope",
+                "outcomeDigest",
+                "realizedLoss"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "envelope",
+                "outcomeDigest",
+                "realizedLoss"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Settle a mature reconciled outcome and release held capacity."
         },
         {
             "id": "export_audit",
@@ -10423,6 +11021,239 @@ OPERATIONS = {
             "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
         },
         {
+            "id": "projects_source_definitions_create",
+            "upstream_operation_id": "projects.sourceDefinitions.create",
+            "method": "POST",
+            "path": "/v1/{parent}/sourceDefinitions",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [
+                "sourceDefinitionId"
+            ],
+            "required_query": [
+                "sourceDefinitionId"
+            ],
+            "body": [
+                "connector",
+                "connectionRef",
+                "connectionRevision",
+                "config",
+                "artifactType",
+                "source",
+                "metadata",
+                "enabled"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "connector",
+                "connectionRef",
+                "connectionRevision",
+                "config",
+                "artifactType"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connector:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create an immutable-versioned connector source definition."
+        },
+        {
+            "id": "projects_source_definitions_list",
+            "upstream_operation_id": "projects.sourceDefinitions.list",
+            "method": "GET",
+            "path": "/v1/{parent}/sourceDefinitions",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connector:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List project source definitions."
+        },
+        {
+            "id": "projects_source_definitions_get",
+            "upstream_operation_id": "projects.sourceDefinitions.get",
+            "method": "GET",
+            "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "sourceDefinitionId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connector:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get one source definition."
+        },
+        {
+            "id": "projects_source_definitions_patch",
+            "upstream_operation_id": "projects.sourceDefinitions.patch",
+            "method": "PATCH",
+            "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "sourceDefinitionId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [
+                "updateMask"
+            ],
+            "required_query": [
+                "updateMask"
+            ],
+            "body": [
+                "etag",
+                "connector",
+                "connectionRef",
+                "connectionRevision",
+                "config",
+                "artifactType",
+                "source",
+                "metadata",
+                "enabled"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "etag"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connector:manage",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a new version of a source definition."
+        },
+        {
+            "id": "projects_source_definitions_run",
+            "upstream_operation_id": "projects.sourceDefinitions.run",
+            "method": "POST",
+            "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "sourceDefinitionId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "required_query": [],
+            "body": [
+                "producerVersion",
+                "idempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "producerVersion",
+                "idempotencyKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connector:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Start an exact-replay connector run from a reviewed definition."
+        },
+        {
+            "id": "projects_connector_runs_list",
+            "upstream_operation_id": "projects.connectorRuns.list",
+            "method": "GET",
+            "path": "/v1/{parent}/connectorRuns",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connector:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List durable connector runs."
+        },
+        {
+            "id": "projects_connector_runs_get",
+            "upstream_operation_id": "projects.connectorRuns.get",
+            "method": "GET",
+            "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "parent",
+                "connectorRunId"
+            ],
+            "path_param_templates": {
+                "parent": "projects/*"
+            },
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connector:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Get one durable connector run and its terminal receipt."
+        },
+        {
             "id": "extract_source",
             "upstream_operation_id": "projects.sources.extract",
             "method": "POST",
@@ -10460,7 +11291,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": "dataset:write",
+            "scope": "connector:manage",
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Extract bounded objects or records from a configured source connector."
@@ -10489,7 +11320,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": "dataset:read",
+            "scope": "connector:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "List registered source connectors for a project."

@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "f4bf0e62b17ff61d28072a5eca8f5a4cb0a21d53",
+    "commit": "7b9acb1d8226282f452aff28e5e415b05f71a4e1",
     "files": [
       {
-        "git_blob": "3ae816e647657d3a324874e86896f9eab4203cf3",
+        "git_blob": "b78c3cc5aec96e69d22e23fae6874705cf959a57",
         "path": "api/openapi.yaml",
-        "sha256": "06a3007c8cee428cb2f6aab291033c15e40851416b117df71e504a33234a8d69"
+        "sha256": "baddc1dadc133cf47338053b728f15df41433e8c453e012e02edf9caaef0e971"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,19 +15,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "f915f2c55bf94eb835794198c3b1cc79e8393e0a",
+        "git_blob": "77e52cbd3e3d538e6e9c5399add3674b87d70b9e",
         "path": "src/data_engine/app.py",
-        "sha256": "7835f2fef4ebb346ec9cda7d2f0fd55db4c8470855172822c8097870e061f9c3"
+        "sha256": "7b3454b5863ee30cf96f88f97720072cdc54522c7a9823ff564f77d52446210f"
       },
       {
-        "git_blob": "4f7777710cdb846140b170a03a070b2331862771",
+        "git_blob": "341cd1063cd400c8c30bd0b8c86d83c4b7b1a53b",
         "path": "src/data_engine/mcp.py",
-        "sha256": "78d1824e3ddccd638887f2c713d56ec1edf9a94d434c5092cf48ab2cf353f5dd"
+        "sha256": "11ecf62e3ae9c247dd0f50c6279771c9a656bc17b047c8a679b4cefaab1f7206"
       },
       {
-        "git_blob": "be1cf96c5b8a167a253b174ba5c529d65380b3d6",
+        "git_blob": "3a262100e85b64dc7b7903d700a73c96f85fcf92",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "64b5d4593b8c307cc160afe3d57ee81d4d1558f83b1577b2ff8c737c172619bb"
+        "sha256": "e9303f609e4b0dc2c4e5043cfc76ca44f480c24ce98aa00a32ac215ac1853c56"
       }
     ],
     "repository": "tempera-dev/data-engine"
@@ -7144,6 +7144,570 @@
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Run a pre-reviewed project source definition. The tool cannot supply buckets, SQL, SOQL, or credentials; it returns a durable receipt-bound connector run.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotencyKey": {
+            "description": "Exact-replay connector run key.",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "producerVersion": {
+            "description": "Immutable connector adapter version or commit identifier.",
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "project": {
+            "description": "Project id (the {project} path segment).",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "sourceDefinitionId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "sourceDefinitionId",
+          "producerVersion",
+          "idempotencyKey"
+        ],
+        "type": "object"
+      },
+      "name": "projects.sourceDefinitions.run",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "artifactNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "attemptCount": {
+            "type": "integer"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "connectionRef": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string"
+          },
+          "connectorRunId": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "error": {
+            "additionalProperties": true,
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "errorCount": {
+            "type": "integer"
+          },
+          "extractedCount": {
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "ingestedCount": {
+            "type": "integer"
+          },
+          "itemHashes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "producerVersion": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          },
+          "providerReceipt": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "receipt": {
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "artifactNames": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "complete": {
+                    "type": "boolean"
+                  },
+                  "connectionRef": {
+                    "type": "string"
+                  },
+                  "connectionRevision": {
+                    "type": "string"
+                  },
+                  "connector": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  },
+                  "errorCount": {
+                    "type": "integer"
+                  },
+                  "extractedCount": {
+                    "type": "integer"
+                  },
+                  "ingestedCount": {
+                    "type": "integer"
+                  },
+                  "itemHashes": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "producerVersion": {
+                    "type": "string"
+                  },
+                  "providerReceipt": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "run": {
+                    "type": "string"
+                  },
+                  "schema": {
+                    "const": "data-engine.connector-run-receipt.v1"
+                  },
+                  "sourceDefinition": {
+                    "type": "string"
+                  },
+                  "sourceDefinitionEtag": {
+                    "type": "string"
+                  },
+                  "sourceDefinitionVersion": {
+                    "type": "integer"
+                  },
+                  "sourceSnapshotHash": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "SUCCEEDED",
+                      "INCOMPLETE",
+                      "FAILED"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "schema",
+                  "run",
+                  "status",
+                  "complete",
+                  "sourceDefinition",
+                  "sourceDefinitionVersion",
+                  "sourceDefinitionEtag",
+                  "connectionRef",
+                  "connectionRevision",
+                  "connector",
+                  "producerVersion",
+                  "extractedCount",
+                  "ingestedCount",
+                  "errorCount",
+                  "artifactNames",
+                  "itemHashes",
+                  "providerReceipt",
+                  "sourceSnapshotHash",
+                  "startTime",
+                  "endTime"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceDefinition": {
+            "type": "string"
+          },
+          "sourceDefinitionEtag": {
+            "type": "string"
+          },
+          "sourceDefinitionVersion": {
+            "type": "integer"
+          },
+          "sourceSnapshotHash": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "SUCCEEDED",
+              "INCOMPLETE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "updateTime": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "project",
+          "connectorRunId",
+          "sourceDefinition",
+          "sourceDefinitionVersion",
+          "sourceDefinitionEtag",
+          "connectionRef",
+          "connectionRevision",
+          "connector",
+          "producerVersion",
+          "idempotencyKey",
+          "status",
+          "attemptCount",
+          "complete",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
+          "itemHashes",
+          "providerReceipt",
+          "sourceSnapshotHash",
+          "receipt",
+          "error",
+          "createTime",
+          "startTime",
+          "endTime",
+          "updateTime"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get a project-bound connector run and its immutable terminal receipt.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "connectorRunId": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "project": {
+            "description": "Project id (the {project} path segment).",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "connectorRunId"
+        ],
+        "type": "object"
+      },
+      "name": "projects.connectorRuns.get",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "artifactNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "attemptCount": {
+            "type": "integer"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "connectionRef": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string"
+          },
+          "connectorRunId": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "error": {
+            "additionalProperties": true,
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "errorCount": {
+            "type": "integer"
+          },
+          "extractedCount": {
+            "type": "integer"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "ingestedCount": {
+            "type": "integer"
+          },
+          "itemHashes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "producerVersion": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          },
+          "providerReceipt": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "receipt": {
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "artifactNames": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "complete": {
+                    "type": "boolean"
+                  },
+                  "connectionRef": {
+                    "type": "string"
+                  },
+                  "connectionRevision": {
+                    "type": "string"
+                  },
+                  "connector": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  },
+                  "errorCount": {
+                    "type": "integer"
+                  },
+                  "extractedCount": {
+                    "type": "integer"
+                  },
+                  "ingestedCount": {
+                    "type": "integer"
+                  },
+                  "itemHashes": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "producerVersion": {
+                    "type": "string"
+                  },
+                  "providerReceipt": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "run": {
+                    "type": "string"
+                  },
+                  "schema": {
+                    "const": "data-engine.connector-run-receipt.v1"
+                  },
+                  "sourceDefinition": {
+                    "type": "string"
+                  },
+                  "sourceDefinitionEtag": {
+                    "type": "string"
+                  },
+                  "sourceDefinitionVersion": {
+                    "type": "integer"
+                  },
+                  "sourceSnapshotHash": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "SUCCEEDED",
+                      "INCOMPLETE",
+                      "FAILED"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "schema",
+                  "run",
+                  "status",
+                  "complete",
+                  "sourceDefinition",
+                  "sourceDefinitionVersion",
+                  "sourceDefinitionEtag",
+                  "connectionRef",
+                  "connectionRevision",
+                  "connector",
+                  "producerVersion",
+                  "extractedCount",
+                  "ingestedCount",
+                  "errorCount",
+                  "artifactNames",
+                  "itemHashes",
+                  "providerReceipt",
+                  "sourceSnapshotHash",
+                  "startTime",
+                  "endTime"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceDefinition": {
+            "type": "string"
+          },
+          "sourceDefinitionEtag": {
+            "type": "string"
+          },
+          "sourceDefinitionVersion": {
+            "type": "integer"
+          },
+          "sourceSnapshotHash": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "SUCCEEDED",
+              "INCOMPLETE",
+              "FAILED"
+            ],
+            "type": "string"
+          },
+          "updateTime": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "project",
+          "connectorRunId",
+          "sourceDefinition",
+          "sourceDefinitionVersion",
+          "sourceDefinitionEtag",
+          "connectionRef",
+          "connectionRevision",
+          "connector",
+          "producerVersion",
+          "idempotencyKey",
+          "status",
+          "attemptCount",
+          "complete",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
+          "itemHashes",
+          "providerReceipt",
+          "sourceSnapshotHash",
+          "receipt",
+          "error",
+          "createTime",
+          "startTime",
+          "endTime",
+          "updateTime"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
         "openWorldHint": false,
         "readOnlyHint": true
       },
@@ -7230,149 +7794,6 @@
           "connectors",
           "nextPageToken",
           "totalSize"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false
-      },
-      "description": "Extract records/objects from a source connector (s3, snowflake, salesforce) and ingest them as content-addressed artifacts. Fails closed with FAILED_PRECONDITION when the connector's env config is absent.",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "artifactType": {
-            "description": "Artifact type for ingested records; defaults per connector.",
-            "type": "string"
-          },
-          "bucket": {
-            "description": "s3: bucket name (required for s3).",
-            "type": "string"
-          },
-          "connector": {
-            "description": "Source connector to extract from.",
-            "enum": [
-              "s3",
-              "snowflake",
-              "salesforce"
-            ],
-            "type": "string"
-          },
-          "ingest": {
-            "default": true,
-            "description": "Ingest extracted records as artifacts (default true).",
-            "type": "boolean"
-          },
-          "key": {
-            "description": "s3: extract exactly this object key instead of listing.",
-            "type": "string"
-          },
-          "limit": {
-            "description": "snowflake: required row cap (max 10000).",
-            "maximum": 10000,
-            "type": "integer"
-          },
-          "maxBytes": {
-            "description": "s3: per-object byte cap (default 1000000).",
-            "maximum": 10000000,
-            "type": "integer"
-          },
-          "maxObjects": {
-            "description": "s3: max objects to extract (default 25, cap 100).",
-            "maximum": 100,
-            "type": "integer"
-          },
-          "maxPages": {
-            "description": "salesforce: nextRecordsUrl page bound (default 5, cap 20).",
-            "maximum": 20,
-            "type": "integer"
-          },
-          "metadata": {
-            "description": "Extra metadata merged into each ingested artifact.",
-            "type": "object"
-          },
-          "prefix": {
-            "description": "s3: list objects under this key prefix.",
-            "type": "string"
-          },
-          "project": {
-            "description": "Project id (the {project} path segment).",
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
-          "soql": {
-            "description": "salesforce: SOQL SELECT query (required for salesforce).",
-            "type": "string"
-          },
-          "source": {
-            "description": "Artifact source label; defaults to the connector name.",
-            "type": "string"
-          },
-          "statement": {
-            "description": "snowflake: read-only SELECT/SHOW/DESCRIBE statement (required for snowflake).",
-            "type": "string"
-          }
-        },
-        "required": [
-          "project",
-          "connector"
-        ],
-        "type": "object"
-      },
-      "name": "projects.sources.extract",
-      "outputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "artifactNames": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "connector": {
-            "type": "string"
-          },
-          "errorCount": {
-            "type": "integer"
-          },
-          "extractedCount": {
-            "type": "integer"
-          },
-          "ingest": {
-            "type": "boolean"
-          },
-          "ingestedCount": {
-            "type": "integer"
-          },
-          "items": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "project": {
-            "type": "string"
-          },
-          "source": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "project",
-          "connector",
-          "source",
-          "ingest",
-          "extractedCount",
-          "ingestedCount",
-          "errorCount",
-          "artifactNames",
-          "items"
         ],
         "type": "object"
       }

@@ -47,18 +47,65 @@ def create_source_repo(repo: Path) -> tuple[Path, str]:
     return source, commit
 
 
-def verify(repo: Path, commit: str) -> tuple[str, str, str, bytes]:
+def verify(
+    repo: Path,
+    commit: str,
+    *,
+    source_branch: str = "main",
+    allow_local_source: bool = False,
+) -> tuple[str, str, str, bytes]:
     return sync.current_branch_equivalent_file(
         sync.load_source_lock_module(),
         repo,
         SOURCE_REPO,
-        "main",
+        source_branch,
         commit,
         SOURCE_PATH,
+        allow_local_source=allow_local_source,
     )
 
 
 class CurrentBranchEquivalentFileTest(unittest.TestCase):
+    def test_staged_local_requires_exact_clean_checked_out_branch_head(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="tempera-sdk-content-equivalence-"
+        ) as directory:
+            repo = Path(directory)
+            source, base = create_source_repo(repo)
+            git(repo, "checkout", "-b", "staged/contract")
+            source.write_text(
+                '{"openapi":"3.1.0","paths":{"/v1/staged":{}}}\n',
+                encoding="utf-8",
+            )
+            staged = commit_all(repo, "staged contract")
+
+            commit, _, _, content = verify(
+                repo,
+                staged,
+                source_branch="staged/contract",
+                allow_local_source=True,
+            )
+            self.assertEqual(commit, staged)
+            self.assertIn(b"/v1/staged", content)
+            with self.assertRaises(subprocess.CalledProcessError):
+                verify(repo, staged, source_branch="staged/contract")
+            with self.assertRaisesRegex(ValueError, "staged-local source commit"):
+                verify(
+                    repo,
+                    base,
+                    source_branch="staged/contract",
+                    allow_local_source=True,
+                )
+
+            (repo / "dirty.txt").write_text("dirty\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "source repository is dirty"):
+                verify(
+                    repo,
+                    staged,
+                    source_branch="staged/contract",
+                    allow_local_source=True,
+                )
+
     def test_unrelated_descendant_keeps_exact_pinned_source_valid(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="tempera-sdk-content-equivalence-"

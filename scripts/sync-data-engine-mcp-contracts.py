@@ -35,7 +35,11 @@ def lock_path(destination: Path) -> Path:
 
 
 def expected_files(
-    source_repo_dir: Path, commit: str, source_branch: str = "main"
+    source_repo_dir: Path,
+    commit: str,
+    source_branch: str = "main",
+    *,
+    allow_local_source: bool = False,
 ) -> dict[Path, bytes]:
     outputs: dict[Path, bytes] = {}
     documents: dict[str, dict] = {}
@@ -45,6 +49,7 @@ def expected_files(
             source_repo_dir / source_path,
             source_branch=source_branch,
             source_commit=commit,
+            allow_local_source=allow_local_source,
         )
         try:
             document = json.loads(source_bytes)
@@ -70,6 +75,7 @@ def expected_files(
         source_repo_dir / "api/openapi.yaml",
         source_branch=source_branch,
         source_commit=commit,
+        allow_local_source=allow_local_source,
     )
     openapi_operations = openapi_sync.extract_operations_text(
         openapi_bytes.decode("utf-8"),
@@ -114,7 +120,20 @@ def expected_files(
     exposed_count = decisions.count("expose")
     if invalid_decisions:
         raise ValueError(f"unexpected MCP admission decisions: {invalid_decisions}")
-    if len(tool_list) != 36 or exposed_count != len(tool_list):
+    denied_count = decisions.count("deny")
+    declared_counts = {
+        "authenticated_operation_count": len(operations),
+        "exposed_count": exposed_count,
+        "denied_count": denied_count,
+    }
+    stale_counts = {
+        key: (policy.get(key), actual)
+        for key, actual in declared_counts.items()
+        if policy.get(key) != actual
+    }
+    if stale_counts:
+        raise ValueError(f"MCP admission policy counts are stale: {stale_counts}")
+    if exposed_count != len(tool_list):
         raise ValueError(
             "unexpected MCP exposure/tool counts: "
             f"{exposed_count} exposed decisions/{len(tool_list)} tools"
@@ -128,12 +147,20 @@ def main() -> int:
     parser.add_argument("--source-repo-dir", type=Path, required=True)
     parser.add_argument("--source-branch", default="main")
     parser.add_argument("--source-commit", required=True)
+    parser.add_argument(
+        "--allow-local-source",
+        action="store_true",
+        help="accept only an exact clean checked-out local branch head",
+    )
     args = parser.parse_args()
     if re.fullmatch(r"[0-9a-f]{40}", args.source_commit) is None:
         parser.error("--source-commit must be an exact 40-character SHA")
     try:
         outputs = expected_files(
-            args.source_repo_dir.resolve(), args.source_commit, args.source_branch
+            args.source_repo_dir.resolve(),
+            args.source_commit,
+            args.source_branch,
+            allow_local_source=args.allow_local_source,
         )
         if args.check:
             stale = [

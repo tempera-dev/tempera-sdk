@@ -311,6 +311,33 @@ class AipConformanceTest(unittest.TestCase):
             violations,
         )
 
+    def test_full_local_reference_walk_resolves_and_rejects_dangling_refs(self) -> None:
+        valid = {
+            "components": {
+                "schemas": {
+                    "Widget/Name": {"type": "string"},
+                }
+            },
+            "paths": {
+                "/v1/widgets": {
+                    "get": {
+                        "responses": {
+                            "200": {
+                                "$ref": "#/components/schemas/Widget~1Name"
+                            }
+                        }
+                    }
+                }
+            },
+        }
+        self.assertEqual(MODULE.validate_local_references({"test": valid}), [])
+        valid["paths"]["/v1/widgets"]["get"]["responses"]["409"] = {
+            "$ref": "#/components/responses/AlreadyExists"
+        }
+        failures = MODULE.validate_local_references({"test": valid})
+        self.assertEqual(len(failures), 1)
+        self.assertIn("AlreadyExists", failures[0])
+
     def test_route_manifest_query_fields_are_inspected(self) -> None:
         manifest = {
             "contract_kind": "http-route-manifest",

@@ -2,8 +2,8 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-payments" | "tempera-voice" | "tempera-clearing";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "dataset:read" | "dataset:write" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-voice" | "tempera-clearing";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha";
 
@@ -142,6 +142,18 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Rotate an API key's secret; the new secret is returned exactly once. */
   rotateApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint. */
+  dataSourceConnectionsResolveInternal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List redacted data-source connection metadata in the selected project and environment. */
+  dataSourceConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create project-bound connector metadata using only an external secret reference. */
+  dataSourceConnectionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get redacted metadata for one data-source connection. */
+  dataSourceConnectionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Update a connection name or secret reference with exact-revision concurrency control. */
+  dataSourceConnectionsUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a data-source connection immediately. Revoking an unknown id is a no-op. */
+  dataSourceConnectionsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List provider connection metadata using a first-party account session. Secret references and values are never returned. */
   providerConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a tenant-scoped provider connection using only an external secret reference. */
@@ -258,6 +270,16 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   passkeysRecover(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Delete one passkey after recent AAL2 step-up. */
   passkeysDelete(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Issue a short-lived, effect-specific, single-use Clearing admission from a human approval. */
+  clearingAdmissionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read a Clearing admission from the caller's exact workspace. */
+  clearingAdmissionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Atomically move one READY admission to a fenced lease before dispatch. */
+  clearingAdmissionsClaim(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Consume a matching lease with one durable Clearing commit identity. */
+  clearingAdmissionsFinalize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Monotonically mark an expired lease as requiring authoritative reconciliation. */
+  clearingAdmissionsMarkRecoveryRequired(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {
@@ -524,6 +546,22 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   cancelResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/researchJobs/{jobId}:review. */
   reviewResearchJob(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify one signed Risk Clearing evidence envelope against live Risk state. */
+  verifyRiskClearingEvidenceLive(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Release a reservation only when Clearing proved no external dispatch occurred. */
+  abortRiskClearingReservation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Hold budget capacity after an ambiguous provider dispatch. */
+  markRiskClearingOutcomeUnknown(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record an independently observed provider effect while retaining capacity. */
+  openRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record a non-final observed outcome without releasing capacity. */
+  recordRiskClearingProvisionalOutcome(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record compensation as a forward action without releasing capacity. */
+  recordRiskClearingCompensation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Keep capacity held when authoritative evidence conflicts. */
+  disputeRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Settle a mature reconciled outcome and release held capacity. */
+  settleRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/audit:export. */
   exportAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
@@ -834,6 +872,20 @@ export interface DataEngineClient extends TemperaProductClientBase {
   deriveBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Emit an eval dataset bundle from verified artifacts; returns an async operation handle. */
   emitEval(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an immutable-versioned connector source definition. */
+  projectsSourceDefinitionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List project source definitions. */
+  projectsSourceDefinitionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one source definition. */
+  projectsSourceDefinitionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a new version of a source definition. */
+  projectsSourceDefinitionsPatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Start an exact-replay connector run from a reviewed definition. */
+  projectsSourceDefinitionsRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List durable connector runs. */
+  projectsConnectorRunsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one durable connector run and its terminal receipt. */
+  projectsConnectorRunsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Extract bounded objects or records from a configured source connector. */
   extractSource(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List registered source connectors for a project. */

@@ -1014,6 +1014,227 @@
         }
       }
     },
+    "/v1/internal/data-source-connections:resolve": {
+      "post": {
+        "operationId": "dataSourceConnections.resolveInternal",
+        "summary": "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveDataSourceConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response-only connector credentials bound to the requested resource, revision, and authenticated internal service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolvedDataSourceConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/data-source-connections": {
+      "get": {
+        "operationId": "dataSourceConnections.list",
+        "summary": "List redacted data-source connection metadata in the selected project and environment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redacted data-source connection metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataSourceConnectionPage"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "dataSourceConnections.create",
+        "summary": "Create project-bound connector metadata using only an external secret reference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDataSourceConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Data-source connection created without exposing its secret reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataSourceConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/data-source-connections/{id}": {
+      "get": {
+        "operationId": "dataSourceConnections.get",
+        "summary": "Get redacted metadata for one data-source connection.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redacted data-source connection metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataSourceConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "dataSourceConnections.update",
+        "summary": "Update a connection name or secret reference with exact-revision concurrency control.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated mutable resource fields. Every masked field must be present and no unmasked mutable field may be supplied.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "secretRef",
+                "name,secretRef",
+                "secretRef,name"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDataSourceConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated redacted data-source connection metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataSourceConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "dataSourceConnections.revoke",
+        "summary": "Revoke a data-source connection immediately. Revoking an unknown id is a no-op.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Data-source connection revoked or already absent"
+          },
+          "default": {
+            "description": "Request failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/provider-connections": {
       "get": {
         "operationId": "providerConnections.list",
@@ -3927,6 +4148,125 @@
           }
         }
       }
+    },
+    "/v1/clearing/admissions": {
+      "post": {
+        "operationId": "clearingAdmissions.create",
+        "summary": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:approve",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearingAdmissionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Admission issued in READY state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecord"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Exact issuance replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecord"
+                }
+              }
+            }
+          },
+          "400": {"description": "Invalid admission", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Human approval scope or role missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission identity is already bound differently", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}": {
+      "get": {
+        "operationId": "clearingAdmissions.get",
+        "summary": "Read a Clearing admission from the caller's exact workspace.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "responses": {
+          "200": {"description": "Current admission state", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecord"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Read scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:claim": {
+      "post": {
+        "operationId": "clearingAdmissions.claim",
+        "summary": "Atomically move one READY admission to a fenced lease before dispatch.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionClaimRequest"}}}},
+        "responses": {
+          "200": {"description": "Admission leased exactly once", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionLease"}}}},
+          "400": {"description": "Invalid claim", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission is not READY, is expired, or does not match", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:finalize": {
+      "post": {
+        "operationId": "clearingAdmissions.finalize",
+        "summary": "Consume a matching lease with one durable Clearing commit identity.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeRequest"}}}},
+        "responses": {
+          "200": {"description": "Admission consumed or exact finalize replay accepted", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeResponse"}}}},
+          "400": {"description": "Invalid finalize request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Lease, fence, digest, or commit identity conflicts", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
+    },
+    "/v1/clearing/admissions/{admissionId}:markRecoveryRequired": {
+      "post": {
+        "operationId": "clearingAdmissions.markRecoveryRequired",
+        "summary": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:reconcile",
+        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "responses": {
+          "200": {"description": "Admission is RECOVERY_REQUIRED", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecoveryResponse"}}}},
+          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "403": {"description": "Reconcile scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "409": {"description": "Admission has no expired active lease", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
+          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+        }
+      }
     }
   },
   "components": {
@@ -4208,8 +4548,13 @@
           "memory:manage",
           "trace:read",
           "trace:write",
+          "scenario:read",
+          "scenario:write",
           "dataset:read",
           "dataset:write",
+          "connector:read",
+          "connector:run",
+          "connector:manage",
           "eval:run",
           "training:publish",
           "review:gold:manage",
@@ -4232,6 +4577,10 @@
           "risk:read",
           "risk:write",
           "risk:review",
+          "investigation:read",
+          "investigation:write",
+          "investigation:run",
+          "investigation:review",
           "pii:unmask",
           "payments:intents:read",
           "payments:intents:write",
@@ -4261,8 +4610,13 @@
           "memory:manage",
           "trace:read",
           "trace:write",
+          "scenario:read",
+          "scenario:write",
           "dataset:read",
           "dataset:write",
+          "connector:read",
+          "connector:run",
+          "connector:manage",
           "eval:run",
           "workflow:read",
           "workflow:write",
@@ -4280,6 +4634,10 @@
           "risk:read",
           "risk:write",
           "risk:review",
+          "investigation:read",
+          "investigation:write",
+          "investigation:run",
+          "investigation:review",
           "pii:unmask",
           "voice:read",
           "voice:write",
@@ -4310,6 +4668,7 @@
           "tempera-bio",
           "tempera-document",
           "tempera-risk",
+          "tempera-investigations",
           "tempera-payments",
           "tempera-voice",
           "tempera-clearing"
@@ -4880,6 +5239,347 @@
               "null"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "DataSourceConnector": {
+        "type": "string",
+        "enum": [
+          "s3",
+          "snowflake",
+          "salesforce"
+        ]
+      },
+      "DataSourceConnectionId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 63,
+        "pattern": "^[a-z][a-z0-9-]{0,62}$"
+      },
+      "DataSourceConnectionRef": {
+        "type": "string",
+        "maxLength": 1024,
+        "pattern": "^organizations/[^/]+/projects/[^/]+/environments/[^/]+/dataSourceConnections/[a-z][a-z0-9-]{0,62}$"
+      },
+      "CreateDataSourceConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "connectionId",
+          "connector",
+          "name",
+          "secretRef"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "connectionId": {
+            "$ref": "#/components/schemas/DataSourceConnectionId"
+          },
+          "connector": {
+            "$ref": "#/components/schemas/DataSourceConnector"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          }
+        }
+      },
+      "UpdateDataSourceConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expectedRevision"
+        ],
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "required": [
+              "secretRef"
+            ]
+          }
+        ]
+      },
+      "DataSourceConnection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connectionId",
+          "connectionRef",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "connector",
+          "name",
+          "secretBackend",
+          "secretConfigured",
+          "revision",
+          "state",
+          "createdAt",
+          "updatedAt",
+          "lastResolvedAt",
+          "revokedAt"
+        ],
+        "properties": {
+          "connectionId": {
+            "$ref": "#/components/schemas/DataSourceConnectionId"
+          },
+          "connectionRef": {
+            "$ref": "#/components/schemas/DataSourceConnectionRef"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "connector": {
+            "$ref": "#/components/schemas/DataSourceConnector"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secretBackend": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
+          },
+          "secretConfigured": {
+            "type": "boolean",
+            "const": true
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastResolvedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DataSourceConnectionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dataSourceConnections",
+          "nextPageToken"
+        ],
+        "properties": {
+          "dataSourceConnections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataSourceConnection"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "ResolveDataSourceConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project",
+          "connectionRef",
+          "connectionRevision",
+          "connector"
+        ],
+        "properties": {
+          "project": {
+            "type": "string",
+            "minLength": 1
+          },
+          "connectionRef": {
+            "$ref": "#/components/schemas/DataSourceConnectionRef"
+          },
+          "connectionRevision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "connector": {
+            "$ref": "#/components/schemas/DataSourceConnector"
+          }
+        }
+      },
+      "S3DataSourceCredentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "accessKeyId",
+          "secretAccessKey",
+          "region"
+        ],
+        "properties": {
+          "accessKeyId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sessionToken": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endpoint": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "SnowflakeDataSourceCredentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "accountUrl",
+          "token"
+        ],
+        "properties": {
+          "accountUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "warehouse": {
+            "type": "string",
+            "minLength": 1
+          },
+          "database": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "SalesforceDataSourceCredentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instanceUrl",
+          "token"
+        ],
+        "properties": {
+          "instanceUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "apiVersion": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "ResolvedDataSourceConnection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connectionRef",
+          "revision",
+          "connector",
+          "credentials"
+        ],
+        "properties": {
+          "connectionRef": {
+            "$ref": "#/components/schemas/DataSourceConnectionRef"
+          },
+          "revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "connector": {
+            "$ref": "#/components/schemas/DataSourceConnector"
+          },
+          "credentials": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/S3DataSourceCredentials"
+              },
+              {
+                "$ref": "#/components/schemas/SnowflakeDataSourceCredentials"
+              },
+              {
+                "$ref": "#/components/schemas/SalesforceDataSourceCredentials"
+              }
+            ],
+            "readOnly": true,
+            "description": "Response-only credential material returned exclusively to an authenticated Data Engine or Connectors service and never persisted or logged."
           }
         }
       },
@@ -6405,6 +7105,153 @@
               "$ref": "#/components/schemas/ModelCatalogEntry"
             }
           }
+        }
+      },
+      "ClearingWorkspace": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tenantId", "projectId", "environmentId"],
+        "properties": {
+          "tenantId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "projectId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "environmentId": {"type": "string", "minLength": 1, "maxLength": 128}
+        }
+      },
+      "ClearingDigest": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      },
+      "ClearingFinalAdmission": {
+        "$ref": "./clearing-final-admission-v1.schema.json"
+      },
+      "ClearingAdmissionCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey"
+        ],
+        "properties": {
+          "admissionId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+          "workspace": {"$ref": "#/components/schemas/ClearingWorkspace"},
+          "principalId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "canonicalActionId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "canonicalRequestDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "preparedEffectId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "preparedEffectDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "operation": {"type": "string", "minLength": 1, "maxLength": 128},
+          "resourceSelectors": {"type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 512}},
+          "economicAuthority": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 32,
+            "propertyNames": {"pattern": "^[a-z][a-z0-9_.-]{0,63}$"},
+            "additionalProperties": {"type": "string", "pattern": "^(0|[1-9][0-9]*)$"}
+          },
+          "mandateId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "mandateDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "riskAssessmentId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "riskAssessmentDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "riskReservationId": {"type": "string", "minLength": 1, "maxLength": 256},
+          "riskReservationDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "authorizationContextDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "consumptionKey": {"type": "string", "minLength": 16, "maxLength": 256},
+          "ttlSeconds": {"type": "integer", "minimum": 30, "maximum": 300, "default": 300}
+        }
+      },
+      "ClearingAdmissionRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admission",
+          "admissionDigest",
+          "state",
+          "leaseFence",
+          "leaseExpiresAt",
+          "consumedClearingCommitDigest",
+          "replay"
+        ],
+        "properties": {
+          "admission": {"$ref": "#/components/schemas/ClearingFinalAdmission"},
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "state": {"type": "string", "enum": ["READY", "LEASED", "RECOVERY_REQUIRED", "CONSUMED", "REVOKED", "CANCELLED"]},
+          "leaseFence": {"type": "integer", "minimum": 0},
+          "leaseExpiresAt": {"type": ["string", "null"], "format": "date-time"},
+          "consumedClearingCommitDigest": {
+            "oneOf": [
+              {"$ref": "#/components/schemas/ClearingDigest"},
+              {"type": "null"}
+            ]
+          },
+          "replay": {"type": "boolean"}
+        }
+      },
+      "ClearingAdmissionClaimRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionDigest", "leaseTokenDigest"],
+        "properties": {
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseSeconds": {"type": "integer", "minimum": 5, "maximum": 120, "default": 30}
+        }
+      },
+      "ClearingAdmissionLease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionId", "admissionDigest", "state", "leaseFence", "leaseExpiresAt"],
+        "properties": {
+          "admissionId": {"type": "string"},
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "state": {"const": "LEASED"},
+          "leaseFence": {"type": "integer", "minimum": 1},
+          "leaseExpiresAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "ClearingAdmissionFinalizeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionDigest", "leaseTokenDigest", "leaseFence", "clearingCommitDigest"],
+        "properties": {
+          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
+          "leaseFence": {"type": "integer", "minimum": 1},
+          "clearingCommitDigest": {"$ref": "#/components/schemas/ClearingDigest"}
+        }
+      },
+      "ClearingAdmissionFinalizeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["replay", "state"],
+        "properties": {
+          "replay": {"type": "boolean"},
+          "state": {"const": "CONSUMED"}
+        }
+      },
+      "ClearingAdmissionRecoveryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["admissionId", "state", "leaseFence"],
+        "properties": {
+          "admissionId": {"type": "string"},
+          "state": {"const": "RECOVERY_REQUIRED"},
+          "leaseFence": {"type": "integer", "minimum": 1}
         }
       },
       "WorkspaceBinding": {

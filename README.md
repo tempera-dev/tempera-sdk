@@ -311,9 +311,10 @@ the committed site is always current thanks to the drift gate).
   `specs/data-engine-mcp-tools.json` vendor the producer's exact curated MCP
   decisions and static `tools/list` serialization. Their adjacent `.source`
   locks bind the same immutable Data Engine commit as the OpenAPI lock. The SDK
-  gate requires all 50 authenticated project operations to be explicitly
-  exposed or denied and rejects scope, schema-fixture, or catalog drift without
-  turning REST coverage into model exposure.
+  gate requires every authenticated project operation to be explicitly
+  exposed or denied, verifies the producer-declared exposed/denied counts, and
+  rejects scope, schema-fixture, or catalog drift without turning REST coverage
+  into model exposure.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
 - `contracts/sdk-exact-source-gaps.json` records expiring hosted-verification
@@ -348,3 +349,9 @@ npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml
 ```
+
+For an unpublished exact-source train, synchronizers accept
+`--allow-local-source` only when the requested SHA equals a clean checkout's
+named local branch and `HEAD`. Use `python3 scripts/check-sdk-surface.py
+--staged-local` for that local qualification. The default command above remains
+strict and rejects non-`main` source locks for release.

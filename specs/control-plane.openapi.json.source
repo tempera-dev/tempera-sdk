@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/control-plane.openapi.json",
-  "generated_sha256": "93b6fa95e2e15f4ec8b6ed475bbcfba24a59edbf9c528d6886be7b22165e3464",
+  "generated_sha256": "777814d57a39e546c47dbaef16b6fdd2772582d1dea43e1b8ea60a8eecfff351",
   "generated_with": "sync-control-plane-openapi.py@1+verbatim",
   "schema_version": 1,
-  "source_blob_sha": "1cb95bb537578c87cd0cea4b1d1d17351754ab6c",
-  "source_branch": "main",
-  "source_commit": "d5a4647701cb8d3e04676de96a8651c68a00bb4b",
+  "source_blob_sha": "e1a3051cd0e349c3972bc899065633c166580804",
+  "source_branch": "codex/auth-hub-connector-aip-repair-20260822",
+  "source_commit": "8e5516dae05b6b0a863d6e2b6feb1746644eac2d",
   "source_mode": "100644",
   "source_path": "contracts/control-plane.openapi.json",
   "source_repo": "tempera-dev/auth-hub",
-  "source_sha256": "93b6fa95e2e15f4ec8b6ed475bbcfba24a59edbf9c528d6886be7b22165e3464"
+  "source_sha256": "777814d57a39e546c47dbaef16b6fdd2772582d1dea43e1b8ea60a8eecfff351"
 }

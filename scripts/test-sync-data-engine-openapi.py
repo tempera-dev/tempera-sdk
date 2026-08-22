@@ -51,6 +51,47 @@ def create_source_repo(repo: Path) -> tuple[Path, str]:
 
 
 class SourceLockTest(unittest.TestCase):
+    def test_staged_local_requires_exact_clean_checked_out_branch_head(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-source-lock-") as directory:
+            repo = Path(directory)
+            source, base = create_source_repo(repo)
+            git(repo, "checkout", "-b", "staged/contract")
+            source.write_text("openapi: 3.1.0\npaths:\n  /staged: {}\n", encoding="utf-8")
+            git(repo, "add", "api/openapi.yaml")
+            git(repo, "commit", "-m", "staged contract")
+            staged = head(repo)
+
+            source_bytes, metadata = sync.committed_source(
+                source,
+                source_branch="staged/contract",
+                source_commit=staged,
+                allow_local_source=True,
+            )
+            self.assertIn(b"/staged", source_bytes)
+            self.assertEqual(metadata["source_commit"], staged)
+            with self.assertRaisesRegex(ValueError, "rev-parse --verify"):
+                sync.committed_source(
+                    source,
+                    source_branch="staged/contract",
+                    source_commit=staged,
+                )
+            with self.assertRaisesRegex(ValueError, "staged-local source commit"):
+                sync.committed_source(
+                    source,
+                    source_branch="staged/contract",
+                    source_commit=base,
+                    allow_local_source=True,
+                )
+
+            (repo / "dirty-marker").write_text("dirty\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "source repository is dirty"):
+                sync.committed_source(
+                    source,
+                    source_branch="staged/contract",
+                    source_commit=staged,
+                    allow_local_source=True,
+                )
+
     def test_extracts_canonical_auth_metadata(self) -> None:
         operations = sync.extract_operations_text(
             """paths:
@@ -218,7 +259,16 @@ class SourceLockTest(unittest.TestCase):
             )
 
     def test_vendored_mcp_contract_matches_operation_auth_lock(self) -> None:
-        self.assertEqual(check_surface.validate_data_engine_mcp_contracts(), [])
+        self.assertEqual(
+            check_surface.validate_data_engine_mcp_contracts(allow_non_main=True),
+            [],
+        )
+        self.assertTrue(
+            any(
+                "source_branch" in failure
+                for failure in check_surface.validate_data_engine_mcp_contracts()
+            )
+        )
 
 
 if __name__ == "__main__":

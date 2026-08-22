@@ -1509,6 +1509,421 @@
         }
       }
     },
+    "/v1/projects/{project}/riskClearingEvidence:verifyLive": {
+      "post": {
+        "operationId": "verifyRiskClearingEvidenceLive",
+        "summary": "Verify one signed Risk Clearing evidence envelope against live Risk state",
+        "description": "Authenticated local Tempera Risk API-key callers must be a configured Clearing service account with the explicit clearing_evidence.verify permission. A successful response is non-authorizing: Clearing must still perform its own final admission and atomic commit. Until RiskClearingEvidenceAuthority is provisioned for the tenant/project, the route fails closed with 503.",
+        "security": [
+          {
+            "bearerApiKey": []
+          }
+        ],
+        "x-tempera-effects": [
+          "untrusted_input",
+          "mutation"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingEvidenceVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cryptographic and live-reservation verification result; never execution authority",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingEvidenceVerificationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort": {
+      "post": {
+        "operationId": "abortRiskClearingReservation",
+        "summary": "Release a reservation only when Clearing proved no external dispatch occurred",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingAbortRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown": {
+      "post": {
+        "operationId": "markRiskClearingOutcomeUnknown",
+        "summary": "Hold budget capacity after an ambiguous provider dispatch",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingOutcomeUnknownRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:open": {
+      "post": {
+        "operationId": "openRiskClearingExposure",
+        "summary": "Record an independently observed provider effect while retaining capacity",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingOpenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome": {
+      "post": {
+        "operationId": "recordRiskClearingProvisionalOutcome",
+        "summary": "Record a non-final observed outcome without releasing capacity",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingOutcomeDigestRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation": {
+      "post": {
+        "operationId": "recordRiskClearingCompensation",
+        "summary": "Record compensation as a forward action without releasing capacity",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingCompensationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute": {
+      "post": {
+        "operationId": "disputeRiskClearingExposure",
+        "summary": "Keep capacity held when authoritative evidence conflicts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingDisputeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle": {
+      "post": {
+        "operationId": "settleRiskClearingExposure",
+        "summary": "Settle a mature reconciled outcome and release held capacity",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Project"
+          },
+          {
+            "$ref": "#/components/parameters/ReservationId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClearingSettlementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation transition result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskClearingReservationTransitionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
     "/v1/projects/{project}/audit:export": {
       "get": {
         "operationId": "exportAudit",
@@ -1564,6 +1979,14 @@
           "pattern": "^[!-~]+$"
         }
       },
+      "ReservationId": {
+        "name": "reservationId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ResourceId"
+        }
+      },
       "JobId": {
         "name": "jobId",
         "in": "path",
@@ -1601,6 +2024,216 @@
       "Timestamp": {
         "type": "string",
         "format": "date-time"
+      },
+      "Sha256": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "RiskClearingEvidenceVerificationRequest": {
+        "type": "object",
+        "required": [
+          "envelope"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingEvidenceVerificationResult": {
+        "type": "object",
+        "required": [
+          "schema",
+          "evidence_id",
+          "evidence_envelope_digest",
+          "reservation_id",
+          "reservation_digest",
+          "cryptographically_valid",
+          "live_reservation_valid",
+          "authorization_granted",
+          "final_runtime_admission_required"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.risk-clearing-live-evidence-verification/v1"
+          },
+          "evidence_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "evidence_envelope_digest": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "reservation_id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "reservation_digest": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "cryptographically_valid": {
+            "const": true
+          },
+          "live_reservation_valid": {
+            "const": true
+          },
+          "authorization_granted": {
+            "const": false
+          },
+          "final_runtime_admission_required": {
+            "const": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "RiskClearingAbortRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "abortReceiptDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingOutcomeUnknownRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "dispatchAttemptDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingOpenRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "executionReceiptDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingOutcomeDigestRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "outcomeDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingCompensationRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "compensationReceiptDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingDisputeRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "disputeEvidenceDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingSettlementRequest": {
+        "type": "object",
+        "required": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "properties": {
+          "envelope": {
+            "type": "object"
+          },
+          "outcomeDigest": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "realizedLoss": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 64,
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskClearingReservationTransitionResult": {
+        "type": "object",
+        "required": [
+          "schema",
+          "reservation",
+          "transition_applied",
+          "authorization_granted",
+          "final_runtime_admission_required"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.risk-clearing-reservation-transition-result/v1"
+          },
+          "reservation": {
+            "type": "object"
+          },
+          "transition_applied": {
+            "type": "boolean"
+          },
+          "authorization_granted": {
+            "const": false
+          },
+          "final_runtime_admission_required": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
       },
       "ModelRegistrationRequest": {
         "type": "object",

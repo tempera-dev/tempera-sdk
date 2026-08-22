@@ -11,6 +11,8 @@ import re
 import sys
 from pathlib import Path
 
+from staged_source import validate_exact_local_source
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DESTINATION = ROOT / "specs/control-plane.openapi.json"
@@ -39,10 +41,14 @@ def expected_files(
     repo: Path,
     requested_commit: str,
     source_branch: str = SOURCE_BRANCH,
+    *,
+    allow_local_source: bool = False,
 ) -> tuple[bytes, bytes]:
     source_lock = load_source_lock_module()
-    commit = source_lock.validate_source(
-        repo, SOURCE_REPO, source_branch, requested_commit
+    commit = (
+        validate_exact_local_source(repo, SOURCE_REPO, source_branch, requested_commit)
+        if allow_local_source
+        else source_lock.validate_source(repo, SOURCE_REPO, source_branch, requested_commit)
     )
     blob, mode, content = source_lock.committed_file(repo, commit, SOURCE_PATH)
     document = json.loads(content)
@@ -71,6 +77,11 @@ def main() -> int:
     parser.add_argument("--source-repo-dir", type=Path, required=True)
     parser.add_argument("--source-branch", default=SOURCE_BRANCH)
     parser.add_argument("--source-commit", required=True)
+    parser.add_argument(
+        "--allow-local-source",
+        action="store_true",
+        help="accept only an exact clean checked-out local branch head",
+    )
     args = parser.parse_args()
     if re.fullmatch(r"[0-9a-f]{40}", args.source_commit) is None:
         parser.error("--source-commit must be an exact 40-character SHA")
@@ -79,6 +90,7 @@ def main() -> int:
             args.source_repo_dir.resolve(),
             args.source_commit,
             args.source_branch,
+            allow_local_source=args.allow_local_source,
         )
         expected = {DESTINATION: spec_bytes, LOCK: lock_bytes}
         if args.check:

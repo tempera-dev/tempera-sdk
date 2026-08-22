@@ -33,6 +33,7 @@ loops over the generated tables; `npm test` at the repo root runs all of it.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
@@ -83,7 +84,7 @@ def package_versions() -> dict[str, str]:
     return versions
 
 
-def validate_vendored_source_locks() -> list[str]:
+def validate_vendored_source_locks(*, allow_non_main: bool = False) -> list[str]:
     failures: list[str] = []
     for lock_path in sorted((ROOT / "specs").glob("*.source")):
         label = lock_path.relative_to(ROOT)
@@ -110,7 +111,7 @@ def validate_vendored_source_locks() -> list[str]:
             continue
         if lock.get("schema_version") != 1:
             failures.append(f"{label}: schema_version must be 1")
-        if lock.get("source_branch") != "main":
+        if not allow_non_main and lock.get("source_branch") != "main":
             failures.append(
                 f"{label}: source_branch must be main, not "
                 f"{lock.get('source_branch')!r}"
@@ -136,7 +137,9 @@ def route_identity(method: str, path: str) -> tuple[str, str]:
     return method, re.sub(r"\{[^}]+\}", "{}", path)
 
 
-def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
+def validate_data_engine_openapi_bindings(
+    surface: dict, *, allow_non_main: bool = False
+) -> list[str]:
     if not DATA_ENGINE_OPERATION_LOCK.exists():
         return ["missing contracts/data-engine-openapi-operations.json"]
     try:
@@ -167,7 +170,9 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
     expected_lock_values = {
         "schema_version": 3,
         "source_repo": "tempera-dev/data-engine",
-        "source_branch": "main",
+        "source_branch": (
+            lock.get("source_branch") if allow_non_main else "main"
+        ),
         "source_path": "api/openapi.yaml",
         "generated_with": "sync-data-engine-openapi.py@4",
     }
@@ -219,7 +224,7 @@ def validate_data_engine_openapi_bindings(surface: dict) -> list[str]:
     return failures
 
 
-def validate_data_engine_mcp_contracts() -> list[str]:
+def validate_data_engine_mcp_contracts(*, allow_non_main: bool = False) -> list[str]:
     """Bind curated model exposure to exact producer artifacts and auth truth."""
     failures: list[str] = []
     try:
@@ -245,7 +250,9 @@ def validate_data_engine_mcp_contracts() -> list[str]:
         expected = {
             "schema_version": 1,
             "source_repo": "tempera-dev/data-engine",
-            "source_branch": "main",
+            "source_branch": (
+                operation_lock.get("source_branch") if allow_non_main else "main"
+            ),
             "source_commit": operation_lock.get("source_commit"),
             "source_path": source_path,
             "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",
@@ -297,10 +304,17 @@ def validate_data_engine_mcp_contracts() -> list[str]:
     }
     if exposed != set(by_tool):
         failures.append("Data Engine exposed decisions differ from exact tools artifact")
-    if len(exposed) != 36 or exposed | denied != set(by_operation) or exposed & denied:
+    policy = admission.get("policy", {})
+    if (
+        policy.get("authenticated_operation_count") != len(by_operation)
+        or policy.get("exposed_count") != len(exposed)
+        or policy.get("denied_count") != len(denied)
+    ):
+        failures.append("Data Engine MCP admission policy counts are stale")
+    if exposed | denied != set(by_operation) or exposed & denied:
         failures.append(
             "Data Engine MCP admission must classify every authenticated operation "
-            "while preserving the reviewed 36-tool exposure boundary"
+            "while preserving the producer-reviewed exposure boundary"
         )
     for operation_id, authoritative in expected_operations.items():
         record = by_operation.get(operation_id) or {}
@@ -319,6 +333,13 @@ def validate_data_engine_mcp_contracts() -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--staged-local",
+        action="store_true",
+        help="qualify exact non-main source locks without relaxing the default release gate",
+    )
+    args = parser.parse_args()
     failures: list[str] = []
 
     # 1: every vendored route and request binding must reproduce from OpenAPI.
@@ -415,9 +436,17 @@ def main() -> int:
     # generated, so a new product can be wired into the runtime and surface.d.ts
     # yet silently dropped from the public TemperaClient type. Guard against it.
     surface = json.loads((ROOT / "surface.json").read_text())
-    failures.extend(validate_vendored_source_locks())
-    failures.extend(validate_data_engine_openapi_bindings(surface))
-    failures.extend(validate_data_engine_mcp_contracts())
+    failures.extend(
+        validate_vendored_source_locks(allow_non_main=args.staged_local)
+    )
+    failures.extend(
+        validate_data_engine_openapi_bindings(
+            surface, allow_non_main=args.staged_local
+        )
+    )
+    failures.extend(
+        validate_data_engine_mcp_contracts(allow_non_main=args.staged_local)
+    )
     index_dts = (ROOT / "packages/typescript/src/index.d.ts").read_text()
     client_type = re.search(r"export type TemperaClient = \{(.*?)\n\};", index_dts, re.DOTALL)
     if client_type is None:

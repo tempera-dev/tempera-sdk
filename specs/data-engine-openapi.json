@@ -2144,13 +2144,318 @@
         }
       }
     },
+    "/v1/{parent}/sourceDefinitions": {
+      "post": {
+        "operationId": "projects.sourceDefinitions.create",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:manage",
+        "summary": "Create an immutable-versioned connector source definition",
+        "description": "Binds a project to one Auth Hub data-source connection revision and one fixed, credential-free connector configuration. Identical retries reuse the existing resource; changed content under the same id conflicts.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "sourceDefinitionId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]{0,62}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceDefinitionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Source definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceDefinition"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExists"
+          }
+        }
+      },
+      "get": {
+        "operationId": "projects.sourceDefinitions.list",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:read",
+        "summary": "List project source definitions",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source definitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceDefinitionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}": {
+      "get": {
+        "operationId": "projects.sourceDefinitions.get",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:read",
+        "summary": "Get one source definition",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "sourceDefinitionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Source definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceDefinition"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "projects.sourceDefinitions.patch",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:manage",
+        "summary": "Create a new version of a source definition",
+        "description": "Requires the live etag and an explicit updateMask. A material change increments version and changes etag; older connector-run receipts remain bound to their original version.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "sourceDefinitionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceDefinitionPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated source definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceDefinition"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExists"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run": {
+      "post": {
+        "operationId": "projects.sourceDefinitions.run",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:run",
+        "summary": "Start an exact-replay connector run from a reviewed definition",
+        "description": "Persists PENDING before external I/O, executes outside the database transaction, then commits one immutable terminal receipt. Exact S3-key runs can complete; currently prefix, Snowflake, and Salesforce runs are conservatively INCOMPLETE until provider pagination proof is retained.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "sourceDefinitionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKeyHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable connector run, possibly already terminal",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorRun"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExists"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/connectorRuns": {
+      "get": {
+        "operationId": "projects.connectorRuns.list",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:read",
+        "summary": "List durable connector runs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageSizeParam"
+          },
+          {
+            "$ref": "#/components/parameters/AipPageTokenParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connector runs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorRunListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidArgument"
+          }
+        }
+      }
+    },
+    "/v1/{parent}/connectorRuns/{connectorRunId}": {
+      "get": {
+        "operationId": "projects.connectorRuns.get",
+        "x-tempera-audience": "data-engine",
+        "x-tempera-required-scope": "connector:read",
+        "summary": "Get one durable connector run and its terminal receipt",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ParentParam"
+          },
+          {
+            "name": "connectorRunId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connector run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorRun"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
     "/v1/{parent}/sources:extract": {
       "post": {
         "operationId": "projects.sources.extract",
         "x-tempera-audience": "data-engine",
-        "x-tempera-required-scope": "dataset:write",
+        "x-tempera-required-scope": "connector:manage",
         "summary": "Extract from a source connector (s3, snowflake, salesforce) into artifacts",
-        "description": "Pulls objects/records from a configured source connector and (by default) ingests them as content-addressed artifacts. Text S3 objects ingest raw; binary S3 objects are base64-encoded into raw_body with an encoding marker; structured rows (snowflake, salesforce) ingest as JSON row batches of 100 with row-count metadata. Fails closed with 412 FAILED_PRECONDITION when the connector's env config is absent.",
+        "description": "REST-only legacy migration surface; it is intentionally absent from the MCP tool catalog. Pulls objects/records from a configured source connector and always ingests them as content-addressed artifacts. Text S3 objects ingest raw; binary S3 objects are base64-encoded into raw_body with an encoding marker; structured rows (snowflake, salesforce) ingest as JSON row batches of 100 with row-count metadata. Fails closed with 412 FAILED_PRECONDITION when the connector's env config is absent.",
         "parameters": [
           {
             "$ref": "#/components/parameters/ParentParam"
@@ -2205,7 +2510,7 @@
       "get": {
         "operationId": "projects.connectors.list",
         "x-tempera-audience": "data-engine",
-        "x-tempera-required-scope": "dataset:read",
+        "x-tempera-required-scope": "connector:read",
         "summary": "List source connectors with configured/unconfigured state",
         "description": "Reports each source connector (s3, snowflake, salesforce) as configured or unconfigured booleans plus non-secret config (region, endpoint host, api version). Secret values are never echoed.",
         "parameters": [
@@ -3356,6 +3661,16 @@
       },
       "Conflict": {
         "description": "Immutable identity conflict; ALREADY_EXISTS is non-retryable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "AlreadyExists": {
+        "description": "Source definition or connector-run identity conflict; ALREADY_EXISTS is non-retryable",
         "content": {
           "application/json": {
             "schema": {
@@ -11255,6 +11570,557 @@
           }
         }
       },
+      "SourceDefinitionCreateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connector",
+          "connectionRef",
+          "connectionRevision",
+          "config",
+          "artifactType"
+        ],
+        "properties": {
+          "connector": {
+            "type": "string",
+            "enum": [
+              "s3",
+              "snowflake",
+              "salesforce"
+            ]
+          },
+          "connectionRef": {
+            "type": "string",
+            "description": "Same-project Auth Hub dataSourceConnections resource name."
+          },
+          "connectionRevision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "config": {
+            "$ref": "#/components/schemas/SourceDefinitionConfig"
+          },
+          "artifactType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Non-secret declared metadata."
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "SourceDefinitionPatchRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "etag"
+        ],
+        "properties": {
+          "etag": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string",
+            "enum": [
+              "s3",
+              "snowflake",
+              "salesforce"
+            ]
+          },
+          "connectionRef": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "config": {
+            "$ref": "#/components/schemas/SourceDefinitionConfig"
+          },
+          "artifactType": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SourceDefinitionConfig": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "bucket"
+            ],
+            "properties": {
+              "bucket": {
+                "type": "string"
+              },
+              "prefix": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "maxObjects": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+                "default": 25
+              },
+              "maxBytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10000000,
+                "default": 1000000
+              },
+              "versionId": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "limit"
+            ],
+            "properties": {
+              "statement": {
+                "type": "string",
+                "description": "One fixed read-only SELECT, SHOW, or DESCRIBE statement."
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10000
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "soql"
+            ],
+            "properties": {
+              "soql": {
+                "type": "string",
+                "description": "One fixed read-only SOQL SELECT query."
+              },
+              "maxPages": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20,
+                "default": 5
+              }
+            }
+          }
+        ]
+      },
+      "SourceDefinition": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SourceDefinitionCreateRequest"
+          },
+          {
+            "type": "object",
+            "required": [
+              "name",
+              "project",
+              "sourceDefinitionId",
+              "source",
+              "metadata",
+              "enabled",
+              "version",
+              "etag",
+              "createTime",
+              "updateTime"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "project": {
+                "type": "string"
+              },
+              "sourceDefinitionId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "etag": {
+                "type": "string"
+              },
+              "createTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updateTime": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "SourceDefinitionListResponse": {
+        "type": "object",
+        "required": [
+          "sourceDefinitions",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "properties": {
+          "sourceDefinitions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceDefinition"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          },
+          "totalSize": {
+            "type": "integer"
+          }
+        }
+      },
+      "ConnectorRunRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "producerVersion",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "producerVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "description": "MCP/body form; must match Idempotency-Key when both are supplied."
+          }
+        }
+      },
+      "ConnectorRunReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "run",
+          "status",
+          "complete",
+          "sourceDefinition",
+          "sourceDefinitionVersion",
+          "sourceDefinitionEtag",
+          "connectionRef",
+          "connectionRevision",
+          "connector",
+          "producerVersion",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
+          "itemHashes",
+          "providerReceipt",
+          "sourceSnapshotHash",
+          "startTime",
+          "endTime"
+        ],
+        "properties": {
+          "schema": {
+            "const": "data-engine.connector-run-receipt.v1"
+          },
+          "run": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCEEDED",
+              "INCOMPLETE",
+              "FAILED"
+            ]
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "sourceDefinition": {
+            "type": "string"
+          },
+          "sourceDefinitionVersion": {
+            "type": "integer"
+          },
+          "sourceDefinitionEtag": {
+            "type": "string"
+          },
+          "connectionRef": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string",
+            "enum": [
+              "s3",
+              "snowflake",
+              "salesforce"
+            ]
+          },
+          "producerVersion": {
+            "type": "string"
+          },
+          "extractedCount": {
+            "type": "integer"
+          },
+          "ingestedCount": {
+            "type": "integer"
+          },
+          "errorCount": {
+            "type": "integer"
+          },
+          "artifactNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "itemHashes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "providerReceipt": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Bounded provider completion, pagination, and handle evidence with cursors hashed."
+          },
+          "sourceSnapshotHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ConnectorRun": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "project",
+          "connectorRunId",
+          "sourceDefinition",
+          "sourceDefinitionVersion",
+          "sourceDefinitionEtag",
+          "connectionRef",
+          "connectionRevision",
+          "connector",
+          "producerVersion",
+          "idempotencyKey",
+          "status",
+          "attemptCount",
+          "complete",
+          "extractedCount",
+          "ingestedCount",
+          "errorCount",
+          "artifactNames",
+          "itemHashes",
+          "providerReceipt",
+          "sourceSnapshotHash",
+          "receipt",
+          "error",
+          "createTime",
+          "startTime",
+          "endTime",
+          "updateTime"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          },
+          "connectorRunId": {
+            "type": "string"
+          },
+          "sourceDefinition": {
+            "type": "string"
+          },
+          "sourceDefinitionVersion": {
+            "type": "integer"
+          },
+          "sourceDefinitionEtag": {
+            "type": "string"
+          },
+          "connectionRef": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string",
+            "enum": [
+              "s3",
+              "snowflake",
+              "salesforce"
+            ]
+          },
+          "producerVersion": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "SUCCEEDED",
+              "INCOMPLETE",
+              "FAILED"
+            ]
+          },
+          "attemptCount": {
+            "type": "integer"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "extractedCount": {
+            "type": "integer"
+          },
+          "ingestedCount": {
+            "type": "integer"
+          },
+          "errorCount": {
+            "type": "integer"
+          },
+          "artifactNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "itemHashes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "providerReceipt": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "sourceSnapshotHash": {
+            "type": "string"
+          },
+          "receipt": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorRunReceipt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ConnectorRunListResponse": {
+        "type": "object",
+        "required": [
+          "connectorRuns",
+          "nextPageToken",
+          "totalSize"
+        ],
+        "properties": {
+          "connectorRuns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorRun"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          },
+          "totalSize": {
+            "type": "integer"
+          }
+        }
+      },
       "Connector": {
         "type": "object",
         "required": [
@@ -11370,8 +12236,11 @@
           },
           "ingest": {
             "type": "boolean",
+            "enum": [
+              true
+            ],
             "default": true,
-            "description": "When false, returns extracted payloads without storing artifacts."
+            "description": "Must be true. Raw connector payload previews are disabled."
           },
           "metadata": {
             "type": "object",
@@ -11438,7 +12307,6 @@
                   "type": "string",
                   "enum": [
                     "ingested",
-                    "extracted",
                     "error"
                   ]
                 },
@@ -11466,11 +12334,6 @@
                 },
                 "rowCount": {
                   "type": "integer"
-                },
-                "rawBody": {
-                  "type": "object",
-                  "description": "Present only when ingest=false (dry extraction preview).",
-                  "additionalProperties": true
                 }
               }
             }
