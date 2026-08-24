@@ -263,11 +263,9 @@ class SourceLockTest(unittest.TestCase):
             check_surface.validate_data_engine_mcp_contracts(allow_non_main=True),
             [],
         )
-        self.assertTrue(
-            any(
-                "source_branch" in failure
-                for failure in check_surface.validate_data_engine_mcp_contracts()
-            )
+        self.assertEqual(
+            check_surface.validate_data_engine_mcp_contracts(),
+            [],
         )
 
 

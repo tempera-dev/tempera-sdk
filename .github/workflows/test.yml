@@ -112,6 +112,8 @@ jobs:
               output.write(f"commit={commit}\n")
           PY
       - name: Mint private contract reader token
+        # All matrix producers, including Bio, Human Data, Remi, and Tempo, are
+        # covered by the organization-wide least-privilege installation.
         id: contract-reader
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -315,7 +317,6 @@ jobs:
               output.write(f"commit={commit}\n")
           PY
       - name: Mint private contract reader token
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         id: contract-reader
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -324,7 +325,6 @@ jobs:
           owner: tempera-dev
           repositories: ${{ matrix.repository }}
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         with:
           repository: tempera-dev/${{ matrix.repository }}
           ref: ${{ steps.source-lock.outputs.commit }}
@@ -332,7 +332,6 @@ jobs:
           path: .upstream-source
           token: ${{ steps.contract-reader.outputs.token }}
       - name: Reproduce and verify exact committed source
-        if: ${{ matrix.repository != 'remi' && matrix.repository != 'tempo' && matrix.repository != 'tempera-bio' && matrix.repository != 'human-data' }}
         env:
           PRODUCT: ${{ matrix.product }}
           SOURCE_BRANCH: ${{ matrix.source_branch }}
@@ -348,12 +347,6 @@ jobs:
             --source-repo-dir .upstream-source \
             --source-branch "$SOURCE_BRANCH" \
             --source-commit "$COMMIT"
-      - name: Verify explicit hosted exact-source blocker
-        if: ${{ matrix.repository == 'remi' || matrix.repository == 'tempo' || matrix.repository == 'tempera-bio' || matrix.repository == 'human-data' }}
-        env:
-          SOURCE_REPO: tempera-dev/${{ matrix.repository }}
-        run: python3 scripts/check-exact-source-gaps.py --repository "$SOURCE_REPO"
-
   sdk:
     runs-on: ubuntu-latest
     steps:

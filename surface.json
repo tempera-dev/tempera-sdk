@@ -827,6 +827,33 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "providerConnectionsUpload",
+        "method": "POST",
+        "path": "/v1/provider-connections:upload",
+        "auth": "account",
+        "description": "Create a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "providerConnections.upload",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "allowedModels",
+          "secret"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "providerConnectionsRevoke",
         "method": "DELETE",
         "path": "/v1/provider-connections/{id}",
@@ -859,6 +886,26 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "providerConnectionsRotateUpload",
+        "method": "POST",
+        "path": "/v1/provider-connections/{id}:rotateUpload",
+        "auth": "account",
+        "description": "Rotate a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "providerConnections.rotateUpload",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secret",
+          "allowedModels"
+        ],
+        "requiredBody": [
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "providerConnectionsResolve",
         "method": "POST",
         "path": "/v1/provider-connections/{id}:resolve",
@@ -880,6 +927,140 @@
           "usageDelegation"
         ],
         "upstreamOperationId": "providerConnections.resolve",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsList",
+        "method": "GET",
+        "path": "/v1/connector-credentials",
+        "auth": "account",
+        "description": "List redacted generic connector credential metadata for the selected workspace.",
+        "upstreamOperationId": "connectorCredentials.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "connectorCredentialsCreate",
+        "method": "POST",
+        "path": "/v1/connector-credentials",
+        "auth": "account",
+        "description": "Create generic connector credential metadata using only an external secret reference.",
+        "upstreamOperationId": "connectorCredentials.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretRef"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretRef"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsUpload",
+        "method": "POST",
+        "path": "/v1/connector-credentials:upload",
+        "auth": "account",
+        "description": "Create a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "connectorCredentials.upload",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secret"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsRevoke",
+        "method": "DELETE",
+        "path": "/v1/connector-credentials/{id}",
+        "auth": "account",
+        "description": "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op.",
+        "upstreamOperationId": "connectorCredentials.revoke",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "connectorCredentialsRotate",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:rotate",
+        "auth": "account",
+        "description": "Replace a generic connector credential secret reference and increment its revision.",
+        "upstreamOperationId": "connectorCredentials.rotate",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secretRef"
+        ],
+        "requiredBody": [
+          "secretRef"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsRotateUpload",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:rotateUpload",
+        "auth": "account",
+        "description": "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "connectorCredentials.rotateUpload",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secret"
+        ],
+        "requiredBody": [
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsResolve",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:resolve",
+        "auth": "account",
+        "description": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.",
+        "upstreamOperationId": "connectorCredentials.resolve",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId"
+        ],
         "requestBodyKind": "json",
         "requestContentType": "application/json"
       },
@@ -5657,6 +5838,72 @@
         "prepareCommitRequired": false,
         "requestBodyKind": "json",
         "requestContentType": "application/json"
+      },
+      {
+        "id": "prepareProspectiveExperimentProtocol",
+        "method": "POST",
+        "path": "/v1/prospectiveExperimentProtocols:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare prospective experiment protocol.",
+        "upstreamOperationId": "prepareProspectiveExperimentProtocol",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "configuration",
+          "experimentProposal",
+          "program"
+        ],
+        "requiredBody": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyProspectiveMeasurement",
+        "method": "POST",
+        "path": "/v1/prospectiveMeasurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify prospective measurement.",
+        "upstreamOperationId": "verifyProspectiveMeasurement",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "measurementIdentitySignature",
+          "program",
+          "prospectiveProtocol",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
       },
       {
         "id": "ingestMaveDBScoreSet",

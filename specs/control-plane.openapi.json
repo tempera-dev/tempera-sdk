@@ -1342,6 +1342,37 @@
         }
       }
     },
+    "/v1/provider-connections:upload": {
+      "post": {
+        "operationId": "providerConnections.upload",
+        "summary": "Create a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadProviderConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Provider connection created without persisting or returning raw secret material",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
     "/v1/provider-connections/{id}": {
       "delete": {
         "operationId": "providerConnections.revoke",
@@ -1407,6 +1438,42 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/provider-connections/{id}:rotateUpload": {
+      "post": {
+        "operationId": "providerConnections.rotateUpload",
+        "summary": "Rotate a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RotateUploadedProviderConnectionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider connection rotated without persisting or returning raw secret material",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderConnection"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
           }
         }
       }
@@ -1480,6 +1547,222 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials": {
+      "get": {
+        "operationId": "connectorCredentials.list",
+        "summary": "List redacted generic connector credential metadata for the selected workspace.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connector credential metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCredentialPage"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "connectorCredentials.create",
+        "summary": "Create generic connector credential metadata using only an external secret reference.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectorCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Connector credential created without exposing its secret reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCredential"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials:upload": {
+      "post": {
+        "operationId": "connectorCredentials.upload",
+        "summary": "Create a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadConnectorCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Connector credential created without persisting or returning raw secret material",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCredential"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials/{id}": {
+      "delete": {
+        "operationId": "connectorCredentials.revoke",
+        "summary": "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Connector credential revoked or already absent"
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials/{id}:rotate": {
+      "post": {
+        "operationId": "connectorCredentials.rotate",
+        "summary": "Replace a generic connector credential secret reference and increment its revision.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RotateConnectorCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connector credential rotated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCredential"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials/{id}:rotateUpload": {
+      "post": {
+        "operationId": "connectorCredentials.rotateUpload",
+        "summary": "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RotateUploadedConnectorCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connector credential rotated without persisting or returning raw secret material",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCredential"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/connector-credentials/{id}:resolve": {
+      "post": {
+        "operationId": "connectorCredentials.resolve",
+        "summary": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveConnectorCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Runtime-only external secret reference and exact workspace binding",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolvedConnectorCredential"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/AipError"
           }
         }
       }
@@ -5658,6 +5941,47 @@
           }
         }
       },
+      "UploadProviderConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "secret"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/ProviderConnectionProvider"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          },
+          "secret": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "writeOnly": true,
+            "description": "One-time raw provider secret passed directly to the configured Vault writer and never persisted."
+          }
+        }
+      },
       "RotateProviderConnectionRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -5667,6 +5991,25 @@
         "properties": {
           "secretRef": {
             "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          },
+          "allowedModels": {
+            "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          }
+        }
+      },
+      "RotateUploadedProviderConnectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "secret"
+        ],
+        "properties": {
+          "secret": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "writeOnly": true,
+            "description": "One-time raw provider secret passed directly to the configured Vault writer and never persisted."
           },
           "allowedModels": {
             "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
@@ -5822,6 +6165,253 @@
           },
           "allowedModels": {
             "$ref": "#/components/schemas/ProviderConnectionAllowedModels"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CreateConnectorCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretRef"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          }
+        }
+      },
+      "UploadConnectorCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secret"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secret": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "writeOnly": true,
+            "description": "One-time raw connector secret passed directly to the configured Vault writer and never persisted."
+          }
+        }
+      },
+      "RotateConnectorCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "secretRef"
+        ],
+        "properties": {
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          }
+        }
+      },
+      "RotateUploadedConnectorCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "secret"
+        ],
+        "properties": {
+          "secret": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "writeOnly": true,
+            "description": "One-time raw connector secret passed directly to the configured Vault writer and never persisted."
+          }
+        }
+      },
+      "ResolveConnectorCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectorCredential": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credentialId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretBackend",
+          "secretConfigured",
+          "revision",
+          "state",
+          "createdAt",
+          "updatedAt",
+          "lastResolvedAt",
+          "revokedAt"
+        ],
+        "properties": {
+          "credentialId": {
+            "type": "string",
+            "pattern": "^cred_[A-Za-z0-9_-]{2,75}$"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "secretBackend": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
+          },
+          "secretConfigured": {
+            "type": "boolean",
+            "const": true
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastResolvedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "ConnectorCredentialPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "connectorCredentials",
+          "nextPageToken"
+        ],
+        "properties": {
+          "connectorCredentials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorCredential"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "ResolvedConnectorCredential": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credentialId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "secretRef",
+          "secretBackend",
+          "revision"
+        ],
+        "properties": {
+          "credentialId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "secretRef": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretRef"
+          },
+          "secretBackend": {
+            "$ref": "#/components/schemas/ProviderConnectionSecretBackend"
           },
           "revision": {
             "type": "integer",

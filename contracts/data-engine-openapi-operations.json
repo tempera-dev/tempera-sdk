@@ -1,8 +1,8 @@
 {
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
-  "source_branch": "codex/data-engine-aip193-response-repair-20260822",
-  "source_commit": "97d816eaf8c064f0793d13e3a4e0fa0209a8370f",
+  "source_branch": "main",
+  "source_commit": "cbcbe40c33544ca16e6c3e99f18c5ebcec96dbc9",
   "source_path": "api/openapi.yaml",
   "source_blob_sha": "b78c3cc5aec96e69d22e23fae6874705cf959a57",
   "source_sha256": "baddc1dadc133cf47338053b728f15df41433e8c453e012e02edf9caaef0e971",

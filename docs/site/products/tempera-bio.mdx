@@ -21,7 +21,7 @@ Fail-closed computational-biology artifact pipeline for source ingestion, propos
 | Audience | `tempera-bio` |
 | Auth | bearer minted for audience tempera-bio with the operation's bio scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaBio` · Python `client.tempera_bio` · Rust `build_request("tempera_bio", ...)` |
-| Typed operations | 10 |
+| Typed operations | 12 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaBio.request(path, options)` (TypeScript) /
@@ -475,6 +475,140 @@ let spec = client.build_request("tempera_bio", "prepare_program", &[
     ("candidateSet", "<candidateSet>".into()),
     ("configuration", "<configuration>".into()),
     ("hypothesis", "<hypothesis>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### prepareProspectiveExperimentProtocol
+
+`POST /v1/prospectiveExperimentProtocols:prepare`
+
+Prepare prospective experiment protocol.
+
+- **Producer operationId:** `prepareProspectiveExperimentProtocol`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:proposal:write`
+- **Call as:** TypeScript `client.temperaBio.prepareProspectiveExperimentProtocol()` · Python `client.tempera_bio.prepare_prospective_experiment_protocol()` · Rust `build_request("tempera_bio", "prepare_prospective_experiment_protocol", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `configuration` | yes | — |
+| `experimentProposal` | yes | — |
+| `program` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.prepareProspectiveExperimentProtocol({
+  configuration: "<configuration>",
+  experimentProposal: "<experimentProposal>",
+  program: "<program>",
+});
+```
+
+```python Python
+result = client.tempera_bio.prepare_prospective_experiment_protocol({
+    "configuration": "<configuration>",
+    "experimentProposal": "<experimentProposal>",
+    "program": "<program>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "prepare_prospective_experiment_protocol", &[
+    ("configuration", "<configuration>".into()),
+    ("experimentProposal", "<experimentProposal>".into()),
+    ("program", "<program>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### verifyProspectiveMeasurement
+
+`POST /v1/prospectiveMeasurements:verify`
+
+Verify prospective measurement.
+
+- **Producer operationId:** `verifyProspectiveMeasurement`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Scope:** `bio:measurement:verify`
+- **Call as:** TypeScript `client.temperaBio.verifyProspectiveMeasurement()` · Python `client.tempera_bio.verify_prospective_measurement()` · Rust `build_request("tempera_bio", "verify_prospective_measurement", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `candidate` | yes | — |
+| `experimentProposal` | yes | — |
+| `hypothesis` | yes | — |
+| `measurementIdentitySignature` | yes | — |
+| `program` | yes | — |
+| `prospectiveProtocol` | yes | — |
+| `providerResultEnvelope` | yes | — |
+| `providerResultIdentitySignature` | yes | — |
+| `rawChainOfCustodyBase64` | yes | — |
+| `rawMeasurementBase64` | yes | — |
+| `rawSubmissionReceiptBase64` | yes | — |
+| `submissionIdentitySignature` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.verifyProspectiveMeasurement({
+  candidate: "<candidate>",
+  experimentProposal: "<experimentProposal>",
+  hypothesis: "<hypothesis>",
+  measurementIdentitySignature: "<measurementIdentitySignature>",
+  program: "<program>",
+  prospectiveProtocol: "<prospectiveProtocol>",
+  providerResultEnvelope: "<providerResultEnvelope>",
+  providerResultIdentitySignature: "<providerResultIdentitySignature>",
+  rawChainOfCustodyBase64: "<rawChainOfCustodyBase64>",
+  rawMeasurementBase64: "<rawMeasurementBase64>",
+  rawSubmissionReceiptBase64: "<rawSubmissionReceiptBase64>",
+  submissionIdentitySignature: "<submissionIdentitySignature>",
+});
+```
+
+```python Python
+result = client.tempera_bio.verify_prospective_measurement({
+    "candidate": "<candidate>",
+    "experimentProposal": "<experimentProposal>",
+    "hypothesis": "<hypothesis>",
+    "measurementIdentitySignature": "<measurementIdentitySignature>",
+    "program": "<program>",
+    "prospectiveProtocol": "<prospectiveProtocol>",
+    "providerResultEnvelope": "<providerResultEnvelope>",
+    "providerResultIdentitySignature": "<providerResultIdentitySignature>",
+    "rawChainOfCustodyBase64": "<rawChainOfCustodyBase64>",
+    "rawMeasurementBase64": "<rawMeasurementBase64>",
+    "rawSubmissionReceiptBase64": "<rawSubmissionReceiptBase64>",
+    "submissionIdentitySignature": "<submissionIdentitySignature>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "verify_prospective_measurement", &[
+    ("candidate", "<candidate>".into()),
+    ("experimentProposal", "<experimentProposal>".into()),
+    ("hypothesis", "<hypothesis>".into()),
+    ("measurementIdentitySignature", "<measurementIdentitySignature>".into()),
+    ("program", "<program>".into()),
+    ("prospectiveProtocol", "<prospectiveProtocol>".into()),
+    ("providerResultEnvelope", "<providerResultEnvelope>".into()),
+    ("providerResultIdentitySignature", "<providerResultIdentitySignature>".into()),
+    ("rawChainOfCustodyBase64", "<rawChainOfCustodyBase64>".into()),
+    ("rawMeasurementBase64", "<rawMeasurementBase64>".into()),
+    ("rawSubmissionReceiptBase64", "<rawSubmissionReceiptBase64>".into()),
+    ("submissionIdentitySignature", "<submissionIdentitySignature>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 92 |
+| Typed operations | 101 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -1406,6 +1406,67 @@ let spec = client.build_request("control_plane", "provider_connections_create", 
 
 </CodeGroup>
 
+### providerConnectionsUpload
+
+`POST /v1/provider-connections:upload`
+
+Create a provider connection by writing one raw secret directly to the configured Vault backend.
+
+- **Producer operationId:** `providerConnections.upload`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsUpload()` · Python `client.control_plane.provider_connections_upload()` · Rust `build_request("control_plane", "provider_connections_upload", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `provider` | yes | — |
+| `name` | yes | — |
+| `allowedModels` | no | — |
+| `secret` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.providerConnectionsUpload({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  provider: "<provider>",
+  name: "<name>",
+  secret: "<secret>",
+});
+```
+
+```python Python
+result = client.control_plane.provider_connections_upload({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "provider": "<provider>",
+    "name": "<name>",
+    "secret": "<secret>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "provider_connections_upload", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("provider", "<provider>".into()),
+    ("name", "<name>".into()),
+    ("secret", "<secret>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### providerConnectionsRevoke
 
 `DELETE /v1/provider-connections/{id}`
@@ -1499,6 +1560,59 @@ let spec = client.build_request("control_plane", "provider_connections_rotate", 
 
 </CodeGroup>
 
+### providerConnectionsRotateUpload
+
+`POST /v1/provider-connections/{id}:rotateUpload`
+
+Rotate a provider connection by writing one raw secret directly to the configured Vault backend.
+
+- **Producer operationId:** `providerConnections.rotateUpload`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.providerConnectionsRotateUpload()` · Python `client.control_plane.provider_connections_rotate_upload()` · Rust `build_request("control_plane", "provider_connections_rotate_upload", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `secret` | yes | — |
+| `allowedModels` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.providerConnectionsRotateUpload({
+  id: "<id>",
+  secret: "<secret>",
+  allowedModels: "<allowedModels>",
+});
+```
+
+```python Python
+result = client.control_plane.provider_connections_rotate_upload({
+    "id": "<id>",
+    "secret": "<secret>",
+    "allowedModels": "<allowedModels>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "provider_connections_rotate_upload", &[
+    ("id", "<id>".into()),
+    ("secret", "<secret>".into()),
+    ("allowedModels", "<allowedModels>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### providerConnectionsResolve
 
 `POST /v1/provider-connections/{id}:resolve`
@@ -1553,6 +1667,357 @@ let spec = client.build_request("control_plane", "provider_connections_resolve",
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
     ("usageDelegation", "<usageDelegation>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsList
+
+`GET /v1/connector-credentials`
+
+List redacted generic connector credential metadata for the selected workspace.
+
+- **Producer operationId:** `connectorCredentials.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsList()` · Python `client.control_plane.connector_credentials_list()` · Rust `build_request("control_plane", "connector_credentials_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsCreate
+
+`POST /v1/connector-credentials`
+
+Create generic connector credential metadata using only an external secret reference.
+
+- **Producer operationId:** `connectorCredentials.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsCreate()` · Python `client.control_plane.connector_credentials_create()` · Rust `build_request("control_plane", "connector_credentials_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `name` | yes | — |
+| `secretRef` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  name: "<name>",
+  secretRef: "<secretRef>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "name": "<name>",
+    "secretRef": "<secretRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("name", "<name>".into()),
+    ("secretRef", "<secretRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsUpload
+
+`POST /v1/connector-credentials:upload`
+
+Create a generic connector credential by writing one raw secret directly to the configured Vault backend.
+
+- **Producer operationId:** `connectorCredentials.upload`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsUpload()` · Python `client.control_plane.connector_credentials_upload()` · Rust `build_request("control_plane", "connector_credentials_upload", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `name` | yes | — |
+| `secret` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsUpload({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  name: "<name>",
+  secret: "<secret>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_upload({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "name": "<name>",
+    "secret": "<secret>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_upload", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("name", "<name>".into()),
+    ("secret", "<secret>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsRevoke
+
+`DELETE /v1/connector-credentials/{id}`
+
+Revoke a generic connector credential immediately. Revoking an unknown id is a no-op.
+
+- **Producer operationId:** `connectorCredentials.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsRevoke()` · Python `client.control_plane.connector_credentials_revoke()` · Rust `build_request("control_plane", "connector_credentials_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsRevoke({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_revoke({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_revoke", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsRotate
+
+`POST /v1/connector-credentials/{id}:rotate`
+
+Replace a generic connector credential secret reference and increment its revision.
+
+- **Producer operationId:** `connectorCredentials.rotate`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsRotate()` · Python `client.control_plane.connector_credentials_rotate()` · Rust `build_request("control_plane", "connector_credentials_rotate", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `secretRef` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsRotate({
+  id: "<id>",
+  secretRef: "<secretRef>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_rotate({
+    "id": "<id>",
+    "secretRef": "<secretRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_rotate", &[
+    ("id", "<id>".into()),
+    ("secretRef", "<secretRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsRotateUpload
+
+`POST /v1/connector-credentials/{id}:rotateUpload`
+
+Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend.
+
+- **Producer operationId:** `connectorCredentials.rotateUpload`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsRotateUpload()` · Python `client.control_plane.connector_credentials_rotate_upload()` · Rust `build_request("control_plane", "connector_credentials_rotate_upload", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `secret` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsRotateUpload({
+  id: "<id>",
+  secret: "<secret>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_rotate_upload({
+    "id": "<id>",
+    "secret": "<secret>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_rotate_upload", &[
+    ("id", "<id>".into()),
+    ("secret", "<secret>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorCredentialsResolve
+
+`POST /v1/connector-credentials/{id}:resolve`
+
+Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.
+
+- **Producer operationId:** `connectorCredentials.resolve`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.connectorCredentialsResolve()` · Python `client.control_plane.connector_credentials_resolve()` · Rust `build_request("control_plane", "connector_credentials_resolve", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.connectorCredentialsResolve({
+  id: "<id>",
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+});
+```
+
+```python Python
+result = client.control_plane.connector_credentials_resolve({
+    "id": "<id>",
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "connector_credentials_resolve", &[
+    ("id", "<id>".into()),
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

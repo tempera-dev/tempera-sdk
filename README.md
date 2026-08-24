@@ -317,11 +317,12 @@ the committed site is always current thanks to the drift gate).
   into model exposure.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
-- `contracts/sdk-exact-source-gaps.json` records expiring hosted-verification
-  blockers for private producers where the least-privilege Contract Reader App
-  is not installed. Those jobs are labeled source gates and validate the exact
-  vendored SHA plus producer-side hosted CI; they are not reported as hosted
-  exact-source reproduction until the App installation exists.
+- `contracts/sdk-exact-source-gaps.json` records any temporary, expiring
+  hosted-verification blocker. It is currently empty: every private producer
+  in the upstream matrix uses the organization-wide, least-privilege Contract
+  Reader App and reproduces the exact vendored SHA from committed source. A
+  future exception must name its exact commit, owner, remediation, producer CI,
+  and review date; it must never silently bypass the source gate.
 - The endpoint-change rollout process is documented in
   [`docs/ROLLOUT.md`](./docs/ROLLOUT.md).
 

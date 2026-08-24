@@ -158,12 +158,30 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   providerConnectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a tenant-scoped provider connection using only an external secret reference. */
   providerConnectionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a provider connection by writing one raw secret directly to the configured Vault backend. */
+  providerConnectionsUpload(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke a provider connection immediately. Revoking an unknown id is a no-op. */
   providerConnectionsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Replace a connection secret reference and increment its revision without exposing the reference. */
   providerConnectionsRotate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Rotate a provider connection by writing one raw secret directly to the configured Vault backend. */
+  providerConnectionsRotateUpload(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Resolve connection runtime metadata for a tenant-bound tempera-llm service credential. */
   providerConnectionsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List redacted generic connector credential metadata for the selected workspace. */
+  connectorCredentialsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create generic connector credential metadata using only an external secret reference. */
+  connectorCredentialsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a generic connector credential by writing one raw secret directly to the configured Vault backend. */
+  connectorCredentialsUpload(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a generic connector credential immediately. Revoking an unknown id is a no-op. */
+  connectorCredentialsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace a generic connector credential secret reference and increment its revision. */
+  connectorCredentialsRotate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend. */
+  connectorCredentialsRotateUpload(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential. */
+  connectorCredentialsResolve(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List external experiment-provider metadata. Secret references and values are never returned. */
   listExperimentProviderConnections(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Register a tenant-scoped experiment provider using only an external secret reference. */
@@ -675,6 +693,10 @@ export interface TemperaBioClient extends TemperaProductClientBase {
   verifyMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare program. */
   prepareProgram(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare prospective experiment protocol. */
+  prepareProspectiveExperimentProtocol(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify prospective measurement. */
+  verifyProspectiveMeasurement(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Ingest mave d b score set. */
   ingestMaveDBScoreSet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

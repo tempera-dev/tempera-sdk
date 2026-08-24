@@ -1050,6 +1050,43 @@ OPERATIONS = {
             "description": "Create a tenant-scoped provider connection using only an external secret reference."
         },
         {
+            "id": "provider_connections_upload",
+            "upstream_operation_id": "providerConnections.upload",
+            "method": "POST",
+            "path": "/v1/provider-connections:upload",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "name",
+                "allowedModels",
+                "secret"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "provider",
+                "name",
+                "secret"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a provider connection by writing one raw secret directly to the configured Vault backend."
+        },
+        {
             "id": "provider_connections_revoke",
             "upstream_operation_id": "providerConnections.revoke",
             "method": "DELETE",
@@ -1103,6 +1140,35 @@ OPERATIONS = {
             "description": "Replace a connection secret reference and increment its revision without exposing the reference."
         },
         {
+            "id": "provider_connections_rotate_upload",
+            "upstream_operation_id": "providerConnections.rotateUpload",
+            "method": "POST",
+            "path": "/v1/provider-connections/{id}:rotateUpload",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "secret",
+                "allowedModels"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "secret"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Rotate a provider connection by writing one raw secret directly to the configured Vault backend."
+        },
+        {
             "id": "provider_connections_resolve",
             "upstream_operation_id": "providerConnections.resolve",
             "method": "POST",
@@ -1135,6 +1201,211 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
+        },
+        {
+            "id": "connector_credentials_list",
+            "upstream_operation_id": "connectorCredentials.list",
+            "method": "GET",
+            "path": "/v1/connector-credentials",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List redacted generic connector credential metadata for the selected workspace."
+        },
+        {
+            "id": "connector_credentials_create",
+            "upstream_operation_id": "connectorCredentials.create",
+            "method": "POST",
+            "path": "/v1/connector-credentials",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "name",
+                "secretRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "name",
+                "secretRef"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create generic connector credential metadata using only an external secret reference."
+        },
+        {
+            "id": "connector_credentials_upload",
+            "upstream_operation_id": "connectorCredentials.upload",
+            "method": "POST",
+            "path": "/v1/connector-credentials:upload",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "name",
+                "secret"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId",
+                "name",
+                "secret"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a generic connector credential by writing one raw secret directly to the configured Vault backend."
+        },
+        {
+            "id": "connector_credentials_revoke",
+            "upstream_operation_id": "connectorCredentials.revoke",
+            "method": "DELETE",
+            "path": "/v1/connector-credentials/{id}",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op."
+        },
+        {
+            "id": "connector_credentials_rotate",
+            "upstream_operation_id": "connectorCredentials.rotate",
+            "method": "POST",
+            "path": "/v1/connector-credentials/{id}:rotate",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "secretRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "secretRef"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Replace a generic connector credential secret reference and increment its revision."
+        },
+        {
+            "id": "connector_credentials_rotate_upload",
+            "upstream_operation_id": "connectorCredentials.rotateUpload",
+            "method": "POST",
+            "path": "/v1/connector-credentials/{id}:rotateUpload",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "secret"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "secret"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend."
+        },
+        {
+            "id": "connector_credentials_resolve",
+            "upstream_operation_id": "connectorCredentials.resolve",
+            "method": "POST",
+            "path": "/v1/connector-credentials/{id}:resolve",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "orgId",
+                "projectId",
+                "environmentId"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "orgId",
+                "projectId",
+                "environmentId"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential."
         },
         {
             "id": "list_experiment_provider_connections",
@@ -8351,6 +8622,84 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Prepare program."
+        },
+        {
+            "id": "prepare_prospective_experiment_protocol",
+            "upstream_operation_id": "prepareProspectiveExperimentProtocol",
+            "method": "POST",
+            "path": "/v1/prospectiveExperimentProtocols:prepare",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "configuration",
+                "experimentProposal",
+                "program"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "configuration",
+                "program",
+                "experimentProposal"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "bio:proposal:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Prepare prospective experiment protocol."
+        },
+        {
+            "id": "verify_prospective_measurement",
+            "upstream_operation_id": "verifyProspectiveMeasurement",
+            "method": "POST",
+            "path": "/v1/prospectiveMeasurements:verify",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-bio",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "candidate",
+                "experimentProposal",
+                "hypothesis",
+                "measurementIdentitySignature",
+                "program",
+                "prospectiveProtocol",
+                "providerResultEnvelope",
+                "providerResultIdentitySignature",
+                "rawChainOfCustodyBase64",
+                "rawMeasurementBase64",
+                "rawSubmissionReceiptBase64",
+                "submissionIdentitySignature"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "candidate",
+                "program",
+                "hypothesis",
+                "experimentProposal",
+                "prospectiveProtocol",
+                "rawSubmissionReceiptBase64",
+                "submissionIdentitySignature",
+                "providerResultEnvelope",
+                "providerResultIdentitySignature",
+                "rawChainOfCustodyBase64",
+                "rawMeasurementBase64",
+                "measurementIdentitySignature"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "bio:measurement:verify",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Verify prospective measurement."
         },
         {
             "id": "ingest_mave_db_score_set",
