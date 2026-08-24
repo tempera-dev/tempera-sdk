@@ -7172,6 +7172,31 @@ OPERATIONS = {
             "description": "Check tempera-workflows engine liveness."
         },
         {
+            "id": "connectors_list",
+            "upstream_operation_id": "connectors.list",
+            "method": "GET",
+            "path": "/v1/connectors",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-workflows",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "workflow:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "The server-managed connector ids available to workflow definitions."
+        },
+        {
             "id": "create_experiment_submission",
             "upstream_operation_id": "experimentSubmissions.create",
             "method": "POST",

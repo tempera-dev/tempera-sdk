@@ -587,6 +587,8 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
 export interface TemperaWorkflowsClient extends TemperaProductClientBase {
   /** Check tempera-workflows engine liveness. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** The server-managed connector ids available to workflow definitions. */
+  connectorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Authorize and durably submit one preregistered prospective Bio experiment. */
   createExperimentSubmission(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get a credential-free durable view of one experiment submission. */

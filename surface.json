@@ -4770,6 +4770,23 @@
         "requestBodyKind": "none"
       },
       {
+        "id": "connectorsList",
+        "method": "GET",
+        "path": "/v1/connectors",
+        "auth": "oauthResource",
+        "description": "The server-managed connector ids available to workflow definitions.",
+        "upstreamOperationId": "connectors.list",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none",
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:read",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
+      },
+      {
         "id": "createExperimentSubmission",
         "method": "POST",
         "path": "/v1/experimentSubmissions",

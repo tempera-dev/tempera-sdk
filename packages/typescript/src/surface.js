@@ -7181,6 +7181,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Check tempera-workflows engine liveness."
     },
     {
+      "id": "connectorsList",
+      "upstreamOperationId": "connectors.list",
+      "method": "GET",
+      "path": "/v1/connectors",
+      "auth": "oauthResource",
+      "authAudience": "tempera-workflows",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "workflow:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "The server-managed connector ids available to workflow definitions."
+    },
+    {
       "id": "createExperimentSubmission",
       "upstreamOperationId": "experimentSubmissions.create",
       "method": "POST",

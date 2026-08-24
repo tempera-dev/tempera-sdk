@@ -85,6 +85,16 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "x-tempera-route-policy",
+            "in": "header",
+            "description": "Tenant-bound policy id required when model is tempera/auto",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "requestBody": {
@@ -128,6 +138,28 @@
                   "type": "string"
                 },
                 "description": "Stable request/trace identity"
+              },
+              "x-tempera-route-policy-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Pinned route policy used by tempera/auto, when used"
+              },
+              "x-tempera-route-policy-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Pinned route policy revision used by tempera/auto, when used"
+              },
+              "x-tempera-route-provider-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Pinned provider endpoint revision used by tempera/auto, when used"
               },
               "x-tempera-usage-event-id": {
                 "schema": {
@@ -354,6 +386,16 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "x-tempera-route-policy",
+            "in": "header",
+            "description": "Tenant-bound policy id required when model is tempera/auto",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "requestBody": {
@@ -397,6 +439,28 @@
                   "type": "string"
                 },
                 "description": "Stable request/trace identity"
+              },
+              "x-tempera-route-policy-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Pinned route policy used by tempera/auto, when used"
+              },
+              "x-tempera-route-policy-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Pinned route policy revision used by tempera/auto, when used"
+              },
+              "x-tempera-route-provider-revision": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 0
+                },
+                "description": "Pinned provider endpoint revision used by tempera/auto, when used"
               },
               "x-tempera-usage-event-id": {
                 "schema": {
