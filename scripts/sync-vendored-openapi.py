@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from staged_source import validate_exact_local_source
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_LOCK_SCRIPT = (
@@ -178,19 +180,23 @@ def current_branch_equivalent_file(
     source_branch: str,
     requested_commit: str,
     source_path: str,
+    *,
+    allow_local_source: bool = False,
 ) -> tuple[str, str, str, bytes]:
     """Read an exact source file whose tree entry still matches branch HEAD."""
 
-    commit = source_lock.validate_source(
-        repo,
-        source_repo,
-        source_branch,
-        requested_commit,
+    commit = (
+        validate_exact_local_source(repo, source_repo, source_branch, requested_commit)
+        if allow_local_source
+        else source_lock.validate_source(repo, source_repo, source_branch, requested_commit)
     )
     blob, mode, content = source_lock.committed_file(repo, commit, source_path)
-    current_head = git(
-        repo, "rev-parse", f"refs/remotes/origin/{source_branch}^{{commit}}"
+    branch_ref = (
+        f"refs/heads/{source_branch}"
+        if allow_local_source
+        else f"refs/remotes/origin/{source_branch}"
     )
+    current_head = git(repo, "rev-parse", f"{branch_ref}^{{commit}}")
     current_blob, current_mode, _ = source_lock.committed_file(
         repo, current_head, source_path
     )
@@ -198,7 +204,7 @@ def current_branch_equivalent_file(
         raise ValueError(
             f"source tree entry drift for {source_path}: "
             f"{commit} has {mode} {blob}, while "
-            f"origin/{source_branch}@{current_head} has "
+            f"{branch_ref}@{current_head} has "
             f"{current_mode} {current_blob}; re-vendor from current source"
         )
     return commit, blob, mode, content
@@ -210,6 +216,7 @@ def synchronize(
     requested_commit: str,
     check: bool,
     source_branch: str | None = None,
+    allow_local_source: bool = False,
 ) -> None:
     config = PRODUCTS[product]
     selected_branch = source_branch or config["source_branch"]
@@ -221,6 +228,7 @@ def synchronize(
         selected_branch,
         requested_commit,
         config["source_path"],
+        allow_local_source=allow_local_source,
     )
     rendered = render(content, config["transform"])
     generated = ROOT / config["generated_path"]
@@ -245,7 +253,8 @@ def synchronize(
             raise ValueError(f"{product} vendored OpenAPI or source lock is stale")
         print(
             f"{product} OpenAPI lock verified at {commit}; "
-            f"{config['source_path']} is unchanged on origin/{selected_branch}"
+            f"{config['source_path']} is unchanged on "
+            f"{'local' if allow_local_source else 'origin'}/{selected_branch}"
         )
         return
     generated.write_bytes(rendered)
@@ -266,6 +275,11 @@ def main() -> int:
     )
     parser.add_argument("--source-commit", default="HEAD")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--allow-local-source",
+        action="store_true",
+        help="accept only an exact clean checked-out local branch head",
+    )
     args = parser.parse_args()
     try:
         synchronize(
@@ -274,6 +288,7 @@ def main() -> int:
             args.source_commit,
             args.check,
             args.source_branch,
+            args.allow_local_source,
         )
         return 0
     except (

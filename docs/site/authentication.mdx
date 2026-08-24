@@ -190,6 +190,7 @@ is the default when none is specified.
 | `tempera-bio` | tempera-bio |
 | `tempera-document` | tempera-document |
 | `tempera-risk` | tempera-risk |
+| `tempera-investigations` | — |
 | `tempera-payments` | tempera-payments |
 | `tempera-voice` | tempera-voice |
 | `tempera-clearing` | — |
@@ -204,18 +205,23 @@ is the default when none is specified.
 | `memory:manage` | No typed SDK operation declares it yet; enforced server-side. |
 | `trace:read` | palette: `archiveTrace`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `searchSpans` |
 | `trace:write` | palette: `importSource`, `ingestSpan` |
-| `dataset:read` | data-engine: `getArtifact`, `getDiscoveryRelease`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listConnectors`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `bioProposalPoliciesList`, `getEpisode`, `getRun`, `getSealedEvaluation`, `getTask`, `listDomains`, `listEnvironments`, `listEpisodes`, `listRuns`, `listSealedEvaluations`, `listSealedEvaluators`, `listTasks`, `listVerifiers` |
-| `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `extractSource`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
+| `scenario:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `scenario:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `dataset:read` | data-engine: `getArtifact`, `getDiscoveryRelease`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `bioProposalPoliciesList`, `getEpisode`, `getRun`, `getSealedEvaluation`, `getTask`, `listDomains`, `listEnvironments`, `listEpisodes`, `listRuns`, `listSealedEvaluations`, `listSealedEvaluators`, `listTasks`, `listVerifiers` |
+| `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `projectsConnectorEvidenceIngest`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
+| `connector:read` | data-engine: `listConnectors`, `projectsConnectorRunsGet`, `projectsConnectorRunsList`, `projectsSourceDefinitionsGet`, `projectsSourceDefinitionsList` |
+| `connector:run` | data-engine: `projectsSourceDefinitionsRun` |
+| `connector:manage` | data-engine: `extractSource`, `projectsSourceDefinitionsCreate`, `projectsSourceDefinitionsPatch` |
 | `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode`; tempera-voice: `buildVoiceEvalBundle`, `createVoicePaletteHandoff`, `exportVoiceSessions`, `importVoiceEvalResult`, `listVoiceEvalProfiles`, `publishVoicePaletteHandoff`, `sealVoiceEvalResult` |
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask`, `createReviewerRevocation` |
 | `review:resolve` | data-engine: `claimExpertTask`, `createExpertTaskAppeal`, `getReviewOperations`, `getReviewerQualification`, `recordReviewerSessionEvent`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
-| `workflow:read` | tempera-workflows: `getExperimentSubmission`, `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
+| `workflow:read` | tempera-workflows: `connectorsList`, `getExperimentSubmission`, `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
 | `workflow:write` | tempera-workflows: `assistJson`, `compileBioCampaign`, `composeWorkflow`, `createWorkflow`, `deleteWorkflow`, `updateWorkflow`, `validateWorkflow` |
 | `workflow:run` | tempera-workflows: `callWorkflow`, `cancelRun`, `createRun`, `runsSignal` |
 | `bio:source:read` | tempera-bio: `ingestMaveDBScoreSet` |
-| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareProgram` |
-| `bio:measurement:verify` | tempera-bio: `verifyMeasurement` |
+| `bio:proposal:write` | tempera-bio: `prepareCandidateSet`, `prepareDatasetReleaseManifest`, `prepareExperimentProposal`, `prepareExperimentProposalFromGymBatch`, `prepareHypothesis`, `prepareProgram`, `prepareProspectiveExperimentProtocol` |
+| `bio:measurement:verify` | tempera-bio: `verifyMeasurement`, `verifyProspectiveMeasurement` |
 | `bio:decision:write` | tempera-bio: `deriveCampaignState`, `deriveDecision` |
 | `bio:experiment:approve` | auth-hub: `createExperimentApproval`, `listExperimentApprovals`, `revokeExperimentApproval` |
 | `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection`; tempera-workflows: `createExperimentSubmission`, `reconcileExperimentSubmission` |
@@ -228,6 +234,10 @@ is the default when none is specified.
 | `risk:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `risk:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `risk:review` | No typed SDK operation declares it yet; enforced server-side. |
+| `investigation:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `investigation:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `investigation:run` | No typed SDK operation declares it yet; enforced server-side. |
+| `investigation:review` | No typed SDK operation declares it yet; enforced server-side. |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `payments:intents:read` | tempera-payments: `getPaymentIntent` |
 | `payments:intents:write` | tempera-payments: `createCardSession`, `createPaymentIntent`, `createStripeCheckout` |
@@ -238,12 +248,12 @@ is the default when none is specified.
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:read` | auth-hub: `clearingAdmissionsGet` |
 | `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:commit` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:reconcile` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:commit` | auth-hub: `clearingAdmissionsClaim`, `clearingAdmissionsFinalize` |
+| `clearing:actions:reconcile` | auth-hub: `clearingAdmissionsMarkRecoveryRequired` |
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:approve` | No typed SDK operation declares it yet; enforced server-side. |
+| `clearing:actions:approve` | auth-hub: `clearingAdmissionsCreate` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
 
 ## Issuer endpoints

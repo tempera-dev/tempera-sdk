@@ -59,6 +59,14 @@ python3 scripts/sync-data-engine-openapi.py --check \
   --source-commit <40-character-producer-commit>
 ```
 
+An unpublished integration train may add `--allow-local-source` to the
+Control Plane, Data Engine, MCP-contract, and vendored-product synchronizers.
+That mode still rejects dirty producers and additionally requires the exact
+40-character commit to equal both the checked-out `HEAD` and the named local
+branch head. Qualify the resulting exact non-main locks with
+`python3 scripts/check-sdk-surface.py --staged-local`. The default surface gate
+continues to reject every non-`main` lock and remains the release/publish gate.
+
 ## When a product endpoint changes
 
 1. **Land the product change** behind its own contract gate (regenerate the

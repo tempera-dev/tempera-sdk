@@ -21,7 +21,7 @@ Governed, non-decisional cross-domain investigation service. The trusted SDK sur
 | Audience | `tempera-risk` |
 | Auth | bearer minted for audience tempera-risk; Risk additionally enforces tenant, project, actor, case, access-grant, permissible-purpose, source-rights, and human-review boundaries. |
 | Client | TypeScript `client.temperaRisk` · Python `client.tempera_risk` · Rust `build_request("tempera_risk", ...)` |
-| Typed operations | 35 |
+| Typed operations | 43 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaRisk.request(path, options)` (TypeScript) /
@@ -2045,6 +2045,458 @@ let spec = client.build_request("tempera_risk", "review_research_job", &[
     ("jobId", "<jobId>".into()),
     ("approved", "<approved>".into()),
     ("reason", "<reason>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### verifyRiskClearingEvidenceLive
+
+`POST /v1/projects/{project}/riskClearingEvidence:verifyLive`
+
+Verify one signed Risk Clearing evidence envelope against live Risk state.
+
+- **Producer operationId:** `verifyRiskClearingEvidenceLive`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.verifyRiskClearingEvidenceLive()` · Python `client.tempera_risk.verify_risk_clearing_evidence_live()` · Rust `build_request("tempera_risk", "verify_risk_clearing_evidence_live", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.verifyRiskClearingEvidenceLive({
+  project: "<project>",
+  envelope: "<envelope>",
+});
+```
+
+```python Python
+result = client.tempera_risk.verify_risk_clearing_evidence_live({
+    "project": "<project>",
+    "envelope": "<envelope>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "verify_risk_clearing_evidence_live", &[
+    ("project", "<project>".into()),
+    ("envelope", "<envelope>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### abortRiskClearingReservation
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:abort`
+
+Release a reservation only when Clearing proved no external dispatch occurred.
+
+- **Producer operationId:** `abortRiskClearingReservation`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.abortRiskClearingReservation()` · Python `client.tempera_risk.abort_risk_clearing_reservation()` · Rust `build_request("tempera_risk", "abort_risk_clearing_reservation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `abortReceiptDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.abortRiskClearingReservation({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  abortReceiptDigest: "<abortReceiptDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.abort_risk_clearing_reservation({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "abortReceiptDigest": "<abortReceiptDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "abort_risk_clearing_reservation", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("abortReceiptDigest", "<abortReceiptDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### markRiskClearingOutcomeUnknown
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown`
+
+Hold budget capacity after an ambiguous provider dispatch.
+
+- **Producer operationId:** `markRiskClearingOutcomeUnknown`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.markRiskClearingOutcomeUnknown()` · Python `client.tempera_risk.mark_risk_clearing_outcome_unknown()` · Rust `build_request("tempera_risk", "mark_risk_clearing_outcome_unknown", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `dispatchAttemptDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.markRiskClearingOutcomeUnknown({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  dispatchAttemptDigest: "<dispatchAttemptDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.mark_risk_clearing_outcome_unknown({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "dispatchAttemptDigest": "<dispatchAttemptDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "mark_risk_clearing_outcome_unknown", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("dispatchAttemptDigest", "<dispatchAttemptDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### openRiskClearingExposure
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:open`
+
+Record an independently observed provider effect while retaining capacity.
+
+- **Producer operationId:** `openRiskClearingExposure`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.openRiskClearingExposure()` · Python `client.tempera_risk.open_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "open_risk_clearing_exposure", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `executionReceiptDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.openRiskClearingExposure({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  executionReceiptDigest: "<executionReceiptDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.open_risk_clearing_exposure({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "executionReceiptDigest": "<executionReceiptDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "open_risk_clearing_exposure", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("executionReceiptDigest", "<executionReceiptDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### recordRiskClearingProvisionalOutcome
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome`
+
+Record a non-final observed outcome without releasing capacity.
+
+- **Producer operationId:** `recordRiskClearingProvisionalOutcome`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.recordRiskClearingProvisionalOutcome()` · Python `client.tempera_risk.record_risk_clearing_provisional_outcome()` · Rust `build_request("tempera_risk", "record_risk_clearing_provisional_outcome", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `outcomeDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.recordRiskClearingProvisionalOutcome({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  outcomeDigest: "<outcomeDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.record_risk_clearing_provisional_outcome({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "outcomeDigest": "<outcomeDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "record_risk_clearing_provisional_outcome", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("outcomeDigest", "<outcomeDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### recordRiskClearingCompensation
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation`
+
+Record compensation as a forward action without releasing capacity.
+
+- **Producer operationId:** `recordRiskClearingCompensation`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.recordRiskClearingCompensation()` · Python `client.tempera_risk.record_risk_clearing_compensation()` · Rust `build_request("tempera_risk", "record_risk_clearing_compensation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `compensationReceiptDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.recordRiskClearingCompensation({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  compensationReceiptDigest: "<compensationReceiptDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.record_risk_clearing_compensation({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "compensationReceiptDigest": "<compensationReceiptDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "record_risk_clearing_compensation", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("compensationReceiptDigest", "<compensationReceiptDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### disputeRiskClearingExposure
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:dispute`
+
+Keep capacity held when authoritative evidence conflicts.
+
+- **Producer operationId:** `disputeRiskClearingExposure`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.disputeRiskClearingExposure()` · Python `client.tempera_risk.dispute_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "dispute_risk_clearing_exposure", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `disputeEvidenceDigest` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.disputeRiskClearingExposure({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  disputeEvidenceDigest: "<disputeEvidenceDigest>",
+});
+```
+
+```python Python
+result = client.tempera_risk.dispute_risk_clearing_exposure({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "disputeEvidenceDigest": "<disputeEvidenceDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "dispute_risk_clearing_exposure", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("disputeEvidenceDigest", "<disputeEvidenceDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### settleRiskClearingExposure
+
+`POST /v1/projects/{project}/riskClearingReservations/{reservationId}:settle`
+
+Settle a mature reconciled outcome and release held capacity.
+
+- **Producer operationId:** `settleRiskClearingExposure`
+- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Call as:** TypeScript `client.temperaRisk.settleRiskClearingExposure()` · Python `client.tempera_risk.settle_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "settle_risk_clearing_exposure", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `reservationId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `envelope` | yes | — |
+| `outcomeDigest` | yes | — |
+| `realizedLoss` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.settleRiskClearingExposure({
+  project: "<project>",
+  reservationId: "<reservationId>",
+  envelope: "<envelope>",
+  outcomeDigest: "<outcomeDigest>",
+  realizedLoss: "<realizedLoss>",
+});
+```
+
+```python Python
+result = client.tempera_risk.settle_risk_clearing_exposure({
+    "project": "<project>",
+    "reservationId": "<reservationId>",
+    "envelope": "<envelope>",
+    "outcomeDigest": "<outcomeDigest>",
+    "realizedLoss": "<realizedLoss>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "settle_risk_clearing_exposure", &[
+    ("project", "<project>".into()),
+    ("reservationId", "<reservationId>".into()),
+    ("envelope", "<envelope>".into()),
+    ("outcomeDigest", "<outcomeDigest>".into()),
+    ("realizedLoss", "<realizedLoss>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

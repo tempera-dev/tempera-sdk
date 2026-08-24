@@ -25,7 +25,7 @@
         "format": "openapi-operation-block.v1",
         "input_sha256": "6a69cc1eaca80238e1453052688e1365596878ef0da0de7f34846dad1e1af59e",
         "mcp_input_schema_sha256": "50abc3d683d6a8f72c3cf8f183a02e7296da66ff2ec1c993ee89b3ebf117cf86",
-        "mcp_output_schema_sha256": "dc102485d0af6edaa4a179519abca06e79e576cacf13802a306c2d67a625a8dd",
+        "mcp_output_schema_sha256": "4e58fca700b2b6900eff8ee976044a42d105969860aa3103ce959ad6b92fb5ef",
         "output_sha256": "0c529ee2e2a8d2a6d4ecf0fb89a67690e6ce1d56728aa3b73787fb9effea0bb1"
       }
     },
@@ -205,6 +205,81 @@
       }
     },
     {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.connectorEvidence.ingest",
+      "path": "/v1/{parent}/connectorEvidence:ingest",
+      "reason": "Signed high-volume source evidence admission remains a producer-orchestrated REST handoff.",
+      "required_scope": "dataset:write",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f9e81cfdde916d68b8e1251440a40abe49f746ec11467b1bffff0aab9754dc79",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "34bf2c3dc9ce3a33fa8d4a4f2578a9aad81ee4ff36a12a3e9a5c49597428e086"
+      }
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "decision": "expose",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "rest-route-dispatch",
+        "runtime-input-validation"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.connectorRuns.get",
+      "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "connector:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f3600797d20f7bcda4335a3b10ee2ead8c1c4c04dc5df45690b8d0cb8950fa5d",
+        "mcp_input_schema_sha256": "ff51ba99286d3f26921f78c8328af5be29ba9455e4c3e5049cd2b95add7fd834",
+        "mcp_output_schema_sha256": "44079518ce48cfbad962ba4510f52dd63d3ff8f2c0834b8368bb67d2b6b9a4f4",
+        "output_sha256": "7069d135651dfab17efa402c2293091133b53e6dfec5e26743ec2871deee00e1"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.connectorRuns.list",
+      "path": "/v1/{parent}/connectorRuns",
+      "reason": "Connector-run enumeration remains an operator application surface; models may retrieve a known run.",
+      "required_scope": "connector:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "747fcebbd36378039c276053df86803edf341f5ee9196b1ba4bc1718a3ee2a0a",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "8722e2fdd538dfe7b353e50d5611107c78087a168150d5299b22a405866473b6"
+      }
+    },
+    {
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -224,10 +299,10 @@
       "operation_id": "projects.connectors.list",
       "path": "/v1/{parent}/connectors",
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
-      "required_scope": "dataset:read",
+      "required_scope": "connector:read",
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
-        "input_sha256": "b26e43ea9364f8b7c41aca1760eceb99dfc6e0eedb0ec57da3e1e865421fce44",
+        "input_sha256": "e01e26bb2408fa91cb407f579359bd42ab52277317fe4cda7e3f521c7de91cf2",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "e777a4d704aa38f91f5b6c9014798944a79a236f19f9d49bcf1369b6a434d235",
         "output_sha256": "dda8c9339f82d270d321e8c89b7217feec9ee82e71d738f59830549889fe427a"
@@ -908,7 +983,7 @@
         "input_sha256": "1703021cf81a2f51a113f7066c53160b2d4b2da8cea534b8dea62d9defaae09b",
         "mcp_input_schema_sha256": "4384ea91b62a35aac518e08bcb65e363bed0d898111629bae8ec658e9161b7b6",
         "mcp_output_schema_sha256": "a9d28ed99f13c0c298d263c4fb443e99296f2603eb0617c670c24082d05129ee",
-        "output_sha256": "068dd8159cdd6a2260c58ecac9dafc2b0ec891163665af512d253c5b5f06eb65"
+        "output_sha256": "2cdb1e087aa810eb6fc954a7a4ab1f4e3ee4184b3575a0ec94dc642dec0e416a"
       }
     },
     {
@@ -1183,10 +1258,102 @@
       }
     },
     {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "POST",
+      "operation_id": "projects.sourceDefinitions.create",
+      "path": "/v1/{parent}/sourceDefinitions",
+      "reason": "Source-definition creation requires an operator-reviewed credential and query binding.",
+      "required_scope": "connector:manage",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "21b00150b67f35bcc2bb81393522b90febde5479b474b1a8caef6086893be413",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "8b54292edff2f119e6b6d84387ded1809446b49ffd3bca22552239c3e6e55adb"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.sourceDefinitions.get",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+      "reason": "Source definitions contain fixed provider coordinates and remain an operator application surface.",
+      "required_scope": "connector:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "84c3c1fa615191bf56c56276fc8abe9b7199da416c1e7d31862ac49c4f4e5d9f",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "a60a7f449a36dc70f9ff4ff2ff38e7b96f82016f0fca3ffeb397f96c2987a30d"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "safe",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "read-only",
+      "method": "GET",
+      "operation_id": "projects.sourceDefinitions.list",
+      "path": "/v1/{parent}/sourceDefinitions",
+      "reason": "Source-definition enumeration remains an operator application surface.",
+      "required_scope": "connector:read",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "60a15bc9cba00d185860478a41604fa96a2a21f78e08114a2d425e07f9ced1a2",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "d8b1e828202c70496dd258b3a8c9be56b46d1286690516d7b0607d21b79ed511"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
+      ],
+      "idempotency": "not-guaranteed",
+      "method": "PATCH",
+      "operation_id": "projects.sourceDefinitions.patch",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+      "reason": "Source-definition version changes require operator review and optimistic concurrency.",
+      "required_scope": "connector:manage",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "a0f2fbaec1ddc8ed3ac63f3ee7468f85bd35883cd093803061b3c7b16cef838d",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
+        "output_sha256": "6549a96bf73b605af04cc8643358bd9bc20b51e95deb490e4f3846c43cbe3837"
+      }
+    },
+    {
       "annotations": {
         "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
         "readOnlyHint": false
       },
       "decision": "expose",
@@ -1195,19 +1362,43 @@
         "audience:data-engine",
         "project-binding",
         "rest-route-dispatch",
-        "runtime-input-validation"
+        "runtime-input-validation",
+        "explicit-open-world-annotation"
+      ],
+      "idempotency": "exact-replay",
+      "method": "POST",
+      "operation_id": "projects.sourceDefinitions.run",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
+      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
+      "required_scope": "connector:run",
+      "schema_fixtures": {
+        "format": "openapi-operation-block.v1",
+        "input_sha256": "f1f9fe999704989709a38a12c914e47dea09250d62878c34b77da77fbd872a24",
+        "mcp_input_schema_sha256": "6ff8beacb1c5bbb083c318622c1bf91ca43e85b1c9db1a476b90ad4d0e33a541",
+        "mcp_output_schema_sha256": "44079518ce48cfbad962ba4510f52dd63d3ff8f2c0834b8368bb67d2b6b9a4f4",
+        "output_sha256": "ed7e9267b05326a7b31ac8b4ebd7c6782aaba562f494e2a79a483137935c5515"
+      }
+    },
+    {
+      "annotations": null,
+      "decision": "deny",
+      "effect": "write",
+      "guards": [
+        "audience:data-engine",
+        "project-binding",
+        "absent-from-static-mcp-registry"
       ],
       "idempotency": "not-guaranteed",
       "method": "POST",
       "operation_id": "projects.sources.extract",
       "path": "/v1/{parent}/sources:extract",
-      "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
-      "required_scope": "dataset:write",
+      "reason": "Arbitrary connector parameters can expose external data or execute caller-supplied queries; use a reviewed source definition and connector run.",
+      "required_scope": "connector:manage",
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
-        "input_sha256": "9c3b3ba33aff2941a5378052b7c62baee583024d09f4678482757d0df66e670a",
-        "mcp_input_schema_sha256": "43602d0c55b45713bbb04f7ce91f28ab88b04f63c30dfa7bb08c1f17070f73eb",
-        "mcp_output_schema_sha256": "4700e034d9602d5af68790f6eb68f55f6fa8d098d199984c7a8d7d9b30ab0cc6",
+        "input_sha256": "118b915f01e30061643b9d34532a2b1c022bf47c689bc3fd7fe8f390cf887376",
+        "mcp_input_schema_sha256": null,
+        "mcp_output_schema_sha256": null,
         "output_sha256": "aaaa0ab0600fc283de465173a993ef3140d5a3aac8561a8e8434960f32c48061"
       }
     },
@@ -1534,28 +1725,28 @@
     }
   ],
   "policy": {
-    "authenticated_operation_count": 57,
-    "denied_count": 21,
+    "authenticated_operation_count": 65,
+    "denied_count": 28,
     "excluded_transport_operations": [
       "health.get",
       "mcp.jsonrpc"
     ],
-    "exposed_count": 36,
+    "exposed_count": 37,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "42b8ed99dd011649a98aafb563d69cdb8fec8d6875edf38c8ede8c2c40dc176f"
+      "sha256": "ba57fbb6972897193f16d57b71b930bbf40da1e08bcd36ffdbbcc4dae4578132"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "1deb0d418b1a3c8a2e3f8e7cd3ce348f79428685",
+    "commit": "7b9acb1d8226282f452aff28e5e415b05f71a4e1",
     "files": [
       {
-        "git_blob": "1d0acbc378d432940aac61e508f8ea6b85be8795",
+        "git_blob": "b78c3cc5aec96e69d22e23fae6874705cf959a57",
         "path": "api/openapi.yaml",
-        "sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f"
+        "sha256": "baddc1dadc133cf47338053b728f15df41433e8c453e012e02edf9caaef0e971"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1563,19 +1754,19 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "454c314d3ec09c88b76234b152fead6e20e2b91a",
+        "git_blob": "77e52cbd3e3d538e6e9c5399add3674b87d70b9e",
         "path": "src/data_engine/app.py",
-        "sha256": "173beb096fc26468104f6adc22eac1be68a9d67c518c54be11fa64ef4b25cbbe"
+        "sha256": "7b3454b5863ee30cf96f88f97720072cdc54522c7a9823ff564f77d52446210f"
       },
       {
-        "git_blob": "f930e96426af2edc7d88ffb609c66abc9e229a03",
+        "git_blob": "341cd1063cd400c8c30bd0b8c86d83c4b7b1a53b",
         "path": "src/data_engine/mcp.py",
-        "sha256": "b9454386556f6ab800d6866472c9f1272e32385a8d88439fdefb7b946b24029f"
+        "sha256": "11ecf62e3ae9c247dd0f50c6279771c9a656bc17b047c8a679b4cefaab1f7206"
       },
       {
-        "git_blob": "5a50d8273b747fbf47eb3de636f655032d1d7fe4",
+        "git_blob": "3a262100e85b64dc7b7903d700a73c96f85fcf92",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "3fb4160d2a3c89ce7491859b20ce3f0e5caed4759d1cf252efe7fba859a62c2c"
+        "sha256": "e9303f609e4b0dc2c4e5043cfc76ca44f480c24ce98aa00a32ac215ac1853c56"
       }
     ],
     "repository": "tempera-dev/data-engine"

@@ -311,16 +311,18 @@ the committed site is always current thanks to the drift gate).
   `specs/data-engine-mcp-tools.json` vendor the producer's exact curated MCP
   decisions and static `tools/list` serialization. Their adjacent `.source`
   locks bind the same immutable Data Engine commit as the OpenAPI lock. The SDK
-  gate requires all 50 authenticated project operations to be explicitly
-  exposed or denied and rejects scope, schema-fixture, or catalog drift without
-  turning REST coverage into model exposure.
+  gate requires every authenticated project operation to be explicitly
+  exposed or denied, verifies the producer-declared exposed/denied counts, and
+  rejects scope, schema-fixture, or catalog drift without turning REST coverage
+  into model exposure.
 - Each package's test suite loops over **every** generated operation against
   a mock transport, asserting method, path, auth header, and body defaults.
-- `contracts/sdk-exact-source-gaps.json` records expiring hosted-verification
-  blockers for private producers where the least-privilege Contract Reader App
-  is not installed. Those jobs are labeled source gates and validate the exact
-  vendored SHA plus producer-side hosted CI; they are not reported as hosted
-  exact-source reproduction until the App installation exists.
+- `contracts/sdk-exact-source-gaps.json` records any temporary, expiring
+  hosted-verification blocker. It is currently empty: every private producer
+  in the upstream matrix uses the organization-wide, least-privilege Contract
+  Reader App and reproduces the exact vendored SHA from committed source. A
+  future exception must name its exact commit, owner, remediation, producer CI,
+  and review date; it must never silently bypass the source gate.
 - The endpoint-change rollout process is documented in
   [`docs/ROLLOUT.md`](./docs/ROLLOUT.md).
 
@@ -348,3 +350,9 @@ npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml
 ```
+
+For an unpublished exact-source train, synchronizers accept
+`--allow-local-source` only when the requested SHA equals a clean checkout's
+named local branch and `HEAD`. Use `python3 scripts/check-sdk-surface.py
+--staged-local` for that local qualification. The default command above remains
+strict and rejects non-`main` source locks for release.

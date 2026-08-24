@@ -31,6 +31,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from staged_source import validate_exact_local_source
+
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
@@ -157,6 +159,7 @@ def committed_source(
     source_repo: str = DEFAULT_SOURCE_REPO,
     source_branch: str = DEFAULT_SOURCE_BRANCH,
     source_commit: str = "HEAD",
+    allow_local_source: bool = False,
 ) -> tuple[bytes, dict[str, str]]:
     if not SOURCE_REPO_RE.fullmatch(source_repo):
         raise ValueError("source repo must be an owner/name GitHub repository")
@@ -193,18 +196,21 @@ def committed_source(
     commit = run_git(repo, "rev-parse", f"{source_commit}^{{commit}}")
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError(f"source commit is not a 40-character SHA: {commit!r}")
-    remote_ref = f"refs/remotes/origin/{source_branch}"
-    remote_commit = run_git(repo, "rev-parse", "--verify", remote_ref)
-    reachable = subprocess.run(
-        ["git", "-C", str(repo), "merge-base", "--is-ancestor", commit, remote_commit],
-        capture_output=True,
-        check=False,
-    )
-    if reachable.returncode != 0:
-        raise ValueError(
-            f"source commit {commit} is not reachable from origin/{source_branch}; "
-            "push the source commit before generating provenance"
+    if allow_local_source:
+        validate_exact_local_source(repo, source_repo, source_branch, commit)
+    else:
+        remote_ref = f"refs/remotes/origin/{source_branch}"
+        remote_commit = run_git(repo, "rev-parse", "--verify", remote_ref)
+        reachable = subprocess.run(
+            ["git", "-C", str(repo), "merge-base", "--is-ancestor", commit, remote_commit],
+            capture_output=True,
+            check=False,
         )
+        if reachable.returncode != 0:
+            raise ValueError(
+                f"source commit {commit} is not reachable from origin/{source_branch}; "
+                "push the source commit before generating provenance"
+            )
     tree = subprocess.run(
         ["git", "-C", str(repo), "ls-tree", "-z", commit, "--", source_path],
         capture_output=True,
@@ -306,6 +312,11 @@ def main() -> int:
     parser.add_argument("--source-repo", default=DEFAULT_SOURCE_REPO)
     parser.add_argument("--source-branch", default=DEFAULT_SOURCE_BRANCH)
     parser.add_argument("--source-commit", default="HEAD")
+    parser.add_argument(
+        "--allow-local-source",
+        action="store_true",
+        help="accept only an exact clean checked-out local branch head",
+    )
     args = parser.parse_args()
     if args.source.is_symlink() or not args.source.is_file():
         print(
@@ -320,6 +331,7 @@ def main() -> int:
             source_repo=args.source_repo,
             source_branch=args.source_branch,
             source_commit=args.source_commit,
+            allow_local_source=args.allow_local_source,
         )
         source_text = source_bytes.decode("utf-8")
         operations = extract_operations_text(

@@ -19,6 +19,7 @@ import sys
 from datetime import date
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,6 +38,7 @@ SPECS = {
     "temperaWorkflows": "tempera-workflows-api.json",
     "tempo": "tempo-openapi.json",
 }
+REFERENCE_GATED_PRODUCTS = {"controlPlane", "dataEngine"}
 
 # These are transport or operational endpoints, not Google-style resource APIs.
 # Keeping the list exact makes an accidentally added exception fail the ratchet.
@@ -531,6 +533,47 @@ def load_specs() -> dict[str, dict[str, Any]]:
     return loaded
 
 
+def validate_local_references(specs: dict[str, dict[str, Any]]) -> list[str]:
+    """Walk every local JSON reference and require its pointer to resolve."""
+
+    failures: list[str] = []
+
+    def resolve(document: Any, reference: str) -> None:
+        if reference == "#":
+            return
+        if not reference.startswith("#/"):
+            raise ValueError("local reference must be '#' or start with '#/'")
+        current = document
+        for encoded in reference[2:].split("/"):
+            token = unquote(encoded).replace("~1", "/").replace("~0", "~")
+            if isinstance(current, dict) and token in current:
+                current = current[token]
+            elif isinstance(current, list) and token.isdigit() and int(token) < len(current):
+                current = current[int(token)]
+            else:
+                raise ValueError(f"missing pointer token {token!r}")
+
+    def walk(product: str, document: Any, value: Any, location: str) -> None:
+        if isinstance(value, dict):
+            reference = value.get("$ref")
+            if isinstance(reference, str) and reference.startswith("#"):
+                try:
+                    resolve(document, reference)
+                except ValueError as error:
+                    failures.append(
+                        f"{product}:{location}: dangling local $ref {reference!r}: {error}"
+                    )
+            for key, child in value.items():
+                walk(product, document, child, f"{location}/{key}")
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                walk(product, document, child, f"{location}/{index}")
+
+    for product, document in specs.items():
+        walk(product, document, document, "#")
+    return failures
+
+
 def load_baseline() -> dict[str, Any]:
     return json.loads(BASELINE.read_text(encoding="utf-8"))
 
@@ -677,6 +720,15 @@ def main() -> int:
         return 0
 
     failures = validate_baseline_shape(baseline)
+    failures.extend(
+        validate_local_references(
+            {
+                product: spec
+                for product, spec in specs.items()
+                if product in REFERENCE_GATED_PRODUCTS
+            }
+        )
+    )
     failures.extend(validate_protocol_exceptions(specs))
     accepted = set(baseline.get("accepted_violations") or [])
     discovered = set(violations)

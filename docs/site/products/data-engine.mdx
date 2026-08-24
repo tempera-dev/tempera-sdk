@@ -21,7 +21,7 @@ Domain-portable label-emergence engine: deterministic ingestion, sandboxed verif
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine, central tp_ API key, or the data-engine static token |
 | Client | TypeScript `client.dataEngine` · Python `client.data_engine` · Rust `build_request("data_engine", ...)` |
-| Typed operations | 58 |
+| Typed operations | 66 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.dataEngine.request(path, options)` (TypeScript) /
@@ -212,6 +212,61 @@ let spec = client.build_request("data_engine", "ingest_artifact", &[
     ("artifactType", "<artifactType>".into()),
     ("source", "<source>".into()),
     ("externalId", "<externalId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsConnectorEvidenceIngest
+
+`POST /v1/{parent}/connectorEvidence:ingest`
+
+Verify and retain signed Tempera Connectors source evidence.
+
+- **Producer operationId:** `projects.connectorEvidence.ingest`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `dataset:write`
+- **Call as:** TypeScript `client.dataEngine.projectsConnectorEvidenceIngest()` · Python `client.data_engine.projects_connector_evidence_ingest()` · Rust `build_request("data_engine", "projects_connector_evidence_ingest", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `evidence` | yes | — |
+| `artifactBase64` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsConnectorEvidenceIngest({
+  parent: "<parent>",
+  evidence: "<evidence>",
+  artifactBase64: "<artifactBase64>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_connector_evidence_ingest({
+    "parent": "<parent>",
+    "evidence": "<evidence>",
+    "artifactBase64": "<artifactBase64>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_connector_evidence_ingest", &[
+    ("parent", "<parent>".into()),
+    ("evidence", "<evidence>".into()),
+    ("artifactBase64", "<artifactBase64>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2178,6 +2233,418 @@ let spec = client.build_request("data_engine", "emit_eval", &[
 
 </CodeGroup>
 
+### projectsSourceDefinitionsCreate
+
+`POST /v1/{parent}/sourceDefinitions`
+
+Create an immutable-versioned connector source definition.
+
+- **Producer operationId:** `projects.sourceDefinitions.create`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:manage`
+- **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsCreate()` · Python `client.data_engine.projects_source_definitions_create()` · Rust `build_request("data_engine", "projects_source_definitions_create", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sourceDefinitionId` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `connector` | yes | — |
+| `connectionRef` | yes | — |
+| `connectionRevision` | yes | — |
+| `config` | yes | — |
+| `artifactType` | yes | — |
+| `source` | no | — |
+| `metadata` | no | — |
+| `enabled` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsSourceDefinitionsCreate({
+  parent: "<parent>",
+  connector: "<connector>",
+  connectionRef: "<connectionRef>",
+  connectionRevision: "<connectionRevision>",
+  config: "<config>",
+  artifactType: "<artifactType>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_source_definitions_create({
+    "parent": "<parent>",
+    "connector": "<connector>",
+    "connectionRef": "<connectionRef>",
+    "connectionRevision": "<connectionRevision>",
+    "config": "<config>",
+    "artifactType": "<artifactType>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_source_definitions_create", &[
+    ("parent", "<parent>".into()),
+    ("connector", "<connector>".into()),
+    ("connectionRef", "<connectionRef>".into()),
+    ("connectionRevision", "<connectionRevision>".into()),
+    ("config", "<config>".into()),
+    ("artifactType", "<artifactType>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsSourceDefinitionsList
+
+`GET /v1/{parent}/sourceDefinitions`
+
+List project source definitions.
+
+- **Producer operationId:** `projects.sourceDefinitions.list`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:read`
+- **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsList()` · Python `client.data_engine.projects_source_definitions_list()` · Rust `build_request("data_engine", "projects_source_definitions_list", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsSourceDefinitionsList({
+  parent: "<parent>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_source_definitions_list({
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_source_definitions_list", &[
+    ("parent", "<parent>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsSourceDefinitionsGet
+
+`GET /v1/{parent}/sourceDefinitions/{sourceDefinitionId}`
+
+Get one source definition.
+
+- **Producer operationId:** `projects.sourceDefinitions.get`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:read`
+- **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsGet()` · Python `client.data_engine.projects_source_definitions_get()` · Rust `build_request("data_engine", "projects_source_definitions_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `sourceDefinitionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsSourceDefinitionsGet({
+  parent: "<parent>",
+  sourceDefinitionId: "<sourceDefinitionId>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_source_definitions_get({
+    "parent": "<parent>",
+    "sourceDefinitionId": "<sourceDefinitionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_source_definitions_get", &[
+    ("parent", "<parent>".into()),
+    ("sourceDefinitionId", "<sourceDefinitionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsSourceDefinitionsPatch
+
+`PATCH /v1/{parent}/sourceDefinitions/{sourceDefinitionId}`
+
+Create a new version of a source definition.
+
+- **Producer operationId:** `projects.sourceDefinitions.patch`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:manage`
+- **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsPatch()` · Python `client.data_engine.projects_source_definitions_patch()` · Rust `build_request("data_engine", "projects_source_definitions_patch", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `sourceDefinitionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `etag` | yes | — |
+| `connector` | no | — |
+| `connectionRef` | no | — |
+| `connectionRevision` | no | — |
+| `config` | no | — |
+| `artifactType` | no | — |
+| `source` | no | — |
+| `metadata` | no | — |
+| `enabled` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsSourceDefinitionsPatch({
+  parent: "<parent>",
+  sourceDefinitionId: "<sourceDefinitionId>",
+  etag: "<etag>",
+  connector: "<connector>",
+  connectionRef: "<connectionRef>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_source_definitions_patch({
+    "parent": "<parent>",
+    "sourceDefinitionId": "<sourceDefinitionId>",
+    "etag": "<etag>",
+    "connector": "<connector>",
+    "connectionRef": "<connectionRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_source_definitions_patch", &[
+    ("parent", "<parent>".into()),
+    ("sourceDefinitionId", "<sourceDefinitionId>".into()),
+    ("etag", "<etag>".into()),
+    ("connector", "<connector>".into()),
+    ("connectionRef", "<connectionRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsSourceDefinitionsRun
+
+`POST /v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run`
+
+Start an exact-replay connector run from a reviewed definition.
+
+- **Producer operationId:** `projects.sourceDefinitions.run`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:run`
+- **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsRun()` · Python `client.data_engine.projects_source_definitions_run()` · Rust `build_request("data_engine", "projects_source_definitions_run", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `sourceDefinitionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `producerVersion` | yes | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsSourceDefinitionsRun({
+  parent: "<parent>",
+  sourceDefinitionId: "<sourceDefinitionId>",
+  producerVersion: "<producerVersion>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_source_definitions_run({
+    "parent": "<parent>",
+    "sourceDefinitionId": "<sourceDefinitionId>",
+    "producerVersion": "<producerVersion>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_source_definitions_run", &[
+    ("parent", "<parent>".into()),
+    ("sourceDefinitionId", "<sourceDefinitionId>".into()),
+    ("producerVersion", "<producerVersion>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsConnectorRunsList
+
+`GET /v1/{parent}/connectorRuns`
+
+List durable connector runs.
+
+- **Producer operationId:** `projects.connectorRuns.list`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:read`
+- **Call as:** TypeScript `client.dataEngine.projectsConnectorRunsList()` · Python `client.data_engine.projects_connector_runs_list()` · Rust `build_request("data_engine", "projects_connector_runs_list", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsConnectorRunsList({
+  parent: "<parent>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_connector_runs_list({
+    "parent": "<parent>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_connector_runs_list", &[
+    ("parent", "<parent>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### projectsConnectorRunsGet
+
+`GET /v1/{parent}/connectorRuns/{connectorRunId}`
+
+Get one durable connector run and its terminal receipt.
+
+- **Producer operationId:** `projects.connectorRuns.get`
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **AIP resource path templates:** `parent=projects/*`
+- **Scope:** `connector:read`
+- **Call as:** TypeScript `client.dataEngine.projectsConnectorRunsGet()` · Python `client.data_engine.projects_connector_runs_get()` · Rust `build_request("data_engine", "projects_connector_runs_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `parent` | yes | Substituted into the URL path (percent-encoded). |
+| `connectorRunId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.dataEngine.projectsConnectorRunsGet({
+  parent: "<parent>",
+  connectorRunId: "<connectorRunId>",
+});
+```
+
+```python Python
+result = client.data_engine.projects_connector_runs_get({
+    "parent": "<parent>",
+    "connectorRunId": "<connectorRunId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("data_engine", "projects_connector_runs_get", &[
+    ("parent", "<parent>".into()),
+    ("connectorRunId", "<connectorRunId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### extractSource
 
 `POST /v1/{parent}/sources:extract`
@@ -2187,7 +2654,7 @@ Extract bounded objects or records from a configured source connector.
 - **Producer operationId:** `projects.sources.extract`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
-- **Scope:** `dataset:write`
+- **Scope:** `connector:manage`
 - **Call as:** TypeScript `client.dataEngine.extractSource()` · Python `client.data_engine.extract_source()` · Rust `build_request("data_engine", "extract_source", params)`
 
 **Path parameters**
@@ -2257,7 +2724,7 @@ List registered source connectors for a project.
 - **Producer operationId:** `projects.connectors.list`
 - **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **AIP resource path templates:** `parent=projects/*`
-- **Scope:** `dataset:read`
+- **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.listConnectors()` · Python `client.data_engine.list_connectors()` · Rust `build_request("data_engine", "list_connectors", params)`
 
 **Path parameters**

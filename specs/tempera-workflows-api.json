@@ -109,6 +109,44 @@
         ],
         "type": "string"
       },
+      "ConnectorInfo": {
+        "description": "A server-managed external API connector that is safe to expose to Studio.\n\nThe base URL and credential are intentionally omitted: a workflow refers to\nthis stable id, and the service resolves the target only at execution time.",
+        "properties": {
+          "hasCredential": {
+            "description": "Whether the deployment has a server-side bearer credential for this\nconnector. The credential itself is never returned.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Stable lowercase connector id used by `connector.request` nodes.",
+            "example": "support-api",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "hasCredential"
+        ],
+        "type": "object"
+      },
+      "ConnectorList": {
+        "description": "`GET /v1/connectors` response. This is an inventory of usable connector\nids, not a secret-management API.",
+        "properties": {
+          "connectors": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorInfo"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "connectors"
+        ],
+        "type": "object"
+      },
       "EdgeDef": {
         "additionalProperties": false,
         "description": "A directed data edge.",
@@ -1674,6 +1712,86 @@
         "x-tempera-physical-action": false,
         "x-tempera-prepare-commit-required": false,
         "x-tempera-required-scope": null
+      }
+    },
+    "/v1/connectors": {
+      "get": {
+        "description": "This intentionally exposes neither the resolved base URL nor credentials:\nthose values stay in deployment configuration, so a Studio user can build\na custom API step without making the browser an SSRF or secret boundary.",
+        "operationId": "connectors.list",
+        "parameters": [
+          {
+            "description": "Maximum entries to return (default 100, max 500).",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opaque continuation token returned by the preceding list response.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorList"
+                }
+              }
+            },
+            "description": "Configured Tempera Connector ids (no URLs or secrets)"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid list query or page token"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Missing scope"
+          }
+        },
+        "summary": "The server-managed connector ids available to workflow definitions.",
+        "tags": [
+          "connectors"
+        ],
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": false,
+        "x-tempera-prepare-commit-required": false,
+        "x-tempera-required-scope": "workflow:read"
       }
     },
     "/v1/experimentSubmissions": {
@@ -3373,6 +3491,10 @@
     {
       "description": "Data-driven node catalog for the studio palette",
       "name": "nodeTypes"
+    },
+    {
+      "description": "Server-managed custom API connector inventory; URLs and credentials never leave deployment configuration",
+      "name": "connectors"
     },
     {
       "description": "Human-approved, durable, fail-closed physical experiment submission and reconciliation",

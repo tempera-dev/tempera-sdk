@@ -21,7 +21,7 @@ Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of ty
 | Audience | `tempera-workflows` |
 | Auth | bearer minted for audience tempera-workflows with workflow:read/workflow:write/workflow:run, or a central tp_ API key |
 | Client | TypeScript `client.temperaWorkflows` · Python `client.tempera_workflows` · Rust `build_request("tempera_workflows", ...)` |
-| Typed operations | 20 |
+| Typed operations | 21 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaWorkflows.request(path, options)` (TypeScript) /
@@ -51,6 +51,51 @@ result = client.tempera_workflows.health()
 
 ```rust Rust
 let spec = client.build_request("tempera_workflows", "health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### connectorsList
+
+`GET /v1/connectors`
+
+The server-managed connector ids available to workflow definitions.
+
+- **Producer operationId:** `connectors.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-workflows`.
+- **Scope:** `workflow:read`
+- **Call as:** TypeScript `client.temperaWorkflows.connectorsList()` · Python `client.tempera_workflows.connectors_list()` · Rust `build_request("tempera_workflows", "connectors_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaWorkflows.connectorsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.tempera_workflows.connectors_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_workflows", "connectors_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

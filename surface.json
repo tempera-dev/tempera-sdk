@@ -25,6 +25,7 @@
     "tempera-bio",
     "tempera-document",
     "tempera-risk",
+    "tempera-investigations",
     "tempera-payments",
     "tempera-voice",
     "tempera-clearing"
@@ -37,8 +38,13 @@
     "memory:manage",
     "trace:read",
     "trace:write",
+    "scenario:read",
+    "scenario:write",
     "dataset:read",
     "dataset:write",
+    "connector:read",
+    "connector:run",
+    "connector:manage",
     "eval:run",
     "training:publish",
     "review:gold:manage",
@@ -61,6 +67,10 @@
     "risk:read",
     "risk:write",
     "risk:review",
+    "investigation:read",
+    "investigation:write",
+    "investigation:run",
+    "investigation:review",
     "pii:unmask",
     "payments:intents:read",
     "payments:intents:write",
@@ -663,6 +673,120 @@
         "requestBodyKind": "none"
       },
       {
+        "id": "dataSourceConnectionsResolveInternal",
+        "method": "POST",
+        "path": "/v1/internal/data-source-connections:resolve",
+        "auth": "account",
+        "description": "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint.",
+        "upstreamOperationId": "dataSourceConnections.resolveInternal",
+        "body": [
+          "project",
+          "connectionRef",
+          "connectionRevision",
+          "connector"
+        ],
+        "requiredBody": [
+          "project",
+          "connectionRef",
+          "connectionRevision",
+          "connector"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "dataSourceConnectionsList",
+        "method": "GET",
+        "path": "/v1/data-source-connections",
+        "auth": "account",
+        "description": "List redacted data-source connection metadata in the selected project and environment.",
+        "upstreamOperationId": "dataSourceConnections.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "dataSourceConnectionsCreate",
+        "method": "POST",
+        "path": "/v1/data-source-connections",
+        "auth": "account",
+        "description": "Create project-bound connector metadata using only an external secret reference.",
+        "upstreamOperationId": "dataSourceConnections.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "connectionId",
+          "connector",
+          "name",
+          "secretRef"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "connectionId",
+          "connector",
+          "name",
+          "secretRef"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "dataSourceConnectionsGet",
+        "method": "GET",
+        "path": "/v1/data-source-connections/{id}",
+        "auth": "account",
+        "description": "Get redacted metadata for one data-source connection.",
+        "upstreamOperationId": "dataSourceConnections.get",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "dataSourceConnectionsUpdate",
+        "method": "PATCH",
+        "path": "/v1/data-source-connections/{id}",
+        "auth": "account",
+        "description": "Update a connection name or secret reference with exact-revision concurrency control.",
+        "upstreamOperationId": "dataSourceConnections.update",
+        "pathParams": [
+          "id"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "expectedRevision",
+          "name",
+          "secretRef"
+        ],
+        "requiredBody": [
+          "expectedRevision"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "dataSourceConnectionsRevoke",
+        "method": "DELETE",
+        "path": "/v1/data-source-connections/{id}",
+        "auth": "account",
+        "description": "Revoke a data-source connection immediately. Revoking an unknown id is a no-op.",
+        "upstreamOperationId": "dataSourceConnections.revoke",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
         "id": "providerConnectionsList",
         "method": "GET",
         "path": "/v1/provider-connections",
@@ -703,6 +827,33 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "providerConnectionsUpload",
+        "method": "POST",
+        "path": "/v1/provider-connections:upload",
+        "auth": "account",
+        "description": "Create a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "providerConnections.upload",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "allowedModels",
+          "secret"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "provider",
+          "name",
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "providerConnectionsRevoke",
         "method": "DELETE",
         "path": "/v1/provider-connections/{id}",
@@ -735,6 +886,26 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "providerConnectionsRotateUpload",
+        "method": "POST",
+        "path": "/v1/provider-connections/{id}:rotateUpload",
+        "auth": "account",
+        "description": "Rotate a provider connection by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "providerConnections.rotateUpload",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secret",
+          "allowedModels"
+        ],
+        "requiredBody": [
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "providerConnectionsResolve",
         "method": "POST",
         "path": "/v1/provider-connections/{id}:resolve",
@@ -756,6 +927,140 @@
           "usageDelegation"
         ],
         "upstreamOperationId": "providerConnections.resolve",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsList",
+        "method": "GET",
+        "path": "/v1/connector-credentials",
+        "auth": "account",
+        "description": "List redacted generic connector credential metadata for the selected workspace.",
+        "upstreamOperationId": "connectorCredentials.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "connectorCredentialsCreate",
+        "method": "POST",
+        "path": "/v1/connector-credentials",
+        "auth": "account",
+        "description": "Create generic connector credential metadata using only an external secret reference.",
+        "upstreamOperationId": "connectorCredentials.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretRef"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secretRef"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsUpload",
+        "method": "POST",
+        "path": "/v1/connector-credentials:upload",
+        "auth": "account",
+        "description": "Create a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "connectorCredentials.upload",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secret"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsRevoke",
+        "method": "DELETE",
+        "path": "/v1/connector-credentials/{id}",
+        "auth": "account",
+        "description": "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op.",
+        "upstreamOperationId": "connectorCredentials.revoke",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "connectorCredentialsRotate",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:rotate",
+        "auth": "account",
+        "description": "Replace a generic connector credential secret reference and increment its revision.",
+        "upstreamOperationId": "connectorCredentials.rotate",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secretRef"
+        ],
+        "requiredBody": [
+          "secretRef"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsRotateUpload",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:rotateUpload",
+        "auth": "account",
+        "description": "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend.",
+        "upstreamOperationId": "connectorCredentials.rotateUpload",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "secret"
+        ],
+        "requiredBody": [
+          "secret"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "connectorCredentialsResolve",
+        "method": "POST",
+        "path": "/v1/connector-credentials/{id}:resolve",
+        "auth": "account",
+        "description": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.",
+        "upstreamOperationId": "connectorCredentials.resolve",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId"
+        ],
         "requestBodyKind": "json",
         "requestContentType": "application/json"
       },
@@ -1591,6 +1896,138 @@
           "credentialId"
         ],
         "requestBodyKind": "none"
+      },
+      {
+        "id": "clearingAdmissionsCreate",
+        "method": "POST",
+        "path": "/v1/clearing/admissions",
+        "auth": "oauthResource",
+        "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
+        "upstreamOperationId": "clearingAdmissions.create",
+        "body": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey",
+          "ttlSeconds"
+        ],
+        "requiredBody": [
+          "admissionId",
+          "workspace",
+          "principalId",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:approve"
+      },
+      {
+        "id": "clearingAdmissionsGet",
+        "method": "GET",
+        "path": "/v1/clearing/admissions/{admissionId}",
+        "auth": "oauthResource",
+        "description": "Read a Clearing admission from the caller's exact workspace.",
+        "upstreamOperationId": "clearingAdmissions.get",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:read"
+      },
+      {
+        "id": "clearingAdmissionsClaim",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:claim",
+        "auth": "oauthResource",
+        "description": "Atomically move one READY admission to a fenced lease before dispatch.",
+        "upstreamOperationId": "clearingAdmissions.claim",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseSeconds"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsFinalize",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:finalize",
+        "auth": "oauthResource",
+        "description": "Consume a matching lease with one durable Clearing commit identity.",
+        "upstreamOperationId": "clearingAdmissions.finalize",
+        "pathParams": [
+          "admissionId"
+        ],
+        "body": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requiredBody": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit"
+      },
+      {
+        "id": "clearingAdmissionsMarkRecoveryRequired",
+        "method": "POST",
+        "path": "/v1/clearing/admissions/{admissionId}:markRecoveryRequired",
+        "auth": "oauthResource",
+        "description": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
+        "upstreamOperationId": "clearingAdmissions.markRecoveryRequired",
+        "pathParams": [
+          "admissionId"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:reconcile"
       }
     ],
     "palette": [
@@ -4133,6 +4570,181 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "verifyRiskClearingEvidenceLive",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
+        "auth": "product",
+        "description": "Verify one signed Risk Clearing evidence envelope against live Risk state.",
+        "upstreamOperationId": "verifyRiskClearingEvidenceLive",
+        "pathParams": [
+          "project"
+        ],
+        "body": [
+          "envelope"
+        ],
+        "requiredBody": [
+          "envelope"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "abortRiskClearingReservation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
+        "auth": "product",
+        "description": "Release a reservation only when Clearing proved no external dispatch occurred.",
+        "upstreamOperationId": "abortRiskClearingReservation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "abortReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "markRiskClearingOutcomeUnknown",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
+        "auth": "product",
+        "description": "Hold budget capacity after an ambiguous provider dispatch.",
+        "upstreamOperationId": "markRiskClearingOutcomeUnknown",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "dispatchAttemptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "openRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
+        "auth": "product",
+        "description": "Record an independently observed provider effect while retaining capacity.",
+        "upstreamOperationId": "openRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "executionReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingProvisionalOutcome",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
+        "auth": "product",
+        "description": "Record a non-final observed outcome without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingProvisionalOutcome",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "recordRiskClearingCompensation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
+        "auth": "product",
+        "description": "Record compensation as a forward action without releasing capacity.",
+        "upstreamOperationId": "recordRiskClearingCompensation",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "compensationReceiptDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "disputeRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
+        "auth": "product",
+        "description": "Keep capacity held when authoritative evidence conflicts.",
+        "upstreamOperationId": "disputeRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requiredBody": [
+          "envelope",
+          "disputeEvidenceDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
+        "id": "settleRiskClearingExposure",
+        "method": "POST",
+        "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
+        "auth": "product",
+        "description": "Settle a mature reconciled outcome and release held capacity.",
+        "upstreamOperationId": "settleRiskClearingExposure",
+        "pathParams": [
+          "project",
+          "reservationId"
+        ],
+        "body": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requiredBody": [
+          "envelope",
+          "outcomeDigest",
+          "realizedLoss"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
+      },
+      {
         "id": "exportAudit",
         "method": "GET",
         "path": "/v1/projects/{project}/audit:export",
@@ -4156,6 +4768,23 @@
         "physicalAction": false,
         "prepareCommitRequired": false,
         "requestBodyKind": "none"
+      },
+      {
+        "id": "connectorsList",
+        "method": "GET",
+        "path": "/v1/connectors",
+        "auth": "oauthResource",
+        "description": "The server-managed connector ids available to workflow definitions.",
+        "upstreamOperationId": "connectors.list",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "requestBodyKind": "none",
+        "authAudience": "tempera-workflows",
+        "scope": "workflow:read",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ]
       },
       {
         "id": "createExperimentSubmission",
@@ -5228,6 +5857,72 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "prepareProspectiveExperimentProtocol",
+        "method": "POST",
+        "path": "/v1/prospectiveExperimentProtocols:prepare",
+        "auth": "oauthResource",
+        "description": "Prepare prospective experiment protocol.",
+        "upstreamOperationId": "prepareProspectiveExperimentProtocol",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "configuration",
+          "experimentProposal",
+          "program"
+        ],
+        "requiredBody": [
+          "configuration",
+          "program",
+          "experimentProposal"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:proposal:write"
+      },
+      {
+        "id": "verifyProspectiveMeasurement",
+        "method": "POST",
+        "path": "/v1/prospectiveMeasurements:verify",
+        "auth": "oauthResource",
+        "description": "Verify prospective measurement.",
+        "upstreamOperationId": "verifyProspectiveMeasurement",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "candidate",
+          "experimentProposal",
+          "hypothesis",
+          "measurementIdentitySignature",
+          "program",
+          "prospectiveProtocol",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature"
+        ],
+        "requiredBody": [
+          "candidate",
+          "program",
+          "hypothesis",
+          "experimentProposal",
+          "prospectiveProtocol",
+          "rawSubmissionReceiptBase64",
+          "submissionIdentitySignature",
+          "providerResultEnvelope",
+          "providerResultIdentitySignature",
+          "rawChainOfCustodyBase64",
+          "rawMeasurementBase64",
+          "measurementIdentitySignature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-bio",
+        "scope": "bio:measurement:verify"
+      },
+      {
         "id": "ingestMaveDBScoreSet",
         "method": "POST",
         "path": "/v1/sources/maveDbScoreSets:ingest",
@@ -6181,6 +6876,31 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "projectsConnectorEvidenceIngest",
+        "method": "POST",
+        "path": "/v1/{parent}/connectorEvidence:ingest",
+        "auth": "product",
+        "description": "Verify and retain signed Tempera Connectors source evidence.",
+        "upstreamOperationId": "projects.connectorEvidence.ingest",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "body": [
+          "evidence",
+          "artifactBase64"
+        ],
+        "requiredBody": [
+          "evidence",
+          "artifactBase64"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "dataset:write"
+      },
+      {
         "id": "ingestWeb",
         "method": "POST",
         "path": "/v1/{parent}/web:ingest",
@@ -6998,6 +7718,184 @@
         "requestContentType": "application/json"
       },
       {
+        "id": "projectsSourceDefinitionsCreate",
+        "method": "POST",
+        "path": "/v1/{parent}/sourceDefinitions",
+        "auth": "product",
+        "description": "Create an immutable-versioned connector source definition.",
+        "upstreamOperationId": "projects.sourceDefinitions.create",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "query": [
+          "sourceDefinitionId"
+        ],
+        "requiredQuery": [
+          "sourceDefinitionId"
+        ],
+        "body": [
+          "connector",
+          "connectionRef",
+          "connectionRevision",
+          "config",
+          "artifactType",
+          "source",
+          "metadata",
+          "enabled"
+        ],
+        "requiredBody": [
+          "connector",
+          "connectionRef",
+          "connectionRevision",
+          "config",
+          "artifactType"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "connector:manage"
+      },
+      {
+        "id": "projectsSourceDefinitionsList",
+        "method": "GET",
+        "path": "/v1/{parent}/sourceDefinitions",
+        "auth": "product",
+        "description": "List project source definitions.",
+        "upstreamOperationId": "projects.sourceDefinitions.list",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "connector:read"
+      },
+      {
+        "id": "projectsSourceDefinitionsGet",
+        "method": "GET",
+        "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+        "auth": "product",
+        "description": "Get one source definition.",
+        "upstreamOperationId": "projects.sourceDefinitions.get",
+        "pathParams": [
+          "parent",
+          "sourceDefinitionId"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "none",
+        "scope": "connector:read"
+      },
+      {
+        "id": "projectsSourceDefinitionsPatch",
+        "method": "PATCH",
+        "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+        "auth": "product",
+        "description": "Create a new version of a source definition.",
+        "upstreamOperationId": "projects.sourceDefinitions.patch",
+        "pathParams": [
+          "parent",
+          "sourceDefinitionId"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "etag",
+          "connector",
+          "connectionRef",
+          "connectionRevision",
+          "config",
+          "artifactType",
+          "source",
+          "metadata",
+          "enabled"
+        ],
+        "requiredBody": [
+          "etag"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "connector:manage"
+      },
+      {
+        "id": "projectsSourceDefinitionsRun",
+        "method": "POST",
+        "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
+        "auth": "product",
+        "description": "Start an exact-replay connector run from a reviewed definition.",
+        "upstreamOperationId": "projects.sourceDefinitions.run",
+        "pathParams": [
+          "parent",
+          "sourceDefinitionId"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "body": [
+          "producerVersion",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "producerVersion",
+          "idempotencyKey"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "connector:run"
+      },
+      {
+        "id": "projectsConnectorRunsList",
+        "method": "GET",
+        "path": "/v1/{parent}/connectorRuns",
+        "auth": "product",
+        "description": "List durable connector runs.",
+        "upstreamOperationId": "projects.connectorRuns.list",
+        "pathParams": [
+          "parent"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "connector:read"
+      },
+      {
+        "id": "projectsConnectorRunsGet",
+        "method": "GET",
+        "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
+        "auth": "product",
+        "description": "Get one durable connector run and its terminal receipt.",
+        "upstreamOperationId": "projects.connectorRuns.get",
+        "pathParams": [
+          "parent",
+          "connectorRunId"
+        ],
+        "pathParamTemplates": {
+          "parent": "projects/*"
+        },
+        "requestBodyKind": "none",
+        "scope": "connector:read"
+      },
+      {
         "id": "extractSource",
         "method": "POST",
         "path": "/v1/{parent}/sources:extract",
@@ -7024,7 +7922,7 @@
         "requiredBody": [
           "connector"
         ],
-        "scope": "dataset:write",
+        "scope": "connector:manage",
         "description": "Extract bounded objects or records from a configured source connector.",
         "upstreamOperationId": "projects.sources.extract",
         "pathParamTemplates": {
@@ -7045,7 +7943,7 @@
           "pageSize",
           "pageToken"
         ],
-        "scope": "dataset:read",
+        "scope": "connector:read",
         "description": "List registered source connectors for a project.",
         "upstreamOperationId": "projects.connectors.list",
         "pathParamTemplates": {

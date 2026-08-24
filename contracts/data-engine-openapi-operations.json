@@ -2,12 +2,12 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "19a34d5d06dd6977887d45892ab84eef6786c637",
+  "source_commit": "cbcbe40c33544ca16e6c3e99f18c5ebcec96dbc9",
   "source_path": "api/openapi.yaml",
-  "source_blob_sha": "1d0acbc378d432940aac61e508f8ea6b85be8795",
-  "source_sha256": "3d524ab171809bcebfbb4a2d23912ef8fdb8d8bc1d3b44eb742d4693d8488d9f",
+  "source_blob_sha": "b78c3cc5aec96e69d22e23fae6874705cf959a57",
+  "source_sha256": "baddc1dadc133cf47338053b728f15df41433e8c453e012e02edf9caaef0e971",
   "generated_with": "sync-data-engine-openapi.py@4",
-  "generated_sha256": "b46d98b0eb87d3a7d1405c21ffd9fba819fbe31529084188cff0eb2654d9f331",
+  "generated_sha256": "b462e2c5f9514c34c9ecc6a8fa1fa67580f756b13d6efe897364aa5061ee431d",
   "operations": [
     {
       "sdkOperationId": "health",
@@ -38,6 +38,14 @@
       "operationId": "projects.artifacts.ingest",
       "method": "POST",
       "path": "/v1/{parent}/artifacts:ingest",
+      "audience": "data-engine",
+      "requiredScope": "dataset:write"
+    },
+    {
+      "sdkOperationId": "projectsConnectorEvidenceIngest",
+      "operationId": "projects.connectorEvidence.ingest",
+      "method": "POST",
+      "path": "/v1/{parent}/connectorEvidence:ingest",
       "audience": "data-engine",
       "requiredScope": "dataset:write"
     },
@@ -322,12 +330,68 @@
       "requiredScope": "eval:run"
     },
     {
+      "sdkOperationId": "projectsSourceDefinitionsCreate",
+      "operationId": "projects.sourceDefinitions.create",
+      "method": "POST",
+      "path": "/v1/{parent}/sourceDefinitions",
+      "audience": "data-engine",
+      "requiredScope": "connector:manage"
+    },
+    {
+      "sdkOperationId": "projectsSourceDefinitionsList",
+      "operationId": "projects.sourceDefinitions.list",
+      "method": "GET",
+      "path": "/v1/{parent}/sourceDefinitions",
+      "audience": "data-engine",
+      "requiredScope": "connector:read"
+    },
+    {
+      "sdkOperationId": "projectsSourceDefinitionsGet",
+      "operationId": "projects.sourceDefinitions.get",
+      "method": "GET",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+      "audience": "data-engine",
+      "requiredScope": "connector:read"
+    },
+    {
+      "sdkOperationId": "projectsSourceDefinitionsPatch",
+      "operationId": "projects.sourceDefinitions.patch",
+      "method": "PATCH",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
+      "audience": "data-engine",
+      "requiredScope": "connector:manage"
+    },
+    {
+      "sdkOperationId": "projectsSourceDefinitionsRun",
+      "operationId": "projects.sourceDefinitions.run",
+      "method": "POST",
+      "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
+      "audience": "data-engine",
+      "requiredScope": "connector:run"
+    },
+    {
+      "sdkOperationId": "projectsConnectorRunsList",
+      "operationId": "projects.connectorRuns.list",
+      "method": "GET",
+      "path": "/v1/{parent}/connectorRuns",
+      "audience": "data-engine",
+      "requiredScope": "connector:read"
+    },
+    {
+      "sdkOperationId": "projectsConnectorRunsGet",
+      "operationId": "projects.connectorRuns.get",
+      "method": "GET",
+      "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
+      "audience": "data-engine",
+      "requiredScope": "connector:read"
+    },
+    {
       "sdkOperationId": "extractSource",
       "operationId": "projects.sources.extract",
       "method": "POST",
       "path": "/v1/{parent}/sources:extract",
       "audience": "data-engine",
-      "requiredScope": "dataset:write"
+      "requiredScope": "connector:manage"
     },
     {
       "sdkOperationId": "listConnectors",
@@ -335,7 +399,7 @@
       "method": "GET",
       "path": "/v1/{parent}/connectors",
       "audience": "data-engine",
-      "requiredScope": "dataset:read"
+      "requiredScope": "connector:read"
     },
     {
       "sdkOperationId": "createTool",

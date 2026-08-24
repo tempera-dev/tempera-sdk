@@ -594,7 +594,9 @@ impl TemperaClient {
         let mut request = self.build_request(product, operation, params)?;
         request.body_bytes = Some(content);
         if let Some(content_type) = op.request_content_type {
-            request.headers.push(("content-type".to_string(), content_type.to_string()));
+            request
+                .headers
+                .push(("content-type".to_string(), content_type.to_string()));
         }
         Ok(request)
     }
@@ -1067,10 +1069,7 @@ mod tests {
             .build_request(
                 "tempera_gym",
                 "list_runs",
-                &[
-                    ("environment_id", "env-1".into()),
-                    ("page_size", "".into()),
-                ],
+                &[("environment_id", "env-1".into()), ("page_size", "".into())],
             )
             .unwrap();
         assert!(
@@ -1079,7 +1078,12 @@ mod tests {
                 .iter()
                 .any(|(name, value)| name == "pageSize" && value.is_empty())
         );
-        assert!(!empty_alias.query.iter().any(|(name, _)| name == "page_size"));
+        assert!(
+            !empty_alias
+                .query
+                .iter()
+                .any(|(name, _)| name == "page_size")
+        );
 
         let rollout = client
             .build_request(
@@ -1439,7 +1443,10 @@ mod tests {
             .build_request(
                 "tempera_payments",
                 "get_payment_intent",
-                &[("payment_intent_id", "pi_1".into()), ("tenant_id", "tenant_1".into())],
+                &[
+                    ("payment_intent_id", "pi_1".into()),
+                    ("tenant_id", "tenant_1".into()),
+                ],
             )
             .unwrap();
         assert!(
@@ -1688,25 +1695,15 @@ mod tests {
 
     #[test]
     fn physical_experiment_submission_preserves_exact_workflows_contract() {
-        let create = crate::surface::find_operation(
-            "tempera_workflows",
-            "create_experiment_submission",
-        )
-        .unwrap();
-        let get = crate::surface::find_operation(
-            "tempera_workflows",
-            "get_experiment_submission",
-        )
-        .unwrap();
-        let reconcile = crate::surface::find_operation(
-            "tempera_workflows",
-            "reconcile_experiment_submission",
-        )
-        .unwrap();
-        assert_eq!(
-            create.upstream_operation_id,
-            "experimentSubmissions.create"
-        );
+        let create =
+            crate::surface::find_operation("tempera_workflows", "create_experiment_submission")
+                .unwrap();
+        let get = crate::surface::find_operation("tempera_workflows", "get_experiment_submission")
+            .unwrap();
+        let reconcile =
+            crate::surface::find_operation("tempera_workflows", "reconcile_experiment_submission")
+                .unwrap();
+        assert_eq!(create.upstream_operation_id, "experimentSubmissions.create");
         assert_eq!(create.auth_audience, Some("tempera-workflows"));
         assert_eq!(create.scope, Some("bio:experiment:submit"));
         assert!(create.physical_action);
@@ -1731,8 +1728,7 @@ mod tests {
                     (
                         "experiment_proposal",
                         ParamValue::RawJson(
-                            r#"{"schemaVersion":"tempera.bio-experiment-proposal/v1"}"#
-                                .to_string(),
+                            r#"{"schemaVersion":"tempera.bio-experiment-proposal/v1"}"#.to_string(),
                         ),
                     ),
                     ("connection_id", "epc_1".into()),
@@ -2115,13 +2111,19 @@ mod tests {
             .build_binary(
                 "tempera_document",
                 "uploads_write",
-                &[("project_id", "project_1".into()), ("upload_id", "upload_1".into())],
+                &[
+                    ("project_id", "project_1".into()),
+                    ("upload_id", "upload_1".into()),
+                ],
                 vec![1, 2, 3],
             )
             .unwrap();
         assert_eq!(spec.body_json, None);
         assert_eq!(spec.body_bytes, Some(vec![1, 2, 3]));
-        assert_eq!(header(&spec, "content-type"), Some("application/octet-stream"));
+        assert_eq!(
+            header(&spec, "content-type"),
+            Some("application/octet-stream")
+        );
         assert_eq!(header(&spec, "authorization"), Some("Bearer tp_key_1"));
     }
 }
