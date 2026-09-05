@@ -475,10 +475,24 @@ def render_python(surface: dict) -> str:
 
 
 def rust_literal(value: str) -> str:
-    """Render one JSON string as a Rust string literal without invalid escapes."""
-    rendered = json.dumps(value, ensure_ascii=False)
-    rendered = rendered.replace("\\b", "\\x08").replace("\\f", "\\x0c")
-    return re.sub(r"\\u([0-9a-fA-F]{4})", r"\\u{\1}", rendered)
+    """Render one string as a Rust literal without rewriting source characters."""
+    escaped: list[str] = []
+    for character in value:
+        if character == "\\":
+            escaped.append("\\\\")
+        elif character == '"':
+            escaped.append('\\"')
+        elif character == "\n":
+            escaped.append("\\n")
+        elif character == "\r":
+            escaped.append("\\r")
+        elif character == "\t":
+            escaped.append("\\t")
+        elif ord(character) < 0x20 or ord(character) == 0x7F:
+            escaped.append(f"\\u{{{ord(character):x}}}")
+        else:
+            escaped.append(character)
+    return '"' + "".join(escaped) + '"'
 
 
 def rust_str(value: str | None) -> str:
