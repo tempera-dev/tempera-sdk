@@ -32,7 +32,7 @@ class RustLiteralTest(unittest.TestCase):
             generator.rust_literal("\ud800")
 
     def test_rustc_round_trips_literal_bytes_without_reinterpretation(self):
-        for value in (r"\b", r"\f", r"\u2019", r"\backslash", "organization’s", "\b\f"):
+        for value in (r"\b", r"\f", r"\u2019", r"\backslash", "organization’s", "\b\f", "\x00", "🚀"):
             with self.subTest(value=repr(value)), tempfile.TemporaryDirectory(
                 prefix="tempera-sdk-rust-literal-"
             ) as directory:
