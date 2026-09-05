@@ -5662,7 +5662,9 @@ OPERATIONS = {
                 "model",
                 "response_format",
                 "stream",
-                "temperature"
+                "temperature",
+                "tool_choice",
+                "tools"
             ],
             "forbidden_body": [],
             "required_body": [

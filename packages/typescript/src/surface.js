@@ -5671,7 +5671,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "model",
         "response_format",
         "stream",
-        "temperature"
+        "temperature",
+        "tool_choice",
+        "tools"
       ],
       "forbiddenBody": [],
       "requiredBody": [

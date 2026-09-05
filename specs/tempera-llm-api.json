@@ -6,7 +6,7 @@
     "license": {
       "name": "MIT"
     },
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/healthz": {
@@ -594,7 +594,8 @@
           "message": {
             "$ref": "#/components/schemas/ChatMessage"
           }
-        }
+        },
+        "additionalProperties": {}
       },
       "ChatCompletionRequest": {
         "type": "object",
@@ -640,8 +641,20 @@
             "type": "number",
             "format": "float",
             "nullable": true
+          },
+          "tool_choice": {
+            "$ref": "#/components/schemas/NullableChatToolChoice"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatToolDefinition"
+            },
+            "description": "Function tools made available for this request.",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": {}
       },
       "ChatCompletionResponse": {
         "type": "object",
@@ -680,7 +693,8 @@
           "usage": {
             "$ref": "#/components/schemas/Usage"
           }
-        }
+        },
+        "additionalProperties": {}
       },
       "ChatMessage": {
         "type": "object",
@@ -691,7 +705,8 @@
         "properties": {
           "content": {
             "type": "string",
-            "description": "Message content. Kept as a string for the non-streaming skeleton."
+            "description": "Message content. The wire-presence wrapper distinguishes an omitted\nfield from the OpenAI assistant form `\"content\": null` used alongside\n`tool_calls`.",
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -701,8 +716,110 @@
           "role": {
             "type": "string",
             "description": "`system` | `user` | `assistant` | `tool`."
+          },
+          "tool_call_id": {
+            "type": "string",
+            "description": "Correlates a `role: tool` result to an earlier assistant tool call.",
+            "nullable": true
+          },
+          "tool_calls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatToolCall"
+            },
+            "description": "Tool calls emitted by an assistant. As with `content`, missing and\nexplicit `null` are distinct wire states.",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": {}
+      },
+      "ChatToolCall": {
+        "type": "object",
+        "description": "A tool invocation emitted by an assistant message.",
+        "required": [
+          "id",
+          "type",
+          "function"
+        ],
+        "properties": {
+          "function": {
+            "$ref": "#/components/schemas/ChatToolCallFunction"
+          },
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "ChatToolCallFunction": {
+        "type": "object",
+        "description": "A function's invocation payload in an OpenAI tool call.",
+        "required": [
+          "name",
+          "arguments"
+        ],
+        "properties": {
+          "arguments": {
+            "type": "string",
+            "description": "JSON is deliberately still encoded text on this wire surface, matching\nthe Chat Completions protocol."
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "ChatToolChoice": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/components/schemas/NamedToolChoice"
+          }
+        ],
+        "description": "OpenAI accepts both a protocol mode (for example `auto`) and a named\nfunction selector. Modes remain strings so future provider modes survive a\ntyped pass-through rather than being rejected or erased."
+      },
+      "ChatToolDefinition": {
+        "type": "object",
+        "description": "One OpenAI-compatible function tool declaration.",
+        "required": [
+          "type",
+          "function"
+        ],
+        "properties": {
+          "function": {
+            "$ref": "#/components/schemas/ChatToolFunctionDefinition"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "ChatToolFunctionDefinition": {
+        "type": "object",
+        "description": "The function descriptor within a declared `tools` entry.",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "parameters": {
+            "description": "A native JSON Schema. Its contents are intentionally not re-modelled as\na Rust struct because JSON Schema itself is an extensible JSON language.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
       },
       "ErrorBody": {
         "type": "object",
@@ -814,6 +931,47 @@
             "description": "Always `list`."
           }
         }
+      },
+      "NamedToolChoice": {
+        "type": "object",
+        "description": "A named-function form of OpenAI's `tool_choice` field.",
+        "required": [
+          "type",
+          "function"
+        ],
+        "properties": {
+          "function": {
+            "$ref": "#/components/schemas/NamedToolChoiceFunction"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "NamedToolChoiceFunction": {
+        "type": "object",
+        "description": "Name selected by a [`NamedToolChoice`].",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "NullableChatToolChoice": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ChatToolChoice"
+          },
+          {
+            "type": "string",
+            "nullable": true
+          }
+        ]
       },
       "ReadinessResponse": {
         "type": "object",

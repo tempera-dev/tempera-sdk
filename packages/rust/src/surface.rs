@@ -5173,6 +5173,8 @@ pub const OPERATIONS: &[OperationSpec] = &[
             "response_format",
             "stream",
             "temperature",
+            "tool_choice",
+            "tools",
         ],
         forbidden_body: &[],
         required_body: &["model", "messages", "max_tokens"],

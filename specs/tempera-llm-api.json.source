@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-llm-api.json",
-  "generated_sha256": "d29908ab7e84dd277242195d2ad2dbe9882dcc37d3545fe0709e7e01cac1bf0e",
+  "generated_sha256": "19d3f56fd8f424ede2983aa8ff3859e593d03154ca23ba80e6b5bd463cf83c40",
   "generated_with": "source_lock.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "ed73e53f92f0d502e78bdd2e5a2fda090cb0e9a1",
+  "source_blob_sha": "e055e540d537dad298f71e5fa35c63c13c0f630b",
   "source_branch": "main",
-  "source_commit": "c6f905c44c7d9dc9d9c8c06816e1e530b1e1ce4c",
+  "source_commit": "5507fec7ce9fb25d47663d4f187a122f11b64c82",
   "source_mode": "100644",
   "source_path": "sdks/openapi/tempera-llm-api.json",
   "source_repo": "tempera-dev/tempera-llm",
-  "source_sha256": "d29908ab7e84dd277242195d2ad2dbe9882dcc37d3545fe0709e7e01cac1bf0e"
+  "source_sha256": "19d3f56fd8f424ede2983aa8ff3859e593d03154ca23ba80e6b5bd463cf83c40"
 }
