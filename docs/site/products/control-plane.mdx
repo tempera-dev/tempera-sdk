@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 101 |
+| Typed operations | 104 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -76,6 +76,34 @@ result = client.control_plane.get_readiness()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "get_readiness", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### samlSsoConfigurationsGet
+
+`GET /v1/sso/config`
+
+Read the active organization’s private SAML 2.0 SSO configuration status.
+
+- **Producer operationId:** `samlSsoConfigurations.get`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.samlSsoConfigurationsGet()` · Python `client.control_plane.saml_sso_configurations_get()` · Rust `build_request("control_plane", "saml_sso_configurations_get", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.samlSsoConfigurationsGet();
+```
+
+```python Python
+result = client.control_plane.saml_sso_configurations_get()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "saml_sso_configurations_get", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -2812,7 +2840,6 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 | Parameter | Required | Notes |
 |---|---|---|
 | `rail` | no | — |
-| `plan` | no | — |
 | `planId` | no | — |
 | `interval` | no | — |
 | `currency` | no | — |
@@ -2823,21 +2850,21 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 ```typescript TypeScript
 const result = await client.controlPlane.createBillingCheckout({
   rail: "<rail>",
-  plan: "<plan>",
+  planId: "<planId>",
 });
 ```
 
 ```python Python
 result = client.control_plane.create_billing_checkout({
     "rail": "<rail>",
-    "plan": "<plan>",
+    "planId": "<planId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("control_plane", "create_billing_checkout", &[
     ("rail", "<rail>".into()),
-    ("plan", "<plan>".into()),
+    ("planId", "<planId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2895,6 +2922,94 @@ result = client.control_plane.get_billing_credits()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "get_billing_credits", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listCreditTopupPacks
+
+`GET /v1/billing/credit-packs`
+
+List source-owned fixed prepaid credit packs available to an authenticated billing administrator.
+
+- **Producer operationId:** `listCreditTopupPacks`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listCreditTopupPacks()` · Python `client.control_plane.list_credit_topup_packs()` · Rust `build_request("control_plane", "list_credit_topup_packs", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listCreditTopupPacks({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_credit_topup_packs({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_credit_topup_packs", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createCreditTopup
+
+`POST /v1/billing/credit-topups`
+
+Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected.
+
+- **Producer operationId:** `createCreditTopup`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.createCreditTopup()` · Python `client.control_plane.create_credit_topup()` · Rust `build_request("control_plane", "create_credit_topup", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `packId` | yes | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.createCreditTopup({
+  packId: "<packId>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.control_plane.create_credit_topup({
+    "packId": "<packId>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "create_credit_topup", &[
+    ("packId", "<packId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

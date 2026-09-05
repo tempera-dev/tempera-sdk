@@ -48,6 +48,9 @@
     "controlPlane|/oauth/revoke",
     "controlPlane|/oauth/token",
     "controlPlane|/readyz",
+    "controlPlane|/sso/saml/acs/{configId}",
+    "controlPlane|/sso/saml/login",
+    "controlPlane|/sso/saml/metadata/{configId}",
     "cradle|/mcp",
     "cradle|/v1/health",
     "dataEngine|/mcp",
@@ -80,7 +83,8 @@
     "tempo|/bidi"
   ],
   "protocol_operation_exceptions": [
-    "controlPlane|POST|/v1/oauth/introspect"
+    "controlPlane|POST|/v1/oauth/introspect",
+    "controlPlane|POST|/v1/sso/handoffs:exchange"
   ],
   "protocol_json_exceptions": [
     "controlPlane|POST|/v1/admin/step-up",

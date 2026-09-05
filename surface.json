@@ -352,6 +352,15 @@
         "requestBodyKind": "none"
       },
       {
+        "id": "samlSsoConfigurationsGet",
+        "method": "GET",
+        "path": "/v1/sso/config",
+        "auth": "account",
+        "description": "Read the active organization’s private SAML 2.0 SSO configuration status.",
+        "upstreamOperationId": "samlSsoConfigurations.get",
+        "requestBodyKind": "none"
+      },
+      {
         "id": "me",
         "method": "GET",
         "path": "/v1/me",
@@ -1351,7 +1360,6 @@
         "auth": "account",
         "query": [
           "rail",
-          "plan",
           "planId",
           "interval",
           "currency",
@@ -1378,6 +1386,37 @@
         "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
         "upstreamOperationId": "getBillingCredits",
         "requestBodyKind": "none"
+      },
+      {
+        "id": "listCreditTopupPacks",
+        "method": "GET",
+        "path": "/v1/billing/credit-packs",
+        "auth": "account",
+        "description": "List source-owned fixed prepaid credit packs available to an authenticated billing administrator.",
+        "upstreamOperationId": "listCreditTopupPacks",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none"
+      },
+      {
+        "id": "createCreditTopup",
+        "method": "POST",
+        "path": "/v1/billing/credit-topups",
+        "auth": "account",
+        "description": "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected.",
+        "upstreamOperationId": "createCreditTopup",
+        "body": [
+          "packId",
+          "idempotencyKey"
+        ],
+        "requiredBody": [
+          "packId",
+          "idempotencyKey"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json"
       },
       {
         "id": "getModelCatalog",

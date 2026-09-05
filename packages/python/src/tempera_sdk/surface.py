@@ -256,6 +256,28 @@ OPERATIONS = {
             "description": "Readiness probe for durable control-plane storage."
         },
         {
+            "id": "saml_sso_configurations_get",
+            "upstream_operation_id": "samlSsoConfigurations.get",
+            "method": "GET",
+            "path": "/v1/sso/config",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Read the active organization\u2019s private SAML 2.0 SSO configuration status."
+        },
+        {
             "id": "me",
             "upstream_operation_id": "getMe",
             "method": "GET",
@@ -1868,7 +1890,6 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [
                 "rail",
-                "plan",
                 "planId",
                 "interval",
                 "currency",
@@ -1929,6 +1950,59 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
+        },
+        {
+            "id": "list_credit_topup_packs",
+            "upstream_operation_id": "listCreditTopupPacks",
+            "method": "GET",
+            "path": "/v1/billing/credit-packs",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "List source-owned fixed prepaid credit packs available to an authenticated billing administrator."
+        },
+        {
+            "id": "create_credit_topup",
+            "upstream_operation_id": "createCreditTopup",
+            "method": "POST",
+            "path": "/v1/billing/credit-topups",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "packId",
+                "idempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "packId",
+                "idempotencyKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "description": "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected."
         },
         {
             "id": "get_model_catalog",
