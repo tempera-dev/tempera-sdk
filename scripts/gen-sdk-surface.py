@@ -488,6 +488,8 @@ def rust_literal(value: str) -> str:
             escaped.append("\\r")
         elif character == "\t":
             escaped.append("\\t")
+        elif 0xD800 <= ord(character) <= 0xDFFF:
+            raise ValueError("Rust literals cannot contain surrogate code points")
         elif ord(character) < 0x20 or ord(character) == 0x7F:
             escaped.append(f"\\u{{{ord(character):x}}}")
         else:
