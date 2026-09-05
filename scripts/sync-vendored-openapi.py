@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from staged_source import validate_exact_local_source
+from local_schema_bundle import bundle, strict_object
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,8 +35,8 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "source_branch": "main",
         "source_path": "api/openapi.yaml",
         "generated_path": "specs/data-engine-openapi.json",
-        "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
-        "transform": "yaml-json",
+        "generated_with": "sync-vendored-openapi.py@2+PyYAML@6.0.3+source-pinned-local-json-bundle",
+        "transform": "yaml-json-local-bundle",
     },
     "humanData": {
         "source_repo": "tempera-dev/human-data",
@@ -230,7 +231,35 @@ def synchronize(
         config["source_path"],
         allow_local_source=allow_local_source,
     )
-    rendered = render(content, config["transform"])
+    referenced_files: dict[str, dict[str, str]] = {}
+    if config["transform"] == "yaml-json-local-bundle":
+        def read_reference(path: str) -> bytes:
+            _, ref_blob, ref_mode, ref_content = current_branch_equivalent_file(
+                source_lock, repo, config["source_repo"], selected_branch,
+                commit, path, allow_local_source=allow_local_source,
+            )
+            receipt = {"source_path": path, "source_blob_sha": ref_blob,
+                "source_mode": ref_mode, "source_sha256": source_lock.digest(ref_content)}
+            prior = referenced_files.setdefault(path, receipt)
+            if prior != receipt:
+                raise ValueError(f"inconsistent source receipt for referenced file: {path}")
+            return ref_content
+
+        import yaml
+        if yaml.__version__ != "6.0.3":
+            raise ValueError("PyYAML 6.0.3 is required for source-pinned YAML bundling")
+        class UniqueLoader(yaml.SafeLoader):
+            pass
+        def unique_mapping(loader, node):
+            return strict_object(loader.construct_pairs(node, deep=True))
+        UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, unique_mapping)
+        root = yaml.load(content, Loader=UniqueLoader)
+        if not isinstance(root, dict):
+            raise ValueError("OpenAPI YAML root must be an object")
+        rendered = (json.dumps(bundle(root, config["source_path"], read_reference),
+                               indent=2, allow_nan=False) + "\n").encode()
+    else:
+        rendered = render(content, config["transform"])
     generated = ROOT / config["generated_path"]
     lock_path = generated.with_name(generated.name + ".source")
     lock = {
@@ -247,6 +276,9 @@ def synchronize(
         "generated_sha256": source_lock.digest(rendered),
     }
     expected_lock = json.dumps(lock, indent=2, sort_keys=True) + "\n"
+    if config["transform"] == "yaml-json-local-bundle":
+        lock["referenced_files"] = [referenced_files[path] for path in sorted(referenced_files)]
+        expected_lock = json.dumps(lock, indent=2, sort_keys=True) + "\n"
     if check:
         observed_lock = lock_path.read_text(encoding="utf-8")
         if generated.read_bytes() != rendered or json.loads(observed_lock) != lock:

@@ -52,7 +52,7 @@
       "required_scope": "dataset:write",
       "schema_fixtures": {
         "format": "openapi-operation-block.v1",
-        "input_sha256": "14e330e6f497d53186f21038b5780dd8c57ed7af509564d3fd9719a9935a8231",
+        "input_sha256": "e3b6891c76bfa063f5216160f6e8727f643374dd76e8e6ff4c8cc638ff000f44",
         "mcp_input_schema_sha256": "3b8c189ffc5ead0ffc9e31dfe12e2de7465890c0d417cdeab65edf00e40d6af9",
         "mcp_output_schema_sha256": "943ec0331ed081fc1f53451df8fdca14f8c414654fe76399ebbfa3e3458072cd",
         "output_sha256": "9b0548b4b6da37d5cefaab3e966f77737ec9931d05d6bc6df221c13ea3eacab4"
@@ -1734,19 +1734,19 @@
     "exposed_count": 37,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "ba57fbb6972897193f16d57b71b930bbf40da1e08bcd36ffdbbcc4dae4578132"
+      "sha256": "58aadf0cc8f6a9392cbafd73bade004e238fd408a2e860e38361c2b688b8750f"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "7b9acb1d8226282f452aff28e5e415b05f71a4e1",
+    "commit": "9ad352af58cc88ccba5691159e0e54b3b912b98b",
     "files": [
       {
-        "git_blob": "b78c3cc5aec96e69d22e23fae6874705cf959a57",
+        "git_blob": "08d8a7a1368bff30140ab431ede9a9dfd500c6aa",
         "path": "api/openapi.yaml",
-        "sha256": "baddc1dadc133cf47338053b728f15df41433e8c453e012e02edf9caaef0e971"
+        "sha256": "a6c9bd5dc523e6ce4044a960f12ff08c888d5833e2d917c42dd7831c1ffa01ca"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
