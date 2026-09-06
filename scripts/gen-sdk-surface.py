@@ -474,19 +474,42 @@ def render_python(surface: dict) -> str:
     )
 
 
+def rust_literal(value: str) -> str:
+    """Render one string as a Rust literal without rewriting source characters."""
+    escaped: list[str] = []
+    for character in value:
+        if character == "\\":
+            escaped.append("\\\\")
+        elif character == '"':
+            escaped.append('\\"')
+        elif character == "\n":
+            escaped.append("\\n")
+        elif character == "\r":
+            escaped.append("\\r")
+        elif character == "\t":
+            escaped.append("\\t")
+        elif 0xD800 <= ord(character) <= 0xDFFF:
+            raise ValueError("Rust literals cannot contain surrogate code points")
+        elif ord(character) < 0x20 or ord(character) == 0x7F:
+            escaped.append(f"\\u{{{ord(character):x}}}")
+        else:
+            escaped.append(character)
+    return '"' + "".join(escaped) + '"'
+
+
 def rust_str(value: str | None) -> str:
     if value is None:
         return "None"
-    return "Some(" + json.dumps(value) + ")"
+    return "Some(" + rust_literal(value) + ")"
 
 
 def rust_str_slice(values: list[str]) -> str:
-    return "&[" + ", ".join(json.dumps(value) for value in values) + "]"
+    return "&[" + ", ".join(rust_literal(value) for value in values) + "]"
 
 
 def rust_str_pairs(values: dict[str, str]) -> str:
     pairs = ", ".join(
-        f"({json.dumps(key)}, {json.dumps(value)})" for key, value in values.items()
+        f"({rust_literal(key)}, {rust_literal(value)})" for key, value in values.items()
     )
     return f"&[{pairs}]"
 
@@ -501,14 +524,14 @@ def render_rust(surface: dict) -> str:
         "pub const SURFACE_VERSION: u32 = " + str(surface["version"]) + ";",
         "",
         "pub const AUDIENCES: &[&str] = " + rust_str_slice(surface["audiences"]) + ";",
-        "pub const DEFAULT_AUDIENCE: &str = " + json.dumps(surface["defaultAudience"]) + ";",
+        "pub const DEFAULT_AUDIENCE: &str = " + rust_literal(surface["defaultAudience"]) + ";",
         "pub const SCOPES: &[&str] = " + rust_str_slice(surface["scopes"]) + ";",
         "",
-        "pub const AUTHORIZE_PATH: &str = " + json.dumps(surface["issuer"]["authorizePath"]) + ";",
-        "pub const TOKEN_PATH: &str = " + json.dumps(surface["issuer"]["tokenPath"]) + ";",
-        "pub const REVOKE_PATH: &str = " + json.dumps(surface["issuer"]["revokePath"]) + ";",
-        "pub const INTROSPECT_PATH: &str = " + json.dumps(surface["issuer"]["introspectPath"]) + ";",
-        "pub const MCP_PATH: &str = " + json.dumps(surface["issuer"]["mcpPath"]) + ";",
+        "pub const AUTHORIZE_PATH: &str = " + rust_literal(surface["issuer"]["authorizePath"]) + ";",
+        "pub const TOKEN_PATH: &str = " + rust_literal(surface["issuer"]["tokenPath"]) + ";",
+        "pub const REVOKE_PATH: &str = " + rust_literal(surface["issuer"]["revokePath"]) + ";",
+        "pub const INTROSPECT_PATH: &str = " + rust_literal(surface["issuer"]["introspectPath"]) + ";",
+        "pub const MCP_PATH: &str = " + rust_literal(surface["issuer"]["mcpPath"]) + ";",
         "",
         "#[derive(Debug, Clone, Copy, PartialEq, Eq)]",
         "pub struct EnvironmentTarget {",
@@ -522,9 +545,9 @@ def render_rust(surface: dict) -> str:
     lines.append("pub const ENVIRONMENTS: &[EnvironmentTarget] = &[")
     for env_name, target in surface["environments"].items():
         lines.append("    EnvironmentTarget {")
-        lines.append(f"        environment: {json.dumps(env_name)},")
+        lines.append(f"        environment: {rust_literal(env_name)},")
         for field in env_fields:
-            lines.append(f"        {snake(field)}: {json.dumps(target[field])},")
+            lines.append(f"        {snake(field)}: {rust_literal(target[field])},")
         lines.append("    },")
     lines.append("];")
     lines.append("")
@@ -541,12 +564,12 @@ def render_rust(surface: dict) -> str:
     lines.append("pub const PRODUCTS: &[ProductSpec] = &[")
     for key, product in surface["products"].items():
         lines.append("    ProductSpec {")
-        lines.append(f"        key: {json.dumps(snake(key))},")
-        lines.append(f"        name: {json.dumps(product['name'])},")
-        lines.append(f"        repository: {json.dumps(product['repository'])},")
-        lines.append(f"        env_var: {json.dumps(product['envVar'])},")
+        lines.append(f"        key: {rust_literal(snake(key))},")
+        lines.append(f"        name: {rust_literal(product['name'])},")
+        lines.append(f"        repository: {rust_literal(product['repository'])},")
+        lines.append(f"        env_var: {rust_literal(product['envVar'])},")
         lines.append(f"        audience: {rust_str(product['audience'])},")
-        lines.append(f"        description: {json.dumps(product['description'])},")
+        lines.append(f"        description: {rust_literal(product['description'])},")
         lines.append("    },")
     lines.append("];")
     lines.append("")
@@ -581,14 +604,14 @@ def render_rust(surface: dict) -> str:
     for product_key, ops in surface["operations"].items():
         for op in ops:
             lines.append("    OperationSpec {")
-            lines.append(f"        product: {json.dumps(snake(product_key))},")
-            lines.append(f"        id: {json.dumps(snake(op['id']))},")
+            lines.append(f"        product: {rust_literal(snake(product_key))},")
+            lines.append(f"        id: {rust_literal(snake(op['id']))},")
             lines.append(
-                f"        upstream_operation_id: {json.dumps(op['upstreamOperationId'])},"
+                f"        upstream_operation_id: {rust_literal(op['upstreamOperationId'])},"
             )
-            lines.append(f"        method: {json.dumps(op['method'])},")
-            lines.append(f"        path: {json.dumps(op['path'])},")
-            lines.append(f"        auth: {json.dumps(op['auth'])},")
+            lines.append(f"        method: {rust_literal(op['method'])},")
+            lines.append(f"        path: {rust_literal(op['path'])},")
+            lines.append(f"        auth: {rust_literal(op['auth'])},")
             lines.append(f"        auth_audience: {rust_str(op.get('authAudience'))},")
             lines.append(f"        path_params: {rust_str_slice(op.get('pathParams', []))},")
             lines.append(
@@ -602,10 +625,10 @@ def render_rust(surface: dict) -> str:
             lines.append(f"        required_body: {rust_str_slice(op.get('requiredBody', []))},")
             defaults = op.get("bodyDefaults", {})
             pairs = ", ".join(
-                f"({json.dumps(key)}, {json.dumps(str(value))})" for key, value in defaults.items()
+                f"({rust_literal(key)}, {rust_literal(str(value))})" for key, value in defaults.items()
             )
             lines.append(f"        body_defaults: &[{pairs}],")
-            lines.append(f"        request_body_kind: {json.dumps(op.get('requestBodyKind', 'none'))},")
+            lines.append(f"        request_body_kind: {rust_literal(op.get('requestBodyKind', 'none'))},")
             lines.append(f"        request_content_type: {rust_str(op.get('requestContentType'))},")
             lines.append(f"        scope: {rust_str(op.get('scope'))},")
             lines.append(
@@ -615,7 +638,7 @@ def render_rust(surface: dict) -> str:
                 "        prepare_commit_required: "
                 f"{str(op.get('prepareCommitRequired', False)).lower()},"
             )
-            lines.append(f"        description: {json.dumps(op['description'])},")
+            lines.append(f"        description: {rust_literal(op['description'])},")
             lines.append("    },")
     lines.append("];")
     lines.append("")
@@ -630,10 +653,10 @@ def render_rust(surface: dict) -> str:
     lines.append("pub const MCP_METHODS: &[McpMethodSpec] = &[")
     for method in surface["mcpGateway"]["methods"]:
         lines.append("    McpMethodSpec {")
-        lines.append(f"        id: {json.dumps(snake(method['id']))},")
-        lines.append(f"        rpc: {json.dumps(method['rpc'])},")
+        lines.append(f"        id: {rust_literal(snake(method['id']))},")
+        lines.append(f"        rpc: {rust_literal(method['rpc'])},")
         lines.append(f"        tool: {rust_str(method.get('tool'))},")
-        lines.append(f"        description: {json.dumps(method['description'])},")
+        lines.append(f"        description: {rust_literal(method['description'])},")
         lines.append("    },")
     lines.append("];")
     lines.append("")

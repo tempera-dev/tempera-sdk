@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import tempfile
 import unittest
@@ -18,6 +19,7 @@ SPEC.loader.exec_module(sync)
 
 SOURCE_REPO = "tempera-dev/tempera-workflows"
 SOURCE_PATH = "sdks/openapi/tempera-workflows-api.json"
+DATA_SOURCE_REPO = "tempera-dev/data-engine"
 
 
 def git(repo: Path, *args: str) -> str:
@@ -45,6 +47,59 @@ def create_source_repo(repo: Path) -> tuple[Path, str]:
     commit = commit_all(repo, "initial contract")
     git(repo, "update-ref", "refs/remotes/origin/main", commit)
     return source, commit
+
+
+def create_bundled_data_repo(repo: Path, *, reference_symlink: bool = False) -> str:
+    """Create a real Git source whose YAML imports one committed JSON schema."""
+    repo.mkdir()
+    git(repo, "init", "-b", "main")
+    git(repo, "config", "user.name", "Tempera SDK test")
+    git(repo, "config", "user.email", "sdk-test@tempera.invalid")
+    git(repo, "remote", "add", "origin", f"https://github.com/{DATA_SOURCE_REPO}.git")
+    (repo / "api").mkdir()
+    (repo / "contracts").mkdir()
+    (repo / "api" / "openapi.yaml").write_text(
+        "openapi: 3.1.0\ninfo: {title: fixture, version: 1}\npaths: {}\ncomponents:\n"
+        "  schemas:\n    Evidence:\n      $ref: ../contracts/evidence.json\n",
+        encoding="utf-8",
+    )
+    contract = repo / "contracts" / "evidence.json"
+    if reference_symlink:
+        contract.symlink_to("target.json")
+        (repo / "contracts" / "target.json").write_text('{"type":"string"}\n', encoding="utf-8")
+    else:
+        contract.write_text('{"type":"object","properties":{"id":{"type":"string"}}}\n', encoding="utf-8")
+    commit = commit_all(repo, "initial bundled data contract")
+    git(repo, "update-ref", "refs/remotes/origin/main", commit)
+    return commit
+
+
+def bundled_config() -> dict[str, str]:
+    return {
+        "source_repo": DATA_SOURCE_REPO,
+        "source_branch": "main",
+        "source_path": "api/openapi.yaml",
+        "generated_path": "specs/fixture.json",
+        "generated_with": "test-local-bundle",
+        "transform": "yaml-json-local-bundle",
+    }
+
+
+def synchronize_fixture(repo: Path, output: Path, commit: str, *, check: bool = False) -> None:
+    """Exercise the production synchronizer against a controlled Git repository."""
+    product = "testBundledData"
+    original_root = sync.ROOT
+    original_config = sync.PRODUCTS.get(product)
+    sync.ROOT = output
+    sync.PRODUCTS[product] = bundled_config()
+    try:
+        sync.synchronize(product, repo, commit, check)
+    finally:
+        sync.ROOT = original_root
+        if original_config is None:
+            del sync.PRODUCTS[product]
+        else:
+            sync.PRODUCTS[product] = original_config
 
 
 def verify(
@@ -195,6 +250,45 @@ class CurrentBranchEquivalentFileTest(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "source origin .* does not match"):
                 verify(repo, pinned)
+
+    def test_bundled_reference_receipt_is_reproducible_and_branch_drift_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-bundled-source-") as directory:
+            repo = Path(directory) / "source"
+            output = Path(directory) / "output"
+            (output / "specs").mkdir(parents=True)
+            pinned = create_bundled_data_repo(repo)
+
+            synchronize_fixture(repo, output, pinned)
+            rendered = (output / "specs/fixture.json").read_bytes()
+            receipt = json.loads((output / "specs/fixture.json.source").read_text())
+            self.assertEqual(receipt["source_commit"], pinned)
+            self.assertEqual(
+                receipt["referenced_files"],
+                [{
+                    "source_path": "contracts/evidence.json",
+                    "source_blob_sha": git(repo, "rev-parse", f"{pinned}:contracts/evidence.json"),
+                    "source_mode": "100644",
+                    "source_sha256": "1a7cc8b51f5e08cb5520d3b667b24657b14daef90a2fa46c35a4c6223f3af6ad",
+                }],
+            )
+            self.assertNotIn(b"../contracts/evidence.json", rendered)
+            synchronize_fixture(repo, output, pinned, check=True)
+            self.assertEqual(rendered, (output / "specs/fixture.json").read_bytes())
+
+            (repo / "contracts" / "evidence.json").write_text('{"type":"string"}\n', encoding="utf-8")
+            current = commit_all(repo, "change imported contract")
+            git(repo, "update-ref", "refs/remotes/origin/main", current)
+            with self.assertRaisesRegex(ValueError, "source tree entry drift for contracts/evidence.json"):
+                synchronize_fixture(repo, output, pinned, check=True)
+
+    def test_bundled_reference_symlink_is_rejected_from_git_tree(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="tempera-sdk-bundled-source-") as directory:
+            repo = Path(directory) / "source"
+            output = Path(directory) / "output"
+            (output / "specs").mkdir(parents=True)
+            pinned = create_bundled_data_repo(repo, reference_symlink=True)
+            with self.assertRaisesRegex(ValueError, "source is not a regular Git file: contracts/evidence.json"):
+                synchronize_fixture(repo, output, pinned)
 
 
 if __name__ == "__main__":

@@ -265,6 +265,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Readiness probe for durable control-plane storage."
     },
     {
+      "id": "samlSsoConfigurationsGet",
+      "upstreamOperationId": "samlSsoConfigurations.get",
+      "method": "GET",
+      "path": "/v1/sso/config",
+      "auth": "account",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Read the active organization\u2019s private SAML 2.0 SSO configuration status."
+    },
+    {
       "id": "me",
       "upstreamOperationId": "getMe",
       "method": "GET",
@@ -1877,7 +1899,6 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [
         "rail",
-        "plan",
         "planId",
         "interval",
         "currency",
@@ -1938,6 +1959,59 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
+    },
+    {
+      "id": "listCreditTopupPacks",
+      "upstreamOperationId": "listCreditTopupPacks",
+      "method": "GET",
+      "path": "/v1/billing/credit-packs",
+      "auth": "account",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "List source-owned fixed prepaid credit packs available to an authenticated billing administrator."
+    },
+    {
+      "id": "createCreditTopup",
+      "upstreamOperationId": "createCreditTopup",
+      "method": "POST",
+      "path": "/v1/billing/credit-topups",
+      "auth": "account",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "packId",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "packId",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "description": "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected."
     },
     {
       "id": "getModelCatalog",
@@ -5671,7 +5745,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "model",
         "response_format",
         "stream",
-        "temperature"
+        "temperature",
+        "tool_choice",
+        "tools"
       ],
       "forbiddenBody": [],
       "requiredBody": [

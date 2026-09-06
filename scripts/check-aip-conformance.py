@@ -54,6 +54,11 @@ PROTOCOL_EXCEPTIONS = {
     ("controlPlane", "/github/callback"),
     ("controlPlane", "/github/webhook"),
     ("controlPlane", "/readyz"),
+    # SAML is a browser/identity-provider protocol, not a Google-style resource
+    # API. The aggregate SDK deliberately excludes these routes.
+    ("controlPlane", "/sso/saml/login"),
+    ("controlPlane", "/sso/saml/metadata/{configId}"),
+    ("controlPlane", "/sso/saml/acs/{configId}"),
     ("cradle", "/v1/health"),
     ("cradle", "/mcp"),
     ("dataEngine", "/v1/health"),
@@ -92,6 +97,9 @@ PROTOCOL_SUFFIX_EXCEPTIONS = {
 # by RFC 7662, including its snake_case members and inactive-token response.
 PROTOCOL_OPERATION_EXCEPTIONS = {
     ("controlPlane", "POST", "/v1/oauth/introspect"),
+    # Runtime requires a server-only BFF handoff secret despite OpenAPI's empty
+    # security declaration; it is deliberately excluded from the general SDK.
+    ("controlPlane", "POST", "/v1/sso/handoffs:exchange"),
 }
 # Resource operations may deliberately return an embedded protocol payload.
 # Continue checking their path, parameters, pagination, and AIP-193 errors, but

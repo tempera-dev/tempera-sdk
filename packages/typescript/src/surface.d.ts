@@ -100,6 +100,8 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Readiness probe for durable control-plane storage. */
   getReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read the active organization’s private SAML 2.0 SSO configuration status. */
+  samlSsoConfigurationsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch the authenticated user's identity, active workspace, and roles. */
   me(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the organizations the authenticated user belongs to. */
@@ -220,6 +222,10 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   getBillingPortal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff. */
   getBillingCredits(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List source-owned fixed prepaid credit packs available to an authenticated billing administrator. */
+  listCreditTopupPacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected. */
+  createCreditTopup(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement. */
   getModelCatalog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter. */

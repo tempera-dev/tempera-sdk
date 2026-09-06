@@ -231,6 +231,72 @@
       "product": "tempo",
       "rationale": "The endpoint is an unbounded server-sent event stream while aggregate SDK operations return buffered responses.",
       "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "GET",
+      "migration": "Keep browser navigation and redirect handling in the dedicated SAML BFF flow rather than exposing it through the buffered aggregate SDK.",
+      "operation_id": "samlSsoLogin.begin",
+      "owner": "auth-hub",
+      "path": "/sso/saml/login",
+      "product": "controlPlane",
+      "rationale": "The endpoint begins an interactive browser SAML exchange; its declared empty OpenAPI security does not make it a general SDK operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "GET",
+      "migration": "Keep SAML metadata exchange in the dedicated identity-provider/BFF configuration flow rather than the aggregate SDK.",
+      "operation_id": "samlSsoMetadata.get",
+      "owner": "auth-hub",
+      "path": "/sso/saml/metadata/{configId}",
+      "product": "controlPlane",
+      "rationale": "This is an identity-provider protocol endpoint, not a normal account-authenticated JSON product operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "POST",
+      "migration": "Keep assertion-consumer processing in the dedicated browser/BFF SAML flow rather than the aggregate SDK.",
+      "operation_id": "samlSsoLogin.complete",
+      "owner": "auth-hub",
+      "path": "/sso/saml/acs/{configId}",
+      "product": "controlPlane",
+      "rationale": "The endpoint receives an identity-provider SAML assertion and is not an outbound generic SDK operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "server_only_bff_secret",
+      "method": "POST",
+      "migration": "Keep handoff exchange in the server-side BFF, which supplies the required handoff secret; do not model it as an unauthenticated aggregate SDK call.",
+      "operation_id": "samlSsoHandoffs.exchange",
+      "owner": "auth-hub",
+      "path": "/v1/sso/handoffs:exchange",
+      "product": "controlPlane",
+      "rationale": "The OpenAPI empty security declaration cannot express the runtime-required server-only BFF handoff secret.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "staff_step_up_required",
+      "method": "POST",
+      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
+      "operation_id": "samlSsoConfigurations.configure",
+      "owner": "auth-hub",
+      "path": "/v1/sso/config:configure",
+      "product": "controlPlane",
+      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "staff_step_up_required",
+      "method": "POST",
+      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
+      "operation_id": "samlSsoConfigurations.disable",
+      "owner": "auth-hub",
+      "path": "/v1/sso/config:disable",
+      "product": "controlPlane",
+      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
+      "review_after": "2026-10-01"
     }
   ]
 }

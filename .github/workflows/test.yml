@@ -68,6 +68,7 @@ jobs:
           git -C .data-engine-source fetch --no-tags origin main:refs/remotes/origin/main
           test "$(git -C .data-engine-source rev-parse HEAD)" = "$(git -C .data-engine-source rev-parse refs/remotes/origin/main)"
           python3 -m pip install PyYAML==6.0.3
+          python3 scripts/test-sync-vendored-openapi.py
           python3 scripts/sync-vendored-openapi.py --check --product dataEngine --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
           python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
           python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
@@ -361,6 +362,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: python3 scripts/test-sync-data-engine-openapi.py
+      - run: python3 scripts/test-gen-sdk-surface.py
+      - run: python3 scripts/test-ci-yaml-dependencies.py
+      - run: python3 -m pip install PyYAML==6.0.3
       - run: python3 scripts/test-sync-vendored-openapi.py
       - run: python3 scripts/test-upstream-drift.py
       - run: python3 scripts/test-sdk-names.py
