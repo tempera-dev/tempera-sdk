@@ -9078,6 +9078,18 @@
         "safeRetry": "none"
       },
       {
+        "id": "getDefaultVoiceAgent",
+        "method": "GET",
+        "path": "/v1/agents:default",
+        "auth": "oauthResource",
+        "description": "Get Default Agent.",
+        "upstreamOperationId": "getDefaultVoiceAgent",
+        "requestBodyKind": "none",
+        "authAudience": "tempera-voice",
+        "scope": "voice:read",
+        "safeRetry": "read"
+      },
+      {
         "id": "downloadVoiceArtifact",
         "method": "GET",
         "path": "/v1/artifacts/{reference}",
@@ -9284,6 +9296,7 @@
         "upstreamOperationId": "listVoiceSessions",
         "query": [
           "agent_id",
+          "profile_ref",
           "limit"
         ],
         "requestBodyKind": "none",
@@ -9302,8 +9315,11 @@
           "agent_id",
           "channel",
           "external_id",
+          "goal_ref",
           "metadata",
-          "safety_identifier"
+          "profile_ref",
+          "safety_identifier",
+          "site_id"
         ],
         "requiredBody": [
           "agent_id"
@@ -9342,7 +9358,12 @@
         "requestBodyKind": "none",
         "authAudience": "tempera-voice",
         "scope": "voice:read",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "query": [
+          "status",
+          "limit",
+          "after"
+        ]
       },
       {
         "id": "listVoiceSessionEvents",

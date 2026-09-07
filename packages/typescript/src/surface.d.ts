@@ -977,6 +977,8 @@ export interface TemperaVoiceClient extends TemperaProductClientBase {
   getVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Upsert Agent. */
   upsertVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Default Agent. */
+  getDefaultVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Download Artifact. */
   downloadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Upload Artifact. */
