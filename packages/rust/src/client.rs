@@ -101,7 +101,9 @@ fn check_idempotency_key(
         name: name.to_string(),
     };
     match value {
-        ParamValue::Str(key) => canonical_idempotency_key(key).map(|_| ()).ok_or_else(invalid),
+        ParamValue::Str(key) => canonical_idempotency_key(key)
+            .map(|_| ())
+            .ok_or_else(invalid),
         _ => Err(invalid()),
     }
 }

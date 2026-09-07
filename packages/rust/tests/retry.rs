@@ -145,9 +145,12 @@ fn send(spec: &RequestSpec, _attempt: u32) -> Result<String, SendError> {
         Some(index) => (&rest[..index], &rest[index..]),
         None => (rest, "/"),
     };
-    let mut stream = TcpStream::connect(authority)
-        .map_err(|error| SendError::Connection(error.to_string()))?;
-    let mut request = format!("{} {} HTTP/1.1\r\nhost: {}\r\n", spec.method, path, authority);
+    let mut stream =
+        TcpStream::connect(authority).map_err(|error| SendError::Connection(error.to_string()))?;
+    let mut request = format!(
+        "{} {} HTTP/1.1\r\nhost: {}\r\n",
+        spec.method, path, authority
+    );
     for (name, value) in &spec.headers {
         request.push_str(&format!("{name}: {value}\r\n"));
     }
@@ -393,7 +396,10 @@ fn a_non_canonical_idempotency_key_never_reaches_the_wire() {
     }
     let received = server.received();
     server.stop();
-    assert!(received.is_empty(), "no malformed key ever reached the wire");
+    assert!(
+        received.is_empty(),
+        "no malformed key ever reached the wire"
+    );
 }
 
 #[test]

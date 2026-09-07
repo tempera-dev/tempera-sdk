@@ -87,7 +87,11 @@ pub fn retry_delay(attempt: u32) -> Duration {
 
 /// Total attempts admitted for one `safe_retry` classification.
 pub fn attempt_budget(safe_retry: &str) -> u32 {
-    if safe_retry == "none" { 1 } else { MAX_ATTEMPTS }
+    if safe_retry == "none" {
+        1
+    } else {
+        MAX_ATTEMPTS
+    }
 }
 
 /// Send one already-built request, retrying only when `safe_retry` allows it.
