@@ -70,6 +70,8 @@ def make_client(**overrides):
             "remi": "https://remi.example.test",
             "data_engine": "https://data-engine.example.test",
             "human_data": "https://human.example.test",
+            "tempera_dropshipping": "https://dropshipping.example.test",
+            "tempera_business": "https://business.example.test",
             "tempJs": "https://tempjs.example.test",
             "temp_os": "https://tempos.example.test",
             "arrha": "https://arrha.example.test",

@@ -32,6 +32,8 @@ VENDORED_SPECS = {
     "temperaDocument": "tempera-document-api.json",
     "remi": "remi-http-contract.json",
     "tempo": "tempo-openapi.json",
+    "temperaDropshipping": "tempera-dropshipping-api.json",
+    "temperaBusiness": "tempera-business-api.json",
 }
 STRICT_PRODUCTS = set(VENDORED_SPECS)
 PARAM_RE = re.compile(r"\{[^}]+\}")

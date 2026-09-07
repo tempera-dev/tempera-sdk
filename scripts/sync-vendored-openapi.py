@@ -134,6 +134,26 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
+    # Staged producers. Their canonical contracts still live on unmerged
+    # feature branches, so the vendored locks below deliberately record a
+    # non-main source_branch and are admitted only through the explicit,
+    # expiring ledger in contracts/sdk-staged-sources.json.
+    "temperaDropshipping": {
+        "source_repo": "tempera-dev/tempera-dropshipping",
+        "source_branch": "feat/a1-canonical-orders",
+        "source_path": "contracts/dropshipping.openapi.json",
+        "generated_path": "specs/tempera-dropshipping-api.json",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
+    "temperaBusiness": {
+        "source_repo": "tempera-dev/tempera-business",
+        "source_branch": "feat/a2-business-profile",
+        "source_path": "contracts/tempera-business.openapi.json",
+        "generated_path": "specs/tempera-business-api.json",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
 }
 
 

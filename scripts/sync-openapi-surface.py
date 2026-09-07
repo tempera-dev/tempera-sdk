@@ -32,6 +32,8 @@ PRODUCT_SPECS = {
     "temperaBio": "tempera-bio-api.json",
     "remi": "remi-http-contract.json",
     "tempo": "tempo-openapi.json",
+    "temperaDropshipping": "tempera-dropshipping-api.json",
+    "temperaBusiness": "tempera-business-api.json",
 }
 DEFAULT_AUTH = {
     "temperaPayments": "oauthResource",
@@ -49,7 +51,16 @@ DEFAULT_AUTH = {
     "temperaBio": "product",
     "remi": "product",
     "tempo": "product",
+    "temperaDropshipping": "oauthResource",
+    "temperaBusiness": "oauthResource",
 }
+# Producers whose contracts declare a bearer scheme and an explicit
+# x-tempera-required-scope but no per-operation OAuth security requirement.
+# Their audience is the product audience recorded in surface.json, so the
+# generated operations bind it instead of silently dropping the audience.
+AUDIENCE_BOUND_PRODUCTS = {"temperaDropshipping", "temperaBusiness"}
+# Request-body field names that carry a client-minted idempotency key.
+IDEMPOTENCY_KEY_FIELDS = {"idempotencyKey", "idempotency_key"}
 PARAM_RE = re.compile(r"\{([^}]+)\}")
 WORD_RE = re.compile(r"[^A-Za-z0-9]+")
 Route = tuple[str, str]
@@ -340,8 +351,33 @@ def synchronize_control_plane_registries(
         or not all(isinstance(item, str) and item for item in scopes)
     ):
         raise ValueError("controlPlane Scope enum is invalid")
-    surface["audiences"] = audiences
+    # Staged producers are admitted before the control plane publishes their
+    # audience. surface.json declares each one in audienceGaps with an owner
+    # and a migration, and the registry is the control-plane enum followed by
+    # those staged audiences in declaration order, so the union stays exactly
+    # reproducible from committed inputs.
+    staged = [
+        audience
+        for audience in surface.get("audienceGaps", {})
+        if audience not in audiences
+    ]
+    surface["audiences"] = [*audiences, *staged]
     surface["scopes"] = scopes
+
+
+def safe_retry(method: str, body_fields: list[str]) -> str:
+    """Classify whether one operation may be transparently retried.
+
+    GET is always safe. A write is retry-safe only when its request body
+    carries a client-minted idempotency key, because a retry has to resend
+    that identical key. Everything else must never be retried.
+    """
+
+    if method.upper() == "GET":
+        return "read"
+    if any(field in IDEMPOTENCY_KEY_FIELDS for field in body_fields):
+        return "idempotent"
+    return "none"
 
 
 def synchronize_product(
@@ -441,6 +477,7 @@ def synchronize_product(
                     item[key] = values
                 else:
                     item.pop(key, None)
+            item["safeRetry"] = safe_retry(item["method"], item.get("body", []))
             if item["id"] in seen_ids:
                 raise ValueError(
                     f"{product} generated duplicate operation id {item['id']!r}"
@@ -591,6 +628,18 @@ def synchronize_product(
                         f"{product} {operation_id} has invalid "
                         "x-tempera-required-scope"
                     )
+            if (
+                product in AUDIENCE_BOUND_PRODUCTS
+                and item.get("auth") == "oauthResource"
+                and "authAudience" not in item
+            ):
+                audience = surface["products"][product].get("audience")
+                if not isinstance(audience, str) or not audience:
+                    raise ValueError(
+                        f"{product} {operation_id} has no product audience to bind"
+                    )
+                item["authAudience"] = audience
+            item["safeRetry"] = safe_retry(item["method"], item.get("body", []))
             if item["id"] in seen_ids:
                 raise ValueError(f"{product} generated duplicate operation id {item['id']!r}")
             seen_ids.add(item["id"])

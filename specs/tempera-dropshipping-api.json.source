@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-dropshipping-api.json",
+  "generated_sha256": "8633f3c593153be67490acacdf89dcc95e2052a166db97bc17f2695abcc1e622",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "d7eb67aa1d9f7e6a8b14454d9e91254be22be9de",
+  "source_branch": "feat/a1-canonical-orders",
+  "source_commit": "969edf4e00d444d58530b2d4eaf04435c0cc6798",
+  "source_mode": "100644",
+  "source_path": "contracts/dropshipping.openapi.json",
+  "source_repo": "tempera-dev/tempera-dropshipping",
+  "source_sha256": "8633f3c593153be67490acacdf89dcc95e2052a166db97bc17f2695abcc1e622"
+}

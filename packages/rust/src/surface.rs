@@ -24,6 +24,8 @@ pub const AUDIENCES: &[&str] = &[
     "tempera-payments",
     "tempera-voice",
     "tempera-clearing",
+    "tempera-dropshipping",
+    "tempera-business",
 ];
 pub const DEFAULT_AUDIENCE: &str = "palette";
 pub const SCOPES: &[&str] = &[
@@ -336,6 +338,22 @@ pub const PRODUCTS: &[ProductSpec] = &[
         audience: None,
         description: "Settlement, chain, credits, and indexer layer for agent payments. Passthrough client only; no typed operations yet.",
     },
+    ProductSpec {
+        key: "tempera_dropshipping",
+        name: "tempera-dropshipping",
+        repository: "https://github.com/tempera-dev/tempera-dropshipping",
+        env_var: "TEMPERA_DROPSHIPPING_URL",
+        audience: Some("tempera-dropshipping"),
+        description: "Declared merchant order recovery: site-scoped orders, stores, proposals, and business workspaces. The producer prepares and reviews plans; it claims no provider execution authority.",
+    },
+    ProductSpec {
+        key: "tempera_business",
+        name: "tempera-business",
+        repository: "https://github.com/tempera-dev/tempera-business",
+        env_var: "TEMPERA_BUSINESS_URL",
+        audience: Some("tempera-business"),
+        description: "Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle.",
+    },
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -360,6 +378,7 @@ pub struct OperationSpec {
     pub scope: Option<&'static str>,
     pub physical_action: bool,
     pub prepare_commit_required: bool,
+    pub safe_retry: &'static str,
     pub description: &'static str,
 }
 
@@ -385,6 +404,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check control-plane liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -408,6 +428,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Readiness probe for durable control-plane storage.",
     },
     OperationSpec {
@@ -431,6 +452,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read the active organization’s private SAML 2.0 SSO configuration status.",
     },
     OperationSpec {
@@ -454,6 +476,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the authenticated user's identity, active workspace, and roles.",
     },
     OperationSpec {
@@ -477,6 +500,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the organizations the authenticated user belongs to.",
     },
     OperationSpec {
@@ -500,6 +524,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an organization; the caller becomes its owner.",
     },
     OperationSpec {
@@ -523,6 +548,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the user's active account sessions.",
     },
     OperationSpec {
@@ -546,6 +572,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a first-party hosted account session from email/password login or signup.",
     },
     OperationSpec {
@@ -569,6 +596,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke an account session and its tokens immediately (idempotent).",
     },
     OperationSpec {
@@ -592,6 +620,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Switch the active workspace and receive a token pair scoped to it.",
     },
     OperationSpec {
@@ -615,6 +644,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List team members of the active organization.",
     },
     OperationSpec {
@@ -638,6 +668,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Change a team member's role (requires an org admin role; at least one owner must remain).",
     },
     OperationSpec {
@@ -661,6 +692,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Remove a team member from the active organization (idempotent).",
     },
     OperationSpec {
@@ -684,6 +716,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List invites for the active organization, newest first.",
     },
     OperationSpec {
@@ -707,6 +740,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Invite a user to the active organization; the accept URL is returned once.",
     },
     OperationSpec {
@@ -730,6 +764,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Cancel a pending invite (idempotent).",
     },
     OperationSpec {
@@ -753,6 +788,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List projects across every organization the user belongs to.",
     },
     OperationSpec {
@@ -776,6 +812,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a project in an organization (requires an org admin role).",
     },
     OperationSpec {
@@ -799,6 +836,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List environments across every project the user can access.",
     },
     OperationSpec {
@@ -822,6 +860,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an environment in a project (requires an org admin role).",
     },
     OperationSpec {
@@ -845,6 +884,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List API keys in the active workspace; secrets are never returned.",
     },
     OperationSpec {
@@ -876,6 +916,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace.",
     },
     OperationSpec {
@@ -899,6 +940,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke an API key (idempotent).",
     },
     OperationSpec {
@@ -922,6 +964,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Rotate an API key's secret; the new secret is returned exactly once.",
     },
     OperationSpec {
@@ -955,6 +998,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint.",
     },
     OperationSpec {
@@ -978,6 +1022,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List redacted data-source connection metadata in the selected project and environment.",
     },
     OperationSpec {
@@ -1017,6 +1062,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create project-bound connector metadata using only an external secret reference.",
     },
     OperationSpec {
@@ -1040,6 +1086,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get redacted metadata for one data-source connection.",
     },
     OperationSpec {
@@ -1063,6 +1110,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Update a connection name or secret reference with exact-revision concurrency control.",
     },
     OperationSpec {
@@ -1086,6 +1134,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a data-source connection immediately. Revoking an unknown id is a no-op.",
     },
     OperationSpec {
@@ -1109,6 +1158,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List provider connection metadata using a first-party account session. Secret references and values are never returned.",
     },
     OperationSpec {
@@ -1147,6 +1197,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a tenant-scoped provider connection using only an external secret reference.",
     },
     OperationSpec {
@@ -1185,6 +1236,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a provider connection by writing one raw secret directly to the configured Vault backend.",
     },
     OperationSpec {
@@ -1208,6 +1260,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a provider connection immediately. Revoking an unknown id is a no-op.",
     },
     OperationSpec {
@@ -1231,6 +1284,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Replace a connection secret reference and increment its revision without exposing the reference.",
     },
     OperationSpec {
@@ -1254,6 +1308,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Rotate a provider connection by writing one raw secret directly to the configured Vault backend.",
     },
     OperationSpec {
@@ -1277,6 +1332,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
     },
     OperationSpec {
@@ -1300,6 +1356,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List redacted generic connector credential metadata for the selected workspace.",
     },
     OperationSpec {
@@ -1323,6 +1380,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create generic connector credential metadata using only an external secret reference.",
     },
     OperationSpec {
@@ -1346,6 +1404,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a generic connector credential by writing one raw secret directly to the configured Vault backend.",
     },
     OperationSpec {
@@ -1369,6 +1428,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op.",
     },
     OperationSpec {
@@ -1392,6 +1452,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Replace a generic connector credential secret reference and increment its revision.",
     },
     OperationSpec {
@@ -1415,6 +1476,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend.",
     },
     OperationSpec {
@@ -1438,6 +1500,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.",
     },
     OperationSpec {
@@ -1461,6 +1524,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List external experiment-provider metadata. Secret references and values are never returned.",
     },
     OperationSpec {
@@ -1502,6 +1566,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Register a tenant-scoped experiment provider using only an external secret reference.",
     },
     OperationSpec {
@@ -1525,6 +1590,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke an experiment-provider connection. An unknown id is a no-op.",
     },
     OperationSpec {
@@ -1568,6 +1634,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:submit"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.",
     },
     OperationSpec {
@@ -1591,6 +1658,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:signer:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List versioned public Ed25519 verifier keys for an authorized human administrator.",
     },
     OperationSpec {
@@ -1614,6 +1682,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:signer:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Register or rotate a public Ed25519 verifier key. Private key material is rejected.",
     },
     OperationSpec {
@@ -1637,6 +1706,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:signer:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a public verifier key while retaining its history.",
     },
     OperationSpec {
@@ -1660,6 +1730,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:approve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List exact, single-use experiment approvals for an authorized human approver.",
     },
     OperationSpec {
@@ -1701,6 +1772,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:approve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.",
     },
     OperationSpec {
@@ -1724,6 +1796,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:approve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke an unused experiment approval. Consumed approvals remain immutable.",
     },
     OperationSpec {
@@ -1747,6 +1820,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List recent audit-log events for the user and active organization (up to 50, newest first).",
     },
     OperationSpec {
@@ -1770,6 +1844,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the connector catalog (MCP clients, editors, and API surfaces).",
     },
     OperationSpec {
@@ -1793,6 +1868,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one connector's connection status for the active workspace.",
     },
     OperationSpec {
@@ -1816,6 +1892,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the product catalog with default scopes and setup paths.",
     },
     OperationSpec {
@@ -1839,6 +1916,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one product's activation status, entitlements, signals, and usage meters.",
     },
     OperationSpec {
@@ -1862,6 +1940,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
     },
     OperationSpec {
@@ -1885,6 +1964,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
     },
     OperationSpec {
@@ -1908,6 +1988,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the billing-portal URL for the organization (requires a billing role).",
     },
     OperationSpec {
@@ -1931,6 +2012,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
     },
     OperationSpec {
@@ -1954,6 +2036,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List source-owned fixed prepaid credit packs available to an authenticated billing administrator.",
     },
     OperationSpec {
@@ -1977,6 +2060,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected.",
     },
     OperationSpec {
@@ -2000,6 +2084,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("model:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
     },
     OperationSpec {
@@ -2031,6 +2116,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
     },
     OperationSpec {
@@ -2076,6 +2162,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Atomically reserve the maximum model cost before starting a provider request.",
     },
     OperationSpec {
@@ -2099,6 +2186,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Commit exact provider usage against an admitted reservation and release unused capacity.",
     },
     OperationSpec {
@@ -2122,6 +2210,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Release unused capacity after provider failure or cancellation.",
     },
     OperationSpec {
@@ -2161,6 +2250,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
     },
     OperationSpec {
@@ -2184,6 +2274,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the OAuth grants the user has approved in the active workspace.",
     },
     OperationSpec {
@@ -2207,6 +2298,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke an OAuth grant and every refresh token issued under it.",
     },
     OperationSpec {
@@ -2230,6 +2322,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid.",
     },
     OperationSpec {
@@ -2253,6 +2346,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch OAuth 2.1 authorization-server metadata for the issuer.",
     },
     OperationSpec {
@@ -2276,6 +2370,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "OAuth protected resource discovery metadata for MCP/resource clients.",
     },
     OperationSpec {
@@ -2299,6 +2394,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch OAuth protected-resource metadata for one registered audience.",
     },
     OperationSpec {
@@ -2322,6 +2418,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the JSON Web Key Set used to verify control-plane access tokens.",
     },
     OperationSpec {
@@ -2345,6 +2442,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
     },
     OperationSpec {
@@ -2368,6 +2466,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations.",
     },
     OperationSpec {
@@ -2391,6 +2490,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference.",
     },
     OperationSpec {
@@ -2414,6 +2514,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
     },
     OperationSpec {
@@ -2437,6 +2538,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a one-time CSRF-bound GitHub App installation session.",
     },
     OperationSpec {
@@ -2460,6 +2562,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Bind a GitHub installation callback to its authenticated workspace.",
     },
     OperationSpec {
@@ -2483,6 +2586,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List active GitHub App installations for the organization.",
     },
     OperationSpec {
@@ -2506,6 +2610,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Disconnect a GitHub App installation from the workspace.",
     },
     OperationSpec {
@@ -2529,6 +2634,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List repository metadata received for a GitHub installation.",
     },
     OperationSpec {
@@ -2552,6 +2658,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace.",
     },
     OperationSpec {
@@ -2575,6 +2682,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Accept a signed, replay-deduplicated GitHub webhook.",
     },
     OperationSpec {
@@ -2598,6 +2706,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch.",
     },
     OperationSpec {
@@ -2621,6 +2730,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List passkeys enrolled for the authenticated account.",
     },
     OperationSpec {
@@ -2644,6 +2754,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Begin passkey registration for the authenticated account.",
     },
     OperationSpec {
@@ -2667,6 +2778,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify and persist a passkey registration.",
     },
     OperationSpec {
@@ -2690,6 +2802,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Begin discoverable passkey authentication.",
     },
     OperationSpec {
@@ -2713,6 +2826,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify a passkey assertion and create an AAL2 account session.",
     },
     OperationSpec {
@@ -2736,6 +2850,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Begin passkey step-up for a signed-in account session.",
     },
     OperationSpec {
@@ -2759,6 +2874,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify passkey step-up and mint a short-lived AAL2 elevation token.",
     },
     OperationSpec {
@@ -2782,6 +2898,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Consume a one-time recovery code, remove passkeys, and revoke all active account credentials.",
     },
     OperationSpec {
@@ -2805,6 +2922,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Delete one passkey after recent AAL2 step-up.",
     },
     OperationSpec {
@@ -2867,6 +2985,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("clearing:actions:approve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
     },
     OperationSpec {
@@ -2890,6 +3009,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("clearing:actions:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read a Clearing admission from the caller's exact workspace.",
     },
     OperationSpec {
@@ -2913,6 +3033,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("clearing:actions:commit"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Atomically move one READY admission to a fenced lease before dispatch.",
     },
     OperationSpec {
@@ -2946,6 +3067,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("clearing:actions:commit"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Consume a matching lease with one durable Clearing commit identity.",
     },
     OperationSpec {
@@ -2969,6 +3091,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("clearing:actions:reconcile"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Monotonically mark an expired lease as requiring authoritative reconciliation.",
     },
     OperationSpec {
@@ -2992,6 +3115,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check palette API liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -3015,6 +3139,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
     },
     OperationSpec {
@@ -3038,6 +3163,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("admin"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Mint a palette-scoped API key; the secret is returned exactly once.",
     },
     OperationSpec {
@@ -3061,6 +3187,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("admin"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a palette API key.",
     },
     OperationSpec {
@@ -3092,6 +3219,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
     },
     OperationSpec {
@@ -3115,6 +3243,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Archive a trace to Parquet and return the archive manifest.",
     },
     OperationSpec {
@@ -3138,6 +3267,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/audit/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3161,6 +3291,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
     },
     OperationSpec {
@@ -3184,6 +3315,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3207,6 +3339,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3230,6 +3363,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
     },
     OperationSpec {
@@ -3253,6 +3387,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
     },
     OperationSpec {
@@ -3276,6 +3411,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
     },
     OperationSpec {
@@ -3299,6 +3435,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
     },
     OperationSpec {
@@ -3322,6 +3459,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
     },
     OperationSpec {
@@ -3345,6 +3483,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a dataset for curating cases from traces.",
     },
     OperationSpec {
@@ -3368,6 +3507,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Promote a trace (or one span of it) into a dataset case.",
     },
     OperationSpec {
@@ -3391,6 +3531,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Snapshot a dataset into an immutable version for evals and experiments.",
     },
     OperationSpec {
@@ -3427,6 +3568,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
     },
     OperationSpec {
@@ -3464,6 +3606,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
     },
     OperationSpec {
@@ -3487,6 +3630,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.",
     },
     OperationSpec {
@@ -3510,6 +3654,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.",
     },
     OperationSpec {
@@ -3533,6 +3678,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
     },
     OperationSpec {
@@ -3573,6 +3719,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
     },
     OperationSpec {
@@ -3615,6 +3762,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
     },
     OperationSpec {
@@ -3644,6 +3792,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/gates/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3667,6 +3816,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
     },
     OperationSpec {
@@ -3690,6 +3840,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Import spans from a named external source payload.",
     },
     OperationSpec {
@@ -3713,6 +3864,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
     },
     OperationSpec {
@@ -3736,6 +3888,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
     },
     OperationSpec {
@@ -3759,6 +3912,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
     },
     OperationSpec {
@@ -3782,6 +3936,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
     },
     OperationSpec {
@@ -3805,6 +3960,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
     },
     OperationSpec {
@@ -3828,6 +3984,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
     },
     OperationSpec {
@@ -3851,6 +4008,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
     },
     OperationSpec {
@@ -3879,6 +4037,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
     },
     OperationSpec {
@@ -3902,6 +4061,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3925,6 +4085,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/prompts/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -3948,6 +4109,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
     },
     OperationSpec {
@@ -3971,6 +4133,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
     },
     OperationSpec {
@@ -3994,6 +4157,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
     },
     OperationSpec {
@@ -4017,6 +4181,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
     },
     OperationSpec {
@@ -4040,6 +4205,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -4063,6 +4229,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -4086,6 +4253,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
     },
     OperationSpec {
@@ -4109,6 +4277,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -4132,6 +4301,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
     },
     OperationSpec {
@@ -4162,6 +4332,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
     },
     OperationSpec {
@@ -4185,6 +4356,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
     },
     OperationSpec {
@@ -4208,6 +4380,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
     },
     OperationSpec {
@@ -4231,6 +4404,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -4260,6 +4434,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
     },
     OperationSpec {
@@ -4283,6 +4458,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
     },
     OperationSpec {
@@ -4306,6 +4482,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
     },
     OperationSpec {
@@ -4341,6 +4518,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Search spans by text query and facet filters.",
     },
     OperationSpec {
@@ -4364,6 +4542,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one canonical span by trace and span id.",
     },
     OperationSpec {
@@ -4387,6 +4566,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch a span's recorded input and output values.",
     },
     OperationSpec {
@@ -4440,6 +4620,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Ingest one native span; idempotent when an idempotency key is supplied.",
     },
     OperationSpec {
@@ -4479,6 +4660,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List trace summaries for a tenant with filters and cursor pagination.",
     },
     OperationSpec {
@@ -4502,6 +4684,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("trace:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
     },
     OperationSpec {
@@ -4525,6 +4708,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("admin"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch usage totals for a tenant project.",
     },
     OperationSpec {
@@ -4548,6 +4732,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /.well-known/agent-card.json.",
     },
     OperationSpec {
@@ -4571,6 +4756,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /.well-known/agent.json.",
     },
     OperationSpec {
@@ -4594,6 +4780,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check tempod liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -4617,6 +4804,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /metrics.",
     },
     OperationSpec {
@@ -4640,6 +4828,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch tempod's OpenAPI document, generated at runtime for this host.",
     },
     OperationSpec {
@@ -4663,6 +4852,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check tempod readiness, including engine attachment, drain state, and session capacity.",
     },
     OperationSpec {
@@ -4686,6 +4876,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /drain.",
     },
     OperationSpec {
@@ -4709,6 +4900,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List agent runs, optionally filtered to one session.",
     },
     OperationSpec {
@@ -4732,6 +4924,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one agent run with its state.",
     },
     OperationSpec {
@@ -4755,6 +4948,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /runs/{run_id}/events.",
     },
     OperationSpec {
@@ -4778,6 +4972,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Cancel an agent run.",
     },
     OperationSpec {
@@ -4801,6 +4996,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resume an agent run after a human handoff completes.",
     },
     OperationSpec {
@@ -4824,6 +5020,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List browser sessions with their state and creation time.",
     },
     OperationSpec {
@@ -4847,6 +5044,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Open a browser session at a URL; driverless sessions skip engine attachment.",
     },
     OperationSpec {
@@ -4870,6 +5068,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Close a browser session and release its engine resources.",
     },
     OperationSpec {
@@ -4893,6 +5092,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Grant a pending policy confirmation and receive a single-use grant token.",
     },
     OperationSpec {
@@ -4916,6 +5116,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the session's event window after a sequence number.",
     },
     OperationSpec {
@@ -4939,6 +5140,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /sessions/{session_id}/manager.",
     },
     OperationSpec {
@@ -4962,6 +5164,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Start an agent run against the session with a goal, action budget, and round limit.",
     },
     OperationSpec {
@@ -4992,6 +5195,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /sessions/{session_id}/surfaces.",
     },
     OperationSpec {
@@ -5015,6 +5219,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
     },
     OperationSpec {
@@ -5045,6 +5250,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.",
     },
     OperationSpec {
@@ -5075,6 +5281,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Let a human surface take write ownership of the session and receive an adoption lease.",
     },
     OperationSpec {
@@ -5098,6 +5305,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Return write ownership of the session to the agent plane.",
     },
     OperationSpec {
@@ -5121,6 +5329,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
     },
     OperationSpec {
@@ -5144,6 +5353,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
     },
     OperationSpec {
@@ -5174,6 +5384,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Call POST /sessions/{session_id}/transform.",
     },
     OperationSpec {
@@ -5197,6 +5408,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check tempera-llm gateway liveness; returns {ok: true}.",
     },
     OperationSpec {
@@ -5220,6 +5432,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /readyz.",
     },
     OperationSpec {
@@ -5253,6 +5466,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("model:invoke"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.",
     },
     OperationSpec {
@@ -5276,6 +5490,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("model:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the configured model catalog the gateway can route to.",
     },
     OperationSpec {
@@ -5305,6 +5520,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("model:invoke"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.",
     },
     OperationSpec {
@@ -5328,6 +5544,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /healthz.",
     },
     OperationSpec {
@@ -5351,6 +5568,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /openapi.yaml.",
     },
     OperationSpec {
@@ -5374,6 +5592,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Execute one principal-bound, signed, bounded graph read.",
     },
     OperationSpec {
@@ -5404,6 +5623,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/subjects.",
     },
     OperationSpec {
@@ -5427,6 +5647,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/subjects.",
     },
     OperationSpec {
@@ -5450,6 +5671,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/subjects/{subjectId}.",
     },
     OperationSpec {
@@ -5492,6 +5714,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/events:ingest.",
     },
     OperationSpec {
@@ -5544,6 +5767,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/policies.",
     },
     OperationSpec {
@@ -5597,6 +5821,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Register an immutable model artifact after dual human approval.",
     },
     OperationSpec {
@@ -5620,6 +5845,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Ingest a signed non-decisional score from an authenticated scorer workload.",
     },
     OperationSpec {
@@ -5643,6 +5869,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/approvals.",
     },
     OperationSpec {
@@ -5682,6 +5909,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/policyDeployments.",
     },
     OperationSpec {
@@ -5718,6 +5946,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/decisions.",
     },
     OperationSpec {
@@ -5741,6 +5970,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/decisions/{decisionId}.",
     },
     OperationSpec {
@@ -5764,6 +5994,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/outcomes.",
     },
     OperationSpec {
@@ -5794,6 +6025,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/screenings.",
     },
     OperationSpec {
@@ -5817,6 +6049,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/cases.",
     },
     OperationSpec {
@@ -5862,6 +6095,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Open a governed multi-domain investigation case.",
     },
     OperationSpec {
@@ -5885,6 +6119,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/cases/{caseId}.",
     },
     OperationSpec {
@@ -5908,6 +6143,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read all completed non-decisional investigation dossiers for a case.",
     },
     OperationSpec {
@@ -5961,6 +6197,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access.",
     },
     OperationSpec {
@@ -5984,6 +6221,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Revoke a sensitive investigation-data access grant.",
     },
     OperationSpec {
@@ -6034,6 +6272,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Ingest an evidence-backed bitemporal person or company profile.",
     },
     OperationSpec {
@@ -6083,6 +6322,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Find non-decisional identity-resolution candidates under an active case grant.",
     },
     OperationSpec {
@@ -6106,6 +6346,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List declared non-runnable investigation source packs.",
     },
     OperationSpec {
@@ -6129,6 +6370,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read one declared non-runnable investigation source pack.",
     },
     OperationSpec {
@@ -6152,6 +6394,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read truthful admitted coverage for one source pack.",
     },
     OperationSpec {
@@ -6205,6 +6448,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/researchJobs.",
     },
     OperationSpec {
@@ -6228,6 +6472,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/researchJobs/{jobId}.",
     },
     OperationSpec {
@@ -6251,6 +6496,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Replay bounded authorized job events as SSE; reconnect with afterSequence.",
     },
     OperationSpec {
@@ -6274,6 +6520,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read the cited, non-decisional result under the job's original access grant.",
     },
     OperationSpec {
@@ -6297,6 +6544,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read ordered non-decisional job events under the job's original access grant.",
     },
     OperationSpec {
@@ -6320,6 +6568,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel.",
     },
     OperationSpec {
@@ -6343,6 +6592,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/researchJobs/{jobId}:review.",
     },
     OperationSpec {
@@ -6366,6 +6616,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify one signed Risk Clearing evidence envelope against live Risk state.",
     },
     OperationSpec {
@@ -6389,6 +6640,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Release a reservation only when Clearing proved no external dispatch occurred.",
     },
     OperationSpec {
@@ -6412,6 +6664,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Hold budget capacity after an ambiguous provider dispatch.",
     },
     OperationSpec {
@@ -6435,6 +6688,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Record an independently observed provider effect while retaining capacity.",
     },
     OperationSpec {
@@ -6458,6 +6712,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Record a non-final observed outcome without releasing capacity.",
     },
     OperationSpec {
@@ -6481,6 +6736,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Record compensation as a forward action without releasing capacity.",
     },
     OperationSpec {
@@ -6504,6 +6760,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Keep capacity held when authoritative evidence conflicts.",
     },
     OperationSpec {
@@ -6527,6 +6784,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Settle a mature reconciled outcome and release held capacity.",
     },
     OperationSpec {
@@ -6550,6 +6808,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/audit:export.",
     },
     OperationSpec {
@@ -6573,6 +6832,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check tempera-workflows engine liveness.",
     },
     OperationSpec {
@@ -6596,6 +6856,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "The server-managed connector ids available to workflow definitions.",
     },
     OperationSpec {
@@ -6635,6 +6896,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:submit"),
         physical_action: true,
         prepare_commit_required: true,
+        safe_retry: "none",
         description: "Authorize and durably submit one preregistered prospective Bio experiment.",
     },
     OperationSpec {
@@ -6658,6 +6920,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get a credential-free durable view of one experiment submission.",
     },
     OperationSpec {
@@ -6681,6 +6944,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:experiment:submit"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order.",
     },
     OperationSpec {
@@ -6704,6 +6968,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface.",
     },
     OperationSpec {
@@ -6727,6 +6992,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List workflow runs, optionally filtered to one workflow.",
     },
     OperationSpec {
@@ -6750,6 +7016,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only.",
     },
     OperationSpec {
@@ -6773,6 +7040,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Cancel a queued or running workflow run.",
     },
     OperationSpec {
@@ -6796,6 +7064,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Consume a durable external callback and resume a waiting run.",
     },
     OperationSpec {
@@ -6819,6 +7088,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List stored workflow definitions, newest first.",
     },
     OperationSpec {
@@ -6850,6 +7120,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored.",
     },
     OperationSpec {
@@ -6873,6 +7144,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Delete a stored workflow definition.",
     },
     OperationSpec {
@@ -6896,6 +7168,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one stored workflow definition.",
     },
     OperationSpec {
@@ -6927,6 +7200,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Replace a stored workflow definition with a new validated revision.",
     },
     OperationSpec {
@@ -6957,6 +7231,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Start a run of a stored workflow with an optional input document and idempotency key.",
     },
     OperationSpec {
@@ -6988,6 +7263,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Run a workflow to completion and return its output in a single call.",
     },
     OperationSpec {
@@ -7017,6 +7293,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
     },
     OperationSpec {
@@ -7040,6 +7317,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it.",
     },
     OperationSpec {
@@ -7070,6 +7348,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node.",
     },
     OperationSpec {
@@ -7101,6 +7380,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("workflow:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Validate a workflow definition without storing it; returns the full diagnostic list.",
     },
     OperationSpec {
@@ -7124,6 +7404,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check tempera-gym service liveness.",
     },
     OperationSpec {
@@ -7147,6 +7428,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the gym pack's environment catalog, including implementation status and per-environment manifests.",
     },
     OperationSpec {
@@ -7170,6 +7452,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Domain capabilities represented in the versioned task catalog.",
     },
     OperationSpec {
@@ -7193,6 +7476,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List versioned task definitions without agent inputs.",
     },
     OperationSpec {
@@ -7216,6 +7500,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get one immutable task definition including its agent-visible input.",
     },
     OperationSpec {
@@ -7239,6 +7524,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Deterministically verify one candidate without creating an episode.",
     },
     OperationSpec {
@@ -7262,6 +7548,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List verifier identities and bound tasks without grader content.",
     },
     OperationSpec {
@@ -7285,6 +7572,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List durable episode snapshots, newest first.",
     },
     OperationSpec {
@@ -7308,6 +7596,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Reset a versioned task into a durable episode.",
     },
     OperationSpec {
@@ -7331,6 +7620,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read and content-verify one durable episode snapshot.",
     },
     OperationSpec {
@@ -7354,6 +7644,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Apply one schema-validated action and persist the transition.",
     },
     OperationSpec {
@@ -7381,6 +7672,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Retain a completed Gym episode and trajectory in Data Engine.",
     },
     OperationSpec {
@@ -7404,6 +7696,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List persisted rollout run index records, newest first.",
     },
     OperationSpec {
@@ -7427,6 +7720,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash.",
     },
     OperationSpec {
@@ -7458,6 +7752,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope.",
     },
     OperationSpec {
@@ -7481,6 +7776,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Discover the four frozen outcome-blind Bio proposal policies.",
     },
     OperationSpec {
@@ -7526,6 +7822,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Propose one constrained Bio candidate batch without outcome access.",
     },
     OperationSpec {
@@ -7549,6 +7846,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Discover boot-trusted exact sealed-evaluator identities.",
     },
     OperationSpec {
@@ -7572,6 +7870,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List persisted sealed-evaluation precommits and results.",
     },
     OperationSpec {
@@ -7595,6 +7894,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Persist an opaque sealed-suite commitment before policy freeze.",
     },
     OperationSpec {
@@ -7618,6 +7918,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read one verified precommit and aggregate sealed result.",
     },
     OperationSpec {
@@ -7641,6 +7942,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Evaluate one frozen policy through its exact sealed adapter.",
     },
     OperationSpec {
@@ -7664,6 +7966,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:decision:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Derive campaign state.",
     },
     OperationSpec {
@@ -7687,6 +7990,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare candidate set.",
     },
     OperationSpec {
@@ -7710,6 +8014,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare dataset release manifest.",
     },
     OperationSpec {
@@ -7745,6 +8050,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:decision:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Derive decision.",
     },
     OperationSpec {
@@ -7768,6 +8074,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare experiment proposal.",
     },
     OperationSpec {
@@ -7801,6 +8108,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare experiment proposal from gym batch.",
     },
     OperationSpec {
@@ -7824,6 +8132,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare hypothesis.",
     },
     OperationSpec {
@@ -7861,6 +8170,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:measurement:verify"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify measurement.",
     },
     OperationSpec {
@@ -7884,6 +8194,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare program.",
     },
     OperationSpec {
@@ -7907,6 +8218,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:proposal:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Prepare prospective experiment protocol.",
     },
     OperationSpec {
@@ -7956,6 +8268,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:measurement:verify"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify prospective measurement.",
     },
     OperationSpec {
@@ -7979,6 +8292,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("bio:source:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Ingest mave d b score set.",
     },
     OperationSpec {
@@ -8002,6 +8316,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/health.",
     },
     OperationSpec {
@@ -8041,6 +8356,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("payments:intents:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a canonical payment intent.",
     },
     OperationSpec {
@@ -8064,6 +8380,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("payments:intents:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read the canonical payment-intent projection.",
     },
     OperationSpec {
@@ -8087,6 +8404,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("payments:receipts:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Read and cryptographically re-verify the canonical settlement receipt.",
     },
     OperationSpec {
@@ -8122,6 +8440,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("payments:intents:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an idempotent hosted Stripe Checkout session for a fiat payment intent.",
     },
     OperationSpec {
@@ -8157,6 +8476,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("payments:intents:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a hosted/tokenizing card session with the selected configured acquirer.",
     },
     OperationSpec {
@@ -8180,6 +8500,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify and durably deduplicate a Stripe webhook using its raw body.",
     },
     OperationSpec {
@@ -8203,6 +8524,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Health check.",
     },
     OperationSpec {
@@ -8226,6 +8548,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an immutable document version from a completed upload.",
     },
     OperationSpec {
@@ -8249,6 +8572,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get a document.",
     },
     OperationSpec {
@@ -8278,6 +8602,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Extract one caller-schema object with exact source evidence.",
     },
     OperationSpec {
@@ -8301,6 +8626,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Return the latest successful canonical document graph.",
     },
     OperationSpec {
@@ -8324,6 +8650,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Build or reuse a qualified immutable hybrid-retrieval index.",
     },
     OperationSpec {
@@ -8347,6 +8674,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Search the latest immutable graph and return grounded source excerpts.",
     },
     OperationSpec {
@@ -8370,6 +8698,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List logical units without materializing the complete document graph.",
     },
     OperationSpec {
@@ -8393,6 +8722,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Start an idempotent long-running processing operation.",
     },
     OperationSpec {
@@ -8416,6 +8746,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get a long-running operation.",
     },
     OperationSpec {
@@ -8439,6 +8770,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a resumable upload resource.",
     },
     OperationSpec {
@@ -8462,6 +8794,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get an upload.",
     },
     OperationSpec {
@@ -8485,6 +8818,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Stream source bytes to content-addressed storage.",
     },
     OperationSpec {
@@ -8508,6 +8842,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("document:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Complete a streamed upload after digest assertions.",
     },
     OperationSpec {
@@ -8537,6 +8872,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/capability.",
     },
     OperationSpec {
@@ -8582,6 +8918,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/completion/validate.",
     },
     OperationSpec {
@@ -8605,6 +8942,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the browser adapter contract, required controls, and conformance profile.",
     },
     OperationSpec {
@@ -8628,6 +8966,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/launch/claim.",
     },
     OperationSpec {
@@ -8651,6 +8990,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/launch/plan.",
     },
     OperationSpec {
@@ -8674,6 +9014,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/register.",
     },
     OperationSpec {
@@ -8713,6 +9054,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/browser/adapter/validate.",
     },
     OperationSpec {
@@ -8747,6 +9089,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Request admission for a browser session at a sandbox level and receive the guard plan.",
     },
     OperationSpec {
@@ -8770,6 +9113,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
     },
     OperationSpec {
@@ -8793,6 +9137,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
     },
     OperationSpec {
@@ -8824,6 +9169,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Execute source synchronously in a sandbox lane and return the result with metrics.",
     },
     OperationSpec {
@@ -8847,6 +9193,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check sandbox-daemon liveness; returns status, version, and uptime.",
     },
     OperationSpec {
@@ -8870,6 +9217,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the ecosystem integration contract this daemon implements.",
     },
     OperationSpec {
@@ -8901,6 +9249,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Submit an asynchronous sandbox job; returns an operation handle to poll.",
     },
     OperationSpec {
@@ -8924,6 +9273,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
     },
     OperationSpec {
@@ -8947,6 +9297,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch a sandbox job's status and result.",
     },
     OperationSpec {
@@ -8970,6 +9321,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Call POST /v1/projects/{project}/modules.",
     },
     OperationSpec {
@@ -8993,6 +9345,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Call GET /v1/projects/{project}/modules/{sha256}.",
     },
     OperationSpec {
@@ -9016,6 +9369,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check memory-server liveness.",
     },
     OperationSpec {
@@ -9039,6 +9393,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check memory-server readiness, including database health.",
     },
     OperationSpec {
@@ -9062,6 +9417,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch deep store health: schema version, integrity checks, and graph consistency.",
     },
     OperationSpec {
@@ -9085,6 +9441,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch memory-store statistics: ledger events, nodes, and token counts by kind.",
     },
     OperationSpec {
@@ -9108,6 +9465,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch service metrics as JSON, including per-route counters and query-tier latencies.",
     },
     OperationSpec {
@@ -9131,6 +9489,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring.",
     },
     OperationSpec {
@@ -9154,6 +9513,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List recent service audit events (default 100, maximum 500).",
     },
     OperationSpec {
@@ -9185,6 +9545,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Write one memory event into the tenant and project ledger.",
     },
     OperationSpec {
@@ -9208,6 +9569,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Project pending ledger events into the memory graph and return the projection report.",
     },
     OperationSpec {
@@ -9240,6 +9602,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Answer a scoped memory question with evidence and reconstruction metadata.",
     },
     OperationSpec {
@@ -9268,6 +9631,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
     },
     OperationSpec {
@@ -9291,6 +9655,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Check data-engine liveness; returns the service status.",
     },
     OperationSpec {
@@ -9314,6 +9679,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the MVP use-case templates (data products and pipeline templates) for a project.",
     },
     OperationSpec {
@@ -9337,6 +9703,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.",
     },
     OperationSpec {
@@ -9366,6 +9733,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Ingest one artifact deterministically into the project; returns an async operation handle.",
     },
     OperationSpec {
@@ -9389,6 +9757,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Verify and retain signed Tempera Connectors source evidence.",
     },
     OperationSpec {
@@ -9419,6 +9788,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.",
     },
     OperationSpec {
@@ -9453,6 +9823,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Create a data campaign with a rubric, budget, target accuracy, and skill tags.",
     },
     OperationSpec {
@@ -9476,6 +9847,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List a project's data campaigns with pagination.",
     },
     OperationSpec {
@@ -9499,6 +9871,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.",
     },
     OperationSpec {
@@ -9522,6 +9895,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.",
     },
     OperationSpec {
@@ -9555,6 +9929,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.",
     },
     OperationSpec {
@@ -9578,6 +9953,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List human residual review tasks, optionally filtered by status and campaign.",
     },
     OperationSpec {
@@ -9607,6 +9983,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:gold:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.",
     },
     OperationSpec {
@@ -9630,6 +10007,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:gold:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Record an immutable project-scoped reviewer revocation and terminate active assignments.",
     },
     OperationSpec {
@@ -9664,6 +10042,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
     },
     OperationSpec {
@@ -9687,6 +10066,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision.",
     },
     OperationSpec {
@@ -9710,6 +10090,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Atomically claim one open expert task with an exclusive renewable lease.",
     },
     OperationSpec {
@@ -9733,6 +10114,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Renew the authenticated reviewer's active expert-task lease.",
     },
     OperationSpec {
@@ -9756,6 +10138,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Release the authenticated reviewer's active expert-task lease for reassignment.",
     },
     OperationSpec {
@@ -9779,6 +10162,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Autosave a version-checked draft under the active reviewer lease.",
     },
     OperationSpec {
@@ -9802,6 +10186,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier.",
     },
     OperationSpec {
@@ -9825,6 +10210,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("review:resolve"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.",
     },
     OperationSpec {
@@ -9848,6 +10234,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch data-engine usage and quality metrics for a project.",
     },
     OperationSpec {
@@ -9871,6 +10258,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch the project label-quality report and unresolved expert backlog.",
     },
     OperationSpec {
@@ -9894,6 +10282,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch public-site and ecosystem readiness signals for a project.",
     },
     OperationSpec {
@@ -9917,6 +10306,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).",
     },
     OperationSpec {
@@ -9940,6 +10330,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one artifact, expanded to the requested view (BASIC or FULL).",
     },
     OperationSpec {
@@ -9963,6 +10354,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the labels attached to one artifact.",
     },
     OperationSpec {
@@ -9986,6 +10378,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Profile dataset quality before export, including duplicates, label coverage, and distributions.",
     },
     OperationSpec {
@@ -10016,6 +10409,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.",
     },
     OperationSpec {
@@ -10039,6 +10433,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one labeling job with its state and progress.",
     },
     OperationSpec {
@@ -10062,6 +10457,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List the deterministic label results a job produced.",
     },
     OperationSpec {
@@ -10085,6 +10481,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one emitted product bundle with its status and manifest URL.",
     },
     OperationSpec {
@@ -10108,6 +10505,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Validate an emitted product bundle's referential integrity and hygiene.",
     },
     OperationSpec {
@@ -10131,6 +10529,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Check raw-hash leakage between exactly two product bundles.",
     },
     OperationSpec {
@@ -10154,6 +10553,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch an integrity-checked, bounded manifest for an emitted eval product.",
     },
     OperationSpec {
@@ -10177,6 +10577,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("training:publish"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.",
     },
     OperationSpec {
@@ -10200,6 +10601,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("training:publish"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Revalidate and fetch one training release, including any durable stale state.",
     },
     OperationSpec {
@@ -10230,6 +10632,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Derive a deterministic post-training bundle from a ready product.",
     },
     OperationSpec {
@@ -10253,6 +10656,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
     },
     OperationSpec {
@@ -10291,6 +10695,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an immutable-versioned connector source definition.",
     },
     OperationSpec {
@@ -10314,6 +10719,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List project source definitions.",
     },
     OperationSpec {
@@ -10337,6 +10743,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get one source definition.",
     },
     OperationSpec {
@@ -10370,6 +10777,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create a new version of a source definition.",
     },
     OperationSpec {
@@ -10393,6 +10801,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "idempotent",
         description: "Start an exact-replay connector run from a reviewed definition.",
     },
     OperationSpec {
@@ -10416,6 +10825,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List durable connector runs.",
     },
     OperationSpec {
@@ -10439,6 +10849,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get one durable connector run and its terminal receipt.",
     },
     OperationSpec {
@@ -10477,6 +10888,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:manage"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Extract bounded objects or records from a configured source connector.",
     },
     OperationSpec {
@@ -10500,6 +10912,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("connector:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List registered source connectors for a project.",
     },
     OperationSpec {
@@ -10530,6 +10943,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create or version-bump a stored custom tool.",
     },
     OperationSpec {
@@ -10553,6 +10967,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List stored custom tools and their usage statistics.",
     },
     OperationSpec {
@@ -10576,6 +10991,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one stored custom tool and its usage statistics.",
     },
     OperationSpec {
@@ -10599,6 +11015,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Delete a stored custom tool and every retained version.",
     },
     OperationSpec {
@@ -10622,6 +11039,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Invoke a stored custom tool through its configured execution boundary.",
     },
     OperationSpec {
@@ -10669,6 +11087,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Atomically commit an immutable discovery release graph.",
     },
     OperationSpec {
@@ -10692,6 +11111,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get one immutable discovery release.",
     },
     OperationSpec {
@@ -10735,6 +11155,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an immutable shared evidence record by canonical content hash.",
     },
     OperationSpec {
@@ -10758,6 +11179,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List immutable shared evidence records with bounded cursor pagination.",
     },
     OperationSpec {
@@ -10781,6 +11203,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one immutable shared evidence record by its platform digest.",
     },
     OperationSpec {
@@ -10830,6 +11253,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an immutable shared episode by canonical content hash.",
     },
     OperationSpec {
@@ -10853,6 +11277,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List immutable shared episodes with bounded cursor pagination.",
     },
     OperationSpec {
@@ -10876,6 +11301,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one immutable shared episode by its platform digest.",
     },
     OperationSpec {
@@ -10910,6 +11336,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Retrieve deterministic candidates for one exact canonical typed research obligation.",
     },
     OperationSpec {
@@ -10947,6 +11374,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create an immutable executable research catalog entry by canonical content hash.",
     },
     OperationSpec {
@@ -10970,6 +11398,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List immutable executable research catalog entries with bounded pagination.",
     },
     OperationSpec {
@@ -10993,6 +11422,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("dataset:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Fetch one immutable executable research catalog entry by content hash.",
     },
     OperationSpec {
@@ -11016,6 +11446,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Compute live qualification evidence.",
     },
     OperationSpec {
@@ -11039,6 +11470,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Liveness.",
     },
     OperationSpec {
@@ -11062,6 +11494,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: None,
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Readiness.",
     },
     OperationSpec {
@@ -11085,6 +11518,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Resolve Action.",
     },
     OperationSpec {
@@ -11108,6 +11542,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List Agents.",
     },
     OperationSpec {
@@ -11149,6 +11584,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create Agent.",
     },
     OperationSpec {
@@ -11172,6 +11608,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get Agent.",
     },
     OperationSpec {
@@ -11213,6 +11650,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Upsert Agent.",
     },
     OperationSpec {
@@ -11236,6 +11674,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Download Artifact.",
     },
     OperationSpec {
@@ -11259,6 +11698,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Upload Artifact.",
     },
     OperationSpec {
@@ -11282,6 +11722,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Capabilities.",
     },
     OperationSpec {
@@ -11305,6 +11746,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List Eval Profiles.",
     },
     OperationSpec {
@@ -11351,6 +11793,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Build Eval Bundle.",
     },
     OperationSpec {
@@ -11391,6 +11834,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create Palette Handoff.",
     },
     OperationSpec {
@@ -11414,6 +11858,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Publish Palette Handoff.",
     },
     OperationSpec {
@@ -11444,6 +11889,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Import Eval Result.",
     },
     OperationSpec {
@@ -11467,6 +11913,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Seal Eval Result.",
     },
     OperationSpec {
@@ -11490,6 +11937,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List Sessions.",
     },
     OperationSpec {
@@ -11519,6 +11967,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Create Session.",
     },
     OperationSpec {
@@ -11542,6 +11991,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "Get Session.",
     },
     OperationSpec {
@@ -11565,6 +12015,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List Actions.",
     },
     OperationSpec {
@@ -11588,6 +12039,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:read"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "read",
         description: "List Events.",
     },
     OperationSpec {
@@ -11611,6 +12063,7 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("voice:write"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "End Session.",
     },
     OperationSpec {
@@ -11634,7 +12087,1052 @@ pub const OPERATIONS: &[OperationSpec] = &[
         scope: Some("eval:run"),
         physical_action: false,
         prepare_commit_required: false,
+        safe_retry: "none",
         description: "Export Sessions.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "update_business_workspace",
+        upstream_operation_id: "updateBusinessWorkspace",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "expected_revision",
+            "idempotency_key",
+            "profile_ref",
+            "profile_revision",
+        ],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "profile_ref", "profile_revision"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Put Workspace.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "get_business_workspace",
+        upstream_operation_id: "getBusinessWorkspace",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "workspace_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Get Workspace.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "record_business_task_receipt",
+        upstream_operation_id: "recordBusinessTaskReceipt",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}/declared-receipts",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "workspace_id",
+            "task_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "receipt"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "receipt"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Record Task Receipt.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "prepare_business_task",
+        upstream_operation_id: "prepareBusinessTask",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepare",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "workspace_id",
+            "task_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["draft", "expected_revision"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "draft"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Prepare Task.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "prepare_business_browser_task",
+        upstream_operation_id: "prepareBusinessBrowserTask",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepareBrowser",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "workspace_id",
+            "task_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision"],
+        forbidden_body: &[],
+        required_body: &["expected_revision"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Browser Task.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "review_business_task",
+        upstream_operation_id: "reviewBusinessTask",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:review",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "workspace_id",
+            "task_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "review"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "review"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Review Task.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "list_events",
+        upstream_operation_id: "listEvents",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "List Events.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "list_inbox",
+        upstream_operation_id: "listInbox",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Inbox.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "get_business_summary",
+        upstream_operation_id: "getBusinessSummary",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/operating-summary",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Operating Summary.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "list_orders",
+        upstream_operation_id: "listOrders",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "List Orders.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "create_order",
+        upstream_operation_id: "createOrder",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "record"],
+        forbidden_body: &[],
+        required_body: &["record"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Create Order.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "get_order",
+        upstream_operation_id: "getOrder",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Get Order.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "update_order",
+        upstream_operation_id: "updateOrder",
+        method: "PATCH",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "record"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "record"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Update Order.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "list_order_audit_events",
+        upstream_operation_id: "listOrderAuditEvents",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/audit",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Audit.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "prepare_proposal",
+        upstream_operation_id: "prepareProposal",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/proposals",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "quote_id"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "quote_id"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Prepare.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "evaluate_order",
+        upstream_operation_id: "evaluateOrder",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:evaluate",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision"],
+        forbidden_body: &[],
+        required_body: &["expected_revision"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Evaluate Order.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "reconcile_order",
+        upstream_operation_id: "reconcileOrder",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:reconcile",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["order_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["evidence_ref", "expected_revision", "purchase_state"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "purchase_state", "evidence_ref"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Reconcile.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "get_proposal",
+        upstream_operation_id: "getProposal",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "proposal_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Get Proposal.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "record_manual_outcome",
+        upstream_operation_id: "recordManualOutcome",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}/manual-outcome",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "proposal_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "evidence_ref",
+            "expected_revision",
+            "outcome",
+            "proposal_digest",
+        ],
+        forbidden_body: &[],
+        required_body: &[
+            "expected_revision",
+            "proposal_digest",
+            "outcome",
+            "evidence_ref",
+        ],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Outcome.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "approve_proposal",
+        upstream_operation_id: "approveProposal",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:approve",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "proposal_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "proposal_digest"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "proposal_digest"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Approve.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "execute_proposal",
+        upstream_operation_id: "executeProposal",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:execute",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &[
+            "proposal_id",
+            "organization",
+            "project",
+            "environment",
+            "site",
+        ],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "proposal_digest"],
+        forbidden_body: &[],
+        required_body: &["expected_revision", "proposal_digest"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:approve"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Execute.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "list_stores",
+        upstream_operation_id: "listStores",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "List Stores.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "create_store",
+        upstream_operation_id: "createStore",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["channel", "display_name", "id"],
+        forbidden_body: &[],
+        required_body: &["id", "display_name"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("orders:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "none",
+        description: "Create Store.",
+    },
+    OperationSpec {
+        product: "tempera_dropshipping",
+        id: "get_store",
+        upstream_operation_id: "getStore",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{store_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-dropshipping"),
+        path_params: &["store_id", "organization", "project", "environment", "site"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("orders:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Get Store.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_profile_get",
+        upstream_operation_id: "business.profile.get",
+        method: "GET",
+        path: "/v1/business-profile",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Profile.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_profile_history",
+        upstream_operation_id: "business.profile.history",
+        method: "GET",
+        path: "/v1/business-profile/history",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Profile History.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_profile_clear",
+        upstream_operation_id: "business.profile.clear",
+        method: "POST",
+        path: "/v1/business-profile:clear",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "idempotency_key", "reason"],
+        forbidden_body: &[],
+        required_body: &["idempotency_key", "expected_revision"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:review"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Clear.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_profile_initialize",
+        upstream_operation_id: "business.profile.initialize",
+        method: "POST",
+        path: "/v1/business-profile:initialize",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "available_services",
+            "facts",
+            "idempotency_key",
+            "references",
+        ],
+        forbidden_body: &[],
+        required_body: &["idempotency_key"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Initialize.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_profile_patch",
+        upstream_operation_id: "business.profile.patch",
+        method: "POST",
+        path: "/v1/business-profile:patch",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "available_services",
+            "expected_revision",
+            "facts",
+            "idempotency_key",
+            "references",
+        ],
+        forbidden_body: &[],
+        required_body: &["idempotency_key", "expected_revision"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Patch.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_capabilities",
+        upstream_operation_id: "business.capabilities",
+        method: "GET",
+        path: "/v1/capabilities",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Capabilities.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_list",
+        upstream_operation_id: "business.cases.list",
+        method: "GET",
+        path: "/v1/cases",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Listing.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_create",
+        upstream_operation_id: "business.cases.create",
+        method: "POST",
+        path: "/v1/cases",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["idempotency_key", "intake", "profile_ref"],
+        forbidden_body: &[],
+        required_body: &["idempotency_key", "intake"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Create.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_get",
+        upstream_operation_id: "business.cases.get",
+        method: "GET",
+        path: "/v1/cases/{case_id}",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Get Case.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_audit",
+        upstream_operation_id: "business.cases.audit",
+        method: "GET",
+        path: "/v1/cases/{case_id}/audit",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &["after", "limit"],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Audit.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_record_declared_receipt",
+        upstream_operation_id: "business.cases.recordDeclaredReceipt",
+        method: "POST",
+        path: "/v1/cases/{case_id}/declared-receipts",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "expected_revision",
+            "idempotency_key",
+            "owner",
+            "preparation_digest",
+            "receipt_ref",
+            "reported_outcome",
+        ],
+        forbidden_body: &[],
+        required_body: &[
+            "idempotency_key",
+            "expected_revision",
+            "preparation_digest",
+            "receipt_ref",
+            "owner",
+            "reported_outcome",
+        ],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Receipt.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_prepare_draft",
+        upstream_operation_id: "business.cases.prepareDraft",
+        method: "POST",
+        path: "/v1/cases/{case_id}:prepareDraft",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["draft", "expected_revision", "idempotency_key"],
+        forbidden_body: &[],
+        required_body: &["idempotency_key", "expected_revision", "draft"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Prepare.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_review_draft",
+        upstream_operation_id: "business.cases.reviewDraft",
+        method: "POST",
+        path: "/v1/cases/{case_id}:reviewDraft",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[
+            "decision",
+            "expected_revision",
+            "idempotency_key",
+            "preparation_digest",
+        ],
+        forbidden_body: &[],
+        required_body: &[
+            "idempotency_key",
+            "expected_revision",
+            "preparation_digest",
+            "decision",
+        ],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:review"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Review.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_cases_update_intake",
+        upstream_operation_id: "business.cases.updateIntake",
+        method: "POST",
+        path: "/v1/cases/{case_id}:updateIntake",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &["case_id"],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &["expected_revision", "idempotency_key", "intake"],
+        forbidden_body: &[],
+        required_body: &["idempotency_key", "expected_revision", "intake"],
+        body_defaults: &[],
+        request_body_kind: "json",
+        request_content_type: Some("application/json"),
+        scope: Some("business:write"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "idempotent",
+        description: "Update.",
+    },
+    OperationSpec {
+        product: "tempera_business",
+        id: "business_operating_state",
+        upstream_operation_id: "business.operatingState",
+        method: "GET",
+        path: "/v1/operating-state",
+        auth: "oauthResource",
+        auth_audience: Some("tempera-business"),
+        path_params: &[],
+        path_param_templates: &[],
+        query: &[],
+        required_query: &[],
+        body: &[],
+        forbidden_body: &[],
+        required_body: &[],
+        body_defaults: &[],
+        request_body_kind: "none",
+        request_content_type: None,
+        scope: Some("business:read"),
+        physical_action: false,
+        prepare_commit_required: false,
+        safe_retry: "read",
+        description: "Operating State.",
     },
 ];
 

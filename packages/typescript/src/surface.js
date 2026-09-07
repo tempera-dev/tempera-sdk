@@ -5,7 +5,7 @@
 
 export const TEMPERA_SURFACE_VERSION = 6;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-investigations", "tempera-payments", "tempera-voice", "tempera-clearing"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-investigations", "tempera-payments", "tempera-voice", "tempera-clearing", "tempera-dropshipping", "tempera-business"]);
 export const DEFAULT_AUDIENCE = "palette";
 export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin"]);
 
@@ -213,6 +213,20 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_ARRHA_URL",
     "audience": null,
     "description": "Settlement, chain, credits, and indexer layer for agent payments. Passthrough client only; no typed operations yet."
+  },
+  "temperaDropshipping": {
+    "name": "tempera-dropshipping",
+    "repository": "https://github.com/tempera-dev/tempera-dropshipping",
+    "envVar": "TEMPERA_DROPSHIPPING_URL",
+    "audience": "tempera-dropshipping",
+    "description": "Declared merchant order recovery: site-scoped orders, stores, proposals, and business workspaces. The producer prepares and reviews plans; it claims no provider execution authority."
+  },
+  "temperaBusiness": {
+    "name": "tempera-business",
+    "repository": "https://github.com/tempera-dev/tempera-business",
+    "envVar": "TEMPERA_BUSINESS_URL",
+    "audience": "tempera-business",
+    "description": "Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle."
   }
 }
 );
@@ -240,6 +254,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check control-plane liveness; returns {ok: true}."
     },
     {
@@ -262,6 +277,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Readiness probe for durable control-plane storage."
     },
     {
@@ -284,6 +300,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read the active organization\u2019s private SAML 2.0 SSO configuration status."
     },
     {
@@ -306,6 +323,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the authenticated user's identity, active workspace, and roles."
     },
     {
@@ -331,6 +349,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the organizations the authenticated user belongs to."
     },
     {
@@ -357,6 +376,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an organization; the caller becomes its owner."
     },
     {
@@ -382,6 +402,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the user's active account sessions."
     },
     {
@@ -413,6 +434,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a first-party hosted account session from email/password login or signup."
     },
     {
@@ -437,6 +459,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke an account session and its tokens immediately (idempotent)."
     },
     {
@@ -467,6 +490,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Switch the active workspace and receive a token pair scoped to it."
     },
     {
@@ -492,6 +516,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List team members of the active organization."
     },
     {
@@ -524,6 +549,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Change a team member's role (requires an org admin role; at least one owner must remain)."
     },
     {
@@ -548,6 +574,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Remove a team member from the active organization (idempotent)."
     },
     {
@@ -573,6 +600,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List invites for the active organization, newest first."
     },
     {
@@ -601,6 +629,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Invite a user to the active organization; the accept URL is returned once."
     },
     {
@@ -625,6 +654,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Cancel a pending invite (idempotent)."
     },
     {
@@ -650,6 +680,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List projects across every organization the user belongs to."
     },
     {
@@ -678,6 +709,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a project in an organization (requires an org admin role)."
     },
     {
@@ -703,6 +735,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List environments across every project the user can access."
     },
     {
@@ -731,6 +764,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an environment in a project (requires an org admin role)."
     },
     {
@@ -756,6 +790,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List API keys in the active workspace; secrets are never returned."
     },
     {
@@ -791,6 +826,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
     },
     {
@@ -815,6 +851,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke an API key (idempotent)."
     },
     {
@@ -839,6 +876,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Rotate an API key's secret; the new secret is returned exactly once."
     },
     {
@@ -871,6 +909,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint."
     },
     {
@@ -896,6 +935,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List redacted data-source connection metadata in the selected project and environment."
     },
     {
@@ -934,6 +974,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create project-bound connector metadata using only an external secret reference."
     },
     {
@@ -958,6 +999,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get redacted metadata for one data-source connection."
     },
     {
@@ -992,6 +1034,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Update a connection name or secret reference with exact-revision concurrency control."
     },
     {
@@ -1016,6 +1059,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a data-source connection immediately. Revoking an unknown id is a no-op."
     },
     {
@@ -1041,6 +1085,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List provider connection metadata using a first-party account session. Secret references and values are never returned."
     },
     {
@@ -1078,6 +1123,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a tenant-scoped provider connection using only an external secret reference."
     },
     {
@@ -1115,6 +1161,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a provider connection by writing one raw secret directly to the configured Vault backend."
     },
     {
@@ -1139,6 +1186,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a provider connection immediately. Revoking an unknown id is a no-op."
     },
     {
@@ -1168,6 +1216,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Replace a connection secret reference and increment its revision without exposing the reference."
     },
     {
@@ -1197,6 +1246,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Rotate a provider connection by writing one raw secret directly to the configured Vault backend."
     },
     {
@@ -1231,6 +1281,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential."
     },
     {
@@ -1256,6 +1307,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List redacted generic connector credential metadata for the selected workspace."
     },
     {
@@ -1290,6 +1342,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create generic connector credential metadata using only an external secret reference."
     },
     {
@@ -1324,6 +1377,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a generic connector credential by writing one raw secret directly to the configured Vault backend."
     },
     {
@@ -1348,6 +1402,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a generic connector credential immediately. Revoking an unknown id is a no-op."
     },
     {
@@ -1376,6 +1431,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Replace a generic connector credential secret reference and increment its revision."
     },
     {
@@ -1404,6 +1460,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Rotate a generic connector credential by writing one raw secret directly to the configured Vault backend."
     },
     {
@@ -1436,6 +1493,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential."
     },
     {
@@ -1461,6 +1519,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List external experiment-provider metadata. Secret references and values are never returned."
     },
     {
@@ -1501,6 +1560,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Register a tenant-scoped experiment provider using only an external secret reference."
     },
     {
@@ -1525,6 +1585,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke an experiment-provider connection. An unknown id is a no-op."
     },
     {
@@ -1569,6 +1630,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:submit",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows."
     },
     {
@@ -1594,6 +1656,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:signer:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List versioned public Ed25519 verifier keys for an authorized human administrator."
     },
     {
@@ -1628,6 +1691,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:signer:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Register or rotate a public Ed25519 verifier key. Private key material is rejected."
     },
     {
@@ -1652,6 +1716,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:signer:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a public verifier key while retaining its history."
     },
     {
@@ -1677,6 +1742,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:approve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List exact, single-use experiment approvals for an authorized human approver."
     },
     {
@@ -1717,6 +1783,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:approve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests."
     },
     {
@@ -1741,6 +1808,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:approve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke an unused experiment approval. Consumed approvals remain immutable."
     },
     {
@@ -1766,6 +1834,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List recent audit-log events for the user and active organization (up to 50, newest first)."
     },
     {
@@ -1791,6 +1860,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the connector catalog (MCP clients, editors, and API surfaces)."
     },
     {
@@ -1815,6 +1885,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one connector's connection status for the active workspace."
     },
     {
@@ -1840,6 +1911,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the product catalog with default scopes and setup paths."
     },
     {
@@ -1864,6 +1936,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one product's activation status, entitlements, signals, and usage meters."
     },
     {
@@ -1886,6 +1959,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role)."
     },
     {
@@ -1914,6 +1988,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role)."
     },
     {
@@ -1936,6 +2011,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the billing-portal URL for the organization (requires a billing role)."
     },
     {
@@ -1958,6 +2034,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff."
     },
     {
@@ -1983,6 +2060,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List source-owned fixed prepaid credit packs available to an authenticated billing administrator."
     },
     {
@@ -2011,6 +2089,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected."
     },
     {
@@ -2033,6 +2112,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "model:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement."
     },
     {
@@ -2068,6 +2148,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter."
     },
     {
@@ -2112,6 +2193,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Atomically reserve the maximum model cost before starting a provider request."
     },
     {
@@ -2148,6 +2230,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Commit exact provider usage against an admitted reservation and release unused capacity."
     },
     {
@@ -2180,6 +2263,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Release unused capacity after provider failure or cancellation."
     },
     {
@@ -2220,6 +2304,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable."
     },
     {
@@ -2245,6 +2330,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the OAuth grants the user has approved in the active workspace."
     },
     {
@@ -2269,6 +2355,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke an OAuth grant and every refresh token issued under it."
     },
     {
@@ -2296,6 +2383,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid."
     },
     {
@@ -2318,6 +2406,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
     },
     {
@@ -2340,6 +2429,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "OAuth protected resource discovery metadata for MCP/resource clients."
     },
     {
@@ -2364,6 +2454,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch OAuth protected-resource metadata for one registered audience."
     },
     {
@@ -2386,6 +2477,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the JSON Web Key Set used to verify control-plane access tokens."
     },
     {
@@ -2408,6 +2500,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session."
     },
     {
@@ -2434,6 +2527,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations."
     },
     {
@@ -2464,6 +2558,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference."
     },
     {
@@ -2486,6 +2581,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics."
     },
     {
@@ -2512,6 +2608,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a one-time CSRF-bound GitHub App installation session."
     },
     {
@@ -2540,6 +2637,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Bind a GitHub installation callback to its authenticated workspace."
     },
     {
@@ -2565,6 +2663,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List active GitHub App installations for the organization."
     },
     {
@@ -2589,6 +2688,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Disconnect a GitHub App installation from the workspace."
     },
     {
@@ -2616,6 +2716,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List repository metadata received for a GitHub installation."
     },
     {
@@ -2643,6 +2744,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Capture an ephemeral, immutable GitHub repository snapshot for an authorized workspace."
     },
     {
@@ -2665,6 +2767,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Accept a signed, replay-deduplicated GitHub webhook."
     },
     {
@@ -2687,6 +2790,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch."
     },
     {
@@ -2712,6 +2816,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List passkeys enrolled for the authenticated account."
     },
     {
@@ -2734,6 +2839,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Begin passkey registration for the authenticated account."
     },
     {
@@ -2763,6 +2869,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify and persist a passkey registration."
     },
     {
@@ -2785,6 +2892,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Begin discoverable passkey authentication."
     },
     {
@@ -2814,6 +2922,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify a passkey assertion and create an AAL2 account session."
     },
     {
@@ -2836,6 +2945,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Begin passkey step-up for a signed-in account session."
     },
     {
@@ -2865,6 +2975,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify passkey step-up and mint a short-lived AAL2 elevation token."
     },
     {
@@ -2891,6 +3002,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Consume a one-time recovery code, remove passkeys, and revoke all active account credentials."
     },
     {
@@ -2915,6 +3027,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Delete one passkey after recent AAL2 step-up."
     },
     {
@@ -2976,6 +3089,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "clearing:actions:approve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval."
     },
     {
@@ -3000,6 +3114,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "clearing:actions:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read a Clearing admission from the caller's exact workspace."
     },
     {
@@ -3031,6 +3146,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "clearing:actions:commit",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Atomically move one READY admission to a fenced lease before dispatch."
     },
     {
@@ -3065,6 +3181,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "clearing:actions:commit",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Consume a matching lease with one durable Clearing commit identity."
     },
     {
@@ -3089,6 +3206,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "clearing:actions:reconcile",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Monotonically mark an expired lease as requiring authoritative reconciliation."
     }
   ],
@@ -3113,6 +3231,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check palette API liveness; returns {ok: true}."
     },
     {
@@ -3145,6 +3264,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook."
     },
     {
@@ -3175,6 +3295,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Mint a palette-scoped API key; the secret is returned exactly once."
     },
     {
@@ -3202,6 +3323,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a palette API key."
     },
     {
@@ -3235,6 +3357,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans."
     },
     {
@@ -3261,6 +3384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Archive a trace to Parquet and return the archive manifest."
     },
     {
@@ -3289,6 +3413,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/audit/{tenant_id}/{project_id}."
     },
     {
@@ -3320,6 +3445,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}."
     },
     {
@@ -3345,6 +3471,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}."
     },
     {
@@ -3373,6 +3500,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}."
     },
     {
@@ -3402,6 +3530,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect."
     },
     {
@@ -3432,6 +3561,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke."
     },
     {
@@ -3461,6 +3591,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills."
     },
     {
@@ -3490,6 +3621,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status."
     },
     {
@@ -3521,6 +3653,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools."
     },
     {
@@ -3550,6 +3683,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a dataset for curating cases from traces."
     },
     {
@@ -3582,6 +3716,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Promote a trace (or one span of it) into a dataset case."
     },
     {
@@ -3610,6 +3745,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Snapshot a dataset into an immutable version for evals and experiments."
     },
     {
@@ -3650,6 +3786,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic."
     },
     {
@@ -3691,6 +3828,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge."
     },
     {
@@ -3724,6 +3862,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt."
     },
     {
@@ -3757,6 +3896,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt."
     },
     {
@@ -3784,6 +3924,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload."
     },
     {
@@ -3828,6 +3969,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic."
     },
     {
@@ -3874,6 +4016,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge."
     },
     {
@@ -3908,6 +4051,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/gates/{tenant_id}/{project_id}."
     },
     {
@@ -3936,6 +4080,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run."
     },
     {
@@ -3969,6 +4114,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Import spans from a named external source payload."
     },
     {
@@ -3997,6 +4143,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay."
     },
     {
@@ -4022,6 +4169,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue."
     },
     {
@@ -4049,6 +4197,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain."
     },
     {
@@ -4076,6 +4225,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain."
     },
     {
@@ -4102,6 +4252,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile."
     },
     {
@@ -4136,6 +4287,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate."
     },
     {
@@ -4164,6 +4316,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger."
     },
     {
@@ -4198,6 +4351,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling."
     },
     {
@@ -4226,6 +4380,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}."
     },
     {
@@ -4260,6 +4415,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/prompts/{tenant_id}/{project_id}."
     },
     {
@@ -4286,6 +4442,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}."
     },
     {
@@ -4318,6 +4475,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff."
     },
     {
@@ -4347,6 +4505,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
     },
     {
@@ -4379,6 +4538,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions."
     },
     {
@@ -4407,6 +4567,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}."
     },
     {
@@ -4440,6 +4601,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}."
     },
     {
@@ -4466,6 +4628,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke."
     },
     {
@@ -4498,6 +4661,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}."
     },
     {
@@ -4528,6 +4692,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks."
     },
     {
@@ -4563,6 +4728,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace."
     },
     {
@@ -4599,6 +4765,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations."
     },
     {
@@ -4632,6 +4799,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote."
     },
     {
@@ -4660,6 +4828,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}."
     },
     {
@@ -4694,6 +4863,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}."
     },
     {
@@ -4724,6 +4894,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine."
     },
     {
@@ -4750,6 +4921,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}."
     },
     {
@@ -4786,6 +4958,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Search spans by text query and facet filters."
     },
     {
@@ -4815,6 +4988,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one canonical span by trace and span id."
     },
     {
@@ -4844,6 +5018,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch a span's recorded input and output values."
     },
     {
@@ -4898,6 +5073,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Ingest one native span; idempotent when an idempotency key is supplied."
     },
     {
@@ -4938,6 +5114,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List trace summaries for a tenant with filters and cursor pagination."
     },
     {
@@ -4966,6 +5143,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "trace:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason."
     },
     {
@@ -4991,6 +5169,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch usage totals for a tenant project."
     }
   ],
@@ -5015,6 +5194,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /.well-known/agent-card.json."
     },
     {
@@ -5037,6 +5217,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /.well-known/agent.json."
     },
     {
@@ -5059,6 +5240,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check tempod liveness; returns {ok: true}."
     },
     {
@@ -5081,6 +5263,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /metrics."
     },
     {
@@ -5103,6 +5286,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch tempod's OpenAPI document, generated at runtime for this host."
     },
     {
@@ -5125,6 +5309,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check tempod readiness, including engine attachment, drain state, and session capacity."
     },
     {
@@ -5147,6 +5332,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /drain."
     },
     {
@@ -5173,6 +5359,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List agent runs, optionally filtered to one session."
     },
     {
@@ -5197,6 +5384,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one agent run with its state."
     },
     {
@@ -5223,6 +5411,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /runs/{run_id}/events."
     },
     {
@@ -5247,6 +5436,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Cancel an agent run."
     },
     {
@@ -5271,6 +5461,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resume an agent run after a human handoff completes."
     },
     {
@@ -5296,6 +5487,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List browser sessions with their state and creation time."
     },
     {
@@ -5323,6 +5515,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Open a browser session at a URL; driverless sessions skip engine attachment."
     },
     {
@@ -5347,6 +5540,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Close a browser session and release its engine resources."
     },
     {
@@ -5372,6 +5566,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Grant a pending policy confirmation and receive a single-use grant token."
     },
     {
@@ -5398,6 +5593,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the session's event window after a sequence number."
     },
     {
@@ -5422,6 +5618,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /sessions/{session_id}/manager."
     },
     {
@@ -5451,6 +5648,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Start an agent run against the session with a goal, action budget, and round limit."
     },
     {
@@ -5482,6 +5680,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /sessions/{session_id}/surfaces."
     },
     {
@@ -5507,6 +5706,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}."
     },
     {
@@ -5540,6 +5740,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision."
     },
     {
@@ -5571,6 +5772,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Let a human surface take write ownership of the session and receive an adoption lease."
     },
     {
@@ -5595,6 +5797,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Return write ownership of the session to the agent plane."
     },
     {
@@ -5619,6 +5822,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements)."
     },
     {
@@ -5645,6 +5849,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks."
     },
     {
@@ -5679,6 +5884,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Call POST /sessions/{session_id}/transform."
     }
   ],
@@ -5703,6 +5909,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check tempera-llm gateway liveness; returns {ok: true}."
     },
     {
@@ -5725,6 +5932,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /readyz."
     },
     {
@@ -5761,6 +5969,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "model:invoke",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway."
     },
     {
@@ -5786,6 +5995,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "model:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the configured model catalog the gateway can route to."
     },
     {
@@ -5818,6 +6028,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "model:invoke",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway."
     }
   ],
@@ -5842,6 +6053,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /healthz."
     },
     {
@@ -5864,6 +6076,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /openapi.yaml."
     },
     {
@@ -5893,6 +6106,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Execute one principal-bound, signed, bounded graph read."
     },
     {
@@ -5928,6 +6142,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/subjects."
     },
     {
@@ -5952,6 +6167,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/subjects."
     },
     {
@@ -5977,6 +6193,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/subjects/{subjectId}."
     },
     {
@@ -6020,6 +6237,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/events:ingest."
     },
     {
@@ -6073,6 +6291,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/policies."
     },
     {
@@ -6127,6 +6346,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Register an immutable model artifact after dual human approval."
     },
     {
@@ -6163,6 +6383,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Ingest a signed non-decisional score from an authenticated scorer workload."
     },
     {
@@ -6193,6 +6414,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/approvals."
     },
     {
@@ -6233,6 +6455,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/policyDeployments."
     },
     {
@@ -6276,6 +6499,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/decisions."
     },
     {
@@ -6301,6 +6525,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/decisions/{decisionId}."
     },
     {
@@ -6325,6 +6550,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/outcomes."
     },
     {
@@ -6361,6 +6587,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/screenings."
     },
     {
@@ -6385,6 +6612,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/cases."
     },
     {
@@ -6431,6 +6659,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Open a governed multi-domain investigation case."
     },
     {
@@ -6456,6 +6685,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/cases/{caseId}."
     },
     {
@@ -6481,6 +6711,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read all completed non-decisional investigation dossiers for a case."
     },
     {
@@ -6535,6 +6766,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access."
     },
     {
@@ -6564,6 +6796,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Revoke a sensitive investigation-data access grant."
     },
     {
@@ -6615,6 +6848,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Ingest an evidence-backed bitemporal person or company profile."
     },
     {
@@ -6665,6 +6899,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Find non-decisional identity-resolution candidates under an active case grant."
     },
     {
@@ -6689,6 +6924,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List declared non-runnable investigation source packs."
     },
     {
@@ -6714,6 +6950,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read one declared non-runnable investigation source pack."
     },
     {
@@ -6739,6 +6976,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read truthful admitted coverage for one source pack."
     },
     {
@@ -6793,6 +7031,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/researchJobs."
     },
     {
@@ -6818,6 +7057,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/researchJobs/{jobId}."
     },
     {
@@ -6846,6 +7086,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Replay bounded authorized job events as SSE; reconnect with afterSequence."
     },
     {
@@ -6871,6 +7112,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read the cited, non-decisional result under the job's original access grant."
     },
     {
@@ -6899,6 +7141,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read ordered non-decisional job events under the job's original access grant."
     },
     {
@@ -6928,6 +7171,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel."
     },
     {
@@ -6959,6 +7203,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/researchJobs/{jobId}:review."
     },
     {
@@ -6987,6 +7232,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify one signed Risk Clearing evidence envelope against live Risk state."
     },
     {
@@ -7018,6 +7264,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Release a reservation only when Clearing proved no external dispatch occurred."
     },
     {
@@ -7049,6 +7296,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Hold budget capacity after an ambiguous provider dispatch."
     },
     {
@@ -7080,6 +7328,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Record an independently observed provider effect while retaining capacity."
     },
     {
@@ -7111,6 +7360,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Record a non-final observed outcome without releasing capacity."
     },
     {
@@ -7142,6 +7392,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Record compensation as a forward action without releasing capacity."
     },
     {
@@ -7173,6 +7424,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Keep capacity held when authoritative evidence conflicts."
     },
     {
@@ -7206,6 +7458,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Settle a mature reconciled outcome and release held capacity."
     },
     {
@@ -7230,6 +7483,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/audit:export."
     }
   ],
@@ -7254,6 +7508,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check tempera-workflows engine liveness."
     },
     {
@@ -7279,6 +7534,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "The server-managed connector ids available to workflow definitions."
     },
     {
@@ -7317,6 +7573,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:submit",
       "physicalAction": true,
       "prepareCommitRequired": true,
+      "safeRetry": "none",
       "description": "Authorize and durably submit one preregistered prospective Bio experiment."
     },
     {
@@ -7341,6 +7598,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get a credential-free durable view of one experiment submission."
     },
     {
@@ -7365,6 +7623,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:experiment:submit",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resolve an ambiguous physical dispatch with a provider-side lookup. This operation cannot create a provider order."
     },
     {
@@ -7390,6 +7649,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the typed node catalog: native orchestration nodes plus the sdk.<product>.<operation> nodes generated from the SDK surface."
     },
     {
@@ -7416,6 +7676,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List workflow runs, optionally filtered to one workflow."
     },
     {
@@ -7440,6 +7701,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one workflow run with its state, node results, and timings; the live SSE event stream at /v1/runs/{run_id}/events is passthrough-only."
     },
     {
@@ -7464,6 +7726,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Cancel a queued or running workflow run."
     },
     {
@@ -7498,6 +7761,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Consume a durable external callback and resume a waiting run."
     },
     {
@@ -7523,6 +7787,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List stored workflow definitions, newest first."
     },
     {
@@ -7559,6 +7824,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a workflow definition (tempera.workflow/v1 bounded DAG of typed nodes); the definition is validated before it is stored."
     },
     {
@@ -7583,6 +7849,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Delete a stored workflow definition."
     },
     {
@@ -7607,6 +7874,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one stored workflow definition."
     },
     {
@@ -7649,6 +7917,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Replace a stored workflow definition with a new validated revision."
     },
     {
@@ -7680,6 +7949,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Start a run of a stored workflow with an optional input document and idempotency key."
     },
     {
@@ -7712,6 +7982,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Run a workflow to completion and return its output in a single call."
     },
     {
@@ -7742,6 +8013,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Compile a validated, unsaved, bounded Bio campaign workflow draft."
     },
     {
@@ -7774,6 +8046,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Search the full SDK-backed node catalog or ask Tempera Code to propose a validated workflow draft without saving or running it."
     },
     {
@@ -7807,6 +8080,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Generate or repair one JSON editor value and validate its requested root and purpose without saving a workflow or executing a node."
     },
     {
@@ -7843,6 +8117,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "workflow:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Validate a workflow definition without storing it; returns the full diagnostic list."
     }
   ],
@@ -7867,6 +8142,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check tempera-gym service liveness."
     },
     {
@@ -7892,6 +8168,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the gym pack's environment catalog, including implementation status and per-environment manifests."
     },
     {
@@ -7917,6 +8194,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Domain capabilities represented in the versioned task catalog."
     },
     {
@@ -7944,6 +8222,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List versioned task definitions without agent inputs."
     },
     {
@@ -7970,6 +8249,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get one immutable task definition including its agent-visible input."
     },
     {
@@ -8002,6 +8282,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Deterministically verify one candidate without creating an episode."
     },
     {
@@ -8027,6 +8308,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List verifier identities and bound tasks without grader content."
     },
     {
@@ -8054,6 +8336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List durable episode snapshots, newest first."
     },
     {
@@ -8082,6 +8365,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Reset a versioned task into a durable episode."
     },
     {
@@ -8106,6 +8390,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read and content-verify one durable episode snapshot."
     },
     {
@@ -8135,6 +8420,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Apply one schema-validated action and persist the transition."
     },
     {
@@ -8165,6 +8451,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Retain a completed Gym episode and trajectory in Data Engine."
     },
     {
@@ -8191,6 +8478,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List persisted rollout run index records, newest first."
     },
     {
@@ -8215,6 +8503,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one persisted run's index record and verified trajectory-v1 envelope by run id or trajectory content hash."
     },
     {
@@ -8248,6 +8537,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Execute one rollout synchronously, persist the trajectory, and return the completed operation envelope."
     },
     {
@@ -8273,6 +8563,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Discover the four frozen outcome-blind Bio proposal policies."
     },
     {
@@ -8317,6 +8608,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Propose one constrained Bio candidate batch without outcome access."
     },
     {
@@ -8342,6 +8634,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Discover boot-trusted exact sealed-evaluator identities."
     },
     {
@@ -8367,6 +8660,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List persisted sealed-evaluation precommits and results."
     },
     {
@@ -8399,6 +8693,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Persist an opaque sealed-suite commitment before policy freeze."
     },
     {
@@ -8423,6 +8718,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read one verified precommit and aggregate sealed result."
     },
     {
@@ -8453,6 +8749,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Evaluate one frozen policy through its exact sealed adapter."
     }
   ],
@@ -8487,6 +8784,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:decision:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Derive campaign state."
     },
     {
@@ -8513,6 +8811,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare candidate set."
     },
     {
@@ -8543,6 +8842,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare dataset release manifest."
     },
     {
@@ -8577,6 +8877,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:decision:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Derive decision."
     },
     {
@@ -8607,6 +8908,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare experiment proposal."
     },
     {
@@ -8639,6 +8941,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare experiment proposal from gym batch."
     },
     {
@@ -8665,6 +8968,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare hypothesis."
     },
     {
@@ -8701,6 +9005,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:measurement:verify",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify measurement."
     },
     {
@@ -8731,6 +9036,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare program."
     },
     {
@@ -8761,6 +9067,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:proposal:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Prepare prospective experiment protocol."
     },
     {
@@ -8809,6 +9116,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:measurement:verify",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify prospective measurement."
     },
     {
@@ -8835,6 +9143,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "bio:source:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Ingest mave d b score set."
     }
   ],
@@ -8859,6 +9168,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/health."
     },
     {
@@ -8897,6 +9207,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "payments:intents:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a canonical payment intent."
     },
     {
@@ -8925,6 +9236,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "payments:intents:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read the canonical payment-intent projection."
     },
     {
@@ -8953,6 +9265,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "payments:receipts:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Read and cryptographically re-verify the canonical settlement receipt."
     },
     {
@@ -8989,6 +9302,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "payments:intents:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
     },
     {
@@ -9025,6 +9339,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "payments:intents:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
     },
     {
@@ -9047,6 +9362,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
     }
   ],
@@ -9071,6 +9387,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Health check."
     },
     {
@@ -9099,6 +9416,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an immutable document version from a completed upload."
     },
     {
@@ -9124,6 +9442,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get a document."
     },
     {
@@ -9159,6 +9478,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Extract one caller-schema object with exact source evidence."
     },
     {
@@ -9184,6 +9504,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Return the latest successful canonical document graph."
     },
     {
@@ -9211,6 +9532,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Build or reuse a qualified immutable hybrid-retrieval index."
     },
     {
@@ -9242,6 +9564,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Search the latest immutable graph and return grounded source excerpts."
     },
     {
@@ -9270,6 +9593,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List logical units without materializing the complete document graph."
     },
     {
@@ -9299,6 +9623,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Start an idempotent long-running processing operation."
     },
     {
@@ -9324,6 +9649,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get a long-running operation."
     },
     {
@@ -9354,6 +9680,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a resumable upload resource."
     },
     {
@@ -9379,6 +9706,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get an upload."
     },
     {
@@ -9404,6 +9732,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Stream source bytes to content-addressed storage."
     },
     {
@@ -9432,6 +9761,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "document:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Complete a streamed upload after digest assertions."
     }
   ],
@@ -9465,6 +9795,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/capability."
     },
     {
@@ -9509,6 +9840,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/completion/validate."
     },
     {
@@ -9531,6 +9863,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the browser adapter contract, required controls, and conformance profile."
     },
     {
@@ -9557,6 +9890,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/launch/claim."
     },
     {
@@ -9587,6 +9921,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/launch/plan."
     },
     {
@@ -9619,6 +9954,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/register."
     },
     {
@@ -9657,6 +9993,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/browser/adapter/validate."
     },
     {
@@ -9694,6 +10031,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Request admission for a browser session at a sandbox level and receive the guard plan."
     },
     {
@@ -9716,6 +10054,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers."
     },
     {
@@ -9738,6 +10077,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations."
     },
     {
@@ -9771,6 +10111,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Execute source synchronously in a sandbox lane and return the result with metrics."
     },
     {
@@ -9793,6 +10134,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check sandbox-daemon liveness; returns status, version, and uptime."
     },
     {
@@ -9815,6 +10157,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the ecosystem integration contract this daemon implements."
     },
     {
@@ -9848,6 +10191,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Submit an asynchronous sandbox job; returns an operation handle to poll."
     },
     {
@@ -9872,6 +10216,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
     },
     {
@@ -9896,6 +10241,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch a sandbox job's status and result."
     },
     {
@@ -9924,6 +10270,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Call POST /v1/projects/{project}/modules."
     },
     {
@@ -9949,6 +10296,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Call GET /v1/projects/{project}/modules/{sha256}."
     }
   ],
@@ -9973,6 +10321,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check memory-server liveness."
     },
     {
@@ -9995,6 +10344,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check memory-server readiness, including database health."
     },
     {
@@ -10017,6 +10367,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch deep store health: schema version, integrity checks, and graph consistency."
     },
     {
@@ -10039,6 +10390,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
     },
     {
@@ -10061,6 +10413,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies."
     },
     {
@@ -10083,6 +10436,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring."
     },
     {
@@ -10108,6 +10462,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List recent service audit events (default 100, maximum 500)."
     },
     {
@@ -10143,6 +10498,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Write one memory event into the tenant and project ledger."
     },
     {
@@ -10167,6 +10523,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Project pending ledger events into the memory graph and return the projection report."
     },
     {
@@ -10201,6 +10558,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Answer a scoped memory question with evidence and reconstruction metadata."
     },
     {
@@ -10228,6 +10586,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history."
     }
   ],
@@ -10252,6 +10611,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Check data-engine liveness; returns the service status."
     },
     {
@@ -10281,6 +10641,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the MVP use-case templates (data products and pipeline templates) for a project."
     },
     {
@@ -10308,6 +10669,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy."
     },
     {
@@ -10340,6 +10702,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Ingest one artifact deterministically into the project; returns an async operation handle."
     },
     {
@@ -10372,6 +10735,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Verify and retain signed Tempera Connectors source evidence."
     },
     {
@@ -10407,6 +10771,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle."
     },
     {
@@ -10444,6 +10809,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Create a data campaign with a rubric, budget, target accuracy, and skill tags."
     },
     {
@@ -10473,6 +10839,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List a project's data campaigns with pagination."
     },
     {
@@ -10506,6 +10873,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition."
     },
     {
@@ -10533,6 +10901,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes."
     },
     {
@@ -10571,6 +10940,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend."
     },
     {
@@ -10603,6 +10973,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List human residual review tasks, optionally filtered by status and campaign."
     },
     {
@@ -10639,6 +11010,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:gold:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label."
     },
     {
@@ -10673,6 +11045,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:gold:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Record an immutable project-scoped reviewer revocation and terminate active assignments."
     },
     {
@@ -10715,6 +11088,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision."
     },
     {
@@ -10749,6 +11123,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision."
     },
     {
@@ -10783,6 +11158,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Atomically claim one open expert task with an exclusive renewable lease."
     },
     {
@@ -10817,6 +11193,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Renew the authenticated reviewer's active expert-task lease."
     },
     {
@@ -10850,6 +11227,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Release the authenticated reviewer's active expert-task lease for reassignment."
     },
     {
@@ -10887,6 +11265,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Autosave a version-checked draft under the active reviewer lease."
     },
     {
@@ -10919,6 +11298,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier."
     },
     {
@@ -10948,6 +11328,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "review:resolve",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations."
     },
     {
@@ -10974,6 +11355,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch data-engine usage and quality metrics for a project."
     },
     {
@@ -11000,6 +11382,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch the project label-quality report and unresolved expert backlog."
     },
     {
@@ -11026,6 +11409,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch public-site and ecosystem readiness signals for a project."
     },
     {
@@ -11056,6 +11440,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
     },
     {
@@ -11085,6 +11470,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one artifact, expanded to the requested view (BASIC or FULL)."
     },
     {
@@ -11115,6 +11501,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the labels attached to one artifact."
     },
     {
@@ -11144,6 +11531,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Profile dataset quality before export, including duplicates, label coverage, and distributions."
     },
     {
@@ -11180,6 +11568,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll."
     },
     {
@@ -11207,6 +11596,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one labeling job with its state and progress."
     },
     {
@@ -11237,6 +11627,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List the deterministic label results a job produced."
     },
     {
@@ -11264,6 +11655,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one emitted product bundle with its status and manifest URL."
     },
     {
@@ -11291,6 +11683,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Validate an emitted product bundle's referential integrity and hygiene."
     },
     {
@@ -11321,6 +11714,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Check raw-hash leakage between exactly two product bundles."
     },
     {
@@ -11348,6 +11742,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch an integrity-checked, bounded manifest for an emitted eval product."
     },
     {
@@ -11382,6 +11777,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "training:publish",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints."
     },
     {
@@ -11409,6 +11805,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "training:publish",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Revalidate and fetch one training release, including any durable stale state."
     },
     {
@@ -11445,6 +11842,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Derive a deterministic post-training bundle from a ready product."
     },
     {
@@ -11477,6 +11875,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Emit an eval dataset bundle from verified artifacts; returns an async operation handle."
     },
     {
@@ -11522,6 +11921,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an immutable-versioned connector source definition."
     },
     {
@@ -11551,6 +11951,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List project source definitions."
     },
     {
@@ -11578,6 +11979,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get one source definition."
     },
     {
@@ -11621,6 +12023,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create a new version of a source definition."
     },
     {
@@ -11654,6 +12057,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
       "description": "Start an exact-replay connector run from a reviewed definition."
     },
     {
@@ -11683,6 +12087,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List durable connector runs."
     },
     {
@@ -11710,6 +12115,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get one durable connector run and its terminal receipt."
     },
     {
@@ -11753,6 +12159,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:manage",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Extract bounded objects or records from a configured source connector."
     },
     {
@@ -11782,6 +12189,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "connector:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List registered source connectors for a project."
     },
     {
@@ -11820,6 +12228,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create or version-bump a stored custom tool."
     },
     {
@@ -11849,6 +12258,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List stored custom tools and their usage statistics."
     },
     {
@@ -11876,6 +12286,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one stored custom tool and its usage statistics."
     },
     {
@@ -11903,6 +12314,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Delete a stored custom tool and every retained version."
     },
     {
@@ -11932,6 +12344,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Invoke a stored custom tool through its configured execution boundary."
     },
     {
@@ -11982,6 +12395,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Atomically commit an immutable discovery release graph."
     },
     {
@@ -12009,6 +12423,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get one immutable discovery release."
     },
     {
@@ -12055,6 +12470,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an immutable shared evidence record by canonical content hash."
     },
     {
@@ -12085,6 +12501,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List immutable shared evidence records with bounded cursor pagination."
     },
     {
@@ -12112,6 +12529,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one immutable shared evidence record by its platform digest."
     },
     {
@@ -12164,6 +12582,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an immutable shared episode by canonical content hash."
     },
     {
@@ -12194,6 +12613,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List immutable shared episodes with bounded cursor pagination."
     },
     {
@@ -12221,6 +12641,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one immutable shared episode by its platform digest."
     },
     {
@@ -12263,6 +12684,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Retrieve deterministic candidates for one exact canonical typed research obligation."
     },
     {
@@ -12303,6 +12725,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create an immutable executable research catalog entry by canonical content hash."
     },
     {
@@ -12332,6 +12755,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List immutable executable research catalog entries with bounded pagination."
     },
     {
@@ -12359,6 +12783,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "dataset:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Fetch one immutable executable research catalog entry by content hash."
     }
   ],
@@ -12389,6 +12814,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Compute live qualification evidence."
     }
   ],
@@ -12413,6 +12839,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Liveness."
     },
     {
@@ -12435,6 +12862,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": null,
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Readiness."
     },
     {
@@ -12464,6 +12892,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Resolve Action."
     },
     {
@@ -12488,6 +12917,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List Agents."
     },
     {
@@ -12531,6 +12961,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create Agent."
     },
     {
@@ -12555,6 +12986,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get Agent."
     },
     {
@@ -12600,6 +13032,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Upsert Agent."
     },
     {
@@ -12624,6 +13057,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Download Artifact."
     },
     {
@@ -12654,6 +13088,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Upload Artifact."
     },
     {
@@ -12676,6 +13111,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Capabilities."
     },
     {
@@ -12698,6 +13134,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List Eval Profiles."
     },
     {
@@ -12743,6 +13180,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Build Eval Bundle."
     },
     {
@@ -12782,6 +13220,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create Palette Handoff."
     },
     {
@@ -12808,6 +13247,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Publish Palette Handoff."
     },
     {
@@ -12841,6 +13281,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Import Eval Result."
     },
     {
@@ -12869,6 +13310,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Seal Eval Result."
     },
     {
@@ -12894,6 +13336,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List Sessions."
     },
     {
@@ -12924,6 +13367,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Create Session."
     },
     {
@@ -12948,6 +13392,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "Get Session."
     },
     {
@@ -12972,6 +13417,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List Actions."
     },
     {
@@ -12999,6 +13445,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "read",
       "description": "List Events."
     },
     {
@@ -13025,6 +13472,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "voice:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "End Session."
     },
     {
@@ -13051,7 +13499,1244 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "eval:run",
       "physicalAction": false,
       "prepareCommitRequired": false,
+      "safeRetry": "none",
       "description": "Export Sessions."
+    }
+  ],
+  "temperaDropshipping": [
+    {
+      "id": "updateBusinessWorkspace",
+      "upstreamOperationId": "updateBusinessWorkspace",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "idempotency_key",
+        "profile_ref",
+        "profile_revision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "profile_ref",
+        "profile_revision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Put Workspace."
+    },
+    {
+      "id": "getBusinessWorkspace",
+      "upstreamOperationId": "getBusinessWorkspace",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "workspace_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Workspace."
+    },
+    {
+      "id": "recordBusinessTaskReceipt",
+      "upstreamOperationId": "recordBusinessTaskReceipt",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}/declared-receipts",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "workspace_id",
+        "task_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "receipt"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "receipt"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Record Task Receipt."
+    },
+    {
+      "id": "prepareBusinessTask",
+      "upstreamOperationId": "prepareBusinessTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepare",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "workspace_id",
+        "task_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "draft",
+        "expected_revision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "draft"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Prepare Task."
+    },
+    {
+      "id": "prepareBusinessBrowserTask",
+      "upstreamOperationId": "prepareBusinessBrowserTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepareBrowser",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "workspace_id",
+        "task_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Browser Task."
+    },
+    {
+      "id": "reviewBusinessTask",
+      "upstreamOperationId": "reviewBusinessTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:review",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "workspace_id",
+        "task_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "review"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "review"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Review Task."
+    },
+    {
+      "id": "listEvents",
+      "upstreamOperationId": "listEvents",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Events."
+    },
+    {
+      "id": "listInbox",
+      "upstreamOperationId": "listInbox",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Inbox."
+    },
+    {
+      "id": "getBusinessSummary",
+      "upstreamOperationId": "getBusinessSummary",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/operating-summary",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Operating Summary."
+    },
+    {
+      "id": "listOrders",
+      "upstreamOperationId": "listOrders",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Orders."
+    },
+    {
+      "id": "createOrder",
+      "upstreamOperationId": "createOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "record"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "record"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Order."
+    },
+    {
+      "id": "getOrder",
+      "upstreamOperationId": "getOrder",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Order."
+    },
+    {
+      "id": "updateOrder",
+      "upstreamOperationId": "updateOrder",
+      "method": "PATCH",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "record"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "record"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Update Order."
+    },
+    {
+      "id": "listOrderAuditEvents",
+      "upstreamOperationId": "listOrderAuditEvents",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/audit",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Audit."
+    },
+    {
+      "id": "prepareProposal",
+      "upstreamOperationId": "prepareProposal",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/proposals",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "quote_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "quote_id"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Prepare."
+    },
+    {
+      "id": "evaluateOrder",
+      "upstreamOperationId": "evaluateOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:evaluate",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Evaluate Order."
+    },
+    {
+      "id": "reconcileOrder",
+      "upstreamOperationId": "reconcileOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:reconcile",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "order_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "evidence_ref",
+        "expected_revision",
+        "purchase_state"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "purchase_state",
+        "evidence_ref"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Reconcile."
+    },
+    {
+      "id": "getProposal",
+      "upstreamOperationId": "getProposal",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "proposal_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Proposal."
+    },
+    {
+      "id": "recordManualOutcome",
+      "upstreamOperationId": "recordManualOutcome",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}/manual-outcome",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "proposal_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "evidence_ref",
+        "expected_revision",
+        "outcome",
+        "proposal_digest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "proposal_digest",
+        "outcome",
+        "evidence_ref"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Outcome."
+    },
+    {
+      "id": "approveProposal",
+      "upstreamOperationId": "approveProposal",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:approve",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "proposal_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "proposal_digest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "proposal_digest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Approve."
+    },
+    {
+      "id": "executeProposal",
+      "upstreamOperationId": "executeProposal",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:execute",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "proposal_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "proposal_digest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expected_revision",
+        "proposal_digest"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Execute."
+    },
+    {
+      "id": "listStores",
+      "upstreamOperationId": "listStores",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Stores."
+    },
+    {
+      "id": "createStore",
+      "upstreamOperationId": "createStore",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "channel",
+        "display_name",
+        "id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "id",
+        "display_name"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Store."
+    },
+    {
+      "id": "getStore",
+      "upstreamOperationId": "getStore",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{store_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "store_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Store."
+    }
+  ],
+  "temperaBusiness": [
+    {
+      "id": "businessProfileGet",
+      "upstreamOperationId": "business.profile.get",
+      "method": "GET",
+      "path": "/v1/business-profile",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Profile."
+    },
+    {
+      "id": "businessProfileHistory",
+      "upstreamOperationId": "business.profile.history",
+      "method": "GET",
+      "path": "/v1/business-profile/history",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Profile History."
+    },
+    {
+      "id": "businessProfileClear",
+      "upstreamOperationId": "business.profile.clear",
+      "method": "POST",
+      "path": "/v1/business-profile:clear",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "idempotency_key",
+        "reason"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:review",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Clear."
+    },
+    {
+      "id": "businessProfileInitialize",
+      "upstreamOperationId": "business.profile.initialize",
+      "method": "POST",
+      "path": "/v1/business-profile:initialize",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "available_services",
+        "facts",
+        "idempotency_key",
+        "references"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Initialize."
+    },
+    {
+      "id": "businessProfilePatch",
+      "upstreamOperationId": "business.profile.patch",
+      "method": "POST",
+      "path": "/v1/business-profile:patch",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "available_services",
+        "expected_revision",
+        "facts",
+        "idempotency_key",
+        "references"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Patch."
+    },
+    {
+      "id": "businessCapabilities",
+      "upstreamOperationId": "business.capabilities",
+      "method": "GET",
+      "path": "/v1/capabilities",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Capabilities."
+    },
+    {
+      "id": "businessCasesList",
+      "upstreamOperationId": "business.cases.list",
+      "method": "GET",
+      "path": "/v1/cases",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Listing."
+    },
+    {
+      "id": "businessCasesCreate",
+      "upstreamOperationId": "business.cases.create",
+      "method": "POST",
+      "path": "/v1/cases",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "idempotency_key",
+        "intake",
+        "profile_ref"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "intake"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Create."
+    },
+    {
+      "id": "businessCasesGet",
+      "upstreamOperationId": "business.cases.get",
+      "method": "GET",
+      "path": "/v1/cases/{case_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Case."
+    },
+    {
+      "id": "businessCasesAudit",
+      "upstreamOperationId": "business.cases.audit",
+      "method": "GET",
+      "path": "/v1/cases/{case_id}/audit",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "after",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Audit."
+    },
+    {
+      "id": "businessCasesRecordDeclaredReceipt",
+      "upstreamOperationId": "business.cases.recordDeclaredReceipt",
+      "method": "POST",
+      "path": "/v1/cases/{case_id}/declared-receipts",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "idempotency_key",
+        "owner",
+        "preparation_digest",
+        "receipt_ref",
+        "reported_outcome"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision",
+        "preparation_digest",
+        "receipt_ref",
+        "owner",
+        "reported_outcome"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Receipt."
+    },
+    {
+      "id": "businessCasesPrepareDraft",
+      "upstreamOperationId": "business.cases.prepareDraft",
+      "method": "POST",
+      "path": "/v1/cases/{case_id}:prepareDraft",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "draft",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision",
+        "draft"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Prepare."
+    },
+    {
+      "id": "businessCasesReviewDraft",
+      "upstreamOperationId": "business.cases.reviewDraft",
+      "method": "POST",
+      "path": "/v1/cases/{case_id}:reviewDraft",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "decision",
+        "expected_revision",
+        "idempotency_key",
+        "preparation_digest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision",
+        "preparation_digest",
+        "decision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:review",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Review."
+    },
+    {
+      "id": "businessCasesUpdateIntake",
+      "upstreamOperationId": "business.cases.updateIntake",
+      "method": "POST",
+      "path": "/v1/cases/{case_id}:updateIntake",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [
+        "case_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "expected_revision",
+        "idempotency_key",
+        "intake"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotency_key",
+        "expected_revision",
+        "intake"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Update."
+    },
+    {
+      "id": "businessOperatingState",
+      "upstreamOperationId": "business.operatingState",
+      "method": "GET",
+      "path": "/v1/operating-state",
+      "auth": "oauthResource",
+      "authAudience": "tempera-business",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Operating State."
     }
   ]
 }

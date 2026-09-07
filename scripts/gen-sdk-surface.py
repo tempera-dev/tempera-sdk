@@ -138,6 +138,17 @@ def validate(surface: dict) -> list[str]:
             query = set(op.get("query", []))
             if not required_query.issubset(query):
                 problems.append(f"{label}: requiredQuery must be a subset of query")
+            safe_retry = op.get("safeRetry")
+            if safe_retry not in {"read", "idempotent", "none"}:
+                problems.append(f"{label}: invalid safeRetry {safe_retry!r}")
+            elif safe_retry == "read" and op.get("method") != "GET":
+                problems.append(f"{label}: only GET may be safeRetry 'read'")
+            elif safe_retry == "idempotent" and not (
+                set(op.get("body", [])) & {"idempotencyKey", "idempotency_key"}
+            ):
+                problems.append(
+                    f"{label}: safeRetry 'idempotent' requires a request-body idempotency key"
+                )
             body_kind = op.get("requestBodyKind", "none")
             if body_kind not in {"none", "json", "binary"}:
                 problems.append(f"{label}: invalid requestBodyKind {body_kind!r}")
@@ -166,6 +177,15 @@ def validate(surface: dict) -> list[str]:
         for field in ("owner", "reportedDate", "status", "migration"):
             if not gap.get(field):
                 problems.append(f"scope gap {scope!r} lacks {field}")
+    # Staged producer audiences are admitted before the control plane
+    # publishes them. Each one must be explicitly declared, must appear in the
+    # audience registry, and must carry an owner and a migration.
+    for audience, gap in surface.get("audienceGaps", {}).items():
+        if audience not in surface["audiences"]:
+            problems.append(f"audience gap {audience!r} is not in the audience registry")
+        for field in ("owner", "reportedDate", "status", "migration"):
+            if not gap.get(field):
+                problems.append(f"audience gap {audience!r} lacks {field}")
     env_keys = None
     for env_name, target in surface["environments"].items():
         keys = sorted(target)
@@ -257,6 +277,7 @@ def render_typescript(surface: dict) -> str:
                 "scope": op.get("scope"),
                 "physicalAction": op.get("physicalAction", False),
                 "prepareCommitRequired": op.get("prepareCommitRequired", False),
+                "safeRetry": op["safeRetry"],
                 "description": op["description"],
             }
             for op in ops
@@ -342,6 +363,7 @@ def render_typescript_dts(surface: dict) -> str:
         "  scope: TemperaScope | null;",
         "  physicalAction: boolean;",
         "  prepareCommitRequired: boolean;",
+        "  safeRetry: \"read\" | \"idempotent\" | \"none\";",
         "  description: string;",
         "};",
         "export declare const TEMPERA_OPERATIONS: Readonly<Record<TemperaProductKey, readonly TemperaOperationSpec[]>>;",
@@ -451,6 +473,7 @@ def render_python(surface: dict) -> str:
                 "scope": op.get("scope"),
                 "physical_action": op.get("physicalAction", False),
                 "prepare_commit_required": op.get("prepareCommitRequired", False),
+                "safe_retry": op["safeRetry"],
                 "description": op["description"],
             }
             for op in ops
@@ -597,6 +620,7 @@ def render_rust(surface: dict) -> str:
     lines.append("    pub scope: Option<&'static str>,")
     lines.append("    pub physical_action: bool,")
     lines.append("    pub prepare_commit_required: bool,")
+    lines.append("    pub safe_retry: &'static str,")
     lines.append("    pub description: &'static str,")
     lines.append("}")
     lines.append("")
@@ -638,6 +662,7 @@ def render_rust(surface: dict) -> str:
                 "        prepare_commit_required: "
                 f"{str(op.get('prepareCommitRequired', False)).lower()},"
             )
+            lines.append(f"        safe_retry: {rust_literal(op['safeRetry'])},")
             lines.append(f"        description: {rust_literal(op['description'])},")
             lines.append("    },")
     lines.append("];")

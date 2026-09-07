@@ -39,6 +39,8 @@ function testClient(overrides = {}) {
       remi: "https://remi.example.test",
       dataEngine: "https://data-engine.example.test",
       humanData: "https://human.example.test",
+      temperaDropshipping: "https://dropshipping.example.test",
+      temperaBusiness: "https://business.example.test",
       tempJs: "https://tempjs.example.test",
       tempOS: "https://tempos.example.test",
       arrha: "https://arrha.example.test",

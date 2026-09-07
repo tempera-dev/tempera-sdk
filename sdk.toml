@@ -78,3 +78,17 @@ repository = "https://github.com/tempera-dev/arrha"
 visibility = "private"
 default_env = "TEMPERA_ARRHA_URL"
 scopes = ["admin"]
+
+[products.tempera_dropshipping]
+name = "tempera-dropshipping"
+repository = "https://github.com/tempera-dev/tempera-dropshipping"
+visibility = "private"
+default_env = "TEMPERA_DROPSHIPPING_URL"
+scopes = ["orders:read", "orders:write", "orders:approve"]
+
+[products.tempera_business]
+name = "tempera-business"
+repository = "https://github.com/tempera-dev/tempera-business"
+visibility = "private"
+default_env = "TEMPERA_BUSINESS_URL"
+scopes = ["business:read", "business:write", "business:review"]

@@ -297,6 +297,17 @@
       "product": "controlPlane",
       "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
       "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "provider_ingress_hmac_transport",
+      "method": "POST",
+      "migration": "Add a reviewed provider-ingress primitive that verifies the Shopify HMAC header and preserves the raw request body before exposing this route as a product operation.",
+      "operation_id": "receiveShopifyWebhook",
+      "owner": "tempera-dropshipping",
+      "path": "/webhooks/shopify/{installation}",
+      "product": "temperaDropshipping",
+      "rationale": "The route is an unversioned provider webhook authenticated by a Shopify HMAC over the raw body, not a bearer-authorized aggregate SDK operation.",
+      "review_after": "2026-10-01"
     }
   ]
 }

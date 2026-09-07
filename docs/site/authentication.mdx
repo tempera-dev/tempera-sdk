@@ -194,6 +194,8 @@ is the default when none is specified.
 | `tempera-payments` | tempera-payments |
 | `tempera-voice` | tempera-voice |
 | `tempera-clearing` | — |
+| `tempera-dropshipping` | tempera-dropshipping |
+| `tempera-business` | tempera-business |
 
 ## Scopes
 
@@ -255,6 +257,51 @@ is the default when none is specified.
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:approve` | auth-hub: `clearingAdmissionsCreate` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
+
+## Known scope gaps
+
+### `business:read`
+
+- **Status:** staged.
+- **Owner:** tempera-business.
+- **Reported:** 2026-09-07.
+- **Migration:** Register business:read in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
+### `business:review`
+
+- **Status:** staged.
+- **Owner:** tempera-business.
+- **Reported:** 2026-09-07.
+- **Migration:** Register business:review in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
+### `business:write`
+
+- **Status:** staged.
+- **Owner:** tempera-business.
+- **Reported:** 2026-09-07.
+- **Migration:** Register business:write in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
+### `orders:approve`
+
+- **Status:** staged.
+- **Owner:** tempera-dropshipping.
+- **Reported:** 2026-09-07.
+- **Migration:** Register orders:approve in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
+### `orders:read`
+
+- **Status:** staged.
+- **Owner:** tempera-dropshipping.
+- **Reported:** 2026-09-07.
+- **Migration:** Register orders:read in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
+### `orders:write`
+
+- **Status:** staged.
+- **Owner:** tempera-dropshipping.
+- **Reported:** 2026-09-07.
+- **Migration:** Register orders:write in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
+
 
 ## Issuer endpoints
 

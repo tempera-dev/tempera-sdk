@@ -39,6 +39,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,8 +85,72 @@ def package_versions() -> dict[str, str]:
     return versions
 
 
-def validate_vendored_source_locks(*, allow_non_main: bool = False) -> list[str]:
+STAGED_SOURCES = ROOT / "contracts" / "sdk-staged-sources.json"
+STAGED_SOURCE_KEYS = {
+    "generated_path",
+    "source_repo",
+    "source_branch",
+    "source_commit",
+    "published_digest",
+    "owner",
+    "rationale",
+    "migration",
+    "review_after",
+}
+
+
+def load_staged_sources() -> tuple[dict[str, dict[str, str]], list[str]]:
+    """Read the explicit, expiring ledger of unmerged producer-branch pins.
+
+    A vendored contract may name a non-main producer branch only while this
+    ledger admits it by exact path, repository, branch, and commit. The ledger
+    records provenance; it never asserts that the pinned commit is merged.
+    """
+
     failures: list[str] = []
+    try:
+        ledger = json.loads(STAGED_SOURCES.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return {}, [f"cannot load contracts/sdk-staged-sources.json: {error}"]
+    if ledger.get("schema_version") != 1:
+        failures.append("staged-source ledger schema_version must be 1")
+    entries = ledger.get("staged_sources")
+    if not isinstance(entries, list):
+        return {}, [*failures, "staged-source ledger staged_sources must be an array"]
+    indexed: dict[str, dict[str, str]] = {}
+    for position, entry in enumerate(entries):
+        label = f"staged_sources[{position}]"
+        if not isinstance(entry, dict) or set(entry) != STAGED_SOURCE_KEYS:
+            failures.append(f"{label} keys differ from the exact staged-source schema")
+            continue
+        if not all(isinstance(entry[key], str) and entry[key] for key in entry):
+            failures.append(f"{label} values must be non-empty strings")
+            continue
+        if entry["source_branch"] == "main":
+            failures.append(f"{label} must not stage a main-branch lock")
+            continue
+        if re.fullmatch(r"[0-9a-f]{40}", entry["source_commit"]) is None:
+            failures.append(f"{label} source_commit is not a 40-character SHA")
+        if re.fullmatch(r"[0-9a-f]{64}", entry["published_digest"]) is None:
+            failures.append(f"{label} published_digest is not SHA-256")
+        try:
+            review_after = date.fromisoformat(entry["review_after"])
+            if review_after < date.today():
+                failures.append(
+                    f"{label} staged-source review expired on {review_after.isoformat()}"
+                )
+        except ValueError:
+            failures.append(f"{label} review_after must be an ISO calendar date")
+        if entry["generated_path"] in indexed:
+            failures.append(f"{label} duplicates {entry['generated_path']}")
+            continue
+        indexed[entry["generated_path"]] = entry
+    return indexed, failures
+
+
+def validate_vendored_source_locks(*, allow_non_main: bool = False) -> list[str]:
+    staged, failures = load_staged_sources()
+    matched_staged: set[str] = set()
     for lock_path in sorted((ROOT / "specs").glob("*.source")):
         label = lock_path.relative_to(ROOT)
         try:
@@ -111,11 +176,35 @@ def validate_vendored_source_locks(*, allow_non_main: bool = False) -> list[str]
             continue
         if lock.get("schema_version") != 1:
             failures.append(f"{label}: schema_version must be 1")
-        if not allow_non_main and lock.get("source_branch") != "main":
+        generated_path = str(lock.get("generated_path", ""))
+        entry = staged.get(generated_path)
+        if lock.get("source_branch") != "main":
+            if entry is not None:
+                matched_staged.add(generated_path)
+                drifted = [
+                    field
+                    for field in ("source_repo", "source_branch", "source_commit")
+                    if lock.get(field) != entry[field]
+                ]
+                if drifted:
+                    failures.append(
+                        f"{label}: staged-source ledger disagrees on {drifted}"
+                    )
+                elif lock.get("source_sha256") != entry["published_digest"]:
+                    failures.append(
+                        f"{label}: source_sha256 differs from the producer-published digest"
+                    )
+            elif not allow_non_main:
+                failures.append(
+                    f"{label}: source_branch must be main or admitted by "
+                    f"contracts/sdk-staged-sources.json, not "
+                    f"{lock.get('source_branch')!r}"
+                )
+        elif entry is not None:
             failures.append(
-                f"{label}: source_branch must be main, not "
-                f"{lock.get('source_branch')!r}"
+                f"{label}: staged-source ledger entry is stale; the lock is on main"
             )
+            matched_staged.add(generated_path)
         if re.fullmatch(r"[0-9a-f]{40}", str(lock.get("source_commit", ""))) is None:
             failures.append(f"{label}: source_commit is not a 40-character SHA")
         generated = ROOT / str(lock["generated_path"])
@@ -128,6 +217,10 @@ def validate_vendored_source_locks(*, allow_non_main: bool = False) -> list[str]
             failures.append(
                 f"{label}: generated_sha256 does not match {generated.relative_to(ROOT)}"
             )
+    for orphan in sorted(set(staged) - matched_staged):
+        failures.append(
+            f"contracts/sdk-staged-sources.json: {orphan} has no vendored source lock"
+        )
     return failures
 
 
