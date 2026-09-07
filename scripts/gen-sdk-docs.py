@@ -30,6 +30,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from functools import lru_cache
 
 from sdk_names import snake_case
 
@@ -137,6 +138,12 @@ def product_page_slug(product_key: str) -> str:
     return f"products/{kebab(product_key)}"
 
 
+@lru_cache(maxsize=1)
+def oauth_only_scopes() -> frozenset[str]:
+    schemas = json.loads((ROOT / "specs/control-plane.openapi.json").read_text())["components"]["schemas"]
+    return frozenset(schemas["Scope"]["enum"]) - frozenset(schemas["ApiKeyScope"]["enum"])
+
+
 def auth_label(surface: dict, product_key: str, op: dict) -> str:
     if product_key == "temperaPayments" and op["id"] in {"createMerchant", "createMerchantOnboardingLink"}:
         return "Human OAuth bearer for audience `tempera-payments`; `payments:merchants:write` requires an owner or admin. Central `tp_` API keys cannot use this operation."
@@ -145,6 +152,9 @@ def auth_label(surface: dict, product_key: str, op: dict) -> str:
         return "None (public endpoint)."
     if kind == "account":
         return "Account bearer — the control-plane session token returned by `createHostedSession`."
+    if kind in {"oauthResource", "product"} and op.get("scope") in oauth_only_scopes():
+        audience = op.get("authAudience") or surface["products"][product_key]["audience"] or surface["defaultAudience"]
+        return f"OAuth access token for audience `{audience}`. Central `tp_` API keys cannot carry the required `{op['scope']}` scope."
     if kind == "oauthResource":
         return (
             "Resource bearer — an OAuth access token or central `tp_` API key "
@@ -354,7 +364,7 @@ def render_index(surface: dict) -> str:
         "\n"
         "const auth = new TemperaAuth({\n"
         "  issuerUrl,\n"
-        "  apiKey, // tp_... works at every product\n"
+        "  apiKey, // tp_... for operations that allow API keys\n"
         "});\n"
         'const client = createTemperaClient({ auth, environment: "staging" });\n'
         "\n"
@@ -375,7 +385,7 @@ def render_index(surface: dict) -> str:
         "\n"
         "auth = TemperaAuth(\n"
         '    issuer_url=os.environ["TEMPERA_ISSUER_URL"],\n'
-        '    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... works at every product\n'
+        '    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... for operations that allow API keys\n'
         ")\n"
         'client = TemperaClient(auth=auth, environment="staging")\n'
         "\n"
@@ -491,7 +501,7 @@ def render_authentication(surface: dict) -> str:
         "",
         "The provisioned Tempera control plane (auth-hub) is the OAuth 2.1 issuer for the whole",
         "fleet. One Tempera account mints one access token per **product audience**,",
-        "and central API keys (`tp_...`) work as bearers at every product via central",
+        "and central API keys (`tp_...`) work on service-eligible operations via central",
         "introspection. The SDK's `TemperaAuth` holds both: per-audience OAuth token",
         "sets and an optional unified API key.",
         "",
@@ -630,7 +640,8 @@ def render_authentication(surface: dict) -> str:
         "Workspace API keys minted by the control plane (`createApiKey`, secrets",
         "prefixed `tp_`) use central introspection across supported product audiences.",
         "Each operation still enforces its own credential policy. Merchant creation and",
-        "onboarding require owner/admin human OAuth and reject API keys. Give `TemperaAuth`",
+        "onboarding require owner/admin human OAuth. Orders reads require an expiring OAuth",
+        "access token. These operations reject API keys. For service-eligible operations, give `TemperaAuth`",
         "an `apiKey` / `api_key` / `with_api_key(...)` and skip the OAuth flow",
         "entirely for headless use.",
         "",
@@ -643,12 +654,13 @@ def render_authentication(surface: dict) -> str:
         "   - `none` — no `authorization` header is sent.",
         "   - `account` — the account-session token returned by `createHostedSession` (or",
         "     passed as `accountToken` / `account_token` / `with_account_token`).",
-        "   - `oauthResource` — an OAuth access token or central `tp_` API key for the operation's explicit resource audience.",
+        "   - `oauthResource` — an OAuth access token or central `tp_` API key for the operation's explicit resource audience, subject to its credential policy.",
         "   - `introspectionSecret` — the configured introspection secret",
         "     (`introspectToken` only; server-side).",
         "   - `product` — through `TemperaAuth.bearerFor(audience)`: the audience's",
         "     **access token** if one is stored, else the unified **`tp_` API key**,",
-        "     else a configuration error before any request is sent.",
+        "     else a configuration error before any request is sent. This fallback does not",
+        "     establish credential eligibility: OAuth-only operations reject API-key requests.",
         "",
         "## Audiences",
         "",

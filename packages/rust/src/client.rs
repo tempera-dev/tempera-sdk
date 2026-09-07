@@ -316,7 +316,7 @@ impl std::fmt::Display for BuildError {
             ),
             BuildError::MissingCredential { product, audience } => write!(
                 f,
-                "{product}: no credential for audience {audience}; pass a TemperaAuth with an api_key or {audience} tokens to call product endpoints"
+                "{product}: no credential for audience {audience}; pass a TemperaAuth with credentials permitted by this operation"
             ),
             BuildError::InvalidOperationContract { product, operation } => write!(
                 f,

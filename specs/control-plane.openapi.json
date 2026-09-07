@@ -5284,6 +5284,7 @@
           "payments:admin",
           "payments:merchants:read",
           "payments:merchants:write",
+          "orders:read",
           "voice:read",
           "voice:write",
           "voice:stream",
@@ -5298,7 +5299,7 @@
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
+        "description": "A service-principal scope. OAuth-only orders:read and human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5336,7 +5337,6 @@
           "investigation:review",
           "pii:unmask",
           "payments:merchants:read",
-          "payments:merchants:write",
           "voice:read",
           "voice:write",
           "voice:stream",
@@ -5368,6 +5368,7 @@
           "tempera-risk",
           "tempera-investigations",
           "tempera-payments",
+          "tempera-dropshipping",
           "tempera-voice",
           "tempera-clearing"
         ]

@@ -108,9 +108,8 @@ let spec = client.build_request("tempera_dropshipping", "update_business_workspa
 Get Workspace.
 
 - **Producer operationId:** `getBusinessWorkspace`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getBusinessWorkspace()` · Python `client.tempera_dropshipping.get_business_workspace()` · Rust `build_request("tempera_dropshipping", "get_business_workspace", params)`
 
 **Path parameters**
@@ -462,9 +461,8 @@ let spec = client.build_request("tempera_dropshipping", "review_business_task", 
 List Catalog Offers.
 
 - **Producer operationId:** `listCatalogOffers`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listCatalogOffers()` · Python `client.tempera_dropshipping.list_catalog_offers()` · Rust `build_request("tempera_dropshipping", "list_catalog_offers", params)`
 
 **Path parameters**
@@ -614,9 +612,8 @@ let spec = client.build_request("tempera_dropshipping", "create_catalog_offer", 
 Get Catalog Offer.
 
 - **Producer operationId:** `getCatalogOffer`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getCatalogOffer()` · Python `client.tempera_dropshipping.get_catalog_offer()` · Rust `build_request("tempera_dropshipping", "get_catalog_offer", params)`
 
 **Path parameters**
@@ -672,9 +669,8 @@ let spec = client.build_request("tempera_dropshipping", "get_catalog_offer", &[
 List Events.
 
 - **Producer operationId:** `listEvents`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listEvents()` · Python `client.tempera_dropshipping.list_events()` · Rust `build_request("tempera_dropshipping", "list_events", params)`
 
 **Path parameters**
@@ -739,9 +735,8 @@ let spec = client.build_request("tempera_dropshipping", "list_events", &[
 Inbox.
 
 - **Producer operationId:** `listInbox`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listInbox()` · Python `client.tempera_dropshipping.list_inbox()` · Rust `build_request("tempera_dropshipping", "list_inbox", params)`
 
 **Path parameters**
@@ -806,9 +801,8 @@ let spec = client.build_request("tempera_dropshipping", "list_inbox", &[
 Operating Summary.
 
 - **Producer operationId:** `getBusinessSummary`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getBusinessSummary()` · Python `client.tempera_dropshipping.get_business_summary()` · Rust `build_request("tempera_dropshipping", "get_business_summary", params)`
 
 **Path parameters**
@@ -860,9 +854,8 @@ let spec = client.build_request("tempera_dropshipping", "get_business_summary", 
 List Orders.
 
 - **Producer operationId:** `listOrders`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listOrders()` · Python `client.tempera_dropshipping.list_orders()` · Rust `build_request("tempera_dropshipping", "list_orders", params)`
 
 **Path parameters**
@@ -994,9 +987,8 @@ let spec = client.build_request("tempera_dropshipping", "create_order", &[
 Get Order.
 
 - **Producer operationId:** `getOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getOrder()` · Python `client.tempera_dropshipping.get_order()` · Rust `build_request("tempera_dropshipping", "get_order", params)`
 
 **Path parameters**
@@ -1123,9 +1115,8 @@ let spec = client.build_request("tempera_dropshipping", "update_order", &[
 Audit.
 
 - **Producer operationId:** `listOrderAuditEvents`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listOrderAuditEvents()` · Python `client.tempera_dropshipping.list_order_audit_events()` · Rust `build_request("tempera_dropshipping", "list_order_audit_events", params)`
 
 **Path parameters**
@@ -1265,9 +1256,8 @@ let spec = client.build_request("tempera_dropshipping", "prepare_proposal", &[
 Evaluate Order.
 
 - **Producer operationId:** `evaluateOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.evaluateOrder()` · Python `client.tempera_dropshipping.evaluate_order()` · Rust `build_request("tempera_dropshipping", "evaluate_order", params)`
 
 **Path parameters**
@@ -1407,9 +1397,8 @@ let spec = client.build_request("tempera_dropshipping", "reconcile_order", &[
 Get Proposal.
 
 - **Producer operationId:** `getProposal`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getProposal()` · Python `client.tempera_dropshipping.get_proposal()` · Rust `build_request("tempera_dropshipping", "get_proposal", params)`
 
 **Path parameters**
@@ -1686,9 +1675,8 @@ let spec = client.build_request("tempera_dropshipping", "execute_proposal", &[
 List Sale Orders.
 
 - **Producer operationId:** `listSaleOrders`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listSaleOrders()` · Python `client.tempera_dropshipping.list_sale_orders()` · Rust `build_request("tempera_dropshipping", "list_sale_orders", params)`
 
 **Path parameters**
@@ -1824,9 +1812,8 @@ let spec = client.build_request("tempera_dropshipping", "create_sale_order", &[
 Get Sale Order.
 
 - **Producer operationId:** `getSaleOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getSaleOrder()` · Python `client.tempera_dropshipping.get_sale_order()` · Rust `build_request("tempera_dropshipping", "get_sale_order", params)`
 
 **Path parameters**
@@ -1882,9 +1869,8 @@ let spec = client.build_request("tempera_dropshipping", "get_sale_order", &[
 List Stores.
 
 - **Producer operationId:** `listStores`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.listStores()` · Python `client.tempera_dropshipping.list_stores()` · Rust `build_request("tempera_dropshipping", "list_stores", params)`
 
 **Path parameters**
@@ -2020,9 +2006,8 @@ let spec = client.build_request("tempera_dropshipping", "create_store", &[
 Get Store.
 
 - **Producer operationId:** `getStore`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.getStore()` · Python `client.tempera_dropshipping.get_store()` · Rust `build_request("tempera_dropshipping", "get_store", params)`
 
 **Path parameters**

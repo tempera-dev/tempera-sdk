@@ -523,7 +523,7 @@ let spec = client.build_request("data_engine", "transition_campaign", &[
 Fetch the authenticated reviewer's project-scoped qualification and campaign eligibility without blind-probe outcomes.
 
 - **Producer operationId:** `projects.reviewerQualifications.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.getReviewerQualification()` · Python `client.data_engine.get_reviewer_qualification()` · Rust `build_request("data_engine", "get_reviewer_qualification", params)`
@@ -692,7 +692,7 @@ let spec = client.build_request("data_engine", "list_expert_tasks", &[
 Clone a review task into an isolated, HMAC-scored qualification task without returning the expected label.
 
 - **Producer operationId:** `projects.reviewQualificationTasks.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:gold:manage` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:gold:manage`
 - **Call as:** TypeScript `client.dataEngine.createReviewQualificationTask()` · Python `client.data_engine.create_review_qualification_task()` · Rust `build_request("data_engine", "create_review_qualification_task", params)`
@@ -753,7 +753,7 @@ let spec = client.build_request("data_engine", "create_review_qualification_task
 Record an immutable project-scoped reviewer revocation and terminate active assignments.
 
 - **Producer operationId:** `projects.reviewerRevocations.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:gold:manage` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:gold:manage`
 - **Call as:** TypeScript `client.dataEngine.createReviewerRevocation()` · Python `client.data_engine.create_reviewer_revocation()` · Rust `build_request("data_engine", "create_reviewer_revocation", params)`
@@ -812,7 +812,7 @@ let spec = client.build_request("data_engine", "create_reviewer_revocation", &[
 Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.
 
 - **Producer operationId:** `projects.expertTasks.resolve`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.resolveExpertTask()` · Python `client.data_engine.resolve_expert_task()` · Rust `build_request("data_engine", "resolve_expert_task", params)`
@@ -882,7 +882,7 @@ let spec = client.build_request("data_engine", "resolve_expert_task", &[
 Record an immutable reviewer appeal and open independent adjudication without changing the appealed decision.
 
 - **Producer operationId:** `projects.expertTasks.appeal`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.createExpertTaskAppeal()` · Python `client.data_engine.create_expert_task_appeal()` · Rust `build_request("data_engine", "create_expert_task_appeal", params)`
@@ -945,7 +945,7 @@ let spec = client.build_request("data_engine", "create_expert_task_appeal", &[
 Atomically claim one open expert task with an exclusive renewable lease.
 
 - **Producer operationId:** `projects.expertTaskAssignments.claim`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.claimExpertTask()` · Python `client.data_engine.claim_expert_task()` · Rust `build_request("data_engine", "claim_expert_task", params)`
@@ -1008,7 +1008,7 @@ let spec = client.build_request("data_engine", "claim_expert_task", &[
 Renew the authenticated reviewer's active expert-task lease.
 
 - **Producer operationId:** `projects.expertTaskAssignments.renew`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.renewExpertTaskAssignment()` · Python `client.data_engine.renew_expert_task_assignment()` · Rust `build_request("data_engine", "renew_expert_task_assignment", params)`
@@ -1071,7 +1071,7 @@ let spec = client.build_request("data_engine", "renew_expert_task_assignment", &
 Release the authenticated reviewer's active expert-task lease for reassignment.
 
 - **Producer operationId:** `projects.expertTaskAssignments.release`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.releaseExpertTaskAssignment()` · Python `client.data_engine.release_expert_task_assignment()` · Rust `build_request("data_engine", "release_expert_task_assignment", params)`
@@ -1130,7 +1130,7 @@ let spec = client.build_request("data_engine", "release_expert_task_assignment",
 Autosave a version-checked draft under the active reviewer lease.
 
 - **Producer operationId:** `projects.expertTaskAssignments.saveDraft`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.saveExpertTaskDraft()` · Python `client.data_engine.save_expert_task_draft()` · Rust `build_request("data_engine", "save_expert_task_draft", params)`
@@ -1197,7 +1197,7 @@ let spec = client.build_request("data_engine", "save_expert_task_draft", &[
 Record one same-origin reviewer-session lifecycle event using only an opaque browser-generated session identifier.
 
 - **Producer operationId:** `projects.reviewerSessions.record`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.recordReviewerSessionEvent()` · Python `client.data_engine.record_reviewer_session_event()` · Rust `build_request("data_engine", "record_reviewer_session_event", params)`
@@ -1252,7 +1252,7 @@ let spec = client.build_request("data_engine", "record_reviewer_session_event", 
 Fetch bounded project review-operations, SLA, agreement, calibration, rubric-drift, and budget observations.
 
 - **Producer operationId:** `projects.reviewOperations.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `review:resolve` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `review:resolve`
 - **Call as:** TypeScript `client.dataEngine.getReviewOperations()` · Python `client.data_engine.get_review_operations()` · Rust `build_request("data_engine", "get_review_operations", params)`
@@ -2014,7 +2014,7 @@ let spec = client.build_request("data_engine", "get_product_manifest", &[
 Admit exact training and heldout product generations after revalidating integrity, review consent, and leakage constraints.
 
 - **Producer operationId:** `projects.trainingReleases.admit`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `training:publish` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `training:publish`
 - **Call as:** TypeScript `client.dataEngine.admitTrainingRelease()` · Python `client.data_engine.admit_training_release()` · Rust `build_request("data_engine", "admit_training_release", params)`
@@ -2073,7 +2073,7 @@ let spec = client.build_request("data_engine", "admit_training_release", &[
 Revalidate and fetch one training release, including any durable stale state.
 
 - **Producer operationId:** `projects.trainingReleases.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `training:publish` scope.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `training:publish`
 - **Call as:** TypeScript `client.dataEngine.getTrainingRelease()` · Python `client.data_engine.get_training_release()` · Rust `build_request("data_engine", "get_training_release", params)`
