@@ -5262,6 +5262,8 @@
           "payments:webhooks:write",
           "payments:refunds:write",
           "payments:admin",
+          "payments:merchants:read",
+          "payments:merchants:write",
           "voice:read",
           "voice:write",
           "voice:stream",
@@ -5276,7 +5278,7 @@
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, and clearing:actions:approve are intentionally excluded.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5313,6 +5315,8 @@
           "investigation:run",
           "investigation:review",
           "pii:unmask",
+          "payments:merchants:read",
+          "payments:merchants:write",
           "voice:read",
           "voice:write",
           "voice:stream",

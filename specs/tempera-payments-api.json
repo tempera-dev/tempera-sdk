@@ -131,6 +131,81 @@
         }
       }
     },
+    "/v1/merchants": {
+      "get": {
+        "operationId": "getWorkspaceMerchant",
+        "summary": "Read the merchant onboarding projection for one workspace",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "parameters": [{ "name": "tenant_id", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 128 } }],
+        "responses": {
+          "200": { "description": "Current merchant eligibility projection", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Merchant" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" }, "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "404": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      },
+      "post": {
+        "operationId": "createMerchant",
+        "summary": "Create the single US/USD merchant record for a workspace",
+        "description": "Creates merchant onboarding state only. It does not prove incorporation, payment acceptance, or payout eligibility.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:write",
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[!-~]+$" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateMerchant" } } } },
+        "responses": {
+          "201": { "description": "Merchant created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Merchant" } } } },
+          "200": { "description": "Equivalent idempotent replay", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Merchant" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" }, "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "409": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/v1/merchants/{merchant_id}": {
+      "get": {
+        "operationId": "getMerchant",
+        "summary": "Read a merchant onboarding projection",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "parameters": [{ "name": "merchant_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }, { "name": "tenant_id", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 128 } }],
+        "responses": {
+          "200": { "description": "Current merchant eligibility projection", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Merchant" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" }, "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "404": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/v1/merchants/{merchant_id}/refresh": {
+      "post": {
+        "operationId": "refreshMerchantEligibility",
+        "summary": "Retrieve and store a fresh merchant eligibility observation",
+        "description": "A provider observation is current only while its age is strictly less than 300 seconds. Refresh clears the prior eligibility projection before the provider call; a generation compare-and-set prevents a late response from an older refresh from overwriting a newer generation. An unavailable or malformed provider observation must not be treated as eligibility.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "parameters": [{ "name": "merchant_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MerchantTenant" } } } },
+        "responses": {
+          "200": { "description": "Fresh merchant eligibility projection", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Merchant" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" }, "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "404": { "$ref": "#/components/responses/ApiError" }, "409": { "$ref": "#/components/responses/ApiError" }, "429": { "$ref": "#/components/responses/MerchantProviderRateLimited" }, "502": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
+    "/v1/merchants/{merchant_id}/onboarding": {
+      "post": {
+        "operationId": "createMerchantOnboardingLink",
+        "summary": "Create a short-lived Stripe-hosted merchant onboarding link",
+        "description": "The URL is a bearer capability and must never be cached. If Stripe reports an expired link, request a new link with a new Idempotency-Key; do not replay an expired key.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:write",
+        "parameters": [{ "name": "merchant_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }, { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[!-~]+$" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MerchantTenant" } } } },
+        "responses": {
+          "200": { "description": "Short-lived private onboarding link", "headers": { "Cache-Control": { "schema": { "type": "string", "const": "no-store" } }, "Referrer-Policy": { "schema": { "type": "string", "const": "no-referrer" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MerchantOnboardingLink" } } } },
+          "400": { "$ref": "#/components/responses/ApiError" }, "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "404": { "$ref": "#/components/responses/ApiError" }, "409": { "$ref": "#/components/responses/ApiError" }, "429": { "$ref": "#/components/responses/MerchantProviderRateLimited" }, "502": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
     "/v1/webhooks/stripe": {
       "post": {
         "operationId": "receiveStripeWebhook",
@@ -146,7 +221,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "flows": { "authorizationCode": { "authorizationUrl": "https://api.tempera.dev/oauth/authorize", "tokenUrl": "https://api.tempera.dev/oauth/token", "scopes": { "payments:intents:write": "Create payment intents", "payments:intents:read": "Read payment intents", "payments:receipts:read": "Read verified payment settlement receipts" } } }
+        "flows": { "authorizationCode": { "authorizationUrl": "https://api.tempera.dev/oauth/authorize", "tokenUrl": "https://api.tempera.dev/oauth/token", "scopes": { "payments:intents:write": "Create payment intents", "payments:intents:read": "Read payment intents", "payments:receipts:read": "Read verified payment settlement receipts", "payments:merchants:read": "Read merchant onboarding eligibility", "payments:merchants:write": "Create merchant onboarding records and links" } } }
       }
     },
     "schemas": {
@@ -191,6 +266,12 @@
           "client_payload": { "type": "object", "description": "Provider-issued payload passed to the selected provider's hosted/tokenizing frontend component. It contains no caller-supplied PAN/CVV fields." }
         }
       },
+      "MerchantCategory": { "type": "string", "enum": ["physical_goods", "offline_services"], "description": "The limited initial merchant categories; this is not a general marketplace taxonomy." },
+      "CreateMerchant": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "country", "currency", "category"], "properties": { "tenant_id": { "type": "string", "minLength": 1, "maxLength": 128 }, "country": { "type": "string", "const": "US" }, "currency": { "type": "string", "const": "usd" }, "category": { "$ref": "#/components/schemas/MerchantCategory" } } },
+      "MerchantTenant": { "type": "object", "additionalProperties": false, "required": ["tenant_id"], "properties": { "tenant_id": { "type": "string", "minLength": 1, "maxLength": 128 } } },
+      "MerchantNextAction": { "type": "string", "enum": ["start_onboarding", "continue_onboarding", "refresh_requirements", "wait_for_provider", "contact_support", "ready"] },
+      "Merchant": { "type": "object", "additionalProperties": false, "required": ["id", "tenant_id", "country", "currency", "category", "workspace_ready", "payments_enabled", "payouts_enabled", "action_required", "requirements_current", "currently_due", "past_due", "pending_verification", "disabled_reason", "next_action", "provider_observed_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "tenant_id": { "type": "string" }, "country": { "type": "string", "const": "US" }, "currency": { "type": "string", "const": "usd" }, "category": { "$ref": "#/components/schemas/MerchantCategory" }, "workspace_ready": { "type": "boolean" }, "payments_enabled": { "type": "boolean", "description": "False unless a current provider observation demonstrates enabled card payments." }, "payouts_enabled": { "type": "boolean", "description": "False unless a current provider observation demonstrates enabled payouts." }, "action_required": { "type": "boolean" }, "requirements_current": { "type": "boolean", "description": "False when the provider observation is absent, stale, future-dated, or has age greater than or equal to 300 seconds." }, "currently_due": { "type": "array", "items": { "type": "string" } }, "past_due": { "type": "array", "items": { "type": "string" } }, "pending_verification": { "type": "array", "items": { "type": "string" } }, "disabled_reason": { "type": ["string", "null"] }, "next_action": { "$ref": "#/components/schemas/MerchantNextAction" }, "provider_observed_at": { "type": ["integer", "null"], "format": "int64", "description": "Provider observation Unix timestamp in seconds, or null when no provider observation exists." } } },
+      "MerchantOnboardingLink": { "type": "object", "additionalProperties": false, "required": ["merchant_id", "url", "expires_at"], "properties": { "merchant_id": { "type": "string", "format": "uuid" }, "url": { "type": "string", "format": "uri", "pattern": "^https://connect\\.stripe\\.com/", "description": "Short-lived bearer URL. Do not persist, cache, or log it." }, "expires_at": { "type": "integer", "format": "int64", "description": "Unix timestamp in seconds." } } },
       "SettlementEvidence": {
         "type": "object",
         "additionalProperties": false,
@@ -223,6 +304,6 @@
       },
       "Error": { "type": "object", "required": ["code", "message"], "properties": { "code": { "type": "string" }, "message": { "type": "string" } } }
     },
-    "responses": { "ApiError": { "description": "Normalized API error", "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "$ref": "#/components/schemas/Error" } } } } } } }
+    "responses": { "ApiError": { "description": "Normalized API error", "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "$ref": "#/components/schemas/Error" } } } } } }, "MerchantProviderRateLimited": { "description": "Hourly per-merchant provider budget exhausted; error.code is merchant_provider_rate_limited.", "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "$ref": "#/components/schemas/Error" } } } } } } }
   }
 }

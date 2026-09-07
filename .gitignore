@@ -3,4 +3,5 @@ target/
 __pycache__/
 *.py[cod]
 .DS_Store
-
+.build/
+.swiftpm/

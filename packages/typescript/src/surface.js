@@ -7,7 +7,7 @@ export const TEMPERA_SURFACE_VERSION = 6;
 
 export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-investigations", "tempera-payments", "tempera-voice", "tempera-clearing", "tempera-dropshipping", "tempera-business"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -9341,6 +9341,153 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
+    },
+    {
+      "id": "getWorkspaceMerchant",
+      "upstreamOperationId": "getWorkspaceMerchant",
+      "method": "GET",
+      "path": "/v1/merchants",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "tenant_id"
+      ],
+      "requiredQuery": [
+        "tenant_id"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:merchants:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read the merchant onboarding projection for one workspace."
+    },
+    {
+      "id": "createMerchant",
+      "upstreamOperationId": "createMerchant",
+      "method": "POST",
+      "path": "/v1/merchants",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "tenant_id",
+        "country",
+        "currency",
+        "category"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id",
+        "country",
+        "currency",
+        "category"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:merchants:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create the single US/USD merchant record for a workspace."
+    },
+    {
+      "id": "getMerchant",
+      "upstreamOperationId": "getMerchant",
+      "method": "GET",
+      "path": "/v1/merchants/{merchant_id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "merchant_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenant_id"
+      ],
+      "requiredQuery": [
+        "tenant_id"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:merchants:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read a merchant onboarding projection."
+    },
+    {
+      "id": "refreshMerchantEligibility",
+      "upstreamOperationId": "refreshMerchantEligibility",
+      "method": "POST",
+      "path": "/v1/merchants/{merchant_id}/refresh",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "merchant_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "tenant_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:merchants:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Retrieve and store a fresh merchant eligibility observation."
+    },
+    {
+      "id": "createMerchantOnboardingLink",
+      "upstreamOperationId": "createMerchantOnboardingLink",
+      "method": "POST",
+      "path": "/v1/merchants/{merchant_id}/onboarding",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "merchant_id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [
+        "tenant_id"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenant_id"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:merchants:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create a short-lived Stripe-hosted merchant onboarding link."
     },
     {
       "id": "receiveStripeWebhook",

@@ -23,6 +23,16 @@
       "sourceBranch": "feat/a2-business-profile",
       "sourceCommit": "0d635ac7f3ec4261fbc45c74efe510349b4d38d6",
       "sourceSha256": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe"
+    },
+    {
+      "product": "temperaPayments",
+      "audience": "tempera-payments",
+      "envVar": "TEMPERA_PAYMENTS_URL",
+      "spec": "specs/tempera-payments-api.json",
+      "sourceRepo": "tempera-dev/tempera-payments",
+      "sourceBranch": "main",
+      "sourceCommit": "29e98d547cb2961afd8d574fac6996869e383445",
+      "sourceSha256": "0709ddcc1a729352fdefa8f18feb84c40368acd49d07fb621c2e764af079faf4"
     }
   ],
   "operations": [
@@ -571,6 +581,76 @@
       "safeRetry": "none",
       "requestDigest": "4f850c8eddfbdd20d8db3db5ad9400fe5af5260ea15433e0d43f51e052e0f18b",
       "responseDigest": "f47ac9c4243af8a57cfd55d2633e738541ab9cfc8c3516a89312d6f7840866ca"
+    },
+    {
+      "operation": "temperaPayments.createMerchant",
+      "product": "temperaPayments",
+      "id": "createMerchant",
+      "upstreamOperationId": "createMerchant",
+      "method": "POST",
+      "pathTemplate": "/v1/merchants",
+      "pathShape": "/v1/merchants",
+      "authAudience": "tempera-payments",
+      "scope": "payments:merchants:write",
+      "safeRetry": "none",
+      "requestDigest": "5c83ed6ded8587d68f2c900a754cf33a2ea02cc12c59c5a2105874bba2e64d6d",
+      "responseDigest": "f3d7d399db0b81c2a90bfb4630bbb0475472ff53118f7c14e9bab6fb35bca4e1"
+    },
+    {
+      "operation": "temperaPayments.createMerchantOnboardingLink",
+      "product": "temperaPayments",
+      "id": "createMerchantOnboardingLink",
+      "upstreamOperationId": "createMerchantOnboardingLink",
+      "method": "POST",
+      "pathTemplate": "/v1/merchants/{merchant_id}/onboarding",
+      "pathShape": "/v1/merchants/{}/onboarding",
+      "authAudience": "tempera-payments",
+      "scope": "payments:merchants:write",
+      "safeRetry": "none",
+      "requestDigest": "0dad2a9918918279ea94db6e7fb3fcbc0b1750925a96c3e1414eb617938723fe",
+      "responseDigest": "27fb33e261ddb78514d5defdae876ad399e9faf304c8ab55866c0699c5b7acd6"
+    },
+    {
+      "operation": "temperaPayments.getMerchant",
+      "product": "temperaPayments",
+      "id": "getMerchant",
+      "upstreamOperationId": "getMerchant",
+      "method": "GET",
+      "pathTemplate": "/v1/merchants/{merchant_id}",
+      "pathShape": "/v1/merchants/{}",
+      "authAudience": "tempera-payments",
+      "scope": "payments:merchants:read",
+      "safeRetry": "read",
+      "requestDigest": "983b8adab3f6ba3b1d0c34a42e3aaa25ae45ba8f62d549df8d1dc01dd1454c5d",
+      "responseDigest": "f3d7d399db0b81c2a90bfb4630bbb0475472ff53118f7c14e9bab6fb35bca4e1"
+    },
+    {
+      "operation": "temperaPayments.getWorkspaceMerchant",
+      "product": "temperaPayments",
+      "id": "getWorkspaceMerchant",
+      "upstreamOperationId": "getWorkspaceMerchant",
+      "method": "GET",
+      "pathTemplate": "/v1/merchants",
+      "pathShape": "/v1/merchants",
+      "authAudience": "tempera-payments",
+      "scope": "payments:merchants:read",
+      "safeRetry": "read",
+      "requestDigest": "48f13ed86aae9959e8922ace500cbd1b78c43f615ad15c3880e86c71a543170d",
+      "responseDigest": "f3d7d399db0b81c2a90bfb4630bbb0475472ff53118f7c14e9bab6fb35bca4e1"
+    },
+    {
+      "operation": "temperaPayments.refreshMerchantEligibility",
+      "product": "temperaPayments",
+      "id": "refreshMerchantEligibility",
+      "upstreamOperationId": "refreshMerchantEligibility",
+      "method": "POST",
+      "pathTemplate": "/v1/merchants/{merchant_id}/refresh",
+      "pathShape": "/v1/merchants/{}/refresh",
+      "authAudience": "tempera-payments",
+      "scope": "payments:merchants:read",
+      "safeRetry": "none",
+      "requestDigest": "6a96e2b5f695cd6f0116f9e4f865581f9d9166864ea9b60e738b9416345bd0c7",
+      "responseDigest": "f3d7d399db0b81c2a90bfb4630bbb0475472ff53118f7c14e9bab6fb35bca4e1"
     }
   ]
 }
