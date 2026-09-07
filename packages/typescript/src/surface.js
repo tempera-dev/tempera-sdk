@@ -13036,6 +13036,29 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Upsert Agent."
     },
     {
+      "id": "getDefaultVoiceAgent",
+      "upstreamOperationId": "getDefaultVoiceAgent",
+      "method": "GET",
+      "path": "/v1/agents:default",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "voice:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Default Agent."
+    },
+    {
       "id": "downloadVoiceArtifact",
       "upstreamOperationId": "downloadVoiceArtifact",
       "method": "GET",
@@ -13324,6 +13347,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [
         "agent_id",
+        "profile_ref",
         "limit"
       ],
       "requiredQuery": [],
@@ -13354,8 +13378,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "agent_id",
         "channel",
         "external_id",
+        "goal_ref",
         "metadata",
-        "safety_identifier"
+        "profile_ref",
+        "safety_identifier",
+        "site_id"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -13406,7 +13433,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "session_id"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "status",
+        "limit",
+        "after"
+      ],
       "requiredQuery": [],
       "body": [],
       "forbiddenBody": [],

@@ -2038,6 +2038,45 @@ mod tests {
     }
 
     #[test]
+    fn voice_pending_queries_and_legacy_requests() {
+        let client = full_client();
+        let request = client
+            .build_request(
+                "tempera_voice",
+                "list_voice_session_actions",
+                &[
+                    ("session_id", "session-fixture".into()),
+                    ("status", "pending".into()),
+                    ("limit", ParamValue::Int(100)),
+                    ("after", "action-fixture".into()),
+                ],
+            )
+            .unwrap();
+        assert!(
+            request
+                .url
+                .ends_with("/v1/sessions/session-fixture/actions")
+        );
+        assert_eq!(
+            request.query,
+            vec![
+                ("status".to_string(), "pending".to_string()),
+                ("limit".to_string(), "100".to_string()),
+                ("after".to_string(), "action-fixture".to_string()),
+            ]
+        );
+        assert!(request.body_json.is_none());
+        let legacy = client
+            .build_request(
+                "tempera_voice",
+                "list_voice_session_actions",
+                &[("session_id", "session-fixture".into())],
+            )
+            .unwrap();
+        assert!(legacy.query.is_empty());
+    }
+
+    #[test]
     fn full_url_appends_the_urlencoded_query() {
         let client = full_client();
         let spec = client

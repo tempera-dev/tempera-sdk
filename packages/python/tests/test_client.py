@@ -407,6 +407,21 @@ class DispatchTest(unittest.TestCase):
             },
         )
 
+    def test_voice_pending_queries_and_legacy_requests(self):
+        client, transport = make_client()
+        client.tempera_voice.list_voice_session_actions(
+            session_id="session-fixture", status="pending", limit=100, after="action-fixture"
+        )
+        call = transport.calls[-1]
+        self.assertEqual(call["path"], "/v1/sessions/session-fixture/actions")
+        self.assertEqual(call["query"], {"status": "pending", "limit": "100", "after": "action-fixture"})
+        self.assertEqual(call["method"], "GET")
+        self.assertIsNone(call["data"])
+        client.tempera_voice.list_voice_session_actions(session_id="session-fixture")
+        self.assertEqual(transport.calls[-1]["query"], {})
+        client.tempera_voice.list_voice_sessions(profile_ref="profile-fixture", limit=20)
+        self.assertEqual(transport.calls[-1]["query"]["profile_ref"], "profile-fixture")
+
     def test_declared_query_and_body_parameters_route_to_the_right_place(self):
         client, transport = make_client()
         client.palette.list_traces({"tenant_id": "t1", "limit": 5, "cursor": "abc"})

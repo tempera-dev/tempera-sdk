@@ -102,6 +102,23 @@ test("every surface operation dispatches its method, path, and auth header", asy
   }
 });
 
+test("Voice pending filters and pagination reach the request without changing legacy calls", async () => {
+  const { client, calls } = testClient();
+  await client.temperaVoice.listVoiceSessionActions({
+    session_id: "session-fixture", status: "pending", limit: 100, after: "action-fixture",
+  });
+  assert.equal(calls[0].url.pathname, "/v1/sessions/session-fixture/actions");
+  assert.deepEqual(Object.fromEntries(calls[0].url.searchParams), {
+    status: "pending", limit: "100", after: "action-fixture",
+  });
+  assert.equal(calls[0].options.method, "GET");
+  assert.equal(calls[0].options.body, undefined);
+  await client.temperaVoice.listVoiceSessionActions({ session_id: "session-fixture" });
+  assert.equal(calls[1].url.search, "");
+  await client.temperaVoice.listVoiceSessions({ profile_ref: "profile-fixture", limit: 20 });
+  assert.equal(calls[2].url.searchParams.get("profile_ref"), "profile-fixture");
+});
+
 test("declared query and body parameters are routed to the right place", async () => {
   const { client, calls } = testClient();
   await client.palette.listTraces({ tenant_id: "t1", limit: 5, cursor: "abc" });
