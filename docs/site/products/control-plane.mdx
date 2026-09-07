@@ -2294,7 +2294,7 @@ let spec = client.build_request("control_plane", "resolve_experiment_provider_co
 List versioned public Ed25519 verifier keys for an authorized human administrator.
 
 - **Producer operationId:** `bioSignerKeys.list`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:signer:manage` scope.
 - **Scope:** `bio:signer:manage`
 - **Call as:** TypeScript `client.controlPlane.listBioSignerKeys()` · Python `client.control_plane.list_bio_signer_keys()` · Rust `build_request("control_plane", "list_bio_signer_keys", params)`
 
@@ -2339,7 +2339,7 @@ let spec = client.build_request("control_plane", "list_bio_signer_keys", &[
 Register or rotate a public Ed25519 verifier key. Private key material is rejected.
 
 - **Producer operationId:** `bioSignerKeys.create`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:signer:manage` scope.
 - **Scope:** `bio:signer:manage`
 - **Call as:** TypeScript `client.controlPlane.createBioSignerKey()` · Python `client.control_plane.create_bio_signer_key()` · Rust `build_request("control_plane", "create_bio_signer_key", params)`
 
@@ -2396,7 +2396,7 @@ let spec = client.build_request("control_plane", "create_bio_signer_key", &[
 Revoke a public verifier key while retaining its history.
 
 - **Producer operationId:** `bioSignerKeys.revoke`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:signer:manage` scope.
 - **Scope:** `bio:signer:manage`
 - **Call as:** TypeScript `client.controlPlane.revokeBioSignerKey()` · Python `client.control_plane.revoke_bio_signer_key()` · Rust `build_request("control_plane", "revoke_bio_signer_key", params)`
 
@@ -2437,7 +2437,7 @@ let spec = client.build_request("control_plane", "revoke_bio_signer_key", &[
 List exact, single-use experiment approvals for an authorized human approver.
 
 - **Producer operationId:** `experimentApprovals.list`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:experiment:approve` scope.
 - **Scope:** `bio:experiment:approve`
 - **Call as:** TypeScript `client.controlPlane.listExperimentApprovals()` · Python `client.control_plane.list_experiment_approvals()` · Rust `build_request("control_plane", "list_experiment_approvals", params)`
 
@@ -2482,7 +2482,7 @@ let spec = client.build_request("control_plane", "list_experiment_approvals", &[
 Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.
 
 - **Producer operationId:** `experimentApprovals.create`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:experiment:approve` scope.
 - **Scope:** `bio:experiment:approve`
 - **Call as:** TypeScript `client.controlPlane.createExperimentApproval()` · Python `client.control_plane.create_experiment_approval()` · Rust `build_request("control_plane", "create_experiment_approval", params)`
 
@@ -2551,7 +2551,7 @@ let spec = client.build_request("control_plane", "create_experiment_approval", &
 Revoke an unused experiment approval. Consumed approvals remain immutable.
 
 - **Producer operationId:** `experimentApprovals.revoke`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-bio`.
+- **Auth:** OAuth access token for audience `tempera-bio`. Central `tp_` API keys cannot carry the required `bio:experiment:approve` scope.
 - **Scope:** `bio:experiment:approve`
 - **Call as:** TypeScript `client.controlPlane.revokeExperimentApproval()` · Python `client.control_plane.revoke_experiment_approval()` · Rust `build_request("control_plane", "revoke_experiment_approval", params)`
 
@@ -4489,7 +4489,7 @@ let spec = client.build_request("control_plane", "passkeys_delete", &[
 Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.
 
 - **Producer operationId:** `clearingAdmissions.create`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-clearing`.
+- **Auth:** OAuth access token for audience `tempera-clearing`. Central `tp_` API keys cannot carry the required `clearing:actions:approve` scope.
 - **Scope:** `clearing:actions:approve`
 - **Call as:** TypeScript `client.controlPlane.clearingAdmissionsCreate()` · Python `client.control_plane.clearing_admissions_create()` · Rust `build_request("control_plane", "clearing_admissions_create", params)`
 

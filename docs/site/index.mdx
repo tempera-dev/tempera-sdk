@@ -53,7 +53,7 @@ if (!issuerUrl || !apiKey || !tenantId) throw new Error("Missing provisioned Tem
 
 const auth = new TemperaAuth({
   issuerUrl,
-  apiKey, // tp_... works at every product
+  apiKey, // tp_... for operations that allow API keys
 });
 const client = createTemperaClient({ auth, environment: "staging" });
 
@@ -75,7 +75,7 @@ from tempera_sdk import TemperaAuth, TemperaClient
 
 auth = TemperaAuth(
     issuer_url=os.environ["TEMPERA_ISSUER_URL"],
-    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... works at every product
+    api_key=os.environ["TEMPERA_API_KEY"],  # tp_... for operations that allow API keys
 )
 client = TemperaClient(auth=auth, environment="staging")
 

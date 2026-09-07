@@ -27,9 +27,9 @@
     "tempera-risk",
     "tempera-investigations",
     "tempera-payments",
+    "tempera-dropshipping",
     "tempera-voice",
     "tempera-clearing",
-    "tempera-dropshipping",
     "tempera-business"
   ],
   "defaultAudience": "palette",
@@ -82,6 +82,7 @@
     "payments:admin",
     "payments:merchants:read",
     "payments:merchants:write",
+    "orders:read",
     "voice:read",
     "voice:write",
     "voice:stream",
@@ -94,12 +95,6 @@
     "admin"
   ],
   "audienceGaps": {
-    "tempera-dropshipping": {
-      "owner": "tempera-dropshipping",
-      "reportedDate": "2026-09-07",
-      "status": "staged",
-      "migration": "Register the tempera-dropshipping resource audience in the Auth Hub control-plane contract, then drop this gap and re-vendor the enum."
-    },
     "tempera-business": {
       "owner": "tempera-business",
       "reportedDate": "2026-09-07",
@@ -108,12 +103,6 @@
     }
   },
   "scopeGaps": {
-    "orders:read": {
-      "owner": "tempera-dropshipping",
-      "reportedDate": "2026-09-07",
-      "status": "staged",
-      "migration": "Register orders:read in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum."
-    },
     "orders:write": {
       "owner": "tempera-dropshipping",
       "reportedDate": "2026-09-07",

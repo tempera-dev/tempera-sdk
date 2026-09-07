@@ -168,14 +168,14 @@ export function createTemperaClient({
     if (authKind === "oauthResource") {
       if (!auth) {
         throw new TemperaSdkError(
-          `${productKey}: pass a TemperaAuth (with an apiKey or ${authAudience} tokens) to call this resource endpoint`,
+          `${productKey}: pass a TemperaAuth with credentials permitted for audience ${authAudience} by this operation`,
         );
       }
       return auth.bearerFor(authAudience);
     }
     const audience = TEMPERA_PRODUCTS[productKey]?.audience ?? DEFAULT_AUDIENCE;
     if (!auth) {
-      throw new TemperaSdkError(`${productKey}: pass a TemperaAuth (with an apiKey or ${audience} tokens) to call product endpoints`);
+      throw new TemperaSdkError(`${productKey}: pass a TemperaAuth with credentials permitted for audience ${audience} by this operation`);
     }
     return auth.bearerFor(audience);
   }

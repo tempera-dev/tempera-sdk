@@ -229,14 +229,14 @@ class TemperaClient:
         if auth_kind == "oauthResource":
             if self.auth is None:
                 raise TemperaSdkError(
-                    f"{attr}: pass a TemperaAuth (with an api_key or "
-                    f"{auth_audience} tokens) to call this resource endpoint"
+                    f"{attr}: pass a TemperaAuth with credentials permitted for "
+                    f"audience {auth_audience} by this operation"
                 )
             return self.auth.bearer_for(str(auth_audience))
         audience = PRODUCTS[product_key]["audience"] or DEFAULT_AUDIENCE
         if self.auth is None:
             raise TemperaSdkError(
-                f"{attr}: pass a TemperaAuth (with an api_key or {audience} tokens) to call product endpoints"
+                f"{attr}: pass a TemperaAuth with credentials permitted for audience {audience} by this operation"
             )
         return self.auth.bearer_for(audience)
 

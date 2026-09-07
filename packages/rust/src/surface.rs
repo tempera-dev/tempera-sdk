@@ -22,9 +22,9 @@ pub const AUDIENCES: &[&str] = &[
     "tempera-risk",
     "tempera-investigations",
     "tempera-payments",
+    "tempera-dropshipping",
     "tempera-voice",
     "tempera-clearing",
-    "tempera-dropshipping",
     "tempera-business",
 ];
 pub const DEFAULT_AUDIENCE: &str = "palette";
@@ -77,6 +77,7 @@ pub const SCOPES: &[&str] = &[
     "payments:admin",
     "payments:merchants:read",
     "payments:merchants:write",
+    "orders:read",
     "voice:read",
     "voice:write",
     "voice:stream",
