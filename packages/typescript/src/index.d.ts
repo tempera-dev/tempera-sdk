@@ -8,6 +8,7 @@ import type {
   ControlPlaneClient,
   CradleClient,
   DataEngineClient,
+  HumanDataClient,
   PaletteClient,
   PassthroughClient,
   RemiClient,
@@ -16,6 +17,8 @@ import type {
   TemperaVoiceClient,
   TemperaWorkflowsClient,
   TemperaGymClient,
+  TemperaBioClient,
+  TemperaPaymentsClient,
   TemperaDocumentClient,
   TemperaDropshippingClient,
   TemperaBusinessClient,
@@ -171,7 +174,7 @@ export type TemperaClient = {
   temperaDocument: TemperaDocumentClient;
   temperaDropshipping: TemperaDropshippingClient;
   temperaBusiness: TemperaBusinessClient;
-  temperaPayments: PassthroughClient;
+  temperaPayments: TemperaPaymentsClient;
   cradle: CradleClient;
   remi: RemiClient;
   dataEngine: DataEngineClient;

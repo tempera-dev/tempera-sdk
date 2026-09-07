@@ -21,7 +21,7 @@ Provider-neutral fiat checkout and blockchain settlement platform with source-lo
 | Audience | `tempera-payments` |
 | Auth | bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaPayments` · Python `client.tempera_payments` · Rust `build_request("tempera_payments", ...)` |
-| Typed operations | 7 |
+| Typed operations | 12 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaPayments.request(path, options)` (TypeScript) /
@@ -347,6 +347,250 @@ let spec = client.build_request("tempera_payments", "create_card_session", &[
     ("success_url", "<success_url>".into()),
     ("failure_url", "<failure_url>".into()),
     ("billing", "<billing>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getWorkspaceMerchant
+
+`GET /v1/merchants`
+
+Read the merchant onboarding projection for one workspace.
+
+- **Producer operationId:** `getWorkspaceMerchant`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:read`
+- **Call as:** TypeScript `client.temperaPayments.getWorkspaceMerchant()` · Python `client.tempera_payments.get_workspace_merchant()` · Rust `build_request("tempera_payments", "get_workspace_merchant", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getWorkspaceMerchant({
+  tenant_id: "<tenant_id>",
+});
+```
+
+```python Python
+result = client.tempera_payments.get_workspace_merchant({
+    "tenant_id": "<tenant_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_workspace_merchant", &[
+    ("tenant_id", "<tenant_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createMerchant
+
+`POST /v1/merchants`
+
+Create the single US/USD merchant record for a workspace.
+
+- **Producer operationId:** `createMerchant`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:write`
+- **Call as:** TypeScript `client.temperaPayments.createMerchant()` · Python `client.tempera_payments.create_merchant()` · Rust `build_request("tempera_payments", "create_merchant", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | — |
+| `country` | yes | — |
+| `currency` | yes | — |
+| `category` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createMerchant({
+  tenant_id: "<tenant_id>",
+  country: "<country>",
+  currency: "<currency>",
+  category: "<category>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_merchant({
+    "tenant_id": "<tenant_id>",
+    "country": "<country>",
+    "currency": "<currency>",
+    "category": "<category>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_merchant", &[
+    ("tenant_id", "<tenant_id>".into()),
+    ("country", "<country>".into()),
+    ("currency", "<currency>".into()),
+    ("category", "<category>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getMerchant
+
+`GET /v1/merchants/{merchant_id}`
+
+Read a merchant onboarding projection.
+
+- **Producer operationId:** `getMerchant`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:read`
+- **Call as:** TypeScript `client.temperaPayments.getMerchant()` · Python `client.tempera_payments.get_merchant()` · Rust `build_request("tempera_payments", "get_merchant", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getMerchant({
+  merchant_id: "<merchant_id>",
+  tenant_id: "<tenant_id>",
+});
+```
+
+```python Python
+result = client.tempera_payments.get_merchant({
+    "merchant_id": "<merchant_id>",
+    "tenant_id": "<tenant_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_merchant", &[
+    ("merchant_id", "<merchant_id>".into()),
+    ("tenant_id", "<tenant_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### refreshMerchantEligibility
+
+`POST /v1/merchants/{merchant_id}/refresh`
+
+Retrieve and store a fresh merchant eligibility observation.
+
+- **Producer operationId:** `refreshMerchantEligibility`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:read`
+- **Call as:** TypeScript `client.temperaPayments.refreshMerchantEligibility()` · Python `client.tempera_payments.refresh_merchant_eligibility()` · Rust `build_request("tempera_payments", "refresh_merchant_eligibility", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.refreshMerchantEligibility({
+  merchant_id: "<merchant_id>",
+  tenant_id: "<tenant_id>",
+});
+```
+
+```python Python
+result = client.tempera_payments.refresh_merchant_eligibility({
+    "merchant_id": "<merchant_id>",
+    "tenant_id": "<tenant_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "refresh_merchant_eligibility", &[
+    ("merchant_id", "<merchant_id>".into()),
+    ("tenant_id", "<tenant_id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createMerchantOnboardingLink
+
+`POST /v1/merchants/{merchant_id}/onboarding`
+
+Create a short-lived Stripe-hosted merchant onboarding link.
+
+- **Producer operationId:** `createMerchantOnboardingLink`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:write`
+- **Call as:** TypeScript `client.temperaPayments.createMerchantOnboardingLink()` · Python `client.tempera_payments.create_merchant_onboarding_link()` · Rust `build_request("tempera_payments", "create_merchant_onboarding_link", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenant_id` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createMerchantOnboardingLink({
+  merchant_id: "<merchant_id>",
+  tenant_id: "<tenant_id>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_merchant_onboarding_link({
+    "merchant_id": "<merchant_id>",
+    "tenant_id": "<tenant_id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_merchant_onboarding_link", &[
+    ("merchant_id", "<merchant_id>".into()),
+    ("tenant_id", "<tenant_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

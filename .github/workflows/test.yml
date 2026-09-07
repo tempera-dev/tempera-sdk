@@ -375,8 +375,19 @@ jobs:
       - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py
       - run: python3 scripts/check-native-transport.py
+      - run: python3 scripts/test-native-transport.py
       - run: npm --prefix packages/typescript test
+      - name: Compile the public TypeScript merchant client
+        run: npx --yes --package typescript@5.9.3 tsc packages/typescript/test/merchant-types.ts --noEmit --strict --module NodeNext --target ES2022 --lib ES2022,DOM
       - run: python3 -m unittest discover -s packages/python/tests
         env:
           PYTHONPATH: packages/python/src
       - run: cargo test --manifest-path packages/rust/Cargo.toml
+  swift:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Check native operation bindings
+        run: python3 scripts/check-native-transport.py --client packages/swift/Sources/TemperaMerchantSDK/TemperaMerchantSDK.swift
+      - name: Test Swift package with strict concurrency
+        run: swift test -Xswiftc -strict-concurrency=complete

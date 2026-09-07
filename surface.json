@@ -80,6 +80,8 @@
     "payments:webhooks:write",
     "payments:refunds:write",
     "payments:admin",
+    "payments:merchants:read",
+    "payments:merchants:write",
     "voice:read",
     "voice:write",
     "voice:stream",
@@ -6494,6 +6496,114 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:intents:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "getWorkspaceMerchant",
+        "method": "GET",
+        "path": "/v1/merchants",
+        "auth": "oauthResource",
+        "description": "Read the merchant onboarding projection for one workspace.",
+        "upstreamOperationId": "getWorkspaceMerchant",
+        "query": [
+          "tenant_id"
+        ],
+        "requiredQuery": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "createMerchant",
+        "method": "POST",
+        "path": "/v1/merchants",
+        "auth": "oauthResource",
+        "description": "Create the single US/USD merchant record for a workspace.",
+        "upstreamOperationId": "createMerchant",
+        "body": [
+          "tenant_id",
+          "country",
+          "currency",
+          "category"
+        ],
+        "requiredBody": [
+          "tenant_id",
+          "country",
+          "currency",
+          "category"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "getMerchant",
+        "method": "GET",
+        "path": "/v1/merchants/{merchant_id}",
+        "auth": "oauthResource",
+        "description": "Read a merchant onboarding projection.",
+        "upstreamOperationId": "getMerchant",
+        "pathParams": [
+          "merchant_id"
+        ],
+        "query": [
+          "tenant_id"
+        ],
+        "requiredQuery": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "refreshMerchantEligibility",
+        "method": "POST",
+        "path": "/v1/merchants/{merchant_id}/refresh",
+        "auth": "oauthResource",
+        "description": "Retrieve and store a fresh merchant eligibility observation.",
+        "upstreamOperationId": "refreshMerchantEligibility",
+        "pathParams": [
+          "merchant_id"
+        ],
+        "body": [
+          "tenant_id"
+        ],
+        "requiredBody": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+        "safeRetry": "none"
+      },
+      {
+        "id": "createMerchantOnboardingLink",
+        "method": "POST",
+        "path": "/v1/merchants/{merchant_id}/onboarding",
+        "auth": "oauthResource",
+        "description": "Create a short-lived Stripe-hosted merchant onboarding link.",
+        "upstreamOperationId": "createMerchantOnboardingLink",
+        "pathParams": [
+          "merchant_id"
+        ],
+        "body": [
+          "tenant_id"
+        ],
+        "requiredBody": [
+          "tenant_id"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:write",
         "safeRetry": "none"
       },
       {

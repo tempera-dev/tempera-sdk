@@ -3,7 +3,7 @@
 // product-client interfaces used by createTemperaClient().
 
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-voice" | "tempera-clearing" | "tempera-dropshipping" | "tempera-business";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness";
 
@@ -723,6 +723,16 @@ export interface TemperaPaymentsClient extends TemperaProductClientBase {
   createStripeCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a hosted/tokenizing card session with the selected configured acquirer. */
   createCardSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read the merchant onboarding projection for one workspace. */
+  getWorkspaceMerchant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create the single US/USD merchant record for a workspace. */
+  createMerchant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read a merchant onboarding projection. */
+  getMerchant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Retrieve and store a fresh merchant eligibility observation. */
+  refreshMerchantEligibility(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a short-lived Stripe-hosted merchant onboarding link. */
+  createMerchantOnboardingLink(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Verify and durably deduplicate a Stripe webhook using its raw body. */
   receiveStripeWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

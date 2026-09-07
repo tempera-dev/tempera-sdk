@@ -45,11 +45,82 @@ SURFACE = ROOT / "surface.json"
 CONTRACT = ROOT / "contracts" / "native-transport-v1.json"
 
 # Products whose operations the native clients are allowed to call directly.
-NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness")
+NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness", "temperaPayments")
 PRODUCT_SPECS = {
     "temperaDropshipping": "tempera-dropshipping-api.json",
     "temperaBusiness": "tempera-business-api.json",
+    "temperaPayments": "tempera-payments-api.json",
 }
+
+# Payments remains a broad producer contract, but native phones receive only
+# the merchant onboarding seam. Keep this allowlist here rather than adding
+# the legacy payment-intent or raw money operations to surface.json.
+PAYMENTS_NATIVE_OPERATIONS = (
+    {
+        "id": "getWorkspaceMerchant",
+        "upstreamOperationId": "getWorkspaceMerchant",
+        "method": "GET",
+        "path": "/v1/merchants",
+        "query": ["tenant_id"],
+        "requiredQuery": ["tenant_id"],
+        "safeRetry": "read",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+    },
+    {
+        "id": "createMerchant",
+        "upstreamOperationId": "createMerchant",
+        "method": "POST",
+        "path": "/v1/merchants",
+        "body": ["tenant_id", "country", "currency", "category"],
+        "requiredBody": ["tenant_id", "country", "currency", "category"],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "safeRetry": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:write",
+    },
+    {
+        "id": "getMerchant",
+        "upstreamOperationId": "getMerchant",
+        "method": "GET",
+        "path": "/v1/merchants/{merchant_id}",
+        "pathParams": ["merchant_id"],
+        "query": ["tenant_id"],
+        "requiredQuery": ["tenant_id"],
+        "safeRetry": "read",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+    },
+    {
+        "id": "refreshMerchantEligibility",
+        "upstreamOperationId": "refreshMerchantEligibility",
+        "method": "POST",
+        "path": "/v1/merchants/{merchant_id}/refresh",
+        "pathParams": ["merchant_id"],
+        "body": ["tenant_id"],
+        "requiredBody": ["tenant_id"],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "safeRetry": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+    },
+    {
+        "id": "createMerchantOnboardingLink",
+        "upstreamOperationId": "createMerchantOnboardingLink",
+        "method": "POST",
+        "path": "/v1/merchants/{merchant_id}/onboarding",
+        "pathParams": ["merchant_id"],
+        "body": ["tenant_id"],
+        "requiredBody": ["tenant_id"],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "safeRetry": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:write",
+    },
+)
 
 PARAM_RE = re.compile(r"\{[^}]+\}")
 ANNOTATION_RE = re.compile(
@@ -59,7 +130,7 @@ ANNOTATION_RE = re.compile(
 STRING_LITERAL_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
 # Kotlin "$name" / "${expr}" and Swift "\(expr)" interpolations.
 INTERPOLATION_RE = re.compile(r"\\\([^)]*\)|\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_]*")
-CANONICAL_PREFIX = "/v1/organizations/"
+CANONICAL_PREFIXES = ("/v1/organizations/", "/v1/merchants")
 
 
 def digest(value: Any) -> str:
@@ -113,8 +184,22 @@ def upstream_operations(spec: dict[str, Any]) -> dict[str, dict[str, Any]]:
                 continue
             operation_id = operation.get("operationId")
             if isinstance(operation_id, str) and operation_id:
-                indexed[operation_id] = operation
+                indexed[operation_id] = {
+                    **operation,
+                    "_path": path,
+                    "_method": method.upper(),
+                }
     return indexed
+
+
+def validate_payment_mapping(op: dict[str, Any], upstream_operation: dict[str, Any]) -> None:
+    """Keep the bounded payment mapping tied to the producer's wire metadata."""
+    if upstream_operation["_method"] != op["method"] or upstream_operation["_path"] != op["path"]:
+        raise ValueError(f"Payments native mapping drifts from OpenAPI for {op['id']}")
+    if upstream_operation.get("x-tempera-auth-audience") != op["authAudience"]:
+        raise ValueError(f"Payments native audience drifts for {op['id']}")
+    if upstream_operation.get("x-tempera-required-scope") != op["scope"]:
+        raise ValueError(f"Payments native scope drifts for {op['id']}")
 
 
 def build_contract() -> dict[str, Any]:
@@ -140,8 +225,15 @@ def build_contract() -> dict[str, Any]:
             }
         )
         upstream = upstream_operations(spec)
-        for op in surface["operations"][product]:
+        native_surface = (
+            PAYMENTS_NATIVE_OPERATIONS
+            if product == "temperaPayments"
+            else surface["operations"][product]
+        )
+        for op in native_surface:
             upstream_operation = upstream[op["upstreamOperationId"]]
+            if product == "temperaPayments":
+                validate_payment_mapping(op, upstream_operation)
             request_descriptor = {
                 "method": op["method"],
                 "path": op["path"],
@@ -252,7 +344,7 @@ def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
         if number in annotated_lines or ANNOTATION_RE.search(line):
             continue
         for shape in literal_path_shapes(line):
-            if shape.startswith(CANONICAL_PREFIX):
+            if any(shape.startswith(prefix) for prefix in CANONICAL_PREFIXES):
                 failures.append(
                     f"{path.name}:{number}: undeclared canonical route {shape}; "
                     "add a tempera-transport annotation above the call site"

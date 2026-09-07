@@ -9,7 +9,7 @@ SURFACE_VERSION = 6
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-investigations', 'tempera-payments', 'tempera-voice', 'tempera-clearing', 'tempera-dropshipping', 'tempera-business')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'payments:merchants:read', 'payments:merchants:write', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -9332,6 +9332,153 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
+        },
+        {
+            "id": "get_workspace_merchant",
+            "upstream_operation_id": "getWorkspaceMerchant",
+            "method": "GET",
+            "path": "/v1/merchants",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "tenant_id"
+            ],
+            "required_query": [
+                "tenant_id"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "payments:merchants:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Read the merchant onboarding projection for one workspace."
+        },
+        {
+            "id": "create_merchant",
+            "upstream_operation_id": "createMerchant",
+            "method": "POST",
+            "path": "/v1/merchants",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "tenant_id",
+                "country",
+                "currency",
+                "category"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id",
+                "country",
+                "currency",
+                "category"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:merchants:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create the single US/USD merchant record for a workspace."
+        },
+        {
+            "id": "get_merchant",
+            "upstream_operation_id": "getMerchant",
+            "method": "GET",
+            "path": "/v1/merchants/{merchant_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "merchant_id"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "tenant_id"
+            ],
+            "required_query": [
+                "tenant_id"
+            ],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "payments:merchants:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Read a merchant onboarding projection."
+        },
+        {
+            "id": "refresh_merchant_eligibility",
+            "upstream_operation_id": "refreshMerchantEligibility",
+            "method": "POST",
+            "path": "/v1/merchants/{merchant_id}/refresh",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "merchant_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "tenant_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:merchants:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Retrieve and store a fresh merchant eligibility observation."
+        },
+        {
+            "id": "create_merchant_onboarding_link",
+            "upstream_operation_id": "createMerchantOnboardingLink",
+            "method": "POST",
+            "path": "/v1/merchants/{merchant_id}/onboarding",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [
+                "merchant_id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [
+                "tenant_id"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "tenant_id"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "payments:merchants:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create a short-lived Stripe-hosted merchant onboarding link."
         },
         {
             "id": "receive_stripe_webhook",
