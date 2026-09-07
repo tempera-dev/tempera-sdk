@@ -3679,6 +3679,26 @@
         }
       }
     },
+    "/.well-known/tempera-mobile-configuration": {
+      "get": {
+        "operationId": "getTemperaMobileConfiguration",
+        "summary": "Public mobile client configuration and resource discovery.",
+        "description": "Returns the public iOS and Android client registry entries. The response is tenant independent and does not require authentication. When TLS backed issuer and service configuration is unavailable, each platform entry is returned with available=false and reason=not_configured.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Mobile client configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperaMobileConfiguration"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/.well-known/oauth-protected-resource": {
       "get": {
         "operationId": "getOAuthProtectedResourceMetadata",
@@ -9628,6 +9648,149 @@
           "usage_delegation": {
             "type": "string",
             "description": "For complete model-gateway identities only: an Auth-signed, workspace-bound delegation valid for at most 60 seconds."
+          }
+        }
+      },
+      "TemperaMobileConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "config_id",
+          "issued_at",
+          "expires_at",
+          "ios",
+          "android"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "tempera.mobile.config/v1"
+          },
+          "config_id": {
+            "type": "string",
+            "pattern": "^mobilecfg_[0-9a-f]{24}$"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ios": {
+            "$ref": "#/components/schemas/TemperaMobileClientConfiguration"
+          },
+          "android": {
+            "$ref": "#/components/schemas/TemperaMobileClientConfiguration"
+          }
+        }
+      },
+      "TemperaMobileClientConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "available",
+          "issuer_url",
+          "service_endpoint_url",
+          "client_id",
+          "redirect_uri",
+          "oauth_resource_audience",
+          "scopes",
+          "pkce_required"
+        ],
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "not_configured"
+            ]
+          },
+          "issuer_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "service_endpoint_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "client_id": {
+            "type": "string",
+            "enum": [
+              "tempera-mobile-ios",
+              "tempera-mobile-android"
+            ]
+          },
+          "redirect_uri": {
+            "type": "string",
+            "enum": [
+              "dev.tempera.ios:/oauth/callback",
+              "dev.tempera.mobile://oauth/callback"
+            ]
+          },
+          "oauth_resource_audience": {
+            "type": "string",
+            "const": "tempera-mcp"
+          },
+          "scopes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "const": "mcp:invoke"
+            }
+          },
+          "pkce_required": {
+            "type": "string",
+            "const": "S256"
+          },
+          "audiences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemperaMobileAudience"
+            }
+          }
+        }
+      },
+      "TemperaMobileAudience": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "oauth_resource_audience",
+          "service_endpoint_url",
+          "scopes"
+        ],
+        "properties": {
+          "oauth_resource_audience": {
+            "type": "string",
+            "const": "tempera-payments"
+          },
+          "service_endpoint_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "scopes": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "enum": [
+                "payments:merchants:read",
+                "payments:merchants:write"
+              ]
+            }
           }
         }
       },

@@ -149,11 +149,13 @@ def schema_fields(
 
 def parameters(
     document: dict[str, Any], path_item: dict[str, Any], operation: dict[str, Any]
-) -> tuple[list[str], dict[str, str], list[str], list[str]]:
+) -> tuple[list[str], dict[str, str], list[str], list[str], list[str], list[str]]:
     path_params: list[str] = []
     path_param_templates: dict[str, str] = {}
     query: list[str] = []
     required_query: list[str] = []
+    headers: list[str] = []
+    required_headers: list[str] = []
     for candidate in [*(path_item.get("parameters") or []), *(operation.get("parameters") or [])]:
         parameter = dereference(document, candidate)
         if not isinstance(parameter, dict):
@@ -167,6 +169,11 @@ def parameters(
             destination.append(name)
         if location == "query" and parameter.get("required") is True and name not in required_query:
             required_query.append(name)
+        if location == "header":
+            if name not in headers:
+                headers.append(name)
+            if parameter.get("required") is True and name not in required_headers:
+                required_headers.append(name)
         resource_pattern = parameter.get("x-tempera-resource-pattern")
         if location == "path" and resource_pattern is not None:
             if not isinstance(resource_pattern, str) or not resource_pattern:
@@ -174,7 +181,7 @@ def parameters(
                     f"path parameter {name!r} has an invalid x-tempera-resource-pattern"
                 )
             path_param_templates[name] = resource_pattern
-    return path_params, path_param_templates, query, required_query
+    return path_params, path_param_templates, query, required_query, headers, required_headers
 
 
 def request_fields(
@@ -466,6 +473,8 @@ def synchronize_product(
                     endpoint.get("required_request_fields") or [],
                 ),
                 ("forbiddenBody", endpoint.get("forbidden_body") or []),
+                ("headers", endpoint.get("header_fields") or []),
+                ("requiredHeaders", endpoint.get("required_header_fields") or []),
             ):
                 if not isinstance(values, list) or not all(
                     isinstance(value, str) and value for value in values
@@ -552,7 +561,7 @@ def synchronize_product(
                     )
                 item["id"] = override["id"]
                 matched_overrides.add(identity)
-            path_params, path_param_templates, query, required_query = parameters(
+            path_params, path_param_templates, query, required_query, headers, required_headers = parameters(
                 spec, path_item, operation
             )
             body, required_body, request_body_kind, request_content_type = request_fields(
@@ -563,6 +572,8 @@ def synchronize_product(
                 ("pathParamTemplates", path_param_templates),
                 ("query", query),
                 ("requiredQuery", required_query),
+                ("headers", headers),
+                ("requiredHeaders", required_headers),
                 ("body", body),
                 ("requiredBody", required_body),
             ):

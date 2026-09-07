@@ -138,6 +138,8 @@ def product_page_slug(product_key: str) -> str:
 
 
 def auth_label(surface: dict, product_key: str, op: dict) -> str:
+    if product_key == "temperaPayments" and op["id"] in {"createMerchant", "createMerchantOnboardingLink"}:
+        return "Human OAuth bearer for audience `tempera-payments`; `payments:merchants:write` requires an owner or admin. Central `tp_` API keys cannot use this operation."
     kind = op["auth"]
     if kind == "none":
         return "None (public endpoint)."
@@ -180,18 +182,19 @@ def operation_example(surface: dict, product_key: str, op: dict) -> list[str]:
     rust_product = snake(product_key)
     op_snake = snake(op["id"])
 
+    merchant_write = product_key == "temperaPayments" and op["id"] in {"createMerchant", "createMerchantOnboardingLink"}
     if names:
         ts_args = "{\n" + "".join(f'  {name}: "<{name}>",\n' for name in names) + "}"
-        ts_code = f"const result = await client.{ts_attr}.{op['id']}({ts_args});"
+        ts_code = f"const result = await client.{ts_attr}.{op['id']}({ts_args}" + (', { headers: { "Idempotency-Key": persistedKey } }' if merchant_write else "") + ");"
         py_args = "{\n" + "".join(f'    "{name}": "<{name}>",\n' for name in names) + "}"
-        py_code = f"result = client.{py_attr}.{op_snake}({py_args})"
+        py_code = f"result = client.{py_attr}.{op_snake}({py_args}" + (', headers={"Idempotency-Key": persisted_key}' if merchant_write else "") + ")"
         rust_args = "&[\n" + "".join(f'    ("{name}", "<{name}>".into()),\n' for name in names) + "]"
     else:
         ts_code = f"const result = await client.{ts_attr}.{op['id']}();"
         py_code = f"result = client.{py_attr}.{op_snake}()"
         rust_args = "&[]"
-    rust_code = (
-        f'let spec = client.build_request("{rust_product}", "{op_snake}", {rust_args})?;\n'
+    rust_code = (f'{"let mut spec" if merchant_write else "let spec"} = client.build_request("{rust_product}", "{op_snake}", {rust_args})?;\n'
+        + ('spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));\n' if merchant_write else "") +
         "// Send spec.method / spec.full_url() / spec.headers / spec.body_json\n"
         "// with your own HTTP client."
     )
@@ -236,6 +239,8 @@ def operation_section(surface: dict, product_key: str, op: dict) -> list[str]:
         lines.append(f"- **Scope:** `{op['scope']}`")
         if op["scope"] in surface.get("scopeGaps", {}):
             lines.append("- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).")
+    if product_key == "temperaPayments" and op["id"] in {"createMerchant", "createMerchantOnboardingLink"}:
+        lines.append("- **Idempotency:** Required. Persist and send an `Idempotency-Key` for the same request on recovery; do not generate a replacement while the outcome is unknown.")
     lines.append(
         f"- **Call as:** TypeScript `client.{product_key}.{op['id']}()` · "
         f"Python `client.{snake_attr(product_key)}.{op_snake}()` · "
@@ -620,11 +625,12 @@ def render_authentication(surface: dict) -> str:
         ]
     )
     lines += [
-        "## tp_ API keys: universal bearers",
+        "## tp_ API keys: service access",
         "",
         "Workspace API keys minted by the control plane (`createApiKey`, secrets",
-        "prefixed `tp_`) are **universal bearers**: every product accepts them via",
-        "central introspection, so one key covers every audience. Give `TemperaAuth`",
+        "prefixed `tp_`) use central introspection across supported product audiences.",
+        "Each operation still enforces its own credential policy. Merchant creation and",
+        "onboarding require owner/admin human OAuth and reject API keys. Give `TemperaAuth`",
         "an `apiKey` / `api_key` / `with_api_key(...)` and skip the OAuth flow",
         "entirely for headless use.",
         "",

@@ -131,6 +131,20 @@
         }
       }
     },
+    "/v1/merchants/workspace": {
+      "get": {
+        "operationId": "getMerchantWorkspace",
+        "summary": "Recover the centrally authenticated workspace and optional merchant",
+        "description": "Uses the current Auth Hub organization claim. No caller-supplied tenant identifier or public mobile configuration chooses the returned workspace.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "responses": {
+          "200": { "description": "Authenticated workspace and current merchant, if created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MerchantWorkspace" } } } },
+          "401": { "$ref": "#/components/responses/ApiError" }, "403": { "$ref": "#/components/responses/ApiError" }, "503": { "$ref": "#/components/responses/ApiError" }
+        }
+      }
+    },
     "/v1/merchants": {
       "get": {
         "operationId": "getWorkspaceMerchant",
@@ -269,6 +283,7 @@
       "MerchantCategory": { "type": "string", "enum": ["physical_goods", "offline_services"], "description": "The limited initial merchant categories; this is not a general marketplace taxonomy." },
       "CreateMerchant": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "country", "currency", "category"], "properties": { "tenant_id": { "type": "string", "minLength": 1, "maxLength": 128 }, "country": { "type": "string", "const": "US" }, "currency": { "type": "string", "const": "usd" }, "category": { "$ref": "#/components/schemas/MerchantCategory" } } },
       "MerchantTenant": { "type": "object", "additionalProperties": false, "required": ["tenant_id"], "properties": { "tenant_id": { "type": "string", "minLength": 1, "maxLength": 128 } } },
+      "MerchantWorkspace": { "type": "object", "additionalProperties": false, "required": ["tenant_id", "merchant"], "properties": { "tenant_id": { "type": "string", "minLength": 1, "maxLength": 128 }, "merchant": { "anyOf": [{ "$ref": "#/components/schemas/Merchant" }, { "type": "null" }] } } },
       "MerchantNextAction": { "type": "string", "enum": ["start_onboarding", "continue_onboarding", "refresh_requirements", "wait_for_provider", "contact_support", "ready"] },
       "Merchant": { "type": "object", "additionalProperties": false, "required": ["id", "tenant_id", "country", "currency", "category", "workspace_ready", "payments_enabled", "payouts_enabled", "action_required", "requirements_current", "currently_due", "past_due", "pending_verification", "disabled_reason", "next_action", "provider_observed_at"], "properties": { "id": { "type": "string", "format": "uuid" }, "tenant_id": { "type": "string" }, "country": { "type": "string", "const": "US" }, "currency": { "type": "string", "const": "usd" }, "category": { "$ref": "#/components/schemas/MerchantCategory" }, "workspace_ready": { "type": "boolean" }, "payments_enabled": { "type": "boolean", "description": "False unless a current provider observation demonstrates enabled card payments." }, "payouts_enabled": { "type": "boolean", "description": "False unless a current provider observation demonstrates enabled payouts." }, "action_required": { "type": "boolean" }, "requirements_current": { "type": "boolean", "description": "False when the provider observation is absent, stale, future-dated, or has age greater than or equal to 300 seconds." }, "currently_due": { "type": "array", "items": { "type": "string" } }, "past_due": { "type": "array", "items": { "type": "string" } }, "pending_verification": { "type": "array", "items": { "type": "string" } }, "disabled_reason": { "type": ["string", "null"] }, "next_action": { "$ref": "#/components/schemas/MerchantNextAction" }, "provider_observed_at": { "type": ["integer", "null"], "format": "int64", "description": "Provider observation Unix timestamp in seconds, or null when no provider observation exists." } } },
       "MerchantOnboardingLink": { "type": "object", "additionalProperties": false, "required": ["merchant_id", "url", "expires_at"], "properties": { "merchant_id": { "type": "string", "format": "uuid" }, "url": { "type": "string", "format": "uri", "pattern": "^https://connect\\.stripe\\.com/", "description": "Short-lived bearer URL. Do not persist, cache, or log it." }, "expires_at": { "type": "integer", "format": "int64", "description": "Unix timestamp in seconds." } } },

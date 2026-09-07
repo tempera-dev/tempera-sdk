@@ -145,11 +145,12 @@ let revoke_form = auth.revoke_body("tempo");
 
 </CodeGroup>
 
-## tp_ API keys: universal bearers
+## tp_ API keys: service access
 
 Workspace API keys minted by the control plane (`createApiKey`, secrets
-prefixed `tp_`) are **universal bearers**: every product accepts them via
-central introspection, so one key covers every audience. Give `TemperaAuth`
+prefixed `tp_`) use central introspection across supported product audiences.
+Each operation still enforces its own credential policy. Merchant creation and
+onboarding require owner/admin human OAuth and reject API keys. Give `TemperaAuth`
 an `apiKey` / `api_key` / `with_api_key(...)` and skip the OAuth flow
 entirely for headless use.
 
@@ -247,7 +248,7 @@ is the default when none is specified.
 | `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
-| `payments:merchants:read` | tempera-payments: `getMerchant`, `getWorkspaceMerchant`, `refreshMerchantEligibility` |
+| `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `refreshMerchantEligibility` |
 | `payments:merchants:write` | tempera-payments: `createMerchant`, `createMerchantOnboardingLink` |
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getDefaultVoiceAgent`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |

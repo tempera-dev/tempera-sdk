@@ -446,7 +446,10 @@
         "description": "Fetch the authenticated user's identity, active workspace, and roles.",
         "upstreamOperationId": "getMe",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "X-Tempera-Reference-Request-Id"
+        ]
       },
       {
         "id": "listOrgs",
@@ -1770,6 +1773,16 @@
         "safeRetry": "read"
       },
       {
+        "id": "getTemperaMobileConfiguration",
+        "method": "GET",
+        "path": "/.well-known/tempera-mobile-configuration",
+        "auth": "none",
+        "description": "Public mobile client configuration and resource discovery.",
+        "upstreamOperationId": "getTemperaMobileConfiguration",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
         "id": "getOAuthProtectedResourceMetadata",
         "method": "GET",
         "path": "/.well-known/oauth-protected-resource",
@@ -2281,7 +2294,13 @@
         "upstreamOperationId": "alerts.evaluate",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "createApiKey",
@@ -2304,7 +2323,13 @@
         "upstreamOperationId": "apiKeys.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "revokeApiKey",
@@ -2321,7 +2346,13 @@
         "description": "Revoke a palette API key.",
         "upstreamOperationId": "apiKeys.revoke",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "archiveQuerySpans",
@@ -2344,7 +2375,13 @@
         ],
         "upstreamOperationId": "archive.querySpans",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "archiveTrace",
@@ -2360,7 +2397,13 @@
         "description": "Archive a trace to Parquet and return the archive manifest.",
         "upstreamOperationId": "archive.archiveTrace",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "auditList",
@@ -2378,7 +2421,13 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "calibrationsRun",
@@ -2400,7 +2449,13 @@
         "upstreamOperationId": "calibrations.run",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectGetStatus",
@@ -2414,7 +2469,13 @@
         ],
         "upstreamOperationId": "connect.getStatus",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsList",
@@ -2432,7 +2493,13 @@
         ],
         "upstreamOperationId": "connectors.list",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsConnect",
@@ -2453,7 +2520,13 @@
         "upstreamOperationId": "connectors.connect",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsInvokeTool",
@@ -2475,7 +2548,13 @@
         "upstreamOperationId": "connectors.invokeTool",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsGetSkills",
@@ -2495,7 +2574,13 @@
         "requiredQuery": [
           "toolkit"
         ],
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsStatus",
@@ -2515,7 +2600,13 @@
         "requiredQuery": [
           "toolkit"
         ],
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "connectorsListTools",
@@ -2537,7 +2628,13 @@
         "requiredQuery": [
           "toolkit"
         ],
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "createDataset",
@@ -2559,7 +2656,13 @@
         "upstreamOperationId": "datasets.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promoteTraceToCase",
@@ -2584,7 +2687,13 @@
         "upstreamOperationId": "datasets.promoteCaseFromTrace",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "createDatasetVersion",
@@ -2604,7 +2713,13 @@
         "upstreamOperationId": "datasets.createVersion",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "evalsRunDeterministic",
@@ -2636,7 +2751,13 @@
         "upstreamOperationId": "evals.runDeterministic",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "evalsRunJudge",
@@ -2669,7 +2790,13 @@
         "upstreamOperationId": "evals.runJudge",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "importTemperaBundle",
@@ -2695,7 +2822,13 @@
         "upstreamOperationId": "evalResults.importTemperaBundle",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "recordTemperaDecision",
@@ -2721,7 +2854,13 @@
         "upstreamOperationId": "evalResults.recordTemperaDecision",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "getTemperaEvidence",
@@ -2738,7 +2877,13 @@
         "description": "Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.",
         "upstreamOperationId": "evalResults.getTemperaEvidence",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "experimentsRunDeterministic",
@@ -2774,7 +2919,13 @@
         "upstreamOperationId": "experiments.runDeterministic",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "experimentsRunJudge",
@@ -2812,7 +2963,13 @@
         "upstreamOperationId": "experiments.runJudge",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "gatesCreate",
@@ -2838,7 +2995,13 @@
         "upstreamOperationId": "gates.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "gatesRun",
@@ -2857,7 +3020,13 @@
         "upstreamOperationId": "gates.run",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "importSource",
@@ -2884,7 +3053,11 @@
         "upstreamOperationId": "ingest.importSource",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key"
+        ]
       },
       {
         "id": "ingestReplayDeadLetter",
@@ -2902,7 +3075,13 @@
         ],
         "upstreamOperationId": "ingest.replayDeadLetter",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "ingestGetQueueStatus",
@@ -2916,7 +3095,13 @@
         ],
         "upstreamOperationId": "ingest.getQueueStatus",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "ingestDrainTraceIngested",
@@ -2933,7 +3118,13 @@
         ],
         "upstreamOperationId": "ingest.drainTraceIngested",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "ingestDrainTraceWrites",
@@ -2950,7 +3141,13 @@
         ],
         "upstreamOperationId": "ingest.drainTraceWrites",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "ingestReconcileTrace",
@@ -2965,7 +3162,13 @@
         ],
         "upstreamOperationId": "ingest.reconcileTrace",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "judgeEvaluate",
@@ -2991,7 +3194,13 @@
         "upstreamOperationId": "judge.evaluate",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "judgeListLedger",
@@ -3009,7 +3218,13 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "onlineDecideSampling",
@@ -3035,7 +3250,13 @@
         "upstreamOperationId": "online.decideSampling",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsList",
@@ -3053,7 +3274,13 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsCreate",
@@ -3079,7 +3306,13 @@
         "upstreamOperationId": "prompts.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsGet",
@@ -3094,7 +3327,13 @@
         ],
         "upstreamOperationId": "prompts.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsDiffVersions",
@@ -3117,7 +3356,13 @@
           "from",
           "to"
         ],
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsListVersions",
@@ -3136,7 +3381,13 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "promptsAddVersion",
@@ -3160,7 +3411,13 @@
         "upstreamOperationId": "prompts.addVersion",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "providerSecretsList",
@@ -3178,7 +3435,13 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "providerSecretsCreate",
@@ -3203,7 +3466,13 @@
         "upstreamOperationId": "providerSecrets.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "providerSecretsRevoke",
@@ -3218,7 +3487,13 @@
         ],
         "upstreamOperationId": "providerSecrets.revoke",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "reviewsCreateQueue",
@@ -3242,7 +3517,13 @@
         "upstreamOperationId": "reviews.createQueue",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "reviewsListTasks",
@@ -3262,7 +3543,13 @@
         ],
         "upstreamOperationId": "reviews.listTasks",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "reviewsEnqueueTaskFromTrace",
@@ -3289,7 +3576,13 @@
         "upstreamOperationId": "reviews.enqueueTaskFromTrace",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "reviewsSubmitAnnotation",
@@ -3317,7 +3610,13 @@
         "upstreamOperationId": "reviews.submitAnnotation",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "reviewsPromoteAnnotation",
@@ -3342,7 +3641,13 @@
         "upstreamOperationId": "reviews.promoteAnnotation",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "scenariosList",
@@ -3360,7 +3665,13 @@
         ],
         "upstreamOperationId": "scenarios.list",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "scenariosCreate",
@@ -3386,7 +3697,13 @@
         "upstreamOperationId": "scenarios.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "scenariosMine",
@@ -3408,7 +3725,13 @@
         "upstreamOperationId": "scenarios.mine",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "scenariosGet",
@@ -3423,7 +3746,13 @@
         ],
         "upstreamOperationId": "scenarios.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "searchSpans",
@@ -3450,7 +3779,13 @@
         "description": "Search spans by text query and facet filters.",
         "upstreamOperationId": "search.spans",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "getSpan",
@@ -3470,7 +3805,13 @@
         "description": "Fetch one canonical span by trace and span id.",
         "upstreamOperationId": "spans.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "getSpanIo",
@@ -3490,7 +3831,13 @@
         "description": "Fetch a span's recorded input and output values.",
         "upstreamOperationId": "spans.getIo",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "ingestSpan",
@@ -3537,7 +3884,13 @@
         "upstreamOperationId": "ingest.native",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "listTraces",
@@ -3568,7 +3921,13 @@
         "description": "List trace summaries for a tenant with filters and cursor pagination.",
         "upstreamOperationId": "traces.list",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "getTrace",
@@ -3587,7 +3946,13 @@
         "description": "Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.",
         "upstreamOperationId": "traces.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       },
       {
         "id": "getUsageSummary",
@@ -3602,7 +3967,13 @@
         "description": "Fetch usage totals for a tenant project.",
         "upstreamOperationId": "usage.getSummary",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "headers": [
+          "authorization",
+          "x-palette-api-key",
+          "x-palette-project-id",
+          "x-palette-environment-id"
+        ]
       }
     ],
     "tempo": [
@@ -3913,7 +4284,11 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-payment",
+          "x-aether-payment-hash"
+        ]
       },
       {
         "id": "adoptSession",
@@ -4053,7 +4428,12 @@
         "upstreamOperationId": "chatCompletions.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-provider-key",
+          "x-tempera-connection-id",
+          "x-tempera-route-policy"
+        ]
       },
       {
         "id": "listModels",
@@ -4092,7 +4472,12 @@
         "upstreamOperationId": "responses.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-provider-key",
+          "x-tempera-connection-id",
+          "x-tempera-route-policy"
+        ]
       }
     ],
     "temperaRisk": [
@@ -4135,7 +4520,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "createSubject",
@@ -4162,7 +4553,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "listSubjects",
@@ -4269,7 +4666,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "registerModel",
@@ -4315,7 +4718,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "ingestModelScore",
@@ -4343,7 +4752,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "createApproval",
@@ -4460,7 +4875,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "createScreening",
@@ -4539,7 +4960,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "getCase",
@@ -4613,7 +5040,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "revokeAccessGrant",
@@ -4677,7 +5110,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "searchPeople",
@@ -4806,7 +5245,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "getResearchJob",
@@ -4957,7 +5402,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "markRiskClearingOutcomeUnknown",
@@ -4980,7 +5431,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "openRiskClearingExposure",
@@ -5003,7 +5460,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "recordRiskClearingProvisionalOutcome",
@@ -5026,7 +5489,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "recordRiskClearingCompensation",
@@ -5049,7 +5518,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "disputeRiskClearingExposure",
@@ -5072,7 +5547,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "settleRiskClearingExposure",
@@ -5097,7 +5578,13 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "exportAudit",
@@ -6394,7 +6881,13 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:intents:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "getPaymentIntent",
@@ -6466,7 +6959,13 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:intents:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "createCardSession",
@@ -6496,7 +6995,25 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:intents:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
+      },
+      {
+        "id": "getMerchantWorkspace",
+        "method": "GET",
+        "path": "/v1/merchants/workspace",
+        "auth": "oauthResource",
+        "description": "Recover the centrally authenticated workspace and optional merchant.",
+        "upstreamOperationId": "getMerchantWorkspace",
+        "requestBodyKind": "none",
+        "authAudience": "tempera-payments",
+        "scope": "payments:merchants:read",
+        "safeRetry": "read"
       },
       {
         "id": "getWorkspaceMerchant",
@@ -6539,7 +7056,13 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:merchants:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "getMerchant",
@@ -6604,7 +7127,13 @@
         "requestContentType": "application/json",
         "authAudience": "tempera-payments",
         "scope": "payments:merchants:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "receiveStripeWebhook",
@@ -6615,7 +7144,13 @@
         "upstreamOperationId": "receiveStripeWebhook",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "Stripe-Signature"
+        ],
+        "requiredHeaders": [
+          "Stripe-Signature"
+        ]
       }
     ],
     "temperaDocument": [
@@ -7167,7 +7702,10 @@
         "upstreamOperationId": "projects.jobs.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "cancelJob",
@@ -7446,7 +7984,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "projectsConnectorEvidenceIngest",
@@ -7472,7 +8013,10 @@
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "scope": "dataset:write",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "ingestWeb",
@@ -7501,7 +8045,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "createCampaign",
@@ -7531,7 +8078,11 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id",
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "listCampaigns",
@@ -7579,7 +8130,11 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id",
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "getReviewerQualification",
@@ -7629,7 +8184,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "listExpertTasks",
@@ -7747,7 +8305,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "createExpertTaskAppeal",
@@ -7775,7 +8336,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "claimExpertTask",
@@ -8074,7 +8638,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "createJob",
@@ -8104,7 +8671,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "getJob",
@@ -8180,7 +8750,10 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "checkProductLeakage",
@@ -8204,7 +8777,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "getProductManifest",
@@ -8250,7 +8826,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "getTrainingRelease",
@@ -8298,7 +8877,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "emitEval",
@@ -8470,7 +9052,10 @@
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "scope": "connector:run",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "headers": [
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "projectsConnectorRunsList",
@@ -8546,7 +9131,11 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id",
+          "Idempotency-Key"
+        ]
       },
       {
         "id": "listConnectors",
@@ -8599,7 +9188,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "listTools",
@@ -8678,7 +9270,10 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "headers": [
+          "x-request-id"
+        ]
       },
       {
         "id": "commitDiscoveryRelease",
@@ -9698,6 +10293,90 @@
         "safeRetry": "none"
       },
       {
+        "id": "listCatalogOffers",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+        "auth": "oauthResource",
+        "description": "List Catalog Offers.",
+        "upstreamOperationId": "listCatalogOffers",
+        "pathParams": [
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "query": [
+          "after",
+          "limit"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "read"
+      },
+      {
+        "id": "createCatalogOffer",
+        "method": "POST",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+        "auth": "oauthResource",
+        "description": "Create Catalog Offer.",
+        "upstreamOperationId": "createCatalogOffer",
+        "pathParams": [
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "body": [
+          "currency",
+          "description",
+          "expires_at",
+          "merchant_id",
+          "name",
+          "photo_url",
+          "product_classification",
+          "unit_amount_minor"
+        ],
+        "requiredBody": [
+          "merchant_id",
+          "product_classification",
+          "name",
+          "description",
+          "currency",
+          "unit_amount_minor"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "orders:write",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
+      },
+      {
+        "id": "getCatalogOffer",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}",
+        "auth": "oauthResource",
+        "description": "Get Catalog Offer.",
+        "upstreamOperationId": "getCatalogOffer",
+        "pathParams": [
+          "offer_id",
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "read"
+      },
+      {
         "id": "listEvents",
         "method": "GET",
         "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",
@@ -10067,6 +10746,82 @@
         "scope": "orders:approve",
         "authAudience": "tempera-dropshipping",
         "safeRetry": "none"
+      },
+      {
+        "id": "listSaleOrders",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+        "auth": "oauthResource",
+        "description": "List Sale Orders.",
+        "upstreamOperationId": "listSaleOrders",
+        "pathParams": [
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "query": [
+          "after",
+          "limit"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "read"
+      },
+      {
+        "id": "createSaleOrder",
+        "method": "POST",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+        "auth": "oauthResource",
+        "description": "Create Sale Order.",
+        "upstreamOperationId": "createSaleOrder",
+        "pathParams": [
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "body": [
+          "offer_id",
+          "offer_revision",
+          "quantity"
+        ],
+        "requiredBody": [
+          "offer_id",
+          "offer_revision",
+          "quantity"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "orders:write",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "none",
+        "headers": [
+          "Idempotency-Key"
+        ],
+        "requiredHeaders": [
+          "Idempotency-Key"
+        ]
+      },
+      {
+        "id": "getSaleOrder",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}",
+        "auth": "oauthResource",
+        "description": "Get Sale Order.",
+        "upstreamOperationId": "getSaleOrder",
+        "pathParams": [
+          "order_id",
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "read"
       },
       {
         "id": "listStores",

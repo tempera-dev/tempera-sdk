@@ -3,8 +3,11 @@ import { createTemperaClient, type TemperaPaymentsClient } from "../src/index.js
 
 const client = createTemperaClient();
 const payments: TemperaPaymentsClient = client.temperaPayments;
+void payments.getMerchantWorkspace();
 void payments.getWorkspaceMerchant({ tenant_id: "org_example" });
-void payments.createMerchant({ tenant_id: "org_example", country: "US", currency: "usd", category: "offline_services" });
+void payments.createMerchant({ tenant_id: "org_example", country: "US", currency: "usd", category: "offline_services" }, {
+  headers: { "Idempotency-Key": "persisted-create-key" },
+});
 void payments.getMerchant({ merchant_id: "example", tenant_id: "org_example" });
 void payments.refreshMerchantEligibility({ merchant_id: "example", tenant_id: "org_example" });
 void payments.createMerchantOnboardingLink({ merchant_id: "example", tenant_id: "org_example" }, {

@@ -454,3 +454,31 @@ private func bodyData(_ request: URLRequest) -> Data {
     }
     return output
 }
+
+extension TemperaMerchantSDKTests {
+    func testMerchantWorkspaceWireAndNull() async throws {
+        MockURLProtocol.configure { request, protocolInstance in
+            XCTAssertEqual(request.url?.path, "/v1/merchants/workspace"); XCTAssertNil(request.url?.query)
+            let body = Data("{\"tenant_id\":\"tenant-a\",\"merchant\":null}".utf8)
+            protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
+        }
+        let workspace = try await client().workspace()
+        XCTAssertNil(workspace.merchant)
+    }
+    func testMerchantWorkspaceNestedMismatchRejected() async throws {
+        MockURLProtocol.configure { _, p in let m=String(data:self.merchantJSON(tenantID:"tenant-b"),encoding:.utf8)!; let body=Data("{\"tenant_id\":\"tenant-a\",\"merchant\":\(m)}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
+    }
+    func testMerchantWorkspaceMissingMerchantRejected() async throws {
+        MockURLProtocol.configure { _, p in let body=Data("{\"tenant_id\":\"tenant-a\"}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
+    }
+    func testMerchantWorkspaceBadTenantRejected() async throws {
+        MockURLProtocol.configure { _, p in let body=Data("{\"tenant_id\":\"\",\"merchant\":null}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
+    }
+}
+
+private func XCTAssertThrowsErrorAsync(_ operation: () async throws -> Void) async {
+    do { try await operation(); XCTFail("Expected error") } catch { }
+}

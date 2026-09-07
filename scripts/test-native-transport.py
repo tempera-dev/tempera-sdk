@@ -33,11 +33,12 @@ def synthetic_contract() -> dict:
 
 
 class NativeTransportTests(unittest.TestCase):
-    def test_only_five_payment_merchant_operations_are_admitted(self) -> None:
+    def test_only_six_payment_merchant_operations_are_admitted(self) -> None:
         operations = checker.PAYMENTS_NATIVE_OPERATIONS
         self.assertEqual(
             [operation["id"] for operation in operations],
             [
+                "getMerchantWorkspace",
                 "getWorkspaceMerchant",
                 "createMerchant",
                 "getMerchant",
@@ -50,6 +51,19 @@ class NativeTransportTests(unittest.TestCase):
             {operation["scope"] for operation in operations},
             {"payments:merchants:read", "payments:merchants:write"},
         )
+
+    def test_required_idempotency_headers_are_bound_to_producer(self) -> None:
+        spec = json.loads((ROOT / "specs/tempera-payments-api.json").read_text())
+        upstream = checker.upstream_operations(spec)
+        for operation in checker.PAYMENTS_NATIVE_OPERATIONS:
+            if operation["scope"] != "payments:merchants:write":
+                continue
+            self.assertEqual(operation["requiredHeaders"], ["Idempotency-Key"])
+            original = upstream[operation["upstreamOperationId"]]
+            checker.validate_payment_mapping(operation, original)
+            for poisoned in ({**original, "_headers": []}, {**original, "_headers": [{"name": "Idempotency-Key", "in": "header", "required": False}]}):
+                with self.assertRaisesRegex(ValueError, "headers drift"):
+                    checker.validate_payment_mapping(operation, poisoned)
 
     def test_wrong_payment_scope_is_rejected_against_producer_metadata(self) -> None:
         operation = dict(checker.PAYMENTS_NATIVE_OPERATIONS[0])

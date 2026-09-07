@@ -3,17 +3,6 @@
   "policy": "A vendored producer contract may be pinned to an unmerged producer branch only while it is listed here. The entry names the exact producer branch and commit, the producer-published contract digest, an owner, a migration back to a trusted main lock, and an expiry. Nothing here claims that the pinned commit is merged, released, or deployed.",
   "staged_sources": [
     {
-      "generated_path": "specs/tempera-dropshipping-api.json",
-      "source_repo": "tempera-dev/tempera-dropshipping",
-      "source_branch": "feat/a1-canonical-orders",
-      "source_commit": "969edf4e00d444d58530b2d4eaf04435c0cc6798",
-      "published_digest": "8633f3c593153be67490acacdf89dcc95e2052a166db97bc17f2695abcc1e622",
-      "owner": "tempera-dropshipping",
-      "rationale": "The canonical Orders contract (A1) is frozen on an unmerged feature branch, so no trusted-main commit publishes it yet.",
-      "migration": "Re-run scripts/sync-vendored-openapi.py --product temperaDropshipping against tempera-dev/tempera-dropshipping main once A1 merges, then delete this entry.",
-      "review_after": "2026-10-01"
-    },
-    {
       "generated_path": "specs/tempera-business-api.json",
       "source_repo": "tempera-dev/tempera-business",
       "source_branch": "feat/a2-business-profile",
