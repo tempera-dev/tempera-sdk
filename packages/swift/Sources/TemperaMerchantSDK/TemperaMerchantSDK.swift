@@ -105,6 +105,36 @@ public struct Merchant: Codable, Sendable, Equatable {
     }
 }
 
+public struct MerchantWorkspace: Codable, Sendable, Equatable {
+    public let tenantID: String
+    public let merchant: Merchant?
+
+    enum CodingKeys: String, CodingKey {
+        case tenantID = "tenant_id"
+        case merchant
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        tenantID = try values.decode(String.self, forKey: .tenantID)
+        guard values.contains(.merchant) else {
+            throw DecodingError.keyNotFound(
+                CodingKeys.merchant,
+                .init(
+                    codingPath: decoder.codingPath,
+                    debugDescription:
+                        "The workspace response must include merchant, even when null."))
+        }
+        merchant = try values.decodeIfPresent(Merchant.self, forKey: .merchant)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(tenantID, forKey: .tenantID)
+        try values.encode(merchant, forKey: .merchant)
+    }
+}
+
 public struct MerchantOnboardingLink: Codable, Sendable, Equatable {
     public let merchantID: UUID
     public let url: URL
@@ -226,6 +256,27 @@ public final class MerchantClient: Sendable {
             expectedMerchantID: nil,
             expectedTenantID: tenantID
         )
+    }
+
+    public func workspace() async throws -> MerchantWorkspace {
+        let workspace: MerchantWorkspace = try await sendRaw(
+            // tempera-transport: temperaPayments.getMerchantWorkspace GET /v1/merchants/workspace
+            path: "/v1/merchants/workspace",
+            method: "GET",
+            query: [],
+            body: Optional<MerchantTenantRequest>.none,
+            idempotencyKey: nil
+        )
+        try validateTenant(workspace.tenantID)
+        if let merchant = workspace.merchant {
+            guard merchant.tenantID == workspace.tenantID, merchant.country == "US",
+                merchant.currency == "usd"
+            else {
+                throw MerchantClientError.invalidResponse(
+                    "The merchant response did not match the authenticated workspace.")
+            }
+        }
+        return workspace
     }
 
     public func merchant(id: UUID, tenantID: String) async throws -> Merchant {
@@ -366,8 +417,10 @@ public final class MerchantClient: Sendable {
                     "The Payments service returned an invalid response."
                 )
             }
-            if let contentLength = http.value(forHTTPHeaderField: "Content-Length").flatMap(Int.init),
-               contentLength > Self.maxResponseBytes {
+            if let contentLength = http.value(forHTTPHeaderField: "Content-Length").flatMap(
+                Int.init),
+                contentLength > Self.maxResponseBytes
+            {
                 bytes.task.cancel()
                 throw MerchantClientError.responseTooLarge
             }

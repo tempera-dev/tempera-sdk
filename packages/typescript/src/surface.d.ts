@@ -59,6 +59,8 @@ export type TemperaOperationSpec = {
   pathParamTemplates: Readonly<Record<string, string>>;
   query: readonly string[];
   requiredQuery: readonly string[];
+  headers: readonly string[];
+  requiredHeaders: readonly string[];
   body: readonly string[];
   forbiddenBody: readonly string[];
   requiredBody: readonly string[];
@@ -247,6 +249,8 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   introspectToken(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch OAuth 2.1 authorization-server metadata for the issuer. */
   discovery(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Public mobile client configuration and resource discovery. */
+  getTemperaMobileConfiguration(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** OAuth protected resource discovery metadata for MCP/resource clients. */
   getOAuthProtectedResourceMetadata(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Fetch OAuth protected-resource metadata for one registered audience. */
@@ -723,6 +727,8 @@ export interface TemperaPaymentsClient extends TemperaProductClientBase {
   createStripeCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a hosted/tokenizing card session with the selected configured acquirer. */
   createCardSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Recover the centrally authenticated workspace and optional merchant. */
+  getMerchantWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read the merchant onboarding projection for one workspace. */
   getWorkspaceMerchant(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create the single US/USD merchant record for a workspace. */
@@ -1036,6 +1042,12 @@ export interface TemperaDropshippingClient extends TemperaProductClientBase {
   prepareBusinessBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Review Task. */
   reviewBusinessTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Catalog Offers. */
+  listCatalogOffers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Catalog Offer. */
+  createCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Catalog Offer. */
+  getCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Events. */
   listEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Inbox. */
@@ -1066,6 +1078,12 @@ export interface TemperaDropshippingClient extends TemperaProductClientBase {
   approveProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Execute. */
   executeProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Sale Orders. */
+  listSaleOrders(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Sale Order. */
+  createSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Sale Order. */
+  getSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Stores. */
   listStores(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create Store. */

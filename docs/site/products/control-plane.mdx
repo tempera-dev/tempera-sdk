@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 104 |
+| Typed operations | 105 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -3517,6 +3517,34 @@ result = client.control_plane.discovery()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "discovery", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getTemperaMobileConfiguration
+
+`GET /.well-known/tempera-mobile-configuration`
+
+Public mobile client configuration and resource discovery.
+
+- **Producer operationId:** `getTemperaMobileConfiguration`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.getTemperaMobileConfiguration()` · Python `client.control_plane.get_tempera_mobile_configuration()` · Rust `build_request("control_plane", "get_tempera_mobile_configuration", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getTemperaMobileConfiguration();
+```
+
+```python Python
+result = client.control_plane.get_tempera_mobile_configuration()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_tempera_mobile_configuration", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import unittest
 from pathlib import Path
 
@@ -189,6 +190,8 @@ class SynchronizeProductTests(unittest.TestCase):
                             {"name": "payment_intent_id", "in": "path", "required": True},
                             {"name": "tenant_id", "in": "query", "required": True},
                             {"name": "expand", "in": "query", "required": False},
+                            {"name": "Idempotency-Key", "in": "header", "required": True},
+                            {"name": "X-Trace", "in": "header", "required": False},
                         ],
                     }
                 }
@@ -200,6 +203,15 @@ class SynchronizeProductTests(unittest.TestCase):
         operation = surface["operations"]["temperaPayments"][0]
         self.assertEqual(operation["query"], ["tenant_id", "expand"])
         self.assertEqual(operation["requiredQuery"], ["tenant_id"])
+        self.assertEqual(operation["headers"], ["Idempotency-Key", "X-Trace"])
+        self.assertEqual(operation["requiredHeaders"], ["Idempotency-Key"])
+
+        drifted = json.loads(json.dumps(producer))
+        drifted["paths"][path]["get"]["parameters"] = drifted["paths"][path]["get"]["parameters"][:-2]
+        surface = {"operations": {"temperaPayments": []}}
+        MODULE.synchronize_product(surface, "temperaPayments", drifted, set(), {})
+        self.assertNotIn("headers", surface["operations"]["temperaPayments"][0])
+        self.assertNotIn("requiredHeaders", surface["operations"]["temperaPayments"][0])
 
     def test_still_rejects_unexplained_deleted_routes(self) -> None:
         surface = {

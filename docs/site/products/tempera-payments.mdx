@@ -21,7 +21,7 @@ Provider-neutral fiat checkout and blockchain settlement platform with source-lo
 | Audience | `tempera-payments` |
 | Auth | bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaPayments` · Python `client.tempera_payments` · Rust `build_request("tempera_payments", ...)` |
-| Typed operations | 12 |
+| Typed operations | 13 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaPayments.request(path, options)` (TypeScript) /
@@ -354,6 +354,35 @@ let spec = client.build_request("tempera_payments", "create_card_session", &[
 
 </CodeGroup>
 
+### getMerchantWorkspace
+
+`GET /v1/merchants/workspace`
+
+Recover the centrally authenticated workspace and optional merchant.
+
+- **Producer operationId:** `getMerchantWorkspace`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:merchants:read`
+- **Call as:** TypeScript `client.temperaPayments.getMerchantWorkspace()` · Python `client.tempera_payments.get_merchant_workspace()` · Rust `build_request("tempera_payments", "get_merchant_workspace", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getMerchantWorkspace();
+```
+
+```python Python
+result = client.tempera_payments.get_merchant_workspace()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_merchant_workspace", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### getWorkspaceMerchant
 
 `GET /v1/merchants`
@@ -402,8 +431,9 @@ let spec = client.build_request("tempera_payments", "get_workspace_merchant", &[
 Create the single US/USD merchant record for a workspace.
 
 - **Producer operationId:** `createMerchant`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Auth:** Human OAuth bearer for audience `tempera-payments`; `payments:merchants:write` requires an owner or admin. Central `tp_` API keys cannot use this operation.
 - **Scope:** `payments:merchants:write`
+- **Idempotency:** Required. Persist and send an `Idempotency-Key` for the same request on recovery; do not generate a replacement while the outcome is unknown.
 - **Call as:** TypeScript `client.temperaPayments.createMerchant()` · Python `client.tempera_payments.create_merchant()` · Rust `build_request("tempera_payments", "create_merchant", params)`
 
 **Body parameters**
@@ -423,7 +453,7 @@ const result = await client.temperaPayments.createMerchant({
   country: "<country>",
   currency: "<currency>",
   category: "<category>",
-});
+}, { headers: { "Idempotency-Key": persistedKey } });
 ```
 
 ```python Python
@@ -432,16 +462,17 @@ result = client.tempera_payments.create_merchant({
     "country": "<country>",
     "currency": "<currency>",
     "category": "<category>",
-})
+}, headers={"Idempotency-Key": persisted_key})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_payments", "create_merchant", &[
+let mut spec = client.build_request("tempera_payments", "create_merchant", &[
     ("tenant_id", "<tenant_id>".into()),
     ("country", "<country>".into()),
     ("currency", "<currency>".into()),
     ("category", "<category>".into()),
 ])?;
+spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -555,8 +586,9 @@ let spec = client.build_request("tempera_payments", "refresh_merchant_eligibilit
 Create a short-lived Stripe-hosted merchant onboarding link.
 
 - **Producer operationId:** `createMerchantOnboardingLink`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Auth:** Human OAuth bearer for audience `tempera-payments`; `payments:merchants:write` requires an owner or admin. Central `tp_` API keys cannot use this operation.
 - **Scope:** `payments:merchants:write`
+- **Idempotency:** Required. Persist and send an `Idempotency-Key` for the same request on recovery; do not generate a replacement while the outcome is unknown.
 - **Call as:** TypeScript `client.temperaPayments.createMerchantOnboardingLink()` · Python `client.tempera_payments.create_merchant_onboarding_link()` · Rust `build_request("tempera_payments", "create_merchant_onboarding_link", params)`
 
 **Path parameters**
@@ -577,21 +609,22 @@ Create a short-lived Stripe-hosted merchant onboarding link.
 const result = await client.temperaPayments.createMerchantOnboardingLink({
   merchant_id: "<merchant_id>",
   tenant_id: "<tenant_id>",
-});
+}, { headers: { "Idempotency-Key": persistedKey } });
 ```
 
 ```python Python
 result = client.tempera_payments.create_merchant_onboarding_link({
     "merchant_id": "<merchant_id>",
     "tenant_id": "<tenant_id>",
-})
+}, headers={"Idempotency-Key": persisted_key})
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_payments", "create_merchant_onboarding_link", &[
+let mut spec = client.build_request("tempera_payments", "create_merchant_onboarding_link", &[
     ("merchant_id", "<merchant_id>".into()),
     ("tenant_id", "<tenant_id>".into()),
 ])?;
+spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

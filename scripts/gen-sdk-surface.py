@@ -138,6 +138,10 @@ def validate(surface: dict) -> list[str]:
             query = set(op.get("query", []))
             if not required_query.issubset(query):
                 problems.append(f"{label}: requiredQuery must be a subset of query")
+            required_headers = set(op.get("requiredHeaders", []))
+            headers = set(op.get("headers", []))
+            if not required_headers.issubset(headers):
+                problems.append(f"{label}: requiredHeaders must be a subset of headers")
             safe_retry = op.get("safeRetry")
             if safe_retry not in {"read", "idempotent", "none"}:
                 problems.append(f"{label}: invalid safeRetry {safe_retry!r}")
@@ -268,6 +272,8 @@ def render_typescript(surface: dict) -> str:
                 "pathParamTemplates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
                 "requiredQuery": op.get("requiredQuery", []),
+                "headers": op.get("headers", []),
+                "requiredHeaders": op.get("requiredHeaders", []),
                 "body": op.get("body", []),
                 "forbiddenBody": op.get("forbiddenBody", []),
                 "requiredBody": op.get("requiredBody", []),
@@ -354,6 +360,8 @@ def render_typescript_dts(surface: dict) -> str:
         "  pathParamTemplates: Readonly<Record<string, string>>;",
         "  query: readonly string[];",
         "  requiredQuery: readonly string[];",
+        "  headers: readonly string[];",
+        "  requiredHeaders: readonly string[];",
         "  body: readonly string[];",
         "  forbiddenBody: readonly string[];",
         "  requiredBody: readonly string[];",
@@ -464,6 +472,8 @@ def render_python(surface: dict) -> str:
                 "path_param_templates": op.get("pathParamTemplates", {}),
                 "query": op.get("query", []),
                 "required_query": op.get("requiredQuery", []),
+                "headers": op.get("headers", []),
+                "required_headers": op.get("requiredHeaders", []),
                 "body": op.get("body", []),
                 "forbidden_body": op.get("forbiddenBody", []),
                 "required_body": op.get("requiredBody", []),
@@ -611,6 +621,8 @@ def render_rust(surface: dict) -> str:
     )
     lines.append("    pub query: &'static [&'static str],")
     lines.append("    pub required_query: &'static [&'static str],")
+    lines.append("    pub headers: &'static [&'static str],")
+    lines.append("    pub required_headers: &'static [&'static str],")
     lines.append("    pub body: &'static [&'static str],")
     lines.append("    pub forbidden_body: &'static [&'static str],")
     lines.append("    pub required_body: &'static [&'static str],")
@@ -644,6 +656,8 @@ def render_rust(surface: dict) -> str:
             )
             lines.append(f"        query: {rust_str_slice(op.get('query', []))},")
             lines.append(f"        required_query: {rust_str_slice(op.get('requiredQuery', []))},")
+            lines.append(f"        headers: {rust_str_slice(op.get('headers', []))},")
+            lines.append(f"        required_headers: {rust_str_slice(op.get('requiredHeaders', []))},")
             lines.append(f"        body: {rust_str_slice(op.get('body', []))},")
             lines.append(f"        forbidden_body: {rust_str_slice(op.get('forbiddenBody', []))},")
             lines.append(f"        required_body: {rust_str_slice(op.get('requiredBody', []))},")

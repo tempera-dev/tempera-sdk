@@ -236,6 +236,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -259,6 +261,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -282,6 +286,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -305,6 +311,10 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "X-Tempera-Reference-Request-Id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -331,6 +341,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -354,6 +366,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "name"
             ],
@@ -384,6 +398,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -407,6 +423,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "mode",
                 "email",
@@ -441,6 +459,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -464,6 +484,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -498,6 +520,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -527,6 +551,8 @@ OPERATIONS = {
             "required_query": [
                 "updateMask"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "role"
             ],
@@ -556,6 +582,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -582,6 +610,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -605,6 +635,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "email",
                 "role"
@@ -636,6 +668,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -662,6 +696,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -685,6 +721,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "name"
@@ -717,6 +755,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -740,6 +780,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "projectId",
                 "name"
@@ -772,6 +814,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -795,6 +839,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -833,6 +879,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -858,6 +906,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -881,6 +931,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "project",
                 "connectionRef",
@@ -917,6 +969,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -940,6 +994,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -981,6 +1037,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1010,6 +1068,8 @@ OPERATIONS = {
             "required_query": [
                 "updateMask"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expectedRevision",
                 "name",
@@ -1041,6 +1101,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1067,6 +1129,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1090,6 +1154,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1128,6 +1194,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1168,6 +1236,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1193,6 +1263,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "secretRef",
                 "allowedModels"
@@ -1223,6 +1295,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "secret",
                 "allowedModels"
@@ -1253,6 +1327,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1289,6 +1365,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1312,6 +1390,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1347,6 +1427,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1384,6 +1466,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1409,6 +1493,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "secretRef"
             ],
@@ -1438,6 +1524,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "secret"
             ],
@@ -1467,6 +1555,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1501,6 +1591,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1524,6 +1616,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1567,6 +1661,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1592,6 +1688,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1638,6 +1736,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1661,6 +1761,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1698,6 +1800,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1724,6 +1828,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1747,6 +1853,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -1790,6 +1898,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1816,6 +1926,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1842,6 +1954,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1867,6 +1981,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1893,6 +2009,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1918,6 +2036,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1941,6 +2061,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1970,6 +2092,8 @@ OPERATIONS = {
                 "network"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -1993,6 +2117,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2016,6 +2142,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2042,6 +2170,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2065,6 +2195,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "packId",
                 "idempotencyKey"
@@ -2094,6 +2226,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2117,6 +2251,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -2153,6 +2289,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -2200,6 +2338,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -2237,6 +2377,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -2270,6 +2412,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "projectId",
@@ -2312,6 +2456,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2337,6 +2483,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2360,6 +2508,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "token",
                 "token_type_hint"
@@ -2388,6 +2538,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2401,6 +2553,31 @@ OPERATIONS = {
             "description": "Fetch OAuth 2.1 authorization-server metadata for the issuer."
         },
         {
+            "id": "get_tempera_mobile_configuration",
+            "upstream_operation_id": "getTemperaMobileConfiguration",
+            "method": "GET",
+            "path": "/.well-known/tempera-mobile-configuration",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Public mobile client configuration and resource discovery."
+        },
+        {
             "id": "get_o_auth_protected_resource_metadata",
             "upstream_operation_id": "getOAuthProtectedResourceMetadata",
             "method": "GET",
@@ -2411,6 +2588,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2436,6 +2615,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2459,6 +2640,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2482,6 +2665,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2505,6 +2690,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "password"
             ],
@@ -2532,6 +2719,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "orgId",
                 "creditMicros",
@@ -2563,6 +2752,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2586,6 +2777,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "projectId",
                 "environmentId",
@@ -2619,6 +2812,8 @@ OPERATIONS = {
                 "state",
                 "installation_id"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2645,6 +2840,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2670,6 +2867,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2698,6 +2897,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2724,6 +2925,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "ref"
             ],
@@ -2749,6 +2952,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2772,6 +2977,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2798,6 +3005,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2821,6 +3030,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2844,6 +3055,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "challengeId",
                 "response",
@@ -2874,6 +3087,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2897,6 +3112,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "challengeId",
                 "response",
@@ -2927,6 +3144,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -2950,6 +3169,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "challengeId",
                 "response",
@@ -2980,6 +3201,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "recoveryCode"
             ],
@@ -3009,6 +3232,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3032,6 +3257,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "admissionId",
                 "workspace",
@@ -3096,6 +3323,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3121,6 +3350,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "admissionDigest",
                 "leaseTokenDigest",
@@ -3153,6 +3384,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "admissionDigest",
                 "leaseTokenDigest",
@@ -3188,6 +3421,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3213,6 +3448,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3240,6 +3477,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "input",
                 "policy"
@@ -3273,6 +3517,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "scopes"
             ],
@@ -3305,6 +3556,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3339,6 +3597,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3366,6 +3631,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3395,6 +3667,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3423,6 +3702,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "evalReportId",
                 "evaluatorVersionId",
@@ -3453,6 +3739,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3482,6 +3775,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3508,6 +3808,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "toolkit"
             ],
@@ -3538,6 +3845,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "arguments",
                 "tool"
@@ -3573,6 +3887,13 @@ OPERATIONS = {
             "required_query": [
                 "toolkit"
             ],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3603,6 +3924,13 @@ OPERATIONS = {
             "required_query": [
                 "toolkit"
             ],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3635,6 +3963,13 @@ OPERATIONS = {
             "required_query": [
                 "toolkit"
             ],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3661,6 +3996,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "name"
             ],
@@ -3692,6 +4034,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "reference",
                 "spanId",
@@ -3725,6 +4074,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "caseIds"
             ],
@@ -3755,6 +4111,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "agentReleaseId",
                 "codeHash",
@@ -3796,6 +4159,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "agentReleaseId",
                 "codeHash",
@@ -3836,6 +4206,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "canonicalJson",
                 "publicKeyPem",
@@ -3870,6 +4247,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "canonicalJson",
                 "publicKeyPem",
@@ -3906,6 +4290,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -3934,6 +4325,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "baselineOutputs",
                 "baselineReleaseId",
@@ -3979,6 +4377,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "baselineOutputs",
                 "baselineReleaseId",
@@ -4024,6 +4429,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "datasetId",
                 "evaluatorVersionId",
@@ -4060,6 +4472,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "experimentRunId"
             ],
@@ -4091,6 +4510,11 @@ OPERATIONS = {
                 "durability"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key"
+            ],
+            "required_headers": [],
             "body": [
                 "payload",
                 "source"
@@ -4125,6 +4549,13 @@ OPERATIONS = {
                 "resetAttempts"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4151,6 +4582,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4179,6 +4617,13 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4207,6 +4652,13 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4234,6 +4686,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4260,6 +4719,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "cacheNamespace",
                 "case",
@@ -4298,6 +4764,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4325,6 +4798,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "highCostMicrosThreshold",
                 "keepErrors",
@@ -4362,6 +4842,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4388,6 +4875,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "createdBy",
                 "description",
@@ -4424,6 +4918,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4457,6 +4958,13 @@ OPERATIONS = {
                 "from",
                 "to"
             ],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4487,6 +4995,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4514,6 +5029,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "createdBy",
                 "message",
@@ -4549,6 +5071,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4575,6 +5104,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "displayName",
                 "provider",
@@ -4610,6 +5146,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4636,6 +5179,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "annotationSchema",
                 "name",
@@ -4674,6 +5224,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4701,6 +5258,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "datasetCaseId",
                 "datasetId",
@@ -4738,6 +5302,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "annotationId",
                 "payload",
@@ -4776,6 +5347,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "datasetId",
                 "reference"
@@ -4810,6 +5388,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4836,6 +5421,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "exemplarTraceId",
                 "expectedOutcome",
@@ -4871,6 +5463,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "jaccardThreshold",
                 "traceIds"
@@ -4903,6 +5502,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4940,6 +5546,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -4970,6 +5583,13 @@ OPERATIONS = {
                 "reason"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5000,6 +5620,13 @@ OPERATIONS = {
                 "reason"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5025,6 +5652,13 @@ OPERATIONS = {
                 "durability"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [
                 "attributes",
                 "authContext",
@@ -5096,6 +5730,13 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5125,6 +5766,13 @@ OPERATIONS = {
                 "reason"
             ],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5151,6 +5799,13 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "authorization",
+                "x-palette-api-key",
+                "x-palette-project-id",
+                "x-palette-environment-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5176,6 +5831,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5199,6 +5856,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5222,6 +5881,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5245,6 +5906,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5268,6 +5931,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5291,6 +5956,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5314,6 +5981,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5341,6 +6010,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5366,6 +6037,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5393,6 +6066,8 @@ OPERATIONS = {
                 "afterSeq"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5418,6 +6093,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5443,6 +6120,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5469,6 +6148,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5492,6 +6173,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "driverless",
                 "url"
@@ -5522,6 +6205,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5548,6 +6233,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5575,6 +6262,8 @@ OPERATIONS = {
                 "afterSeq"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5600,6 +6289,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5625,6 +6316,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "actions",
                 "goal",
@@ -5655,6 +6348,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "engineTier",
                 "label",
@@ -5688,6 +6383,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5713,6 +6410,11 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-payment",
+                "x-aether-payment-hash"
+            ],
+            "required_headers": [],
             "body": [
                 "batch",
                 "confirmationGrant",
@@ -5747,6 +6449,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "engineTier",
                 "label",
@@ -5779,6 +6483,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5804,6 +6510,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5831,6 +6539,8 @@ OPERATIONS = {
                 "setOfMarks"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5856,6 +6566,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "determinism",
                 "idempotencyKey",
@@ -5891,6 +6603,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5914,6 +6628,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -5937,6 +6653,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-provider-key",
+                "x-tempera-connection-id",
+                "x-tempera-route-policy"
+            ],
+            "required_headers": [],
             "body": [
                 "byok",
                 "max_tokens",
@@ -5977,6 +6699,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6000,6 +6724,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-provider-key",
+                "x-tempera-connection-id",
+                "x-tempera-route-policy"
+            ],
+            "required_headers": [],
             "body": [
                 "byok",
                 "input",
@@ -6035,6 +6765,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6058,6 +6790,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6083,6 +6817,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "request",
                 "people_binding"
@@ -6113,6 +6853,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "subject_id",
@@ -6149,6 +6895,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6175,6 +6923,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6200,6 +6950,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schema",
                 "event_id",
@@ -6244,6 +6996,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "policy_id",
@@ -6298,6 +7056,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "model_id",
@@ -6353,6 +7117,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "algorithm",
@@ -6390,6 +7160,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "action",
                 "target"
@@ -6421,6 +7193,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "deployment_id",
                 "policy_id",
@@ -6462,6 +7236,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schema",
                 "request_id",
@@ -6507,6 +7283,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6532,6 +7310,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6557,6 +7341,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "index_name",
                 "subject",
@@ -6594,6 +7380,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6619,6 +7407,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "case_id",
@@ -6667,6 +7461,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6693,6 +7489,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6718,6 +7516,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "grant_id",
@@ -6774,6 +7578,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "reason"
             ],
@@ -6803,6 +7609,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "schema",
                 "profile_id",
@@ -6855,6 +7667,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schema",
                 "query_id",
@@ -6906,6 +7720,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6932,6 +7748,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6958,6 +7776,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -6983,6 +7803,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "subject",
                 "question",
@@ -7039,6 +7865,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7068,6 +7896,8 @@ OPERATIONS = {
                 "pageSize"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7094,6 +7924,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7123,6 +7955,8 @@ OPERATIONS = {
                 "pageSize"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7149,6 +7983,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "reason"
             ],
@@ -7179,6 +8015,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "approved",
                 "reason"
@@ -7210,6 +8048,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "envelope"
             ],
@@ -7240,6 +8080,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "abortReceiptDigest"
@@ -7272,6 +8118,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "dispatchAttemptDigest"
@@ -7304,6 +8156,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "executionReceiptDigest"
@@ -7336,6 +8194,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "outcomeDigest"
@@ -7368,6 +8232,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "compensationReceiptDigest"
@@ -7400,6 +8270,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "disputeEvidenceDigest"
@@ -7432,6 +8308,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "envelope",
                 "outcomeDigest",
@@ -7465,6 +8347,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7490,6 +8374,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7516,6 +8402,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7539,6 +8427,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "approvalId",
                 "connectionId",
@@ -7580,6 +8470,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7605,6 +8497,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7631,6 +8525,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7658,6 +8554,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7683,6 +8581,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7708,6 +8608,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7733,6 +8635,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "payload",
@@ -7769,6 +8673,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7792,6 +8698,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "contractVersion",
                 "description",
@@ -7831,6 +8739,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7856,6 +8766,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -7885,6 +8797,8 @@ OPERATIONS = {
             "required_query": [
                 "updateMask"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "contractVersion",
                 "description",
@@ -7924,6 +8838,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "input",
@@ -7956,6 +8872,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "input",
@@ -7989,6 +8907,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "deadlineMs",
                 "maxRounds",
@@ -8020,6 +8940,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "attachments",
                 "draft",
@@ -8051,6 +8973,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "context",
                 "current",
@@ -8085,6 +9009,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "contractVersion",
                 "description",
@@ -8124,6 +9050,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8150,6 +9078,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8176,6 +9106,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8204,6 +9136,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8231,6 +9165,8 @@ OPERATIONS = {
                 "version"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8258,6 +9194,8 @@ OPERATIONS = {
                 "version"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidate",
                 "seed",
@@ -8290,6 +9228,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8318,6 +9258,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8341,6 +9283,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "task",
                 "seed"
@@ -8372,6 +9316,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8397,6 +9343,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "action",
                 "receipts"
@@ -8427,6 +9375,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "contextEvidenceRef",
                 "verifierReceiptArtifactRef",
@@ -8460,6 +9410,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8485,6 +9437,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8508,6 +9462,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "environmentId",
                 "policy",
@@ -8545,6 +9501,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8568,6 +9526,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schemaVersion",
                 "campaignDigest",
@@ -8616,6 +9576,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8642,6 +9604,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8665,6 +9629,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "evaluator",
                 "qualificationPolicy",
@@ -8700,6 +9666,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -8725,6 +9693,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "policySubmission",
                 "trainingReport"
@@ -8756,6 +9726,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidateSet",
                 "hypothesis",
@@ -8789,6 +9761,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidates"
             ],
@@ -8816,6 +9790,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "decision",
                 "program",
@@ -8847,6 +9823,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidateSet",
                 "experimentProposal",
@@ -8882,6 +9860,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidateSet",
                 "program",
@@ -8913,6 +9893,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "batchProposal",
                 "campaignContext",
@@ -8946,6 +9928,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "hypothesis"
             ],
@@ -8973,6 +9957,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidate",
                 "experimentProposal",
@@ -9010,6 +9996,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidateSet",
                 "configuration",
@@ -9041,6 +10029,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "configuration",
                 "experimentProposal",
@@ -9072,6 +10062,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "candidate",
                 "experimentProposal",
@@ -9121,6 +10113,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "scoreSetUrn"
             ],
@@ -9150,6 +10144,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9173,6 +10169,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "tenant_id",
                 "merchant_id",
@@ -9218,6 +10220,8 @@ OPERATIONS = {
             "required_query": [
                 "tenant_id"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9247,6 +10251,8 @@ OPERATIONS = {
             "required_query": [
                 "tenant_id"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9272,6 +10278,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "tenant_id",
                 "currency",
@@ -9309,6 +10321,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "tenant_id",
                 "acquirer",
@@ -9334,6 +10352,31 @@ OPERATIONS = {
             "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
         },
         {
+            "id": "get_merchant_workspace",
+            "upstream_operation_id": "getMerchantWorkspace",
+            "method": "GET",
+            "path": "/v1/merchants/workspace",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-payments",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "payments:merchants:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Recover the centrally authenticated workspace and optional merchant."
+        },
+        {
             "id": "get_workspace_merchant",
             "upstream_operation_id": "getWorkspaceMerchant",
             "method": "GET",
@@ -9348,6 +10391,8 @@ OPERATIONS = {
             "required_query": [
                 "tenant_id"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9371,6 +10416,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "tenant_id",
                 "country",
@@ -9410,6 +10461,8 @@ OPERATIONS = {
             "required_query": [
                 "tenant_id"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9435,6 +10488,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "tenant_id"
             ],
@@ -9464,6 +10519,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
                 "tenant_id"
             ],
@@ -9491,6 +10552,12 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Stripe-Signature"
+            ],
+            "required_headers": [
+                "Stripe-Signature"
+            ],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9516,6 +10583,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9541,6 +10610,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "upload"
             ],
@@ -9571,6 +10642,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9597,6 +10670,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "instructions",
                 "max_output_tokens",
@@ -9633,6 +10708,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9659,6 +10736,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "kind"
             ],
@@ -9687,6 +10766,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "query",
                 "strategy",
@@ -9722,6 +10803,8 @@ OPERATIONS = {
                 "page_token"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9748,6 +10831,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "profile"
             ],
@@ -9778,6 +10863,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9803,6 +10890,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_byte_length",
                 "expected_sha256",
@@ -9835,6 +10924,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9861,6 +10952,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -9887,6 +10980,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "byte_length",
                 "sha256"
@@ -9915,6 +11010,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "actor",
                 "adapterId",
@@ -9947,6 +11044,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "adapterId",
                 "contractVersion",
@@ -9992,6 +11091,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10015,6 +11116,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "launchRequest"
             ],
@@ -10042,6 +11145,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "admission",
                 "manifest",
@@ -10073,6 +11178,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "actor",
                 "manifest",
@@ -10106,6 +11213,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "adapterId",
                 "completionProofs",
@@ -10145,6 +11254,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "actor",
                 "allowDowngrade",
@@ -10183,6 +11294,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10206,6 +11319,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10229,6 +11344,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "entrypoint",
                 "idempotencyKey",
@@ -10263,6 +11380,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10286,6 +11405,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10309,6 +11430,10 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [],
             "body": [
                 "entrypoint",
                 "idempotencyKey",
@@ -10345,6 +11470,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10370,6 +11497,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10395,6 +11524,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "bytesBase64"
             ],
@@ -10425,6 +11556,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10450,6 +11583,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10473,6 +11608,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10496,6 +11633,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10519,6 +11658,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10542,6 +11683,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10565,6 +11708,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10591,6 +11736,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10614,6 +11761,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "tenantId",
                 "projectId",
@@ -10650,6 +11799,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "limit"
             ],
@@ -10675,6 +11826,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "question",
                 "scope",
@@ -10710,6 +11863,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "vacuum",
                 "repairOrphans",
@@ -10740,6 +11895,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10770,6 +11927,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10798,6 +11957,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10825,6 +11986,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "artifactType",
                 "source",
@@ -10858,6 +12023,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "evidence",
                 "artifactBase64"
@@ -10891,6 +12060,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "url",
                 "artifactType",
@@ -10927,6 +12100,11 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id",
+                "Idempotency-Key"
+            ],
+            "required_headers": [],
             "body": [
                 "taskFamily",
                 "targetAccuracy",
@@ -10968,6 +12146,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -10996,6 +12176,11 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id",
+                "Idempotency-Key"
+            ],
+            "required_headers": [],
             "body": [
                 "targetStatus",
                 "idempotencyKey"
@@ -11030,6 +12215,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11057,6 +12244,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "useCase",
                 "verifier",
@@ -11102,6 +12293,8 @@ OPERATIONS = {
                 "orderBy"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11129,6 +12322,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "sourceExpertTaskName",
                 "expectedLabel",
@@ -11166,6 +12361,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "reviewerRef",
                 "reason",
@@ -11202,6 +12399,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "label",
                 "outcome",
@@ -11245,6 +12446,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "rationale",
                 "evidence",
@@ -11280,6 +12485,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "leaseToken",
@@ -11315,6 +12522,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "leaseToken",
@@ -11350,6 +12559,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "leaseToken"
@@ -11384,6 +12595,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotencyKey",
                 "leaseToken",
@@ -11421,6 +12634,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "event",
                 "sessionId"
@@ -11457,6 +12672,8 @@ OPERATIONS = {
                 "slaTargetSeconds"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11484,6 +12701,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11511,6 +12730,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11538,6 +12759,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11569,6 +12792,8 @@ OPERATIONS = {
                 "view"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11599,6 +12824,8 @@ OPERATIONS = {
                 "view"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11630,6 +12857,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11657,6 +12886,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "artifactIds",
                 "artifactType"
@@ -11687,6 +12920,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "artifactIds",
                 "taskFamily",
@@ -11725,6 +12962,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11756,6 +12995,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11784,6 +13025,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11812,6 +13055,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11839,6 +13086,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "productIds"
             ],
@@ -11871,6 +13122,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11898,6 +13151,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "trainingProductId",
                 "heldoutProductId",
@@ -11934,6 +13191,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -11962,6 +13221,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "format",
                 "trainFraction",
@@ -11998,6 +13261,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "artifactIds",
                 "job"
@@ -12035,6 +13300,8 @@ OPERATIONS = {
             "required_query": [
                 "sourceDefinitionId"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "connector",
                 "connectionRef",
@@ -12080,6 +13347,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12108,6 +13377,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12140,6 +13411,8 @@ OPERATIONS = {
             "required_query": [
                 "updateMask"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "etag",
                 "connector",
@@ -12180,6 +13453,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [],
             "body": [
                 "producerVersion",
                 "idempotencyKey"
@@ -12216,6 +13493,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12244,6 +13523,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12271,6 +13552,11 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id",
+                "Idempotency-Key"
+            ],
+            "required_headers": [],
             "body": [
                 "connector",
                 "bucket",
@@ -12318,6 +13604,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12345,6 +13633,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "name",
                 "description",
@@ -12387,6 +13679,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12415,6 +13709,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12443,6 +13739,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12471,6 +13769,10 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [
+                "x-request-id"
+            ],
+            "required_headers": [],
             "body": [
                 "arguments"
             ],
@@ -12500,6 +13802,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schemaVersion",
                 "requestId",
@@ -12552,6 +13856,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12579,6 +13885,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schemaVersion",
                 "domain",
@@ -12630,6 +13938,8 @@ OPERATIONS = {
                 "domain"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12658,6 +13968,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12685,6 +13997,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "schemaVersion",
                 "domain",
@@ -12742,6 +14056,8 @@ OPERATIONS = {
                 "domain"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12770,6 +14086,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12797,6 +14115,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "contractVersion",
                 "requestId",
@@ -12840,6 +14160,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "kind",
                 "version",
@@ -12884,6 +14206,8 @@ OPERATIONS = {
                 "pageToken"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12912,6 +14236,8 @@ OPERATIONS = {
             },
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12943,6 +14269,8 @@ OPERATIONS = {
                 "productId",
                 "releaseId"
             ],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12968,6 +14296,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -12991,6 +14321,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13016,6 +14348,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "approved",
                 "note"
@@ -13046,6 +14380,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13069,6 +14405,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "id",
                 "input_audio_format",
@@ -13115,6 +14453,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13140,6 +14480,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "id",
                 "input_audio_format",
@@ -13184,6 +14526,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13209,6 +14553,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13232,6 +14578,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "classification",
                 "content_base64",
@@ -13263,6 +14611,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13286,6 +14636,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13309,6 +14661,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "adapter_import_path",
                 "adapter_import_public_key_path",
@@ -13355,6 +14709,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "ab_plan_path",
                 "evidence_path",
@@ -13395,6 +14751,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "handoff_path"
             ],
@@ -13422,6 +14780,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "artifacts",
                 "attestation_path",
@@ -13456,6 +14816,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "draft",
                 "profile_id"
@@ -13489,6 +14851,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13512,6 +14876,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "agent_id",
                 "channel",
@@ -13548,6 +14914,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13577,6 +14945,8 @@ OPERATIONS = {
                 "after"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13605,6 +14975,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13630,6 +15002,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "reason"
             ],
@@ -13655,6 +15029,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "session_ids"
             ],
@@ -13689,6 +15065,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "idempotency_key",
@@ -13727,6 +15105,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13757,6 +15137,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "receipt"
@@ -13793,6 +15175,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "draft",
                 "expected_revision"
@@ -13829,6 +15213,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision"
             ],
@@ -13863,6 +15249,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "review"
@@ -13880,6 +15268,120 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Review Task."
+        },
+        {
+            "id": "list_catalog_offers",
+            "upstream_operation_id": "listCatalogOffers",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "after",
+                "limit"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Catalog Offers."
+        },
+        {
+            "id": "create_catalog_offer",
+            "upstream_operation_id": "createCatalogOffer",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
+            "body": [
+                "currency",
+                "description",
+                "expires_at",
+                "merchant_id",
+                "name",
+                "photo_url",
+                "product_classification",
+                "unit_amount_minor"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "merchant_id",
+                "product_classification",
+                "name",
+                "description",
+                "currency",
+                "unit_amount_minor"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Catalog Offer."
+        },
+        {
+            "id": "get_catalog_offer",
+            "upstream_operation_id": "getCatalogOffer",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "offer_id",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Catalog Offer."
         },
         {
             "id": "list_events",
@@ -13900,6 +15402,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13931,6 +15435,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13959,6 +15465,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -13990,6 +15498,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14018,6 +15528,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "record"
@@ -14052,6 +15564,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14081,6 +15595,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "record"
@@ -14119,6 +15635,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14148,6 +15666,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "quote_id"
@@ -14183,6 +15703,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision"
             ],
@@ -14216,6 +15738,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "evidence_ref",
                 "expected_revision",
@@ -14253,6 +15777,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14282,6 +15808,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "evidence_ref",
                 "expected_revision",
@@ -14321,6 +15849,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "proposal_digest"
@@ -14356,6 +15886,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "proposal_digest"
@@ -14373,6 +15905,112 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Execute."
+        },
+        {
+            "id": "list_sale_orders",
+            "upstream_operation_id": "listSaleOrders",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "after",
+                "limit"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Sale Orders."
+        },
+        {
+            "id": "create_sale_order",
+            "upstream_operation_id": "createSaleOrder",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
+            "body": [
+                "offer_id",
+                "offer_revision",
+                "quantity"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "offer_id",
+                "offer_revision",
+                "quantity"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Sale Order."
+        },
+        {
+            "id": "get_sale_order",
+            "upstream_operation_id": "getSaleOrder",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "order_id",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Sale Order."
         },
         {
             "id": "list_stores",
@@ -14393,6 +16031,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14421,6 +16061,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "channel",
                 "display_name",
@@ -14457,6 +16099,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14482,6 +16126,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14508,6 +16154,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14531,6 +16179,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "idempotency_key",
@@ -14561,6 +16211,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "available_services",
                 "facts",
@@ -14591,6 +16243,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "available_services",
                 "expected_revision",
@@ -14623,6 +16277,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14649,6 +16305,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14672,6 +16330,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "idempotency_key",
                 "intake",
@@ -14704,6 +16364,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14732,6 +16394,8 @@ OPERATIONS = {
                 "limit"
             ],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],
@@ -14757,6 +16421,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "idempotency_key",
@@ -14796,6 +16462,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "draft",
                 "expected_revision",
@@ -14829,6 +16497,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "decision",
                 "expected_revision",
@@ -14864,6 +16534,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [
                 "expected_revision",
                 "idempotency_key",
@@ -14895,6 +16567,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
+            "headers": [],
+            "required_headers": [],
             "body": [],
             "forbidden_body": [],
             "required_body": [],

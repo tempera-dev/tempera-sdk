@@ -3128,6 +3128,1137 @@
         "x-tempera-required-scope": "orders:approve"
       }
     },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers": {
+      "get": {
+        "operationId": "listCatalogOffers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 160,
+              "title": "After",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "description": "Immutable revision-one offer snapshot; it grants no payment authority.",
+                        "properties": {
+                          "created_at": {
+                            "title": "Created At",
+                            "type": "string"
+                          },
+                          "currency": {
+                            "const": "USD",
+                            "title": "Currency",
+                            "type": "string"
+                          },
+                          "description": {
+                            "maxLength": 2000,
+                            "minLength": 1,
+                            "title": "Description",
+                            "type": "string"
+                          },
+                          "expires_at": {
+                            "title": "Expires At",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "id": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "title": "Id",
+                            "type": "string"
+                          },
+                          "merchant_id": {
+                            "title": "Merchant Id",
+                            "type": "string"
+                          },
+                          "name": {
+                            "maxLength": 200,
+                            "minLength": 1,
+                            "title": "Name",
+                            "type": "string"
+                          },
+                          "photo_url": {
+                            "maxLength": 2048,
+                            "title": "Photo Url",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "product_classification": {
+                            "enum": [
+                              "physical_goods",
+                              "offline_services"
+                            ],
+                            "title": "Product Classification",
+                            "type": "string"
+                          },
+                          "revision": {
+                            "const": 1,
+                            "default": 1,
+                            "title": "Revision",
+                            "type": "integer"
+                          },
+                          "scope": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "environment": {
+                                "enum": [
+                                  "development",
+                                  "test",
+                                  "staging",
+                                  "production"
+                                ],
+                                "title": "Environment",
+                                "type": "string"
+                              },
+                              "organization_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Organization Id",
+                                "type": "string"
+                              },
+                              "project_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Project Id",
+                                "type": "string"
+                              },
+                              "site_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Site Id",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "organization_id",
+                              "project_id",
+                              "environment",
+                              "site_id"
+                            ],
+                            "title": "Scope",
+                            "type": "object"
+                          },
+                          "unit_amount_minor": {
+                            "maximum": 99999999.0,
+                            "minimum": 1.0,
+                            "title": "Unit Amount Minor",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "scope",
+                          "merchant_id",
+                          "product_classification",
+                          "name",
+                          "description",
+                          "currency",
+                          "unit_amount_minor",
+                          "created_at"
+                        ],
+                        "title": "CatalogOffer",
+                        "type": "object"
+                      },
+                      "title": "Items",
+                      "type": "array"
+                    },
+                    "next_cursor": {
+                      "title": "Next Cursor",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "title": "CatalogOfferPage",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Catalog Offers",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:read"
+      },
+      "post": {
+        "operationId": "createCatalogOffer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 16,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "currency": {
+                    "const": "USD",
+                    "title": "Currency",
+                    "type": "string"
+                  },
+                  "description": {
+                    "maxLength": 2000,
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "expires_at": {
+                    "title": "Expires At",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "merchant_id": {
+                    "title": "Merchant Id",
+                    "type": "string"
+                  },
+                  "name": {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "photo_url": {
+                    "maxLength": 2048,
+                    "title": "Photo Url",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "product_classification": {
+                    "enum": [
+                      "physical_goods",
+                      "offline_services"
+                    ],
+                    "title": "Product Classification",
+                    "type": "string"
+                  },
+                  "unit_amount_minor": {
+                    "maximum": 99999999.0,
+                    "minimum": 1.0,
+                    "title": "Unit Amount Minor",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "merchant_id",
+                  "product_classification",
+                  "name",
+                  "description",
+                  "currency",
+                  "unit_amount_minor"
+                ],
+                "title": "CreateCatalogOfferRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable revision-one offer snapshot; it grants no payment authority.",
+                  "properties": {
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "description": {
+                      "maxLength": 2000,
+                      "minLength": 1,
+                      "title": "Description",
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "title": "Expires At",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "title": "Name",
+                      "type": "string"
+                    },
+                    "photo_url": {
+                      "maxLength": 2048,
+                      "title": "Photo Url",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "merchant_id",
+                    "product_classification",
+                    "name",
+                    "description",
+                    "currency",
+                    "unit_amount_minor",
+                    "created_at"
+                  ],
+                  "title": "CatalogOffer",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Idempotent replay"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable revision-one offer snapshot; it grants no payment authority.",
+                  "properties": {
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "description": {
+                      "maxLength": 2000,
+                      "minLength": 1,
+                      "title": "Description",
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "title": "Expires At",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "title": "Name",
+                      "type": "string"
+                    },
+                    "photo_url": {
+                      "maxLength": 2048,
+                      "title": "Photo Url",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "merchant_id",
+                    "product_classification",
+                    "name",
+                    "description",
+                    "currency",
+                    "unit_amount_minor",
+                    "created_at"
+                  ],
+                  "title": "CatalogOffer",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Offer created"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Catalog Offer",
+        "x-tempera-effect": "local_write",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:write"
+      }
+    },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}": {
+      "get": {
+        "operationId": "getCatalogOffer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable revision-one offer snapshot; it grants no payment authority.",
+                  "properties": {
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "description": {
+                      "maxLength": 2000,
+                      "minLength": 1,
+                      "title": "Description",
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "title": "Expires At",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "title": "Name",
+                      "type": "string"
+                    },
+                    "photo_url": {
+                      "maxLength": 2048,
+                      "title": "Photo Url",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "merchant_id",
+                    "product_classification",
+                    "name",
+                    "description",
+                    "currency",
+                    "unit_amount_minor",
+                    "created_at"
+                  ],
+                  "title": "CatalogOffer",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Catalog Offer",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:read"
+      }
+    },
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events": {
       "get": {
         "operationId": "listEvents",
@@ -10148,6 +11279,1146 @@
         "x-tempera-external-authority": "NONE",
         "x-tempera-release": "local-candidate",
         "x-tempera-required-scope": "orders:approve"
+      }
+    },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders": {
+      "get": {
+        "operationId": "listSaleOrders",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 160,
+              "title": "After",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "description": "Immutable order snapshot used as a bounded commerce input to Payments.",
+                        "properties": {
+                          "amount_minor": {
+                            "maximum": 99999999.0,
+                            "minimum": 1.0,
+                            "title": "Amount Minor",
+                            "type": "integer"
+                          },
+                          "amount_source": {
+                            "const": "catalog_offer_revision",
+                            "default": "catalog_offer_revision",
+                            "title": "Amount Source",
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "title": "Created At",
+                            "type": "string"
+                          },
+                          "currency": {
+                            "const": "USD",
+                            "title": "Currency",
+                            "type": "string"
+                          },
+                          "id": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "title": "Id",
+                            "type": "string"
+                          },
+                          "merchant_id": {
+                            "title": "Merchant Id",
+                            "type": "string"
+                          },
+                          "offer_id": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "title": "Offer Id",
+                            "type": "string"
+                          },
+                          "offer_revision": {
+                            "const": 1,
+                            "default": 1,
+                            "title": "Offer Revision",
+                            "type": "integer"
+                          },
+                          "product_classification": {
+                            "enum": [
+                              "physical_goods",
+                              "offline_services"
+                            ],
+                            "title": "Product Classification",
+                            "type": "string"
+                          },
+                          "quantity": {
+                            "maximum": 10000.0,
+                            "minimum": 1.0,
+                            "title": "Quantity",
+                            "type": "integer"
+                          },
+                          "revision": {
+                            "const": 1,
+                            "default": 1,
+                            "title": "Revision",
+                            "type": "integer"
+                          },
+                          "scope": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "environment": {
+                                "enum": [
+                                  "development",
+                                  "test",
+                                  "staging",
+                                  "production"
+                                ],
+                                "title": "Environment",
+                                "type": "string"
+                              },
+                              "organization_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Organization Id",
+                                "type": "string"
+                              },
+                              "project_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Project Id",
+                                "type": "string"
+                              },
+                              "site_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Site Id",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "organization_id",
+                              "project_id",
+                              "environment",
+                              "site_id"
+                            ],
+                            "title": "Scope",
+                            "type": "object"
+                          },
+                          "unit_amount_minor": {
+                            "maximum": 99999999.0,
+                            "minimum": 1.0,
+                            "title": "Unit Amount Minor",
+                            "type": "integer"
+                          },
+                          "variant_id": {
+                            "maxLength": 128,
+                            "minLength": 1,
+                            "title": "Variant Id",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "scope",
+                          "offer_id",
+                          "variant_id",
+                          "merchant_id",
+                          "product_classification",
+                          "quantity",
+                          "currency",
+                          "unit_amount_minor",
+                          "amount_minor",
+                          "created_at"
+                        ],
+                        "title": "SaleOrder",
+                        "type": "object"
+                      },
+                      "title": "Items",
+                      "type": "array"
+                    },
+                    "next_cursor": {
+                      "title": "Next Cursor",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "title": "SaleOrderPage",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Sale Orders",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:read"
+      },
+      "post": {
+        "operationId": "createSaleOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 16,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "offer_id": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "title": "Offer Id",
+                    "type": "string"
+                  },
+                  "offer_revision": {
+                    "maximum": 1.0,
+                    "minimum": 1.0,
+                    "title": "Offer Revision",
+                    "type": "integer"
+                  },
+                  "quantity": {
+                    "maximum": 10000.0,
+                    "minimum": 1.0,
+                    "title": "Quantity",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "offer_id",
+                  "offer_revision",
+                  "quantity"
+                ],
+                "title": "CreateSaleOrderRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable order snapshot used as a bounded commerce input to Payments.",
+                  "properties": {
+                    "amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amount Minor",
+                      "type": "integer"
+                    },
+                    "amount_source": {
+                      "const": "catalog_offer_revision",
+                      "default": "catalog_offer_revision",
+                      "title": "Amount Source",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "offer_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Offer Id",
+                      "type": "string"
+                    },
+                    "offer_revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Offer Revision",
+                      "type": "integer"
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "maximum": 10000.0,
+                      "minimum": 1.0,
+                      "title": "Quantity",
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    },
+                    "variant_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Variant Id",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "offer_id",
+                    "variant_id",
+                    "merchant_id",
+                    "product_classification",
+                    "quantity",
+                    "currency",
+                    "unit_amount_minor",
+                    "amount_minor",
+                    "created_at"
+                  ],
+                  "title": "SaleOrder",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Idempotent replay"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable order snapshot used as a bounded commerce input to Payments.",
+                  "properties": {
+                    "amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amount Minor",
+                      "type": "integer"
+                    },
+                    "amount_source": {
+                      "const": "catalog_offer_revision",
+                      "default": "catalog_offer_revision",
+                      "title": "Amount Source",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "offer_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Offer Id",
+                      "type": "string"
+                    },
+                    "offer_revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Offer Revision",
+                      "type": "integer"
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "maximum": 10000.0,
+                      "minimum": 1.0,
+                      "title": "Quantity",
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    },
+                    "variant_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Variant Id",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "offer_id",
+                    "variant_id",
+                    "merchant_id",
+                    "product_classification",
+                    "quantity",
+                    "currency",
+                    "unit_amount_minor",
+                    "amount_minor",
+                    "created_at"
+                  ],
+                  "title": "SaleOrder",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Sale order created"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Sale Order",
+        "x-tempera-effect": "local_write",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:write"
+      }
+    },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}": {
+      "get": {
+        "operationId": "getSaleOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "description": "Immutable order snapshot used as a bounded commerce input to Payments.",
+                  "properties": {
+                    "amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amount Minor",
+                      "type": "integer"
+                    },
+                    "amount_source": {
+                      "const": "catalog_offer_revision",
+                      "default": "catalog_offer_revision",
+                      "title": "Amount Source",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "title": "Created At",
+                      "type": "string"
+                    },
+                    "currency": {
+                      "const": "USD",
+                      "title": "Currency",
+                      "type": "string"
+                    },
+                    "id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Id",
+                      "type": "string"
+                    },
+                    "merchant_id": {
+                      "title": "Merchant Id",
+                      "type": "string"
+                    },
+                    "offer_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Offer Id",
+                      "type": "string"
+                    },
+                    "offer_revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Offer Revision",
+                      "type": "integer"
+                    },
+                    "product_classification": {
+                      "enum": [
+                        "physical_goods",
+                        "offline_services"
+                      ],
+                      "title": "Product Classification",
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "maximum": 10000.0,
+                      "minimum": 1.0,
+                      "title": "Quantity",
+                      "type": "integer"
+                    },
+                    "revision": {
+                      "const": 1,
+                      "default": 1,
+                      "title": "Revision",
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "environment": {
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment",
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organization Id",
+                          "type": "string"
+                        },
+                        "project_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Project Id",
+                          "type": "string"
+                        },
+                        "site_id": {
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Site Id",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id",
+                        "project_id",
+                        "environment",
+                        "site_id"
+                      ],
+                      "title": "Scope",
+                      "type": "object"
+                    },
+                    "unit_amount_minor": {
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Unit Amount Minor",
+                      "type": "integer"
+                    },
+                    "variant_id": {
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Variant Id",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "scope",
+                    "offer_id",
+                    "variant_id",
+                    "merchant_id",
+                    "product_classification",
+                    "quantity",
+                    "currency",
+                    "unit_amount_minor",
+                    "amount_minor",
+                    "created_at"
+                  ],
+                  "title": "SaleOrder",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Sale Order",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:read"
       }
     },
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores": {
