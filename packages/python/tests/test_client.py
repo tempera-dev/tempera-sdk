@@ -975,11 +975,11 @@ class ErrorNormalizationTest(unittest.TestCase):
     def test_normalize_error_body_handles_unknown_and_empty_bodies(self):
         self.assertEqual(
             normalize_error_body(None, "Bad Gateway"),
-            {"code": None, "message": "Bad Gateway", "request_id": None},
+            {"code": None, "message": "Bad Gateway", "reason": None, "request_id": None},
         )
         self.assertEqual(
             normalize_error_body("nonsense", "Oops"),
-            {"code": None, "message": "Oops", "request_id": None},
+            {"code": None, "message": "Oops", "reason": None, "request_id": None},
         )
 
 

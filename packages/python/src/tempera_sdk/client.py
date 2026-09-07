@@ -23,6 +23,7 @@ from typing import Any, Mapping
 
 from .auth import TemperaAuth, Transport, _default_transport, _encode_json
 from .errors import TemperaApiError, TemperaSdkError, _with_context
+from .retry import assert_canonical_idempotency_keys, send_with_retry
 from .surface import DEFAULT_AUDIENCE, ENVIRONMENTS, OPERATIONS, PRODUCTS
 from urllib import parse as urllib_parse
 
@@ -157,6 +158,7 @@ class TemperaClient:
         base_urls: Mapping[str, str] | None = None,
         environment: str | None = None,
         transport: Transport | None = None,
+        sleep: Any = None,
     ):
         self.auth = auth
         self.account_token = account_token
@@ -167,6 +169,8 @@ class TemperaClient:
             raise TemperaSdkError(f"unknown Tempera environment: {environment}")
         self._environment_targets = ENVIRONMENTS[environment] if environment else None
         self._transport = transport or (auth.transport if auth else None) or _default_transport
+        # Injectable only so tests can observe retry backoff without waiting.
+        self._sleep = sleep
         self.control_plane: _ProductClient
         self.palette: _ProductClient
         self.tempo: _ProductClient
@@ -255,6 +259,7 @@ class TemperaClient:
         headers: Mapping[str, str] | None = None,
         bearer: str | None = None,
         operation: str | None = None,
+        safe_retry: str = "none",
     ) -> Any:
         url = self._base_url_for(product_key) + path
         query_pairs = [(key, _query_value(value)) for key, value in (query or {}).items() if value is not None]
@@ -267,11 +272,19 @@ class TemperaClient:
             request_headers["authorization"] = f"Bearer {bearer}"
         if headers:
             request_headers.update(headers)
+        # The request is serialized exactly once. Every retry resends these same
+        # bytes, so the idempotency key inside the body can never be re-minted.
         data = body if binary else (_encode_json(body) if body is not None else None)
-        try:
-            return self._transport(method, url, request_headers, data)
-        except TemperaApiError as error:
-            raise _with_context(error, product_key, operation) from None
+
+        def attempt(_attempt: int) -> Any:
+            try:
+                return self._transport(method, url, request_headers, data)
+            except TemperaApiError as error:
+                raise _with_context(error, product_key, operation) from None
+
+        if self._sleep is None:
+            return send_with_retry(safe_retry, attempt)
+        return send_with_retry(safe_retry, attempt, sleep=self._sleep)
 
     def _substitute_path(
         self,
@@ -402,6 +415,10 @@ class TemperaClient:
                 op.get("auth_audience"),
             )
         )
+        if not binary:
+            assert_canonical_idempotency_keys(
+                f"{PRODUCT_ATTRS[product_key]}.{op['id']}", body
+            )
         return self._raw_request(
             product_key,
             path,
@@ -413,6 +430,7 @@ class TemperaClient:
             headers=headers,
             bearer=resolved_bearer,
             operation=op["id"],
+            safe_retry=op["safe_retry"],
         )
 
 

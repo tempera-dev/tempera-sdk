@@ -24,6 +24,7 @@ import {
   TEMPERA_PRODUCTS,
 } from "./surface.js";
 import { TemperaSdkError, apiErrorFromResponse } from "./errors.js";
+import { assertCanonicalIdempotencyKeys, sendWithRetry } from "./retry.js";
 
 function trimTrailingSlash(url) {
   return url.replace(/\/+$/, "");
@@ -114,6 +115,7 @@ export function createTemperaClient({
   baseUrls = {},
   environment,
   fetch: fetchImpl,
+  sleep,
 } = {}) {
   const doFetch = fetchImpl ?? auth?.fetch ?? globalThis.fetch;
   if (!doFetch) throw new TemperaSdkError("fetch is required");
@@ -178,12 +180,15 @@ export function createTemperaClient({
     return auth.bearerFor(audience);
   }
 
-  async function rawRequest(productKey, path, { method = "GET", body, binary = false, contentType, query, headers = {}, bearer, operation } = {}) {
+  async function rawRequest(productKey, path, { method = "GET", body, binary = false, contentType, query, headers = {}, bearer, operation, safeRetry = "none" } = {}) {
     const url = new URL(baseUrlFor(productKey) + path);
     for (const [key, value] of Object.entries(query ?? {})) {
       if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
     }
-    const response = await doFetch(url.toString(), {
+    // The request is serialized exactly once. Every retry resends these same
+    // bytes, so the idempotency key inside the body can never be re-minted.
+    const target = url.toString();
+    const requestInit = {
       method,
       headers: {
         accept: "application/json",
@@ -192,19 +197,22 @@ export function createTemperaClient({
         ...headers,
       },
       body: body !== undefined ? (binary ? body : JSON.stringify(body)) : undefined,
-    });
-    const parsed = await parseResponseBody(response);
-    if (!response.ok) {
-      throw apiErrorFromResponse({
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-        body: parsed,
-        product: productKey,
-        operation,
-      });
-    }
-    return parsed;
+    };
+    return sendWithRetry(safeRetry, async () => {
+      const response = await doFetch(target, requestInit);
+      const parsed = await parseResponseBody(response);
+      if (!response.ok) {
+        throw apiErrorFromResponse({
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers,
+          body: parsed,
+          product: productKey,
+          operation,
+        });
+      }
+      return parsed;
+    }, { sleep });
   }
 
   function dispatch(productKey, op, params = {}, options = {}) {
@@ -260,6 +268,7 @@ export function createTemperaClient({
       else if (!binary) (body ??= {})[key] = value;
       else throw new TemperaSdkError(`${productKey}.${op.id}: binary operations only accept content plus declared path/query parameters`);
     }
+    if (!binary) assertCanonicalIdempotencyKeys(`${productKey}.${op.id}`, body);
     const bearer =
       options.bearer ?? bearerFor(productKey, op.auth, op.authAudience);
     return rawRequest(productKey, path, {
@@ -271,6 +280,7 @@ export function createTemperaClient({
       headers: options.headers ?? {},
       bearer,
       operation: op.id,
+      safeRetry: op.safeRetry,
     });
   }
 

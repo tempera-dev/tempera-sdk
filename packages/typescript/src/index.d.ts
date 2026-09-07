@@ -36,6 +36,8 @@ export declare class TemperaSdkError extends Error {
 export declare class TemperaApiError extends TemperaSdkError {
   status: number;
   code: string | null;
+  /** AIP-193 google.rpc.ErrorInfo reason from error.details[], when present. */
+  reason: string | null;
   requestId: string | null;
   product: string | null;
   operation: string | null;
@@ -50,7 +52,9 @@ export declare class TemperaMcpError extends TemperaSdkError {
 export declare function normalizeErrorBody(
   body: unknown,
   statusText?: string,
-): { code: string | null; message: string; requestId: string | null };
+): { code: string | null; message: string; reason: string | null; requestId: string | null };
+
+export declare function errorInfoReason(error: unknown): string | null;
 
 export declare function apiErrorFromResponse(options: {
   status: number;
@@ -124,6 +128,23 @@ export declare const TEMPERA_PRODUCT_AUDIENCES: Readonly<
 
 // --- unified client ---
 
+// --- retry rules ---
+
+export declare const MAX_IDEMPOTENCY_KEY_BYTES: 256;
+export declare const IDEMPOTENCY_KEY_FIELDS: readonly ["idempotencyKey", "idempotency_key"];
+export declare const RETRYABLE_STATUSES: readonly number[];
+export declare const MAX_ATTEMPTS: 3;
+export declare const INITIAL_BACKOFF_MS: 250;
+export declare function canonicalIdempotencyKey(value: unknown): string | null;
+export declare function assertCanonicalIdempotencyKeys(label: string, body: unknown): void;
+export declare function retryDelayMs(attempt: number): number;
+export declare function isRetryableFailure(error: unknown): boolean;
+export declare function sendWithRetry<T>(
+  safeRetry: "read" | "idempotent" | "none",
+  send: (attempt: number) => Promise<T>,
+  options?: { sleep?: (ms: number) => Promise<void> },
+): Promise<T>;
+
 export type TemperaClientOptions = {
   auth?: TemperaAuth;
   accountToken?: string;
@@ -131,6 +152,8 @@ export type TemperaClientOptions = {
   baseUrls?: Partial<Record<TemperaProductKey, string>>;
   environment?: TemperaEnvironment;
   fetch?: typeof fetch;
+  /** Injectable backoff, so retry timing is observable in tests. */
+  sleep?: (ms: number) => Promise<void>;
 };
 
 export type TemperaClient = {

@@ -27,6 +27,7 @@ class TemperaApiError(TemperaSdkError):
         status: int,
         code: str | None = None,
         message: str = "",
+        reason: str | None = None,
         request_id: str | None = None,
         product: str | None = None,
         operation: str | None = None,
@@ -37,6 +38,9 @@ class TemperaApiError(TemperaSdkError):
         self.status = status
         self.code = code
         self.message = message
+        # AIP-193 google.rpc.ErrorInfo reason from error.details[]; producers
+        # publish a closed reason vocabulary, so this is the field to branch on.
+        self.reason = reason
         self.request_id = request_id
         self.product = product
         self.operation = operation
@@ -56,8 +60,24 @@ class TemperaMcpError(TemperaSdkError):
         self.data = data
 
 
+def error_info_reason(error: Any) -> str | None:
+    """Return the AIP-193 google.rpc.ErrorInfo reason from an error's details[].
+
+    The first detail carrying a string ``reason`` wins; ``None`` when none do.
+    """
+    if not isinstance(error, Mapping):
+        return None
+    details = error.get("details")
+    if not isinstance(details, (list, tuple)):
+        return None
+    for detail in details:
+        if isinstance(detail, Mapping) and isinstance(detail.get("reason"), str):
+            return detail["reason"]
+    return None
+
+
 def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
-    """Normalize any Tempera product error body into {code, message, request_id}.
+    """Normalize any Tempera product error body into {code, message, reason, request_id}.
 
     Wire shapes handled (see surface.json errorContract.wireShapes):
     - canonical resource API: ``{"error": {"code": 400, "status":
@@ -80,13 +100,24 @@ def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
                     else code if isinstance(code, str) else None
                 ),
                 "message": message if isinstance(message, str) else status_text,
+                "reason": error_info_reason(error),
                 "request_id": request_id if isinstance(request_id, str) else None,
             }
         if isinstance(error, str):
             if isinstance(body.get("message"), str):
-                return {"code": error, "message": body["message"], "request_id": None}
-            return {"code": None, "message": error, "request_id": None}
-    return {"code": None, "message": status_text or "request failed", "request_id": None}
+                return {
+                    "code": error,
+                    "message": body["message"],
+                    "reason": None,
+                    "request_id": None,
+                }
+            return {"code": None, "message": error, "reason": None, "request_id": None}
+    return {
+        "code": None,
+        "message": status_text or "request failed",
+        "reason": None,
+        "request_id": None,
+    }
 
 
 def _header_get(headers: Any, name: str) -> str | None:
@@ -123,6 +154,7 @@ def api_error_from_response(
         status=status,
         code=normalized["code"],
         message=f"Tempera {label or 'request'} failed ({status}): {normalized['message']}",
+        reason=normalized["reason"],
         request_id=normalized["request_id"] or header_request_id,
         product=product,
         operation=operation,
@@ -142,6 +174,7 @@ def _with_context(error: TemperaApiError, product: str | None, operation: str | 
 
 __all__ = [
     "TemperaApiError",
+    "error_info_reason",
     "TemperaMcpError",
     "TemperaSdkError",
     "api_error_from_response",

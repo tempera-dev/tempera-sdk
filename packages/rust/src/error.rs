@@ -289,8 +289,24 @@ pub struct TemperaApiError {
     pub code: Option<String>,
     /// Human-readable error message; never empty.
     pub message: String,
+    /// AIP-193 `google.rpc.ErrorInfo` reason from `error.details[]`, when one
+    /// is present. Producers publish a closed reason vocabulary, so this is
+    /// the field to branch on.
+    pub reason: Option<String>,
     /// Server request id (`request_id`), when the wire shape carried one.
     pub request_id: Option<String>,
+}
+
+/// Return the AIP-193 `google.rpc.ErrorInfo` reason from an error's
+/// `details[]`. The first detail carrying a string `reason` wins.
+pub(crate) fn error_info_reason(error: &Json) -> Option<String> {
+    let Some(Json::Arr(details)) = error.get("details") else {
+        return None;
+    };
+    details
+        .iter()
+        .find_map(|detail| detail.get("reason").and_then(Json::as_str))
+        .map(str::to_string)
 }
 
 impl fmt::Display for TemperaApiError {
@@ -302,6 +318,9 @@ impl fmt::Display for TemperaApiError {
         )?;
         if let Some(code) = &self.code {
             write!(f, " [code: {code}]")?;
+        }
+        if let Some(reason) = &self.reason {
+            write!(f, " [reason: {reason}]")?;
         }
         if let Some(request_id) = &self.request_id {
             write!(f, " [request_id: {request_id}]")?;
@@ -341,6 +360,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                         .and_then(Json::as_str)
                         .unwrap_or(status_text)
                         .to_string(),
+                    reason: error_info_reason(error),
                     request_id: error
                         .get("requestId")
                         .and_then(Json::as_str)
@@ -354,6 +374,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                         status,
                         code: Some(error_text.clone()),
                         message: message.to_string(),
+                        reason: None,
                         request_id: None,
                     };
                 }
@@ -361,6 +382,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
                     status,
                     code: None,
                     message: error_text.clone(),
+                    reason: None,
                     request_id: None,
                 };
             }
@@ -376,6 +398,7 @@ pub fn normalize_error_body(status: u16, status_text: &str, body: &str) -> Tempe
         } else {
             status_text.to_string()
         },
+        reason: None,
         request_id: None,
     }
 }
@@ -535,6 +558,28 @@ mod tests {
     }
 
     #[test]
+    fn reason_is_parsed_from_error_details() {
+        let error = normalize_error_body(
+            409,
+            "Conflict",
+            r#"{"error":{"code":409,"status":"ABORTED","message":"revision moved",
+               "details":[{"@type":"type.googleapis.com/google.rpc.RequestInfo","requestId":"req-1"},
+               {"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"REVISION_CONFLICT",
+               "domain":"tempera-business"}]}}"#,
+        );
+        assert_eq!(error.reason.as_deref(), Some("REVISION_CONFLICT"));
+        assert_eq!(error.code.as_deref(), Some("ABORTED"));
+        assert!(error.to_string().contains("[reason: REVISION_CONFLICT]"));
+
+        let plain = normalize_error_body(
+            409,
+            "Conflict",
+            r#"{"error":{"status":"ABORTED","message":"no details"}}"#,
+        );
+        assert_eq!(plain.reason, None);
+    }
+
+    #[test]
     fn non_string_error_member_falls_back() {
         let error = normalize_error_body(500, "Internal Server Error", r#"{"error":42}"#);
         assert_eq!(error.code, None);
@@ -547,6 +592,7 @@ mod tests {
             status: 429,
             code: Some("quota".to_string()),
             message: "limit hit".to_string(),
+            reason: None,
             request_id: Some("req_9".to_string()),
         };
         assert_eq!(

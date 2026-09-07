@@ -19,6 +19,7 @@
 
 use crate::auth::{TemperaAuth, urlencode};
 use crate::error::json_escape;
+use crate::retry::{IDEMPOTENCY_KEY_FIELDS, MAX_IDEMPOTENCY_KEY_BYTES, canonical_idempotency_key};
 use crate::surface;
 
 /// One request parameter value, carrying enough type information to serialize
@@ -79,6 +80,29 @@ impl From<i64> for ParamValue {
 impl From<bool> for ParamValue {
     fn from(value: bool) -> Self {
         ParamValue::Bool(value)
+    }
+}
+
+/// Reject a malformed idempotency key before the request exists, so a retry
+/// can never be forced to choose between an unusable key and a freshly minted
+/// one. The rule is the canonical tempera-mcp one: exact ASCII-graphic bytes.
+fn check_idempotency_key(
+    product: &str,
+    operation: &str,
+    name: &str,
+    value: &ParamValue,
+) -> Result<(), BuildError> {
+    if !IDEMPOTENCY_KEY_FIELDS.contains(&name) {
+        return Ok(());
+    }
+    let invalid = || BuildError::InvalidIdempotencyKey {
+        product: product.to_string(),
+        operation: operation.to_string(),
+        name: name.to_string(),
+    };
+    match value {
+        ParamValue::Str(key) => canonical_idempotency_key(key).map(|_| ()).ok_or_else(invalid),
+        _ => Err(invalid()),
     }
 }
 
@@ -168,6 +192,16 @@ pub enum BuildError {
         /// Rejected parameter name.
         name: String,
     },
+    /// An idempotency key was not exact ASCII-graphic bytes within the
+    /// canonical length bound, so it could not be safely resent on a retry.
+    InvalidIdempotencyKey {
+        /// Product key of the operation.
+        product: String,
+        /// Operation id.
+        operation: String,
+        /// Rejected request-body field name.
+        name: String,
+    },
     /// Both a canonical lowerCamel wire name and its snake_case alias were
     /// supplied for the same declared parameter.
     DuplicateParameterAlias {
@@ -252,6 +286,14 @@ impl std::fmt::Display for BuildError {
             } => write!(
                 f,
                 "{product}.{operation}: {name} is derived from the authenticated principal"
+            ),
+            BuildError::InvalidIdempotencyKey {
+                product,
+                operation,
+                name,
+            } => write!(
+                f,
+                "{product}.{operation}: {name} must be 1-{MAX_IDEMPOTENCY_KEY_BYTES} ASCII-graphic bytes"
             ),
             BuildError::DuplicateParameterAlias {
                 product,
@@ -459,6 +501,7 @@ impl TemperaClient {
             for key in op.body {
                 if let Some((input_name, value)) = declared_param(params, key, product, operation)?
                 {
+                    check_idempotency_key(product, operation, key, value)?;
                     set_body_member(&mut members, key, value.to_json_fragment());
                     consumed.push(input_name);
                 }
@@ -475,6 +518,7 @@ impl TemperaClient {
             if op.method == "GET" || op.method == "DELETE" {
                 query.push(((*key).to_string(), value.as_plain_string()));
             } else {
+                check_idempotency_key(product, operation, key, value)?;
                 set_body_member(
                     body.get_or_insert_with(Vec::new),
                     key,

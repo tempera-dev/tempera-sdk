@@ -21,11 +21,14 @@ export class TemperaSdkError extends Error {
 }
 
 export class TemperaApiError extends TemperaSdkError {
-  constructor({ status, code, message, requestId, product, operation, body }) {
+  constructor({ status, code, message, reason, requestId, product, operation, body }) {
     super(message, { status, body });
     this.name = "TemperaApiError";
     this.status = status;
     this.code = code ?? null;
+    // AIP-193 google.rpc.ErrorInfo reason from error.details[]; producers
+    // publish a closed reason vocabulary, so this is the field to branch on.
+    this.reason = reason ?? null;
     this.requestId = requestId ?? null;
     this.product = product ?? null;
     this.operation = operation ?? null;
@@ -43,7 +46,22 @@ export class TemperaMcpError extends TemperaSdkError {
 }
 
 /**
- * Normalize any Tempera product error body into {code, message, requestId}.
+ * Extract the AIP-193 google.rpc.ErrorInfo reason from an error's details[].
+ * Returns the first string `reason`, or null when no detail carries one.
+ */
+export function errorInfoReason(error) {
+  const details = error?.details;
+  if (!Array.isArray(details)) return null;
+  for (const detail of details) {
+    if (detail && typeof detail === "object" && typeof detail.reason === "string") {
+      return detail.reason;
+    }
+  }
+  return null;
+}
+
+/**
+ * Normalize any Tempera product error body into {code, message, reason, requestId}.
  *
  * Wire shapes handled (see surface.json errorContract.wireShapes):
  * - canonical resource API: {"error": {"code": 400, "status":
@@ -64,6 +82,7 @@ export function normalizeErrorBody(body, statusText = "") {
               ? error.code
               : null,
         message: typeof error.message === "string" ? error.message : statusText,
+        reason: errorInfoReason(error),
         requestId:
           typeof error.requestId === "string"
             ? error.requestId
@@ -74,12 +93,12 @@ export function normalizeErrorBody(body, statusText = "") {
     }
     if (typeof error === "string") {
       if (typeof body.message === "string") {
-        return { code: error, message: body.message, requestId: null };
+        return { code: error, message: body.message, reason: null, requestId: null };
       }
-      return { code: null, message: error, requestId: null };
+      return { code: null, message: error, reason: null, requestId: null };
     }
   }
-  return { code: null, message: statusText || "request failed", requestId: null };
+  return { code: null, message: statusText || "request failed", reason: null, requestId: null };
 }
 
 /**
@@ -94,6 +113,7 @@ export function apiErrorFromResponse({ status, statusText, headers, body, produc
     status,
     code: normalized.code,
     message: `Tempera ${label || "request"} failed (${status}): ${normalized.message}`,
+    reason: normalized.reason,
     requestId: normalized.requestId ?? headerRequestId,
     product,
     operation,

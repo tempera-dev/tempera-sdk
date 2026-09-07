@@ -25,8 +25,22 @@ export {
   TemperaMcpError,
   TemperaSdkError,
   apiErrorFromResponse,
+  errorInfoReason,
   normalizeErrorBody,
 } from "./errors.js";
+
+export {
+  IDEMPOTENCY_KEY_FIELDS,
+  INITIAL_BACKOFF_MS,
+  MAX_ATTEMPTS,
+  MAX_IDEMPOTENCY_KEY_BYTES,
+  RETRYABLE_STATUSES,
+  assertCanonicalIdempotencyKeys,
+  canonicalIdempotencyKey,
+  isRetryableFailure,
+  retryDelayMs,
+  sendWithRetry,
+} from "./retry.js";
 
 export {
   TEMPERA_PRODUCT_AUDIENCES,

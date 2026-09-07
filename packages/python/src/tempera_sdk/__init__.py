@@ -30,6 +30,12 @@ _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
     "TemperaSdkError": (".errors", "TemperaSdkError"),
     "api_error_from_response": (".errors", "api_error_from_response"),
     "normalize_error_body": (".errors", "normalize_error_body"),
+    "error_info_reason": (".errors", "error_info_reason"),
+    # retry rules
+    "MAX_IDEMPOTENCY_KEY_BYTES": (".retry", "MAX_IDEMPOTENCY_KEY_BYTES"),
+    "RETRYABLE_STATUSES": (".retry", "RETRYABLE_STATUSES"),
+    "canonical_idempotency_key": (".retry", "canonical_idempotency_key"),
+    "send_with_retry": (".retry", "send_with_retry"),
     # auth
     "PRODUCT_AUDIENCES": (".auth", "PRODUCT_AUDIENCES"),
     "PkcePair": (".auth", "PkcePair"),
@@ -56,6 +62,8 @@ _ALIAS_EXPORTS = {"API_TARGETS": "ENVIRONMENTS"}
 
 __all__ = [
     "API_TARGETS",
+    "MAX_IDEMPOTENCY_KEY_BYTES",
+    "RETRYABLE_STATUSES",
     "AUDIENCES",
     "DEFAULT_AUDIENCE",
     "ENVIRONMENTS",
@@ -84,8 +92,11 @@ __all__ = [
     "build_authorize_url",
     "create_pkce_pair",
     "generate_pkce_verifier",
+    "canonical_idempotency_key",
+    "error_info_reason",
     "normalize_error_body",
     "pkce_challenge_s256",
+    "send_with_retry",
 ]
 
 

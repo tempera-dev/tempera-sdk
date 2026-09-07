@@ -15,11 +15,14 @@
 //! - [`error`]: [`TemperaApiError`] and [`normalize_error_body`], folding the
 //!   canonical AIP-193 envelope and supported compatibility shapes into one type.
 //! - [`mcp`]: JSON-RPC 2.0 body builders for the unified MCP gateway.
+//! - [`retry`]: the shared retry rules — which operations may be resent,
+//!   on which statuses, how often, and the canonical idempotency-key rule.
 
 pub mod auth;
 pub mod client;
 pub mod error;
 pub mod mcp;
+pub mod retry;
 pub mod surface;
 
 pub use auth::{
@@ -29,6 +32,10 @@ pub use auth::{
 pub use client::{BuildError, ParamValue, RequestSpec, TemperaClient};
 pub use error::{TemperaApiError, normalize_error_body};
 pub use mcp::{MCP_PROTOCOL_VERSION, McpError, McpRequestBuilder, parse_mcp_error};
+pub use retry::{
+    INITIAL_BACKOFF_MS, MAX_ATTEMPTS, MAX_IDEMPOTENCY_KEY_BYTES, RETRYABLE_STATUSES, SendError,
+    canonical_idempotency_key, retry_delay, send_with_retry, send_with_retry_blocking,
+};
 pub use surface::{
     AUDIENCES, AUTHORIZE_PATH, DEFAULT_AUDIENCE, ENVIRONMENTS, EnvironmentTarget, INTROSPECT_PATH,
     MCP_ERROR_INTERNAL, MCP_ERROR_INVALID_PARAMS, MCP_ERROR_INVALID_REQUEST,

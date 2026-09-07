@@ -49,15 +49,18 @@ DATA_ENGINE_MCP_TOOLS = ROOT / "specs" / "data-engine-mcp-tools.json"
 
 # Hand-written files must keep exposing the uniform primitives by these names.
 REQUIRED_MARKERS = {
-    "packages/typescript/src/errors.js": ["class TemperaApiError", "class TemperaMcpError", "normalizeErrorBody"],
+    "packages/typescript/src/errors.js": ["class TemperaApiError", "class TemperaMcpError", "normalizeErrorBody", "errorInfoReason"],
+    "packages/typescript/src/retry.js": ["canonicalIdempotencyKey", "sendWithRetry", "RETRYABLE_STATUSES", "MAX_ATTEMPTS"],
     "packages/typescript/src/client.js": ["export function createTemperaClient"],
     "packages/typescript/src/mcp.js": ["class TemperaMcpClient", "MCP_PROTOCOL_VERSION"],
     "packages/typescript/src/auth.js": ["class TemperaAuth", "createPkcePair", "pkceChallengeS256"],
-    "packages/python/src/tempera_sdk/errors.py": ["class TemperaApiError", "class TemperaMcpError", "def normalize_error_body"],
+    "packages/python/src/tempera_sdk/errors.py": ["class TemperaApiError", "class TemperaMcpError", "def normalize_error_body", "def error_info_reason"],
+    "packages/python/src/tempera_sdk/retry.py": ["def canonical_idempotency_key", "def send_with_retry", "RETRYABLE_STATUSES", "MAX_ATTEMPTS"],
     "packages/python/src/tempera_sdk/client.py": ["class TemperaClient"],
     "packages/python/src/tempera_sdk/mcp.py": ["class TemperaMcpClient", "MCP_PROTOCOL_VERSION"],
     "packages/python/src/tempera_sdk/auth.py": ["class TemperaAuth", "def create_pkce_pair", "def pkce_challenge_s256"],
-    "packages/rust/src/error.rs": ["pub struct TemperaApiError", "pub fn normalize_error_body"],
+    "packages/rust/src/error.rs": ["pub struct TemperaApiError", "pub fn normalize_error_body", "fn error_info_reason"],
+    "packages/rust/src/retry.rs": ["pub fn canonical_idempotency_key", "pub fn send_with_retry", "RETRYABLE_STATUSES", "MAX_ATTEMPTS"],
     "packages/rust/src/client.rs": ["pub struct TemperaClient", "pub struct RequestSpec"],
     "packages/rust/src/mcp.rs": ["MCP_PROTOCOL_VERSION"],
     "packages/rust/src/auth.rs": ["pub struct TemperaAuth", "pub fn pkce_challenge_s256"],

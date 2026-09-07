@@ -781,8 +781,8 @@ test("requestId falls back to the x-request-id response header", async () => {
 });
 
 test("normalizeErrorBody handles unknown and empty bodies", () => {
-  assert.deepEqual(normalizeErrorBody(null, "Bad Gateway"), { code: null, message: "Bad Gateway", requestId: null });
-  assert.deepEqual(normalizeErrorBody("nonsense", "Oops"), { code: null, message: "Oops", requestId: null });
+  assert.deepEqual(normalizeErrorBody(null, "Bad Gateway"), { code: null, message: "Bad Gateway", reason: null, requestId: null });
+  assert.deepEqual(normalizeErrorBody("nonsense", "Oops"), { code: null, message: "Oops", reason: null, requestId: null });
 });
 
 test("every product client carries its registry metadata", () => {
