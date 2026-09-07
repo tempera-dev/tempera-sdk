@@ -13174,6 +13174,29 @@ OPERATIONS = {
             "description": "Upsert Agent."
         },
         {
+            "id": "get_default_voice_agent",
+            "upstream_operation_id": "getDefaultVoiceAgent",
+            "method": "GET",
+            "path": "/v1/agents:default",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Default Agent."
+        },
+        {
             "id": "download_voice_artifact",
             "upstream_operation_id": "downloadVoiceArtifact",
             "method": "GET",
@@ -13462,6 +13485,7 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [
                 "agent_id",
+                "profile_ref",
                 "limit"
             ],
             "required_query": [],
@@ -13492,8 +13516,11 @@ OPERATIONS = {
                 "agent_id",
                 "channel",
                 "external_id",
+                "goal_ref",
                 "metadata",
-                "safety_identifier"
+                "profile_ref",
+                "safety_identifier",
+                "site_id"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -13544,7 +13571,11 @@ OPERATIONS = {
                 "session_id"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "status",
+                "limit",
+                "after"
+            ],
             "required_query": [],
             "body": [],
             "forbidden_body": [],

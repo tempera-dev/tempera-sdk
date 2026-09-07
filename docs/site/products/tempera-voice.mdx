@@ -21,7 +21,7 @@ Provider-neutral realtime voice control plane with durable sessions, bounded pro
 | Audience | `tempera-voice` |
 | Auth | bearer minted for audience tempera-voice with voice:read/voice:write/voice:stream or shared eval:run, or a central tp_ API key |
 | Client | TypeScript `client.temperaVoice` · Python `client.tempera_voice` · Rust `build_request("tempera_voice", ...)` |
-| Typed operations | 23 |
+| Typed operations | 24 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaVoice.request(path, options)` (TypeScript) /
@@ -350,6 +350,35 @@ let spec = client.build_request("tempera_voice", "upsert_voice_agent", &[
     ("name", "<name>".into()),
     ("id", "<id>".into()),
 ])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getDefaultVoiceAgent
+
+`GET /v1/agents:default`
+
+Get Default Agent.
+
+- **Producer operationId:** `getDefaultVoiceAgent`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.getDefaultVoiceAgent()` · Python `client.tempera_voice.get_default_voice_agent()` · Rust `build_request("tempera_voice", "get_default_voice_agent", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.getDefaultVoiceAgent();
+```
+
+```python Python
+result = client.tempera_voice.get_default_voice_agent()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "get_default_voice_agent", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -803,6 +832,7 @@ List Sessions.
 | Parameter | Required | Notes |
 |---|---|---|
 | `agent_id` | no | — |
+| `profile_ref` | no | — |
 | `limit` | no | — |
 
 <CodeGroup>
@@ -810,21 +840,21 @@ List Sessions.
 ```typescript TypeScript
 const result = await client.temperaVoice.listVoiceSessions({
   agent_id: "<agent_id>",
-  limit: "<limit>",
+  profile_ref: "<profile_ref>",
 });
 ```
 
 ```python Python
 result = client.tempera_voice.list_voice_sessions({
     "agent_id": "<agent_id>",
-    "limit": "<limit>",
+    "profile_ref": "<profile_ref>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "list_voice_sessions", &[
     ("agent_id", "<agent_id>".into()),
-    ("limit", "<limit>".into()),
+    ("profile_ref", "<profile_ref>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -850,8 +880,11 @@ Create Session.
 | `agent_id` | yes | — |
 | `channel` | no | — |
 | `external_id` | no | — |
+| `goal_ref` | no | — |
 | `metadata` | no | — |
+| `profile_ref` | no | — |
 | `safety_identifier` | no | — |
+| `site_id` | no | — |
 
 <CodeGroup>
 
@@ -941,23 +974,37 @@ List Actions.
 |---|---|---|
 | `session_id` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `status` | no | — |
+| `limit` | no | — |
+| `after` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaVoice.listVoiceSessionActions({
   session_id: "<session_id>",
+  status: "<status>",
+  limit: "<limit>",
 });
 ```
 
 ```python Python
 result = client.tempera_voice.list_voice_session_actions({
     "session_id": "<session_id>",
+    "status": "<status>",
+    "limit": "<limit>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "list_voice_session_actions", &[
     ("session_id", "<session_id>".into()),
+    ("status", "<status>".into()),
+    ("limit", "<limit>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
