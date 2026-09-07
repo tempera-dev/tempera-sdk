@@ -63,12 +63,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -1025,12 +1021,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -1466,12 +1458,8 @@
                           "additionalProperties": false,
                           "properties": {
                             "environment": {
-                              "enum": [
-                                "development",
-                                "test",
-                                "staging",
-                                "production"
-                              ],
+                              "maxLength": 128,
+                              "minLength": 1,
                               "title": "Environment",
                               "type": "string"
                             },
@@ -2330,12 +2318,8 @@
                             "additionalProperties": false,
                             "properties": {
                               "environment": {
-                                "enum": [
-                                  "development",
-                                  "test",
-                                  "staging",
-                                  "production"
-                                ],
+                                "maxLength": 128,
+                                "minLength": 1,
                                 "title": "Environment",
                                 "type": "string"
                               },
@@ -2985,12 +2969,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -3575,12 +3555,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -4526,12 +4502,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -5226,12 +5198,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -5860,12 +5828,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },
@@ -6515,12 +6479,8 @@
                       "additionalProperties": false,
                       "properties": {
                         "environment": {
-                          "enum": [
-                            "development",
-                            "test",
-                            "staging",
-                            "production"
-                          ],
+                          "maxLength": 128,
+                          "minLength": 1,
                           "title": "Environment",
                           "type": "string"
                         },

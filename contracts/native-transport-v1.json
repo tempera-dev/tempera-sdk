@@ -21,8 +21,8 @@
       "spec": "specs/tempera-business-api.json",
       "sourceRepo": "tempera-dev/tempera-business",
       "sourceBranch": "feat/a2-business-profile",
-      "sourceCommit": "7ea07eab390a1018c64a23d72eb8b158e252ac94",
-      "sourceSha256": "9f1810a0ee24f43a895bd7c35a4b7239e660892342ca56d0671fc33aedce1a54"
+      "sourceCommit": "0d635ac7f3ec4261fbc45c74efe510349b4d38d6",
+      "sourceSha256": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe"
     }
   ],
   "operations": [
@@ -66,7 +66,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "1f77b085853206b4b070b43e4d0ffa5b2dac2cf9f34074d40be161e2427555aa",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessCasesGet",
@@ -80,7 +80,7 @@
       "scope": "business:read",
       "safeRetry": "read",
       "requestDigest": "d8b1d55f1d78406e7a9811c53831e3ac77102235f88af48fa8b2689b4cbf33be",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessCasesList",
@@ -94,7 +94,7 @@
       "scope": "business:read",
       "safeRetry": "read",
       "requestDigest": "7e88b03724b4c85722c3d7d95f19dd1d68f8c2ebeb893b28fe3d8d27eb08cfe3",
-      "responseDigest": "cf2f37fa796dd7bbf82f8ef532ca904508ef52eb2ba4a9bd4fc0e31b5f64febc"
+      "responseDigest": "ac598cfe94ed1978295007b3bf7684fe4280893d0766b3f197c475ca3146d4a4"
     },
     {
       "operation": "temperaBusiness.businessCasesPrepareDraft",
@@ -108,7 +108,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "a51f7092ab0c492e544f6ea6e923412a351a46c98d340fb91091e56274d5f1e7",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessCasesRecordDeclaredReceipt",
@@ -122,7 +122,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "affa66c40eff831e6ac7a0c82db4bd9a6de06e395beb5c0480a85e7b6330c71d",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessCasesReviewDraft",
@@ -136,7 +136,7 @@
       "scope": "business:review",
       "safeRetry": "idempotent",
       "requestDigest": "229a4cbb795daae357d74f1e09ea461aa08406ae1a42e9a6b0754296d71bade8",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessCasesUpdateIntake",
@@ -150,7 +150,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "ff94b7a7db4d9495a207be7671eb96bf66314adfb52e75e3c50ff987f0985574",
-      "responseDigest": "1c656b7335e99f4d8dcb7c13cd88763756d2bd7da39a520f406f16a34fa88dde"
+      "responseDigest": "d9de87a05b85d833b07adb5668f3ecbcac17aa34cdfd432fe48f0b5cda20d7a7"
     },
     {
       "operation": "temperaBusiness.businessOperatingState",
@@ -192,7 +192,7 @@
       "scope": "business:read",
       "safeRetry": "read",
       "requestDigest": "84db789e79a8d0158ee0d0731fb4b0c5fa7d72fabdb89f6a691397f75b182ac6",
-      "responseDigest": "5773e042442c30b044f512a18f1fd585c6b633220d9c58a1a93ac589f55330fd"
+      "responseDigest": "82a3e77ca58506c28db76f645369ac1195100b19b1f666409eb7224a5e69f25d"
     },
     {
       "operation": "temperaBusiness.businessProfileHistory",
@@ -220,7 +220,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "c77b18dcbd7d587fd71a51212ed1c59a02c7acf38d1e795270d36f3ac3e112a7",
-      "responseDigest": "5773e042442c30b044f512a18f1fd585c6b633220d9c58a1a93ac589f55330fd"
+      "responseDigest": "82a3e77ca58506c28db76f645369ac1195100b19b1f666409eb7224a5e69f25d"
     },
     {
       "operation": "temperaBusiness.businessProfilePatch",
@@ -234,7 +234,7 @@
       "scope": "business:write",
       "safeRetry": "idempotent",
       "requestDigest": "d223737691df77744b1b736040d4a04ef33a0afd4f1e6a74664fd17f9c228717",
-      "responseDigest": "2f22948984db84d49e5f8189f840aad6c2adba0b6bf854683d63d2d61c5d91bc"
+      "responseDigest": "74a553d6695e896cb191291cb8d96924a91acf04bac7fbdc8284dad34fb1955d"
     },
     {
       "operation": "temperaDropshipping.approveProposal",

@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-business-api.json",
-  "generated_sha256": "9f1810a0ee24f43a895bd7c35a4b7239e660892342ca56d0671fc33aedce1a54",
+  "generated_sha256": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe",
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "ce26a5a478b9972ad552c36ef667990cb57d2897",
+  "source_blob_sha": "e921360773adf36792cc4a3cb193a817fc48991d",
   "source_branch": "feat/a2-business-profile",
-  "source_commit": "7ea07eab390a1018c64a23d72eb8b158e252ac94",
+  "source_commit": "0d635ac7f3ec4261fbc45c74efe510349b4d38d6",
   "source_mode": "100644",
   "source_path": "contracts/tempera-business.openapi.json",
   "source_repo": "tempera-dev/tempera-business",
-  "source_sha256": "9f1810a0ee24f43a895bd7c35a4b7239e660892342ca56d0671fc33aedce1a54"
+  "source_sha256": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe"
 }
