@@ -3959,7 +3959,7 @@
         "x-tempera-effect": "local_write",
         "x-tempera-external-authority": "NONE",
         "x-tempera-release": "local-candidate",
-        "x-tempera-required-scope": "orders:write"
+        "x-tempera-required-scope": "orders:commerce:write"
       }
     },
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}": {
@@ -12972,7 +12972,7 @@
         "x-tempera-effect": "local_write",
         "x-tempera-external-authority": "NONE",
         "x-tempera-release": "local-candidate",
-        "x-tempera-required-scope": "orders:write"
+        "x-tempera-required-scope": "orders:commerce:write"
       }
     },
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}": {
