@@ -747,6 +747,12 @@ TARGETS = {
     "packages/python/src/tempera_sdk/surface.py": render_python,
     "packages/rust/src/surface.rs": render_rust,
 }
+# Languages added after the original three register themselves in
+# scripts/renderers/ rather than growing this module further.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from renderers import discover as _discover_renderers  # noqa: E402
+
+TARGETS.update(_discover_renderers())
 
 
 def main() -> int:
