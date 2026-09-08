@@ -58,6 +58,7 @@ dependencies {
 }
 
 tasks.register("verifyRuntimeVariantConflict") {
+    dependsOn(":publishFixturePublication")
     doLast {
         check(jvmRuntime.resolve().isNotEmpty()) { "published JVM artifact did not resolve" }
         check(androidRuntime.resolve().isNotEmpty()) { "published Android artifact did not resolve" }
