@@ -15384,6 +15384,39 @@ OPERATIONS = {
             "description": "Get Catalog Offer."
         },
         {
+            "id": "list_order_event_projections",
+            "upstream_operation_id": "listOrderEventProjections",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-dropshipping",
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "cursor",
+                "limit"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Event Projections."
+        },
+        {
             "id": "list_events",
             "upstream_operation_id": "listEvents",
             "method": "GET",

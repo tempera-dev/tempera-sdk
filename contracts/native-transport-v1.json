@@ -11,8 +11,8 @@
       "spec": "specs/tempera-dropshipping-api.json",
       "sourceRepo": "tempera-dev/tempera-dropshipping",
       "sourceBranch": "main",
-      "sourceCommit": "210e32b3e4c04b4051890d5b6b838e894450008d",
-      "sourceSha256": "b09088e7181a478d6f760a28413c95d4396bf6d63c573884ff6662d2a17e2de0"
+      "sourceCommit": "e223fa5ced512055e286dde7c7bfbe4f1641cc11",
+      "sourceSha256": "88a36f33e17b1aaacd9094e8f00410266610fa87025e60d98278fc6bf53f07fd"
     },
     {
       "product": "temperaBusiness",
@@ -571,6 +571,22 @@
       "requiredHeaders": [],
       "requestDigest": "4dba87e3a43c31096929efbb9ed148c82e0ddcfd0b24faa9dc35d586b8980431",
       "responseDigest": "cd5d67f5a7be2abcaa2df58d8163bc019bb2173598816e8d6d23cb391eae8088"
+    },
+    {
+      "operation": "temperaDropshipping.listOrderEventProjections",
+      "product": "temperaDropshipping",
+      "id": "listOrderEventProjections",
+      "upstreamOperationId": "listOrderEventProjections",
+      "method": "GET",
+      "pathTemplate": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+      "pathShape": "/v1/organizations/{}/projects/{}/environments/{}/sites/{}/event-projections",
+      "authAudience": "tempera-dropshipping",
+      "scope": "orders:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "d841b5dee027c91cc34463068bff410a10c382846012fdabde6a5ff8a77c645c",
+      "responseDigest": "e63379295d56ca5bec34d75e8ca8fbe6790e65f86c5ea34a423271fefc0bf2d5"
     },
     {
       "operation": "temperaDropshipping.listOrders",

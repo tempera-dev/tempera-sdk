@@ -26,7 +26,7 @@ class AuthGuidanceTest(unittest.TestCase):
 
     def test_orders_reads_require_oauth_but_merchant_read_allows_keys(self):
         reads = [op for op in SURFACE["operations"]["temperaDropshipping"] if op.get("scope") == "orders:read"]
-        self.assertEqual(len(reads), 15)
+        self.assertEqual(len(reads), 16)
         for operation in reads:
             self.assertIn("cannot carry", generator.auth_label(SURFACE, "temperaDropshipping", operation))
         merchant_read = next(op for op in SURFACE["operations"]["temperaPayments"] if op["id"] == "getMerchant")

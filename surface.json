@@ -10366,6 +10366,28 @@
         "safeRetry": "read"
       },
       {
+        "id": "listOrderEventProjections",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+        "auth": "oauthResource",
+        "description": "List Event Projections.",
+        "upstreamOperationId": "listOrderEventProjections",
+        "pathParams": [
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "query": [
+          "cursor",
+          "limit"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "authAudience": "tempera-dropshipping",
+        "safeRetry": "read"
+      },
+      {
         "id": "listEvents",
         "method": "GET",
         "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",

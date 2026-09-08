@@ -18,7 +18,8 @@ let package = Package(
         .testTarget(
             name: "TemperaMerchantSDKTests",
             dependencies: ["TemperaMerchantSDK"],
-            path: "packages/swift/Tests/TemperaMerchantSDKTests"
+            path: "packages/swift/Tests/TemperaMerchantSDKTests",
+            resources: [.copy("Fixtures")]
         ),
     ]
 )

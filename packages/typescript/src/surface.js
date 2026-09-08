@@ -15393,6 +15393,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Catalog Offer."
     },
     {
+      "id": "listOrderEventProjections",
+      "upstreamOperationId": "listOrderEventProjections",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+      "auth": "oauthResource",
+      "authAudience": "tempera-dropshipping",
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "cursor",
+        "limit"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Event Projections."
+    },
+    {
       "id": "listEvents",
       "upstreamOperationId": "listEvents",
       "method": "GET",
