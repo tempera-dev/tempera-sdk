@@ -19,7 +19,7 @@ Declared merchant order recovery: site-scoped orders, stores, proposals, and bus
 | Repository | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) |
 | Base URL env var | `TEMPERA_DROPSHIPPING_URL` (see [Environments](/environments)) |
 | Audience | `tempera-dropshipping` |
-| Auth | bearer minted for audience tempera-dropshipping with the operation's orders:read/orders:write/orders:approve scope |
+| Auth | OAuth bearer for audience tempera-dropshipping; orders:read for reads and orders:commerce:write for catalog-offer/sale-order creation. Legacy orders:write and orders:approve operations remain blocked on central scope registration. |
 | Client | TypeScript `client.temperaDropshipping` · Python `client.tempera_dropshipping` · Rust `build_request("tempera_dropshipping", ...)` |
 | Typed operations | 31 |
 

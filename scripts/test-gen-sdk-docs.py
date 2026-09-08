@@ -41,6 +41,13 @@ class AuthGuidanceTest(unittest.TestCase):
         merchant_read = next(operation for operation in SURFACE["operations"]["temperaPayments"] if operation["id"] == "getMerchant")
         self.assertIn("or central", generator.auth_label(SURFACE, "temperaPayments", merchant_read))
 
+    def test_orders_overview_preserves_narrow_commerce_and_legacy_scope_boundary(self):
+        summary = SURFACE["products"]["temperaDropshipping"]["auth"]
+        for required in ("OAuth", "orders:read", "orders:commerce:write", "blocked on central scope registration"):
+            self.assertIn(required, summary)
+        page = (generator.SITE / "products/tempera-dropshipping.mdx").read_text()
+        self.assertIn("| Auth | " + summary + " |", page)
+
     def test_generated_auth_page_describes_fallback_without_promising_eligibility(self):
         # Verify actual committed generated output, not only a formatter helper.
         page = (generator.SITE / "authentication.mdx").read_text()

@@ -384,7 +384,7 @@
       "repository": "https://github.com/tempera-dev/tempera-dropshipping",
       "envVar": "TEMPERA_DROPSHIPPING_URL",
       "audience": "tempera-dropshipping",
-      "auth": "bearer minted for audience tempera-dropshipping with the operation's orders:read/orders:write/orders:approve scope",
+      "auth": "OAuth bearer for audience tempera-dropshipping; orders:read for reads and orders:commerce:write for catalog-offer/sale-order creation. Legacy orders:write and orders:approve operations remain blocked on central scope registration.",
       "description": "Declared merchant order recovery: site-scoped orders, stores, proposals, and business workspaces. The producer prepares and reviews plans; it claims no provider execution authority."
     },
     "temperaBusiness": {
