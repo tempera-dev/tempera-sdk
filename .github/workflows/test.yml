@@ -194,100 +194,40 @@ jobs:
           python3 .codex/skills/tempera-sync-contracts/scripts/source_lock.py check --repo-dir .palette-source --source-repo tempera-dev/palette --source-branch main --commit "${{ steps.palette-lock.outputs.commit }}" --source-path sdks/openapi/palette-api.json --generated-with source_lock.py@1+palette-api-dump-openapi --generated-file specs/palette-api.json --generated-path specs/palette-api.json --lock specs/palette-api.json.source
           python3 scripts/sync-palette-eval-openapi.py --check --source .palette-source/sdks/openapi/palette-api.json --source-checkout .palette-source
 
+  upstream-exact-source-matrix:
+    name: Build the exact-source matrix
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      # The matrix is derived from PRODUCTS in sync-vendored-openapi.py rather
+      # than duplicated here, so a product cannot be vendored without also
+      # being verified. Forgetting one used to be a silent, green omission.
+      - id: build
+        run: python3 scripts/gen-exact-source-matrix.py >> "$GITHUB_OUTPUT"
+
   upstream-exact-source:
     name: ${{ matrix.name }} source gate
+    needs: upstream-exact-source-matrix
     permissions:
       contents: read
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - name: Tempera Payments
-            product: temperaPayments
-            repository: tempera-payments
-            source_branch: main
-            source_path: contracts/openapi/payments.openapi.json
-            lock: specs/tempera-payments-api.json.source
-            generated_path: specs/tempera-payments-api.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Cradle
-            product: cradle
-            repository: cradle
-            source_branch: main
-            source_path: sdks/openapi.json
-            lock: specs/cradle-openapi.json.source
-            generated_path: specs/cradle-openapi.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Human Data
-            product: humanData
-            repository: human-data
-            source_branch: main
-            source_path: api/openapi.json
-            lock: specs/human-data-openapi.json.source
-            generated_path: specs/human-data-openapi.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Tempera Gym
-            product: temperaGym
-            repository: tempera-gym
-            source_branch: main
-            source_path: contracts/gym-api.openapi.yaml
-            lock: specs/tempera-gym-api.json.source
-            generated_path: specs/tempera-gym-api.json
-            generated_with: source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2
-            transform: yaml-json
-          - name: Tempera Bio
-            product: temperaBio
-            repository: tempera-bio
-            source_branch: main
-            source_path: openapi/tempera-bio-discovery-v1.openapi.json
-            lock: specs/tempera-bio-api.json.source
-            generated_path: specs/tempera-bio-api.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Tempera LLM
-            product: temperaLlm
-            repository: tempera-llm
-            source_branch: main
-            source_path: sdks/openapi/tempera-llm-api.json
-            lock: specs/tempera-llm-api.json.source
-            generated_path: specs/tempera-llm-api.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Tempera Workflows
-            product: temperaWorkflows
-            repository: tempera-workflows
-            source_branch: main
-            source_path: sdks/openapi/tempera-workflows-api.json
-            lock: specs/tempera-workflows-api.json.source
-            generated_path: specs/tempera-workflows-api.json
-            generated_with: source_lock.py@1+verbatim-openapi-copy
-            transform: verbatim
-          - name: Remi
-            product: remi
-            repository: remi
-            source_branch: main
-            source_path: docs/public-http-contract.json
-            lock: specs/remi-http-contract.json.source
-            generated_path: specs/remi-http-contract.json
-            generated_with: sync-vendored-openapi.py@1+verbatim-contract-copy
-            transform: verbatim
-          - name: Tempo
-            product: tempo
-            repository: tempo
-            source_branch: main
-            source_path: api/openapi.json
-            lock: specs/tempo-openapi.json.source
-            generated_path: specs/tempo-openapi.json
-            generated_with: sync-vendored-openapi.py@1+verbatim-openapi-copy
-            transform: verbatim
+      matrix: ${{ fromJson(needs.upstream-exact-source-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
+      # The lock is checked against the registry before any token is minted, so
+      # a pull request cannot repoint a lock at a repository of its choosing
+      # and have CI check it out with the contract reader's credentials.
       - name: Read allowlisted source lock
         id: source-lock
         env:
@@ -332,6 +272,9 @@ jobs:
           fetch-depth: 0
           path: .upstream-source
           token: ${{ steps.contract-reader.outputs.token }}
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
       - name: Reproduce and verify exact committed source
         env:
           PRODUCT: ${{ matrix.product }}
@@ -340,14 +283,15 @@ jobs:
           COMMIT: ${{ steps.source-lock.outputs.commit }}
         run: |
           git -C .upstream-source fetch --no-tags origin "$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
-          if [ "$TRANSFORM" = yaml-json ]; then
-            python3 -m pip install PyYAML==6.0.3
-          fi
+          case "$TRANSFORM" in
+            yaml-json*) python3 -m pip install PyYAML==6.0.3 ;;
+          esac
           python3 scripts/sync-vendored-openapi.py --check \
             --product "$PRODUCT" \
             --source-repo-dir .upstream-source \
             --source-branch "$SOURCE_BRANCH" \
             --source-commit "$COMMIT"
+
   sdk:
     runs-on: ubuntu-latest
     steps:
