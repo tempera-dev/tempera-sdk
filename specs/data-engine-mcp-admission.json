@@ -1734,14 +1734,14 @@
     "exposed_count": 37,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "c98b7bbe5c181e6c9a1eabc48863456bc24a02787f87b0a4fa1ccc4057b4896b"
+      "sha256": "1e3d74112f2f6d9e555729e25cda65e358f4ab514a48c6b522aa6e44ddb0638c"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "041a7e1044d85c230feba1671e0092b8958fd798",
+    "commit": "6556c26192509282b2f7c26226fe06c906a9108d",
     "files": [
       {
         "git_blob": "0b3be446c7ff93baba7f2294ea3c2f0de860d123",
