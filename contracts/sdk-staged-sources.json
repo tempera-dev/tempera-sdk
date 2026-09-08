@@ -1,17 +1,5 @@
 {
   "schema_version": 1,
   "policy": "A vendored producer contract may be pinned to an unmerged producer branch only while it is listed here. The entry names the exact producer branch and commit, the producer-published contract digest, an owner, a migration back to a trusted main lock, and an expiry. Nothing here claims that the pinned commit is merged, released, or deployed.",
-  "staged_sources": [
-    {
-      "generated_path": "specs/tempera-business-api.json",
-      "source_repo": "tempera-dev/tempera-business",
-      "source_branch": "feat/a2-business-profile",
-      "source_commit": "0d635ac7f3ec4261fbc45c74efe510349b4d38d6",
-      "published_digest": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe",
-      "owner": "tempera-business",
-      "rationale": "The business profile contract (A2) is on an unmerged feature branch. This commit also carries the fix that lets the service accept the environment identifier the authority actually issues, without which no cross-service call succeeds, so the earlier pin describes a contract that cannot be used.",
-      "migration": "Re-run scripts/sync-vendored-openapi.py --product temperaBusiness against tempera-dev/tempera-business main once A2 merges, then delete this entry.",
-      "review_after": "2026-10-01"
-    }
-  ]
+  "staged_sources": []
 }

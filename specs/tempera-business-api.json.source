@@ -4,7 +4,7 @@
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "e921360773adf36792cc4a3cb193a817fc48991d",
-  "source_branch": "feat/a2-business-profile",
+  "source_branch": "main",
   "source_commit": "0d635ac7f3ec4261fbc45c74efe510349b4d38d6",
   "source_mode": "100644",
   "source_path": "contracts/tempera-business.openapi.json",
