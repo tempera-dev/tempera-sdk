@@ -15,7 +15,7 @@ import dev.tempera.sdk.OkHttpTemperaTransport
 fun sdkClassLoadingSummary(): String {
     val auth = TemperaAuth("https://issuer.example.test", apiKey = "tp_fixture")
     val mcp = TemperaMcpClient(url = auth.mcpUrl, bearer = "fixture-token")
-    val json = TemperaJson.parse("{\"fixture\":true}")
+    val json = requireNotNull(TemperaJson.parse("{\"fixture\":true}"))
     return "${TemperaSurface.mcpPath}:${mcp.url}:${json.isNull()}"
 }
 
