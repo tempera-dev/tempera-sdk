@@ -18,7 +18,7 @@ public class TemperaMcpClient(
     url: String? = null,
     private val auth: TemperaAuth? = null,
     private val bearer: String? = null,
-    private val transport: TemperaTransport = JdkHttpTransport(),
+    private val transport: TemperaTransport = defaultTemperaTransport(),
     private val configuration: TemperaClientConfiguration = TemperaClientConfiguration(),
 ) {
     /** The gateway endpoint. */

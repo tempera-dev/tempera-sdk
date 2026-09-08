@@ -98,7 +98,7 @@ public class TemperaClient(
     private val introspectionSecret: String? = null,
     private val baseUrls: Map<String, String> = emptyMap(),
     environment: String? = null,
-    private val transport: TemperaTransport = JdkHttpTransport(),
+    private val transport: TemperaTransport = defaultTemperaTransport(),
     /** Timeout and retry knobs for every request this client makes. */
     public val configuration: TemperaClientConfiguration = TemperaClientConfiguration(),
     private val processEnvironment: Map<String, String> = System.getenv(),

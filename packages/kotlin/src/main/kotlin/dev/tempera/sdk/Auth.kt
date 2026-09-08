@@ -142,7 +142,7 @@ public class TemperaAuth(
     /** Central `tp_` API key; the fallback bearer for every audience. */
     public val apiKey: String? = null,
     tokens: Map<String, TemperaTokenSet> = emptyMap(),
-    private val transport: TemperaTransport = JdkHttpTransport(),
+    private val transport: TemperaTransport = defaultTemperaTransport(),
     private val configuration: TemperaClientConfiguration = TemperaClientConfiguration(),
 ) {
     /** The issuer this credential targets (no trailing slash). */
