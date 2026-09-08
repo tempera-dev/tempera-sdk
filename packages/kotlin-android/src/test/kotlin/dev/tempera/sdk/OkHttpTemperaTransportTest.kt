@@ -263,7 +263,7 @@ class OkHttpTemperaTransportTest {
         server.shutdown()
         val certificate = HeldCertificate.Builder().addSubjectAlternativeName("localhost").build()
         val serverCertificates = HandshakeCertificates.Builder().heldCertificate(certificate).build()
-        val clientCertificates = HandshakeCertificates.Builder().addTrustedCertificate(certificate.certificate()).build()
+        val clientCertificates = HandshakeCertificates.Builder().addTrustedCertificate(certificate.certificate).build()
         server = MockWebServer()
         server.useHttps(serverCertificates.sslSocketFactory(), false)
         server.start()
