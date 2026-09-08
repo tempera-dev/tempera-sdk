@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
-import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.HostnameVerifier
 import okhttp3.Authenticator
 import okhttp3.Call
 import okhttp3.Callback
@@ -51,6 +51,18 @@ public class OkHttpTemperaTransport private constructor(
 
     private val retryAfterRestorations = ConcurrentHashMap<Call, List<String>>()
 
+    // Keep strict hostname verification independent of the fixture client's
+    // configuration: that client may trust a local test certificate, but must
+    // not be able to install a permissive hostname verifier.
+    private val strictHostnameVerifier: HostnameVerifier = OkHttpClient().hostnameVerifier
+
+    // In pinned OkHttp 4.12, cross-origin HTTP/2 coalescing is eligible only
+    // when the client retains OkHttp's default verifier identity. This distinct
+    // wrapper delegates the same strict decision while retaining ordinary
+    // same-origin connection reuse and preventing cross-host coalescing.
+    private val sameOriginHostnameVerifier =
+        HostnameVerifier { hostname, session -> strictHostnameVerifier.verify(hostname, session) }
+
     private val client: OkHttpClient =
         baseClient.newBuilder()
             .followRedirects(false)
@@ -58,7 +70,7 @@ public class OkHttpTemperaTransport private constructor(
             .retryOnConnectionFailure(false)
             .authenticator(Authenticator.NONE)
             .proxyAuthenticator(Authenticator.NONE)
-            .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
+            .hostnameVerifier(sameOriginHostnameVerifier)
             // OkHttp 4 may follow a 503 with Retry-After: 0 even when connection
             // retries are off. The network interceptor changes that one internal
             // decision and the application interceptor restores only the changed

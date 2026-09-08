@@ -111,11 +111,7 @@ jobs:
           disk-size: 2G
           pre-emulator-launch-script: |
             df -h "$HOME"
-            available_kib=$(df -Pk "$HOME" | awk 'NR == 2 {print $4}')
-            if [ "$available_kib" -lt 8388608 ]; then
-              echo "Insufficient hosted AVD space: need at least 8 GiB after image installation" >&2
-              exit 1
-            fi
+            test "$(df -Pk "$HOME" | awk 'NR == 2 {print $4}')" -ge 8388608 || { echo "Insufficient hosted AVD space: need at least 8 GiB after image installation" >&2; exit 1; }
           disable-animations: true
           script: |
             gradle -p packages/kotlin-android -PfixtureTestBuildType=debug :fixture-app:connectedDebugAndroidTest

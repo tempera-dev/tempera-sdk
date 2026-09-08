@@ -1,11 +1,19 @@
 package dev.tempera.sdk
 
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
+import okhttp3.Call
+import okhttp3.Connection
 import okhttp3.Dispatcher
+import okhttp3.EventListener
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.HeldCertificate
 import okio.Buffer
@@ -70,7 +78,7 @@ class OkHttpTemperaTransportTest {
 
     @Test
     fun doesNotFollowRedirectsOrStatusFollowups() {
-        val statuses = listOf(301, 302, 303, 307, 308, 401, 407, 408, 429, 503)
+        val statuses = listOf(301, 302, 303, 307, 308, 401, 408, 429, 503)
         for (status in statuses) {
             val reply = MockResponse().setResponseCode(status).setBody("status-$status")
             if (status in setOf(301, 302, 303, 307, 308)) reply.addHeader("Location", "/next")
@@ -83,6 +91,55 @@ class OkHttpTemperaTransportTest {
         }
 
         assertEquals(statuses.size, server.requestCount)
+    }
+
+    @Test
+    fun directOriginProxyAuthenticationResponseIsATypedFailureWithNoResend() {
+        server.enqueue(MockResponse().setResponseCode(407).setBody("origin proxy authentication"))
+        server.enqueue(MockResponse().setBody("must not be requested"))
+
+        assertThrows(TemperaTransportException::class.java) { transport().send(request()) }
+
+        assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun actualHttpProxyReturns407WithoutAuthenticatorFollowup() {
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(407)
+                .addHeader("Proxy-Authenticate", "Basic realm=local")
+                .setBody("proxy authentication required")
+        )
+        server.enqueue(MockResponse().setBody("must not be requested"))
+        val authenticatorCalls = AtomicInteger()
+        val proxyClient =
+            OkHttpClient.Builder()
+                .proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", server.port)))
+                .proxyAuthenticator { _, response ->
+                    authenticatorCalls.incrementAndGet()
+                    response.request.newBuilder().header("Proxy-Authorization", "test-only").build()
+                }
+                .build()
+        val transport = OkHttpTemperaTransport(proxyClient)
+
+        val response =
+            transport.send(
+                TemperaHttpRequest(
+                    method = "GET",
+                    url = "http://origin.example.test/resource",
+                    timeoutSeconds = 2.0,
+                )
+            )
+
+        val recorded = requireNotNull(server.takeRequest(1, TimeUnit.SECONDS))
+        assertEquals(407, response.status)
+        assertArrayEquals("proxy authentication required".toByteArray(), response.body)
+        assertEquals("Basic realm=local", response.header("proxy-authenticate"))
+        assertTrue(recorded.requestLine.startsWith("GET http://origin.example.test/resource "))
+        assertEquals(null, recorded.getHeader("Proxy-Authorization"))
+        assertEquals(0, authenticatorCalls.get())
+        assertEquals(1, server.requestCount)
     }
 
     @Test
@@ -259,7 +316,7 @@ class OkHttpTemperaTransportTest {
     }
 
     @Test
-    fun internalTlsFixtureConstructorKeepsNormalHostnameChecking() {
+    fun internalTlsFixtureConstructorUsesStrictHostnameVerificationAndRejectsUnknownCa() {
         server.shutdown()
         val certificate = HeldCertificate.Builder().addSubjectAlternativeName("localhost").build()
         val serverCertificates = HandshakeCertificates.Builder().heldCertificate(certificate).build()
@@ -272,6 +329,7 @@ class OkHttpTemperaTransportTest {
         val fixtureClient =
             OkHttpClient.Builder()
                 .sslSocketFactory(clientCertificates.sslSocketFactory(), clientCertificates.trustManager)
+                .hostnameVerifier { _, _ -> true }
                 .build()
         val transport = OkHttpTemperaTransport(fixtureClient)
         val response = transport.send(request())
@@ -287,6 +345,69 @@ class OkHttpTemperaTransportTest {
                 )
             )
         }
+        assertThrows(TemperaTransportException::class.java) {
+            OkHttpTemperaTransport(OkHttpClient()).send(request())
+        }
+        assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun strictVerifierKeepsSameHostHttp2ReuseAndPreventsCrossHostCoalescing() {
+        server.shutdown()
+        val certificate =
+            HeldCertificate.Builder()
+                .addSubjectAlternativeName("localhost")
+                .addSubjectAlternativeName("127.0.0.1")
+                .build()
+        val serverCertificates = HandshakeCertificates.Builder().heldCertificate(certificate).build()
+        val clientCertificates = HandshakeCertificates.Builder().addTrustedCertificate(certificate.certificate).build()
+        server = MockWebServer()
+        server.protocols = listOf(Protocol.HTTP_2, Protocol.HTTP_1_1)
+        server.useHttps(serverCertificates.sslSocketFactory(), false)
+        server.start()
+        server.enqueue(MockResponse().setBody("same-host-first"))
+        server.enqueue(MockResponse().setBody("same-host-second"))
+        server.enqueue(MockResponse().setResponseCode(421).setBody("cross-host"))
+        val acquiredConnections = ConcurrentLinkedQueue<Connection>()
+        val acquiredProtocols = ConcurrentLinkedQueue<Protocol>()
+        val fixtureClient =
+            OkHttpClient.Builder()
+                .sslSocketFactory(clientCertificates.sslSocketFactory(), clientCertificates.trustManager)
+                .eventListener(
+                    object : EventListener() {
+                        override fun connectionAcquired(call: Call, connection: Connection) {
+                            acquiredConnections.add(connection)
+                            acquiredProtocols.add(connection.protocol())
+                        }
+                    }
+                )
+                .build()
+        val transport = OkHttpTemperaTransport(fixtureClient)
+
+        assertEquals(200, transport.send(request()).status)
+        assertEquals(200, transport.send(request()).status)
+        val crossHostResponse =
+            transport.send(
+                TemperaHttpRequest(
+                    method = "GET",
+                    url = server.url("/cross-host").toString().replace("localhost", "127.0.0.1"),
+                    timeoutSeconds = 2.0,
+                )
+            )
+
+        val first = requireNotNull(server.takeRequest(1, TimeUnit.SECONDS))
+        val second = requireNotNull(server.takeRequest(1, TimeUnit.SECONDS))
+        val crossHost = requireNotNull(server.takeRequest(1, TimeUnit.SECONDS))
+        assertEquals(0, first.sequenceNumber)
+        assertEquals(1, second.sequenceNumber)
+        assertEquals(0, crossHost.sequenceNumber)
+        assertEquals(listOf(Protocol.HTTP_2, Protocol.HTTP_2, Protocol.HTTP_2), acquiredProtocols.toList())
+        val connections = acquiredConnections.toList()
+        assertEquals(3, connections.size)
+        assertTrue(connections[0] === connections[1])
+        assertFalse(connections[1] === connections[2])
+        assertEquals(421, crossHostResponse.status)
+        assertEquals(3, server.requestCount)
     }
 
     private fun transport(
