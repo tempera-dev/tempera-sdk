@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+"""Re-vendor one or more producers and regenerate everything downstream.
+
+This is the whole producer-to-SDK chain in one command, so that the automated
+path and the human path are the same path:
+
+    contract at an exact producer commit
+      -> specs/<product>.json + its .source lock
+      -> surface.json operations
+      -> the generated surface table in every language
+      -> the generated documentation site
+
+Running the steps by hand in the wrong order used to be possible, and left a
+surface.json that no committed spec produced. Here the order is not optional.
+"""
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
+
+
+def registry() -> dict[str, dict[str, str]]:
+    sys.path.insert(0, str(SCRIPTS))
+    spec = importlib.util.spec_from_file_location(
+        "sync_vendored_openapi", SCRIPTS / "sync-vendored-openapi.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module.PRODUCTS
+
+
+def run(command: list[str], cwd: Path | None = None) -> None:
+    print(f"$ {' '.join(command)}", flush=True)
+    subprocess.run(command, cwd=cwd, check=True)
+
+
+def clone(repository: str, branch: str, commit: str, destination: Path) -> str:
+    """Clone a producer and check out the exact commit we intend to vendor."""
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    url = (
+        f"https://x-access-token:{token}@github.com/{repository}.git"
+        if token
+        else f"https://github.com/{repository}.git"
+    )
+    run(["git", "clone", "--quiet", "--no-tags", url, str(destination)])
+    run(["git", "fetch", "--quiet", "--no-tags", "origin", branch], cwd=destination)
+    resolved = commit or subprocess.run(
+        ["git", "rev-parse", f"origin/{branch}"],
+        cwd=destination,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    run(["git", "checkout", "--quiet", resolved], cwd=destination)
+    return resolved
+
+
+def revendor(product: str, commit: str, workspace: Path) -> str:
+    config = registry()[product]
+    repository = config["source_repo"]
+    checkout = workspace / repository.split("/", 1)[1]
+    resolved = clone(repository, config["source_branch"], commit, checkout)
+    run(
+        [
+            sys.executable,
+            str(SCRIPTS / "sync-vendored-openapi.py"),
+            "--product",
+            product,
+            "--source-repo-dir",
+            str(checkout),
+            "--source-branch",
+            config["source_branch"],
+            "--source-commit",
+            resolved,
+        ]
+    )
+    return resolved
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--products",
+        required=True,
+        help="comma-separated SDK product keys, or 'all'",
+    )
+    parser.add_argument(
+        "--commit",
+        default="",
+        help="an exact 40-character commit; only valid with a single product",
+    )
+    parser.add_argument(
+        "--keep-checkouts",
+        type=Path,
+        help="directory to leave the producer checkouts in, for debugging",
+    )
+    args = parser.parse_args()
+
+    products = registry()
+    requested = (
+        sorted(products)
+        if args.products.strip() == "all"
+        else [item.strip() for item in args.products.split(",") if item.strip()]
+    )
+    unknown = [product for product in requested if product not in products]
+    if unknown:
+        print(f"unknown products: {', '.join(unknown)}", file=sys.stderr)
+        return 1
+    if args.commit and len(requested) != 1:
+        print("--commit names one producer's commit, so pass one product", file=sys.stderr)
+        return 1
+
+    workspace = args.keep_checkouts or Path(tempfile.mkdtemp(prefix="tempera-revendor-"))
+    workspace.mkdir(parents=True, exist_ok=True)
+    try:
+        for product in requested:
+            resolved = revendor(product, args.commit, workspace)
+            print(f"vendored {product} at {resolved}", flush=True)
+        # Order matters: the surface is derived from the specs, the language
+        # tables from the surface, and the documentation from the tables.
+        run(
+            [sys.executable, str(SCRIPTS / "sync-openapi-surface.py")]
+            + [argument for product in requested for argument in ("--product", product)]
+        )
+        run([sys.executable, str(SCRIPTS / "gen-sdk-surface.py")])
+        run([sys.executable, str(SCRIPTS / "gen-sdk-docs.py")])
+    except subprocess.CalledProcessError as error:
+        print(f"re-vendor failed: {error}", file=sys.stderr)
+        return 1
+    finally:
+        if args.keep_checkouts is None:
+            shutil.rmtree(workspace, ignore_errors=True)
+    print(f"re-vendored and regenerated {len(requested)} product(s)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
