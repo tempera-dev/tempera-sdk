@@ -121,7 +121,7 @@ class NativeTransportTests(unittest.TestCase):
             unannotated.write_text('let route = "/v1/merchants/\\(id)/refresh"\n')
             self.assertTrue(
                 any(
-                    "undeclared canonical route" in failure
+                    "undeclared temperaPayments route" in failure
                     for failure in checker.check_client(unannotated, contract)
                 )
             )
