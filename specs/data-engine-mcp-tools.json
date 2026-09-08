@@ -2,7 +2,7 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "041a7e1044d85c230feba1671e0092b8958fd798",
+    "commit": "6556c26192509282b2f7c26226fe06c906a9108d",
     "files": [
       {
         "git_blob": "0b3be446c7ff93baba7f2294ea3c2f0de860d123",
