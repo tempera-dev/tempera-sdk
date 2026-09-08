@@ -24,12 +24,21 @@ class AuthGuidanceTest(unittest.TestCase):
                         self.assertIn("cannot", label)
                         self.assertNotIn("or central", label)
 
-    def test_orders_reads_require_oauth_but_merchant_read_allows_keys(self):
-        reads = [op for op in SURFACE["operations"]["temperaDropshipping"] if op.get("scope") == "orders:read"]
-        self.assertEqual(len(reads), 16)
-        for operation in reads:
-            self.assertIn("cannot carry", generator.auth_label(SURFACE, "temperaDropshipping", operation))
-        merchant_read = next(op for op in SURFACE["operations"]["temperaPayments"] if op["id"] == "getMerchant")
+    def test_orders_oauth_scopes_and_commerce_writes_are_exact(self):
+        orders = SURFACE["operations"]["temperaDropshipping"]
+        oauth_only_scopes = {"orders:read", "orders:commerce:write"}
+        oauth_only_operations = [operation for operation in orders if operation.get("scope") in oauth_only_scopes]
+        self.assertTrue(oauth_only_operations)
+        for operation in oauth_only_operations:
+            with self.subTest(operation=operation["id"]):
+                self.assertIn("cannot carry", generator.auth_label(SURFACE, "temperaDropshipping", operation))
+
+        commerce_write_operations = {
+            operation["id"] for operation in orders if operation.get("scope") == "orders:commerce:write"
+        }
+        self.assertEqual(commerce_write_operations, {"createCatalogOffer", "createSaleOrder"})
+
+        merchant_read = next(operation for operation in SURFACE["operations"]["temperaPayments"] if operation["id"] == "getMerchant")
         self.assertIn("or central", generator.auth_label(SURFACE, "temperaPayments", merchant_read))
 
     def test_generated_auth_page_describes_fallback_without_promising_eligibility(self):

@@ -11,8 +11,8 @@
       "spec": "specs/tempera-dropshipping-api.json",
       "sourceRepo": "tempera-dev/tempera-dropshipping",
       "sourceBranch": "main",
-      "sourceCommit": "e223fa5ced512055e286dde7c7bfbe4f1641cc11",
-      "sourceSha256": "88a36f33e17b1aaacd9094e8f00410266610fa87025e60d98278fc6bf53f07fd"
+      "sourceCommit": "a519f9f4898a557bec6f77533e3cc8ba11727866",
+      "sourceSha256": "0c8dba5d7b9d066f6e725ebf5e4d23f7f74ec84e979c0b49e803d4ac8e0df1cf"
     },
     {
       "product": "temperaBusiness",
@@ -301,7 +301,7 @@
       "pathTemplate": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
       "pathShape": "/v1/organizations/{}/projects/{}/environments/{}/sites/{}/catalog/offers",
       "authAudience": "tempera-dropshipping",
-      "scope": "orders:write",
+      "scope": "orders:commerce:write",
       "safeRetry": "none",
       "headers": [
         "Idempotency-Key"
@@ -337,7 +337,7 @@
       "pathTemplate": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
       "pathShape": "/v1/organizations/{}/projects/{}/environments/{}/sites/{}/sale-orders",
       "authAudience": "tempera-dropshipping",
-      "scope": "orders:write",
+      "scope": "orders:commerce:write",
       "safeRetry": "none",
       "headers": [
         "Idempotency-Key"

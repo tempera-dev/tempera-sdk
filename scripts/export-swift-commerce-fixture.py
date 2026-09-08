@@ -34,7 +34,7 @@ def main():
     from tempera_dropshipping.models import Scope
     scope = Scope(organization_id="fixture-org", project_id="fixture-project", environment="test", site_id="fixture-site")
     principal = {"subject": "fixture-human", "scope": scope,
-                 "permissions": {"orders:read", "orders:write"}}
+                 "permissions": {"orders:read", "orders:commerce:write"}}
     now = datetime(2026, 9, 7, 12, 34, 56, 123456, tzinfo=timezone.utc)
     prefix = "/v1/organizations/fixture-org/projects/fixture-project/environments/test/sites/fixture-site"
     headers = {"Authorization": "Bearer synthetic-fixture-token", "Idempotency-Key": "swift-offer-fixture-key"}

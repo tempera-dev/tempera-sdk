@@ -83,6 +83,7 @@
     "payments:merchants:read",
     "payments:merchants:write",
     "orders:read",
+    "orders:commerce:write",
     "voice:read",
     "voice:write",
     "voice:stream",
@@ -10336,7 +10337,7 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "scope": "orders:write",
+        "scope": "orders:commerce:write",
         "authAudience": "tempera-dropshipping",
         "safeRetry": "none",
         "headers": [
@@ -10805,7 +10806,7 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "scope": "orders:write",
+        "scope": "orders:commerce:write",
         "authAudience": "tempera-dropshipping",
         "safeRetry": "none",
         "headers": [
